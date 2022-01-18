@@ -13,6 +13,7 @@ export const submitBlogPostResourceRight = 'org-entcore-blog-controllers-PostCon
 export const publishBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|publish';
 export const commentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|comment';
 export const updateCommentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|updateComment';
+export const deleteCommentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|deleteComment';
 
 export const listBlogsResourceRight = 'org.entcore.blog.controllers.BlogController|list';
 export const printBlogResourceRight = 'org.entcore.blog.controllers.BlogController|print';

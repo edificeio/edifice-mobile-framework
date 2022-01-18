@@ -45,18 +45,22 @@ const CommentField = (props: ICommentField_Props, ref) => {
   };
   const confirmDiscardUpdate = () => {
     commentId &&
-      Alert.alert(I18n.t('common.modificationUnsaved'), I18n.t('common.comment.modificationUnsaved'), [
-        {
-          text: I18n.t('common.quit'),
-          style: 'destructive',
-          onPress: () => clearCommentField()
-        },
-        {
-          text: I18n.t('common.continue'),
-          style: 'default',
-          onPress: () => inputRef.current && inputRef.current.focus()
-        }
-      ]);
+      Alert.alert(
+        I18n.t('common.modificationUnsavedConfirmation'),
+        I18n.t('common.comment.modificationUnsavedConfirmation'),
+        [
+          {
+            text: I18n.t('common.quit'),
+            style: 'destructive',
+            onPress: () => clearCommentField()
+          },
+          {
+            text: I18n.t('common.continue'),
+            style: 'default',
+            onPress: () => inputRef.current && inputRef.current.focus()
+          }
+        ]
+      );
   };
   React.useImperativeHandle(ref, () => ({ clearCommentField, prefillCommentField, confirmDiscardUpdate }));
 

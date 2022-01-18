@@ -269,6 +269,13 @@ export const blogService = {
         method: 'PUT',
         body
       }) as Promise<{ number: number }>;
+    },
+    delete: async (session: IUserSession, blogPostCommentId: { blogId: string; postId: string, commentId: string }) => {
+      const { blogId, postId, commentId } = blogPostCommentId;
+      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'DELETE',
+      }) as Promise<{ number: number }>;
     }
   },
 };

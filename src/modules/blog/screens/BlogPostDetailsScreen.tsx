@@ -27,7 +27,7 @@ import NotificationTopInfo from '~/framework/modules/timelinev2/components/Notif
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
-import { getBlogPostDetailsAction, publishBlogPostCommentAction, updateBlogPostCommentAction } from '~/modules/blog/actions';
+import { deleteBlogPostCommentAction, getBlogPostDetailsAction, publishBlogPostCommentAction, updateBlogPostCommentAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlogPostComment, IBlogPost } from '~/modules/blog/reducer';
 import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/modules/blog/service';
@@ -40,7 +40,7 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import { openUrl } from '~/framework/util/linking';
 import CommentField from '~/framework/components/commentField';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { commentBlogPostResourceRight, updateCommentBlogPostResourceRight } from '../rights';
+import { commentBlogPostResourceRight, deleteCommentBlogPostResourceRight, updateCommentBlogPostResourceRight } from '../rights';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { IDisplayedBlog } from './BlogExplorerScreen';
 
@@ -53,6 +53,7 @@ export interface IBlogPostDetailsScreenEventProps {
   handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<IBlogPost | undefined>;
   handlePublishBlogPostComment(blogPostId: { blogId: string; postId: string }, comment: string): Promise<number | undefined>;
   handleUpdateBlogPostComment(blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string): Promise<number | undefined>;
+  handleDeleteBlogPostComment(blogPostCommentId: { blogId: string; postId: string, commentId: string }): Promise<number | undefined>;
 }
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
@@ -193,7 +194,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         {hasCommentBlogPostRight
           ? <CommentField
               ref={this.commentFieldRef}
-              onPublishComment={(comment, commentId) => this.doComment(comment, commentId)}
+              onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
               isPublishingComment={isPublishingComment}
             />
           : null
@@ -287,14 +288,53 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     );
   }
 
-  renderComment(blogPostComment: IBlogPostComment) {
+  renderCommentActions(blogPostComment: IBlogPostComment) {
     const { session, navigation } = this.props;
     const blog = navigation.getParam('blog');
     const hasUpdateCommentBlogPostRight = blog && resourceHasRight(blog, updateCommentBlogPostResourceRight, session);
-    const isCommentBySessionUser = blogPostComment.author.userId === session.user.id;
+    const hasDeleteCommentBlogPostRight = blog && resourceHasRight(blog, deleteCommentBlogPostResourceRight, session);
+    const hasNoCommentBlogPostRights = !hasUpdateCommentBlogPostRight && !hasDeleteCommentBlogPostRight;
+    const isCommentByOtherUser = blogPostComment.author.userId !== session.user.id;
+
+    if (isCommentByOtherUser || hasNoCommentBlogPostRights) {
+      return null;
+    } else return (
+      <View style={{ alignSelf: "flex-end", flexDirection: "row" }}>
+        {hasDeleteCommentBlogPostRight
+          ? <TouchableOpacity
+              style={{ marginRight: hasUpdateCommentBlogPostRight ? 15: undefined }}
+              onPress={() => {
+                Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.deleteConfirmation'), [
+                  {
+                    text: I18n.t('common.cancel'),
+                    style: 'default'
+                  },
+                  {
+                    text: I18n.t('common.delete'),
+                    style: 'destructive',
+                    onPress: () => this.doDeleteComment(blogPostComment.id)
+                  }
+                ])
+              }}
+            >
+              <Icon name="trash" color={theme.color.failure} size={16} />
+            </TouchableOpacity>
+          : null
+        }
+        {hasUpdateCommentBlogPostRight
+          ? <TouchableOpacity onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
+              <Icon name="pencil" color={theme.color.secondary.regular} size={16} />
+            </TouchableOpacity>
+          : null
+        }
+      </View> 
+    );
+  }
+
+  renderComment(blogPostComment: IBlogPostComment) {
     return (
       <ListItem
-        style={{ justifyContent: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
+        style={{ justifyContent: 'flex-start', alignItems: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
         leftElement={
           <GridAvatars
             users={[blogPostComment.author.userId || require('ASSETS/images/resource-avatar.png')]}
@@ -327,14 +367,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 : undefined
               }
             />
-            {isCommentBySessionUser && hasUpdateCommentBlogPostRight
-              ? <View style={{ flexDirection: "row", alignSelf: "flex-end" }} >
-                  <TouchableOpacity onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
-                    <Icon name="pencil" color={theme.color.secondary.regular} size={16} />
-                  </TouchableOpacity>
-                </View>
-              : null
-            }
+            {this.renderCommentActions(blogPostComment)}
           </View>
         }
       />
@@ -372,10 +405,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     }
   }
 
-  async doComment(comment: string, commentId?: string) {
+  async doCreateComment(comment: string, commentId?: string) {
     try {
       this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
-      await this.doPublishBlogPostComment(comment, commentId);
+      await this.doCreateBlogPostComment(comment, commentId);
       await this.doGetBlogPostDetails();
       // Note #1: setTimeout is used to wait for the FlatList height to update (after a comment is added).
       // Note #2: scrollToEnd seems to become less precise once there is lots of data.
@@ -386,30 +419,23 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     }
   }
 
+  async doDeleteComment(commentId: string) {
+    await this.doDeleteBlogPostComment(commentId);
+    await this.doGetBlogPostDetails();
+  }
+
   async doGetBlogPostDetails() {
     try {
       const { navigation, handleGetBlogPostDetails } = this.props;
-      let ids: { blogId: string; postId: string };
-      let blogPostState: string | undefined = undefined;
       const notification = navigation.getParam('notification');
-      if (notification && navigation.getParam('useNotification', true)) {
-        const resourceUri = notification?.resource.uri;
-        if (!resourceUri) {
-          throw new Error('[doGetBlogPostDetails] failed to call api (resourceUri is undefined)');
-        }
-        ids = blogUriCaptureFunction(resourceUri) as Required<ReturnType<typeof blogUriCaptureFunction>>;
-        if (!ids.blogId || !ids.postId) {
-          throw new Error(`[doGetBlogPostDetails] failed to capture resourceUri "${resourceUri}": ${ids}`);
-        }
-        if (notification['event-type'] === 'SUBMIT-POST') blogPostState = 'SUBMITTED';
-      } else {
-        const blogId = navigation.getParam('blog')?.id;
-        const postId = navigation.getParam('blogPost')?._id;
-        blogPostState = navigation.getParam('blogPost')?.state;
-        if (!blogId || !postId) {
-          throw new Error(`[doGetBlogPostDetails] missing blogId or postId : ${{ blogId, postId }}`);
-        }
-        ids = { blogId, postId };
+      const useNotification = navigation.getParam('useNotification', true);
+      let ids = this.getBlogPostIds();
+      let blogPostState: string | undefined = undefined;
+      if (notification && useNotification && notification['event-type'] === 'SUBMIT-POST') {
+        blogPostState = 'SUBMITTED';
+      } else blogPostState = navigation.getParam('blogPost')?.state;
+      if (!blogPostState) {
+        throw new Error('failed to call api (blogPostState is undefined)');
       }
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       this.setState({ blogPostData });
@@ -420,44 +446,64 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     }
   }
 
-  async doPublishBlogPostComment(comment: string, commentId?: string) {
+  async doCreateBlogPostComment(comment: string, commentId?: string) {
     try {
-      const { navigation, handlePublishBlogPostComment, handleUpdateBlogPostComment } = this.props;
-      let ids: { blogId: string; postId: string, commentId?: string };
-      const notification = navigation.getParam('notification');
-      if (notification && navigation.getParam('useNotification', true)) {
-        const resourceUri = notification?.resource.uri;
-        if (!resourceUri) {
-          throw new Error('[doPublishBlogPostComment] failed to call api (resourceUri is undefined)');
-        }
-        ids = blogUriCaptureFunction(resourceUri) as Required<ReturnType<typeof blogUriCaptureFunction>>;
-        if (commentId) ids.commentId = commentId;
-        if (!ids.blogId || !ids.postId) {
-          throw new Error(`[doPublishBlogPostComment] failed to capture resourceUri "${resourceUri}": ${ids}`);
-        }
-      } else {
-        const blogId = navigation.getParam('blog')?.id;
-        const postId = navigation.getParam('blogPost')?._id;
-        if (!blogId || !postId) {
-          throw new Error(`[doPublishBlogPostComment] missing blogId or postId : ${{ blogId, postId }}`);
-        }
-        ids = { blogId, postId };
-        if (commentId) ids.commentId = commentId;
-      }
-      commentId
-        ? await handleUpdateBlogPostComment(ids, comment)
-        : await handlePublishBlogPostComment(ids, comment);
+      const { handlePublishBlogPostComment, handleUpdateBlogPostComment } = this.props;
+      let ids = this.getBlogPostIds();
+      if (commentId) {
+        ids.commentId = commentId;
+        await handleUpdateBlogPostComment(ids, comment)
+      } else await handlePublishBlogPostComment(ids, comment);
     } catch (e) {
       // ToDo: Error handling
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
-      console.warn(`[${moduleConfig.name}] doPublishBlogPostComment failed`, e);
+      console.warn(`[${moduleConfig.name}] doCreateBlogPostComment failed`, e);
     }
+  }
+
+  async doDeleteBlogPostComment(commentId: string) {
+    try {
+      const { handleDeleteBlogPostComment } = this.props;
+      if (!commentId) {
+        throw new Error('failed to call api (commentId is undefined)');
+      }
+      let ids = this.getBlogPostIds();
+      ids.commentId = commentId;
+      await handleDeleteBlogPostComment(ids);
+    } catch (e) {
+      // ToDo: Error handling
+      Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+      console.warn(`[${moduleConfig.name}] doDeleteBlogPostComment failed`, e);
+    }
+  }
+
+  getBlogPostIds() {
+    const { navigation } = this.props;
+    const notification = navigation.getParam('notification');
+    const useNotification = navigation.getParam('useNotification', true);
+    let ids;
+    if (notification && useNotification) {
+      const resourceUri = notification?.resource.uri;
+      if (!resourceUri) {
+        throw new Error('failed to call api (resourceUri is undefined)');
+      }
+      ids = blogUriCaptureFunction(resourceUri) as Required<ReturnType<typeof blogUriCaptureFunction>>;
+      if (!ids.blogId || !ids.postId) {
+        throw new Error(`failed to capture resourceUri "${resourceUri}": ${ids}`);
+      }
+    } else {
+      const blogId = navigation.getParam('blog')?.id;
+      const postId = navigation.getParam('blogPost')?._id;
+      if (!blogId || !postId) {
+        throw new Error(`missing blogId or postId : ${{ blogId, postId }}`);
+      }
+      ids = { blogId, postId };
+    }
+    return ids;
   }
 }
 
 // UTILS ==========================================================================================
-
-// Add some util functions here
 
 // MAPPING ========================================================================================
 
@@ -477,6 +523,9 @@ const mapDispatchToProps: (
   }, // TS BUG: dispatch mishandled
   handleUpdateBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string) => {
     return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
+  }, // TS BUG: dispatch mishandled
+  handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string, commentId: string }) => {
+    return (await dispatch(deleteBlogPostCommentAction(blogPostCommentId))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
 });
 

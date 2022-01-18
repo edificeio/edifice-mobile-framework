@@ -222,7 +222,22 @@ export const publishBlogPostAction =
       // ToDo: Error handling
       console.warn(`[${moduleConfig.name}] updateBlogPostCommentAction failed`, e);
     }
-  }; 
+  };
+
+/**
+ * Delete a comment for a given blog post.
+ * Info: no reducer is used in this action.
+ */
+ export const deleteBlogPostCommentAction =
+ (blogPostCommentId: { blogId: string; postId: string, commentId: string }) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+   try {
+     const session = getUserSession(getState());
+     return blogService.comments.delete(session, blogPostCommentId);
+   } catch (e) {
+     // ToDo: Error handling
+     console.warn(`[${moduleConfig.name}] deleteBlogPostCommentAction failed`, e);
+   }
+ }; 
 
 /**
  * These are actions to fetch and populate Blog main reducer.
