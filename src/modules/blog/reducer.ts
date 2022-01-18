@@ -42,9 +42,15 @@ export interface IBlogPostComment {
     userId: string;
     username: string;
   };
+  coauthor?: {
+    login: string;
+    userId: string;
+    username: string;
+  };
   comment: string;
   created: Moment;
   id: string;
+  modified?: Moment;
   state: string;
 }
 

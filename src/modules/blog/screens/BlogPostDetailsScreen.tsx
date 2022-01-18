@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, KeyboardAvoidingViewProps, Platform, RefreshControl, SafeAreaView, View } from 'react-native';
+import { Alert, FlatList, KeyboardAvoidingView, KeyboardAvoidingViewProps, Platform, RefreshControl, SafeAreaView, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -22,12 +22,12 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextSemiBold, TextLight } from '~/framework/components/text';
+import { TextSemiBold, TextLight, TextLightItalic } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
-import { getBlogPostDetailsAction, publishBlogPostCommentAction } from '~/modules/blog/actions';
+import { getBlogPostDetailsAction, publishBlogPostCommentAction, updateBlogPostCommentAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlogPostComment, IBlogPost } from '~/modules/blog/reducer';
 import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/modules/blog/service';
@@ -40,7 +40,7 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import { openUrl } from '~/framework/util/linking';
 import CommentField from '~/framework/components/commentField';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { commentBlogPostResourceRight } from '../rights';
+import { commentBlogPostResourceRight, updateCommentBlogPostResourceRight } from '../rights';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { IDisplayedBlog } from './BlogExplorerScreen';
 
@@ -52,6 +52,7 @@ export interface IBlogPostDetailsScreenDataProps {
 export interface IBlogPostDetailsScreenEventProps {
   handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<IBlogPost | undefined>;
   handlePublishBlogPostComment(blogPostId: { blogId: string; postId: string }, comment: string): Promise<number | undefined>;
+  handleUpdateBlogPostComment(blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string): Promise<number | undefined>;
 }
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
@@ -172,25 +173,27 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const hasCommentBlogPostRight = blog && resourceHasRight(blog, commentBlogPostResourceRight, session);
     return (
       <>
-        <FlatList
-          ref={ref => (this.flatListRef = ref)}
-          data={blogPostComments}
-          renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
-          keyExtractor={(item: IBlogPostComment) => item.id.toString()}
-          ListHeaderComponent={this.renderBlogPostDetails()}
-          contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.card }}
-          scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-          refreshControl={
-            <RefreshControl
-              refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
-              onRefresh={() => this.doRefresh()}
-            />
-          }
-        />
+        <TouchableWithoutFeedback onPress={() => this.commentFieldRef?.current?.confirmDiscardUpdate()}>
+          <FlatList
+            ref={ref => (this.flatListRef = ref)}
+            data={blogPostComments}
+            renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
+            keyExtractor={(item: IBlogPostComment) => item.id.toString()}
+            ListHeaderComponent={this.renderBlogPostDetails()}
+            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.card }}
+            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
+            refreshControl={
+              <RefreshControl
+                refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
+                onRefresh={() => this.doRefresh()}
+              />
+            }
+          />
+        </TouchableWithoutFeedback>
         {hasCommentBlogPostRight
           ? <CommentField
               ref={this.commentFieldRef}
-              onPublishComment={(comment) => this.doComment(comment)}
+              onPublishComment={(comment, commentId) => this.doComment(comment, commentId)}
               isPublishingComment={isPublishingComment}
             />
           : null
@@ -285,6 +288,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   renderComment(blogPostComment: IBlogPostComment) {
+    const { session, navigation } = this.props;
+    const blog = navigation.getParam('blog');
+    const hasUpdateCommentBlogPostRight = blog && resourceHasRight(blog, updateCommentBlogPostResourceRight, session);
+    const isCommentBySessionUser = blogPostComment.author.userId === session.user.id;
     return (
       <ListItem
         style={{ justifyContent: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
@@ -295,7 +302,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           />
         }
         rightElement={
-          <View style={{ marginLeft: 15 }}>
+          <View style={{ flex: 1, marginLeft: 15 }}>
             <View style={{ flexDirection: 'row' }}>
               <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: 5, maxWidth: '70%' }}>
                 {blogPostComment.author.username}
@@ -313,7 +320,21 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               }}
               expandMessage={I18n.t('common.readMore')}
               expansionTextStyle={{ fontSize: 12 }}
+              additionalText={blogPostComment.modified
+                ? <TextLightItalic style={{ fontSize: 10 }}>
+                    {I18n.t('common.modified')}
+                  </TextLightItalic>
+                : undefined
+              }
             />
+            {isCommentBySessionUser && hasUpdateCommentBlogPostRight
+              ? <View style={{ flexDirection: "row", alignSelf: "flex-end" }} >
+                  <TouchableOpacity onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
+                    <Icon name="pencil" color={theme.color.secondary.regular} size={16} />
+                  </TouchableOpacity>
+                </View>
+              : null
+            }
           </View>
         }
       />
@@ -351,14 +372,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     }
   }
 
-  async doComment(comment: string) {
+  async doComment(comment: string, commentId?: string) {
     try {
       this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
-      await this.doPublishBlogPostComment(comment);
+      await this.doPublishBlogPostComment(comment, commentId);
       await this.doGetBlogPostDetails();
       // Note #1: setTimeout is used to wait for the FlatList height to update (after a comment is added).
       // Note #2: scrollToEnd seems to become less precise once there is lots of data.
-      setTimeout(() => this.flatListRef?.scrollToEnd(), 1000);
+      !commentId && setTimeout(() => this.flatListRef?.scrollToEnd(), 1000);
       this.commentFieldRef?.current?.clearCommentField();
     } finally {
       this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.DONE });
@@ -399,10 +420,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     }
   }
 
-  async doPublishBlogPostComment(comment: string) {
+  async doPublishBlogPostComment(comment: string, commentId?: string) {
     try {
-      const { navigation, handlePublishBlogPostComment } = this.props;
-      let ids: { blogId: string; postId: string };
+      const { navigation, handlePublishBlogPostComment, handleUpdateBlogPostComment } = this.props;
+      let ids: { blogId: string; postId: string, commentId?: string };
       const notification = navigation.getParam('notification');
       if (notification && navigation.getParam('useNotification', true)) {
         const resourceUri = notification?.resource.uri;
@@ -410,6 +431,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           throw new Error('[doPublishBlogPostComment] failed to call api (resourceUri is undefined)');
         }
         ids = blogUriCaptureFunction(resourceUri) as Required<ReturnType<typeof blogUriCaptureFunction>>;
+        if (commentId) ids.commentId = commentId;
         if (!ids.blogId || !ids.postId) {
           throw new Error(`[doPublishBlogPostComment] failed to capture resourceUri "${resourceUri}": ${ids}`);
         }
@@ -420,8 +442,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           throw new Error(`[doPublishBlogPostComment] missing blogId or postId : ${{ blogId, postId }}`);
         }
         ids = { blogId, postId };
+        if (commentId) ids.commentId = commentId;
       }
-      await handlePublishBlogPostComment(ids, comment);
+      commentId
+        ? await handleUpdateBlogPostComment(ids, comment)
+        : await handlePublishBlogPostComment(ids, comment);
     } catch (e) {
       // ToDo: Error handling
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
@@ -449,6 +474,9 @@ const mapDispatchToProps: (
   }, // TS BUG: dispatch mishandled
   handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
     return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;
+  }, // TS BUG: dispatch mishandled
+  handleUpdateBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string) => {
+    return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
 });
 

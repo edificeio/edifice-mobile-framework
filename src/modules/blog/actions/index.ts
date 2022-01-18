@@ -207,7 +207,22 @@ export const publishBlogPostAction =
      // ToDo: Error handling
      console.warn(`[${moduleConfig.name}] publishBlogPostCommentAction failed`, e);
    }
- }; 
+ };
+
+/**
+ * Update a comment for a given blog post.
+ * Info: no reducer is used in this action.
+ */
+  export const updateBlogPostCommentAction =
+  (blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    try {
+      const session = getUserSession(getState());
+      return blogService.comments.update(session, blogPostCommentId, comment);
+    } catch (e) {
+      // ToDo: Error handling
+      console.warn(`[${moduleConfig.name}] updateBlogPostCommentAction failed`, e);
+    }
+  }; 
 
 /**
  * These are actions to fetch and populate Blog main reducer.

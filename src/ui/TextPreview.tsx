@@ -5,7 +5,6 @@ import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-
 import { LayoutEvent } from 'react-navigation';
 
 import { A } from './Typography';
-
 import { contentStyle } from '~/myAppMenu/components/NewContainerContent';
 
 export interface ITextPreviewProps {
@@ -17,23 +16,21 @@ export interface ITextPreviewProps {
   expandMessage?: string;
   collapseMessage?: string;
   expansionTextStyle?: object;
+  additionalText?: JSX.Element;
 }
 
 interface ITextPreviewState {
   longText: boolean;
-  measuredText: boolean;
   isExpanded: boolean;
 }
 
 export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPreviewState> {
   state = {
     longText: false,
-    measuredText: false,
-    isExpanded: false,
+    isExpanded: false
   };
 
   public measureText = (numberOfLines: number) => async (evt: LayoutEvent) => {
-    this.setState({ measuredText: true });
     if (evt.nativeEvent.lines.length >= numberOfLines) {
       const layout = evt.nativeEvent.lines[numberOfLines - 1];
       const text = layout.text;
@@ -50,22 +47,25 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     }
   };
 
+  public showExpansionLabels() {
+    const { textContent, numberOfLines, isCollapsable } = this.props;
+    const { longText, isExpanded } = this.state;
+    return !numberOfLines ? textContent.endsWith('...') : longText && (isCollapsable || !isExpanded);
+  }
+
   public renderExpansionLabels() {
     const {
-      textContent,
       numberOfLines, // don't include "numberOfLines" prop when "textContent" is already cropped (HTML)
-      isCollapsable,
       onExpand, // must include if no "numberOfLines" prop (no expansion possible)
       expandMessage,
       collapseMessage,
-      expansionTextStyle,
+      expansionTextStyle
     } = this.props;
-    const { longText, isExpanded } = this.state;
+    const { isExpanded } = this.state;
     const expand = expandMessage || I18n.t('seeMore');
     const collapse = collapseMessage || I18n.t('seeLess');
-    const showExpansionLabels = !numberOfLines ? textContent.endsWith('...') : longText && (isCollapsable || !isExpanded);
     return (
-      showExpansionLabels && (
+      this.showExpansionLabels() && (
         <A style={expansionTextStyle} onPress={() => (onExpand ? onExpand() : this.setState({ isExpanded: !isExpanded }))}>
           {!numberOfLines && ' '}
           {isExpanded ? collapse : expand}
@@ -75,18 +75,23 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   }
 
   public render() {
-    const { textContent, textStyle, numberOfLines } = this.props;
-    const { measuredText, isExpanded } = this.state;
+    const { textContent, textStyle, numberOfLines, additionalText } = this.props;
+    const { isExpanded } = this.state;
     return (
       <View>
         <Text
           style={textStyle}
           numberOfLines={!numberOfLines || isExpanded ? undefined : numberOfLines}
-          onTextLayout={numberOfLines && !measuredText && this.measureText(numberOfLines)}>
+          onTextLayout={numberOfLines && this.measureText(numberOfLines)}
+        >
           {textContent}
+          {additionalText && !this.showExpansionLabels() && <><Text>{" "}</Text>{additionalText}</>}
           {!numberOfLines && this.renderExpansionLabels()}
         </Text>
-        {numberOfLines && this.renderExpansionLabels()}
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {additionalText && this.showExpansionLabels() && <>{additionalText}<Text>{" "}</Text></>}
+          {numberOfLines && this.renderExpansionLabels()}
+        </View>
       </View>
     );
   }

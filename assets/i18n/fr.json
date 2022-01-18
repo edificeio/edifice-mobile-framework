@@ -137,7 +137,8 @@
       "addComment": "Ajoutez un commentaire...",
       "comment": "Commentaire",
       "comments": "Commentaires",
-      "noComments": "Pas encore de commentaires"
+      "noComments": "Pas encore de commentaires",
+      "modificationUnsaved": "Vous allez annuler les changements du commentaire. En êtes-vous sûr ?"
     },
     "continue": "Continuer",
     "date": {
@@ -155,6 +156,9 @@
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "infoBubble-doNotShow": "Ne plus afficher ce message",
     "infoBubble-understood": "J'ai compris",
+    "modificationUnsaved": "Modification non enregistrée",
+    "modified": "(modifié)",
+    "modify": "Modifier",
     "ok": "OK",
     "openInBrowser": "Ouvrir dans le navigateur",
     "publish": "Publier",

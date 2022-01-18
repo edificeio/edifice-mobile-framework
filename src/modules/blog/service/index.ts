@@ -69,9 +69,15 @@ export interface IEntcoreBlogPostComment {
     userId: string;
     username: string;
   };
+  coauthor?: {
+    login: string;
+    userId: string;
+    username: string;
+  }
   comment: string;
   created: { $date: number };
   id: string;
+  modified?: { $date: number };
   state: string;
 }
 
@@ -160,7 +166,11 @@ export const blogFolderAdapter = (blogFolder: IEntcoreBlogFolder) => {
 };
 
 export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
-  const ret = blogPostComments.map(blogPostComment => ({ ...blogPostComment, created: moment(blogPostComment.created.$date) }));
+  const ret = blogPostComments.map(blogPostComment => {
+    let adaptedBlogPostComment = { ...blogPostComment, created: moment(blogPostComment.created.$date) };
+    if (blogPostComment.modified) adaptedBlogPostComment.modified = moment(blogPostComment.modified.$date);
+    return adaptedBlogPostComment;
+  });
   return ret as IBlogPostComments;
 };
 
@@ -248,6 +258,15 @@ export const blogService = {
       const body = JSON.stringify({ comment });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'POST',
+        body
+      }) as Promise<{ number: number }>;
+    },
+    update: async (session: IUserSession, blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string) => {
+      const { blogId, postId, commentId } = blogPostCommentId;
+      const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
+      const body = JSON.stringify({ comment });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'PUT',
         body
       }) as Promise<{ number: number }>;
     }

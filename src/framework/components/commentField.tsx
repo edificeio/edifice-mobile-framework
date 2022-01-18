@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-import { getUserSession, IUserSession } from '../util/session';
+import { getUserSession } from '../util/session';
 import { LoadingIndicator } from './loading';
 import { TextAction } from './text';
 
@@ -15,7 +15,7 @@ export interface ICommentField_DataProps {
   isPublishingComment: boolean;
 }
 export interface ICommentField_EventProps {
-  onPublishComment: (comment: string) => any;
+  onPublishComment: (comment: string, commentId?: string) => any;
 }
 export type ICommentField_Props = ICommentField_DataProps & ICommentField_EventProps;
 
@@ -26,15 +26,39 @@ const CommentField = (props: ICommentField_Props, ref) => {
   const session = useSelector((state) => getUserSession(state));
   const [ comment, setComment ] = React.useState<string>('');
   const [ publishButtonWidth, setPublishButtonWidth ] = React.useState<number | undefined>();
+  const [ commentId, setCommentId ] = React.useState<string | undefined>();
   const onPublish = () => {
     inputRef.current && inputRef.current.blur();
-    props.onPublishComment(comment);
+    props.onPublishComment(comment, commentId);
   };
   const clearCommentField = () => {
     inputRef.current && inputRef.current.clear();
     setComment('');
+    commentId && setPublishButtonWidth(undefined);
+    setCommentId(undefined);
   };
-  React.useImperativeHandle(ref, () => ({ clearCommentField }));
+  const prefillCommentField = (comment: string, commentId: string) => {
+    inputRef.current && inputRef.current.focus();
+    setComment(comment);
+    setCommentId(commentId);
+    setPublishButtonWidth(undefined);
+  };
+  const confirmDiscardUpdate = () => {
+    commentId &&
+      Alert.alert(I18n.t('common.modificationUnsaved'), I18n.t('common.comment.modificationUnsaved'), [
+        {
+          text: I18n.t('common.quit'),
+          style: 'destructive',
+          onPress: () => clearCommentField()
+        },
+        {
+          text: I18n.t('common.continue'),
+          style: 'default',
+          onPress: () => inputRef.current && inputRef.current.focus()
+        }
+      ]);
+  };
+  React.useImperativeHandle(ref, () => ({ clearCommentField, prefillCommentField, confirmDiscardUpdate }));
 
   return (
     <View
@@ -65,6 +89,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
           style={{ flex: 1, marginRight: 12, paddingTop: 0 }}
           placeholder={I18n.t('common.comment.addComment')}
           onChangeText={(text) => setComment(text)}
+          value={comment}
           editable={!props.isPublishingComment}
           multiline
         />
@@ -79,7 +104,9 @@ const CommentField = (props: ICommentField_Props, ref) => {
             <LoadingIndicator small />
           ) : (
             <TouchableOpacity onPress={() => onPublish()} disabled={!comment}>
-              <TextAction style={{ opacity: !comment ? 0.5 : 1 }}>{I18n.t('common.publish')}</TextAction>
+              <TextAction style={{ opacity: !comment ? 0.5 : 1 }}>
+                {I18n.t(`common.${commentId ? 'modify' : 'publish'}`)}
+              </TextAction>
             </TouchableOpacity>
           )}
         </View>
