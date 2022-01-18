@@ -29,8 +29,8 @@ import { IResourceUriNotification, ITimelineNotification } from '~/framework/uti
 import { Trackers } from '~/framework/util/tracker';
 import { deleteBlogPostCommentAction, getBlogPostDetailsAction, publishBlogPostCommentAction, updateBlogPostCommentAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
-import { IBlogPostComment, IBlogPost } from '~/modules/blog/reducer';
-import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/modules/blog/service';
+import { IBlogPostComment, IBlogPost, IBlog } from '~/modules/blog/reducer';
+import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -80,6 +80,7 @@ export enum BlogPostCommentLoadingState {
 export interface IBlogPostDetailsScreenState {
   loadingState: BlogPostDetailsLoadingState;
   publishCommentLoadingState: BlogPostCommentLoadingState;
+  blogInfos: IDisplayedBlog | IBlog | undefined;
   blogPostData: IBlogPost | undefined;
   errorState: boolean;
 }
@@ -94,6 +95,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   state: IBlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
     publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
+    blogInfos: undefined,
     blogPostData: undefined,
     errorState: false,
   };
@@ -166,12 +168,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   renderContent() {
-    const { session, navigation } = this.props;
-    const { loadingState, publishCommentLoadingState, blogPostData } = this.state;
+    const { session } = this.props;
+    const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
     const blogPostComments = blogPostData?.comments;
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
-    const blog = navigation.getParam('blog');
-    const hasCommentBlogPostRight = blog && resourceHasRight(blog, commentBlogPostResourceRight, session);
+    const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     return (
       <>
         <TouchableWithoutFeedback onPress={() => this.commentFieldRef?.current?.confirmDiscardUpdate()}>
@@ -289,17 +290,17 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   renderCommentActions(blogPostComment: IBlogPostComment) {
-    const { session, navigation } = this.props;
-    const blog = navigation.getParam('blog');
-    const hasUpdateCommentBlogPostRight = blog && resourceHasRight(blog, updateCommentBlogPostResourceRight, session);
-    const hasDeleteCommentBlogPostRight = blog && resourceHasRight(blog, deleteCommentBlogPostResourceRight, session);
+    const { session } = this.props;
+    const { blogInfos } = this.state;
+    const hasUpdateCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
+    const hasDeleteCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
     const hasNoCommentBlogPostRights = !hasUpdateCommentBlogPostRight && !hasDeleteCommentBlogPostRight;
     const isCommentByOtherUser = blogPostComment.author.userId !== session.user.id;
 
     if (isCommentByOtherUser || hasNoCommentBlogPostRights) {
       return null;
     } else return (
-      <View style={{ alignSelf: "flex-end", flexDirection: "row" }}>
+      <View style={{ alignSelf: "flex-end", flexDirection: "row", marginTop: 5 }}>
         {hasDeleteCommentBlogPostRight
           ? <TouchableOpacity
               style={{ marginRight: hasUpdateCommentBlogPostRight ? 15: undefined }}
@@ -377,9 +378,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   // LIFECYCLE ====================================================================================
 
   componentDidMount() {
-    if (this.props.navigation.getParam('blogPost')) {
+    const { navigation } = this.props;
+    const blogPost = navigation.getParam('blogPost')
+    const blog = navigation.getParam('blog')
+    if (blog && blogPost) {
       this.setState({
-        blogPostData: this.props.navigation.getParam('blogPost'),
+        blogInfos: blog,
+        blogPostData: blogPost,
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
     } else this.doInit();
@@ -391,6 +396,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     try {
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
       await this.doGetBlogPostDetails();
+      await this.doGetBlogInfos();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
     }
@@ -429,14 +435,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       const { navigation, handleGetBlogPostDetails } = this.props;
       const notification = navigation.getParam('notification');
       const useNotification = navigation.getParam('useNotification', true);
-      let ids = this.getBlogPostIds();
+      const ids = this.getBlogPostIds();
       let blogPostState: string | undefined = undefined;
       if (notification && useNotification && notification['event-type'] === 'SUBMIT-POST') {
         blogPostState = 'SUBMITTED';
       } else blogPostState = navigation.getParam('blogPost')?.state;
-      if (!blogPostState) {
-        throw new Error('failed to call api (blogPostState is undefined)');
-      }
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       this.setState({ blogPostData });
     } catch (e) {
@@ -449,7 +452,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   async doCreateBlogPostComment(comment: string, commentId?: string) {
     try {
       const { handlePublishBlogPostComment, handleUpdateBlogPostComment } = this.props;
-      let ids = this.getBlogPostIds();
+      const ids = this.getBlogPostIds();
       if (commentId) {
         ids.commentId = commentId;
         await handleUpdateBlogPostComment(ids, comment)
@@ -467,13 +470,26 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       if (!commentId) {
         throw new Error('failed to call api (commentId is undefined)');
       }
-      let ids = this.getBlogPostIds();
+      const ids = this.getBlogPostIds();
       ids.commentId = commentId;
       await handleDeleteBlogPostComment(ids);
     } catch (e) {
       // ToDo: Error handling
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
       console.warn(`[${moduleConfig.name}] doDeleteBlogPostComment failed`, e);
+    }
+  }
+
+  async doGetBlogInfos() {
+    try {
+      const { session } = this.props;
+      const ids = this.getBlogPostIds();
+      const blogId = ids?.blogId;
+      const blogInfos = await blogService.get(session, blogId);
+      this.setState({ blogInfos });
+    } catch (e) {
+      // ToDo: Error handling
+      console.warn(`[${moduleConfig.name}] doGetBlogInfos failed`, e);
     }
   }
 
