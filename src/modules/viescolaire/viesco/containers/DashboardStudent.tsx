@@ -4,6 +4,8 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IAuthorizedViescoApps } from './Dashboard';
+
 import { getSessionInfo } from '~/App';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchHomeworkListAction, updateHomeworkProgressAction } from '~/modules/viescolaire/cdt/actions/homeworks';
@@ -18,6 +20,7 @@ import DashboardComponent from '~/modules/viescolaire/viesco/components/Dashboar
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
 
 class Dashboard extends React.PureComponent<{
+  authorizedViescoApps: IAuthorizedViescoApps;
   homeworks: IHomeworkListState;
   structureId: string;
   childId: string;
@@ -56,7 +59,7 @@ class Dashboard extends React.PureComponent<{
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  const homeworks = getHomeworksListState(state);
+const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
   const childId = getSessionInfo().userId;

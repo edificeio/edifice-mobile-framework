@@ -7,16 +7,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
-import { fetchCourseListAction, fetchCourseListFromTeacherAction } from '~/modules/viescolaire/edt/actions/courses';
 import { fetchSlotListAction } from '~/modules/viescolaire/edt/actions/slots';
 import { fetchUserChildrenAction } from '~/modules/viescolaire/edt/actions/userChildren';
 import Timetable from '~/modules/viescolaire/edt/components/Timetable';
-import { getCoursesListState } from '~/modules/viescolaire/edt/state/courses';
 import { getSlotsListState } from '~/modules/viescolaire/edt/state/slots';
 import { getUserChildrenState } from '~/modules/viescolaire/edt/state/userChildren';
+import { fetchCourseListAction, fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/actions/courses';
 import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
 import { getSelectedChildStructure, getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
 import { getChildrenGroupsState } from '~/modules/viescolaire/viesco/state/childrenGroups';
+import { getCoursesListState } from '~/modules/viescolaire/viesco/state/courses';
 import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
 import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';

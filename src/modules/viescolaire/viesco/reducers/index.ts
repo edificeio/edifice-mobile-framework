@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import children from './children';
 import childrenGroups from './childrenGroups';
+import coursesList from './courses';
 import group from './group';
 import memento from './memento';
 import { periods, year } from './periods';
@@ -19,4 +20,5 @@ export default combineReducers({
   group,
   childrenGroups,
   memento,
+  coursesList,
 });

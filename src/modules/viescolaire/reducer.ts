@@ -7,14 +7,15 @@ import { combineReducers } from 'redux';
 import cdt from './cdt/reducers';
 import { IHomeworkListState } from './cdt/state/homeworks';
 import { ISessionListState } from './cdt/state/sessions';
+import { ITimeSlotsState } from './cdt/state/timeSlots';
 import competences from './competences/reducers';
 import { ILevelsListState } from './competences/state/competencesLevels';
 import { IDevoirsMatieresState } from './competences/state/devoirs';
 import { IMoyenneListState } from './competences/state/moyennes';
+import { ICompetencesUserChildrenState } from './competences/state/userChildren';
 import edt from './edt/reducers';
-import { ICourseListState } from './edt/state/courses';
 import { ISlotListState } from './edt/state/slots';
-import { IUserChildrenState } from './edt/state/userChildren';
+import { IEdtUserChildrenState } from './edt/state/userChildren';
 import presences from './presences/reducers';
 import { INotifiationChildren } from './presences/state/eventsNotification';
 import { IMultipleSlotsState } from './presences/state/multipleSlots';
@@ -24,6 +25,7 @@ import { ICoursesRegisterInfosState } from './presences/state/teacherCourseRegis
 import { ICoursesListState } from './presences/state/teacherCourses';
 import viesco from './viesco/reducers';
 import { IChildrenGroupsState } from './viesco/state/childrenGroups';
+import { ICourseListState } from './viesco/state/courses';
 import { IGroupListState } from './viesco/state/group';
 import { IMementoState } from './viesco/state/memento';
 import { IPeriodsListState, IYearState } from './viesco/state/periods';
@@ -43,15 +45,16 @@ export interface IViesco_State {
     group: IGroupListState;
     childrenGroups: IChildrenGroupsState;
     memento: IMementoState;
+    coursesList: ICourseListState;
   };
   cdt: {
     homeworksList: IHomeworkListState;
     sessionsList: ISessionListState;
+    timeSlots: ITimeSlotsState;
   };
   edt: {
-    coursesList: ICourseListState;
     slotsList: ISlotListState;
-    userChildren: IUserChildrenState;
+    userChildren: IEdtUserChildrenState;
   };
   presences: {
     coursesList: ICoursesListState;
@@ -66,6 +69,7 @@ export interface IViesco_State {
     levels: ILevelsListState;
     devoirsMatieres: IDevoirsMatieresState;
     moyennesList: IMoyenneListState;
+    userChildren: ICompetencesUserChildrenState;
   };
 }
 

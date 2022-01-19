@@ -4,6 +4,8 @@ import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IAuthorizedViescoApps } from './Dashboard';
+
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchChildHomeworkAction } from '~/modules/viescolaire/cdt/actions/homeworks';
 import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
@@ -18,7 +20,8 @@ import DashboardComponent from '~/modules/viescolaire/viesco/components/Dashboar
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
 
-class Dashboard extends React.PureComponent<{
+type IDashboardContainerProps = {
+  authorizedViescoApps: IAuthorizedViescoApps;
   homeworks: IHomeworkListState;
   evaluations: IDevoirsMatieresState;
   hasRightToCreateAbsence: boolean;
@@ -33,7 +36,9 @@ class Dashboard extends React.PureComponent<{
   getChildrenGroups: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;
   isFocused: boolean;
-}> {
+};
+
+class Dashboard extends React.PureComponent<IDashboardContainerProps> {
   public componentDidMount() {
     const { childId, structureId } = this.props;
     this.props.getSubjects(this.props.structureId);

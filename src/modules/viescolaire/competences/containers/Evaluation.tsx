@@ -9,12 +9,12 @@ import { getSessionInfo } from '~/App';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
 import { fetchDevoirMoyennesListAction } from '~/modules/viescolaire/competences/actions/moyennes';
+import { fetchUserChildrenAction } from '~/modules/viescolaire/competences/actions/userChildren';
 import Competences from '~/modules/viescolaire/competences/components/Evaluation';
 import { getLevelsListState, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { getDevoirListState, IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { getMoyenneListState, IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
-import { fetchUserChildrenAction } from '~/modules/viescolaire/edt/actions/userChildren';
-import { getUserChildrenState } from '~/modules/viescolaire/edt/state/userChildren';
+import { getUserChildrenState } from '~/modules/viescolaire/competences/state/userChildren';
 import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
 import { fetchPeriodsListAction } from '~/modules/viescolaire/viesco/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
@@ -25,7 +25,6 @@ import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
-// eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type CompetencesProps = {
   devoirsList: IDevoirsMatieresState;
   devoirsMoyennesList: IMoyenneListState;

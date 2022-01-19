@@ -2,8 +2,8 @@ import moment from 'moment';
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { coursesService } from '~/modules/viescolaire/edt/services/courses';
-import { ICourseList, actionTypes } from '~/modules/viescolaire/edt/state/courses';
+import { coursesService } from '~/modules/viescolaire/viesco/services/courses';
+import { ICourseList, actionTypes } from '~/modules/viescolaire/viesco/state/courses';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

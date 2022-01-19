@@ -6,9 +6,9 @@ import { dataActions as competencesDevoirsActions } from '~/modules/viescolaire/
 import { dataActions as competencesMoyennesActions } from '~/modules/viescolaire/competences/actions/moyennes';
 import { dataActions as servicesMatieresAction } from '~/modules/viescolaire/competences/actions/servicesMatieres';
 import { dataActions as structureMatieresAction } from '~/modules/viescolaire/competences/actions/structureMatieres';
-import { dataActions as edtCoursesActions } from '~/modules/viescolaire/edt/actions/courses';
 import { dataActions as slotsActions } from '~/modules/viescolaire/edt/actions/slots';
 import { studentEventsActions as historyActions } from '~/modules/viescolaire/presences/actions/events';
+import { dataActions as CoursesActions } from '~/modules/viescolaire/viesco/actions/courses';
 import { periodsDataActions as periodActions, yearDataActions as yearActions } from '~/modules/viescolaire/viesco/actions/periods';
 import { dataActions as teacherActions } from '~/modules/viescolaire/viesco/actions/personnel';
 import { dataActions as subjectActions } from '~/modules/viescolaire/viesco/actions/subjects';
@@ -29,9 +29,9 @@ export function selectChildAction(child: string) {
     dispatch(historyActions.clear());
     dispatch(periodActions.clear());
     dispatch(yearActions.clear());
+    dispatch(CoursesActions.clear());
     // EDT
     dispatch(slotsActions.clear());
-    dispatch(edtCoursesActions.clear());
     // Competences
     dispatch(competencesDevoirsActions.clear());
     dispatch(competencesMoyennesActions.clear());

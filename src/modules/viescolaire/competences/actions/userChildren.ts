@@ -1,21 +1,20 @@
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { MatieresService } from '~/modules/viescolaire/competences/services/matieres';
-import { actionTypes, IMatiereList } from '~/modules/viescolaire/competences/state/matieres';
+import { userChildrenService } from '~/modules/viescolaire/competences/services/userChildren';
+import { IUserChildren, actionTypes } from '~/modules/viescolaire/competences/state/userChildren';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const dataActions = createAsyncActionCreators<IMatiereList>(actionTypes);
+export const dataActions = createAsyncActionCreators<IUserChildren>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchMatieresAction(studentId: string) {
+export function fetchUserChildrenAction() {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(dataActions.clear());
       dispatch(dataActions.request());
-      const data = await MatieresService.getMatieres(studentId);
+      const data = await userChildrenService.get();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
