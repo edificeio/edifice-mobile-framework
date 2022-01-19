@@ -1,7 +1,18 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, KeyboardAvoidingViewProps, Platform, RefreshControl, SafeAreaView, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  KeyboardAvoidingView,
+  KeyboardAvoidingViewProps,
+  Platform,
+  RefreshControl,
+  SafeAreaView,
+  View,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -27,7 +38,12 @@ import NotificationTopInfo from '~/framework/modules/timelinev2/components/Notif
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
-import { deleteBlogPostCommentAction, getBlogPostDetailsAction, publishBlogPostCommentAction, updateBlogPostCommentAction } from '~/modules/blog/actions';
+import {
+  deleteBlogPostCommentAction,
+  getBlogPostDetailsAction,
+  publishBlogPostCommentAction,
+  updateBlogPostCommentAction,
+} from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlogPostComment, IBlogPost, IBlog } from '~/modules/blog/reducer';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
@@ -46,14 +62,21 @@ import { IDisplayedBlog } from './BlogExplorerScreen';
 
 // TYPES ==========================================================================================
 
-export interface IBlogPostDetailsScreenDataProps { 
+export interface IBlogPostDetailsScreenDataProps {
   session: IUserSession;
 }
 export interface IBlogPostDetailsScreenEventProps {
   handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<IBlogPost | undefined>;
   handlePublishBlogPostComment(blogPostId: { blogId: string; postId: string }, comment: string): Promise<number | undefined>;
-  handleUpdateBlogPostComment(blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string): Promise<number | undefined>;
-  handleDeleteBlogPostComment(blogPostCommentId: { blogId: string; postId: string, commentId: string }): Promise<number | undefined>;
+  handleUpdateBlogPostComment(
+    blogPostCommentId: { blogId: string; postId: string; commentId: string },
+    comment: string,
+  ): Promise<number | undefined>;
+  handleDeleteBlogPostComment(blogPostCommentId: {
+    blogId: string;
+    postId: string;
+    commentId: string;
+  }): Promise<number | undefined>;
 }
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
@@ -119,8 +142,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             <KeyboardAvoidingView
               behavior={keyboardAvoidingViewBehavior}
               keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}
-              style={{ height: '100%' }}
-            >
+              style={{ height: '100%' }}>
               {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
                 <LoadingIndicator />
               ) : errorState ? (
@@ -192,14 +214,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             }
           />
         </TouchableWithoutFeedback>
-        {hasCommentBlogPostRight
-          ? <CommentField
-              ref={this.commentFieldRef}
-              onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
-              isPublishingComment={isPublishingComment}
-            />
-          : null
-        }
+        {hasCommentBlogPostRight ? (
+          <CommentField
+            ref={this.commentFieldRef}
+            onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
+            isPublishingComment={isPublishingComment}
+          />
+        ) : null}
       </>
     );
   }
@@ -299,37 +320,36 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
     if (isCommentByOtherUser || hasNoCommentBlogPostRights) {
       return null;
-    } else return (
-      <View style={{ alignSelf: "flex-end", flexDirection: "row", marginTop: 5 }}>
-        {hasDeleteCommentBlogPostRight
-          ? <TouchableOpacity
-              style={{ marginRight: hasUpdateCommentBlogPostRight ? 15: undefined }}
+    } else
+      return (
+        <View style={{ alignSelf: 'flex-end', flexDirection: 'row', marginTop: 5 }}>
+          {hasDeleteCommentBlogPostRight ? (
+            <TouchableOpacity
+              style={{ marginRight: hasUpdateCommentBlogPostRight ? 15 : undefined }}
               onPress={() => {
                 Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.deleteConfirmation'), [
                   {
                     text: I18n.t('common.cancel'),
-                    style: 'default'
+                    style: 'default',
                   },
                   {
                     text: I18n.t('common.delete'),
                     style: 'destructive',
-                    onPress: () => this.doDeleteComment(blogPostComment.id)
-                  }
-                ])
-              }}
-            >
+                    onPress: () => this.doDeleteComment(blogPostComment.id),
+                  },
+                ]);
+              }}>
               <Icon name="trash" color={theme.color.failure} size={16} />
             </TouchableOpacity>
-          : null
-        }
-        {hasUpdateCommentBlogPostRight
-          ? <TouchableOpacity onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
+          ) : null}
+          {hasUpdateCommentBlogPostRight ? (
+            <TouchableOpacity
+              onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
               <Icon name="pencil" color={theme.color.secondary.regular} size={16} />
             </TouchableOpacity>
-          : null
-        }
-      </View> 
-    );
+          ) : null}
+        </View>
+      );
   }
 
   renderComment(blogPostComment: IBlogPostComment) {
@@ -361,11 +381,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               }}
               expandMessage={I18n.t('common.readMore')}
               expansionTextStyle={{ fontSize: 12 }}
-              additionalText={blogPostComment.modified
-                ? <TextLightItalic style={{ fontSize: 10 }}>
-                    {I18n.t('common.modified')}
-                  </TextLightItalic>
-                : undefined
+              additionalText={
+                blogPostComment.modified ? (
+                  <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>
+                ) : undefined
               }
             />
             {this.renderCommentActions(blogPostComment)}
@@ -379,8 +398,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   componentDidMount() {
     const { navigation } = this.props;
-    const blogPost = navigation.getParam('blogPost')
-    const blog = navigation.getParam('blog')
+    const blogPost = navigation.getParam('blogPost');
+    const blog = navigation.getParam('blog');
     if (blog && blogPost) {
       this.setState({
         blogInfos: blog,
@@ -428,6 +447,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   async doDeleteComment(commentId: string) {
     await this.doDeleteBlogPostComment(commentId);
     await this.doGetBlogPostDetails();
+    const commentFieldCommentId = this.commentFieldRef?.current?.getCommentId();
+    const isDeletedCommentEdited = commentId === commentFieldCommentId;
+    isDeletedCommentEdited && this.commentFieldRef?.current?.clearCommentField();
   }
 
   async doGetBlogPostDetails() {
@@ -455,7 +477,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       const ids = this.getBlogPostIds();
       if (commentId) {
         ids.commentId = commentId;
-        await handleUpdateBlogPostComment(ids, comment)
+        await handleUpdateBlogPostComment(ids, comment);
       } else await handlePublishBlogPostComment(ids, comment);
     } catch (e) {
       // ToDo: Error handling
@@ -523,8 +545,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => IBlogPostDetailsScreenDataProps = s => ({ 
-  session: getUserSession(s)
+const mapStateToProps: (s: IGlobalState) => IBlogPostDetailsScreenDataProps = s => ({
+  session: getUserSession(s),
 });
 
 const mapDispatchToProps: (
@@ -537,10 +559,13 @@ const mapDispatchToProps: (
   handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
     return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
-  handleUpdateBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string) => {
+  handleUpdateBlogPostComment: async (
+    blogPostCommentId: { blogId: string; postId: string; commentId: string },
+    comment: string,
+  ) => {
     return (await dispatch(updateBlogPostCommentAction(blogPostCommentId, comment))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
-  handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string, commentId: string }) => {
+  handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
     return (await dispatch(deleteBlogPostCommentAction(blogPostCommentId))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
 });

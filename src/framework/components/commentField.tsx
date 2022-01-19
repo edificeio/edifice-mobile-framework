@@ -23,10 +23,10 @@ export type ICommentField_Props = ICommentField_DataProps & ICommentField_EventP
 
 const CommentField = (props: ICommentField_Props, ref) => {
   const inputRef: { current: TextInput | undefined } = React.useRef();
-  const session = useSelector((state) => getUserSession(state));
-  const [ comment, setComment ] = React.useState<string>('');
-  const [ publishButtonWidth, setPublishButtonWidth ] = React.useState<number | undefined>();
-  const [ commentId, setCommentId ] = React.useState<string | undefined>();
+  const session = useSelector(state => getUserSession(state));
+  const [comment, setComment] = React.useState<string>('');
+  const [publishButtonWidth, setPublishButtonWidth] = React.useState<number | undefined>();
+  const [commentId, setCommentId] = React.useState<string | undefined>();
   const onPublish = () => {
     inputRef.current && inputRef.current.blur();
     props.onPublishComment(comment, commentId);
@@ -45,24 +45,23 @@ const CommentField = (props: ICommentField_Props, ref) => {
   };
   const confirmDiscardUpdate = () => {
     commentId &&
-      Alert.alert(
-        I18n.t('common.modificationUnsavedConfirmation'),
-        I18n.t('common.comment.modificationUnsavedConfirmation'),
-        [
-          {
-            text: I18n.t('common.quit'),
-            style: 'destructive',
-            onPress: () => clearCommentField()
-          },
-          {
-            text: I18n.t('common.continue'),
-            style: 'default',
-            onPress: () => inputRef.current && inputRef.current.focus()
-          }
-        ]
-      );
+      Alert.alert(I18n.t('common.modificationUnsavedConfirmation'), I18n.t('common.comment.modificationUnsavedConfirmation'), [
+        {
+          text: I18n.t('common.quit'),
+          style: 'destructive',
+          onPress: () => clearCommentField(),
+        },
+        {
+          text: I18n.t('common.continue'),
+          style: 'default',
+          onPress: () => inputRef.current && inputRef.current.focus(),
+        },
+      ]);
   };
-  React.useImperativeHandle(ref, () => ({ clearCommentField, prefillCommentField, confirmDiscardUpdate }));
+  const getCommentId = () => {
+    return commentId;
+  };
+  React.useImperativeHandle(ref, () => ({ clearCommentField, prefillCommentField, confirmDiscardUpdate, getCommentId }));
 
   return (
     <View
@@ -70,9 +69,8 @@ const CommentField = (props: ICommentField_Props, ref) => {
         backgroundColor: theme.color.background.card,
         flexDirection: 'row',
         alignItems: 'flex-end',
-        padding: 12
-      }}
-    >
+        padding: 12,
+      }}>
       <SingleAvatar userId={session.user.id} />
       <View
         style={{
@@ -85,25 +83,23 @@ const CommentField = (props: ICommentField_Props, ref) => {
           borderWidth: 0.5,
           borderColor: theme.color.inputBorder,
           flexDirection: 'row',
-          alignItems: 'flex-end'
-        }}
-      >
+          alignItems: 'flex-end',
+        }}>
         <TextInput
           ref={inputRef}
           style={{ flex: 1, marginRight: 12, paddingTop: 0 }}
           placeholder={I18n.t('common.comment.addComment')}
-          onChangeText={(text) => setComment(text)}
+          onChangeText={text => setComment(text)}
           value={comment}
           editable={!props.isPublishingComment}
           multiline
         />
         <View
           style={{ height: 20, width: publishButtonWidth }}
-          onLayout={(e) => {
+          onLayout={e => {
             const publishButtonWidth = e.nativeEvent.layout.width;
             setPublishButtonWidth(publishButtonWidth);
-          }}
-        >
+          }}>
           {props.isPublishingComment ? (
             <LoadingIndicator small />
           ) : (
