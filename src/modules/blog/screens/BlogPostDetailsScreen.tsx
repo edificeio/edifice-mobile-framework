@@ -84,6 +84,7 @@ export interface IBlogPostDetailsScreenNavParams {
   blogId?: string;
   blog: IDisplayedBlog;
   useNotification?: boolean;
+  showNotification?: boolean;
 }
 export type IBlogPostDetailsScreenProps = IBlogPostDetailsScreenDataProps &
   IBlogPostDetailsScreenEventProps &
@@ -228,7 +229,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   renderBlogPostDetails() {
     const { navigation } = this.props;
     const { blogPostData } = this.state;
-    const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
+    const notification =
+      navigation.getParam('useNotification', true) &&
+      navigation.getParam('showNotification', navigation.getParam('useNotification', true)) &&
+      navigation.getParam('notification');
     let resourceUri = notification && notification?.resource.uri;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;

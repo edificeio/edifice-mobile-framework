@@ -17,26 +17,15 @@ export interface IBlogNotification extends ITimelineNotification, IResourceUriNo
 const handleBlogPostNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navState) => async (dispatch, getState) => {
     const path = computeRelativePath(`${moduleConfig.routeName}/details`, navState);
-    const useNotification = path !== `${moduleConfig.routeName}/details`;
     const navParams = {};
-    if (!useNotification) {
-      const blogNotif = getAsResourceUriNotification(notification);
-      if (!blogNotif) return { managed: 0 };
-      const blogIds = blogUriCaptureFunction(blogNotif.resource.uri);
-      if (!blogIds.blogId || !blogIds.postId) return { managed: 0 };
-      const session = getUserSession(getState());
-      const { blogId, postId } = blogIds;
-      const blogPostInfo = await blogService.post.get(session, { blogId, postId });
-      const blogPostComments = await blogService.comments.get(session, { blogId, postId });
-      const blogPostData: IBlogPost = { ...blogPostInfo, comments: blogPostComments };
-      navParams['blogPostWithComments'] = blogPostData;
-      navParams['blogId'] = blogId;
-      console.log('navParams', navParams);
-    }
+    const blogNotif = getAsResourceUriNotification(notification);
+    if (!blogNotif) return { managed: 0 };
+
     mainNavNavigate(path, {
-      notification,
-      useNotification,
-      ...navParams
+      notification: blogNotif,
+      useNotification: true,
+      showNotification: path !== `${moduleConfig.routeName}/details`,
+      ...navParams,
     });
     return {
       managed: 1,
