@@ -9,6 +9,9 @@ import BlogExplorerScreen from './screens/BlogExplorerScreen';
 import BlogPostListScreen from './screens/BlogPostListScreen';
 
 export const timelineRoutes = addViewTrackingToStackRoutes({
+  [`${moduleConfig.routeName}`]: {
+    screen: BlogExplorerScreen,
+  },
   [`${moduleConfig.routeName}/select`]: {
     screen: BlogSelectScreen,
   },
@@ -26,9 +29,6 @@ export const timelineRoutes = addViewTrackingToStackRoutes({
 export default () =>
   createStackNavigator(
     {
-      [`${moduleConfig.routeName}`]: {
-        screen: BlogExplorerScreen,
-      },
       ...timelineRoutes,
     },
     {

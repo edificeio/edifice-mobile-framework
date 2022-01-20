@@ -312,19 +312,20 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
       // Track action, load/navigate to timeline and display notifier
       const blogPostDisplayRight = blogPostRight.displayRight;
-      const trackerEvent = {
-        [createBlogPostResourceRight]: 'CREATE',
-        [submitBlogPostResourceRight]: 'SUBMIT',
-        [publishBlogPostResourceRight]: 'PUBLISH',
+      const event = {
+        [createBlogPostResourceRight]: 'Enregistrer',
+        [submitBlogPostResourceRight]: 'Soumettre',
+        [publishBlogPostResourceRight]: 'Publier',
       }[blogPostDisplayRight];
-      const trackerEventText = trackerEvent === 'CREATE' ? 'CREATE' : `CREATE ${trackerEvent}`;
+      const eventName = `Rédaction blog - ${event}`;
+      const eventCategory = navigation.getParam('referrer') ? 'Blog' : 'Timeline';
       const notifierSuccessText = {
         [createBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.createSuccess'),
         [submitBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.submitSuccess'),
         [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishSuccess'),
       }[blogPostDisplayRight];
 
-      Trackers.trackEvent('Blog', trackerEventText, 'BlogPost');
+      Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
       navigation.navigate(navigation.getParam('referrer', 'timeline'));
       dispatch(
