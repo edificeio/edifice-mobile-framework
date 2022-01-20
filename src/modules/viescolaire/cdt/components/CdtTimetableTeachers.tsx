@@ -7,8 +7,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
-import { ICourse } from '~/modules/viescolaire/edt/state/courses';
 import { homeworkListDetailsTeacherAdapter, sessionListDetailsTeacherAdapter } from '~/modules/viescolaire/utils/cdt';
+import { ICourse } from '~/modules/viescolaire/viesco/state/courses';
 import { Icon, Loading } from '~/ui';
 import Calendar from '~/ui/Calendar';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -32,6 +32,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
+  subjectView: { maxWidth: '56%' },
   buttonsView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -52,9 +53,10 @@ const style = StyleSheet.create({
     backgroundColor: '#FFF1DB',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     height: 45,
     marginBottom: 15,
-    padding: 10,
+    paddingHorizontal: 10,
   },
 });
 
@@ -132,8 +134,13 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
 
     return (
       <View style={style.courseView}>
-        <View style={style.infoView}>
-          <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
+        <View style={style.subjectView}>
+          <View style={style.infoView}>
+            <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
+          </View>
+          <View style={style.infoView}>
+            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
+          </View>
         </View>
         <View style={style.buttonsView}>
           {/* Display sessions : check if it is a course or a session */}
@@ -191,7 +198,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const slotEvents = adaptCourses(courses.data, homeworks.data, sessions.data);
 
     return (
-      <PageContainer>
+      <PageContainer style={{ marginTop: 5 }}>
         <View style={style.refreshContainer}>
           <View style={style.weekPickerView}>
             <Text>{I18n.t('viesco-edt-week-of')}</Text>

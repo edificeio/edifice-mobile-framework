@@ -2,7 +2,7 @@ import moment from 'moment';
 import querystring from 'querystring';
 
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { ICourseList } from '~/modules/viescolaire/edt/state/courses';
+import { ICourseList } from '~/modules/viescolaire/viesco/state/courses';
 
 export type ICourseListBackend = {
   _id: string;

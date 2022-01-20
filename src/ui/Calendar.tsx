@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { TouchableOpacity, ScrollView, State, PanGestureHandler } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { IHomework } from '~/modules/viescolaire/cdt/state/homeworks';
+import { IHomework } from '~/modules/viescolaire/types/homework';
 import { CommonStyles } from '~/styles/common/styles';
 
 const minutes = (m: moment.Moment): number => {

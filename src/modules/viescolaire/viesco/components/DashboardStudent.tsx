@@ -18,24 +18,28 @@ import { EmptyScreen } from '~/ui/EmptyScreen';
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
-  grid: {
+  gridAllModules: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  gridModulesLine: {
+    width: '100%',
+  },
   gridButtonContainer: {
-    width: '50%',
     paddingVertical: 8,
     paddingHorizontal: 6,
   },
   gridButton: {
     borderRadius: 5,
+  },
+  viewButton: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
   },
   gridButtonText: {
+    marginLeft: 10,
     color: '#FFFFFF',
-    flex: 1,
     textAlign: 'center',
   },
   title: { fontSize: 18 },
@@ -50,59 +54,76 @@ interface IIconButtonProps {
   color: string;
   text: string;
   onPress: () => void;
+  nbModules: number;
 }
 
-const IconButton = ({ disabled, icon, color, text, onPress }: IIconButtonProps) => (
-  <View style={styles.gridButtonContainer}>
+const IconButton = ({ disabled, icon, color, text, onPress, nbModules }: IIconButtonProps) => (
+  <View style={[styles.gridButtonContainer, { width: nbModules === 4 ? '50%' : '100%' }]}>
     <TouchableOpacity
       disabled={disabled}
       onPress={onPress}
       style={[styles.gridButton, { backgroundColor: disabled ? '#858FA9' : color }]}>
-      <Icon size={20} color="white" name={icon} />
-      <Text style={styles.gridButtonText}>{text}</Text>
+      <View style={[styles.viewButton, { justifyContent: nbModules === 4 ? 'flex-start' : 'center' }]}>
+        <Icon size={20} color="white" name={icon} />
+        <Text style={styles.gridButtonText}>{text}</Text>
+      </View>
     </TouchableOpacity>
   </View>
 );
 
 export default class Dashboard extends React.PureComponent<any> {
   private renderNavigationGrid() {
+    const nbModules = Object.values(this.props.authorizedViescoApps).filter(x => x).length;
+
     return (
-      <View style={[styles.dashboardPart, styles.grid]}>
-        <IconButton
-          onPress={() =>
-            this.props.navigation.navigate(
-              'presences',
-              {},
-              NavigationActions.navigate({
-                routeName: 'History',
-                params: {
-                  user_type: 'Student',
-                },
-              }),
-            )
-          }
-          text={I18n.t('viesco-history')}
-          color="#FCB602"
-          icon="access_time"
-        />
-        <IconButton
-          onPress={() => this.props.navigation.navigate('Timetable')}
-          text={I18n.t('viesco-timetable')}
-          color="#162EAE"
-          icon="calendar_today"
-        />
-        <IconButton
-          onPress={() => this.props.navigation.navigate('HomeworkList')}
-          text={I18n.t('Homework')}
-          color="#2BAB6F"
-          icon="checkbox-multiple-marked"
-        />
-        <IconButton
-          onPress={() => this.props.navigation.navigate('EvaluationList')}
-          text={I18n.t('viesco-tests')}
-          color="#F95303"
-          icon="equalizer"
-        />
+      <View style={[styles.dashboardPart, nbModules === 4 ? styles.gridAllModules : styles.gridModulesLine]}>
+        {this.props.authorizedViescoApps.presences && (
+          <IconButton
+            onPress={() =>
+              this.props.navigation.navigate(
+                'presences',
+                {},
+                NavigationActions.navigate({
+                  routeName: 'History',
+                  params: {
+                    user_type: 'Student',
+                  },
+                }),
+              )
+            }
+            text={I18n.t('viesco-history')}
+            color="#FCB602"
+            icon="access_time"
+            nbModules={nbModules}
+          />
+        )}
+        {this.props.authorizedViescoApps.edt && (
+          <IconButton
+            onPress={() => this.props.navigation.navigate('Timetable')}
+            text={I18n.t('viesco-timetable')}
+            color="#162EAE"
+            icon="calendar_today"
+            nbModules={nbModules}
+          />
+        )}
+        {this.props.authorizedViescoApps.diary && (
+          <IconButton
+            onPress={() => this.props.navigation.navigate('HomeworkList')}
+            text={I18n.t('Homework')}
+            color="#2BAB6F"
+            icon="checkbox-multiple-marked"
+            nbModules={nbModules}
+          />
+        )}
+        {this.props.authorizedViescoApps.competences && (
+          <IconButton
+            onPress={() => this.props.navigation.navigate('EvaluationList')}
+            text={I18n.t('viesco-tests')}
+            color="#F95303"
+            icon="equalizer"
+            nbModules={nbModules}
+          />
+        )}
       </View>
     );
   }
@@ -207,13 +228,14 @@ export default class Dashboard extends React.PureComponent<any> {
   }
 
   public render() {
-    const { homeworks, evaluations, levels } = this.props;
+    const { authorizedViescoApps, homeworks, evaluations, levels } = this.props;
+
     return (
       <View style={{ flex: 1 }}>
         {this.renderNavigationGrid()}
         <ScrollView>
-          {this.renderHomework(homeworks.data)}
-          {evaluations.isFetching ? <Loading /> : this.renderEvaluations(evaluations, levels)}
+          {authorizedViescoApps.diary && this.renderHomework(homeworks.data)}
+          {authorizedViescoApps.competences && (evaluations.isFetching ? <Loading /> : this.renderEvaluations(evaluations, levels))}
         </ScrollView>
       </View>
     );

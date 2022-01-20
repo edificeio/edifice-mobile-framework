@@ -12,6 +12,7 @@ import { ILevelsList } from '~/modules/viescolaire/competences/state/competences
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { isHomeworkDone, homeworkListDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/Dashboard';
 import { INavigationProps } from '~/types';
 import { Icon, Loading } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -19,24 +20,28 @@ import { EmptyScreen } from '~/ui/EmptyScreen';
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
-  grid: {
+  gridAllModules: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  gridModulesLine: {
+    width: '100%',
+  },
   gridButtonContainer: {
-    width: '50%',
     paddingVertical: 8,
     paddingHorizontal: 6,
   },
   gridButton: {
     borderRadius: 5,
+  },
+  viewButton: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
   },
   gridButtonText: {
+    marginLeft: 10,
     color: '#FFFFFF',
-    flex: 1,
     textAlign: 'center',
   },
   title: { fontSize: 18 },
@@ -54,7 +59,8 @@ export type IHomeworkByDateList = {
   [key: string]: IHomework[];
 };
 
-type DashboardProps = {
+type IDashboardProps = {
+  authorizedViescoApps: IAuthorizedViescoApps;
   homeworks: IHomeworkListState;
   evaluations: IDevoirsMatieresState;
   levels: ILevelsList;
@@ -67,59 +73,76 @@ interface IIconButtonProps {
   color: string;
   text: string;
   onPress: () => void;
+  nbModules: number;
 }
 
-const IconButton = ({ disabled, icon, color, text, onPress }: IIconButtonProps) => (
-  <View style={styles.gridButtonContainer}>
+const IconButton = ({ disabled, icon, color, text, onPress, nbModules }: IIconButtonProps) => (
+  <View style={[styles.gridButtonContainer, { width: nbModules === 4 ? '50%' : '100%' }]}>
     <TouchableOpacity
       disabled={disabled}
       onPress={onPress}
       style={[styles.gridButton, { backgroundColor: disabled ? '#858FA9' : color }]}>
-      <Icon size={20} color="white" name={icon} />
-      <Text style={styles.gridButtonText}>{text}</Text>
+      <View style={[styles.viewButton, { justifyContent: nbModules === 4 ? 'flex-start' : 'center' }]}>
+        <Icon size={20} color="white" name={icon} />
+        <Text style={styles.gridButtonText}>{text}</Text>
+      </View>
     </TouchableOpacity>
   </View>
 );
 
-export default class Dashboard extends React.PureComponent<DashboardProps> {
+export default class Dashboard extends React.PureComponent<IDashboardProps> {
   private renderNavigationGrid() {
+    const nbModules = Object.values(this.props.authorizedViescoApps).filter(x => x).length;
+
     return (
-      <View style={[styles.dashboardPart, styles.grid]}>
-        <IconButton
-          onPress={() =>
-            this.props.navigation.navigate(
-              'presences',
-              {},
-              NavigationActions.navigate({
-                routeName: 'History',
-                params: {
-                  user_type: 'Relative',
-                },
-              }),
-            )
-          }
-          text={I18n.t('viesco-history')}
-          color="#FCB602"
-          icon="access_time"
-        />
-        <IconButton
-          onPress={() => this.props.navigation.navigate('Timetable')}
-          text={I18n.t('viesco-timetable')}
-          color="#162EAE"
-          icon="calendar_today"
-        />
-        <IconButton
-          onPress={() => this.props.navigation.navigate('HomeworkList')}
-          text={I18n.t('Homework')}
-          color="#2BAB6F"
-          icon="checkbox-multiple-marked"
-        />
-        <IconButton
-          onPress={() => this.props.navigation.navigate('EvaluationList')}
-          text={I18n.t('viesco-tests')}
-          color="#F95303"
-          icon="equalizer"
-        />
+      <View style={[styles.dashboardPart, nbModules === 4 ? styles.gridAllModules : styles.gridModulesLine]}>
+        {this.props.authorizedViescoApps.presences && (
+          <IconButton
+            onPress={() =>
+              this.props.navigation.navigate(
+                'presences',
+                {},
+                NavigationActions.navigate({
+                  routeName: 'History',
+                  params: {
+                    user_type: 'Relative',
+                  },
+                }),
+              )
+            }
+            text={I18n.t('viesco-history')}
+            color="#FCB602"
+            icon="access_time"
+            nbModules={nbModules}
+          />
+        )}
+        {this.props.authorizedViescoApps.edt && (
+          <IconButton
+            onPress={() => this.props.navigation.navigate('Timetable')}
+            text={I18n.t('viesco-timetable')}
+            color="#162EAE"
+            icon="calendar_today"
+            nbModules={nbModules}
+          />
+        )}
+        {this.props.authorizedViescoApps.diary && (
+          <IconButton
+            onPress={() => this.props.navigation.navigate('HomeworkList')}
+            text={I18n.t('Homework')}
+            color="#2BAB6F"
+            icon="checkbox-multiple-marked"
+            nbModules={nbModules}
+          />
+        )}
+        {this.props.authorizedViescoApps.competences && (
+          <IconButton
+            onPress={() => this.props.navigation.navigate('EvaluationList')}
+            text={I18n.t('viesco-tests')}
+            color="#F95303"
+            icon="equalizer"
+            nbModules={nbModules}
+          />
+        )}
       </View>
     );
   }
@@ -223,7 +246,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
   }
 
   public render() {
-    const { homeworks, evaluations, hasRightToCreateAbsence, levels } = this.props;
+    const { authorizedViescoApps, homeworks, evaluations, hasRightToCreateAbsence, levels } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
@@ -237,8 +260,9 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
 
         <ScrollView>
           {this.renderNavigationGrid()}
-          {this.renderHomework(homeworks)}
-          {evaluations && evaluations.isFetching ? <Loading /> : this.renderLastEval(evaluations, levels)}
+          {authorizedViescoApps.diary && this.renderHomework(homeworks)}
+          {authorizedViescoApps.competences &&
+            (evaluations && evaluations.isFetching ? <Loading /> : this.renderLastEval(evaluations, levels))}
         </ScrollView>
       </View>
     );

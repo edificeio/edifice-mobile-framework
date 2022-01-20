@@ -24,10 +24,10 @@ const style = StyleSheet.create({
     shadowOpacity: CommonStyles.shadowOpacity,
     shadowRadius: CommonStyles.shadowRadius,
     marginBottom: 10,
-    height: 400,
   },
   grid: {
     flexDirection: 'row',
+    justifyContent: 'center',
     flexWrap: 'wrap',
   },
   gridButtonContainer: {
@@ -84,38 +84,44 @@ const ImageButton = ({ imageSrc, color, text, onPress, disabled }: ImageButtonPr
   );
 };
 
-export default props => (
-  <PageContainer>
-    <ConnectionTrackingBar />
-    <ScrollView overScrollMode="never" bounces={false}>
-      <View style={style.coursesPart}>
-        <StructurePicker />
-        <CallList {...props} />
-      </View>
-      <View style={style.dashboardPart}>
-        <View style={style.grid}>
-          <ImageButton
-            onPress={() => props.navigation.navigate('Timetable')}
-            text={I18n.t('viesco-timetable')}
-            color="#162EAE"
-            imageSrc={require('ASSETS/viesco/edt.png')}
-          />
-          <ImageButton
-            onPress={() =>
-              props.navigation.navigate(
-                'cdt',
-                {},
-                NavigationActions.navigate({
-                  routeName: 'CdtTeachers',
-                }),
-              )
-            }
-            text={I18n.t('Homework')}
-            color="#2BAB6F"
-            imageSrc={require('ASSETS/viesco/cdt.png')}
-          />
+export default props => {
+  return (
+    <PageContainer>
+      <ConnectionTrackingBar />
+      <ScrollView overScrollMode="never" bounces={false}>
+        <View style={[style.coursesPart, { height: props.authorizedViescoApps.presences ? 400 : 'auto' }]}>
+          <StructurePicker />
+          {props.authorizedViescoApps.presences && <CallList {...props} />}
         </View>
-      </View>
-    </ScrollView>
-  </PageContainer>
-);
+        <View style={style.dashboardPart}>
+          <View style={style.grid}>
+            {props.authorizedViescoApps.edt && (
+              <ImageButton
+                onPress={() => props.navigation.navigate('Timetable')}
+                text={I18n.t('viesco-timetable')}
+                color="#162EAE"
+                imageSrc={require('ASSETS/viesco/edt.png')}
+              />
+            )}
+            {props.authorizedViescoApps.diary && (
+              <ImageButton
+                onPress={() =>
+                  props.navigation.navigate(
+                    'cdt',
+                    {},
+                    NavigationActions.navigate({
+                      routeName: 'CdtTeachers',
+                    }),
+                  )
+                }
+                text={I18n.t('Homework')}
+                color="#2BAB6F"
+                imageSrc={require('ASSETS/viesco/cdt.png')}
+              />
+            )}
+          </View>
+        </View>
+      </ScrollView>
+    </PageContainer>
+  );
+};
