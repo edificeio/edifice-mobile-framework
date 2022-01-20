@@ -213,7 +213,7 @@ export const blogService = {
   },
   posts: {
     get: async (session: IUserSession, blogId: string) => {
-      const api = `/blog/post/list/all/${blogId}?content=`;
+      const api = `/blog/post/list/all/${blogId}?content=true`;
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
       return (entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList);
     },
