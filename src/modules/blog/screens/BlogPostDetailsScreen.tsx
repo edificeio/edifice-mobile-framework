@@ -17,6 +17,7 @@ import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { Viewport } from '@skele/components';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
@@ -33,7 +34,7 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextSemiBold, TextLight, TextLightItalic } from '~/framework/components/text';
+import { TextSemiBold, TextLight, TextLightItalic, TextSizeStyle } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -52,7 +53,7 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
+import { ContentCardHeader, ContentCardIcon, ContentCardTitle, ResourceView } from '~/framework/components/card';
 import { openUrl } from '~/framework/util/linking';
 import CommentField from '~/framework/components/commentField';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -84,7 +85,6 @@ export interface IBlogPostDetailsScreenNavParams {
   blogId?: string;
   blog: IDisplayedBlog;
   useNotification?: boolean;
-  showNotification?: boolean;
 }
 export type IBlogPostDetailsScreenProps = IBlogPostDetailsScreenDataProps &
   IBlogPostDetailsScreenEventProps &
@@ -107,6 +107,7 @@ export interface IBlogPostDetailsScreenState {
   blogInfos: IDisplayedBlog | IBlog | undefined;
   blogPostData: IBlogPost | undefined;
   errorState: boolean;
+  showHeaderTitle: boolean;
 }
 
 // COMPONENT ======================================================================================
@@ -116,12 +117,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   flatListRef: FlatList | null = null;
   commentFieldRef: { current: any } = React.createRef();
+  _titleRef?: React.Ref<any> = undefined;
   state: IBlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
     publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
     blogInfos: undefined,
     blogPostData: undefined,
     errorState: false,
+    showHeaderTitle: false,
   };
 
   // RENDER =======================================================================================
@@ -172,13 +175,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             />
           </HeaderLeft>
           <HeaderCenter>
-            {blogPostData?.title ? (
+            {blogPostData?.title && this.state.showHeaderTitle ? (
               <>
-                <HeaderTitle>{blogPostData?.title}</HeaderTitle>
+                <HeaderTitle numberOfLines={1}>{blogPostData?.title}</HeaderTitle>
                 <HeaderSubtitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle>
               </>
             ) : (
-              <HeaderTitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle>
+              <HeaderTitle numberOfLines={2}>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle>
             )}
           </HeaderCenter>
         </HeaderRow>
@@ -199,21 +202,23 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return (
       <>
         <TouchableWithoutFeedback onPress={() => this.commentFieldRef?.current?.confirmDiscardUpdate()}>
-          <FlatList
-            ref={ref => (this.flatListRef = ref)}
-            data={blogPostComments}
-            renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
-            keyExtractor={(item: IBlogPostComment) => item.id.toString()}
-            ListHeaderComponent={this.renderBlogPostDetails()}
-            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.card }}
-            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-            refreshControl={
-              <RefreshControl
-                refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
-                onRefresh={() => this.doRefresh()}
-              />
-            }
-          />
+          <Viewport.Tracker>
+            <FlatList
+              ref={ref => (this.flatListRef = ref)}
+              data={blogPostComments}
+              renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
+              keyExtractor={(item: IBlogPostComment) => item.id.toString()}
+              ListHeaderComponent={this.renderBlogPostDetails()}
+              contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.card }}
+              scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
+              refreshControl={
+                <RefreshControl
+                  refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
+                  onRefresh={() => this.doRefresh()}
+                />
+              }
+            />
+          </Viewport.Tracker>
         </TouchableWithoutFeedback>
         {hasCommentBlogPostRight ? (
           <CommentField
@@ -231,7 +236,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const { blogPostData } = this.state;
     const notification =
       navigation.getParam('useNotification', true) &&
-      navigation.getParam('showNotification', navigation.getParam('useNotification', true)) &&
       navigation.getParam('notification');
     let resourceUri = notification && notification?.resource.uri;
     const blogPostContent = blogPostData?.content;
@@ -241,24 +245,28 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
     const hasComments = blogPostComments && blogPostComments.length > 0;
+    const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View>
         <View style={{ paddingHorizontal: 16 }}>
+          <ViewportAwareTitle
+            style={{ marginTop: 16, marginHorizontal: 12, backgroundColor: theme.color.background.card }}
+            onViewportEnter={() => this.updateVisible(true)}
+            onViewportLeave={() => this.updateVisible(false)}
+            innerRef={ref => (this._titleRef = ref)}>
+            <TextSemiBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextSemiBold>
+          </ViewportAwareTitle>
           <ResourceView
             header={
-              notification ? (
-                <NotificationTopInfo notification={notification} />
-              ) : (
-                <ContentCardHeader
-                  icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
-                  text={
-                    blogPostData?.author.username ? (
-                      <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</TextSemiBold>
-                    ) : undefined
-                  }
-                  date={blogPostData?.modified}
-                />
-              )
+              <ContentCardHeader
+                icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
+                text={
+                  blogPostData?.author.username ? (
+                    <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</TextSemiBold>
+                  ) : undefined
+                }
+                date={blogPostData?.modified}
+              />
             }>
             <HtmlContentView
               html={blogPostContent}
@@ -411,6 +419,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
     } else this.doInit();
+  }
+
+  private updateVisible(isVisible: boolean) {
+    // console.log("updateVisible", isVisible);
+    if (this.state.showHeaderTitle && isVisible) this.setState({ showHeaderTitle: false });
+    else if (!this.state.showHeaderTitle && !isVisible) this.setState({ showHeaderTitle: true });
   }
 
   // METHODS ======================================================================================

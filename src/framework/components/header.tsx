@@ -3,21 +3,21 @@
  * Build Headers components for React Navigation or for custom hand-made screens.
  */
 
-import styled from "@emotion/native";
-import * as React from "react";
-import { Platform, SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } from "react-native";
-import { hasNotch } from "react-native-device-info";
+import styled from '@emotion/native';
+import * as React from 'react';
+import { Platform, SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
 
-import { UI_SIZES } from "./constants";
-import theme from "~/app/theme";
-import { Icon } from "./icon";
-import { FontWeightIOS, rem, TextInverse } from "./text";
+import { UI_SIZES } from './constants';
+import theme from '~/app/theme';
+import { Icon } from './icon';
+import { FontWeightIOS, rem, TextInverse } from './text';
 
 const HeaderMinHeight = 52;
 
 const FakeHeader_StyleComponent = styled.View({
-  flexDirection: "row",
-  alignItems: "center",
+  flexDirection: 'row',
+  alignItems: 'center',
   flex: 0,
   backgroundColor: theme.color.secondary.regular,
   elevation: 5,
@@ -26,37 +26,38 @@ const FakeHeader_StyleComponent = styled.View({
 
 export const FakeHeader = (props: React.PropsWithChildren<ViewProps>) => (
   <FakeHeader_StyleComponent>
-    <SafeAreaView style={{ width: "100%", height: "100%" }}>{props.children}</SafeAreaView>
+    <SafeAreaView style={{ width: '100%', height: '100%' }}>{props.children}</SafeAreaView>
   </FakeHeader_StyleComponent>
 );
 
 export const HeaderRow = styled.View({
   minHeight: HeaderMinHeight,
-  flexDirection: "row",
-  alignItems: "center",
+  flexDirection: 'row',
+  alignItems: 'center',
 });
 
 export const HeaderLeft = styled(HeaderRow)({
-  position: "absolute",
+  position: 'absolute',
   left: 0,
-  height: "100%",
-  flexDirection: "row",
-  alignItems: "stretch",
+  height: '100%',
+  flexDirection: 'row',
+  alignItems: 'stretch',
   zIndex: 1,
 });
 export const HeaderRight = styled(HeaderRow)({
-  position: "absolute",
+  position: 'absolute',
   right: 0,
-  height: "100%",
-  flexDirection: "row",
-  alignItems: "stretch",
+  height: '100%',
+  flexDirection: 'row',
+  alignItems: 'stretch',
   zIndex: 1,
 });
 export const HeaderCenter = styled.View({
   flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
+  justifyContent: 'center',
+  alignItems: 'center',
   minHeight: HeaderMinHeight,
+  marginHorizontal: 60,
 });
 
 const iconSpecificSizes = {
@@ -76,25 +77,23 @@ export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconS
         shadowRadius: 4,
         borderRadius: 30,
         backgroundColor: theme.color.secondary.regular,
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
       })
     : styled.View({
         height: HeaderMinHeight,
         width: 60,
         flex: 0,
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
       });
 
   return (
     <HeaderIconView>
       <Icon
-        size={
-          props.iconSize || (props.name ? iconSpecificSizes[props.name as string] : iconDefaultSize) || iconDefaultSize
-        }
+        size={props.iconSize || (props.name ? iconSpecificSizes[props.name as string] : iconDefaultSize) || iconDefaultSize}
         name={props.name}
-        color={props.hidden ? "transparent" : "#FFFFFF"}
+        color={props.hidden ? 'transparent' : '#FFFFFF'}
       />
     </HeaderIconView>
   );
@@ -117,8 +116,8 @@ interface IHeaderActionCustomProps extends IHeaderActionCommonProps {
 
 const HeaderActionText = styled(TextInverse)({
   paddingHorizontal: 18,
-  justifyContent: "center",
-  alignItems: "center",
+  justifyContent: 'center',
+  alignItems: 'center',
 });
 
 export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
@@ -126,7 +125,7 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
   return (
     <ActionComponent
       {...(props.disabled ? {} : { onPress: props.onPress })}
-      style={{ flex: 0, justifyContent: "center", ...(props.disabled ? { opacity: 0.7 } : {}), ...props.style }}>
+      style={{ flex: 0, justifyContent: 'center', ...(props.disabled ? { opacity: 0.7 } : {}), ...props.style }}>
       {(props as IHeaderActionCustomProps).customComponent ? (
         (props as IHeaderActionCustomProps).customComponent
       ) : (
@@ -148,8 +147,8 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
 };
 
 export const HeaderTitle = styled(TextInverse)({
-  textAlign: "center",
-  textAlignVertical: "center",
+  textAlign: 'center',
+  textAlignVertical: 'center',
   fontWeight: FontWeightIOS.Bold,
   fontSize: rem(16 / 14),
 });

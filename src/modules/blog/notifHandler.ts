@@ -24,7 +24,6 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction =
     mainNavNavigate(path, {
       notification: blogNotif,
       useNotification: true,
-      showNotification: path !== `${moduleConfig.routeName}/details`,
       ...navParams,
     });
     return {
