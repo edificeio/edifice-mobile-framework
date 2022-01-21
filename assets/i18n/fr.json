@@ -149,6 +149,7 @@
     },
     "delete": "Supprimer",
     "deletion": "Suppression",
+    "discard": "Abandonner",
     "error": {
       "content": {
         "text": "Il semblerait que le contenu se soit envolé.\nSi le problème persiste, contactez l'assistance."

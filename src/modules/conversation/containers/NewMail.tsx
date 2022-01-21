@@ -317,7 +317,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       } else if (!isDraftEmpty && !isSavedDraft) {
         Alert.alert(I18n.t('conversation.saveDraftTitle'), I18n.t('conversation.saveDraftMessage'), [
           {
-            text: I18n.t('conversation.delete'),
+            text: I18n.t('common.discard'),
             onPress: async () => {
               try {
                 if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
@@ -328,13 +328,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
-                  'Rédaction mail - Sortir - Effacer le brouillon - Succès',
+                  'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
                 );
               } catch (err) {
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
-                  'Rédaction mail - Sortir - Effacer le brouillon - Échec',
+                  'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
                 );
               }
               navigation.goBack();
