@@ -52,7 +52,7 @@ export const notificationsService = {
     return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
   },
   report: async (session: IUserSession, id: string) => {
-    const api = `${legacyAppConf.currentPlatform?.url!}/timeline/${id}/report`;
+    const api = `${DEPRECATED_getCurrentPlatform()!.url}/timeline/${id}/report`;
     const method = 'PUT';
     return signedFetchJson(api, { method });
   },
