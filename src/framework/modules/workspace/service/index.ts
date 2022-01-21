@@ -9,6 +9,8 @@ import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '~/fra
 import { IUserSession } from '~/framework/util/session';
 import { signedFetchJson2 } from '~/infra/fetchWithCache';
 
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+
 const implicitWorkspaceUploadParams = {
   owner: {}, // Exists BackEnd side but not useed yet!
   protected: { protected: 'true', application: 'media-library' },
@@ -126,5 +128,10 @@ const workspaceService = {
     return signedFetchJson2(api, { method, body, headers }) as Promise<IWorkspaceCreateFolderResultBackend>;
   },
 };
+
+export const computeVideoThumbnail = (id: string, size?: number[]) =>
+  `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}${
+    size && size[0] && size[1] ? `?thumbnail=${size[0]}x${size[1]}` : ''
+  }`;
 
 export default workspaceService;

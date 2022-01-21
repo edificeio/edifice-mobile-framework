@@ -2,6 +2,7 @@ import { decode } from 'html-entities';
 import * as React from 'react';
 
 import { IMedia } from '~/framework//util/notifications';
+import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { IRemoteAttachment } from '~/ui/Attachment';
 import { AttachmentGroup } from '~/ui/AttachmentGroup';
@@ -95,14 +96,20 @@ const renderAttachementsPreview = (medias: IMedia[]) => {
   return <AttachmentGroup attachments={attachments as IRemoteAttachment[]} containerStyle={{ flex: 1 }} />;
 };
 
+const extractVideoResolution = (resolutionAsString: string) => {
+  const match = resolutionAsString ? /^(\d+)x(\d+)$/.exec(resolutionAsString) : undefined;
+  return match ? [parseInt(match[1]), parseInt(match[2])] : undefined;
+};
+
 const renderAudioVideoPreview = (media: IMedia) => {
+  const videoDimensions = media['video-resolution'] ? extractVideoResolution(media['video-resolution']) : undefined;
+  const videoId = media['document-id'] as string | undefined;
   return (
     <Player
-      type={media.type}
+      type={media.type as 'audio' | 'video'}
       source={signURISource(transformedSrc(media.src as string))}
-      // TODO: add posterSource and ratio (when backend ready)
-      // posterSource={media.posterSource ? signURISource(transformedSrc(media.posterSource as string)) : undefined}
-      // ratio={media.ratio}
+      posterSource={videoId && videoDimensions ? signURISource(computeVideoThumbnail(videoId, videoDimensions)) : undefined}
+      ratio={videoDimensions && videoDimensions[1] !== 0 ? videoDimensions[0] / videoDimensions[1] : undefined}
     />
   );
 };
