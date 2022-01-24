@@ -42,6 +42,9 @@ import {
 } from './nuggetRenderer';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { extractVideoResolution } from './content';
+import { signURISource } from '~/infra/oauth';
+import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   textFormatting?: boolean;
@@ -628,6 +631,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseVideoTag(tag: ISaxTagOpen): void {
     if (!this.opts.video) return;
+    // Parse src
     let src = tag.attrs.src;
     if (src.indexOf('file://') === -1) {
       // TODO : Better parse video url and detect cases
@@ -636,12 +640,19 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
         src = DEPRECATED_getCurrentPlatform()!.url + src;
       }
     }
+    // Parse additional video metadata
+    const videoDimensions = tag.attrs['data-video-resolution']
+      ? extractVideoResolution(tag.attrs['data-video-resolution'])
+      : undefined;
+    const videoId = tag.attrs['data-document-id'];
     const videoNugget: IVideoNugget = {
       src,
       type: HtmlParserNuggetTypes.Video,
+      ...(videoDimensions && videoDimensions[1] !== 0 ? { ratio: videoDimensions[0] / videoDimensions[1] } : {}),
+      ...(videoId && videoDimensions ? { posterSource: signURISource(computeVideoThumbnail(videoId, videoDimensions)) } : {}),
     };
     this.insertTopLevelNugget(videoNugget);
-    this.currentImageNugget = null; // Video breaks image groups
+    this.currentImageNugget = undefined; // Video breaks image groups
     this.currentDivIsEmpty = false;
   }
 

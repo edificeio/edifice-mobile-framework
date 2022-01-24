@@ -4,7 +4,7 @@
  */
 
 import * as React from 'react';
-import { Image, Linking, TextStyle, View, ViewStyle } from 'react-native';
+import { Image, ImageURISource, Linking, TextStyle, View, ViewStyle } from 'react-native';
 
 import {
   NestedText,
@@ -84,6 +84,8 @@ export interface IAudioNugget extends INugget {
 
 export interface IVideoNugget extends INugget {
   src: string;
+  ratio?: number;
+  posterSource?: ImageURISource;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -349,7 +351,13 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
 function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <View key={key}>
-      <Player type="video" source={signURISource(transformedSrc(nugget.src))} style={style} />
+      <Player
+        type="video"
+        source={signURISource(transformedSrc(nugget.src))}
+        style={style}
+        {...(nugget.ratio ? { ratio: nugget.ratio } : {})}
+        {...(nugget.posterSource ? { posterSource: nugget.posterSource } : {})}
+      />
     </View>
   );
 }

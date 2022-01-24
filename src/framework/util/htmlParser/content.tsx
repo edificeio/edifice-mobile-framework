@@ -96,7 +96,7 @@ const renderAttachementsPreview = (medias: IMedia[]) => {
   return <AttachmentGroup attachments={attachments as IRemoteAttachment[]} containerStyle={{ flex: 1 }} />;
 };
 
-const extractVideoResolution = (resolutionAsString: string) => {
+export const extractVideoResolution = (resolutionAsString: string) => {
   const match = resolutionAsString ? /^(\d+)x(\d+)$/.exec(resolutionAsString) : undefined;
   return match ? [parseInt(match[1]), parseInt(match[2])] : undefined;
 };
