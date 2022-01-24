@@ -312,7 +312,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             }}
           />
           <View style={{ flex: 1 }}>
-            {isFetching && !isRefreshing ? (
+            {isFetching && !isRefreshing && !isChangingPage ? (
               <Loading />
             ) : (
               <FlatList
