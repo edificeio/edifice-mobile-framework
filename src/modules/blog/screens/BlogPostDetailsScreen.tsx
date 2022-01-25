@@ -245,6 +245,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
     const hasComments = blogPostComments && blogPostComments.length > 0;
+    const commentsString = hasComments
+      ? blogPostComments.length === 1
+        ? `1 ${I18n.t('common.comment.comment').toLowerCase()}`
+        : `${blogPostComments.length} ${I18n.t('common.comment.comments').toLowerCase()}`
+      : I18n.t('common.comment.noComments').toLowerCase();
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View>
@@ -297,27 +302,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             </View>
           ) : null}
         </View>
-        {hasComments ? (
-          <ListItem
-            style={{
-              justifyContent: 'flex-start',
-              shadowColor: theme.color.shadowColor,
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.2,
-              elevation: 2,
-              borderBottomColor: undefined,
-              borderBottomWidth: undefined,
-              marginTop: 10,
-              marginBottom: 4,
-            }}
-            leftElement={<Icon name="new_comment" color={theme.color.neutral.regular} size={16} style={{ marginRight: 5 }} />}
-            rightElement={
-              <TextLight>
-                {blogPostComments!.length} {I18n.t(`common.comment.comment${blogPostComments!.length > 1 ? 's' : ''}`)}
-              </TextLight>
-            }
-          />
-        ) : null}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            margin: 12
+          }}>
+          <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
+          <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
+        </View>
       </View>
     );
   }
