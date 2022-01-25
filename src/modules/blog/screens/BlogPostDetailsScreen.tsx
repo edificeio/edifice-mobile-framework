@@ -12,6 +12,7 @@ import {
   View,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
@@ -35,7 +36,6 @@ import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { TextSemiBold, TextLight, TextLightItalic, TextSizeStyle } from '~/framework/components/text';
-import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
@@ -53,7 +53,7 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { ContentCardHeader, ContentCardIcon, ContentCardTitle, ResourceView } from '~/framework/components/card';
+import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import { openUrl } from '~/framework/util/linking';
 import CommentField from '~/framework/components/commentField';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -171,7 +171,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
               iconSize={24}
-              onPress={() => navigation.dispatch(NavigationActions.back())}
+              onPress={() => {
+                const commentFieldComment = this.commentFieldRef?.current?.getComment();
+                const goBack = () => navigation.dispatch(NavigationActions.back());
+                Keyboard.dismiss();
+                commentFieldComment ? this.commentFieldRef?.current?.confirmDiscard(() => goBack()) : goBack();
+              }}
             />
           </HeaderLeft>
           <HeaderCenter>
@@ -201,25 +206,24 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     return (
       <>
-        <TouchableWithoutFeedback onPress={() => this.commentFieldRef?.current?.confirmDiscardUpdate()}>
-          <Viewport.Tracker>
-            <FlatList
-              ref={ref => (this.flatListRef = ref)}
-              data={blogPostComments}
-              renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
-              keyExtractor={(item: IBlogPostComment) => item.id.toString()}
-              ListHeaderComponent={this.renderBlogPostDetails()}
-              contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.card }}
-              scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-              refreshControl={
-                <RefreshControl
-                  refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
-                  onRefresh={() => this.doRefresh()}
-                />
-              }
-            />
-          </Viewport.Tracker>
-        </TouchableWithoutFeedback>
+        <Viewport.Tracker>
+          <FlatList
+            keyboardShouldPersistTaps="always"
+            ref={ref => (this.flatListRef = ref)}
+            data={blogPostComments}
+            renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
+            keyExtractor={(item: IBlogPostComment) => item.id.toString()}
+            ListHeaderComponent={this.renderBlogPostDetails()}
+            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.card }}
+            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
+            refreshControl={
+              <RefreshControl
+                refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
+                onRefresh={() => this.doRefresh()}
+              />
+            }
+          />
+        </Viewport.Tracker>
         {hasCommentBlogPostRight ? (
           <CommentField
             ref={this.commentFieldRef}
@@ -234,9 +238,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   renderBlogPostDetails() {
     const { navigation } = this.props;
     const { blogPostData } = this.state;
-    const notification =
-      navigation.getParam('useNotification', true) &&
-      navigation.getParam('notification');
+    const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
     let resourceUri = notification && notification?.resource.uri;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
@@ -252,66 +254,72 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       : I18n.t('common.comment.noComments').toLowerCase();
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
-      <View>
-        <View style={{ paddingHorizontal: 16 }}>
-          <ViewportAwareTitle
-            style={{ marginTop: 16, marginHorizontal: 12, backgroundColor: theme.color.background.card }}
-            onViewportEnter={() => this.updateVisible(true)}
-            onViewportLeave={() => this.updateVisible(false)}
-            innerRef={ref => (this._titleRef = ref)}>
-            <TextSemiBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextSemiBold>
-          </ViewportAwareTitle>
-          <ResourceView
-            header={
-              <ContentCardHeader
-                icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
-                text={
-                  blogPostData?.author.username ? (
-                    <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</TextSemiBold>
-                  ) : undefined
-                }
-                date={blogPostData?.modified}
-              />
-            }>
-            <HtmlContentView
-              html={blogPostContent}
-              onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
-              onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
-              onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
-              onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
-            />
-          </ResourceView>
-
-          {resourceUri ? (
-            <View style={{ marginTop: 10 }}>
-              <FlatButton
-                title={I18n.t('common.openInBrowser')}
-                customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
-                customTextStyle={{ color: theme.color.secondary.regular }}
-                onPress={() => {
-                  //TODO: create generic function inside oauth (use in myapps, etc.)
-                  if (!DEPRECATED_getCurrentPlatform()) {
-                    console.warn('Must have a platform selected to redirect the user');
-                    return null;
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+          this.commentFieldRef?.current?.confirmDiscard();
+        }}>
+        <View>
+          <View style={{ paddingHorizontal: 16 }}>
+            <ViewportAwareTitle
+              style={{ marginTop: 16, marginHorizontal: 12, backgroundColor: theme.color.background.card }}
+              onViewportEnter={() => this.updateVisible(true)}
+              onViewportLeave={() => this.updateVisible(false)}
+              innerRef={ref => (this._titleRef = ref)}>
+              <TextSemiBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextSemiBold>
+            </ViewportAwareTitle>
+            <ResourceView
+              header={
+                <ContentCardHeader
+                  icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
+                  text={
+                    blogPostData?.author.username ? (
+                      <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</TextSemiBold>
+                    ) : undefined
                   }
-                  const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                  openUrl(url);
-                  Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-                }}
+                  date={blogPostData?.modified}
+                />
+              }>
+              <HtmlContentView
+                html={blogPostContent}
+                onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
+                onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
+                onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
+                onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
               />
-            </View>
-          ) : null}
+            </ResourceView>
+
+            {resourceUri ? (
+              <View style={{ marginTop: 10 }}>
+                <FlatButton
+                  title={I18n.t('common.openInBrowser')}
+                  customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
+                  customTextStyle={{ color: theme.color.secondary.regular }}
+                  onPress={() => {
+                    //TODO: create generic function inside oauth (use in myapps, etc.)
+                    if (!DEPRECATED_getCurrentPlatform()) {
+                      console.warn('Must have a platform selected to redirect the user');
+                      return null;
+                    }
+                    const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
+                    openUrl(url);
+                    Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
+                  }}
+                />
+              </View>
+            ) : null}
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              margin: 12,
+            }}>
+            <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
+            <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
+          </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            margin: 12
-          }}>
-          <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-          <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 
@@ -332,7 +340,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             <TouchableOpacity
               style={{ marginRight: hasUpdateCommentBlogPostRight ? 15 : undefined }}
               onPress={() => {
-                Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.deleteConfirmation'), [
+                Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.confirmationDelete'), [
                   {
                     text: I18n.t('common.cancel'),
                     style: 'default',
@@ -359,43 +367,51 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   renderComment(blogPostComment: IBlogPostComment) {
     return (
-      <ListItem
-        style={{ justifyContent: 'flex-start', alignItems: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
-        leftElement={
-          <GridAvatars
-            users={[blogPostComment.author.userId || require('ASSETS/images/resource-avatar.png')]}
-            fallback={require('ASSETS/images/resource-avatar.png')}
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+          this.commentFieldRef?.current?.confirmDiscard();
+        }}>
+        <View>
+          <ListItem
+            style={{ justifyContent: 'flex-start', alignItems: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
+            leftElement={
+              <GridAvatars
+                users={[blogPostComment.author.userId || require('ASSETS/images/resource-avatar.png')]}
+                fallback={require('ASSETS/images/resource-avatar.png')}
+              />
+            }
+            rightElement={
+              <View style={{ flex: 1, marginLeft: 15 }}>
+                <View style={{ flexDirection: 'row' }}>
+                  <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: 5, maxWidth: '70%' }}>
+                    {blogPostComment.author.username}
+                  </TextSemiBold>
+                  <TextLight style={{ fontSize: 10 }}>{moment(blogPostComment.created).fromNow()}</TextLight>
+                </View>
+                <TextPreview
+                  textContent={blogPostComment.comment}
+                  numberOfLines={5}
+                  textStyle={{
+                    color: CommonStyles.textColor,
+                    fontFamily: CommonStyles.primaryFontFamily,
+                    fontSize: 12,
+                    marginTop: 5,
+                  }}
+                  expandMessage={I18n.t('common.readMore')}
+                  expansionTextStyle={{ fontSize: 12 }}
+                  additionalText={
+                    blogPostComment.modified ? (
+                      <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>
+                    ) : undefined
+                  }
+                />
+                {this.renderCommentActions(blogPostComment)}
+              </View>
+            }
           />
-        }
-        rightElement={
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: 5, maxWidth: '70%' }}>
-                {blogPostComment.author.username}
-              </TextSemiBold>
-              <TextLight style={{ fontSize: 10 }}>{moment(blogPostComment.created).fromNow()}</TextLight>
-            </View>
-            <TextPreview
-              textContent={blogPostComment.comment}
-              numberOfLines={5}
-              textStyle={{
-                color: CommonStyles.textColor,
-                fontFamily: CommonStyles.primaryFontFamily,
-                fontSize: 12,
-                marginTop: 5,
-              }}
-              expandMessage={I18n.t('common.readMore')}
-              expansionTextStyle={{ fontSize: 12 }}
-              additionalText={
-                blogPostComment.modified ? (
-                  <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>
-                ) : undefined
-              }
-            />
-            {this.renderCommentActions(blogPostComment)}
-          </View>
-        }
-      />
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 

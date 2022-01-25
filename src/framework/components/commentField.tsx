@@ -43,25 +43,32 @@ const CommentField = (props: ICommentField_Props, ref) => {
     setCommentId(commentId);
     setPublishButtonWidth(undefined);
   };
-  const confirmDiscardUpdate = () => {
-    commentId &&
-      Alert.alert(I18n.t('common.modificationUnsavedConfirmation'), I18n.t('common.comment.modificationUnsavedConfirmation'), [
-        {
-          text: I18n.t('common.quit'),
-          style: 'destructive',
-          onPress: () => clearCommentField(),
-        },
-        {
-          text: I18n.t('common.continue'),
-          style: 'default',
-          onPress: () => inputRef.current && inputRef.current.focus(),
-        },
-      ]);
+  const confirmDiscard = (quitCallback?: Function, continueCallback?: Function) => {
+    comment &&
+      Alert.alert(
+        I18n.t(`common.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
+        I18n.t(`common.comment.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
+        [
+          {
+            text: I18n.t('common.quit'),
+            style: 'destructive',
+            onPress: () => (quitCallback ? quitCallback() : clearCommentField()),
+          },
+          {
+            text: I18n.t('common.continue'),
+            style: 'default',
+            onPress: () => (continueCallback ? continueCallback() : inputRef.current && inputRef.current.focus()),
+          },
+        ],
+      );
   };
   const getCommentId = () => {
     return commentId;
   };
-  React.useImperativeHandle(ref, () => ({ clearCommentField, prefillCommentField, confirmDiscardUpdate, getCommentId }));
+  const getComment = () => {
+    return comment;
+  };
+  React.useImperativeHandle(ref, () => ({ clearCommentField, prefillCommentField, confirmDiscard, getCommentId, getComment }));
 
   return (
     <View
