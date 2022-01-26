@@ -13,7 +13,8 @@ export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fi
 export class ImagePicker extends React.PureComponent<
   {
     callback: (image: ImagePicked) => void;
-    options?: Partial<ImageLibraryOptions & CameraOptions>;
+    cameraOptions?: Omit<CameraOptions, 'mediaType'>;
+    galeryOptions?: Omit<ImageLibraryOptions, 'mediaType'>;
     multiple?: boolean;
   } & TouchableOpacityProps,
   {
@@ -23,7 +24,7 @@ export class ImagePicker extends React.PureComponent<
   state = { showModal: false };
 
   render() {
-    const { callback, options, multiple, ...props } = this.props;
+    const { callback, cameraOptions, galeryOptions, multiple, ...props } = this.props;
     const menuActions = [
       {
         id: 'camera',
@@ -53,18 +54,14 @@ export class ImagePicker extends React.PureComponent<
     const actions = {
       camera: async () => {
         try {
-          // await assertPermissions('camera');
-          // launchCamera({ ...options, mediaType: 'photo' }, realCallback);
-          LocalFile.pick({ source: 'camera' }).then(realCallback);
+          LocalFile.pick({ source: 'camera' }, cameraOptions, undefined).then(realCallback);
         } catch (error) {
           console.error(error);
         }
       },
       gallery: async () => {
         try {
-          // await assertPermissions('galery.read');
-          // launchImageLibrary({ ...this.props.options, mediaType: 'photo' }, realCallback);
-          LocalFile.pick({ source: 'galery', multiple }).then(realCallback);
+          LocalFile.pick({ source: 'galery', multiple }, undefined, galeryOptions).then(realCallback);
         } catch (error) {
           console.error(error);
         }

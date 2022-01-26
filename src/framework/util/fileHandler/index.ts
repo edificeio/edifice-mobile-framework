@@ -8,7 +8,15 @@ import { Platform } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
 import { copyFile, DownloadDirectoryPath, exists, UploadFileItem } from 'react-native-fs';
-import { Asset, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker';
+import {
+  Asset,
+  CameraOptions,
+  ImageLibraryOptions,
+  ImagePickerResponse,
+  launchCamera,
+  launchImageLibrary,
+  MediaType,
+} from 'react-native-image-picker';
 
 import { assertPermissions } from '~/framework/util/permissions';
 
@@ -58,7 +66,11 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   /**
    * Pick a file from the user's device storage.
    */
-  static async pick(opts: LocalFile.IPickOptions) {
+  static async pick(
+    opts: LocalFile.IPickOptions,
+    cameraOptions?: Omit<CameraOptions, 'mediaType'>,
+    galeryOptions?: Omit<ImageLibraryOptions, 'mediaType'>,
+  ) {
     let pickedFiles: (DocumentPickerResponse | Asset)[] = [];
     if (opts.source === 'documents') {
       // Assert permission
@@ -94,6 +106,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             {
               mediaType: LocalFile._getImagePickerTypeArg(opts.type),
               selectionLimit: 0,
+              ...galeryOptions,
             },
             callback,
           );
@@ -101,6 +114,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           launchImageLibrary(
             {
               mediaType: LocalFile._getImagePickerTypeArg(opts.type),
+              ...galeryOptions,
             },
             callback,
           );
@@ -121,6 +135,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           {
             mediaType: LocalFile._getImagePickerTypeArg(opts.type),
             saveToPhotos: false,
+            ...cameraOptions,
           },
           callback,
         );

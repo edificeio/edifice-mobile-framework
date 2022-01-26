@@ -72,7 +72,7 @@ export const UserCard = ({
         <ImagePicker
           callback={image => (updatingAvatar ? null : onChangeAvatar(image))}
           activeOpacity={updatingAvatar ? 1 : 0}
-          options={{ cameraType: 'front' }}>
+          cameraOptions={{ cameraType: 'front' }}>
           <IconButton
             disabled={updatingAvatar}
             iconName="pencil"
@@ -100,7 +100,7 @@ export const UserCard = ({
         <ImagePicker
           callback={image => (updatingAvatar ? null : onChangeAvatar(image))}
           activeOpacity={updatingAvatar ? 1 : 0}
-          options={{ cameraType: 'front' }}>
+          cameraOptions={{ cameraType: 'front' }}>
           <IconButton
             disabled={updatingAvatar}
             iconName="camera-on"
