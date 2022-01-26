@@ -77,6 +77,8 @@ const CommentField = (props: ICommentField_Props, ref) => {
         flexDirection: 'row',
         alignItems: 'flex-end',
         padding: 12,
+        borderTopWidth: 1,
+        borderTopColor: theme.color.listItemBorder,
       }}>
       <SingleAvatar userId={session.user.id} />
       <View
