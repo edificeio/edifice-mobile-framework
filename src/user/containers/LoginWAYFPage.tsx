@@ -49,9 +49,9 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
           <View
             style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 }}>
             <Logo source={this.pfConf.logo} />
-            <Text style={{ textAlign: 'center' }}>{I18n.t('login-wayf-text')}</Text>
+            <Text style={{ textAlign: 'center' }}>{I18n.t('login-wayf-main-text')}</Text>
             <FlatButton
-              title={I18n.t('login-wayf-button')}
+              title={I18n.t('login-wayf-main-button')}
               onPress={() => {
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
                 navigation.navigate('WAYF');

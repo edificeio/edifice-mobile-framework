@@ -45,6 +45,9 @@ android {
         buildConfigField "String", "BundleVersionType", "\"alpha.8\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
+        ndk {
+            debugSymbolLevel 'FULL'
+        }
     }
     splits {
         abi {

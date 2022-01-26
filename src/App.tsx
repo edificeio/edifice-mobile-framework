@@ -1,34 +1,32 @@
-// RN Imports
-import * as React from 'react';
+import messaging from '@react-native-firebase/messaging';
 import I18n from 'i18n-js';
-import { initI18n } from './app/i18n';
-import { AppState, AppStateStatus, StatusBar, View } from 'react-native';
-import * as RNLocalize from 'react-native-localize';
+import * as React from 'react';
 import 'react-native-gesture-handler';
-import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
-import DeviceInfo from 'react-native-device-info';
-import { enableScreens } from 'react-native-screens';
-
-// Polyfills
 import 'ts-polyfill/lib/es2019-object';
-
-// Redux
+import { AppState, AppStateStatus, StatusBar, View } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import * as RNLocalize from 'react-native-localize';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 
-// ODE Mobile Framework Modules
-import { Trackers } from '~/framework/util/tracker';
-
-// ODE Mobile Framework Redux
+import AppScreen from './AppScreen';
+import { createMainStore } from './AppStore';
+import { initI18n } from './app/i18n';
+import AppModules from './app/modules';
+import { OAuth2RessourceOwnerPasswordClient, AllModulesBackup } from './infra/oauth';
+import { getLoginStackToDisplay } from './navigation/LoginNavigator';
+import { reset } from './navigation/helpers/navHelper';
+import { CommonStyles } from './styles/common/styles';
 import { refreshToken } from './user/actions/login';
 import { loadCurrentPlatform, selectPlatform } from './user/actions/platform';
-import { isInActivatingMode } from './user/selectors';
 import { checkVersionThenLogin } from './user/actions/version';
+import { IUserAuthState } from './user/reducers/auth';
+import { isInActivatingMode } from './user/selectors';
+import { IUserInfoState } from './user/state/info';
 
-// Style
-import { CommonStyles } from './styles/common/styles';
-import SplashScreen from 'react-native-splash-screen';
-
-import messaging from '@react-native-firebase/messaging';
+import AppConf from '~/framework/util/appConf';
+import { Trackers } from '~/framework/util/tracker';
 
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
 require('./myAppMenu');
@@ -41,22 +39,6 @@ require('./workspace');
 //require("./viescolaire");
 //require("./support");
 require('./user');
-
-// Main Screen
-import AppScreen from './AppScreen';
-
-// Store
-import { createMainStore } from './AppStore';
-import { IUserAuthState } from './user/reducers/auth';
-import { IUserInfoState } from './user/state/info';
-
-// App Conf
-import AppConf from '~/framework/util/appConf';
-// import './infra/appConf';
-import { reset } from './navigation/helpers/navHelper';
-import { getLoginStackToDisplay } from './navigation/LoginNavigator';
-import { OAuth2RessourceOwnerPasswordClient, AllModulesBackup } from './infra/oauth';
-import AppModules from './app/modules';
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
@@ -95,7 +77,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
 
     // Tracking
     await Trackers.init();
-    Trackers.trackDebugEvent('Application', 'STARTUP');
+    Trackers.trackDebugEvent('Application', '');
     Trackers.setCustomDimension(4, 'App Name', DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.

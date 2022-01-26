@@ -26,6 +26,13 @@ export interface IOAuthToken {
   scope: string;
 }
 
+export interface IOAuthCustomToken {
+  structureName: string;
+  key: string;
+}
+
+export type OAuthCustomTokens = IOAuthCustomToken[];
+
 export enum OAuthErrorType {
   // Response errors
   INVALID_CLIENT = 'invalid_client',
@@ -44,11 +51,13 @@ export enum OAuthErrorType {
   // Not initialized
   NOT_INITIALIZED = 'not_initilized',
 }
+
 export interface OAuthErrorDetails {
   type: OAuthErrorType;
   error?: string;
   description?: string;
 }
+
 export type OAuthError = Error & OAuthErrorDetails;
 
 export const sanitizeScope = (scopes: string[]) => (Array.isArray(scopes) ? scopes.join(' ').trim() : scopes || '');
@@ -108,14 +117,14 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Use this returns always an error.
    * @param data
    */
-  private createAuthError(body: { error: string; error_description?: string }): OAuthError;
-  private createAuthError<T extends object>(
+  public createAuthError(body: { error: string; error_description?: string }): OAuthError;
+  public createAuthError<T extends object>(
     type: OAuthErrorType,
     error: string,
     description?: string,
     additionalData?: T,
   ): OAuthError & T;
-  private createAuthError<T extends object>(
+  public createAuthError<T extends object>(
     bodyOrType: { error: string; error_description?: string } | OAuthErrorType,
     error?: string,
     description?: string,
@@ -295,10 +304,112 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
+      const error = err as Error;
       // tslint:disable-next-line:no-console
-      console.warn('Get token failed: ', err);
-      (err as Error).name = '[oAuth] getToken failed: ' + err.name;
-      throw err;
+      console.warn('Get token failed: ', error);
+      error.name = '[oAuth] getToken failed: ' + error.name;
+      throw error;
+    }
+  }
+
+  /**
+   * Get a fresh new access token with custom token
+   */
+  public async getNewTokenWithCustomToken(token: string, saveToken: boolean = true): Promise<IOAuthToken> {
+    if (!this.clientInfo) {
+      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
+    }
+    // Build request body
+    const body = {
+      client_id: this.clientInfo.clientId,
+      client_secret: this.clientInfo.clientSecret,
+      custom_token: token,
+      grant_type: 'custom_token',
+      scope: this.clientInfo.scopeString,
+    };
+    // Build request headers
+    const headers = {
+      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
+      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
+    };
+    try {
+      // Call oAuth API
+      const data = await this.request(this.accessTokenUri, {
+        body,
+        headers,
+        method: 'POST',
+      });
+      // Manage token i any
+      if (data.hasOwnProperty('access_token')) {
+        this.token = {
+          ...data,
+          expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
+        };
+        saveToken && (await this.saveToken());
+        this.generateUniqueSesionIdentifier();
+        return this.token!;
+      }
+      // Error
+      throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
+    } catch (err) {
+      // Manage error
+      const error = err as Error;
+      // tslint:disable-next-line:no-console
+      console.warn('Get token with custom token failed: ', error);
+      error.name = '[oAuth] getToken failed: ' + error.name;
+      throw error;
+    }
+  }
+
+  /**
+   * Get a fresh new access token with SAML Token
+   */
+  public async getNewTokenWithSAML(saml: string, saveToken: boolean = true): Promise<IOAuthToken | IOAuthCustomToken[]> {
+    if (!this.clientInfo) {
+      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
+    }
+    // Build request body
+    const body = {
+      assertion: saml,
+      client_id: this.clientInfo.clientId,
+      client_secret: this.clientInfo.clientSecret,
+      grant_type: 'saml2',
+      scope: this.clientInfo.scopeString,
+    };
+    // Build request headers
+    const headers = {
+      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
+      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
+    };
+    try {
+      // Call oAuth API
+      const data = await this.request(this.accessTokenUri, {
+        body,
+        headers,
+        method: 'POST',
+      });
+      // Manage token i any
+      if (data.hasOwnProperty('access_token')) {
+        this.token = {
+          ...data,
+          expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
+        };
+        saveToken && (await this.saveToken());
+        this.generateUniqueSesionIdentifier();
+        return this.token!;
+      }
+      if (data.hasOwnProperty('users')) {
+        return data.users;
+      }
+      // Error
+      throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
+    } catch (err) {
+      // Manage error
+      const error = err as Error;
+      // tslint:disable-next-line:no-console
+      console.warn('Get token with SAML failed: ', error);
+      error.name = '[oAuth] getToken failed: ' + error.name;
+      throw error;
     }
   }
 

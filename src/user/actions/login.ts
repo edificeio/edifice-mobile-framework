@@ -87,7 +87,7 @@ export function loginAction(
         dispatch({ type: actionTypeRequestLogin });
       } catch (err) {
         console.warn('[login] initialization failed');
-        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
       // === 1: Get oAuth token from somewhere (server or local storage)
@@ -136,7 +136,7 @@ export function loginAction(
         if (userinfo2.apps.includes('Actualites')) userinfo2.apps.push('News');
       } catch (err) {
         console.warn('[login] userinfo fetch failed', err);
-        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
       // === 3: check user validity

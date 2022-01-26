@@ -366,9 +366,16 @@
   "loading": "Loading",
   "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
   "login-back": "Back to login",
-  "login-wayf-button": "S'identifier",
-  "login-wayf-text": "Il est temps de sélectionner votre profil et de saisir vos identifiants !",
-  "login-wayf-title": "Identification",
+  "login-wayf-error-retry": "Réessayer",
+  "login-wayf-loading-text": "Connexion en cours...",
+  "login-wayf-main-button": "S'identifier",
+  "login-wayf-main-text": "Il est temps de sélectionner votre profil et de saisir vos identifiants !",
+  "login-wayf-main-title": "Identification",
+  "login-wayf-select-button": "Se connecter",
+  "login-wayf-select-help": "Pour mieux comprendre",
+  "login-wayf-select-placeholder": "Choisir un compte",
+  "login-wayf-select-text": "Votre compte EduConnect est lié à plusieurs comptes de l’ENT.\r\n\r\nChoisissez le compte avec lequel vous voulez vous connecter.",
+  "login-wayf-select-title": "Choix du compte",
   "mailbox": {
     "alert": {
       "deletedThread": {
