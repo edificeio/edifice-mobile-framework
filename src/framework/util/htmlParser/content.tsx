@@ -38,7 +38,8 @@ export const extractMediaFromHtml = (html: string) => {
   if (!html) return;
   const imageRegex = /<img(\s+[^>]*)?\ssrc=\"([^\"]+)\"/g;
   const audioRegex = /<audio(\s+[^>]*)?\ssrc=\"([^\"]+)\"/g;
-  const videoRegex = /<video(\s+[^>]*)?\ssrc=\"([^\"]+)\"/g;
+  const videoRegex = /<video(\s+[^>]*)>/g;
+  const tagAttributesPattern = /(data-)?([^= ]+)=\"([^\"]*)\"/g;
   const iframeRegex = /<iframe(\s+[^>]*)?\ssrc=\"([^\"]+)\"/g;
   const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
   const attachmentRegex = /<a.*?>.*?<\/a>/g;
@@ -57,7 +58,10 @@ export const extractMediaFromHtml = (html: string) => {
 
   const images = foundImages && foundImages.map(foundImage => ({ type: 'image', src: foundImage[2], index: foundImage.index }));
   const audios = foundAudios && foundAudios.map(foundAudio => ({ type: 'audio', src: foundAudio[2], index: foundAudio.index }));
-  const videos = foundVideos && foundVideos.map(foundVideo => ({ type: 'video', src: foundVideo[2], index: foundVideo.index }));
+  const videos = foundVideos && foundVideos.map(foundVideo => {
+    const videoAttrs = [...foundVideo[1].matchAll(tagAttributesPattern)];
+    return { type: 'video', index: foundVideo.index, ...Object.fromEntries(videoAttrs.map(attr => attr.slice(2))) };
+  });
   const iframes =
     foundIframes && foundIframes.map(foundIframe => ({ type: 'iframe', src: foundIframe[2], index: foundIframe.index }));
   const unflattenedAttachments = [];
