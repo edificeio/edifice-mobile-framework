@@ -72,11 +72,11 @@ const adaptCourses = (courses: ICourse[], homeworks: IHomeworkList, sessions: IS
   const homeworksWithoutCourse = [] as IHomework[];
   const calendarList = [...courses] as any;
 
-  courses.sort((a, b) => a.startDate - b.startDate);
+  courses.sort((a, b) => moment(a.startDate).diff(moment(b.startDate)));
 
   // Link sessions to courses in calendarList
   sessions
-    .sort((a, b) => a.date - b.date)
+    .sort((a, b) => moment(a.date).diff(moment(b.date)))
     .map(s => {
       let isSessionPlaced = false as boolean;
       s['startDate'] = moment(s.date.format('YYYY-MM-DD ') + s.start_time);
@@ -95,7 +95,7 @@ const adaptCourses = (courses: ICourse[], homeworks: IHomeworkList, sessions: IS
 
   // Sort homeworks whose are not linked to sessions but to day
   homeworksArray
-    .sort((a, b) => a.due_date - b.due_date)
+    .sort((a, b) => moment(a.due_date).diff(moment(b.due_date)))
     .map(hwk => {
       if (!hwk.session_id) {
         homeworksWithoutCourse.push(hwk);

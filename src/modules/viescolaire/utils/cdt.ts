@@ -49,6 +49,9 @@ export const homeworkListDetailsAdapter = (homework: IHomework, homeworkList?: I
   const homeworksArray = Object.values(homeworkDataList) as IHomework[];
   const reformatedHomeworkArray = [] as homework[];
   homeworksArray.map(item => reformatedHomeworkArray.push(homeworkDetailsAdapter(item)));
+  reformatedHomeworkArray.sort(
+    (a, b) => moment(a.due_date).diff(moment(b.due_date)) || moment(a.created_date).diff(moment(b.created_date)),
+  );
 
   return {
     homework: homeworkDetailsAdapter(homework),

@@ -92,10 +92,10 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   componentDidUpdate(prevProps, prevState) {
     const { startDate, selectedDate } = this.state;
-    const { structureId, childId, childClasses, group, fetchSlots } = this.props;
+    const { structureId, childId, group, fetchSlots } = this.props;
 
     // on selectedChild change
-    if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) this.initComponent();
+    if (prevProps.childId !== childId) this.initComponent();
 
     // on selected date change
     if (!prevState.selectedDate.isSame(selectedDate, 'day')) this.setState({ startDate: selectedDate.clone().startOf('week') });

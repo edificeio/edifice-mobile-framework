@@ -4,25 +4,14 @@
 
 import { combineReducers } from 'redux';
 
+import { ICdt_State } from './cdt/reducer';
 import cdt from './cdt/reducers';
-import { IHomeworkListState } from './cdt/state/homeworks';
-import { ISessionListState } from './cdt/state/sessions';
-import { ITimeSlotsState } from './cdt/state/timeSlots';
+import { ICompetences_State } from './competences/reducer';
 import competences from './competences/reducers';
-import { ILevelsListState } from './competences/state/competencesLevels';
-import { IDevoirsMatieresState } from './competences/state/devoirs';
-import { IMoyenneListState } from './competences/state/moyennes';
-import { ICompetencesUserChildrenState } from './competences/state/userChildren';
+import { IEdt_State } from './edt/reducer';
 import edt from './edt/reducers';
-import { ISlotListState } from './edt/state/slots';
-import { IEdtUserChildrenState } from './edt/state/userChildren';
+import { IPresences_State } from './presences/reducer';
 import presences from './presences/reducers';
-import { INotifiationChildren } from './presences/state/eventsNotification';
-import { IMultipleSlotsState } from './presences/state/multipleSlots';
-import { IRegisterPreferencesState } from './presences/state/registerPreferences';
-import { IClassesCallListState } from './presences/state/teacherClassesCall';
-import { ICoursesRegisterInfosState } from './presences/state/teacherCourseRegister';
-import { ICoursesListState } from './presences/state/teacherCourses';
 import viesco from './viesco/reducers';
 import { IChildrenGroupsState } from './viesco/state/childrenGroups';
 import { ICourseListState } from './viesco/state/courses';
@@ -47,30 +36,10 @@ export interface IViesco_State {
     memento: IMementoState;
     coursesList: ICourseListState;
   };
-  cdt: {
-    homeworksList: IHomeworkListState;
-    sessionsList: ISessionListState;
-    timeSlots: ITimeSlotsState;
-  };
-  edt: {
-    slotsList: ISlotListState;
-    userChildren: IEdtUserChildrenState;
-  };
-  presences: {
-    coursesList: ICoursesListState;
-    callList: IClassesCallListState;
-    coursesRegister: ICoursesRegisterInfosState;
-    history: any;
-    notification: INotifiationChildren[];
-    multipleSlots: IMultipleSlotsState;
-    registerPreferences: IRegisterPreferencesState;
-  };
-  competences: {
-    levels: ILevelsListState;
-    devoirsMatieres: IDevoirsMatieresState;
-    moyennesList: IMoyenneListState;
-    userChildren: ICompetencesUserChildrenState;
-  };
+  cdt: ICdt_State;
+  edt: IEdt_State;
+  presences: IPresences_State;
+  competences: ICompetences_State;
 }
 
 // Reducer

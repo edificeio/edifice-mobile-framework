@@ -181,7 +181,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
 
   const homeworkDataList = homeworkList as IHomeworkList;
   const homeworksArray = Object.values(homeworkDataList) as IHomework[];
-  homeworksArray.sort((a, b) => a.due_date - b.due_date);
+  homeworksArray.sort((a, b) => moment(a.due_date).diff(moment(b.due_date)) || moment(a.created_date).diff(moment(b.created_date)));
   return (
     <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}>
       {homeworksArray.length === 0 ? (

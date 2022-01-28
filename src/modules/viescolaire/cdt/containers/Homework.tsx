@@ -37,6 +37,7 @@ class Homework extends React.PureComponent<any> {
         />
       );
     }
+
     return (
       <DisplayHomework
         {...this.props}
