@@ -213,7 +213,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
             keyExtractor={(item: IBlogPostComment) => item.id.toString()}
             ListHeaderComponent={this.renderBlogPostDetails()}
-            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.card }}
+            style={{ backgroundColor: theme.color.background.page }}
+            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.page }}
             scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
             refreshControl={
               <RefreshControl
@@ -253,10 +254,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       : I18n.t('common.comment.noComments').toLowerCase();
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
-      <View>
+      <View style={{ backgroundColor: theme.color.background.card }}>
         <View style={{ paddingHorizontal: 16 }}>
           <ViewportAwareTitle
-            style={{ marginTop: 16, marginHorizontal: 12, backgroundColor: theme.color.background.card }}
+            style={{ marginTop: 16, marginHorizontal: 12 }}
             onViewportEnter={() => this.updateVisible(true)}
             onViewportLeave={() => this.updateVisible(false)}
             innerRef={ref => (this._titleRef = ref)}>
@@ -307,7 +308,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            margin: 12,
+            marginTop: 10,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            borderTopWidth: 1,
+            borderBottomWidth: 1,
+            borderTopColor: theme.color.inputBorder,
+            borderBottomColor: theme.color.inputBorder,
           }}>
           <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
           <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
