@@ -11,8 +11,8 @@ import {
   SafeAreaView,
   View,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Keyboard,
+  EmitterSubscription,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
@@ -118,6 +118,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   flatListRef: FlatList | null = null;
   commentFieldRef: { current: any } = React.createRef();
   _titleRef?: React.Ref<any> = undefined;
+  showSubscription: EmitterSubscription | undefined;
   state: IBlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
     publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
@@ -174,7 +175,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               onPress={() => {
                 const commentFieldComment = this.commentFieldRef?.current?.getComment();
                 const goBack = () => navigation.dispatch(NavigationActions.back());
-                Keyboard.dismiss();
                 commentFieldComment ? this.commentFieldRef?.current?.confirmDiscard(() => goBack()) : goBack();
               }}
             />
@@ -208,7 +208,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       <>
         <Viewport.Tracker>
           <FlatList
-            keyboardShouldPersistTaps="always"
             ref={ref => (this.flatListRef = ref)}
             data={blogPostComments}
             renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
@@ -254,72 +253,66 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       : I18n.t('common.comment.noComments').toLowerCase();
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-          this.commentFieldRef?.current?.confirmDiscard();
-        }}>
-        <View>
-          <View style={{ paddingHorizontal: 16 }}>
-            <ViewportAwareTitle
-              style={{ marginTop: 16, marginHorizontal: 12, backgroundColor: theme.color.background.card }}
-              onViewportEnter={() => this.updateVisible(true)}
-              onViewportLeave={() => this.updateVisible(false)}
-              innerRef={ref => (this._titleRef = ref)}>
-              <TextSemiBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextSemiBold>
-            </ViewportAwareTitle>
-            <ResourceView
-              header={
-                <ContentCardHeader
-                  icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
-                  text={
-                    blogPostData?.author.username ? (
-                      <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</TextSemiBold>
-                    ) : undefined
-                  }
-                  date={blogPostData?.modified}
-                />
-              }>
-              <HtmlContentView
-                html={blogPostContent}
-                onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
-                onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
-                onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
-                onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
+      <View>
+        <View style={{ paddingHorizontal: 16 }}>
+          <ViewportAwareTitle
+            style={{ marginTop: 16, marginHorizontal: 12, backgroundColor: theme.color.background.card }}
+            onViewportEnter={() => this.updateVisible(true)}
+            onViewportLeave={() => this.updateVisible(false)}
+            innerRef={ref => (this._titleRef = ref)}>
+            <TextSemiBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextSemiBold>
+          </ViewportAwareTitle>
+          <ResourceView
+            header={
+              <ContentCardHeader
+                icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
+                text={
+                  blogPostData?.author.username ? (
+                    <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</TextSemiBold>
+                  ) : undefined
+                }
+                date={blogPostData?.modified}
               />
-            </ResourceView>
+            }>
+            <HtmlContentView
+              html={blogPostContent}
+              onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
+              onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
+              onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
+              onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
+            />
+          </ResourceView>
 
-            {resourceUri ? (
-              <View style={{ marginTop: 10 }}>
-                <FlatButton
-                  title={I18n.t('common.openInBrowser')}
-                  customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
-                  customTextStyle={{ color: theme.color.secondary.regular }}
-                  onPress={() => {
-                    //TODO: create generic function inside oauth (use in myapps, etc.)
-                    if (!DEPRECATED_getCurrentPlatform()) {
-                      console.warn('Must have a platform selected to redirect the user');
-                      return null;
-                    }
-                    const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                    openUrl(url);
-                    Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-                  }}
-                />
-              </View>
-            ) : null}
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              margin: 12,
-            }}>
-            <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-            <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
-          </View>
+          {resourceUri ? (
+            <View style={{ marginTop: 10 }}>
+              <FlatButton
+                title={I18n.t('common.openInBrowser')}
+                customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
+                customTextStyle={{ color: theme.color.secondary.regular }}
+                onPress={() => {
+                  //TODO: create generic function inside oauth (use in myapps, etc.)
+                  if (!DEPRECATED_getCurrentPlatform()) {
+                    console.warn('Must have a platform selected to redirect the user');
+                    return null;
+                  }
+                  const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
+                  openUrl(url);
+                  Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
+                }}
+              />
+            </View>
+          ) : null}
         </View>
-      </TouchableWithoutFeedback>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            margin: 12,
+          }}>
+          <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
+          <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
+        </View>
+      </View>
     );
   }
 
@@ -367,51 +360,45 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   renderComment(blogPostComment: IBlogPostComment) {
     return (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-          this.commentFieldRef?.current?.confirmDiscard();
-        }}>
-        <View>
-          <ListItem
-            style={{ justifyContent: 'flex-start', alignItems: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
-            leftElement={
-              <GridAvatars
-                users={[blogPostComment.author.userId || require('ASSETS/images/resource-avatar.png')]}
-                fallback={require('ASSETS/images/resource-avatar.png')}
-              />
-            }
-            rightElement={
-              <View style={{ flex: 1, marginLeft: 15 }}>
-                <View style={{ flexDirection: 'row' }}>
-                  <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: 5, maxWidth: '70%' }}>
-                    {blogPostComment.author.username}
-                  </TextSemiBold>
-                  <TextLight style={{ fontSize: 10 }}>{moment(blogPostComment.created).fromNow()}</TextLight>
-                </View>
-                <TextPreview
-                  textContent={blogPostComment.comment}
-                  numberOfLines={5}
-                  textStyle={{
-                    color: CommonStyles.textColor,
-                    fontFamily: CommonStyles.primaryFontFamily,
-                    fontSize: 12,
-                    marginTop: 5,
-                  }}
-                  expandMessage={I18n.t('common.readMore')}
-                  expansionTextStyle={{ fontSize: 12 }}
-                  additionalText={
-                    blogPostComment.modified ? (
-                      <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>
-                    ) : undefined
-                  }
-                />
-                {this.renderCommentActions(blogPostComment)}
+      <View>
+        <ListItem
+          style={{ justifyContent: 'flex-start', alignItems: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
+          leftElement={
+            <GridAvatars
+              users={[blogPostComment.author.userId || require('ASSETS/images/resource-avatar.png')]}
+              fallback={require('ASSETS/images/resource-avatar.png')}
+            />
+          }
+          rightElement={
+            <View style={{ flex: 1, marginLeft: 15 }}>
+              <View style={{ flexDirection: 'row' }}>
+                <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: 5, maxWidth: '70%' }}>
+                  {blogPostComment.author.username}
+                </TextSemiBold>
+                <TextLight style={{ fontSize: 10 }}>{moment(blogPostComment.created).fromNow()}</TextLight>
               </View>
-            }
-          />
-        </View>
-      </TouchableWithoutFeedback>
+              <TextPreview
+                textContent={blogPostComment.comment}
+                numberOfLines={5}
+                textStyle={{
+                  color: CommonStyles.textColor,
+                  fontFamily: CommonStyles.primaryFontFamily,
+                  fontSize: 12,
+                  marginTop: 5,
+                }}
+                expandMessage={I18n.t('common.readMore')}
+                expansionTextStyle={{ fontSize: 12 }}
+                additionalText={
+                  blogPostComment.modified ? (
+                    <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>
+                  ) : undefined
+                }
+              />
+              {this.renderCommentActions(blogPostComment)}
+            </View>
+          }
+        />
+      </View>
     );
   }
 
@@ -421,6 +408,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const { navigation } = this.props;
     const blogPost = navigation.getParam('blogPost');
     const blog = navigation.getParam('blog');
+
     if (blog && blogPost) {
       this.setState({
         blogInfos: blog,
@@ -428,12 +416,20 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
     } else this.doInit();
+
+    this.showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
+      this.commentFieldRef?.current?.confirmDiscard();
+    });
+  }
+
+  componentWillUnmount() {
+    this.showSubscription?.remove();
   }
 
   private updateVisible(isVisible: boolean) {
-    // console.log("updateVisible", isVisible);
-    if (this.state.showHeaderTitle && isVisible) this.setState({ showHeaderTitle: false });
-    else if (!this.state.showHeaderTitle && !isVisible) this.setState({ showHeaderTitle: true });
+    const { showHeaderTitle } = this.state;
+    if (showHeaderTitle && isVisible) this.setState({ showHeaderTitle: false });
+    else if (!showHeaderTitle && !isVisible) this.setState({ showHeaderTitle: true });
   }
 
   // METHODS ======================================================================================

@@ -44,7 +44,8 @@ const CommentField = (props: ICommentField_Props, ref) => {
     setPublishButtonWidth(undefined);
   };
   const confirmDiscard = (quitCallback?: Function, continueCallback?: Function) => {
-    comment &&
+    !props.isPublishingComment &&
+      comment &&
       Alert.alert(
         I18n.t(`common.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
         I18n.t(`common.comment.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
