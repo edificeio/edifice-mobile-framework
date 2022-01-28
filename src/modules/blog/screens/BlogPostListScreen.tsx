@@ -154,11 +154,11 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         <HeaderCenter>
           {selectedBlogTitle ? (
             <>
-              <HeaderTitle>{selectedBlogTitle}</HeaderTitle>
+              <HeaderTitle numberOfLines={1}>{selectedBlogTitle}</HeaderTitle>
               <HeaderSubtitle>{I18n.t('blog.appName')}</HeaderSubtitle>
             </>
           ) : (
-            <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
+            <HeaderTitle numberOfLines={2}>{I18n.t('blog.appName')}</HeaderTitle>
           )}
         </HeaderCenter>
       </HeaderRow>
