@@ -289,18 +289,6 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     );
   }
 
-  // Lifecycle
-
-  async componentDidUpdate() {
-    // On successful login, save the platformId in Async Storage
-    const {
-      navigation,
-      auth: { loggedIn },
-    } = this.props;
-    const platformId = navigation.getParam('platformId') || this.props.auth.platformId;
-    loggedIn && (await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId));
-  }
-
   // Event handlers
 
   protected async handleLogin() {

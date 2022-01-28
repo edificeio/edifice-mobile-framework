@@ -109,7 +109,6 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
       reset(getLoginStackToDisplay(platformId));
       SplashScreen.hide();
     }
-
     this.handleAppStateChange('active'); // Call this manually after Tracker is set up
   }
 

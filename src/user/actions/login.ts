@@ -70,18 +70,17 @@ export enum DEPRECATED_LoginResult {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-let checkingIOSPermissions = false;
-
 export function loginAction(
   redirectOnError: boolean = false,
   credentials?: { username: string; password: string; rememberMe: boolean },
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const pf = DEPRECATED_getCurrentPlatform();
     try {
       // === 0: Init login
       console.log('0: Init login');
       try {
-        if (!DEPRECATED_getCurrentPlatform()) throw new Error('[login] Must specify a platform');
+        if (!pf) throw new Error('[login] Must specify a platform');
         if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[login] no active oauth connection');
 
         dispatch({ type: actionTypeRequestLogin });
@@ -94,7 +93,7 @@ export function loginAction(
       console.log('1: Get oAuth token from somewhere (server or local storage)');
       try {
         if (credentials) {
-          await OAuth2RessourceOwnerPasswordClient.connection.getNewToken(
+          await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
             credentials.username,
             credentials.password,
             false, // Do not save token until login is completely successful
@@ -193,7 +192,7 @@ export function loginAction(
           userdata,
           userPublicInfo: userPublicInfo.result[0],
         });
-        credentials?.rememberMe && OAuth2RessourceOwnerPasswordClient.connection.saveToken();
+        (credentials?.rememberMe || pf.wayf) && OAuth2RessourceOwnerPasswordClient.connection.saveToken();
       } catch (err) {
         console.warn('[login] userinfo fetch failed');
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
@@ -215,13 +214,16 @@ export function loginAction(
             ? userinfo2.structures[0]
             : 'no structure',
         ),
-        Trackers.setCustomDimension(3, 'Project', DEPRECATED_getCurrentPlatform()!.url.replace(/(^\w+:|^)\/\//, '')), // remove protocol
+        Trackers.setCustomDimension(3, 'Project', pf!.url.replace(/(^\w+:|^)\/\//, '')), // remove protocol
       ]);
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN');
       // Track manual login (with credentials)
       else await Trackers.trackDebugEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
-      // === 8: navigate back to the main screen
+      // === 8: Store Curreet Platform
+      await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, pf.name);
+
+      // === 9: navigate back to the main screen
       console.log('8: navigate back to the main screen');
       navigate('Main');
     } catch (err) {
@@ -231,7 +233,7 @@ export function loginAction(
       if (err.type === OAuthErrorType.BAD_CREDENTIALS) {
         try {
           if (credentials) {
-            const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/activation/match`, {
+            const res = await fetch(`${pf!.url}/auth/activation/match`, {
               body: JSON.stringify({
                 login: credentials.username,
                 password: credentials.password,

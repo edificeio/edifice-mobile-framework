@@ -11,12 +11,11 @@ import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IOAuthToken, OAuthCustomTokens, OAuthErrorType, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
-import { FlatButton } from '~/ui';
+import { FlatButton, Loading } from '~/ui';
 import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
@@ -123,8 +122,20 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Display error message
   displayError(error: string) {
-    this.error = error;
-    this.setState({ mode: WAYFPageMode.ERROR });
+    this.clearCookies(() => {
+      this.error = error;
+      this.setState({ mode: WAYFPageMode.ERROR });
+    });
+  }
+
+  // Display loading screen
+  displayLoading() {
+    this.setState({ mode: WAYFPageMode.LOADING });
+  }
+
+  // Display user selection
+  displaySelect() {
+    this.setState({ mode: WAYFPageMode.SELECT });
   }
 
   // Display WebView
@@ -133,19 +144,64 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.clearCookies(() => this.setState({ dropdownOpened: false, mode: WAYFPageMode.WEBVIEW }));
   }
 
+  // Get oAuth token with given SAML response
+  getOAuthToken(saml: string) {
+    this.samlResponse = saml;
+    Trackers.trackDebugEvent('Auth', 'WAYF', 'SAML');
+    this.displayLoading();
+    // Call oauth2 token api
+    OAuth2RessourceOwnerPasswordClient.connection
+      ?.getNewTokenWithSAML(this.samlResponse)
+      .then(data => {
+        // Manage unique user
+        if ((data as IOAuthToken).access_token) {
+          this.login();
+          return;
+        }
+        // Otherwise send error
+        throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
+          OAuthErrorType.BAD_RESPONSE,
+          'no access_token returned',
+          '',
+          { data },
+        );
+      })
+      .catch(error => {
+        // Manage multiple users
+        if (error.error === OAuthErrorType.MULTIPLE_VECTOR) {
+          try {
+            // Extract users from error description
+            const data = JSON.parse(error.error_description);
+            (data.users as OAuthCustomTokens).forEach(token => {
+              this.dropdownItems.push({ label: token.structureName, value: token.key });
+            });
+            // Display users selection
+            this.displaySelect();
+            return;
+          } catch {
+            // Malformed multiple users error description
+            this.displayError(OAuthErrorType.BAD_RESPONSE);
+          }
+        }
+        // Othherwise display received error
+        this.displayError(error.type);
+      });
+  }
+
   // Login with current oAuth token
   login() {
-    this.setState({ mode: WAYFPageMode.LOADING });
-    this.props.dispatch(checkVersionThenLogin(false));
+    this.clearCookies(() => {
+      Trackers.trackDebugEvent('Auth', 'WAYF', 'LOGIN');
+      this.displayLoading();
+      this.props.dispatch(checkVersionThenLogin(false));
+    });
   }
 
   // Login with selected token
   loginWithCustomToken() {
-    // SAML token found
     Trackers.trackDebugEvent('Auth', 'WAYF', 'CUSTOM_TOKEN');
-    // Display loading sreen
-    this.setState({ mode: WAYFPageMode.LOADING });
-    // Call oauth2 token api with received SAML token
+    this.displayLoading();
+    // Call oauth2 token api with seleted custom token
     this.dropdownValue &&
       OAuth2RessourceOwnerPasswordClient.connection
         ?.getNewTokenWithCustomToken(this.dropdownValue)
@@ -164,7 +220,6 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           );
         })
         .catch(error => {
-          // Display error
           this.displayError(error.type);
         });
   }
@@ -174,8 +229,8 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     const { navigation } = this.props;
     switch (mode) {
       case WAYFPageMode.ERROR:
-        // Go to top of navigation stack
-        this.clearCookies(() => navigation.navigate('LoginWAYF'));
+        // Go to top of wayf navigation stack
+        navigation.navigate('LoginWAYF');
         break;
       case WAYFPageMode.SELECT:
         // Go back to WebView mode
@@ -197,41 +252,8 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     const components = innerHTML.split('name="SAMLResponse" value="');
     if (components?.length === 2) {
       const index = components[1].indexOf('"');
-      if (index > 0) {
-        // SAML token found
-        Trackers.trackDebugEvent('Auth', 'WAYF', 'SAML');
-        // Display loading sreen
-        this.setState({ mode: WAYFPageMode.LOADING });
-        // Call oauth2 token api with received SAML token
-        this.samlResponse = components[1].substring(0, index);
-        OAuth2RessourceOwnerPasswordClient.connection
-          ?.getNewTokenWithSAML(this.samlResponse)
-          .then(data => {
-            // Manage unique user
-            if ((data as IOAuthToken).access_token) {
-              this.login();
-              return;
-            }
-            // Manage multiple users
-            if ((data as OAuthCustomTokens).length) {
-              (data as OAuthCustomTokens).forEach(token => {
-                this.dropdownItems.push({ label: token.structureName, value: token.key });
-                this.setState({ mode: WAYFPageMode.SELECT });
-              });
-            }
-            // Otherwise send error
-            throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-              OAuthErrorType.BAD_RESPONSE,
-              'no access_token returned',
-              '',
-              { data },
-            );
-          })
-          .catch(error => {
-            // Display error
-            this.displayError(error.type);
-          });
-      }
+      // Call oauth2 token api with received SAML if any
+      if (index > 0) this.getOAuthToken(components[1].substring(0, index));
     }
   }
 
@@ -318,9 +340,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
                 placeholder={I18n.t('login-wayf-select-placeholder')}
                 placeholderStyle={WAYFPage.STYLES.selectPlaceholder}
                 setOpen={() => this.setState({ dropdownOpened: !dropdownOpened })}
-                setValue={callback => {
-                  this.dropdownValue = callback();
-                }}
+                setValue={callback => (this.dropdownValue = callback())}
                 showTickIcon={false}
                 style={WAYFPage.STYLES.select}
                 textStyle={WAYFPage.STYLES.selectText}
@@ -348,7 +368,9 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
             onMessage={(event: WebViewMessageEvent) => this.onMessage(event)}
             onNavigationStateChange={(navigationState: WebViewNavigation) => this.onNavigationStateChange(navigationState)}
             onShouldStartLoadWithRequest={(request: ShouldStartLoadRequest) => this.onShouldStartLoadWithRequest(request)}
-            renderLoading={() => <LoadingIndicator />}
+            renderLoading={() => <Loading />}
+            scalesPageToFit
+            showsHorizontalScrollIndicator={false}
             source={{ uri: this.wayfUrl }}
             setSupportMultipleWindows={false}
             startInLoadingState

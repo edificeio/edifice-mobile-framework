@@ -55,7 +55,7 @@ export const EmptyScreen = ({
           style={{
             textAlign: 'center',
             width: '80%',
-            marginVertical: 20
+            marginVertical: 20,
           }}>
           {title}
         </TextSemiBold>

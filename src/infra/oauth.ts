@@ -35,19 +35,20 @@ export type OAuthCustomTokens = IOAuthCustomToken[];
 
 export enum OAuthErrorType {
   // Response errors
-  INVALID_CLIENT = 'invalid_client',
-  INVALID_GRANT = 'invalid_grant',
   BAD_CREDENTIALS = 'bad_credentials',
   BLOCKED_USER = 'blocked_user',
-  TOO_MANY_TRIES = 'too_many_tries',
+  INVALID_CLIENT = 'invalid_client',
+  INVALID_GRANT = 'invalid_grant',
+  MULTIPLE_VECTOR = 'multiple_vector_choice',
   PLATFORM_UNAVAILABLE = 'platform_unavailable',
   TOO_LOAD = 'too_load',
+  TOO_MANY_TRIES = 'too_many_tries',
   UNKNOWN_DENIED = 'unknown_denied',
   UNKNOWN_RESPONSE = 'unknown_response',
   // Non-response errors
+  BAD_RESPONSE = 'bad_response',
   NETWORK_ERROR = 'network_error',
   PARSE_ERROR = 'parse_error',
-  BAD_RESPONSE = 'bad_response',
   // Not initialized
   NOT_INITIALIZED = 'not_initilized',
 }
@@ -264,26 +265,24 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
-   * Get a fresh new access token with owner credentials
+   * Get a fresh new access token with given grant  type and body parameters
    */
-  public async getNewToken(username: string, password: string, saveToken: boolean = true): Promise<IOAuthToken> {
+  private async getNewToken(grantType: string, parms: any, saveToken: boolean = true): Promise<IOAuthToken> {
     if (!this.clientInfo) {
       throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
     }
     // 1: Build request
     const body = {
+      ...parms,
       client_id: this.clientInfo.clientId,
       client_secret: this.clientInfo.clientSecret,
-      grant_type: 'password',
+      grant_type: grantType,
       scope: this.clientInfo.scopeString,
-      username,
-      password,
     };
     const headers = {
       ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
       Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
     };
-
     try {
       // 2: Call oAuth API
       const data = await this.request(this.accessTokenUri, {
@@ -316,101 +315,21 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Get a fresh new access token with custom token
    */
   public async getNewTokenWithCustomToken(token: string, saveToken: boolean = true): Promise<IOAuthToken> {
-    if (!this.clientInfo) {
-      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
-    }
-    // Build request body
-    const body = {
-      client_id: this.clientInfo.clientId,
-      client_secret: this.clientInfo.clientSecret,
-      custom_token: token,
-      grant_type: 'custom_token',
-      scope: this.clientInfo.scopeString,
-    };
-    // Build request headers
-    const headers = {
-      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
-      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
-    };
-    try {
-      // Call oAuth API
-      const data = await this.request(this.accessTokenUri, {
-        body,
-        headers,
-        method: 'POST',
-      });
-      // Manage token i any
-      if (data.hasOwnProperty('access_token')) {
-        this.token = {
-          ...data,
-          expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
-        };
-        saveToken && (await this.saveToken());
-        this.generateUniqueSesionIdentifier();
-        return this.token!;
-      }
-      // Error
-      throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
-    } catch (err) {
-      // Manage error
-      const error = err as Error;
-      // tslint:disable-next-line:no-console
-      console.warn('Get token with custom token failed: ', error);
-      error.name = '[oAuth] getToken failed: ' + error.name;
-      throw error;
-    }
+    return this.getNewToken('custom_token', { custom_token: token }, saveToken);
   }
 
   /**
    * Get a fresh new access token with SAML Token
    */
   public async getNewTokenWithSAML(saml: string, saveToken: boolean = true): Promise<IOAuthToken | IOAuthCustomToken[]> {
-    if (!this.clientInfo) {
-      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
-    }
-    // Build request body
-    const body = {
-      assertion: saml,
-      client_id: this.clientInfo.clientId,
-      client_secret: this.clientInfo.clientSecret,
-      grant_type: 'saml2',
-      scope: this.clientInfo.scopeString,
-    };
-    // Build request headers
-    const headers = {
-      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
-      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
-    };
-    try {
-      // Call oAuth API
-      const data = await this.request(this.accessTokenUri, {
-        body,
-        headers,
-        method: 'POST',
-      });
-      // Manage token i any
-      if (data.hasOwnProperty('access_token')) {
-        this.token = {
-          ...data,
-          expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
-        };
-        saveToken && (await this.saveToken());
-        this.generateUniqueSesionIdentifier();
-        return this.token!;
-      }
-      if (data.hasOwnProperty('users')) {
-        return data.users;
-      }
-      // Error
-      throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
-    } catch (err) {
-      // Manage error
-      const error = err as Error;
-      // tslint:disable-next-line:no-console
-      console.warn('Get token with SAML failed: ', error);
-      error.name = '[oAuth] getToken failed: ' + error.name;
-      throw error;
-    }
+    return this.getNewToken('saml2', { assertion: saml }, saveToken);
+  }
+
+  /**
+   * Get a fresh new access token with owner credentials
+   */
+  public async getNewTokenWithUserAndPassword(username: string, password: string, saveToken: boolean = true): Promise<IOAuthToken> {
+    return this.getNewToken('password', { username, password }, saveToken);
   }
 
   /**
@@ -419,10 +338,12 @@ export class OAuth2RessourceOwnerPasswordClient {
   public async loadToken(): Promise<IOAuthToken | undefined> {
     try {
       const rawStoredToken = await AsyncStorage.getItem('token');
+      console.log('rawStoredToken =  ' + rawStoredToken);
       if (!rawStoredToken) {
         return undefined;
       }
       const storedToken = JSON.parse(rawStoredToken);
+      console.log('storedToken =  ' + storedToken);
       if (!storedToken) {
         const err = new Error('[oAuth] loadToken: Unable to parse stored token');
         throw err;
@@ -432,6 +353,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         expires_at: new Date(storedToken.expires_at),
       };
       this.generateUniqueSesionIdentifier();
+      console.log('this.token =  ' + this.token);
       return this.token!;
     } catch (err) {
       console.warn('[oAuth] loadToken: ', err);
