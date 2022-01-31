@@ -95,10 +95,9 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
   }
 
-  async componentDidUpdate() {
-    const { auth } = this.props;
-    // Display login error if any
-    auth.error && this.displayError(auth.error);
+  componentWillUpdate(nextProps) {
+    const { auth } = nextProps;
+    auth?.error?.length > 0 && auth.error !== this.error && this.displayError(auth.error);
   }
 
   // Clear WebView cookies and execute given callback when done
@@ -144,30 +143,28 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.clearCookies(() => this.setState({ dropdownOpened: false, mode: WAYFPageMode.WEBVIEW }));
   }
 
-  // Get oAuth token with given SAML response
-  getOAuthToken(saml: string) {
-    this.samlResponse = saml;
+  // Get oAuth token with received SAML response
+  getOAuthToken() {
     Trackers.trackDebugEvent('Auth', 'WAYF', 'SAML');
     this.displayLoading();
     // Call oauth2 token api
     OAuth2RessourceOwnerPasswordClient.connection
-      ?.getNewTokenWithSAML(this.samlResponse)
+      ?.getNewTokenWithSAML(this.samlResponse!)
       .then(data => {
-        // Manage unique user
+        // Manage unique user, otherwise send error
         if ((data as IOAuthToken).access_token) {
           this.login();
-          return;
+        } else {
+          throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
+            OAuthErrorType.BAD_RESPONSE,
+            'no access_token returned',
+            '',
+            { data },
+          );
         }
-        // Otherwise send error
-        throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-          OAuthErrorType.BAD_RESPONSE,
-          'no access_token returned',
-          '',
-          { data },
-        );
       })
       .catch(error => {
-        // Manage multiple users
+        // Manage multiple users, othherwise display received error
         if (error.error === OAuthErrorType.MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
@@ -177,14 +174,11 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
             });
             // Display users selection
             this.displaySelect();
-            return;
           } catch {
             // Malformed multiple users error description
             this.displayError(OAuthErrorType.BAD_RESPONSE);
           }
-        }
-        // Othherwise display received error
-        this.displayError(error.type);
+        } else this.displayError(error.type);
       });
   }
 
@@ -193,6 +187,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.clearCookies(() => {
       Trackers.trackDebugEvent('Auth', 'WAYF', 'LOGIN');
       this.displayLoading();
+      this.samlResponse = null;
       this.props.dispatch(checkVersionThenLogin(false));
     });
   }
@@ -206,18 +201,17 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       OAuth2RessourceOwnerPasswordClient.connection
         ?.getNewTokenWithCustomToken(this.dropdownValue)
         .then(data => {
-          // Manage unique user
+          // Manage unique user, otherwise send error
           if ((data as IOAuthToken).access_token) {
             this.login();
-            return;
+          } else {
+            throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
+              OAuthErrorType.BAD_RESPONSE,
+              'no access_token returned',
+              '',
+              { data },
+            );
           }
-          // Otherwise send error
-          throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-            OAuthErrorType.BAD_RESPONSE,
-            'no access_token returned',
-            '',
-            { data },
-          );
         })
         .catch(error => {
           this.displayError(error.type);
@@ -238,11 +232,11 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         break;
       case WAYFPageMode.WEBVIEW:
         // Go back through WebView history if possible otherwise go back through navigation stack
-        (this.webviewCanGoBack && this.webview?.goBack()) || (!this.webviewCanGoBack && this.props.navigation.goBack());
+        (this.webviewCanGoBack && this.webview?.goBack()) ||
+          (!this.webviewCanGoBack && this.clearCookies(() => this.props.navigation.goBack()));
         break;
     }
   }
-
   // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)
   // See WebView onMessage property
   onMessage(event: WebViewMessageEvent) {
@@ -253,7 +247,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     if (components?.length === 2) {
       const index = components[1].indexOf('"');
       // Call oauth2 token api with received SAML if any
-      if (index > 0) this.getOAuthToken(components[1].substring(0, index));
+      if (index > 0) this.samlResponse = components[1].substring(0, index);
     }
   }
 
@@ -274,8 +268,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     //   - No SAMLResponse has been detected
     //   - WAYF redirects to web standard login page
     const url = request.url;
-    if (!this.samlResponse && this.pfUrl && url.startsWith(this.pfUrl)) {
-      this.props.navigation.navigate('LoginHome');
+    if (this.pfUrl && url.startsWith(this.pfUrl)) {
+      if (this.samlResponse) {
+        this.getOAuthToken();
+      } else {
+        this.props.navigation.navigate('LoginHome');
+      }
       return false;
     }
     return true;
@@ -352,7 +350,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
                   disabled={this.dropdownValue === null}
                   onPress={() => this.loginWithCustomToken()}
                 />
-                <Text style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Text>
+                {/*<Text style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Text>*/}
               </View>
             </View>
           </TouchableWithoutFeedback>
