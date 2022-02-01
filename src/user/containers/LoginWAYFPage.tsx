@@ -11,7 +11,7 @@ import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { FlatButton } from '~/ui';
 
-const Logo = style.image({ height: 75, width: 300, resizeMode: 'contain' });
+export const Logo = style.image({ height: 100, width: 100, resizeMode: 'contain' });
 
 export interface ILoginWAYFPageProps {
   navigation?: any;

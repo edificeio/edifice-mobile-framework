@@ -9,6 +9,8 @@ import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-we
 import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
+import { Logo } from './LoginWAYFPage';
+
 import theme from '~/app/theme';
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -20,8 +22,6 @@ import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
-
-const Logo = style.image({ height: 75, width: 300, resizeMode: 'contain' });
 
 enum WAYFPageMode {
   ERROR,
@@ -100,13 +100,14 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     auth?.error?.length > 0 && auth.error !== this.error && this.displayError(auth.error);
   }
 
-  // Clear WebView cookies and execute given callback when done
-  clearCookies(callback: Function) {
+  // Clear datas (WebView cookies, etc.) and execute given callback when done
+  clearDatas(callback: Function) {
     const { navigation } = this.props;
     // Clear cookies
     CookieManager.clearAll(true)
       .then(_success => {
         // Clear some stuff
+        this.error = '';
         this.dropdownItems = [];
         this.dropdownValue = null;
         this.samlResponse = null;
@@ -121,7 +122,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Display error message
   displayError(error: string) {
-    this.clearCookies(() => {
+    this.clearDatas(() => {
       this.error = error;
       this.setState({ mode: WAYFPageMode.ERROR });
     });
@@ -140,7 +141,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Display WebView
   displayWebview() {
     // Clear cookies and then go to WebView mode
-    this.clearCookies(() => this.setState({ dropdownOpened: false, mode: WAYFPageMode.WEBVIEW }));
+    this.clearDatas(() => this.setState({ dropdownOpened: false, mode: WAYFPageMode.WEBVIEW }));
   }
 
   // Get oAuth token with received SAML response
@@ -184,7 +185,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Login with current oAuth token
   login() {
-    this.clearCookies(() => {
+    this.clearDatas(() => {
       Trackers.trackDebugEvent('Auth', 'WAYF', 'LOGIN');
       this.displayLoading();
       this.samlResponse = null;
@@ -233,7 +234,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       case WAYFPageMode.WEBVIEW:
         // Go back through WebView history if possible otherwise go back through navigation stack
         (this.webviewCanGoBack && this.webview?.goBack()) ||
-          (!this.webviewCanGoBack && this.clearCookies(() => this.props.navigation.goBack()));
+          (!this.webviewCanGoBack && this.clearDatas(() => this.props.navigation.goBack()));
         break;
     }
   }
