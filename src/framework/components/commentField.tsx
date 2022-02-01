@@ -3,11 +3,12 @@ import * as React from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import theme from '~/app/theme';
-import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-import { getUserSession } from '../util/session';
 import { LoadingIndicator } from './loading';
 import { TextAction } from './text';
+
+import theme from '~/app/theme';
+import { getUserSession } from '~/framework/util/session';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 // TYPES ==========================================================================================
 
@@ -22,6 +23,7 @@ export type ICommentField_Props = ICommentField_DataProps & ICommentField_EventP
 // COMPONENT ======================================================================================
 
 const CommentField = (props: ICommentField_Props, ref) => {
+  let alertDisplayed = false; //  Due to Alert + Keyboard bug, we need to set/unset a flag when Alert is displayed/discarded
   const inputRef: { current: TextInput | undefined } = React.useRef();
   const session = useSelector(state => getUserSession(state));
   const [comment, setComment] = React.useState<string>('');
@@ -44,8 +46,8 @@ const CommentField = (props: ICommentField_Props, ref) => {
     setPublishButtonWidth(undefined);
   };
   const confirmDiscard = (quitCallback?: Function, continueCallback?: Function) => {
-    !props.isPublishingComment &&
-      comment &&
+    if (!props.isPublishingComment && !alertDisplayed && comment) {
+      alertDisplayed = true; //  Due to Alert + Keyboard bug, we need to set a flag when Alert is displayed
       Alert.alert(
         I18n.t(`common.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
         I18n.t(`common.comment.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
@@ -53,15 +55,26 @@ const CommentField = (props: ICommentField_Props, ref) => {
           {
             text: I18n.t('common.quit'),
             style: 'destructive',
-            onPress: () => (quitCallback ? quitCallback() : clearCommentField()),
+            onPress: () => {
+              //  Due to Alert + Keyboard bug, we need to unset a flag when Alert is discarded
+              alertDisplayed = false;
+              // eslint-disable-next-line @babel/no-unused-expressions
+              quitCallback ? quitCallback() : clearCommentField();
+            },
           },
           {
             text: I18n.t('common.continue'),
             style: 'default',
-            onPress: () => (continueCallback ? continueCallback() : inputRef.current && inputRef.current.focus()),
+            onPress: () => {
+              //  Due to Alert + Keyboard bug, we need to unset a flag when Alert is discardeds
+              alertDisplayed = false;
+              // eslint-disable-next-line @babel/no-unused-expressions
+              continueCallback ? continueCallback() : inputRef.current && inputRef.current.focus();
+            },
           },
         ],
       );
+    }
   };
   const getCommentId = () => {
     return commentId;

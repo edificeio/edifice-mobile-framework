@@ -1,3 +1,4 @@
+import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
@@ -18,10 +19,13 @@ import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { Viewport } from '@skele/components';
+
+import { IDisplayedBlog } from './BlogExplorerScreen';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
+import CommentField from '~/framework/components/commentField';
 import {
   FakeHeader,
   HeaderAction,
@@ -37,7 +41,10 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { TextSemiBold, TextLight, TextLightItalic, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
+import { resourceHasRight } from '~/framework/util/resourceRights';
+import { getUserSession, IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import {
   deleteBlogPostCommentAction,
@@ -47,19 +54,17 @@ import {
 } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlogPostComment, IBlogPost, IBlog } from '~/modules/blog/reducer';
+import {
+  commentBlogPostResourceRight,
+  deleteCommentBlogPostResourceRight,
+  updateCommentBlogPostResourceRight,
+} from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
-import { openUrl } from '~/framework/util/linking';
-import CommentField from '~/framework/components/commentField';
-import { resourceHasRight } from '~/framework/util/resourceRights';
-import { commentBlogPostResourceRight, deleteCommentBlogPostResourceRight, updateCommentBlogPostResourceRight } from '../rights';
-import { getUserSession, IUserSession } from '~/framework/util/session';
-import { IDisplayedBlog } from './BlogExplorerScreen';
 
 // TYPES ==========================================================================================
 
@@ -424,7 +429,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       });
     } else this.doInit();
 
-    this.showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
+    this.showSubscription = Keyboard.addListener('keyboardDidHide', () => {
       this.commentFieldRef?.current?.confirmDiscard();
     });
   }
