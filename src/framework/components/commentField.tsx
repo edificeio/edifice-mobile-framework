@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, InteractionManager, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { LoadingIndicator } from './loading';
@@ -23,7 +23,10 @@ export type ICommentField_Props = ICommentField_DataProps & ICommentField_EventP
 // COMPONENT ======================================================================================
 
 const CommentField = (props: ICommentField_Props, ref) => {
-  let alertDisplayed = false; //  Due to Alert + Keyboard bug, we need to set/unset a flag when Alert is displayed/discarded
+  //  Due to Alert + Keyboard bug, we need to set/unset a flag when Alert is displayed/discarded
+  let alertDisplayed = false;
+  const resetAlertDisplay = () => InteractionManager.runAfterInteractions(() => (alertDisplayed = false));
+
   const inputRef: { current: TextInput | undefined } = React.useRef();
   const session = useSelector(state => getUserSession(state));
   const [comment, setComment] = React.useState<string>('');
@@ -56,20 +59,18 @@ const CommentField = (props: ICommentField_Props, ref) => {
             text: I18n.t('common.quit'),
             style: 'destructive',
             onPress: () => {
-              //  Due to Alert + Keyboard bug, we need to unset a flag when Alert is discarded
-              alertDisplayed = false;
               // eslint-disable-next-line @babel/no-unused-expressions
               quitCallback ? quitCallback() : clearCommentField();
+              resetAlertDisplay();
             },
           },
           {
             text: I18n.t('common.continue'),
             style: 'default',
             onPress: () => {
-              //  Due to Alert + Keyboard bug, we need to unset a flag when Alert is discardeds
-              alertDisplayed = false;
               // eslint-disable-next-line @babel/no-unused-expressions
               continueCallback ? continueCallback() : inputRef.current && inputRef.current.focus();
+              resetAlertDisplay();
             },
           },
         ],
