@@ -98,7 +98,7 @@
       "emptyScreenText": "¡Póngase la gorra del pequeño reportero para crear un blog! Publique y comparta fácilmente su información, integrando diferentes contenidos multimedia.",
       "emptyScreenTextNoCreationRights": "No hay ningún blog todavía. El Blog facilita compartir la información integrando diferentes contenidos multimedia. Sugiera ideas a su escuela (actividades de la clase, viajes escolares, exposiciones, etc.).",
       "emptyScreenTitle": "No hay ningún blog a la vista...",
-      "rootItemName": "Blogs"
+      "rootItemName": "Blog"
     },
     "blogPostListScreen": {
       "emptyScreen": {
@@ -117,7 +117,7 @@
       "sharedToNbPersons": "Compartido con {{nb}} personas",
       "title": "Seleccionar un blog"
     },
-    "appName": "Blogs",
+    "appName": "Blog",
     "resourceName": "Entrada de blog",
     "tabName": "Blog"
   },

@@ -98,7 +98,7 @@
       "emptyScreenText": "Put on your junior reporter’s hat and write a Blog! Easily publish and share information and incorporate a wide range of multimedia content.",
       "emptyScreenTextNoCreationRights": "No Blogs have been created yet. The Blog lets you easily share information by incorporating a wide range of multimedia content. Use it to suggest ideas to your school (for your next discussion group, field trip, exposition, etc.)",
       "emptyScreenTitle": "No Blogs in sight...",
-      "rootItemName": "Blogs"
+      "rootItemName": "Blog"
     },
     "blogPostListScreen": {
       "emptyScreen": {
@@ -117,7 +117,7 @@
       "sharedToNbPersons": "Shared with {{nb}} people",
       "title": "Choose a blog"
     },
-    "appName": "Blogs",
+    "appName": "Blog",
     "resourceName": "Blog post",
     "tabName": "Blog"
   },

@@ -98,7 +98,7 @@
       "emptyScreenText": "Endossez la casquette du petit reporter en créant un Blog ! Publiez et partagez facilement vos informations, en y intégrant différents contenus multimédias.",
       "emptyScreenTextNoCreationRights": "Il n'y a pas encore de Blog. Le Blog permet de partager facilement des informations en y intégrant différents contenus multimédias. Proposez des idées à votre école (la vie de la classe, les voyages scolaires, des expos, ...).",
       "emptyScreenTitle": "Aucun blog à l'hoziron...",
-      "rootItemName": "Blogs"
+      "rootItemName": "Blog"
     },
     "blogPostListScreen": {
       "emptyScreen": {
@@ -117,7 +117,7 @@
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"
     },
-    "appName": "Blogs",
+    "appName": "Blog",
     "resourceName": "Billet de blog",
     "tabName": "Blog"
   },
