@@ -36,6 +36,7 @@ import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlogPost, IBlogPostList } from '~/modules/blog/reducer';
 import { getBlogPostRight } from '~/modules/blog/rights';
 import { blogService } from '~/modules/blog/service';
+import { computeRelativePath } from '~/framework/util/navigation';
 
 // TYPES ==========================================================================================
 
@@ -136,7 +137,10 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
     });
 
   const onOpenBlogPost = (item: IBlogPost) => {
-    props.navigation.navigate(`${moduleConfig.routeName}/details`, { blogPost: item, blog: selectedBlog });
+    props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), {
+      blogPost: item,
+      blog: selectedBlog,
+    });
   };
 
   // HEADER =====================================================================================
