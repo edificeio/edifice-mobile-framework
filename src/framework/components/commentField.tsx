@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, InteractionManager, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { LoadingIndicator } from './loading';
@@ -25,7 +25,7 @@ export type ICommentField_Props = ICommentField_DataProps & ICommentField_EventP
 const CommentField = (props: ICommentField_Props, ref) => {
   //  Due to Alert + Keyboard bug, we need to set/unset a flag when Alert is displayed/discarded
   let alertDisplayed = false;
-  const resetAlertDisplay = () => InteractionManager.runAfterInteractions(() => (alertDisplayed = false));
+  const resetAlertDisplay = () => setTimeout(() => (alertDisplayed = false), 0);
 
   const inputRef: { current: TextInput | undefined } = React.useRef();
   const session = useSelector(state => getUserSession(state));
