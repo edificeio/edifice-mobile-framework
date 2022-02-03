@@ -1,6 +1,7 @@
 import style from 'glamorous-native';
 import * as React from 'react';
 import { ImageProps, ImageURISource } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { shallowEqual } from 'react-redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -17,14 +18,14 @@ const StyledImage = {
   borderWidth: 1,
 };
 
-const LargeImage = style.image({
+const LargeImage = style(FastImage)({
   ...StyledImage,
   borderRadius: 24,
   height: 45,
   width: 45,
 });
 
-const MediumImage = style.image({
+const MediumImage = style(FastImage)({
   ...StyledImage,
   borderRadius: 16,
   height: 35,
@@ -68,14 +69,14 @@ const MediumContainer = style.view({
   backgroundColor: '#EEEEEE',
 });
 
-const AlignedImage = style.image({
+const AlignedImage = style(FastImage)({
   ...StyledImage,
   borderRadius: 16,
   height: 29,
   width: 29,
 });
 
-const VeryLargeImage = style.image(
+const VeryLargeImage = style(FastImage)(
   {
     ...StyledImage,
     alignSelf: 'center',
@@ -89,7 +90,7 @@ const VeryLargeImage = style.image(
   }),
 );
 
-const SmallImage = style.image(
+const SmallImage = style(FastImage)(
   {
     borderColor: 'white',
     borderWidth: 1,
@@ -138,7 +139,7 @@ export interface IAvatarProps {
   fallback?: ImageURISource;
 }
 
-export class Avatar extends React.Component<IAvatarProps, { status: 'initial' | 'loading' | 'success' | 'failed' }> {
+export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'loading' | 'success' | 'failed' }> {
   decorate: boolean;
   count: number;
 
