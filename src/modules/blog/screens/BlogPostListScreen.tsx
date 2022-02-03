@@ -123,7 +123,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const fetchBlogPosts = async (blogId: string) => {
     try {
       const session = props.session;
-      const blogPosts = await blogService.posts.get(session, blogId);
+      const blogPosts = await blogService.posts.get(session, blogId, ['PUBLISHED', 'SUBMITTED']);
       setBlogPosts(blogPosts);
     } catch (e) {
       throw e;

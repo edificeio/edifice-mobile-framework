@@ -73,7 +73,7 @@ export interface IEntcoreBlogPostComment {
     login: string;
     userId: string;
     username: string;
-  }
+  };
   comment: string;
   created: { $date: number };
   id: string;
@@ -212,17 +212,24 @@ export const blogService = {
     },
   },
   posts: {
-    get: async (session: IUserSession, blogId: string) => {
-      const api = `/blog/post/list/all/${blogId}?content=true`;
+    get: async (session: IUserSession, blogId: string, state?: string | string[]) => {
+      let stateAsArray: string[] | undefined;
+      if (typeof state === 'string') stateAsArray = [state];
+      else stateAsArray = state;
+      let api = `/blog/post/list/all/${blogId}?content=true`;
+      if (stateAsArray) api += `&states=${stateAsArray.join(',')}`
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
-      return (entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList);
+      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList;
+      return blogPosts;
     },
   },
   post: {
     get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, state?: string) => {
       const { blogId, postId } = blogPostId;
       let api = `/blog/post/${blogId}/${postId}`;
-      if (state) {api += `?state=${state}`};
+      if (state) {
+        api += `?state=${state}`;
+      }
       const entcoreBlogPost = (await fetchJSONWithCache(api)) as IEntcoreBlogPost;
       // Run the adapter for the received blog post
       return blogPostAdapter(entcoreBlogPost) as IBlogPost;
@@ -258,24 +265,28 @@ export const blogService = {
       const body = JSON.stringify({ comment });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'POST',
-        body
+        body,
       }) as Promise<{ number: number }>;
     },
-    update: async (session: IUserSession, blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string) => {
+    update: async (
+      session: IUserSession,
+      blogPostCommentId: { blogId: string; postId: string; commentId: string },
+      comment: string,
+    ) => {
       const { blogId, postId, commentId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
       const body = JSON.stringify({ comment });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'PUT',
-        body
+        body,
       }) as Promise<{ number: number }>;
     },
-    delete: async (session: IUserSession, blogPostCommentId: { blogId: string; postId: string, commentId: string }) => {
+    delete: async (session: IUserSession, blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
       const { blogId, postId, commentId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'DELETE',
       }) as Promise<{ number: number }>;
-    }
+    },
   },
 };
