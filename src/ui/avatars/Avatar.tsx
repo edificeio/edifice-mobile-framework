@@ -165,14 +165,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
       : undefined;
   }
 
-  public shouldComponentUpdate(nextProps, nextState) {
-    let status: string;
-    let comparedNextState: any, comparedState: any;
-    ({ status, ...comparedNextState } = nextState);
-    ({ status, ...comparedState } = this.state);
-    return !shallowEqual(comparedState, comparedNextState) || !shallowEqual(this.props, nextProps);
-  }
-
   get isMissingSourceAndId() {
     return !this.props.sourceOrId && !this.props.id;
   }
