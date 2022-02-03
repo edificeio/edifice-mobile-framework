@@ -1,4 +1,4 @@
-import { NavigationActions, NavigationNavigateAction, StackActions } from 'react-navigation';
+import { NavigationAction, NavigationActions, NavigationNavigateAction, StackActions } from 'react-navigation';
 
 import { rootNavigatorRef } from '~/AppScreen';
 import NavigationService from '~/navigation/NavigationService';
@@ -11,6 +11,15 @@ import NavigationService from '~/navigation/NavigationService';
  */
 export const navigate = (route, params = {}) => {
   return rootNavigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params }));
+};
+export const resetNavigation = (actions: NavigationNavigateAction[], index?: number) => {
+  console.log('rootNavigatorRef', rootNavigatorRef);
+  return rootNavigatorRef.dispatch(
+    StackActions.reset({
+      index: index ?? 0,
+      actions,
+    }),
+  );
 };
 
 /**

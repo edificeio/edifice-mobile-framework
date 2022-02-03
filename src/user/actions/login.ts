@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import SplashScreen from 'react-native-splash-screen';
 import { ThunkDispatch } from 'redux-thunk';
+import { NavigationActions } from 'react-navigation';
 
 import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut } from './actionTypes/login';
 import { PLATFORM_STORAGE_KEY } from './platform';
@@ -12,7 +13,7 @@ import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/LoginNavigator';
-import { navigate, reset } from '~/navigation/helpers/navHelper';
+import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { clearTimeline } from '~/timeline/actions/clearTimeline';
 import { userService } from '~/user/service';
 
@@ -284,7 +285,12 @@ export function loginAction(
       else await Trackers.trackEvent('Auth', 'RESTORE ERROR', err.type); // track separately auto login (with stored token)
 
       // === 4: Redirect if asked
-      if (redirectOnError) navigate(getLoginRouteName());
+      if (redirectOnError) {
+        resetNavigation([
+          NavigationActions.navigate({ routeName: 'PlatformSelect' }),
+          NavigationActions.navigate({ routeName: getLoginRouteName() }),
+        ], 1);
+      }
     } finally {
       SplashScreen.hide();
     }
