@@ -12,6 +12,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { Icon } from '~/ui';
 import theme from '~/app/theme';
+import ActionsMenu from '~/framework/components/actionsMenu';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -27,7 +28,6 @@ import {
 } from '~/modules/conversation/actions/mail';
 import { fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
 import { RenderPJs, HeaderMail, FooterButton } from '~/modules/conversation/components/MailContentItems';
-import MailContentMenu from '~/modules/conversation/components/MailContentMenu';
 import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
 import { DraftType } from '~/modules/conversation/containers/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
@@ -234,7 +234,7 @@ class MailContentContainer extends React.PureComponent<
           restoreToFolder={this.props.restoreToFolder}
           restoreToInbox={this.props.restoreToInbox}
         />
-        <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
+        <ActionsMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
   }

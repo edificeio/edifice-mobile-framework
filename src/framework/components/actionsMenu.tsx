@@ -9,7 +9,7 @@ import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import { Text } from '~/ui/Typography';
 
-type MailContentMenuProps = {
+type ActionsMenuProps = {
   data: {
     text: string;
     icon: string;
@@ -18,7 +18,7 @@ type MailContentMenuProps = {
   onClickOutside: () => any;
   show: boolean;
 };
-export default class MailContentMenu extends React.PureComponent<MailContentMenuProps> {
+export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
   public render() {
     const { onClickOutside, show, data } = this.props;
     const RenderComp = () => {

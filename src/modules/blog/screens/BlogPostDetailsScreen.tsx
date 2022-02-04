@@ -24,6 +24,7 @@ import { IDisplayedBlog } from './BlogExplorerScreen';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import {
@@ -31,6 +32,7 @@ import {
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
+  HeaderRight,
   HeaderRow,
   HeaderSubtitle,
   HeaderTitle,
@@ -39,7 +41,7 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextSemiBold, TextLight, TextLightItalic, TextSizeStyle } from '~/framework/components/text';
+import { TextBold, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -61,7 +63,6 @@ import {
 } from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
 import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
@@ -113,6 +114,7 @@ export interface IBlogPostDetailsScreenState {
   blogPostData: IBlogPost | undefined;
   errorState: boolean;
   showHeaderTitle: boolean;
+  showMenu: boolean;
 }
 
 // COMPONENT ======================================================================================
@@ -131,12 +133,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     blogPostData: undefined,
     errorState: false,
     showHeaderTitle: false,
+    showMenu: false,
   };
 
   // RENDER =======================================================================================
 
   render() {
-    const { loadingState, errorState } = this.state;
+    const { navigation } = this.props;
+    const { loadingState, errorState, showMenu, blogPostData } = this.state;
     const keyboardAvoidingViewBehavior = Platform.select({
       ios: 'padding',
       android: 'height',
@@ -144,6 +148,29 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
     // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
     const keyboardAvoidingViewVerticalOffset = hasNotch() ? 100 : 76; // Those are "magic" values found by try&error. Seems to be fine on every phone.
+    const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
+    const blogId = navigation.getParam('blog')?.id;
+    let resourceUri = notification && notification?.resource.uri;
+    if (!resourceUri && blogPostData && blogId) {
+      resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
+    }
+    const menuData = [
+      {
+        text: I18n.t('common.openInBrowser'),
+        icon: 'arrow-right',
+        onPress: () => {
+          //TODO: create generic function inside oauth (use in myapps, etc.)
+          if (!DEPRECATED_getCurrentPlatform()) {
+            console.warn('Must have a platform selected to redirect the user');
+            return null;
+          }
+          const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
+          openUrl(url);
+          Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
+        },
+      },
+    ];
+
     return (
       <>
         {this.renderHeader()}
@@ -163,6 +190,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             </KeyboardAvoidingView>
           </SafeAreaView>
         </PageView>
+        <ActionsMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
   }
@@ -170,6 +198,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   renderHeader() {
     const { navigation } = this.props;
     const { blogPostData } = this.state;
+    const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
+    const blogId = navigation.getParam('blog')?.id;
+    let resourceUri = notification && notification?.resource.uri;
+    if (!resourceUri && blogPostData && blogId) {
+      resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
+    }
     return (
       <FakeHeader>
         <HeaderRow>
@@ -194,6 +228,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               <HeaderTitle numberOfLines={2}>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle>
             )}
           </HeaderCenter>
+          {resourceUri ? (
+            <HeaderRight style={{ alignItems: 'center' }}>
+              <TouchableOpacity onPress={this.showMenu}>
+                <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
+              </TouchableOpacity>
+            </HeaderRight>
+          ) : null}
         </HeaderRow>
       </FakeHeader>
     );
@@ -241,16 +282,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   renderBlogPostDetails() {
-    const { navigation } = this.props;
-    const { blogPostData } = this.state;
-    const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
-    let resourceUri = notification && notification?.resource.uri;
+    const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
-    const blogId = navigation.getParam('blog')?.id;
-    if (!resourceUri && blogPostData && blogId) {
-      resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
-    }
     const hasComments = blogPostComments && blogPostComments.length > 0;
     const commentsString = hasComments
       ? blogPostComments.length === 1
@@ -260,14 +294,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View style={{ backgroundColor: theme.color.background.card }}>
-        <View style={{ paddingHorizontal: 16 }}>
-          <ViewportAwareTitle
-            style={{ marginTop: 16, marginHorizontal: 12 }}
-            onViewportEnter={() => this.updateVisible(true)}
-            onViewportLeave={() => this.updateVisible(false)}
-            innerRef={ref => (this._titleRef = ref)}>
-            <TextSemiBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextSemiBold>
-          </ViewportAwareTitle>
+        <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
           <ResourceView
             header={
               <ContentCardHeader
@@ -280,6 +307,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 date={blogPostData?.modified}
               />
             }>
+            <TextBold style={{ color: theme.color.text.light }}>{blogInfos?.title}</TextBold>
+            <ViewportAwareTitle
+              style={{ marginBottom: 16 }}
+              onViewportEnter={() => this.updateVisible(true)}
+              onViewportLeave={() => this.updateVisible(false)}
+              innerRef={ref => (this._titleRef = ref)}>
+              <TextBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextBold>
+            </ViewportAwareTitle>
             <HtmlContentView
               html={blogPostContent}
               onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
@@ -288,26 +323,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
             />
           </ResourceView>
-
-          {resourceUri ? (
-            <View style={{ marginTop: 10 }}>
-              <FlatButton
-                title={I18n.t('common.openInBrowser')}
-                customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
-                customTextStyle={{ color: theme.color.secondary.regular }}
-                onPress={() => {
-                  //TODO: create generic function inside oauth (use in myapps, etc.)
-                  if (!DEPRECATED_getCurrentPlatform()) {
-                    console.warn('Must have a platform selected to redirect the user');
-                    return null;
-                  }
-                  const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                  openUrl(url);
-                  Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-                }}
-              />
-            </View>
-          ) : null}
         </View>
         <View
           style={{
@@ -443,6 +458,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     if (showHeaderTitle && isVisible) this.setState({ showHeaderTitle: false });
     else if (!showHeaderTitle && !isVisible) this.setState({ showHeaderTitle: true });
   }
+
+  public showMenu = () => {
+    const { showMenu } = this.state;
+    this.setState({
+      showMenu: !showMenu,
+    });
+  };
 
   // METHODS ======================================================================================
 
