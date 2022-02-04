@@ -2,7 +2,7 @@
  * Navigation util
  */
 
-import { NavigationState } from "react-navigation";
+import { NavigationState } from 'react-navigation';
 
 /**
  * Returns the given path relative to the given navigation state.
@@ -13,16 +13,18 @@ import { NavigationState } from "react-navigation";
  * @param path path to go to.
  * @returns resulting path.
  */
-export const computeRelativePath = (path: string | string[], navState?: NavigationState) => {
-    if (!Array.isArray(path)) path = path.split('/');
-    if (!navState) return path.join('/');
-    let stateAsArray = (navState?.routeName?.split('/') || []) as string[]; // TS fuck ? in practice, this property exists.
-    // Check common part fo the path. Keep the left of the common part of NavState, then, add the path.
-    const found = (() => {
-        for (const i of path) {
-            const index = stateAsArray.findIndex(item => item === i);
-            if (index !== -1) return index;
-        } return undefined;
-    })();
-    return [...stateAsArray.slice(0, found), ...path].join('/'); // Return left uncommon part + given path.
-}
+export const computeRelativePath = (path: string | string[], navState?: NavigationState | string) => {
+  if (!Array.isArray(path)) path = path.split('/');
+  if (!navState) return path.join('/');
+  const currentPath = typeof navState === 'string' ? navState : navState?.routeName!; // TS fuck ? in practice, this property exists.
+  let stateAsArray = (currentPath.split('/') || []) as string[];
+  // Check common part fo the path. Keep the left of the common part of NavState, then, add the path.
+  const found = (() => {
+    for (const i of path) {
+      const index = stateAsArray.findIndex(item => item === i);
+      if (index !== -1) return index;
+    }
+    return undefined;
+  })();
+  return [...stateAsArray.slice(0, found), ...path].join('/'); // Return left uncommon part + given path.
+};

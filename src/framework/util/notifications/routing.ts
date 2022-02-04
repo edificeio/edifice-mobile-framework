@@ -27,7 +27,11 @@ export interface INotifHandlerReturnType {
 }
 
 export type NotifHandlerThunk = ThunkAction<Promise<INotifHandlerReturnType>, any, void, AnyAction>;
-export type NotifHandlerThunkAction = (notification: IAbstractNotification, trackCategory: false | string, navState?: NavigationState) => NotifHandlerThunk;
+export type NotifHandlerThunkAction = (
+  notification: IAbstractNotification,
+  trackCategory: false | string,
+  navState?: NavigationState | string,
+) => NotifHandlerThunk;
 
 export interface INotifHandlerDefinition {
   type: string;
@@ -136,7 +140,12 @@ export const defaultNotificationActionStack = [
 ];
 
 export const handleNotificationAction =
-  (notification: IAbstractNotification, actionStack: NotifHandlerThunkAction[], trackCategory: false | string = false, navState?: NavigationState) =>
+  (
+    notification: IAbstractNotification,
+    actionStack: NotifHandlerThunkAction[],
+    trackCategory: false | string = false,
+    navState?: NavigationState | string,
+  ) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     let manageCount = 0;
     // console.log("notification", notification);
