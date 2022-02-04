@@ -101,9 +101,10 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
 
   return foundUserOrGroup.length > 0 ? (
     <FlatList
-      keyboardShouldPersistTaps="handled"
+      keyboardShouldPersistTaps="always"
       keyboardDismissMode="on-drag"
       removeClippedSubviews
+      nestedScrollEnabled
       contentContainerStyle={{
         paddingBottom: insets.bottom,
       }}

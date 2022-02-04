@@ -15,13 +15,13 @@ export const UI_ANIMATIONS = {
 };
 
 export const UI_SIZES = {
-  bottomInset: initialWindowMetrics?.insets?.bottom,
+  bottomInset: initialWindowMetrics?.insets?.bottom || 0,
   headerHeight: 56,
   modalOpacity: 0.4,
   tabsHeight: 56,
   screenHeight: screenDimensions.height,
   screenWidth: screenDimensions.width,
-  topInset: initialWindowMetrics?.insets?.top,
+  topInset: initialWindowMetrics?.insets?.top || 0,
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (

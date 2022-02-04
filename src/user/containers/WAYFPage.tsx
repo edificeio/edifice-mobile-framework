@@ -1,5 +1,4 @@
 import CookieManager from '@react-native-cookies/cookies';
-import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, Platform, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';

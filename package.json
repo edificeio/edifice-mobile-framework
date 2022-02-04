@@ -78,6 +78,7 @@
     "react-native-global-props": "1.1.5",
     "react-native-hide-show-password-input": "1.2.0",
     "react-native-image-picker": "4.3.0",
+    "react-native-keyboard-avoiding-scroll-view": "1.0.1",
     "react-native-layout-debug": "1.1.1",
     "react-native-localize": "2.1.6",
     "react-native-matomo": "git+https://github.com/BonifyByForteil/react-native-matomo.git",
