@@ -1,8 +1,10 @@
+import { thisExpression } from '@babel/types';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import {
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
@@ -26,6 +28,7 @@ import theme from '~/app/theme';
 import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
+import { UI_SIZES } from '~/framework/components/constants';
 import {
   FakeHeader,
   HeaderAction,
@@ -65,7 +68,6 @@ import { CommonStyles } from '~/styles/common/styles';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { thisExpression } from '@babel/types';
 
 // TYPES ==========================================================================================
 
@@ -384,13 +386,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                   },
                 ]);
               }}>
-              <Icon name="trash" color={theme.color.failure} size={16} />
+              <Icon name="trash" color={theme.color.failure} size={UI_SIZES.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
           {hasUpdateCommentBlogPostRight ? (
             <TouchableOpacity
               onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
-              <Icon name="pencil" color={theme.color.secondary.regular} size={16} />
+              <Icon name="pencil" color={theme.color.secondary.regular} size={UI_SIZES.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
         </View>

@@ -15,9 +15,9 @@ export const UI_ANIMATIONS = {
 };
 
 export const UI_SIZES = {
+  actionButtonSize: 20,
   bottomInset: initialWindowMetrics?.insets?.bottom || 0,
   headerHeight: 56,
-  modalOpacity: 0.4,
   tabsHeight: 56,
   screenHeight: screenDimensions.height,
   screenWidth: screenDimensions.width,
