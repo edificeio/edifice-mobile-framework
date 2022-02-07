@@ -61,10 +61,10 @@ export const BlogPostResourceCard = ({
         title={
           <>
             {state === 'SUBMITTED' ? (
-              <Label text={'Billet à valider'} color={theme.color.primary.regular} labelStyle="outline" marginWidth="small" />
+              <Label text={I18n.t('blog.post.needValidation')} color={theme.color.primary.regular} labelStyle="outline" labelSize="small" />
             ) : null}
             <ContentCardTitle>
-              {title} kze jfksdlksd flks lkfdsj lksjflks vkel sdlf ieroez foiz ojselk nsdl dfsd if skdfn s
+              {title}
             </ContentCardTitle>
           </>
         }

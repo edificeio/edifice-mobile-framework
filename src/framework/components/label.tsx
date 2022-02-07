@@ -16,7 +16,7 @@ export interface ILabelProps extends React.PropsWithChildren<{}>, ViewProps {
   icon?: string;
   color?: ColorValue;
   labelStyle?: 'plain' | 'outline';
-  marginWidth?: 'normal' | 'small';
+  labelSize?: 'normal' | 'small';
   textProps?: TextProps;
 }
 
@@ -30,7 +30,7 @@ export const LabelView = styled.View({
   paddingHorizontal: 12,
 });
 export const LabelText = styled(TextBold)({
-  ...TextSizeStyle.Small
+  // No common style except bold
 });
 
 // COMPONENT ======================================================================================
@@ -41,14 +41,14 @@ export default (props: ILabelProps) => {
     icon,
     color = theme.color.text.regular,
     labelStyle = 'plain',
-    marginWidth = 'normal',
+    labelSize = 'normal',
     children,
     textProps,
     ...viewProps
   } = props;
   const LabelViewWithPadding = styled(LabelView)({
-    paddingVertical: marginWidth === 'normal' ? 6 : 2,
-    paddingHorizontal: marginWidth === 'normal' ? 12 : 8,
+    paddingVertical: labelSize === 'normal' ? 6 : 2,
+    paddingHorizontal: labelSize === 'normal' ? 12 : 8,
   });
   const LabelViewWithColor = styled(LabelViewWithPadding)({
     ...(labelStyle === 'plain'
@@ -67,6 +67,13 @@ export default (props: ILabelProps) => {
         }
       : {
           color,
+        }),
+    ...(labelSize === 'normal'
+      ? {
+          ...TextSizeStyle.Normal,
+        }
+      : {
+          ...TextSizeStyle.Small,
         }),
   });
   return (

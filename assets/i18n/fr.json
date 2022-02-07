@@ -117,6 +117,11 @@
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"
     },
+    "post": {
+      "needValidation": "Billet à valider",
+      "waitingValidation": "Billet en attente de validation",
+      "publishAction": "Publier le billet"
+    },
     "appName": "Blog",
     "resourceName": "Billet de blog",
     "tabName": "Blog"

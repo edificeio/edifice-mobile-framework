@@ -226,6 +226,11 @@ export const blogService = {
   post: {
     get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, state?: string) => {
       const { blogId, postId } = blogPostId;
+      if (!state) {
+        let api_metadata = `/blog/post/list/all/${blogId}?postId=${postId}`;
+        const entcoreBlogPost_metadata = (await fetchJSONWithCache(api_metadata)) as IEntcoreBlogPost;
+        state = entcoreBlogPost_metadata[0]['state'];
+      }
       let api = `/blog/post/${blogId}/${postId}`;
       if (state) {
         api += `?state=${state}`;

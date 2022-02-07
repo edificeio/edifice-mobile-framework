@@ -43,7 +43,14 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { NestedText, TextBold, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import {
+  TextBold,
+  TextColorStyle,
+  TextLight,
+  TextLightItalic,
+  TextSemiBold,
+  TextSizeStyle,
+} from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -53,6 +60,7 @@ import { Trackers } from '~/framework/util/tracker';
 import {
   deleteBlogPostCommentAction,
   getBlogPostDetailsAction,
+  publishBlogPostAction,
   publishBlogPostCommentAction,
   updateBlogPostCommentAction,
 } from '~/modules/blog/actions';
@@ -61,6 +69,7 @@ import { IBlogPostComment, IBlogPost, IBlog } from '~/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
+  publishBlogPostResourceRight,
   updateCommentBlogPostResourceRight,
 } from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
@@ -68,6 +77,9 @@ import { CommonStyles } from '~/styles/common/styles';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import Label from '~/framework/components/label';
+import { FlatButton } from '~/ui';
+import { notifierShowAction } from '~/infra/notifier/actions';
 
 // TYPES ==========================================================================================
 
@@ -86,6 +98,8 @@ export interface IBlogPostDetailsScreenEventProps {
     postId: string;
     commentId: string;
   }): Promise<number | undefined>;
+  handlePublishBlogPost(blogPostId: { blogId: string; postId: string }): Promise<{ number: number } | undefined>;
+  dispatch: ThunkDispatch<any, any, any>
 }
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
@@ -179,8 +193,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return (
       <>
         {this.renderHeader()}
-        <PageView>
-          <SafeAreaView style={{ backgroundColor: theme.color.background.card }}>
+        <PageView path={`${moduleConfig.routeName}/details`}>
+          <SafeAreaView
+            style={{
+              backgroundColor: theme.color.background.card,
+            }}>
             <KeyboardAvoidingView
               behavior={keyboardAvoidingViewBehavior}
               keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}
@@ -255,6 +272,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const blogPostComments = blogPostData?.comments;
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
+    const hasPublishBlogPostRight = blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
     return (
       <>
         <Viewport.Tracker>
@@ -284,12 +302,54 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             }}
           />
         </Viewport.Tracker>
-        {hasCommentBlogPostRight ? (
+        {blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight ? (
           <CommentField
             ref={this.commentFieldRef}
             onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
             isPublishingComment={isPublishingComment}
           />
+        ) : null}
+        {blogPostData?.state === 'SUBMITTED' ? (
+          <View
+            style={{
+              justifyContent: 'center',
+              backgroundColor: theme.color.background.card,
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: 12,
+              borderTopWidth: 1,
+              borderTopColor: theme.color.listItemBorder,
+            }}>
+            {hasPublishBlogPostRight ? (
+              <FlatButton
+                title={I18n.t('blog.post.publishAction')}
+                onPress={async () => {
+                  try {
+                    await this.props.handlePublishBlogPost({ blogId: blogInfos.id, postId: blogPostData._id });
+                  const newBlogPostData = await this.props.handleGetBlogPostDetails({
+                    blogId: blogInfos.id,
+                    postId: blogPostData._id,
+                  });
+                  newBlogPostData && this.setState({ blogPostData: newBlogPostData });
+                  newBlogPostData &&
+                    this.props.navigation.setParams({
+                      blogPost: newBlogPostData,
+                    });
+                  } catch {
+                    this.props.dispatch(
+                      notifierShowAction({
+                        type: 'error',
+                        id: `${moduleConfig.routeName}/details`,
+                        text: I18n.t('common.error.text')
+                      }),
+                    );
+                  }
+                }}
+              />
+            ) : (
+              <TextBold style={{ ...TextColorStyle.Important }}>{I18n.t('blog.post.waitingValidation')}</TextBold>
+            )}
+          </View>
         ) : null}
       </>
     );
@@ -321,21 +381,22 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 date={blogPostData?.modified}
               />
             }>
+            {blogPostData?.state === 'SUBMITTED' ? (
+              <Label
+                text={I18n.t('blog.post.needValidation')}
+                color={theme.color.primary.regular}
+                labelStyle="outline"
+                labelSize="small"
+                style={{ marginTop: 4, marginBottom: 2 }}
+              />
+            ) : null}
             <TextBold style={{ color: theme.color.text.light }}>{blogInfos?.title}</TextBold>
             <ViewportAwareTitle
               style={{ marginBottom: 16 }}
               onViewportEnter={() => this.updateVisible(true)}
               onViewportLeave={() => this.updateVisible(false)}
               innerRef={ref => (this._titleRef = ref)}>
-              {/* {blogPostData?.state === 'SUBMITTED' ? (
-                <TextSemiBold style={{ color: theme.color.failure, ...TextSizeStyle.Tiny }}>{'Billet à valider'}</TextSemiBold>
-              ) : null} */}
-              <TextBold style={{ ...TextSizeStyle.Big }}>
-                {blogPostData?.state === 'SUBMITTED' ? (
-                  <NestedText style={{ color: theme.color.failure}}>{'(Billet à valider) '}</NestedText>
-                ) : null}
-                {blogPostData?.title}
-              </TextBold>
+              <TextBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextBold>
             </ViewportAwareTitle>
             <HtmlContentView
               html={blogPostContent}
@@ -346,21 +407,23 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             />
           </ResourceView>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 10,
-            paddingHorizontal: 12,
-            paddingVertical: 10,
-            borderTopWidth: 1,
-            borderBottomWidth: 1,
-            borderTopColor: theme.color.inputBorder,
-            borderBottomColor: theme.color.inputBorder,
-          }}>
-          <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-          <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
-        </View>
+        {blogPostData?.state === 'PUBLISHED' ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginTop: 10,
+              paddingHorizontal: 12,
+              paddingVertical: 10,
+              borderTopWidth: 1,
+              borderBottomWidth: 1,
+              borderTopColor: theme.color.inputBorder,
+              borderBottomColor: theme.color.inputBorder,
+            }}>
+            <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
+            <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -543,7 +606,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       const ids = this.getBlogPostIds();
       let blogPostState: string | undefined = undefined;
       if (notification && useNotification && notification['event-type'] === 'SUBMIT-POST') {
-        blogPostState = 'SUBMITTED';
+        blogPostState = undefined; // Will be got by an additional request to api
       } else blogPostState = navigation.getParam('blogPost')?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       this.setState({ blogPostData });
@@ -651,6 +714,10 @@ const mapDispatchToProps: (
   handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
     return (await dispatch(deleteBlogPostCommentAction(blogPostCommentId))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
+  handlePublishBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
+    return await dispatch(publishBlogPostAction(blogPostId.blogId, blogPostId.postId));
+  },
+  dispatch
 });
 
 const BlogPostDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);
