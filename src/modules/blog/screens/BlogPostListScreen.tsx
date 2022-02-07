@@ -237,6 +237,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
               contentHtml={item.content}
               date={moment(item.created)}
               title={item.title}
+              state={item.state as 'PUBLISHED' | 'SUBMITTED'}
             />
           );
         }}

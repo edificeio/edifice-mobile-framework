@@ -43,7 +43,7 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextBold, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { NestedText, TextBold, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -327,7 +327,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               onViewportEnter={() => this.updateVisible(true)}
               onViewportLeave={() => this.updateVisible(false)}
               innerRef={ref => (this._titleRef = ref)}>
-              <TextBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextBold>
+              {/* {blogPostData?.state === 'SUBMITTED' ? (
+                <TextSemiBold style={{ color: theme.color.failure, ...TextSizeStyle.Tiny }}>{'Billet à valider'}</TextSemiBold>
+              ) : null} */}
+              <TextBold style={{ ...TextSizeStyle.Big }}>
+                {blogPostData?.state === 'SUBMITTED' ? (
+                  <NestedText style={{ color: theme.color.failure}}>{'(Billet à valider) '}</NestedText>
+                ) : null}
+                {blogPostData?.title}
+              </TextBold>
             </ViewportAwareTitle>
             <HtmlContentView
               html={blogPostContent}

@@ -108,7 +108,7 @@ export const ContentView = (props: IContentCardProps) => {
 /** Pre-configured title for ContentCard */
 export const ContentCardTitle = (props: TextProps) => {
   const { style, ...otherProps } = props;
-  const Comp = styled(TextBold)({ ...TextColorStyle.Action });
+  const Comp = styled(TextBold)({ ...TextColorStyle.Action, ...TextSizeStyle.SlightBig });
   return <Comp numberOfLines={2} ellipsizeMode="tail" {...otherProps} style={style} />;
 };
 

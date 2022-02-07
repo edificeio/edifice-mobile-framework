@@ -4,11 +4,12 @@ import I18n from 'i18n-js';
 import { Moment } from 'moment';
 
 import theme from '~/app/theme';
-import { ContentCardHeader, ContentCardIcon, TouchableResourceCard } from '~/framework/components/card';
+import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { Icon } from '~/framework/components/icon';
-import { Text, TextSemiBold } from '~/framework/components/text';
+import { NestedText, Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
+import Label from '~/framework/components/label';
 
 export interface IBlogPostResourceCardProps {
   action: () => void;
@@ -18,6 +19,7 @@ export interface IBlogPostResourceCardProps {
   contentHtml: string;
   date: Moment;
   title: string;
+  state: 'PUBLISHED' | 'SUBMITTED';
 }
 
 export const BlogPostResourceCard = ({
@@ -28,6 +30,7 @@ export const BlogPostResourceCard = ({
   contentHtml,
   date,
   title,
+  state,
 }: IBlogPostResourceCardProps) => {
   const [isTextTruncatedWithBackspace, setIsTextTruncatedWithBackspace] = React.useState(false);
   const authorTextMaxLines = 1;
@@ -55,16 +58,27 @@ export const BlogPostResourceCard = ({
             date={date}
           />
         }
-        title={title}
+        title={
+          <>
+            {state === 'SUBMITTED' ? (
+              <Label text={'Billet à valider'} color={theme.color.primary.regular} labelStyle="outline" marginWidth="small" />
+            ) : null}
+            <ContentCardTitle>
+              {title} kze jfksdlksd flks lkfdsj lksjflks vkel sdlf ieroez foiz ojselk nsdl dfsd if skdfn s
+            </ContentCardTitle>
+          </>
+        }
         footer={
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-            <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
-          </View>
+          state !== 'SUBMITTED' ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
+              <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
+            </View>
+          ) : undefined
         }>
         {blogPostText ? (
           <View style={{ marginBottom: blogPostMedia?.length ? 10 : undefined }}>
