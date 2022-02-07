@@ -67,11 +67,12 @@ export const TextColorStyle = {
 export const rem = (value: number) => baseFontSize * value;
 export const remlh = (value: number) => baseLineHeight * value;
 export const remStyle = (value: number) => ({ fontSize: rem(value), lineHeight: remlh(value) });
-type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'Big' | 'Huge';
+type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'Big' | 'Huge';
 export const TextSizeStyle = {
     Tiny: remStyle(10 / 14),
     Small: remStyle(12 / 14),
     Normal: remStyle(1),
+    SlightBig: remStyle(16 / 14),
     Big: remStyle(20 / 14),
     Huge: remStyle(2),
 } as { [key in TextSizeStyleKey]: TextStyle };
