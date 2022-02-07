@@ -2,11 +2,12 @@ import * as React from 'react';
 import { Text } from 'react-native';
 
 import NotificationTopInfo from './NotificationTopInfo';
+
 import theme from '~/app/theme';
 import { ResourceCard, TouchableResourceCard } from '~/framework/components/card';
+import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
-import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 
 interface ITimelineNotificationProps {
   notification: ITimelineNotification;
@@ -23,17 +24,10 @@ export class TimelineNotification extends React.PureComponent<ITimelineNotificat
 
     return (
       <ArticleContainer>
-        <CC
-          onPress={notificationAction}
-          style={{ width: '100%' }}
-          header={<NotificationTopInfo notification={notification} />}
-        >
-          {text && /\S/.test(text)
-            ? <Text style={{ color: theme.color.text.regular, marginBottom: media?.length ? 10 : undefined }}>
-                {text}
-              </Text>
-            : null
-          }
+        <CC onPress={notificationAction} style={{ width: '100%' }} header={<NotificationTopInfo notification={notification} />}>
+          {text && /\S/.test(text) ? (
+            <Text style={{ color: theme.color.text.regular, marginBottom: media?.length ? 10 : undefined }}>{text}</Text>
+          ) : null}
           {media ? renderMediaPreview(media) : null}
         </CC>
       </ArticleContainer>

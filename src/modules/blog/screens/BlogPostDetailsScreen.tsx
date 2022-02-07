@@ -3,7 +3,6 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import {
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
@@ -66,6 +65,7 @@ import { CommonStyles } from '~/styles/common/styles';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { thisExpression } from '@babel/types';
 
 // TYPES ==========================================================================================
 
@@ -122,10 +122,13 @@ export interface IBlogPostDetailsScreenState {
 export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsScreenProps, IBlogPostDetailsScreenState> {
   // DECLARATIONS =================================================================================
 
-  flatListRef: FlatList | null = null;
-  commentFieldRef: { current: any } = React.createRef();
   _titleRef?: React.Ref<any> = undefined;
+  commentFieldRef: { current: any } = React.createRef();
+  flatListRef: FlatList | null = null;
+
+  event: string | null = null;
   showSubscription: EmitterSubscription | undefined;
+
   state: IBlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
     publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
@@ -255,19 +258,28 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         <Viewport.Tracker>
           <FlatList
             ref={ref => (this.flatListRef = ref)}
+            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.page }}
             data={blogPostComments}
-            renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
             keyExtractor={(item: IBlogPostComment) => item.id.toString()}
             ListHeaderComponent={this.renderBlogPostDetails()}
-            style={{ backgroundColor: theme.color.background.page }}
-            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.page }}
-            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
             refreshControl={
               <RefreshControl
                 refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
                 onRefresh={() => this.doRefresh()}
               />
             }
+            renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
+            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
+            style={{ backgroundColor: theme.color.background.page }}
+            onLayout={() => {
+              // Scroll to last comment if coming from blog spot comment notification
+              this.flatListRef &&
+                this.event === 'PUBLISH-COMMENT' &&
+                setTimeout(() => {
+                  this.flatListRef?.scrollToEnd();
+                  this.event = null;
+                }, 0);
+            }}
           />
         </Viewport.Tracker>
         {hasCommentBlogPostRight ? (
@@ -447,6 +459,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     this.showSubscription = Keyboard.addListener('keyboardDidHide', () => {
       this.commentFieldRef?.current?.confirmDiscard();
     });
+
+    // Update notificaion event if any
+    const notification = this.props.navigation?.state?.params?.notification;
+    this.event = notification ? notification['event-type'] : null;
   }
 
   componentWillUnmount() {
