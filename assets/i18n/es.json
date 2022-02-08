@@ -117,6 +117,11 @@
       "sharedToNbPersons": "Compartido con {{nb}} personas",
       "title": "Seleccionar un blog"
     },
+    "post": {
+      "needValidation": "Entradas de blog enviadas",
+      "waitingValidation": "Entradas de blog pendiente de validación",
+      "publishAction": "Publicar la entrada de blog"
+    },
     "appName": "Blog",
     "resourceName": "Entrada de blog",
     "tabName": "Blog"
