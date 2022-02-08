@@ -27,7 +27,7 @@ interface ITextPreviewState {
 export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPreviewState> {
   state = {
     longText: false,
-    isExpanded: false
+    isExpanded: false,
   };
 
   public measureText = (numberOfLines: number) => async (evt: LayoutEvent) => {
@@ -41,7 +41,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
         fontSize,
         fontWeight,
       } as TSMeasureParams);
-      if (layout.width + 1 < result.width) {
+      if (layout.width < result.width) {
         this.setState({ longText: true });
       }
     }
@@ -59,7 +59,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
       onExpand, // must include if no "numberOfLines" prop (no expansion possible)
       expandMessage,
       collapseMessage,
-      expansionTextStyle
+      expansionTextStyle,
     } = this.props;
     const { isExpanded } = this.state;
     const expand = expandMessage || I18n.t('seeMore');
@@ -82,14 +82,23 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
         <Text
           style={textStyle}
           numberOfLines={!numberOfLines || isExpanded ? undefined : numberOfLines}
-          onTextLayout={numberOfLines && this.measureText(numberOfLines)}
-        >
+          onTextLayout={numberOfLines && this.measureText(numberOfLines)}>
           {textContent}
-          {additionalText && !this.showExpansionLabels() && <><Text>{" "}</Text>{additionalText}</>}
+          {additionalText && !this.showExpansionLabels() && (
+            <>
+              <Text> </Text>
+              {additionalText}
+            </>
+          )}
           {!numberOfLines && this.renderExpansionLabels()}
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {additionalText && this.showExpansionLabels() && <>{additionalText}<Text>{" "}</Text></>}
+          {additionalText && this.showExpansionLabels() && (
+            <>
+              {additionalText}
+              <Text> </Text>
+            </>
+          )}
           {numberOfLines && this.renderExpansionLabels()}
         </View>
       </View>
