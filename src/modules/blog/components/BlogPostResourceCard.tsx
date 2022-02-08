@@ -1,15 +1,22 @@
-import * as React from 'react';
-import { View } from 'react-native';
 import I18n from 'i18n-js';
 import { Moment } from 'moment';
+import * as React from 'react';
+import { View } from 'react-native';
 
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
-import { ArticleContainer } from '~/ui/ContainerContent';
 import { Icon } from '~/framework/components/icon';
-import { NestedText, Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
-import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import Label from '~/framework/components/label';
+import { Text, TextSemiBold } from '~/framework/components/text';
+import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
+import { ArticleContainer } from '~/ui/ContainerContent';
+
+export const commentsString = (comments: number) =>
+  comments
+    ? comments === 1
+      ? `1 ${I18n.t('common.comment.comment').toLowerCase()}`
+      : `${comments} ${I18n.t('common.comment.comments').toLowerCase()}`
+    : I18n.t('common.comment.noComments');
 
 export interface IBlogPostResourceCardProps {
   action: () => void;
@@ -35,11 +42,6 @@ export const BlogPostResourceCard = ({
   const [isTextTruncatedWithBackspace, setIsTextTruncatedWithBackspace] = React.useState(false);
   const authorTextMaxLines = 1;
   const contentTextMaxLines = 5;
-  const commentsString = comments
-    ? comments === 1
-      ? `1 ${I18n.t('common.comment.comment').toLowerCase()}`
-      : `${comments} ${I18n.t('common.comment.comments').toLowerCase()}`
-    : I18n.t('common.comment.noComments').toLowerCase();
   const blogPostText = extractTextFromHtml(contentHtml);
   const blogPostMedia = extractMediaFromHtml(contentHtml);
 
@@ -61,11 +63,14 @@ export const BlogPostResourceCard = ({
         title={
           <>
             {state === 'SUBMITTED' ? (
-              <Label text={I18n.t('blog.post.needValidation')} color={theme.color.primary.regular} labelStyle="outline" labelSize="small" />
+              <Label
+                text={I18n.t('blog.post.needValidation')}
+                color={theme.color.primary.regular}
+                labelStyle="outline"
+                labelSize="small"
+              />
             ) : null}
-            <ContentCardTitle>
-              {title}
-            </ContentCardTitle>
+            <ContentCardTitle>{title}</ContentCardTitle>
           </>
         }
         footer={
@@ -76,7 +81,7 @@ export const BlogPostResourceCard = ({
                 alignItems: 'center',
               }}>
               <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-              <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
+              <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString(comments)}</TextSemiBold>
             </View>
           ) : undefined
         }>

@@ -1,4 +1,3 @@
-import { thisExpression } from '@babel/types';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -40,23 +39,18 @@ import {
   HeaderTitle,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
+import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import {
-  TextBold,
-  TextColorStyle,
-  TextLight,
-  TextLightItalic,
-  TextSemiBold,
-  TextSizeStyle,
-} from '~/framework/components/text';
+import { TextBold, TextColorStyle, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
+import { notifierShowAction } from '~/infra/notifier/actions';
 import {
   deleteBlogPostCommentAction,
   getBlogPostDetailsAction,
@@ -64,6 +58,7 @@ import {
   publishBlogPostCommentAction,
   updateBlogPostCommentAction,
 } from '~/modules/blog/actions';
+import { commentsString } from '~/modules/blog/components/BlogPostResourceCard';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlogPostComment, IBlogPost, IBlog } from '~/modules/blog/reducer';
 import {
@@ -74,12 +69,10 @@ import {
 } from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
 import { CommonStyles } from '~/styles/common/styles';
+import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import Label from '~/framework/components/label';
-import { FlatButton } from '~/ui';
-import { notifierShowAction } from '~/infra/notifier/actions';
 
 // TYPES ==========================================================================================
 
@@ -99,7 +92,7 @@ export interface IBlogPostDetailsScreenEventProps {
     commentId: string;
   }): Promise<number | undefined>;
   handlePublishBlogPost(blogPostId: { blogId: string; postId: string }): Promise<{ number: number } | undefined>;
-  dispatch: ThunkDispatch<any, any, any>
+  dispatch: ThunkDispatch<any, any, any>;
 }
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
@@ -326,21 +319,21 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 onPress={async () => {
                   try {
                     await this.props.handlePublishBlogPost({ blogId: blogInfos.id, postId: blogPostData._id });
-                  const newBlogPostData = await this.props.handleGetBlogPostDetails({
-                    blogId: blogInfos.id,
-                    postId: blogPostData._id,
-                  });
-                  newBlogPostData && this.setState({ blogPostData: newBlogPostData });
-                  newBlogPostData &&
-                    this.props.navigation.setParams({
-                      blogPost: newBlogPostData,
+                    const newBlogPostData = await this.props.handleGetBlogPostDetails({
+                      blogId: blogInfos.id,
+                      postId: blogPostData._id,
                     });
+                    newBlogPostData && this.setState({ blogPostData: newBlogPostData });
+                    newBlogPostData &&
+                      this.props.navigation.setParams({
+                        blogPost: newBlogPostData,
+                      });
                   } catch {
                     this.props.dispatch(
                       notifierShowAction({
                         type: 'error',
                         id: `${moduleConfig.routeName}/details`,
-                        text: I18n.t('common.error.text')
+                        text: I18n.t('common.error.text'),
                       }),
                     );
                   }
@@ -359,12 +352,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
-    const hasComments = blogPostComments && blogPostComments.length > 0;
-    const commentsString = hasComments
-      ? blogPostComments.length === 1
-        ? `1 ${I18n.t('common.comment.comment').toLowerCase()}`
-        : `${blogPostComments.length} ${I18n.t('common.comment.comments').toLowerCase()}`
-      : I18n.t('common.comment.noComments').toLowerCase();
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View style={{ backgroundColor: theme.color.background.card }}>
@@ -421,7 +408,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               borderBottomColor: theme.color.inputBorder,
             }}>
             <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-            <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
+            <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>
+              {commentsString(blogPostComments?.length || 0)}
+            </TextSemiBold>
           </View>
         ) : null}
       </View>
@@ -717,7 +706,7 @@ const mapDispatchToProps: (
   handlePublishBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
     return await dispatch(publishBlogPostAction(blogPostId.blogId, blogPostId.postId));
   },
-  dispatch
+  dispatch,
 });
 
 const BlogPostDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);
