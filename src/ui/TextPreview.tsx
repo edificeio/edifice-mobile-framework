@@ -5,6 +5,7 @@ import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-
 import { LayoutEvent } from 'react-navigation';
 
 import { A } from './Typography';
+
 import { contentStyle } from '~/myAppMenu/components/NewContainerContent';
 
 export interface ITextPreviewProps {
@@ -30,20 +31,18 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     isExpanded: false,
   };
 
-  public measureText = (numberOfLines: number) => async (evt: LayoutEvent) => {
-    if (evt.nativeEvent.lines.length >= numberOfLines) {
-      const layout = evt.nativeEvent.lines[numberOfLines - 1];
-      const text = layout.text;
+  public measureText = (numberOfLines: number | undefined) => async (evt: LayoutEvent) => {
+    if (numberOfLines) {
       const { fontFamily, fontSize, fontWeight } = contentStyle;
+      const { textContent } = this.props;
       const result: TSMeasureResult = await rnTextSize.measure({
-        text,
+        text: textContent,
         fontFamily,
         fontSize,
         fontWeight,
+        width: evt.nativeEvent.layout.width,
       } as TSMeasureParams);
-      if (layout.width < result.width) {
-        this.setState({ longText: true });
-      }
+      result.lineCount > numberOfLines && this.setState({ longText: true });
     }
   };
 
@@ -82,7 +81,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
         <Text
           style={textStyle}
           numberOfLines={!numberOfLines || isExpanded ? undefined : numberOfLines}
-          onTextLayout={numberOfLines && this.measureText(numberOfLines)}>
+          onLayout={this.measureText(numberOfLines)}>
           {textContent}
           {additionalText && !this.showExpansionLabels() && (
             <>
