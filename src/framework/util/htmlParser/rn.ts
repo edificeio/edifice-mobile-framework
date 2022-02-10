@@ -20,6 +20,7 @@
  * - `audio` (boolean) should audio medias be integrated. Default `true`.
  * - `globalTextStyle` (TextStyle) style that will be applied to all rendered <Text> elements.
  * - `linkTextStyle` (TextStyle) additional style applied to text links.
+ * - `boldTextStyle` (TextStyle) additional style applied to bold text.
  */
 
 import { TextStyle } from 'react-native';
@@ -57,6 +58,7 @@ export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   ignoreLineBreaks?: boolean;
   globalTextStyle?: TextStyle;
   linkTextStyle?: TextStyle;
+  boldTextStyle?: TextStyle;
   selectable?: boolean;
 }
 
@@ -73,6 +75,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     iframes: true,
     images: true,
     linkTextStyle: {},
+    boldTextStyle: {},
     textColor: true,
     textFormatting: true,
     ignoreLineBreaks: false,
@@ -138,6 +141,11 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected currentDivIsEmpty?: boolean = true;
 
+  /**
+   * Is it the first thing to be parsed ?
+   */
+  protected veryFirstText: boolean = true;
+
   // ----------------------------------------------------------------------------------------------
 
   public constructor(opts?: IHtmlParserRNOptions) {
@@ -161,6 +169,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       [HtmlParserNuggetTypes.Text]: {
         all: this.opts.globalTextStyle,
         ...(Object.keys(this.opts.linkTextStyle).length ? { [HtmlParserJsxTextVariant.Link]: this.opts.linkTextStyle } : null),
+        ...(Object.keys(this.opts.boldTextStyle).length ? { [HtmlParserJsxTextVariant.Bold]: this.opts.boldTextStyle } : null),
       },
       [HtmlParserNuggetTypes.Images]: {},
       [HtmlParserNuggetTypes.Iframe]: {},
@@ -299,6 +308,10 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       this.hasToInsertBullet = null;
     }
 
+    if (this.veryFirstText) {
+      this.veryFirstText = false;
+      this.lineBreaksToInsert = 0;
+    }
     if (this.lineBreaksToInsert) {
       // console.log(`encourtered line break`);
       if (!this.opts.ignoreLineBreaks && !this.firstWord) {

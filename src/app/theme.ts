@@ -57,6 +57,13 @@ export interface ITheme {
     purple: ColorValue;
     indigo: ColorValue;
   };
+  flashMessages: {
+    'grey-dark': ColorValue;
+    red: ColorValue;
+    orange: ColorValue;
+    green: ColorValue;
+    blue: ColorValue;
+  };
 }
 
 // Magenta color indicated non-defined values
@@ -110,6 +117,13 @@ export const defaultTheme: ITheme = {
     pink: '#b930a2',
     purple: '#763294',
     indigo: '#1a22a2',
+  },
+  flashMessages: {
+    'grey-dark': '#5b6472',
+    red: '#c74848',
+    orange: '#ff9057',
+    green: '#3cb371',
+    blue: '#2a9cc8',
   },
 };
 

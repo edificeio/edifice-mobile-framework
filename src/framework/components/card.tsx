@@ -75,7 +75,7 @@ const ContentCard_base = (props: IContentCardProps_Base) => {
         <View style={{ flex: 1 }}>{props.header ?? null}</View>
         <View style={{ flex: 0 }}>{props.headerIndicator ?? null}</View>
       </HeaderFlexViewWithPadding>
-      <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding>
+      {props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null}
       {props.footer ? (
         <>
           <FooterSeparator />

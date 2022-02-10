@@ -157,7 +157,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
     const isEmpty = items && items.length === 0;
 
-    const renderSwipeButton = (action, actionIcon, actionText) => [
+    const renderSwipeButton = (action, actionIcon, actionText, color) => [
       <View style={{ height: '100%', justifyContent: 'center' }}>
         <TouchableOpacity onPress={action}>
           <View
@@ -168,8 +168,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               padding: 12,
               width: 140,
             }}>
-            <Icon name={actionIcon} size={16} color={theme.color.warning} />
-            <Text style={{ color: theme.color.warning, marginLeft: 10 }}>{actionText}</Text>
+            <Icon name={actionIcon} size={16} color={color} />
+            <Text style={{ color, marginLeft: 10 }}>{actionText}</Text>
           </View>
         </TouchableOpacity>
       </View>,
@@ -207,18 +207,29 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           return {
             rightButtons: this.rights.notification.report
               ? [
-                  renderSwipeButton(
-                    async () => {
-                      await this.doReportConfirm(item.data as ITimelineNotification);
-                      this.listRef.current?.recenter();
-                    },
-                    'warning',
-                    I18n.t('timeline.reportAction.button'),
-                  ),
+                  item.type === ITimelineItemType.NOTIFICATION
+                    ? renderSwipeButton(
+                        async () => {
+                          await this.doReportConfirm(item.data as ITimelineNotification);
+                          this.listRef.current?.recenter();
+                        },
+                        'warning',
+                        I18n.t('timeline.reportAction.button'),
+                        theme.color.warning,
+                      )
+                    : item.type === ITimelineItemType.FLASHMSG
+                    ? renderSwipeButton(
+                        async () => {
+                          await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
+                          this.listRef.current?.recenter();
+                        },
+                        'close',
+                        I18n.t('common.close'),
+                        theme.color.failure
+                      )
+                    : undefined,
                 ]
               : undefined,
-            // onSwipeStart: () => { console.log("top onSwipeStart", item.data.id) },
-            // onSwipeRelease: () => { console.log("top onSwipeRelease", item.data.id) }
           };
         }}
       />
