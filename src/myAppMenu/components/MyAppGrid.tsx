@@ -1,18 +1,18 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 // @ts-ignore’
-import { View, ScrollView, Linking, Platform } from 'react-native';
+import { View, ScrollView, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 
 import MyAppItem from './MyAppItem';
 
+import theme from '~/app/theme';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { AnyModule } from '~/framework/util/moduleTool';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
-import { CommonStyles } from '~/styles/common/styles';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
@@ -48,8 +48,8 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
             <FlatButton
               title={I18n.t('myapp-accessWeb')}
               loading={false}
-              customButtonStyle={{ backgroundColor: undefined, borderColor: CommonStyles.actionColor, borderWidth: 1.5 }}
-              customTextStyle={{ color: CommonStyles.actionColor }}
+              customButtonStyle={{ backgroundColor: undefined, borderColor: theme.color.secondary.regular, borderWidth: 1.5 }}
+              customTextStyle={{ color: theme.color.secondary.regular }}
               onPress={() => {
                 if (!DEPRECATED_getCurrentPlatform()) {
                   console.warn('Must have a platform selected to redirect the user');

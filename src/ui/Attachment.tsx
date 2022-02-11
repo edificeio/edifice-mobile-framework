@@ -10,6 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IconButton } from './IconButton';
 
+import theme from '~/app/theme';
 import { IGlobalState } from '~/AppStore';
 import { Icon } from '~/framework/components/icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -179,7 +180,7 @@ class Attachment extends React.PureComponent<
           <Pressable style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.onPressAttachment(notifierId)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
-                <ActivityIndicator size="small" color={CommonStyles.primary} style={{ marginRight: 4, height: 18 }} />
+                <ActivityIndicator size="small" color={theme.color.secondary.regular} style={{ marginRight: 4, height: 18 }} />
               ) : downloadState === DownloadState.Success ? (
                 <Icon color={CommonStyles.themeOpenEnt.green} size={16} name="checked" style={{ marginRight: 8 }} />
               ) : !this.attId || downloadState === DownloadState.Error ? (
