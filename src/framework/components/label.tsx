@@ -79,7 +79,7 @@ export default (props: ILabelProps) => {
   return (
     <LabelViewWithColor {...viewProps}>
       <LabelTextWithColor {...textProps}>
-        <Icon name={icon} color={labelStyle === 'plain' ? theme.color.text.inverse : color} size={rem(10/14)} />
+        <Icon name={icon} color={labelStyle === 'plain' ? theme.color.text.inverse : color} size={rem(10 / 14)} />
         &nbsp;
         {text}
         {children}
