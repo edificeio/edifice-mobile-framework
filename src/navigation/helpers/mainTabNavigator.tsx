@@ -3,6 +3,7 @@ import * as React from 'react';
 import { NavigationState, NavigationScreenProp } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 import { IconOnOff } from '~/ui';
@@ -48,7 +49,7 @@ const MainTabNavigationLabel = style.text(
     marginTop: -12,
   },
   ({ focused }) => ({
-    color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor,
+    color: focused ? theme.color.secondary.regular : CommonStyles.textTabBottomColor,
   }),
 );
 
