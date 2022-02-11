@@ -64,6 +64,14 @@ export interface ITheme {
     green: ColorValue;
     blue: ColorValue;
   };
+  days: {
+    monday: ColorValue;
+    tuesday: ColorValue;
+    wednesday: ColorValue;
+    thursday: ColorValue;
+    friday: ColorValue;
+    saturday: ColorValue;
+  };
 }
 
 // Magenta color indicated non-defined values
@@ -124,6 +132,14 @@ export const defaultTheme: ITheme = {
     orange: '#ff9057',
     green: '#3cb371',
     blue: '#2a9cc8',
+  },
+  days: {
+    monday: '#6fbe2e',
+    tuesday: '#a348c0',
+    wednesday: '#46afe6',
+    thursday: '#ff3a55',
+    friday: '#ff8d2e',
+    saturday: '#eac403',
   },
 };
 

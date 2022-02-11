@@ -151,10 +151,14 @@
       "confirmationUnsavedPublication": "Vous allez annuler l'ajout du commentaire. En êtes-vous sûr ?",
       "noComments": "Pas encore de commentaires"
     },
+    "confirmationUnsavedModification": "Modification non enregistrée",
+    "confirmationUnsavedPublication": "Publication non enregistrée",
     "continue": "Continuer",
     "date": {
       "invalid": "",
       "now": "maintenant",
+      "today": "aujourd'hui",
+      "tomorrow": "demain",
       "yesterday": "hier"
     },
     "delete": "Supprimer",
@@ -168,10 +172,9 @@
       "title": "Oups..."
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
+    "for": "Pour",
     "infoBubble-doNotShow": "Ne plus afficher ce message",
     "infoBubble-understood": "J'ai compris",
-    "confirmationUnsavedModification": "Modification non enregistrée",
-    "confirmationUnsavedPublication": "Publication non enregistrée",
     "modified": "(modifié)",
     "modify": "Modifier",
     "ok": "OK",
@@ -388,12 +391,16 @@
   "forgot-several-emails-no-match": "Les informations saisies ne correspondent pas à l'adresse mail renseignée.",
   "forgot-submit": "Envoyer",
   "forgot-success": "Courriel envoyé.",
+  "homework": {
+    "homeworkPage": {
+      "displayPastDays": "Afficher les jours précédents",
+      "noMorePastHomework": "Vous n'avez plus d'anciens devoirs"
+    }
+  },
   "homework-createDiary": "Créer un cahier de textes sur le web",
   "homework-diaries-emptyScreenText": "Avec l'application Cahier de textes, plus d'excuse pour les jeunes étourdis. Notez toutes les activités, partagez-les aux enfants, aux parents et tout le monde est au courant !",
   "homework-diaries-emptyScreenTitle": "C'est l'heure de créer un cahier de textes numérique.",
   "homework-diaries-noCreationRight-emptyScreenTitle": "Pas encore de cahier de textes numérique.",
-  "homework-previousNoMore": "Vous n'avez plus d'anciennes activités",
-  "homework-previousSee": "Afficher les activités précédentes",
   "homework-select": "Vos cahiers de textes",
   "homework-task-empty-title": "Cahier de textes",
   "homework-tasks-emptyScreenText": "Bientôt, vous pourrez consulter toutes les activités à faire sur ce cahier de textes numérique. Génial, non ?",

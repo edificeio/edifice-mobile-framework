@@ -1,16 +1,23 @@
-/**
- * Display a grey vertical line at the left tall as the screen is.
- */
-import style from 'glamorous-native';
+import * as React from 'react';
+import { ColorValue, View } from 'react-native';
 
-import { CommonStyles } from '~/styles/common/styles';
+import { UI_SIZES } from '~/framework/components/constants';
 
-export const HomeworkTimeline = style.view({
-  backgroundColor: CommonStyles.entryfieldBorder, // TODO: Use the linear gradient instead of a plain grey
-  height: '100%',
-  left: 29,
-  position: 'absolute',
-  width: 1,
-});
+export interface IHomeworkTimelineProps {
+  color?: ColorValue;
+}
+
+const HomeworkTimeline = ({ color }: IHomeworkTimelineProps) => (
+  <View
+    style={{
+      backgroundColor: color || '#F2F2F2',
+      height: UI_SIZES.screenHeight,
+      position: 'absolute',
+      top: -6,
+      width: 2,
+      left: 24,
+    }}
+  />
+);
 
 export default HomeworkTimeline;
