@@ -1,4 +1,3 @@
-import { thisExpression } from '@babel/types';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -44,15 +43,7 @@ import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import {
-  NestedText,
-  TextBold,
-  TextColorStyle,
-  TextLight,
-  TextLightItalic,
-  TextSemiBold,
-  TextSizeStyle,
-} from '~/framework/components/text';
+import { TextBold, TextColorStyle, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
