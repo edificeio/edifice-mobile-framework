@@ -51,7 +51,7 @@ export class SearchContainer extends React.PureComponent<SearchProps, SearchStat
     return (
       <PageContainer>
         {this.state.isShownHeader && (
-          <HeaderComponent color={CommonStyles.primary}>
+          <HeaderComponent>
             <Icon name="search2" size={20} color="white" style={{ marginHorizontal: 10 }} />
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
               <Input value={this.state.searchText} onChange={text => this.setState({ searchText: text })} />

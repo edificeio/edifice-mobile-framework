@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
+import theme from '~/app/theme';
 import { HeaderIcon } from '~/framework/components/header';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
@@ -121,7 +122,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           );
         },
         headerStyle: {
-          backgroundColor: CommonStyles.primary,
+          backgroundColor: theme.color.secondary.regular,
         },
       },
       navigation,

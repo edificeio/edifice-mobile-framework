@@ -33,9 +33,9 @@ import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { getMailContentState, IMail } from '~/modules/zimbra/state/mailContent';
 import { getSignatureState, ISignature } from '~/modules/zimbra/state/signature';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { CommonStyles } from '~/styles/common/styles';
 import { INavigationProps } from '~/types';
 import { HeaderAction } from '~/ui/headers/NewHeader';
+import theme from '~/app/theme';
 
 export enum DraftType {
   NEW,
@@ -124,7 +124,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           );
         },
         headerStyle: {
-          backgroundColor: CommonStyles.secondary,
+          backgroundColor: theme.color.secondary.regular,
         },
       },
       navigation,
