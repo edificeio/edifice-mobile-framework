@@ -5,5 +5,5 @@
   "build": 0,
   "alpha": 0,
   "rc": 0,
-  "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
+  "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
