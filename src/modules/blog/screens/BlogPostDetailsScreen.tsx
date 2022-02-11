@@ -3,7 +3,6 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import {
-  Alert,
   FlatList,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
@@ -73,6 +72,7 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { thisExpression } from '@babel/types';
 
 // TYPES ==========================================================================================
 
