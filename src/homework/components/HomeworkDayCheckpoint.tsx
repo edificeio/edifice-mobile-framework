@@ -1,56 +1,38 @@
-/**
- * HomeworkDayCheckpoint
- *
- * Just a wrapper for the heading of a day tasks. Displays a day number in a circle and a day name
- * Props:
- *     style - Glamorous style to add.
- * 	   nb - Day number to be displayed in a `HomeworkDayCircleNumber`.
- *     text - Day name to be displayed.
- *     active - An active `HomeworkDayCheckpoint` will be highlighted. Default `false`.
- */
-
-import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import moment from 'moment';
 import * as React from 'react';
-
-import HomeworkCircleNumber from './HomeworkCircleNumber';
+import { View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Text } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
-
-const { View } = style;
+import { UI_SIZES } from '~/framework/components/constants';
+import Label from '~/framework/components/label';
+import { displayDate } from '~/framework/util/date';
+import { uppercaseFirstLetter } from '~/framework/util/string';
+import today from '~/utils/today';
 
 export interface IHomeworkDayCheckpointProps {
-  style?: any;
-  nb?: number;
-  text?: string;
-  active?: boolean;
+  date: moment.Moment;
 }
 
-const homeworkDayCheckpointStyle = {
-  alignItems: 'center',
-  flexDirection: 'row',
-  backgroundColor: CommonStyles.lightGrey,
-  marginTop: 15,
-};
+export const HomeworkDayCheckpoint = ({ date }: IHomeworkDayCheckpointProps) => {
+  const isPastDate = date.isBefore(today(), 'day');
+  const isTodayOrFutureDate = date.isSameOrAfter(today(), 'day');
+  const dayOfTheWeek = date.locale('en').format('dddd').toLowerCase();
+  const dayColor = theme.days[dayOfTheWeek];
+  const labelColor = isPastDate ? theme.greyPalette.stone : dayColor;
+  const formattedDate = displayDate(date.locale(false), 'short');
+  const datePrefix = isTodayOrFutureDate ? `${I18n.t('common.for')} ` : '';
+  const dateString = uppercaseFirstLetter(`${datePrefix}${formattedDate}`);
 
-export const HomeworkDayCheckpoint = ({ style, nb, text = '', active = false }: IHomeworkDayCheckpointProps) => (
-  <View style={[homeworkDayCheckpointStyle, style]}>
-    <HomeworkCircleNumber nb={nb} active={active} />
+  return (
     <View
       style={{
-        flex: 1,
-        paddingBottom: 15,
-        marginBottom: -15,
-        paddingLeft: 5,
-        marginLeft: -5,
-        backgroundColor: CommonStyles.lightGrey,
+        marginBottom: UI_SIZES.spacing.extraSmall,
+        marginTop: UI_SIZES.spacing.extraLarge,
       }}>
-      <Text color={theme.color.text.light} fontSize={12}>
-        {text.toUpperCase()}
-      </Text>
+      <Label text={dateString} color={labelColor} />
     </View>
-  </View>
-);
+  );
+};
 
 export default HomeworkDayCheckpoint;

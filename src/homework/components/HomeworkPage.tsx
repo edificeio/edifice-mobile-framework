@@ -18,15 +18,13 @@
 // Imports ----------------------------------------------------------------------------------------
 
 // Libraries
-import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Linking, RefreshControl, SectionList, Text } from 'react-native';
+import { RefreshControl, SectionList, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
 
 // Components
-
 import { NavigationScreenProp } from 'react-navigation';
 
 import HomeworkCard from './HomeworkCard';
@@ -39,15 +37,15 @@ import { Trackers } from '~/framework/util/tracker';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
-import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton, Loading } from '~/ui';
+import { Loading } from '~/ui';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import today from '~/utils/today';
 import { openUrl } from '~/framework/util/linking';
-
-const { View } = style;
+import Label from '~/framework/components/label';
+import { UI_SIZES } from '~/framework/components/constants';
+import theme from '~/app/theme';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -151,40 +149,23 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
 
     return (
       <View style={{ flex: 1 }}>
-        {noFutureHomeworkHiddenPast ? null : (
-          <>
-            <HomeworkTimeline />
-            <View
-              style={{
-                backgroundColor: CommonStyles.lightGrey,
-                height: 15,
-                marginLeft: 50,
-                width: '100%',
-                position: 'absolute',
-                zIndex: 1,
-                top: 0,
-              }}
-            />
-          </>
-        )}
+        {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.extraLarge} />}
         <SectionList
           scrollEnabled={!hasNoDiaries}
-          contentContainerStyle={noFutureHomeworkHiddenPast ? { flex: 1 } : null}
+          contentContainerStyle={{
+            padding: UI_SIZES.spacing.large,
+            flex: noFutureHomeworkHiddenPast ? 1 : undefined,
+          }}
           sections={displayedHomework}
-          CellRendererComponent={ViewOverflow} /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
-          stickySectionHeadersEnabled
-          renderSectionHeader={({ section: { title } }) => (
-            <HomeworkDayCheckpoint
-              nb={title.date()}
-              text={title.format('dddd D MMMM YYYY')}
-              active={title.isSame(today(), 'day')}
-            />
-          )}
+          CellRendererComponent={ViewOverflow}
+          stickySectionHeadersEnabled={false}
+          renderSectionHeader={({ section: { title } }) => <HomeworkDayCheckpoint date={title} />}
           renderItem={({ item, index }) => (
             <HomeworkCard
-              key={item.id}
+              key={index}
               title={item.title}
               content={item.content}
+              date={item.date}
               onPress={() => {
                 onSelect!(diaryId!, item.date, item.id);
                 navigation!.navigate('HomeworkTask', { title: item.title });
@@ -202,26 +183,30 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
             />
           }
           onScrollBeginDrag={() => onScrollBeginDrag()}
-          ListHeaderComponent={
-            hasPastHomeWork ? (
-              <View style={{ height: 45, justifyContent: 'center', alignItems: 'center', marginTop: 15 }}>
-                {noRemainingPastHomework ? (
-                  <Text style={{ fontStyle: 'italic', color: CommonStyles.grey }}>{I18n.t('homework-previousNoMore')}</Text>
-                ) : (
-                  <FlatButton
-                    loading={false}
-                    title={I18n.t('homework-previousSee')}
-                    onPress={() => {
-                      const newestRemainingPastHW = remainingPastHomework[remainingPastHomework.length - 1];
-                      const newestRemainingPastHWDate = newestRemainingPastHW.title;
-                      const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf('isoWeek');
-                      this.setState({ pastDateLimit: newestRemainingPastHWWeekStart });
-                    }}
-                  />
-                )}
-              </View>
-            ) : null
-          }
+          ListHeaderComponent={() => {
+            const labelColor = noRemainingPastHomework ? theme.greyPalette.grey : theme.greyPalette.black;
+            const labelText = I18n.t(`homework.homeworkPage.${noRemainingPastHomework ? 'noMorePastHomework' : 'displayPastDays'}`);
+            return (
+              <TouchableOpacity
+                style={{ alignSelf: 'center' }}
+                disabled={noRemainingPastHomework}
+                onPress={() => {
+                  const newestRemainingPastHW = remainingPastHomework[remainingPastHomework.length - 1];
+                  const newestRemainingPastHWDate = newestRemainingPastHW.title;
+                  const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf('isoWeek');
+                  this.setState({ pastDateLimit: newestRemainingPastHWWeekStart });
+                }}>
+                <Label
+                  labelStyle="outline"
+                  labelSize="large"
+                  icon="back"
+                  iconStyle={{ transform: [{ rotate: '90deg' }] }}
+                  color={labelColor}
+                  text={labelText}
+                />
+              </TouchableOpacity>
+            );
+          }}
           ListFooterComponent={noFutureHomeworkHiddenPast ? null : <View style={{ height: 15 }} />}
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
