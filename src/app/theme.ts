@@ -18,7 +18,7 @@ export interface ITheme {
     };
     primary: {
       regular: ColorValue;
-      subleShadow: ColorValue;
+      subtleShadow: ColorValue;
       shadow: ColorValue;
       light: ColorValue;
       extraLight: ColorValue;
@@ -79,7 +79,7 @@ export const defaultTheme: ITheme = {
     },
     primary: {
       regular: '#ff8000',
-      subleShadow: 'magenta',
+      subtleShadow: 'magenta',
       shadow: 'magenta',
       light: 'magenta',
       extraLight: 'magenta',

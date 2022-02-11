@@ -7,7 +7,7 @@ import { Icon } from './icons/Icon';
 
 import { TextBold } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
-import { CommonStyles } from '~/styles/common/styles';
+import theme from '~/app/theme';
 
 export interface ButtonTextIconProps {
   onPress: () => any;
@@ -38,7 +38,7 @@ const TouchableOpacity = style.touchableOpacity({
   width: layoutSize.LAYOUT_50,
   height: layoutSize.LAYOUT_50,
   borderRadius: layoutSize.LAYOUT_25,
-  backgroundColor: CommonStyles.secondary,
+  backgroundColor: theme.color.primary.regular,
 });
 
 export const ButtonIconText = ({ style, children, colorText, ...rest }: ButtonTextIconProps) => {
