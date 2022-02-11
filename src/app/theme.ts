@@ -56,6 +56,13 @@ export interface ITheme {
     friday: ColorValue;
     saturday: ColorValue;
   };
+  flashMessages: {
+    'grey-dark': ColorValue;
+    red: ColorValue;
+    orange: ColorValue;
+    green: ColorValue;
+    blue: ColorValue;
+  };
   greyPalette: {
     black: ColorValue;
     graphite: ColorValue;
@@ -74,21 +81,6 @@ export interface ITheme {
     pink: ColorValue;
     purple: ColorValue;
     indigo: ColorValue;
-  };
-  flashMessages: {
-    'grey-dark': ColorValue;
-    red: ColorValue;
-    orange: ColorValue;
-    green: ColorValue;
-    blue: ColorValue;
-  };
-  days: {
-    monday: ColorValue;
-    tuesday: ColorValue;
-    wednesday: ColorValue;
-    thursday: ColorValue;
-    friday: ColorValue;
-    saturday: ColorValue;
   };
 }
 
@@ -143,6 +135,13 @@ export const defaultTheme: ITheme = {
     friday: '#ff8d2e',
     saturday: '#eac403',
   },
+  flashMessages: {
+    'grey-dark': '#5b6472',
+    red: '#c74848',
+    orange: '#ff9057',
+    green: '#3cb371',
+    blue: '#2a9cc8',
+  },
   greyPalette: {
     black: '#4a4a4a',
     graphite: '#7a7a7a',
@@ -161,21 +160,6 @@ export const defaultTheme: ITheme = {
     pink: '#b930a2',
     purple: '#763294',
     indigo: '#1a22a2',
-  },
-  flashMessages: {
-    'grey-dark': '#5b6472',
-    red: '#c74848',
-    orange: '#ff9057',
-    green: '#3cb371',
-    blue: '#2a9cc8',
-  },
-  days: {
-    monday: '#6fbe2e',
-    tuesday: '#a348c0',
-    wednesday: '#46afe6',
-    thursday: '#ff3a55',
-    friday: '#ff8d2e',
-    saturday: '#eac403',
   },
 };
 

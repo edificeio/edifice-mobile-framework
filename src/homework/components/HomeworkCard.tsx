@@ -27,7 +27,7 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
 
   return (
     <>
-      <HomeworkTimeline leftPosition={UI_SIZES.spacing.smallPlus} color={timelineColor} />
+      <HomeworkTimeline leftPosition={UI_SIZES.spacing.smallPlus} topPosition={-UI_SIZES.spacing.small} color={timelineColor} />
       <TouchableOpacity
         onPress={onPress}
         style={{

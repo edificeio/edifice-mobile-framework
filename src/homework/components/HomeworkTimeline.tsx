@@ -6,15 +6,16 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export interface IHomeworkTimelineProps {
   leftPosition: number;
+  topPosition?: number;
   color?: ColorValue;
 }
 
-const HomeworkTimeline = ({ leftPosition, color }: IHomeworkTimelineProps) => (
+const HomeworkTimeline = ({ leftPosition, topPosition, color }: IHomeworkTimelineProps) => (
   <View
     style={{
       backgroundColor: color || theme.greyPalette.pearl,
       left: leftPosition,
-      top: -UI_SIZES.spacing.small,
+      top: topPosition,
       width: UI_SIZES.dimensions.width.small,
       height: UI_SIZES.screenHeight,
       position: 'absolute',

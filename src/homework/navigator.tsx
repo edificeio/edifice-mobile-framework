@@ -1,18 +1,27 @@
-import { createStackNavigator } from "react-navigation-stack";
-import HomeworkFilterPage from "./containers/HomeworkFilterPage";
-import HomeworkPage from "./containers/HomeworkPage";
-import HomeworkTaskPage from "./containers/HomeworkTaskPage";
+import { createStackNavigator } from 'react-navigation-stack';
 
-export default createStackNavigator({
-  Homework: {
-    screen: HomeworkPage
+import HomeworkInitialScreen from './containers/HomeworkInitialScreen';
+import HomeworkExplorerScreen from './containers/HomeworkExplorerScreen';
+import HomeworkTaskListScreen from './containers/HomeworkTaskListScreen';
+import HomeworkTaskDetailsScreen from './containers/HomeworkTaskDetailsScreen';
+import config from './config';
+
+export default createStackNavigator(
+  {
+    [`${config.name}/loader`]: {
+      screen: HomeworkInitialScreen,
+    },
+    [`${config.name}`]: {
+      screen: HomeworkExplorerScreen,
+    },
+    [`${config.name}/tasks`]: {
+      screen: HomeworkTaskListScreen,
+    },
+    [`${config.name}/details`]: {
+      screen: HomeworkTaskDetailsScreen,
+    },
   },
-
-  HomeworkTask: {
-    screen: HomeworkTaskPage
+  {
+    headerMode: 'none',
   },
-
-  HomeworkFilter: {
-    screen: HomeworkFilterPage
-  }
-});
+);

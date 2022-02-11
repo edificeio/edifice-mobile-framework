@@ -392,19 +392,18 @@
   "forgot-submit": "Envoyer",
   "forgot-success": "Courriel envoyé.",
   "homework": {
-    "homeworkPage": {
+    "homeworkTaskListScreen": {
       "displayPastDays": "Afficher les jours précédents",
       "noMorePastHomework": "Vous n'avez plus d'anciens devoirs"
     },
-    "homeworkTaskPage": {
-      "homework": "Cahier de textes"
+    "homeworkExplorerScreen": {
+      "homeworks": "Cahiers de textes"
     }
   },
   "homework-createDiary": "Créer un cahier de textes sur le web",
   "homework-diaries-emptyScreenText": "Avec l'application Cahier de textes, plus d'excuse pour les jeunes étourdis. Notez toutes les activités, partagez-les aux enfants, aux parents et tout le monde est au courant !",
   "homework-diaries-emptyScreenTitle": "C'est l'heure de créer un cahier de textes numérique.",
   "homework-diaries-noCreationRight-emptyScreenTitle": "Pas encore de cahier de textes numérique.",
-  "homework-select": "Vos cahiers de textes",
   "homework-tasks-emptyScreenText": "Bientôt, vous pourrez consulter toutes les activités à faire sur ce cahier de textes numérique. Génial, non ?",
   "homework-tasks-emptyScreenTitle": "Pas encore d’activité à l’horizon…",
   "imageNotAvailable": "Image non disponible",

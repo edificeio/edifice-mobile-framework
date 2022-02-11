@@ -12,7 +12,7 @@
  * You have to sort elements by yourself before passing them with the `data` prop.
  *
  *
- * ResourceCard: Component that display a single resource/folder.
+ * ResourceItem: Component that display a single resource/folder.
  *   props:
  *      - title + subtitle (+ textStyle) : Text displayed under the thumbnail
  *      - color (+ showBgColor)          : Color of the item, traditionally correspond to the entcore application. bgColor can be shown if no image, or with a transparent image.
@@ -89,7 +89,7 @@ export interface IExplorerFolderItem extends IExplorerItem {
 interface IExplorerResourceItemBase extends IExplorerItem {
   type: 'resource';
   title: string;
-  date: Moment;
+  date?: Moment;
 }
 export interface IExplorerResourceItemWithImage extends IExplorerResourceItemBase {
   thumbnail: ImageSourcePropType;
@@ -157,6 +157,10 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
       </EmptyItemTouchable>
     );
   const TheRightTouchable = item.type === 'folder' ? FolderItemTouchable : ResourceItemTouchable;
+  // "isResourceWithDate" is used to adjust the text layout:
+  // -a resource with a date has a date subtitle (so the title/subtitle are not centered and use 1 line max)
+  // -a folder or a resource without a date have no subtitle (so the title is centered and use 2 lines max)
+  const isResourceWithDate = item.type === 'resource' && item.date;
   return (
     <TheRightTouchable
       onPress={e => {
@@ -164,7 +168,7 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
       }}>
       <ResourceItem
         title={(item as IExplorerFolderItem).name || (item as IExplorerResourceItemBase).title}
-        subtitle={item.type === 'resource' ? displayPastDate(item.date) : undefined}
+        subtitle={isResourceWithDate ? displayPastDate(item.date!) : undefined}
         color={item.type === 'folder' ? 'transparent' : item.color}
         showBgColor={item.type !== 'folder'}
         image={(item as IExplorerResourceItemWithImage).thumbnail}
@@ -175,8 +179,8 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
             name={item.type === 'folder' ? 'folder1' : (item as IExplorerResourceItemWithIcon).icon}
           />
         }
-        textStyle={item.type === 'folder' ? { textAlign: 'center' } : {}}
-        textProps={item.type === 'folder' ? { numberOfLines: 2 } : {}}
+        textStyle={isResourceWithDate ? {} : { textAlign: 'center' }}
+        textProps={{ numberOfLines: isResourceWithDate ? 1 : 2 }}
         style={{}} // reset default card styles because that's the touchable that hold them
       />
     </TheRightTouchable>
@@ -222,67 +226,70 @@ export const ResourceItem = (props: {
   image?: ImageSourcePropType;
   overlay?: React.ReactNode;
   style?: ViewStyle;
-}) => (
-  <View style={props.style ?? resourceItemTouchableStyle}>
-    <ThumbnailView>
-      {props.showBgColor
-        ? (() => {
-            const CustomView = styled(ThumbnailView)({
-              backgroundColor: props.color,
-              opacity: 0.1,
+}) => {
+  return (
+    <View style={props.style ?? resourceItemTouchableStyle}>
+      <ThumbnailView>
+        {props.showBgColor
+          ? (() => {
+              const CustomView = styled(ThumbnailView)({
+                backgroundColor: props.color,
+                opacity: 0.1,
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+              });
+              return <CustomView />;
+            })()
+          : null}
+        {props.image ? (
+          <Image
+            source={props.image}
+            style={{
               position: 'absolute',
               width: '100%',
               height: '100%',
-            });
-            return <CustomView />;
-          })()
-        : null}
-      {props.image ? (
-        <Image
-          source={props.image}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            borderTopLeftRadius: 17,
-            borderTopRightRadius: 17,
-          }}
-        />
-      ) : null}
-      {props.overlay ? props.overlay : null}
-    </ThumbnailView>
-    <MetadataView>
-      <View style={{}}>
-        {(() => {
-          const nbLines = props.textProps?.numberOfLines ?? 1;
-          return Array((props.subtitle ? 1 : 0) + nbLines).fill(true).map((v, i) => <Text key={i}> </Text>);
-        })()}
-        <View style={{ position: 'absolute', width: '100%' }}>
-          <TextBold
-            numberOfLines={1}
-            {...props.textProps}
-            style={{
-              ...TextSizeStyle.Small,
-              ...TextColorStyle.Light,
-              ...props.textStyle,
-            }}>
-            {props.title ?? null}
-          </TextBold>
-        </View>
-        {props.subtitle ? (
+              borderTopLeftRadius: 17,
+              borderTopRightRadius: 17,
+            }}
+          />
+        ) : null}
+        {props.overlay ? props.overlay : null}
+      </ThumbnailView>
+      <MetadataView>
+        <View style={{}}>
+          {/* a resource item always has available space for 2 text lines,
+          so we generate it and place the title/subtitle on top (as an absolute position) */}
+          <Text> </Text>
+          <Text> </Text>
           <View style={{ position: 'absolute', width: '100%' }}>
-            <Text> </Text>
-            <Text
+            <TextBold
+              numberOfLines={props.textProps?.numberOfLines}
+              {...props.textProps}
               style={{
                 ...TextSizeStyle.Small,
                 ...TextColorStyle.Light,
                 ...props.textStyle,
               }}>
-              {props.subtitle}
-            </Text>
+              {props.title ?? null}
+            </TextBold>
           </View>
-        ) : null}
-      </View>
-    </MetadataView>
-  </View>
-);
+          {props.subtitle ? (
+            <View style={{ position: 'absolute', width: '100%' }}>
+              <Text> </Text>
+              <Text
+                numberOfLines={props.textProps?.numberOfLines}
+                style={{
+                  ...TextSizeStyle.Small,
+                  ...TextColorStyle.Light,
+                  ...props.textStyle,
+                }}>
+                {props.subtitle}
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      </MetadataView>
+    </View>
+  );
+};

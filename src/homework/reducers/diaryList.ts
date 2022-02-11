@@ -15,6 +15,7 @@ export interface IHomeworkDiary {
   id: string;
   title: string;
   name: string;
+  thumbnail: string;
 }
 
 export type IHomeworkDiaryList = IArrayById<IHomeworkDiary>;

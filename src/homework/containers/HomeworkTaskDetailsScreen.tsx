@@ -1,16 +1,7 @@
-/**
- * HomeworkTaskPage
- *
- * Display page for a task of a given day.
- */
-
-// imports ----------------------------------------------------------------------------------------
-
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { NavigationInjectedProps, NavigationScreenProp } from 'react-navigation';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
@@ -19,9 +10,7 @@ import { PageView } from '~/framework/components/page';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import MondayImage from 'ode-images/days/monday.svg';
 import TuesdayImage from 'ode-images/days/tuesday.svg';
 import WednesdayImage from 'ode-images/days/wednesday.svg';
@@ -29,8 +18,10 @@ import ThursdayImage from 'ode-images/days/thursday.svg';
 import FridayImage from 'ode-images/days/friday.svg';
 import SaturdayImage from 'ode-images/days/saturday.svg';
 import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
+import { FakeHeader, HeaderAction, HeaderLeft, HeaderRow } from '~/framework/components/header';
+import config from '../config';
 
-export interface IHomeworkTaskPageNavigationParams {
+export interface IHomeworkTaskDetailsScreenNavigationParams {
   task: {
     date: moment.Moment;
     id: string;
@@ -39,19 +30,9 @@ export interface IHomeworkTaskPageNavigationParams {
   };
 }
 
-export type IHomeworkTaskPageProps = NavigationInjectedProps<IHomeworkTaskPageNavigationParams>;
+export type IHomeworkTaskDetailsScreenProps = NavigationInjectedProps<IHomeworkTaskDetailsScreenNavigationParams>;
 
-export class HomeworkTaskPage extends React.PureComponent<IHomeworkTaskPageProps, object> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return alternativeNavScreenOptions(
-      {
-        title: navigation.getParam('task').title || I18n.t('homework.homeworkTaskPage.homework'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-      },
-      navigation,
-    );
-  };
-
+export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTaskDetailsScreenProps, object> {
   render() {
     const { navigation } = this.props;
     const { date, title, content } = navigation.getParam('task');
@@ -70,27 +51,40 @@ export class HomeworkTaskPage extends React.PureComponent<IHomeworkTaskPageProps
     const dayImage = dayImages[dayOfTheWeek];
 
     return (
-      <PageView>
-        <View style={[styles.banner, { backgroundColor: bannerColor }]}>
-          <View>
-            <HomeworkDayCheckpoint date={date} />
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
+                iconSize={24}
+                onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
+              />
+            </HeaderLeft>
+          </HeaderRow>
+        </FakeHeader>
+        <PageView>
+          <View style={[styles.banner, { backgroundColor: bannerColor }]}>
+            <View>
+              <HomeworkDayCheckpoint date={date} />
+            </View>
+            {dayImage}
           </View>
-          {dayImage}
-        </View>
-        <ScrollView contentContainerStyle={styles.contentContainer}>
-          {title ? <TextSemiBold style={styles.title}>{title}</TextSemiBold> : null}
-          {content ? (
-            <HtmlContentView
-              html={content}
-              opts={{ globalTextStyle: styles.content }}
-              onDownload={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT', 'Read mode')}
-              onError={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
-              onDownloadAll={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
-              onOpen={() => Trackers.trackEvent('Homeworks', 'OPEN ATTACHMENT', 'Read mode')}
-            />
-          ) : null}
-        </ScrollView>
-      </PageView>
+          <ScrollView contentContainerStyle={styles.contentContainer}>
+            {title ? <TextSemiBold style={styles.title}>{title}</TextSemiBold> : null}
+            {content ? (
+              <HtmlContentView
+                html={content}
+                opts={{ globalTextStyle: styles.content }}
+                onDownload={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT', 'Read mode')}
+                onError={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
+                onDownloadAll={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
+                onOpen={() => Trackers.trackEvent('Homeworks', 'OPEN ATTACHMENT', 'Read mode')}
+              />
+            ) : null}
+          </ScrollView>
+        </PageView>
+      </>
     );
   }
 }
@@ -120,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withViewTracking('homework/task')(HomeworkTaskPage);
+export default withViewTracking(`${config.name}/details`)(HomeworkTaskDetailsScreen);
