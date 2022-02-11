@@ -392,15 +392,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               onViewportEnter={() => this.updateVisible(true)}
               onViewportLeave={() => this.updateVisible(false)}
               innerRef={ref => (this._titleRef = ref)}>
-              {/* {blogPostData?.state === 'SUBMITTED' ? (
-                <TextSemiBold style={{ color: theme.color.failure, ...TextSizeStyle.Tiny }}>{'Billet à valider'}</TextSemiBold>
-              ) : null} */}
-              <TextBold style={{ ...TextSizeStyle.Big }}>
-                {blogPostData?.state === 'SUBMITTED' ? (
-                  <NestedText style={{ color: theme.color.failure }}>{'(Billet à valider) '}</NestedText>
-                ) : null}
-                {blogPostData?.title}
-              </TextBold>
+              <TextBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</TextBold>
             </ViewportAwareTitle>
             <HtmlContentView
               html={blogPostContent}
