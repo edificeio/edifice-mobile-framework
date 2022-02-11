@@ -10,7 +10,6 @@
  *
  *    `onMount` - fired when component did mount.
  *    `onRefresh` - fired when the user ask to refresh the list.
- *    `onSelect` - fired when the user touches a displayed task.
  *
  *    `navigation` - React Navigation instance.
  */
@@ -66,7 +65,6 @@ export interface IHomeworkPageDataProps {
 export interface IHomeworkPageEventProps {
   onFocus?: () => void;
   onRefresh?: (diaryId: string) => void;
-  onSelect?: (diaryId: string, date: moment.Moment, itemId: string) => void;
   onScrollBeginDrag?: () => void;
 }
 
@@ -124,7 +122,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
   }
 
   private renderList() {
-    const { diaryListData, diaryId, tasksByDay, navigation, onRefresh, onSelect, onScrollBeginDrag, session } = this.props;
+    const { diaryListData, diaryId, tasksByDay, navigation, onRefresh, onScrollBeginDrag, session } = this.props;
     const { fetching, pastDateLimit } = this.state;
     const hasNoDiaries = !diaryListData || (diaryListData && Object.keys(diaryListData).length === 0);
     const data = tasksByDay
@@ -159,17 +157,22 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
           sections={displayedHomework}
           CellRendererComponent={ViewOverflow}
           stickySectionHeadersEnabled={false}
-          renderSectionHeader={({ section: { title } }) => <HomeworkDayCheckpoint date={title} />}
+          renderSectionHeader={({ section: { title } }) => (
+            <View
+              style={{
+                marginBottom: UI_SIZES.spacing.extraSmall,
+                marginTop: UI_SIZES.spacing.extraLarge,
+              }}>
+              <HomeworkDayCheckpoint date={title} />
+            </View>
+          )}
           renderItem={({ item, index }) => (
             <HomeworkCard
               key={index}
               title={item.title}
               content={item.content}
               date={item.date}
-              onPress={() => {
-                onSelect!(diaryId!, item.date, item.id);
-                navigation!.navigate('HomeworkTask', { title: item.title });
-              }}
+              onPress={() => navigation!.navigate('HomeworkTask', { task: item })}
             />
           )}
           keyExtractor={item => item.id}

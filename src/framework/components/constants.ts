@@ -40,6 +40,7 @@ export const UI_SIZES = {
     small: 6,
     smallPlus: 8,
     medium: 12,
+    mediumPlus: 14,
     large: 16,
     largePlus: 22,
     extraLarge: 24,

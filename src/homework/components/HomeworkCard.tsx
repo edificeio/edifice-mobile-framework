@@ -5,6 +5,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { getDayOfTheWeek } from '~/framework/util/date';
 import HtmlToText from '~/infra/htmlConverter/text';
 import today from '~/utils/today';
 import HomeworkTimeline from './HomeworkTimeline';
@@ -18,7 +19,7 @@ export interface IHomeworkCardProps {
 
 const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => {
   const isPastHomework = date.isBefore(today(), 'day');
-  const dayOfTheWeek = date.locale('en').format('dddd').toLowerCase();
+  const dayOfTheWeek = getDayOfTheWeek(date);
   const dayColor = theme.days[dayOfTheWeek];
   const timelineColor = isPastHomework ? theme.greyPalette.cloudy : dayColor;
   const arrowColor = isPastHomework ? theme.greyPalette.stone : dayColor;

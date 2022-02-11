@@ -395,6 +395,9 @@
     "homeworkPage": {
       "displayPastDays": "Afficher les jours précédents",
       "noMorePastHomework": "Vous n'avez plus d'anciens devoirs"
+    },
+    "homeworkTaskPage": {
+      "homework": "Cahier de textes"
     }
   },
   "homework-createDiary": "Créer un cahier de textes sur le web",
@@ -402,7 +405,6 @@
   "homework-diaries-emptyScreenTitle": "C'est l'heure de créer un cahier de textes numérique.",
   "homework-diaries-noCreationRight-emptyScreenTitle": "Pas encore de cahier de textes numérique.",
   "homework-select": "Vos cahiers de textes",
-  "homework-task-empty-title": "Cahier de textes",
   "homework-tasks-emptyScreenText": "Bientôt, vous pourrez consulter toutes les activités à faire sur ce cahier de textes numérique. Génial, non ?",
   "homework-tasks-emptyScreenTitle": "Pas encore d’activité à l’horizon…",
   "imageNotAvailable": "Image non disponible",

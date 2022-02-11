@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
-import { homeworkTaskSelected } from '~/homework/actions/selectedTask';
 import { fetchHomeworkTasks } from '~/homework/actions/tasks';
 import {
   HomeworkPage,
@@ -77,9 +76,6 @@ const mapDispatchToProps: (dispatch: any) => IHomeworkPageEventProps = dispatch 
       dispatch(fetchHomeworkTasks(diaryId));
     },
     onScrollBeginDrag: () => {},
-    onSelect: (diaryId, date, itemId) => {
-      dispatch(homeworkTaskSelected(diaryId, date, itemId));
-    },
   };
 };
 

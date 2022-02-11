@@ -38,6 +38,10 @@ export const displayDate = (date: Moment, format?: 'short' | 'extraShort') => {
   const thisYearFormat = isShortFormat ? 'dddd D MMM' : isExtraShortFormat ? 'DD/MM' : 'dddd D MMMM';
   const otherYearFormat = isShortFormat ? 'dddd D MMM Y' : isExtraShortFormat ? 'DD/MM/YY' : 'dddd D MMMM Y';
 
+  if (!date || !date.isValid()) {
+    return I18n.t('common.date.invalid');
+  }
+
   if (/*yesterday*/ date.clone().add(1, 'day').isSame(now, 'day')) {
     return I18n.t('common.date.yesterday');
   } else if (/*today*/ date.isSame(now, 'day')) {
@@ -47,4 +51,11 @@ export const displayDate = (date: Moment, format?: 'short' | 'extraShort') => {
   } else if (/*this year*/ date.isSame(now, 'year')) {
     return date.format(thisYearFormat);
   } /*other year*/ else return date.format(otherYearFormat);
+};
+
+export const getDayOfTheWeek = (date: Moment) => {
+  if (!date || !date.isValid()) {
+    return I18n.t('common.date.invalid');
+  }
+  return date.locale('en').format('dddd').toLowerCase();
 };

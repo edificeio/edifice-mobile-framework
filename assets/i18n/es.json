@@ -388,12 +388,16 @@
   "forgot-several-emails-no-match": "La información aportada no corresponde a la dirección de correo electrónico proporcionada.",
   "forgot-submit": "Enviar",
   "forgot-success": "Correo electrónico enviado",
+  "homework": {
+    "homeworkTaskPage": {
+      "homework": "Cuaderno"
+    }
+  },
   "homework-createDiary": "Crear un cuaderno semanal en la web",
   "homework-diaries-emptyScreenText": "Gracias a la aplicación Cuaderno semanal, ya no hay más excusas para los niños despistados. ¡Anote todas las actividades, compártalas con los niños, los padres y así todo el mundo está al corriente!",
   "homework-diaries-emptyScreenTitle": "Es hora de crear un Cuaderno semanal digital.",
   "homework-diaries-noCreationRight-emptyScreenTitle": "Todavía no hay ningún cuaderno semanal digital.",
   "homework-select": "Mis cuadernos semanales",
-  "homework-task-empty-title": "Cuaderno",
   "homework-tasks-emptyScreenText": "Pronto podrá consultar todas las actividades por hacer en el cuaderno semanal. ¿Está genial, verdad?",
   "homework-tasks-emptyScreenTitle": "No hay actividades todavía...",
   "imageNotAvailable": "Imagen no disponible",
