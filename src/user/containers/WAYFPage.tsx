@@ -8,10 +8,9 @@ import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-we
 import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
-import { Logo } from './LoginWAYFPage';
-
 import theme from '~/app/theme';
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { PFLogo } from '~/framework/components/pfLogo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -315,7 +314,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         Trackers.trackDebugEvent('Auth', 'WAYF', 'LOADING');
         return (
           <View style={WAYFPage.STYLES.container}>
-            <Logo source={this.pfLogo} />
+            <PFLogo />
             <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</Text>
             <ActivityIndicator size="large" color={theme.color.secondary.regular} />
           </View>
