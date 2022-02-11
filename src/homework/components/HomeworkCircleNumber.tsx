@@ -42,7 +42,7 @@ const homeworkCircleNumberStyle = {
 
 export const HomeworkCircleNumber = ({ style, nb, active = false }: IHomeworkCircleNumberProps) => {
   const backgroundStyle = {
-    backgroundColor: active ? CommonStyles.actionColor : CommonStyles.tabBottomColor,
+    backgroundColor: active ? theme.color.secondary.regular : CommonStyles.tabBottomColor,
   };
 
   return (

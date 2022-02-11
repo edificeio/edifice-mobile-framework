@@ -5,7 +5,7 @@ import { TouchableOpacityProps } from 'react-native';
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Icon } from './icons/Icon';
 
-import { CommonStyles } from '~/styles/common/styles';
+import theme from '~/app/theme';
 
 export interface ButtonTextIconProps {
   onPress: () => any;
@@ -19,7 +19,7 @@ export interface ButtonTextIconProps {
 
 const ButtonText = style.text({
   backgroundColor: 'transparent',
-  color: CommonStyles.actionColor,
+  color: theme.color.secondary.regular,
   fontWeight: '400',
   marginHorizontal: 15,
   textAlign: 'center',
