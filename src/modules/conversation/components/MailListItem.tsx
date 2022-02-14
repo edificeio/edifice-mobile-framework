@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
   },
   containerMailUnread: {
-    backgroundColor: theme.color.secondary.light,
+    backgroundColor: theme.color.secondary.extraLight,
     paddingVertical: 18,
   },
   mailInfos: {
