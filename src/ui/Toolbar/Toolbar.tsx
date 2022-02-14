@@ -3,9 +3,9 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import Item from './Item';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
-import { CommonStyles } from '~/styles/common/styles';
 import { IFloatingProps, IMenuItem } from '~/ui/types';
 import { IItem, INavigationProps } from '~/workspace/types';
 
@@ -51,7 +51,7 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
         <FlatList
           contentContainerStyle={{
             ...styles.firstActions,
-            backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
+            backgroundColor: selected && selected.length ? theme.color.primary.regular : undefined,
           }}
           data={firstItems}
           scrollEnabled={false}
@@ -65,7 +65,7 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
           <FlatList
             contentContainerStyle={{
               ...styles.middleActions,
-              backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
+              backgroundColor: selected && selected.length ? theme.color.primary.regular : undefined,
             }}
             data={[titleItem!]}
             scrollEnabled={false}
@@ -77,7 +77,7 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
         <FlatList
           contentContainerStyle={{
             ...styles.lastActions,
-            backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
+            backgroundColor: selected && selected.length ? theme.color.primary.regular : undefined,
             width: selected && selected.length ? DEVICE_WIDTH() - layoutSize.LAYOUT_70 : layoutSize.LAYOUT_70,
           }}
           data={lastItems}
