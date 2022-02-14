@@ -1,30 +1,38 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View, StyleSheet, Switch, ScrollView, RefreshControl, Platform } from "react-native";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View, StyleSheet, Switch, ScrollView, RefreshControl, Platform } from 'react-native';
 
-import { getSessionInfo } from "../../../../App";
-import { INavigationProps } from "../../../../types";
-import { PageContainer } from "../../../../ui/ContainerContent";
-import DateTimePicker from "../../../../ui/DateTimePicker";
-import { EmptyScreen } from "../../../../ui/EmptyScreen";
-import { Text, TextBold } from "../../../../framework/components/text";
-import { isHomeworkDone, homeworkDetailsAdapter, sessionDetailsAdapter, getTeacherName } from "../../utils/cdt";
-import ChildPicker from "../../viesco/containers/ChildPicker";
-import { ISession } from "../state/sessions";
-import { HomeworkItem, SessionItem } from "./Items";
+import { HomeworkItem, SessionItem } from './Items';
+
+import { getSessionInfo } from '~/App';
+import { Text, TextBold } from '~/framework/components/text';
+import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
+import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
+import {
+  isHomeworkDone,
+  homeworkListDetailsAdapter,
+  sessionListDetailsAdapter,
+  getTeacherName,
+} from '~/modules/viescolaire/utils/cdt';
+import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
+import { INavigationProps } from '~/types';
+import { PageContainer } from '~/ui/ContainerContent';
+import DateTimePicker from '~/ui/DateTimePicker';
+import { EmptyScreen } from '~/ui/EmptyScreen';
 
 const style = StyleSheet.create({
   homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
   title: { fontSize: 18 },
-  subtitle: { color: "#AFAFAF" },
-  course: { fontWeight: "bold", textTransform: "uppercase" },
+  subtitle: { color: '#AFAFAF' },
+  course: { fontWeight: 'bold', textTransform: 'uppercase' },
   grid: {
     marginTop: 10,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
@@ -35,9 +43,9 @@ enum SwitchState {
 
 type HomeworkListProps = {
   updateHomeworkProgress?: any;
-  homeworks: any;
+  homeworks: IHomeworkList;
   sessions: ISession[];
-  personnel: any;
+  personnel: IPersonnelList;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
   onRefreshHomeworks: any;
@@ -48,7 +56,7 @@ type HomeworkListProps = {
 export default (props: HomeworkListProps) => {
   const [switchValue, toggleSwitch] = React.useState<SwitchState>(SwitchState.HOMEWORK);
   const [startDate, setStartDate] = React.useState<moment.Moment>(moment());
-  const [endDate, setEndDate] = React.useState<moment.Moment>(moment().add(3, "week"));
+  const [endDate, setEndDate] = React.useState<moment.Moment>(moment().add(3, 'week'));
 
   const notFirstRender = React.useRef(false);
 
@@ -65,16 +73,16 @@ export default (props: HomeworkListProps) => {
   }, []);
 
   const onRefreshHomeworks = () => {
-    props.onRefreshHomeworks(startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"));
+    props.onRefreshHomeworks(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
   };
 
   const onRefreshSessions = () => {
-    props.onRefreshSessions(startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"));
+    props.onRefreshSessions(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
   };
 
   const DatePickers = React.memo(({ startDate, endDate }) => (
     <View style={style.grid}>
-      <Text>{I18n.t("viesco-from")}</Text>
+      <Text>{I18n.t('viesco-from')}</Text>
       <DateTimePicker
         mode="date"
         style={{ marginHorizontal: 12 }}
@@ -82,42 +90,36 @@ export default (props: HomeworkListProps) => {
         maximumDate={endDate}
         onChange={setStartDate}
       />
-      <Text>{I18n.t("viesco-to")}</Text>
-      <DateTimePicker
-        mode="date"
-        style={{ marginHorizontal: 12 }}
-        value={endDate}
-        minimumDate={startDate}
-        onChange={setEndDate}
-      />
+      <Text>{I18n.t('viesco-to')}</Text>
+      <DateTimePicker mode="date" style={{ marginHorizontal: 12 }} value={endDate} minimumDate={startDate} onChange={setEndDate} />
     </View>
   ));
 
   const PlatformSpecificSwitch = React.memo(({ value }) => {
     let newProps = {};
     switch (Platform.OS) {
-      case "android": {
-        newProps = { thumbColor: value ? "#2BAB6F" : "#FA9700", ...newProps };
+      case 'android': {
+        newProps = { thumbColor: value ? '#2BAB6F' : '#FA9700', ...newProps };
         break;
       }
-      case "ios": {
+      case 'ios': {
         newProps = {
-          trackColor: { false: "#FA9700", true: "#2BAB6F" },
-          ios_backgroundColor: "#FA9700",
+          trackColor: { false: '#FA9700', true: '#2BAB6F' },
+          ios_backgroundColor: '#FA9700',
           ...newProps,
         };
         break;
       }
       default: {
-        newProps = { trackColor: { false: "#FA9700", true: "#2BAB6F" }, ...newProps };
+        newProps = { trackColor: { false: '#FA9700', true: '#2BAB6F' }, ...newProps };
         break;
       }
     }
 
     return (
       <View style={style.grid}>
-        <View style={{ flex: 1, alignItems: "flex-end" }}>
-          <Text>{I18n.t("viesco-homework")}</Text>
+        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+          <Text>{I18n.t('viesco-homework')}</Text>
         </View>
         <Switch
           style={{ marginTop: 30, marginHorizontal: 12 }}
@@ -127,8 +129,8 @@ export default (props: HomeworkListProps) => {
           value={switchValue === SwitchState.SESSION}
           {...newProps}
         />
-        <View style={{ flex: 1, alignItems: "flex-start" }}>
-          <Text>{I18n.t("viesco-session")}</Text>
+        <View style={{ flex: 1, alignItems: 'flex-start' }}>
+          <Text>{I18n.t('viesco-session')}</Text>
         </View>
       </View>
     );
@@ -138,7 +140,7 @@ export default (props: HomeworkListProps) => {
 
   return (
     <PageContainer>
-      {getSessionInfo().type === "Relative" && <ChildPicker />}
+      {getSessionInfo().type === 'Relative' && <ChildPicker />}
       <View style={style.homeworkPart}>
         <DatePickers startDate={startDate} endDate={endDate} />
         <PlatformSpecificSwitch value={switchValue} />
@@ -148,7 +150,9 @@ export default (props: HomeworkListProps) => {
             onRefreshHomeworks={onRefreshHomeworks}
             homeworkList={props.homeworks}
             onHomeworkStatusUpdate={homework => props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework))}
-            onHomeworkTap={homework => props.navigation.navigate("HomeworkPage", homeworkDetailsAdapter(homework))}
+            onHomeworkTap={homework =>
+              props.navigation.navigate('HomeworkPage', homeworkListDetailsAdapter(homework, props.homeworks))
+            }
           />
         ) : (
           <SessionList
@@ -156,7 +160,7 @@ export default (props: HomeworkListProps) => {
             onRefreshSessions={onRefreshSessions}
             sessionList={props.sessions}
             onSessionTap={session =>
-              props.navigation.navigate("SessionPage", sessionDetailsAdapter(session, props.personnel))
+              props.navigation.navigate('SessionPage', sessionListDetailsAdapter(session, props.personnel, props.sessions))
             }
             personnelList={props.personnel}
           />
@@ -167,48 +171,34 @@ export default (props: HomeworkListProps) => {
 };
 
 const EmptyComponent = ({ title }) => (
-  <EmptyScreen
-    imageSrc={require("ASSETS/images/empty-screen/empty-homework.png")}
-    imgWidth={265}
-    imgHeight={280}
-    title={title}
-  />
+  <EmptyScreen imageSrc={require('ASSETS/images/empty-screen/empty-homework.png')} imgWidth={265} imgHeight={280} title={title} />
 );
 
-const HomeworkList = ({
-  isFetching,
-  onRefreshHomeworks,
-  homeworkList,
-  onHomeworkTap,
-  onHomeworkStatusUpdate,
-}) => {
+const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomeworkTap, onHomeworkStatusUpdate }) => {
   React.useEffect(() => {
     if (Object.keys(homeworkList).length === 0) onRefreshHomeworks();
   }, []);
 
-  const homeworkDataList = homeworkList;
-  const homeworksArray = Object.values(homeworkDataList);
-  homeworksArray.sort((a, b) => a.due_date - b.due_date);
+  const homeworkDataList = homeworkList as IHomeworkList;
+  const homeworksArray = Object.values(homeworkDataList) as IHomework[];
+  homeworksArray.sort((a, b) => moment(a.due_date).diff(moment(b.due_date)) || moment(a.created_date).diff(moment(b.created_date)));
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}>
+    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}>
       {homeworksArray.length === 0 ? (
-        <EmptyComponent title={I18n.t("viesco-homework-EmptyScreenText")} />
+        <EmptyComponent title={I18n.t('viesco-homework-EmptyScreenText')} />
       ) : (
         homeworksArray.map((homework, index, list) => (
           <View key={homework.id}>
-            {index === 0 ||
-            moment(homework.due_date).format("DD/MM/YY") !== moment(list[index - 1].due_date).format("DD/MM/YY") ? (
+            {index === 0 || moment(homework.due_date).format('DD/MM/YY') !== moment(list[index - 1].due_date).format('DD/MM/YY') ? (
               <TextBold>
-                {I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("dddd Do MMMM")}
+                {I18n.t('viesco-homework-fordate')} {moment(homework.due_date).format('dddd Do MMMM')}
               </TextBold>
             ) : null}
             <HomeworkItem
               onPress={() => onHomeworkTap(homework)}
-              disabled={getSessionInfo().type !== "Student"}
+              disabled={getSessionInfo().type !== 'Student'}
               checked={isHomeworkDone(homework)}
-              title={homework.subject_id !== "exceptional" ? homework.subject.name : homework.exceptional_label}
+              title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
               subtitle={homework.type}
               onChange={() => onHomeworkStatusUpdate(homework)}
             />
@@ -225,27 +215,24 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
   }, []);
 
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshSessions} />}>
+    <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshSessions} />}>
       {sessionList.length === 0 ? (
-        <EmptyComponent title={I18n.t("viesco-session-EmptyScreenText")} />
+        <EmptyComponent title={I18n.t('viesco-session-EmptyScreenText')} />
       ) : (
         sessionList.map(
           (session, index, list) =>
             !hasEmptyDescription(session) && (
               <View>
-                {index === 0 ||
-                moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
-                  <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
+                {index === 0 || moment(session.date).format('DD/MM/YY') !== moment(list[index - 1].date).format('DD/MM/YY') ? (
+                  <TextBold>{moment(session.date).format('DD/MM/YY')}</TextBold>
                 ) : null}
                 <SessionItem
                   onPress={() => onSessionTap(session)}
-                  matiere={session.subject_id !== "exceptional" ? session.subject.name : session.exceptional_label}
+                  matiere={session.subject_id !== 'exceptional' ? session.subject.name : session.exceptional_label}
                   author={getTeacherName(session.teacher_id, personnelList)}
                 />
               </View>
-            )
+            ),
         )
       )}
     </ScrollView>
@@ -257,8 +244,8 @@ const hasEmptyDescription = (session: ISession) => {
   const regexp = /<(\w+)>[^<]+<\/\1>|[^<>]+/g;
   const htmlTags = session.description.match(regexp) as string[];
   if (!htmlTags) return true;
-  const index = htmlTags.findIndex(item => item === "body") as number;
+  const index = htmlTags.findIndex(item => item === 'body') as number;
 
-  if (session.description === "" || index === -1 || htmlTags[index + 1] === "/body") return true;
+  if (session.description === '' || index === -1 || htmlTags[index + 1] === '/body') return true;
   return false;
 };

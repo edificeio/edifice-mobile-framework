@@ -1,25 +1,18 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { Platform, TouchableOpacity } from "react-native";
-import { NavigationInjectedProps } from "react-navigation";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Platform, TouchableOpacity } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
-import { BackdropPdfReader } from "~/framework/components/backdropPdfReader";
-import {
-  FakeHeader,
-  HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  HeaderRow,
-  HeaderTitle,
-} from "~/framework/components/header";
-import { Icon } from "~/framework/components/icon";
-import { ListItem } from "~/framework/components/listItem";
-import { PageView } from "~/framework/components/page";
-import { Text } from "~/framework/components/text";
-import theme from "~/app/theme";
-import withViewTracking from "~/framework/util/tracker/withViewTracking";
-import { Trackers } from "~/framework/util/tracker";
+import theme from '~/app/theme';
+import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { Icon } from '~/framework/components/icon';
+import { ListItem } from '~/framework/components/listItem';
+import { PageView } from '~/framework/components/page';
+import { Text } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
 // TYPES ==========================================================================================
 
@@ -29,12 +22,12 @@ export interface ILegalNoticeScreenState {
 }
 
 // COMPONENT ======================================================================================
-class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>, ILegalNoticeScreenState> {
+class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<object>, ILegalNoticeScreenState> {
   // DECLARATIONS ===================================================================================
 
   state: ILegalNoticeScreenState = {
-    legalTitle: "",
-    legalUrl: "",
+    legalTitle: '',
+    legalUrl: '',
   };
 
   // RENDER =========================================================================================
@@ -42,26 +35,26 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
   render() {
     const { navigation } = this.props;
     const { legalTitle, legalUrl } = this.state;
-    const legalItems = ["userCharter", "cgu", "personalDataProtection", "cookies"];
+    const legalItems = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
     return (
       <PageView>
         <FakeHeader>
           <HeaderRow>
             <HeaderLeft>
               <HeaderAction
-                iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
                 iconSize={24}
                 onPress={() => navigation.goBack()}
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t("directory-legalNoticeTitle")}</HeaderTitle>
+              <HeaderTitle>{I18n.t('directory-legalNoticeTitle')}</HeaderTitle>
             </HeaderCenter>
           </HeaderRow>
         </FakeHeader>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropPdfReader
-          handleClose={() => this.setState({ legalTitle: "", legalUrl: "" })}
+          handleClose={() => this.setState({ legalTitle: '', legalUrl: '' })}
           handleOpen={() => this.setState({ legalTitle, legalUrl })}
           title={legalTitle}
           uri={legalUrl}
@@ -80,7 +73,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
             <Icon
               name="arrow_down"
               color={theme.color.secondary.regular}
-              style={{ flex: 0, marginLeft: 20, transform: [{ rotate: "270deg" }] }}
+              style={{ flex: 0, marginLeft: 20, transform: [{ rotate: '270deg' }] }}
             />
           }
         />
@@ -98,7 +91,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
     const legalUrl = `${platform}${path}`;
     const legalTitle = I18n.t(`user.legalNoticeScreen.${legalItem}`);
     this.setState({ legalUrl, legalTitle });
-    Trackers.trackEvent("Profile", "READ NOTICE", legalItem);
+    Trackers.trackEvent('Profile', 'READ NOTICE', legalItem);
   };
 
   // UTILS ==========================================================================================
@@ -106,4 +99,4 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
   // MAPPING ========================================================================================
 }
 
-export default withViewTracking("user/legalNotice")(LegalNoticeScreen);
+export default withViewTracking('user/legalNotice')(LegalNoticeScreen);

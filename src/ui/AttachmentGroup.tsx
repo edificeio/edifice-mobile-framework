@@ -1,16 +1,18 @@
-import * as React from "react";
-import { View, TouchableOpacity, FlatList, SafeAreaView } from "react-native";
-import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
-import I18n from "i18n-js";
-import { BubbleStyle } from "./BubbleStyle";
-import { Bold, A } from "./Typography";
-import { Icon } from ".";
-import { CommonStyles } from "../styles/common/styles";
-import Attachment, { IRemoteAttachment } from "./Attachment";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
+import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
+
+import { Icon } from '.';
+import Attachment, { IRemoteAttachment } from './Attachment';
+import { BubbleStyle } from './BubbleStyle';
+import { Bold, A } from './Typography';
+
+import { CommonStyles } from '~/styles/common/styles';
 
 export class AttachmentGroup extends React.PureComponent<
   {
-    attachments: Array<IRemoteAttachment>;
+    attachments: IRemoteAttachment[];
     containerStyle?: any;
     editMode?: boolean;
     isContainerHalfScreen?: boolean;
@@ -28,13 +30,14 @@ export class AttachmentGroup extends React.PureComponent<
   public constructor(props) {
     super(props);
     this.state = {
-      downloadAll: false
+      downloadAll: false,
     };
   }
 
   public render() {
-    const { 
-      attachments,editMode,
+    const {
+      attachments,
+      editMode,
       containerStyle,
       isContainerHalfScreen,
       attachmentsHeightHalfScreen,
@@ -42,61 +45,54 @@ export class AttachmentGroup extends React.PureComponent<
       onDownload,
       onDownloadAll,
       onError,
-      onOpen
+      onOpen,
     } = this.props;
     const { downloadAll } = this.state;
     return (
       <TouchableOpacity activeOpacity={1} style={containerStyle}>
-        {editMode
-          ? null
-          : <BubbleStyle
-              style={{
-                flex: 1,
-                marginTop: 0,
-                marginBottom: 0,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <View style={{ flexDirection: "row" }}>
-                <Bold style={{ marginRight: 5 }}>
-                  {I18n.t(`attachment${attachments.length > 1 ? "s" : ""}`)}
-                </Bold>
-                <Icon
-                  color={CommonStyles.textColor}
-                  size={16}
-                  name={"attached"}
-                  style={{ flex: 0, marginRight: 8, transform: [{ rotate: "270deg" }] }}
-                />
-              </View>
-              {attachments.length > 1
-              ? <RNGHTouchableOpacity
-                  onPress={() => {
-                    this.setState({ downloadAll: true });
-                    onDownloadAll && onDownloadAll();
-                  }}
-                >
-                  <A style={{ fontSize: 12 }}>{I18n.t("download-all")}</A>
+        {editMode ? null : (
+          <BubbleStyle
+            style={{
+              flex: 1,
+              marginTop: 0,
+              marginBottom: 0,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{ flexDirection: 'row' }}>
+              <Bold style={{ marginRight: 5 }}>{I18n.t(`attachment${attachments.length > 1 ? 's' : ''}`)}</Bold>
+              <Icon
+                color={CommonStyles.textColor}
+                size={16}
+                name="attached"
+                style={{ flex: 0, marginRight: 8, transform: [{ rotate: '270deg' }] }}
+              />
+            </View>
+            {attachments.length > 1 ? (
+              <RNGHTouchableOpacity
+                onPress={() => {
+                  this.setState({ downloadAll: true });
+                  onDownloadAll && onDownloadAll();
+                }}>
+                <A style={{ fontSize: 12 }}>{I18n.t('download-all')}</A>
               </RNGHTouchableOpacity>
-              : null
-              }
-            </BubbleStyle>
-        }
+            ) : null}
+          </BubbleStyle>
+        )}
         <BubbleStyle
           style={{
-            flex: 0, 
+            flex: 0,
             paddingVertical: 2,
             marginTop: 0,
             marginBottom: 0,
             maxHeight: editMode ? 150 : undefined,
-          }}
-        >
+          }}>
           <SafeAreaView>
             <FlatList
-              style={{flex: 0}}
+              style={{ flex: 0 }}
               data={attachments}
-              renderItem={({ item, index }) => 
+              renderItem={({ item, index }) => (
                 <View onStartShouldSetResponder={() => true}>
                   <Attachment
                     key={index}
@@ -105,17 +101,16 @@ export class AttachmentGroup extends React.PureComponent<
                     onDownload={onDownload}
                     onError={onError}
                     onOpen={onOpen}
-                    style={{marginTop: index === 0 ? 0 : 2}}
-                    editMode={editMode && !item.hasOwnProperty("id")}
+                    style={{ marginTop: index === 0 ? 0 : 2 }}
+                    editMode={editMode && !item.hasOwnProperty('id')}
                     onRemove={() => onRemove && onRemove(index)}
-                    
                   />
                 </View>
-              }
+              )}
             />
           </SafeAreaView>
         </BubbleStyle>
       </TouchableOpacity>
-    )
+    );
   }
 }

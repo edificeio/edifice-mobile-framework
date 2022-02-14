@@ -7,28 +7,29 @@ import AppCenter from 'appcenter';
 import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
 
-import { signRequest } from '../../../infra/oauth';
-
-import { IAnyNavigableModuleConfig, IAnyModuleConfig } from '../moduleTool';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import appConf from '~/framework/util/appConf';
+import { IAnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
+import { signRequest } from '~/infra/oauth';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
 export type DoTrackArg = undefined | TrackEventOfModuleArgs;
-import appConf from '../appConf';
-import { DEPRECATED_getCurrentPlatform } from '../_legacy_appConf';
 
 export abstract class AbstractTracker<OptionsType> {
   debugName: string;
   opts: OptionsType;
   protected _isReady: boolean;
 
-  constructor(debugName: string, opts: OptionsType){
+  constructor(debugName: string, opts: OptionsType) {
     this.debugName = debugName;
     this.opts = opts;
     this._isReady = false;
   }
 
-  get isReady() { return this._isReady }
+  get isReady() {
+    return this._isReady;
+  }
 
   // Init procedure. Override _init() function to create custom trackers.
   protected async _init() {}
@@ -43,11 +44,23 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
+  // Deug  procedure. Override _isDeug() function when needed
+  protected _isDebugTracker(): boolean {
+    return false;
+  }
+  isDebugTracker(): boolean {
+    return this._isDebugTracker();
+  }
+
   // UserID procedure. Override _setUserId() function to create custom trackers.
-  protected async _setUserId(id: string): Promise<boolean> { throw "not implemented" }
+  protected async _setUserId(id: string): Promise<boolean> {
+    throw new Error('not implemented');
+  }
   async setUserId(id: string) {
     try {
-      if (!this.isReady) { throw new Error ('Tracker is not initialized') }
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
       const ret = await this._setUserId(id);
       ret && console.log(`    Tracker ${this.debugName}: Setting user ID`, id);
     } catch (e) {
@@ -56,10 +69,14 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Custom dimension procedure. Override _setCustomDimension() function to create custom trackers.
-  protected async _setCustomDimension(id: number, name: string, value: string): Promise<boolean> { throw "not implemented" }
+  protected async _setCustomDimension(id: number, name: string, value: string): Promise<boolean> {
+    throw new Error('not implemented');
+  }
   async setCustomDimension(id: number, name: string, value: string) {
     try {
-      if (!this.isReady) { throw new Error('Tracker is not initialized') }
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
       const ret = await this._setCustomDimension(id, name, value);
       ret && console.log(`    Tracker ${this.debugName}: Setting custom dimension`, id, '|', name, '|', value);
     } catch (e) {
@@ -68,10 +85,14 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Track event procedure. Override _trackEvent() function to create custom trackers.
-  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> { throw "not implemented" }
+  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
+    throw new Error('not implemented');
+  }
   async trackEvent(category: string, action: string, name?: string, value?: number) {
     try {
-      if (!this.isReady) { throw new Error('Tracker is not initialized') }
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
       const ret = await this._trackEvent(category, action, name, value);
       ret && console.log(`    Tracker ${this.debugName}: Track event`, category, '|', action, '|', name, '|', value);
     } catch (e) {
@@ -83,10 +104,14 @@ export abstract class AbstractTracker<OptionsType> {
   }
 
   // Track view procedure. Override _trackView() function to create custom trackers.
-  protected async _trackView(path: string[]): Promise<boolean> { throw "not implemented" }
+  protected async _trackView(path: string[]): Promise<boolean> {
+    throw new Error('not implemented');
+  }
   async trackView(path: string[]) {
     try {
-      if (!this.isReady) { throw new Error('Tracker is not initialized') }
+      if (!this.isReady) {
+        throw new Error('Tracker is not initialized');
+      }
       const ret = await this._trackView(path);
       ret && console.log(`    Tracker ${this.debugName}: Track view`, ret === true ? path.join('/') : ret);
     } catch (e) {
@@ -111,7 +136,7 @@ export class ConcreteMatomoTracker extends AbstractTracker<IMatomoTrackerOptions
     await Matomo.setUserId(id);
     return true;
   }
-  async _setCustomDimension(id: number, value: string) {
+  async _setCustomDimension(id: number, name: string, value: string) {
     await Matomo.setCustomDimension(id, value);
     return true;
   }
@@ -131,8 +156,12 @@ export class ConcreteAppCenterTracker extends AbstractTracker<undefined> {
   async _init() {
     // Nothing to do, configuration comes from native appcenter config files
   }
+  protected _isDebugTracker(): boolean {
+    return true;
+  }
   async _setUserId(id: string) {
-    await AppCenter.setUserId(id); return true;
+    await AppCenter.setUserId(id);
+    return true;
   }
   async _setCustomDimension(id: number, name: string, value: string) {
     this._properties[name] = value;
@@ -144,7 +173,7 @@ export class ConcreteAppCenterTracker extends AbstractTracker<undefined> {
       action,
       ...(name ? { name } : {}),
       ...(value ? { value: value.toString() } : {}),
-      ...this._properties
+      ...this._properties,
     });
     return true;
   }
@@ -195,11 +224,8 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     return false; // Nothing here
   }
   async _trackView(path: string[]) {
-    const moduleName = (path[0] === 'timeline'
-      ? ['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase())
-        ? path[2]
-        : 'timeline'
-      : path[0]
+    const moduleName = (
+      path[0] === 'timeline' ? (['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase()) ? path[2] : 'timeline') : path[0]
     ).toLowerCase();
     const moduleAccessMap = {
       blog: 'Blog',
@@ -229,8 +255,8 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 }
 
 export class ConcreteTrackerSet {
-  private _trackers: Array<AbstractTracker<any>> = [];
-  constructor(...trackers: Array<AbstractTracker<any>>) {
+  private _trackers: AbstractTracker<any>[] = [];
+  constructor(...trackers: AbstractTracker<any>[]) {
     this._trackers = trackers;
   }
   addTracker(t: AbstractTracker<any>) {
@@ -238,6 +264,10 @@ export class ConcreteTrackerSet {
   }
   async init() {
     await Promise.all(this._trackers.map(t => t.init()));
+  }
+  async trackDebugEvent(category: string, action: string, name?: string, value?: number) {
+    console.log(`[Trackers] Track debug event`, category, '|', action, '|', name, '|', value);
+    await Promise.all(this._trackers.filter(t => t.isDebugTracker()).map(t => t.trackEvent(category, action, name, value)));
   }
   async trackEvent(category: string, action: string, name?: string, value?: number) {
     console.log(`[Trackers] Track event`, category, '|', action, '|', name, '|', value);
@@ -247,7 +277,7 @@ export class ConcreteTrackerSet {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
   async trackView(path: string[]) {
-    console.log(`[Trackers] Track view`, path.join('/'))
+    console.log(`[Trackers] Track view`, path.join('/'));
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
   async trackViewOfModule(moduleConfig: IAnyNavigableModuleConfig, path: string[]) {
@@ -269,5 +299,5 @@ export class ConcreteTrackerSet {
 export const Trackers = new ConcreteTrackerSet(
   new ConcreteMatomoTracker('Matomo', appConf.matomo),
   new ConcreteAppCenterTracker('AppCenter', undefined),
-  new ConcreteEntcoreTracker('Entcore', undefined)
+  new ConcreteEntcoreTracker('Entcore', undefined),
 );

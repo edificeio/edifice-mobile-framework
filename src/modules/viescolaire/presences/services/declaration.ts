@@ -1,9 +1,9 @@
 import moment from 'moment';
 
-import { LocalFile } from '../../../../framework/util/fileHandler';
-import fileTransferService from '../../../../framework/util/fileHandler/service';
-import { IUserSession } from '../../../../framework/util/session';
-import { fetchJSONWithCache } from '../../../../infra/fetchWithCache';
+import { LocalFile } from '~/framework/util/fileHandler';
+import fileTransferService from '~/framework/util/fileHandler/service';
+import { IUserSession } from '~/framework/util/session';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 export const absenceDeclarationService = {
   post: async (startDate: moment.Moment, endDate: moment.Moment, studentId: string, structureId: string, description: string) => {
@@ -26,27 +26,31 @@ export const absenceDeclarationService = {
     structureId: string,
     description: string,
     file: LocalFile,
-    session: IUserSession
+    session: IUserSession,
   ) => {
     try {
-
-      await fileTransferService.uploadFile(session, file, {
-        url: `/presences/statements/absences/attachment`,
-        fields: {
-          start_at: startDate.format("YYYY-MM-DD HH:mm:ss"),
-          end_at: endDate.format("YYYY-MM-DD HH:mm:ss"),
-          structure_id: structureId,
-          student_id: studentId,
-          description: description
-        }
-      }, (res) => {
-        // console.log(res);
-        return undefined!; // No use of distant file. But, it's a bad practice.
-      }, {
-        onBegin: (res => console.log(res.jobId)),
-        onProgress: (res => console.log(res.totalBytesSent + '/' + res.totalBytesExpectedToSend))
-      });
-
+      await fileTransferService.uploadFile(
+        session,
+        file,
+        {
+          url: `/presences/statements/absences/attachment`,
+          fields: {
+            start_at: startDate.format('YYYY-MM-DD HH:mm:ss'),
+            end_at: endDate.format('YYYY-MM-DD HH:mm:ss'),
+            structure_id: structureId,
+            student_id: studentId,
+            description: description,
+          },
+        },
+        res => {
+          // console.log(res);
+          return undefined!; // No use of distant file. But, it's a bad practice.
+        },
+        {
+          onBegin: res => console.log(res.jobId),
+          onProgress: res => console.log(res.totalBytesSent + '/' + res.totalBytesExpectedToSend),
+        },
+      );
     } catch (e) {
       console.warn(e);
     }

@@ -3,21 +3,14 @@
  * Build actions to be dispatched to the homework tasks reducer.
  */
 
-import {
-  asyncActionTypes,
-  asyncFetchIfNeeded,
-  asyncGetJson
-} from "../../infra/redux/async";
-import homeworkConfig from "../config";
+import moment from 'moment';
 
-import { IHomeworkTasks } from "../reducers/tasks";
-
-import moment from "moment";
-import today from "../../utils/today";
+import homeworkConfig from '~/homework/config';
+import { IHomeworkTasks } from '~/homework/reducers/tasks';
+import { asyncActionTypes, asyncFetchIfNeeded, asyncGetJson } from '~/infra/redux/async';
 
 /** Retuns the local state (global state -> homework -> tasks). Give the global state as parameter. */
-const localState = globalState =>
-  homeworkConfig.getLocalState(globalState).tasks;
+const localState = globalState => homeworkConfig.getLocalState(globalState).tasks;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -40,25 +33,23 @@ export interface IHomeworkTasksBackend {
   entriesModified: {
     $date: number;
   };
-  data: Array<{
+  data: {
     date: string;
-    entries: Array<{
+    entries: {
       title: string;
       value: string;
-    }>;
-  }>;
+    }[];
+  }[];
 }
 
 /** The adapter MUST returns a brand-new object */
-const homeworkTasksAdapter: (
-  data: IHomeworkTasksBackend
-) => IHomeworkTasks = data => {
+const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = data => {
   // Get all the backend homeworkDays.
   if (!data) return { byId: {}, ids: [] };
   const dataDays = data.data;
   const ret = {
     byId: {},
-    ids: []
+    ids: [],
   };
   if (!data.data) return { byId: {}, ids: [] };
   // Now it's time to iterate over the days.
@@ -66,15 +57,15 @@ const homeworkTasksAdapter: (
     if (itemday.entries.length === 0) continue; // If no tasks this day we skip it.
     const date = moment(itemday.date);
     // each homeworkDay must have an id based on the date.
-    const dateId = date.format("YYYY-MM-DD");
+    const dateId = date.format('YYYY-MM-DD');
     // Now we generate the current homeworkDay (empty for the moment)
     const homeworkDay = {
       date,
       id: dateId,
       tasks: {
         byId: {},
-        ids: []
-      }
+        ids: [],
+      },
     };
     // Now it's time to iterate over the tasks of that day
     itemday.entries.forEach((itemtask, indextask) => {
@@ -82,7 +73,7 @@ const homeworkTasksAdapter: (
       homeworkDay.tasks.byId[indextask] = {
         content: itemtask.value,
         id: indextask,
-        title: itemtask.title
+        title: itemtask.title,
       };
     });
     // Now we put the homeworkDay into the return value
@@ -96,9 +87,7 @@ const homeworkTasksAdapter: (
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionTypes = asyncActionTypes(
-  homeworkConfig.createActionType("TASKS")
-);
+export const actionTypes = asyncActionTypes(homeworkConfig.createActionType('TASKS'));
 
 export function homeworkTasksInvalidated(diaryId: string) {
   return { type: actionTypes.invalidated, diaryId };
@@ -114,7 +103,7 @@ export function homeworkTasksReceived(diaryId: string, data: IHomeworkTasks) {
 
     data,
     diaryId,
-    receivedAt: Date.now()
+    receivedAt: Date.now(),
   };
 }
 
@@ -133,10 +122,7 @@ export function fetchHomeworkTasks(diaryId: string) {
     dispatch(homeworkTasksRequested(diaryId));
 
     try {
-      const data = await asyncGetJson(
-        `/homeworks/get/${diaryId}`,
-        homeworkTasksAdapter
-      );
+      const data = await asyncGetJson(`/homeworks/get/${diaryId}`, homeworkTasksAdapter);
 
       dispatch(homeworkTasksReceived(diaryId, data));
     } catch (errmsg) {
@@ -149,9 +135,5 @@ export function fetchHomeworkTasks(diaryId: string) {
  * Calls a fetch operation to get the homework tasks from the backend for the given diaryId, only if needed data is not present or invalidated.
  */
 export function fetchHomeworkTasksIfNeeded(diaryId: string) {
-  return asyncFetchIfNeeded(
-    gs => localState(gs)[diaryId],
-    fetchHomeworkTasks,
-    diaryId
-  );
+  return asyncFetchIfNeeded(gs => localState(gs)[diaryId], fetchHomeworkTasks, diaryId);
 }

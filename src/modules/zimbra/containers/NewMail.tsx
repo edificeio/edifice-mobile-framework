@@ -8,18 +8,15 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 
-import { getSessionInfo } from '../../../App';
-import { IDistantFile, LocalFile, SyncedFile } from '../../../framework/util/fileHandler';
-import pickFile, { pickFileError } from '../../../infra/actions/pickFile';
-import { Trackers } from '../../../framework/util/tracker';
-import withViewTracking from '../../../framework/util/tracker/withViewTracking';
-import { standardNavScreenOptions } from '../../../navigation/helpers/navScreenOptions';
-import { CommonStyles } from '../../../styles/common/styles';
-import { INavigationProps } from '../../../types';
-import { contentUriToLocalFile } from '../../../types/contentUri';
-import { HeaderAction } from '../../../ui/headers/NewHeader';
-import { deleteMailsAction, trashMailsAction } from '../actions/mail';
-import { fetchMailContentAction, clearMailContentAction } from '../actions/mailContent';
+import SignatureModal from './SignatureModal';
+
+import { getSessionInfo } from '~/App';
+import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import pickFile, { pickFileError } from '~/infra/actions/pickFile';
+import { deleteMailsAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
+import { fetchMailContentAction, clearMailContentAction } from '~/modules/zimbra/actions/mailContent';
 import {
   sendMailAction,
   makeDraftMailAction,
@@ -27,15 +24,18 @@ import {
   addAttachmentAction,
   deleteAttachmentAction,
   forwardMailAction,
-} from '../actions/newMail';
-import { getSignatureAction } from '../actions/signature';
-import { ModalPermanentDelete } from '../components/Modals/DeleteMailsModal';
-import MailContentMenu from '../components/MailContentMenu';
-import NewMailComponent from '../components/NewMail';
-import { ISearchUsers } from '../service/newMail';
-import { getMailContentState, IMail } from '../state/mailContent';
-import { getSignatureState, ISignature } from '../state/signature';
-import SignatureModal from './SignatureModal';
+} from '~/modules/zimbra/actions/newMail';
+import { getSignatureAction } from '~/modules/zimbra/actions/signature';
+import MailContentMenu from '~/modules/zimbra/components/MailContentMenu';
+import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
+import NewMailComponent from '~/modules/zimbra/components/NewMail';
+import { ISearchUsers } from '~/modules/zimbra/service/newMail';
+import { getMailContentState, IMail } from '~/modules/zimbra/state/mailContent';
+import { getSignatureState, ISignature } from '~/modules/zimbra/state/signature';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { CommonStyles } from '~/styles/common/styles';
+import { INavigationProps } from '~/types';
+import { HeaderAction } from '~/ui/headers/NewHeader';
 
 export enum DraftType {
   NEW,
@@ -235,7 +235,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     getDeleteDraft: () => {
       if (this.state.id) {
         if (this.props.navigation.state.params?.isTrashed) {
-          let draftId = this.state.id;
+          const draftId = this.state.id;
           this.setState({ deleteModal: { isShown: true, mailsIds: [draftId] } });
         } else {
           this.props.trashMessage([this.state.id]);
@@ -284,13 +284,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const getPrevBody = () => {
       const getUserArrayToString = users => users.map(getDisplayName).join(', ');
 
-      var from = getDisplayName(this.props.mail.from);
-      var date = moment(this.props.mail.date).format('DD/MM/YYYY HH:mm');
-      var subject = this.props.mail.subject;
+      const from = getDisplayName(this.props.mail.from);
+      const date = moment(this.props.mail.date).format('DD/MM/YYYY HH:mm');
+      const subject = this.props.mail.subject;
 
       const to = getUserArrayToString(this.props.mail.to);
 
-      var header =
+      let header =
         '<br>' +
         '<br>' +
         '<p class="row ng-scope"></p>' +
@@ -374,7 +374,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (this.props.mail.body.length > 0) {
           prevbody += '<br><br>' + this.props.mail.body.split('<br><br>').slice(1).join('<br><br>');
         }
-        let current_body = this.props.mail.body.split('<br><br>')[0];
+        const current_body = this.props.mail.body.split('<br><br>')[0];
 
         return {
           prevBody: prevbody,
@@ -405,7 +405,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (key === 'to' || key === 'cc' || key === 'bcc') return [key, value.map(user => user.id)];
         else if (key === 'body') {
           if (this.state.signature.text !== '') {
-            let sign = '<div class="signature new-signature ng-scope">' + this.state.signature.text + '</div>\n\n';
+            const sign = '<div class="signature new-signature ng-scope">' + this.state.signature.text + '</div>\n\n';
             return [key, value + sign + prevBody];
           } else {
             return [key, value + prevBody];

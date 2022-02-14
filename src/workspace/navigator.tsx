@@ -1,6 +1,9 @@
-import { createStackNavigator } from "react-navigation-stack";
-import ContainerItems from "./containers/Items";
-import Details from "./containers/Details";
+import I18n from 'i18n-js';
+import { createStackNavigator } from 'react-navigation-stack';
+
+import Details from './containers/Details';
+import ContainerItems from './containers/Items';
+import { FilterId } from './types';
 import {
   addMenu,
   backMenu,
@@ -16,10 +19,9 @@ import {
   separatorMenu,
   restoreMenu,
   titleMenu,
-} from "./utils/menus";
-import { FilterId } from "./types";
-import I18n from "i18n-js";
-import withViewTracking from "../framework/util/tracker/withViewTracking";
+} from './utils/menus';
+
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
 const WorkspaceNavigator = createStackNavigator(
   {
@@ -77,12 +79,12 @@ const WorkspaceNavigator = createStackNavigator(
   },
   {
     initialRouteParams: {
-      filter: "root",
-      parentId: "root",
-      title: I18n.t("workspace"),
+      filter: 'root',
+      parentId: 'root',
+      title: I18n.t('workspace'),
     },
-    headerMode: "none",
-  }
+    headerMode: 'none',
+  },
 );
 
 export default withViewTracking('Workspace')(WorkspaceNavigator);

@@ -5,24 +5,17 @@ import { createAppContainer, createSwitchNavigator, NavigationRouteConfigMap } f
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 
-// ODE framework modules
-import { IAppModule } from '../infra/moduleTool/types';
-
-// Other functional modules
-// import TimelineNavigator from "../timeline/TimelineNavigator";
-
-// Screens
+import LoginNavigator from './LoginNavigator';
+import NavigationService from './NavigationService';
 import { createMainTabNavigator } from './helpers/mainTabNavigator';
 import { getRoutes, getModules } from './helpers/navBuilder';
-import LoginNavigator from './LoginNavigator';
-import withLinkingAppWrapper from '../infra/wrapper/withLinkingAppWrapper';
-import NavigationService from './NavigationService';
 
-// Components
-import Carousel from "../ui/Carousel";
-import { IFrame } from "../ui/IFrame";
-import { AppPushNotificationHandlerComponent } from "../framework/util/notifications/cloudMessaging";
-import { IEntcoreApp, tabModules, NavigableModuleArray } from "../framework/util/moduleTool";
+import { IEntcoreApp, tabModules, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
+import { IAppModule } from '~/infra/moduleTool/types';
+import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
+import Carousel from '~/ui/Carousel';
+import { IFrame } from '~/ui/IFrame';
 
 /**
  * MAIN NAVIGATOR

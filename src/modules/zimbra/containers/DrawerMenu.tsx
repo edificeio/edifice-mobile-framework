@@ -1,14 +1,14 @@
-import React from "react";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React from 'react';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
-import { fetchRootFoldersAction } from "../actions/folders";
-import { fetchInitAction } from "../actions/initMails";
-import DrawerMenu from "../components/DrawerMenu";
-import { getRootFolderListState, IRootFolderList } from "../state/rootFolders";
-import { getInitMailListState, IInitMail, IFolder, IQuota } from "../state/initMails";
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchRootFoldersAction } from '~/modules/zimbra/actions/folders';
+import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
+import DrawerMenu from '~/modules/zimbra/components/DrawerMenu';
+import { getInitMailListState, IInitMail, IQuota } from '~/modules/zimbra/state/initMails';
+import { getRootFolderListState, IRootFolderList } from '~/modules/zimbra/state/rootFolders';
 
 export type IRootFolders = {
   data: IRootFolderList;
@@ -44,8 +44,8 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
   constructor(props) {
     super(props);
     this.state = {
-      folders: [{ id: "", folderName: "", path: "", unread: 0, count: 0, folders: [] }],
-      quota: { storage: 0, quota: "" },
+      folders: [{ id: '', folderName: '', path: '', unread: 0, count: 0, folders: [] }],
+      quota: { storage: 0, quota: '' },
     };
   }
   componentDidMount() {
@@ -83,8 +83,8 @@ const mapDispatchToProps = (dispatch: any) => {
       fetchInit: fetchInitAction,
       fetchRootFolders: fetchRootFoldersAction,
     },
-    dispatch
+    dispatch,
   );
 };
 
-export default withViewTracking("zimbra/folders")(connect(mapStateToProps, mapDispatchToProps)(DrawerMenuContainer));
+export default withViewTracking('zimbra/folders')(connect(mapStateToProps, mapDispatchToProps)(DrawerMenuContainer));

@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { DEPRECATED_getCurrentPlatform } from '../framework/util/_legacy_appConf';
-import { navigate } from '../navigation/helpers/navHelper';
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { getLoginRouteName } from '~/navigation/LoginNavigator';
+import { navigate } from '~/navigation/helpers/navHelper';
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().
@@ -19,7 +21,7 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
-        navigate('LoginHome');
+        navigate(getLoginRouteName());
       }
     }
     // tslint:disable-next-line:no-console

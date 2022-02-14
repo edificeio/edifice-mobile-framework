@@ -1,10 +1,10 @@
-import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { moveMailsToFolderAction, moveMailsToInboxAction } from "../actions/mail";
-import MoveToFolderModalComponent from "../components/Modals/MoveToFolderModal";
-import { getInitMailListState, IFolder } from "../state/initMails";
+import { moveMailsToFolderAction, moveMailsToInboxAction } from '~/modules/zimbra/actions/mail';
+import MoveToFolderModalComponent from '~/modules/zimbra/components/Modals/MoveToFolderModal';
+import { getInitMailListState, IFolder } from '~/modules/zimbra/state/initMails';
 
 type MoveToFolderModalProps = {
   folders: IFolder[];
@@ -39,12 +39,12 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
     const { selectedFolder } = this.state;
     await this.props.closeModal();
 
-    let mailsIds = [] as any;
+    const mailsIds = [] as any;
     if (Array.isArray(mail)) mail.map(mailInfos => mailsIds.push(mailInfos.id));
     else mailsIds.push(mail.id);
 
     if (!selectedFolder) return;
-    else if (selectedFolder === "inbox") await moveToInbox(mailsIds);
+    else if (selectedFolder === 'inbox') await moveToInbox(mailsIds);
     else await moveToFolder(mailsIds, selectedFolder);
     successCallback();
   };
@@ -73,7 +73,7 @@ const mapDispatchToProps = (dispatch: any) => {
       moveToFolder: moveMailsToFolderAction,
       moveToInbox: moveMailsToInboxAction,
     },
-    dispatch
+    dispatch,
   );
 };
 

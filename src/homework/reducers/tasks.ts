@@ -3,14 +3,13 @@
  * Holds a list of task by day, by diaryId in a double-array.
  */
 
-import moment from "moment";
+import moment from 'moment';
+import { Reducer } from 'redux';
 
-import { IOrderedArrayById } from "../../infra/collections";
-import asyncReducer, { IAction, IState } from "../../infra/redux/async";
-
-import { actionTypes } from "../actions/tasks";
-import { Reducer } from "redux";
-import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
+import { actionTypes } from '~/homework/actions/tasks';
+import { IOrderedArrayById } from '~/infra/collections';
+import asyncReducer, { IAction, IState } from '~/infra/redux/async';
+import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -49,10 +48,9 @@ export interface IAllHomeworkTasksByHomeworkIds {
 
 const stateSingleTasksDefault: IHomeworkTasks = { byId: {}, ids: [] };
 
-
 const homeworkSingleTasksReducer: Reducer<IHomeworkTasks, IAction<any>> = (
   state: IHomeworkTasks = stateSingleTasksDefault,
-  action: IAction<any>
+  action: IAction<any>,
 ) => {
   switch (action.type) {
     case actionTypes.received: // params : data:IHomeworkTasks
@@ -60,12 +58,9 @@ const homeworkSingleTasksReducer: Reducer<IHomeworkTasks, IAction<any>> = (
     default:
       return state;
   }
-}
+};
 
-const homeworkSingleTasksAsyncReducer = asyncReducer<IHomeworkTasks>(
-  homeworkSingleTasksReducer,
-  actionTypes
-);
+const homeworkSingleTasksAsyncReducer = asyncReducer<IHomeworkTasks>(homeworkSingleTasksReducer, actionTypes);
 
 /**
  * Homework AllTasks Reducer : Manages the state of all the diaries' tasks.
@@ -74,10 +69,7 @@ const homeworkSingleTasksAsyncReducer = asyncReducer<IHomeworkTasks>(
  */
 const homeworkAllTasksReducerStateDefault: IAllHomeworkTasksByHomeworkIds = {};
 
-const homeworkAllTasksReducer = (
-  state: IAllHomeworkTasksByHomeworkIds = homeworkAllTasksReducerStateDefault,
-  action: any
-) => {
+const homeworkAllTasksReducer = (state: IAllHomeworkTasksByHomeworkIds = homeworkAllTasksReducerStateDefault, action: any) => {
   switch (action.type) {
     case actionTypes.invalidated: // params: homeworkId:string
     case actionTypes.requested:
@@ -85,10 +77,7 @@ const homeworkAllTasksReducer = (
     case actionTypes.fetchError:
       return {
         ...state,
-        [action.diaryId]: homeworkSingleTasksAsyncReducer(
-          state[action.diaryId],
-          action
-        )
+        [action.diaryId]: homeworkSingleTasksAsyncReducer(state[action.diaryId], action),
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

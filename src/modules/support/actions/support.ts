@@ -1,9 +1,9 @@
 import { Dispatch } from 'redux';
 
-import { IUserSession } from '../../../framework/util/session';
-import { progressAction, progressEndAction, progressInitAction } from '../../../infra/actions/progress';
-import { ITicket } from '../containers/Support';
-import { supportService } from '../service/support';
+import { IUserSession } from '~/framework/util/session';
+import { progressAction, progressEndAction, progressInitAction } from '~/infra/actions/progress';
+import { ITicket } from '~/modules/support/containers/Support';
+import { supportService } from '~/modules/support/service/support';
 
 export function createTicketAction(ticket: ITicket) {
   return async (dispatch: Dispatch) => {

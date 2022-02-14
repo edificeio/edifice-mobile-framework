@@ -1,16 +1,17 @@
-import * as React from "react";
-import I18n from "i18n-js";
-import { connect } from "react-redux";
-import { pickFilters, setFilters } from "../actions/pickFilter";
-import { PageContainer, ListItem } from "../../ui/ContainerContent";
-import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { Heavy } from "../../ui/Typography";
-import { Checkbox } from "../../ui/forms/Checkbox";
-import { NavigationScreenProp, NavigationState, NavigationParams } from "react-navigation";
-import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { HeaderAction } from "../../ui/headers/NewHeader";
-import { Dispatch } from "redux";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { pickFilters, setFilters } from '~/timeline/actions/pickFilter';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer, ListItem } from '~/ui/ContainerContent';
+import { Heavy } from '~/ui/Typography';
+import { Checkbox } from '~/ui/forms/Checkbox';
+import { HeaderAction } from '~/ui/headers/NewHeader';
 
 export interface FilterTimelineProps {
   selectedApps: string[];
@@ -23,7 +24,6 @@ export interface FilterTimelineProps {
 
 // tslint:disable-next-line:max-classes-per-file
 export class FilterTimeline extends React.Component<FilterTimelineProps> {
-
   constructor(props: FilterTimelineProps) {
     super(props);
     // Header events setup
@@ -35,7 +35,7 @@ export class FilterTimeline extends React.Component<FilterTimelineProps> {
       onCancel: () => {
         this.props.pickFilters(this.props.availableApps);
         this.props.navigation.goBack();
-      }
+      },
     });
   }
 
@@ -46,8 +46,8 @@ export class FilterTimeline extends React.Component<FilterTimelineProps> {
   }
 
   checkAllApps(val: boolean) {
-    let newApps = {};
-    for (let prop in this.props.selectedApps) {
+    const newApps = {};
+    for (const prop in this.props.selectedApps) {
       newApps[prop] = val;
     }
     this.props.pickFilters(newApps);
@@ -55,28 +55,25 @@ export class FilterTimeline extends React.Component<FilterTimelineProps> {
 
   get allAppsChecked(): boolean {
     let allChecked = true;
-    for (let app in this.props.selectedApps) {
+    for (const app in this.props.selectedApps) {
       allChecked = allChecked && this.props.selectedApps[app];
     }
     return allChecked;
   }
 
   render() {
-    let apps = [];
-    for (let app in this.props.selectedApps) {
+    const apps = [];
+    for (const app in this.props.selectedApps) {
       apps.push({
         name: app,
-        checked: this.props.selectedApps[app]
+        checked: this.props.selectedApps[app],
       });
     }
 
     return (
       <PageContainer>
         <DEPRECATED_ConnectionTrackingBar />
-        <ListItem
-          style={{ justifyContent: "space-between" }}
-          onPress={() => this.checkAllApps(!this.allAppsChecked)}
-        >
+        <ListItem style={{ justifyContent: 'space-between' }} onPress={() => this.checkAllApps(!this.allAppsChecked)}>
           <Heavy>{I18n.t(`timeline-allFilter`)}</Heavy>
           <Checkbox
             checked={this.allAppsChecked}
@@ -85,17 +82,9 @@ export class FilterTimeline extends React.Component<FilterTimelineProps> {
           />
         </ListItem>
         {apps.map(app => (
-          <ListItem
-            key={app.name}
-            style={{ justifyContent: "space-between" }}
-            onPress={() => this.checkApp(app, !app.checked)}
-          >
+          <ListItem key={app.name} style={{ justifyContent: 'space-between' }} onPress={() => this.checkApp(app, !app.checked)}>
             <Heavy>{I18n.t(`timeline-${app.name.toLowerCase()}Filter`)}</Heavy>
-            <Checkbox
-              checked={app.checked}
-              onCheck={() => this.checkApp(app, true)}
-              onUncheck={() => this.checkApp(app, false)}
-            />
+            <Checkbox checked={app.checked} onCheck={() => this.checkApp(app, true)} onUncheck={() => this.checkApp(app, false)} />
           </ListItem>
         ))}
       </PageContainer>
@@ -107,37 +96,38 @@ const FilterTimelineConnect = connect(
   (state: any) => ({
     selectedApps: state.timeline.selectedApps,
     availableApps: state.timeline.availableApps,
-    legalApps: state.user.auth.apps
+    legalApps: state.user.auth.apps,
   }),
   (dispatch: Dispatch) => ({
     pickFilters: (apps: string[]) => pickFilters(dispatch)(apps),
-    setFilters: (apps: string[], legalapps: string[]) => setFilters(dispatch)(apps, legalapps)
-  })
+    setFilters: (apps: string[], legalapps: string[]) => setFilters(dispatch)(apps, legalapps),
+  }),
 )(FilterTimeline);
 
+const FilterTimelineOK = withViewTracking('timeline/filter')(FilterTimelineConnect);
 
-const FilterTimelineOK = withViewTracking("timeline/filter")(FilterTimelineConnect);
-
-FilterTimelineOK.navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+FilterTimelineOK.navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) =>
   alternativeNavScreenOptions(
     {
-      title: I18n.t("timeline-filterBy"),
-      headerLeft: <HeaderAction
-        onPress={() => {
-          navigation.getParam("onCancel") && navigation.getParam("onCancel")();
-        }}
-        name="close"
-      />,
-      headerRight: <HeaderAction
-        onPress={() => {
-          navigation.getParam("onApply") && navigation.getParam("onApply")();
-        }}
-        title={I18n.t("apply")}
-      />,
+      title: I18n.t('timeline-filterBy'),
+      headerLeft: (
+        <HeaderAction
+          onPress={() => {
+            navigation.getParam('onCancel') && navigation.getParam('onCancel')();
+          }}
+          name="close"
+        />
+      ),
+      headerRight: (
+        <HeaderAction
+          onPress={() => {
+            navigation.getParam('onApply') && navigation.getParam('onApply')();
+          }}
+          title={I18n.t('apply')}
+        />
+      ),
     },
-    navigation
+    navigation,
   );
 
-
 export default FilterTimelineOK;
-

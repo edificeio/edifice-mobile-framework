@@ -1,27 +1,28 @@
-import * as React from "react";
-import { View, Linking, Dimensions, Platform } from "react-native";
-import { connect } from "react-redux";
-import { ThunkDispatch } from "redux-thunk";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { NavigationInjectedProps } from "react-navigation";
-import Swiper from "react-native-swiper";
-import I18n from "i18n-js";
+import I18n from 'i18n-js';
+import OnboardingOne from 'ode-images/onboarding/onboarding_1.svg';
+import OnboardingTwo from 'ode-images/onboarding/onboarding_2.svg';
+import OnboardingThree from 'ode-images/onboarding/onboarding_3.svg';
+import OnboardingFour from 'ode-images/onboarding/onboarding_4.svg';
+import * as React from 'react';
+import { View, Linking, Dimensions, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Swiper from 'react-native-swiper';
+import { NavigationInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { TextSemiBold, H1 } from "../../framework/components/text";
-import theme from "../../app/theme";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { FlatButton } from "../../ui";
-import { selectPlatform } from "../actions/platform";
-
-import OnboardingOne from "ode-images/onboarding/onboarding_1.svg";
-import OnboardingTwo from "ode-images/onboarding/onboarding_2.svg";
-import OnboardingThree from "ode-images/onboarding/onboarding_3.svg";
-import OnboardingFour from "ode-images/onboarding/onboarding_4.svg";
-import appConf from "~/framework/util/appConf";
+import theme from '~/app/theme';
+import { TextSemiBold, H1 } from '~/framework/components/text';
+import appConf from '~/framework/util/appConf';
+import { openUrl } from '~/framework/util/linking';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { getLoginRouteName } from '~/navigation/LoginNavigator';
+import { FlatButton } from '~/ui';
+import { selectPlatform } from '~/user/actions/platform';
 
 // TYPES ==========================================================================================
 
-interface IOnboardingScreenProps extends NavigationInjectedProps<{}> {
+interface IOnboardingScreenProps extends NavigationInjectedProps<object> {
   dispatch: ThunkDispatch<any, any, any>;
 }
 
@@ -34,13 +35,13 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
 
   render() {
     const { navigation, dispatch } = this.props;
-    const isPlatformIos = Platform.OS === "ios";
-    const appName = I18n.t("user.onboardingScreen.appName");
-    const isOneOrNeo = appName.includes("ONE Pocket") || appName.includes("NEO Pocket");
-    const { width } = Dimensions.get("window");
+    const isPlatformIos = Platform.OS === 'ios';
+    const appName = I18n.t('user.onboardingScreen.appName');
+    const isOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
+    const { width } = Dimensions.get('window');
     const svgSize = width * 0.8;
-    const imageStyle = { width: svgSize, height: svgSize, maxHeight: "60%", maxWidth: "80%", marginTop: 4, marginBottom: 30 };
-    const onboardingTexts = I18n.t("user.onboardingScreen.onboarding");
+    const imageStyle = { width: svgSize, height: svgSize, maxHeight: '60%', maxWidth: '80%', marginTop: 4, marginBottom: 30 };
+    const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
     const onboardingImages = [
       <OnboardingOne style={imageStyle} />,
       <OnboardingTwo style={imageStyle} />,
@@ -59,12 +60,12 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
           <H1
             style={{
               color: theme.color.secondary.regular,
-              alignSelf: "center",
+              alignSelf: 'center',
               fontSize: 24,
               height: 80,
               lineHeight: undefined,
             }}>
-            {I18n.t("user.onboardingScreen.appName").toUpperCase()}
+            {I18n.t('user.onboardingScreen.appName').toUpperCase()}
           </H1>
           <Swiper
             autoplay
@@ -83,67 +84,57 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
               borderRadius: 8,
               backgroundColor: theme.color.secondary.regular,
             }}>
-            {((onboardingTexts as unknown) as string[]).map((onboardingText, index) => (
+            {(onboardingTexts as unknown as string[]).map((onboardingText, index) => (
               <View
                 style={{
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  alignSelf: "center",
-                  height: "85%",
-                  width: "80%",
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                  height: '85%',
+                  width: '80%',
                 }}>
                 {onboardingImages[index]}
-                <TextSemiBold style={{ textAlign: "center", fontSize: 18 }}>
-                  {onboardingTexts[index]}
-                </TextSemiBold>
+                <TextSemiBold style={{ textAlign: 'center', fontSize: 18 }}>{onboardingTexts[index]}</TextSemiBold>
               </View>
             ))}
           </Swiper>
         </View>
-        <View style={{ flex: 1, justifyContent: "center" }}>
-          <View style={{ height: 90, justifyContent: "space-between" }}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <View style={{ height: 90, justifyContent: 'space-between' }}>
             <FlatButton
-              title={I18n.t("user.onboardingScreen.joinMyNetwork")}
+              title={I18n.t('user.onboardingScreen.joinMyNetwork')}
               customButtonStyle={{
                 backgroundColor: theme.color.secondary.regular,
                 width: 230,
-                alignItems: "center",
+                alignItems: 'center',
               }}
               onPress={() => {
                 const hasMultiplePlatforms = appConf.platforms.length > 1;
                 if (!hasMultiplePlatforms) {
                   dispatch(selectPlatform(appConf.platforms[0].name));
                 }
-                navigation.navigate(hasMultiplePlatforms ? "PlatformSelect" : "LoginHome");
+                navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : getLoginRouteName());
               }}
             />
             {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
-            {isPlatformIos && isOneOrNeo
-              ? null
-              : <FlatButton
-                  title={I18n.t("user.onboardingScreen.discover")}
-                  customTextStyle={{ color: theme.color.secondary.regular }}
-                  customButtonStyle={{
-                    backgroundColor: theme.color.background.page,
-                    borderColor: theme.color.secondary.regular,
-                    borderWidth: 1,
-                    width: 230,
-                    alignItems: "center",
-                  }}
-                  onPress={() => {
-                    //TODO: create generic function inside oauth
-                    const url = I18n.t("user.onboardingScreen.discoverLink");
-                    Linking.canOpenURL(url).then(supported => {
-                      if (supported) {
-                        Linking.openURL(url);
-                      } else {
-                        console.warn("[onboarding] Don't know how to open URI: ", url);
-                      }
-                    });
-                  }}
-                />
-            }
+            {isPlatformIos && isOneOrNeo ? null : (
+              <FlatButton
+                title={I18n.t('user.onboardingScreen.discover')}
+                customTextStyle={{ color: theme.color.secondary.regular }}
+                customButtonStyle={{
+                  backgroundColor: theme.color.background.page,
+                  borderColor: theme.color.secondary.regular,
+                  borderWidth: 1,
+                  width: 230,
+                  alignItems: 'center',
+                }}
+                onPress={() => {
+                  const url = I18n.t('user.onboardingScreen.discoverLink');
+                  openUrl(url);
+                }}
+              />
+            )}
           </View>
         </View>
       </SafeAreaView>
@@ -160,4 +151,4 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
 // MAPPING ========================================================================================
 
 const OnboardingScreen_Connected = connect()(OnboardingScreen);
-export default withViewTracking("user/onboarding")(OnboardingScreen_Connected);
+export default withViewTracking('user/onboarding')(OnboardingScreen_Connected);

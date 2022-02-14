@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { mailListService } from "../service/mailList";
-import { actionTypes, IMailList } from "../state/mailList";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { mailListService } from '~/modules/zimbra/service/mailList';
+import { actionTypes, IMailList } from '~/modules/zimbra/state/mailList';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ export const dataActions = createAsyncActionCreators<IMailList>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchMailListAction(page: number, folderName: string, searchText: string = "") {
+export function fetchMailListAction(page: number, folderName: string, searchText: string = '') {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
@@ -22,7 +22,7 @@ export function fetchMailListAction(page: number, folderName: string, searchText
   };
 }
 
-export function fetchMailListFromFolderAction(folderLocation: string, page: number, searchText: string = "") {
+export function fetchMailListFromFolderAction(folderLocation: string, page: number, searchText: string = '') {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());

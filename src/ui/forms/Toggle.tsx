@@ -1,46 +1,46 @@
-import * as React from "react";
-import style from "glamorous-native";
-import { View, Animated } from "react-native";
-import { CommonStyles } from "../../styles/common/styles";
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { Icon } from "..";
+import style from 'glamorous-native';
+import * as React from 'react';
+import { View, Animated } from 'react-native';
+
+import { CommonStyles } from '~/styles/common/styles';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const TapCircle = style(TouchableOpacity)(
   {
     borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 22,
     height: 22,
-    backgroundColor: "#FFFFFF",
-    position: "absolute",
+    backgroundColor: '#FFFFFF',
+    position: 'absolute',
     left: 0,
     top: 0,
     borderWidth: 1,
     elevation: 2,
   },
   ({ checked = false }) => ({
-    borderColor: checked ? CommonStyles.primary : "#DDDDDD",
-  })
+    borderColor: checked ? CommonStyles.primary : '#DDDDDD',
+  }),
 );
 
 const Container = style(TouchableOpacity)(
   {
     borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 40,
     height: 22,
-    borderColor: "#dddddd",
-    position: "absolute",
+    borderColor: '#dddddd',
+    position: 'absolute',
     left: 0,
     top: 0,
   },
   ({ checked = false }) => ({
-    backgroundColor: checked ? CommonStyles.primary : "#efefef",
-    borderColor: checked ? CommonStyles.primary : "#DDDDDD",
+    backgroundColor: checked ? CommonStyles.primary : '#efefef',
+    borderColor: checked ? CommonStyles.primary : '#DDDDDD',
     borderWidth: checked ? 0 : 1,
-  })
+  }),
 );
 
 export class Toggle extends React.Component<

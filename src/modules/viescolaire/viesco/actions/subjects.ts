@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { subjectListService } from "../services/subjects";
-import { actionTypes, ISubjectList } from "../state/subjects";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { subjectListService } from '~/modules/viescolaire/viesco/services/subjects';
+import { actionTypes, ISubjectList } from '~/modules/viescolaire/viesco/state/subjects';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

@@ -1,9 +1,9 @@
-import * as React from "react";
-import { View } from "react-native";
-import I18n from "i18n-js";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View } from 'react-native';
 
-import { Loading, FlatButton } from "../../../ui";
-import { ErrorMessage } from "../../../ui/Typography";
+import { Loading, FlatButton } from '~/ui';
+import { ErrorMessage } from '~/ui/Typography';
 
 interface IConnectorViewDataProps {
   error: string;
@@ -23,9 +23,9 @@ class ConnectorView extends React.PureComponent<IConnectorViewProps> {
 
   private renderError() {
     return (
-      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
-        <ErrorMessage style={{ marginBottom: 20, width: "70%" }}>{I18n.t("connector-connectFailed")}</ErrorMessage>
-        <FlatButton onPress={this.props.openConnector} title={I18n.t("tryagain")} loading={this.props.isLoading} />
+      <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+        <ErrorMessage style={{ marginBottom: 20, width: '70%' }}>{I18n.t('connector-connectFailed')}</ErrorMessage>
+        <FlatButton onPress={this.props.openConnector} title={I18n.t('tryagain')} loading={this.props.isLoading} />
       </View>
     );
   }

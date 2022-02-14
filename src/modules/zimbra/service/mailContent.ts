@@ -1,8 +1,8 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { IMail } from "../state/mailContent";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IMail } from '~/modules/zimbra/state/mailContent';
 
 // Data type of what is given by the backend.
 export type IMailContentBackend = {

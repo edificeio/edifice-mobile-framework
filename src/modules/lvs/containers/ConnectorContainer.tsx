@@ -1,22 +1,20 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import connectorConfig from "../moduleConfig";
-import userConfig from "../../../user/config";
-import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
-
-import { AppTitle, Header, HeaderIcon } from "../../../ui/headers/Header";
-import { PageContainer } from "../../../ui/ContainerContent";
-import DEPRECATED_ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
-import { Back } from "../../../ui/headers/Back";
-
-import ConnectorView from "../components/ConnectorView";
-import { openConnector } from "../actions/connector";
-import { bindActionCreators } from "redux";
-import withViewTracking from "~/framework/util/tracker/withViewTracking";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { openConnector } from '~/modules/lvs/actions/connector';
+import ConnectorView from '~/modules/lvs/components/ConnectorView';
+import connectorConfig from '~/modules/lvs/moduleConfig';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
+import { Back } from '~/ui/headers/Back';
+import { AppTitle, Header, HeaderIcon } from '~/ui/headers/Header';
+import userConfig from '~/user/config';
 
 interface IApplicationBackend {
   name: string;
@@ -42,23 +40,21 @@ interface IConnectorContainerNavigationProps {
   navigation?: any;
 }
 
-type IConnectorContainerProps = IConnectorContainerDataProps &
-  IConnectorContainerEventProps &
-  IConnectorContainerNavigationProps;
+type IConnectorContainerProps = IConnectorContainerDataProps & IConnectorContainerEventProps & IConnectorContainerNavigationProps;
 
 class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
         header: (
           <Header>
             <Back navigation={navigation} />
             <AppTitle>{I18n.t(connectorConfig.displayName)}</AppTitle>
-            <HeaderIcon name={null} hidden={true} />
+            <HeaderIcon name={null} hidden />
           </Header>
         ),
       },
-      navigation
+      navigation,
     );
   };
 
@@ -67,9 +63,7 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
       <PageContainer>
         <DEPRECATED_ConnectionTrackingBar />
         <ConnectorView
-          openConnector={() =>
-            this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))
-          }
+          openConnector={() => this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))}
           isLoading={this.props.isLoading}
           error={this.props.error}
         />
@@ -78,14 +72,14 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
   }
 }
 
-const findLvsConnector: (apps: Array<IApplicationBackend>) => string = apps => {
-  const regexp = /la[- ]+vie[- ]+scolaire/i
+const findLvsConnector: (apps: IApplicationBackend[]) => string = apps => {
+  const regexp = /la[- ]+vie[- ]+scolaire/i;
 
   for (const app of apps) {
     if (
-      app.name.toUpperCase().includes("LVS") ||
-      app.displayName.toUpperCase().includes("LVS") ||
-      app.address.toUpperCase().includes("LVS") || 
+      app.name.toUpperCase().includes('LVS') ||
+      app.displayName.toUpperCase().includes('LVS') ||
+      app.address.toUpperCase().includes('LVS') ||
       regexp.test(app.name) ||
       regexp.test(app.displayName) ||
       regexp.test(app.address)
@@ -95,7 +89,7 @@ const findLvsConnector: (apps: Array<IApplicationBackend>) => string = apps => {
   }
 };
 
-const getConnectorAddress: (appAddress: string) => string = (appAddress) =>
+const getConnectorAddress: (appAddress: string) => string = appAddress =>
   `${DEPRECATED_getCurrentPlatform()!.url}${appAddress}&noRedirect=true`;
 
 const mapStateToProps: (state: any) => IConnectorContainerDataProps = state => {
@@ -112,7 +106,4 @@ const mapDispatchToProps: (dispatch: any) => IConnectorContainerEventProps = dis
   return bindActionCreators({ openConnector }, dispatch);
 };
 
-export default withViewTracking("lvs")(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectorContainer));
+export default withViewTracking('lvs')(connect(mapStateToProps, mapDispatchToProps)(ConnectorContainer));

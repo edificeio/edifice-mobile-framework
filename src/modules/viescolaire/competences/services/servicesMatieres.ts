@@ -1,6 +1,6 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IServiceList } from "../state/servicesMatieres";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IServiceList } from '~/modules/viescolaire/competences/state/servicesMatieres';
 
 export type IServiceListBackend = {
   id_matiere: string;
@@ -22,7 +22,7 @@ const servicesAdapter: (data: IServiceListBackend) => IServiceList = data => {
 export const ServicesMatiereListService = {
   getServices: async (idStructure: string) => {
     const result = await fetchJSONWithCache(
-      `/viescolaire/services?idEtablissement=${idStructure}&classes=true&groups=true&manualGroups=true&evaluable=true&notEvaluable=false`
+      `/viescolaire/services?idEtablissement=${idStructure}&classes=true&groups=true&manualGroups=true&evaluable=true&notEvaluable=false`,
     );
     return servicesAdapter(result);
   },

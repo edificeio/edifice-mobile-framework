@@ -1,18 +1,18 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
-import { TextInput, ScrollView } from "react-native-gesture-handler";
-import { LocalFile } from "../../../../framework/util/fileHandler";
-import { DocumentPicked, FilePicker, ImagePicked } from "../../../../infra/filePicker";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { TextInput, ScrollView } from 'react-native-gesture-handler';
 
-import { CommonStyles } from "../../../../styles/common/styles";
-import { Icon } from "../../../../ui";
-import { DialogButtonOk } from "../../../../ui/ConfirmDialog";
-import ConnectionTrackingBar from "../../../../ui/ConnectionTrackingBar";
-import TouchableOpacity from "../../../../ui/CustomTouchableOpacity";
-import DateTimePicker from "../../../../ui/DateTimePicker";
-import { Text, TextBold } from "../../../../ui/Typography";
+import { LocalFile } from '~/framework/util/fileHandler';
+import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import { DialogButtonOk } from '~/ui/ConfirmDialog';
+import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import DateTimePicker from '~/ui/DateTimePicker';
+import { Text, TextBold } from '~/ui/Typography';
 
 type DeclarationProps = {
   startDate: moment.Moment;
@@ -70,43 +70,28 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
     if (singleDay && differentDay) {
       this.props.updateEndDate(
-        moment(this.props.endDate)
-          .year(this.props.startDate.year())
-          .dayOfYear(this.props.startDate.dayOfYear())
+        moment(this.props.endDate).year(this.props.startDate.year()).dayOfYear(this.props.startDate.dayOfYear()),
       );
     }
   }
 
   public render() {
-    const {
-      startDate,
-      updateStartDate,
-      endDate,
-      updateEndDate,
-      comment,
-      updateComment,
-      attachment,
-      submit,
-    } = this.props;
+    const { startDate, updateStartDate, endDate, updateEndDate, comment, updateComment, attachment, submit } = this.props;
 
     const RightSwitchComponent = () => (
       <TouchableOpacity
-        style={[
-          styles.switchPart,
-          styles.rightSwitch,
-          this.state.switchState == SwitchState.SEVERAL && styles.selected,
-        ]}
+        style={[styles.switchPart, styles.rightSwitch, this.state.switchState == SwitchState.SEVERAL && styles.selected]}
         onPress={() => this.setState({ switchState: SwitchState.SEVERAL })}>
         {this.state.switchState == SwitchState.SINGLE ? (
-          <View style={{ flexDirection: "row" }}>
-            <Text>{I18n.t("viesco-several-days")}</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>{I18n.t('viesco-several-days')}</Text>
             <TextBold style={{ marginHorizontal: 10 }}>+</TextBold>
           </View>
         ) : (
           <View>
-            <Text>{I18n.t("viesco-several-days")}</Text>
+            <Text>{I18n.t('viesco-several-days')}</Text>
             <TextBold>
-              {I18n.t("viesco-from")} {startDate.format("DD/MM")} {I18n.t("viesco-to")} {endDate.format("DD/MM")}
+              {I18n.t('viesco-from')} {startDate.format('DD/MM')} {I18n.t('viesco-to')} {endDate.format('DD/MM')}
             </TextBold>
           </View>
         )}
@@ -117,8 +102,8 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
       <TouchableOpacity
         style={[styles.switchPart, styles.leftSwitch, this.state.switchState == SwitchState.SINGLE && styles.selected]}
         onPress={() => this.setState({ switchState: SwitchState.SINGLE })}>
-        <Text>{I18n.t("viesco-single-day")}</Text>
-        <TextBold>{startDate.format("DD/MM")}</TextBold>
+        <Text>{I18n.t('viesco-single-day')}</Text>
+        <TextBold>{startDate.format('DD/MM')}</TextBold>
       </TouchableOpacity>
     );
 
@@ -127,23 +112,23 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
         value={time}
         style={{
           flex: 1,
-          justifyContent: "space-evenly",
-          backgroundColor: "white",
-          alignItems: "center",
+          justifyContent: 'space-evenly',
+          backgroundColor: 'white',
+          alignItems: 'center',
           margin: 10,
         }}
         renderDate={date => (
           <>
             <View
               style={{
-                borderStyle: "solid",
+                borderStyle: 'solid',
                 borderBottomWidth: 2,
-                borderColor: "#FCB602",
+                borderColor: '#FCB602',
                 padding: 10,
               }}>
-              <Text style={{ color: "#FCB602", textTransform: "uppercase" }}>{title}</Text>
+              <Text style={{ color: '#FCB602', textTransform: 'uppercase' }}>{title}</Text>
             </View>
-            <TextBold style={{ padding: 10, fontSize: 24 }}>{date.format("HH    :    mm")}</TextBold>
+            <TextBold style={{ padding: 10, fontSize: 24 }}>{date.format('HH    :    mm')}</TextBold>
           </>
         )}
         mode="time"
@@ -154,18 +139,13 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     const DatePickers = () => (
       <>
         {this.state.switchState === SwitchState.SINGLE ? (
-          <DateTimePicker
-            mode="date"
-            value={startDate}
-            minimumDate={moment().startOf("day")}
-            onChange={updateStartDate}
-          />
+          <DateTimePicker mode="date" value={startDate} minimumDate={moment().startOf('day')} onChange={updateStartDate} />
         ) : (
           <>
             <DateTimePicker
               mode="date"
               value={startDate}
-              minimumDate={moment().startOf("day")}
+              minimumDate={moment().startOf('day')}
               maximumDate={endDate}
               onChange={updateStartDate}
             />
@@ -188,7 +168,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     return (
       <SafeAreaView>
         <ConnectionTrackingBar />
-        <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="position" keyboardVerticalOffset={60}>
+        <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="position" keyboardVerticalOffset={60}>
           <ScrollView bounces={false} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
             <View style={[styles.row, styles.switchContainer]}>
               <LeftSwitchComponent />
@@ -200,35 +180,29 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
             </View>
 
             <View style={styles.row}>
-              <TimePickerComponent title={I18n.t("viesco-from-hour")} time={startDate} onChange={updateStartDate} />
-              <TimePickerComponent title={I18n.t("viesco-to-hour")} time={endDate} onChange={updateEndDate} />
+              <TimePickerComponent title={I18n.t('viesco-from-hour')} time={startDate} onChange={updateStartDate} />
+              <TimePickerComponent title={I18n.t('viesco-to-hour')} time={endDate} onChange={updateEndDate} />
             </View>
 
             <View style={[styles.row, styles.inputContainer]}>
-              <TextBold style={{ marginBottom: 10 }}>{I18n.t("viesco-absence-motive")}</TextBold>
+              <TextBold style={{ marginBottom: 10 }}>{I18n.t('viesco-absence-motive')}</TextBold>
               <TextInput
                 multiline
-                placeholder={I18n.t("viesco-enter-text")}
+                placeholder={I18n.t('viesco-enter-text')}
                 value={comment}
                 underlineColorAndroid="lightgrey"
                 onChangeText={updateComment}
               />
-              <FilePicker multiple
-                callback={(att) => this.props.onPickAttachment(att)}
-              >
-                <IconButton
-                  onPress={() => { }}
-                  text={I18n.t("viesco-attachment")}
-                  color="white"
-                  icon="attachment"
-                /></FilePicker>
+              <FilePicker multiple callback={att => this.props.onPickAttachment(att)}>
+                <IconButton onPress={() => {}} text={I18n.t('viesco-attachment')} color="white" icon="attachment" />
+              </FilePicker>
             </View>
             {attachment && <RenderAttachment />}
 
             <DialogButtonOk
-              style={{ alignSelf: "center" }}
+              style={{ alignSelf: 'center' }}
               disabled={!this.props.validate()}
-              label={I18n.t("viesco-validate")}
+              label={I18n.t('viesco-validate')}
               onPress={submit}
             />
           </ScrollView>
@@ -240,16 +214,16 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
 const styles = StyleSheet.create({
   switchContainer: {
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 10,
   },
   switchPart: {
     flex: 1,
     borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "lightgrey",
+    borderStyle: 'solid',
+    borderColor: 'lightgrey',
     padding: 15,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   leftSwitch: {
     borderBottomLeftRadius: 10,
@@ -260,7 +234,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   selected: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     elevation: CommonStyles.elevation,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
@@ -269,47 +243,47 @@ const styles = StyleSheet.create({
   },
   row: {
     marginVertical: 10,
-    justifyContent: "space-evenly",
-    flexDirection: "row",
+    justifyContent: 'space-evenly',
+    flexDirection: 'row',
   },
   column: {
-    flexDirection: "column",
-    alignItems: "center",
+    flexDirection: 'column',
+    alignItems: 'center',
     padding: 15,
     flexGrow: 1,
     flexBasis: 0,
   },
   timeContainer: {
-    backgroundColor: "white",
-    flexDirection: "column",
-    alignItems: "center",
+    backgroundColor: 'white',
+    flexDirection: 'column',
+    alignItems: 'center',
     padding: 30,
   },
   inputContainer: {
-    backgroundColor: "white",
-    flexDirection: "column",
+    backgroundColor: 'white',
+    flexDirection: 'column',
     paddingHorizontal: 25,
     paddingTop: 25,
   },
   gridButtonContainer: {
-    width: "50%",
+    width: '50%',
     paddingBottom: 6,
   },
   gridButton: {
     borderRadius: 5,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 8,
   },
   gridButtonText: {
-    color: "black",
+    color: 'black',
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
   attachment: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 5,
     marginLeft: 20,
   },

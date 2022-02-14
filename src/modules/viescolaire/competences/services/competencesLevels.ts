@@ -1,6 +1,6 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { ILevelsList } from "../state/competencesLevels";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 
 export type ILevelsListBackend = {
   couleur: string;

@@ -1,27 +1,24 @@
-import {
-  clearRequestsCache,
-  fetchJSONWithCache,
-} from "../../infra/fetchWithCache";
-import {
-  OAuth2RessourceOwnerPasswordClient,
-  OAuthErrorType
-} from "../../infra/oauth";
-import { navigate, reset } from "../../navigation/helpers/navHelper";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import SplashScreen from 'react-native-splash-screen';
+import { ThunkDispatch } from 'redux-thunk';
+import { NavigationActions } from 'react-navigation';
 
-// Legacy imports
-import { userService } from "../service";
-import { initActivationAccount as initActivationAccountAction } from "./activation";
-import { clearTimeline } from "../../timeline/actions/clearTimeline";
-import { createEndSessionAction } from "../../infra/redux/reducerFactory";
-import { ThunkDispatch } from "redux-thunk";
-import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut } from "./actionTypes/login";
-import { Trackers } from "../../framework/util/tracker";
-import { getLoginStackToDisplay } from "../../navigation/LoginNavigator";
-import { PLATFORM_STORAGE_KEY } from "./platform";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import SplashScreen from "react-native-splash-screen";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut } from './actionTypes/login';
+import { PLATFORM_STORAGE_KEY } from './platform';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Trackers } from '~/framework/util/tracker';
+import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
+import { createEndSessionAction } from '~/infra/redux/reducerFactory';
+import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/LoginNavigator';
+import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
+import { clearTimeline } from '~/timeline/actions/clearTimeline';
+import { userService } from '~/user/service';
+
+// eslint-disable-next-line import/order
+import { initActivationAccount as initActivationAccountAction } from './activation';
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -29,7 +26,7 @@ enum LoginFlowErrorType {
   RUNTIME_ERROR = 'runtime_error',
   FIREBASE_ERROR = 'firebase_error',
   NOT_PREMIUM = 'not_premium',
-  PRE_DELETED = 'pre_deleted'
+  PRE_DELETED = 'pre_deleted',
 }
 export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
 
@@ -37,19 +34,24 @@ export enum LoginStatus {
   IDLE,
   UNAVAILABLE,
   SUCCESS,
-  ERROR
+  ERROR,
 }
 
 export interface LoginErrorDetails {
-  type: LoginErrorType,
+  type: LoginErrorType;
   error?: string;
   description?: string;
 }
 export type LoginError = Error & LoginErrorDetails;
 
-function createLoginError<T extends object>(type: LoginErrorType, error: string, description?: string, additionalData?: T): LoginError & T {
-  let err: LoginError = new Error("LOGIN: returned error") as any;
-  err.name = "LOGIN";
+function createLoginError<T extends object>(
+  type: LoginErrorType,
+  error: string,
+  description?: string,
+  additionalData?: T,
+): LoginError & T {
+  let err: LoginError = new Error('LOGIN: returned error') as any;
+  err.name = 'LOGIN';
   err.type = type;
   err.error = error;
   err.description = description;
@@ -57,11 +59,10 @@ function createLoginError<T extends object>(type: LoginErrorType, error: string,
   return err as LoginError & T;
 }
 
-
 export enum DEPRECATED_LoginResult {
   success,
   passwordError,
-  connectionError
+  connectionError,
 }
 
 // ACTION TYPES --------------------------------------------------------------------------------------
@@ -70,35 +71,33 @@ export enum DEPRECATED_LoginResult {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-let checkingIOSPermissions = false;
-
 export function loginAction(
   redirectOnError: boolean = false,
-  credentials?: { username: string; password: string, rememberMe: boolean }
+  credentials?: { username: string; password: string; rememberMe: boolean },
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const pf = DEPRECATED_getCurrentPlatform();
     try {
       // === 0: Init login
-      console.log("0: Init login");
+      console.log('0: Init login');
       try {
-        if (!DEPRECATED_getCurrentPlatform()) throw new Error("[login] Must specify a platform");
-        if (!OAuth2RessourceOwnerPasswordClient.connection)
-          throw new Error("[login] no active oauth connection");
+        if (!pf) throw new Error('[login] Must specify a platform');
+        if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[login] no active oauth connection');
 
         dispatch({ type: actionTypeRequestLogin });
       } catch (err) {
         console.warn('[login] initialization failed');
-        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
       // === 1: Get oAuth token from somewhere (server or local storage)
-      console.log("1: Get oAuth token from somewhere (server or local storage)");
+      console.log('1: Get oAuth token from somewhere (server or local storage)');
       try {
         if (credentials) {
-          await OAuth2RessourceOwnerPasswordClient.connection.getNewToken(
+          await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
             credentials.username,
             credentials.password,
-            false // Do not save token until login is completely successful
+            false, // Do not save token until login is completely successful
           );
         } else {
           // Here, an offline user will try to load a token.
@@ -120,32 +119,30 @@ export function loginAction(
       // === 2: Gather logged user information
       let userinfo2;
       try {
-        console.log("2: Gather logged user information");
-        userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
+        console.log('2: Gather logged user information');
+        userinfo2 = (await fetchJSONWithCache('/auth/oauth2/userinfo', {
           headers: {
-            Accept: "application/json;version=2.0"
-          }
-        }) as any;
+            Accept: 'application/json;version=2.0',
+          },
+        })) as any;
         // console.log("oauth2 userinfo back response", userinfo2);
         // console.log(userinfo2.apps);
         userinfo2.appsInfo = userinfo2.apps;
         userinfo2.apps = userinfo2.apps.map((e: any) => e.name);
 
         // Some applications haven't a precise name... ☹️
-        if (userinfo2.apps.includes("Cahier de texte"))
-          userinfo2.apps.push("Homeworks");
-        if (userinfo2.apps.includes("Espace documentaire"))
-          userinfo2.apps.push("Workspace");
-        if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
+        if (userinfo2.apps.includes('Cahier de texte')) userinfo2.apps.push('Homeworks');
+        if (userinfo2.apps.includes('Espace documentaire')) userinfo2.apps.push('Workspace');
+        if (userinfo2.apps.includes('Actualites')) userinfo2.apps.push('News');
       } catch (err) {
         console.warn('[login] userinfo fetch failed', err);
-        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
       // === 3: check user validity
-      console.log("3: check user validity");
+      console.log('3: check user validity');
       if (userinfo2.deletePending) {
-        const err = new Error("[loginAction]: User is predeleted.");
+        const err = new Error('[loginAction]: User is predeleted.');
         (err as any).type = LoginFlowErrorType.PRE_DELETED;
         throw err;
       } else if (!userinfo2.hasApp) {
@@ -155,19 +152,18 @@ export function loginAction(
       }
 
       // === 4: Gather another user information
-      console.log("4: Gather another user information");
+      console.log('4: Gather another user information');
       let userdata: any, userPublicInfo: any;
       try {
-        userdata = await fetchJSONWithCache(
-          `/directory/user/${userinfo2.userId}`
-        ) as any;
+        userdata = (await fetchJSONWithCache(`/directory/user/${userinfo2.userId}`)) as any;
         // console.log("childrenStructure", await fetchJSONWithCache('/directory/user/' + userinfo2.userId + '/children'));
-        userdata.childrenStructure = userinfo2.type === "Relative" ?
-          await (fetchJSONWithCache('/directory/user/' + userinfo2.userId + '/children') as any) :
-          undefined;
+        userdata.childrenStructure =
+          userinfo2.type === 'Relative'
+            ? await (fetchJSONWithCache('/directory/user/' + userinfo2.userId + '/children') as any)
+            : undefined;
         // console.log("oauth2 userdata", userdata);
 
-        userPublicInfo = await fetchJSONWithCache("/userbook/api/person?id=" + userinfo2.userId);
+        userPublicInfo = await fetchJSONWithCache('/userbook/api/person?id=' + userinfo2.userId);
         // console.log("oauth2 userPublicInfo", userPublicInfo);
       } catch (err) {
         console.warn('[login] userinfo fetch failed');
@@ -175,57 +171,62 @@ export function loginAction(
       }
 
       // === 5: Get firebase device token and store it in the backend
-      console.log("5: Get firebase device token and store it in the backend");
+      console.log('5: Get firebase device token and store it in the backend');
       try {
         const authorizationStatus = await messaging().requestPermission();
         if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
           await userService.registerFCMToken();
         } else {
-          console.warn("[login] Push-notifications unauthorized by the user.")
+          console.warn('[login] Push-notifications unauthorized by the user.');
         }
-
       } catch (err) {
         console.warn('[login] firebase registering failed');
         throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err);
       }
 
       // === 6: validate login
-      console.log("6: validate login");
+      console.log('6: validate login');
       try {
         dispatch({
           type: actionTypeLoggedIn,
           userbook: userinfo2,
           userdata,
-          userPublicInfo: userPublicInfo.result[0]
+          userPublicInfo: userPublicInfo.result[0],
         });
-        credentials?.rememberMe && OAuth2RessourceOwnerPasswordClient.connection.saveToken();
+        (credentials?.rememberMe || pf.wayf) && OAuth2RessourceOwnerPasswordClient.connection.saveToken();
       } catch (err) {
         console.warn('[login] userinfo fetch failed');
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
       }
 
       // === 7: Tracking reporting (only on success)
-      console.log("7: Tracking reporting (only on success)");
+      console.log('7: Tracking reporting (only on success)');
 
       // ToDo
       await Promise.all([
         Trackers.setUserId(userinfo2.userId),
-        Trackers.setCustomDimension(1, "Profile", userinfo2.type),
-        Trackers.setCustomDimension(2, "School",
+        Trackers.setCustomDimension(1, 'Profile', userinfo2.type),
+        Trackers.setCustomDimension(
+          2,
+          'School',
           userinfo2.administrativeStructures && userinfo2.administrativeStructures.length
             ? userinfo2.administrativeStructures[0].id
             : userinfo2.structures && userinfo2.structures.length
-              ? userinfo2.structures[0]
-              : 'no structure'
+            ? userinfo2.structures[0]
+            : 'no structure',
         ),
-        Trackers.setCustomDimension(3, "Project", DEPRECATED_getCurrentPlatform()!.url.replace(/(^\w+:|^)\/\//, '')) // remove protocol
+        Trackers.setCustomDimension(3, 'Project', pf!.url.replace(/(^\w+:|^)\/\//, '')), // remove protocol
       ]);
-      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN'); // Track manual login (with credentials)
-      else await Trackers.trackEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
+      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN');
+      // Track manual login (with credentials)
+      else await Trackers.trackDebugEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
-      // === 8: navigate back to the main screen
-      console.log("8: navigate back to the main screen");
-      navigate("Main");
+      // === 8: Store Curreet Platform
+      await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, pf.name);
+
+      // === 9: navigate back to the main screen
+      console.log('8: navigate back to the main screen');
+      navigate('Main');
     } catch (err) {
       // In case of error...
 
@@ -233,20 +234,17 @@ export function loginAction(
       if (err.type === OAuthErrorType.BAD_CREDENTIALS) {
         try {
           if (credentials) {
-            const res = await fetch(
-              `${DEPRECATED_getCurrentPlatform()!.url}/auth/activation/match`,
-              {
-                body: JSON.stringify({
-                  login: credentials.username,
-                  password: credentials.password
-                }),
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json"
-                },
-                method: "post"
-              }
-            );
+            const res = await fetch(`${pf!.url}/auth/activation/match`, {
+              body: JSON.stringify({
+                login: credentials.username,
+                password: credentials.password,
+              }),
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              method: 'post',
+            });
             if (res.ok) {
               const body = await res.json();
               if (body.match) {
@@ -254,19 +252,15 @@ export function loginAction(
                   initActivationAccountAction(
                     {
                       activationCode: credentials.password,
-                      login: credentials.username
+                      login: credentials.username,
                     },
-                    true
-                  )
+                    true,
+                  ),
                 );
                 return; // End error handling if activation match is a success
               }
             } else {
-              console.warn(
-                "[Login] activation code match fail with error code: ",
-                res.status,
-                res.statusText
-              );
+              console.warn('[Login] activation code match fail with error code: ', res.status, res.statusText);
             }
           }
         } catch (activationErr) {
@@ -275,22 +269,28 @@ export function loginAction(
       }
 
       // === 2: Log error (Continue only if activation match failed)
-      console.warn(err, "type:", err.type);
+      console.warn(err, 'type:', err.type);
       // ToDo Tracking
 
       // === 3: dispatch error
       dispatch({
         errmsg: err.type,
-        type: actionTypeLoginError
+        type: actionTypeLoginError,
       });
 
       // Track
 
-      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', err.type); // Track manual login (with credentials)
+      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', err.type);
+      // Track manual login (with credentials)
       else await Trackers.trackEvent('Auth', 'RESTORE ERROR', err.type); // track separately auto login (with stored token)
 
       // === 4: Redirect if asked
-      if (redirectOnError) navigate("LoginHome");
+      if (redirectOnError) {
+        resetNavigation([
+          NavigationActions.navigate({ routeName: 'PlatformSelect' }),
+          NavigationActions.navigate({ routeName: getLoginRouteName() }),
+        ], 1);
+      }
     } finally {
       SplashScreen.hide();
     }
@@ -299,21 +299,20 @@ export function loginAction(
 
 function endSessionAction() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    if (!OAuth2RessourceOwnerPasswordClient.connection)
-      throw new Error("[endSessionAction] no active oauth connection");
+    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[endSessionAction] no active oauth connection');
     // Unregister the device token from the backend
     await userService.unregisterFCMToken();
     // Erase stored oauth2 token and cache information
     await OAuth2RessourceOwnerPasswordClient.connection.eraseToken();
     // Validate log out
     dispatch({ type: actionTypeLoggedOut });
-  }
+  };
 }
 
 export function logout() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
 
       // === 0: Tracking reporting, only on manual logout
       // ToDo
@@ -325,7 +324,7 @@ export function logout() {
       reset(getLoginStackToDisplay(platformId));
 
       // === 2: End user session
-      await dispatch(endSessionAction())
+      await dispatch(endSessionAction());
       await clearRequestsCache();
       dispatch(createEndSessionAction());
       Trackers.trackEvent('Auth', 'LOGOUT');
@@ -340,7 +339,7 @@ export function logout() {
 export function refreshToken(newToken: string) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       const authState = getState().user.auth;
       if (!authState.loggingIn) return false;
       //

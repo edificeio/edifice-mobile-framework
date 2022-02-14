@@ -1,22 +1,22 @@
-import moment from "moment";
-import * as React from "react";
-import { AppState, AppStateStatus } from "react-native";
-import { NavigationFocusInjectedProps } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import moment from 'moment';
+import * as React from 'react';
+import { AppState, AppStateStatus } from 'react-native';
+import { NavigationFocusInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from "../../../../App";
-import { INavigationProps } from "../../../../types";
-import { getSelectedStructure } from "../../viesco/state/structure";
-import { fetchMultipleSlotsAction } from "../actions/multipleSlots";
-import { fetchRegiterPreferencesAction } from "../actions/registerPreferences";
-import { fetchCoursesRegisterAction } from "../actions/teacherCourseRegister";
-import { fetchCoursesAction } from "../actions/teacherCourses";
-import TeacherCallListComponent from "../components/TeacherCallList";
-import { getMultipleSlotsState, IMultipleSlotsState } from "../state/multipleSlots";
-import { getRegisterPreferencesState, IRegisterPreferencesState } from "../state/registerPreferences";
-import { getCoursesRegisterState } from "../state/teacherCourseRegister";
-import { getCoursesListState, ICourses } from "../state/teacherCourses";
+import { getSessionInfo } from '~/App';
+import { fetchMultipleSlotsAction } from '~/modules/viescolaire/presences/actions/multipleSlots';
+import { fetchRegiterPreferencesAction } from '~/modules/viescolaire/presences/actions/registerPreferences';
+import { fetchCoursesRegisterAction } from '~/modules/viescolaire/presences/actions/teacherCourseRegister';
+import { fetchCoursesAction } from '~/modules/viescolaire/presences/actions/teacherCourses';
+import TeacherCallListComponent from '~/modules/viescolaire/presences/components/TeacherCallList';
+import { getMultipleSlotsState, IMultipleSlotsState } from '~/modules/viescolaire/presences/state/multipleSlots';
+import { getRegisterPreferencesState, IRegisterPreferencesState } from '~/modules/viescolaire/presences/state/registerPreferences';
+import { getCoursesRegisterState } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
+import { getCoursesListState, ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
+import { INavigationProps } from '~/types';
 
 export enum SwitchState {
   DEFAULT,
@@ -101,12 +101,12 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
       multipleSlot = JSON.parse(this.props.registerPreferences.data.preference).multipleSlot;
     }
 
-    const today = moment().format("YYYY-MM-DD");
+    const today = moment().format('YYYY-MM-DD');
     this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today, multipleSlot);
   };
 
   openCall = (course: ICourses) => {
-    let courseRegisterInfos = {
+    const courseRegisterInfos = {
       id: course.id,
       classroom: course.roomLabels[0],
       grade: course.classes[0] !== undefined ? course.classes[0] : course.groups[0],
@@ -117,8 +117,8 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
       const rawCourseData = {
         course_id: course.id,
         structure_id: course.structureId,
-        start_date: moment(course.startDate).format("YYYY-MM-DD HH:mm:ss"),
-        end_date: moment(course.endDate).format("YYYY-MM-DD HH:mm:ss"),
+        start_date: moment(course.startDate).format('YYYY-MM-DD HH:mm:ss'),
+        end_date: moment(course.endDate).format('YYYY-MM-DD HH:mm:ss'),
         subject_id: course.subjectId,
         groups: course.groups,
         classes: course.classes !== undefined ? course.classes : course.groups,
@@ -130,7 +130,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
       this.props.fetchRegisterId(courseData);
     }
 
-    this.props.navigation.navigate("CallSheetPage", { courseInfos: courseRegisterInfos });
+    this.props.navigation.navigate('CallSheetPage', { courseInfos: courseRegisterInfos });
   };
 
   render() {
@@ -165,8 +165,9 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       fetchCourses: fetchCoursesAction,
       fetchRegisterId: fetchCoursesRegisterAction,
       getMultipleSlots: fetchMultipleSlotsAction,
-      getRegisterPreferences: fetchRegiterPreferencesAction, },
-    dispatch
+      getRegisterPreferences: fetchRegiterPreferencesAction,
+    },
+    dispatch,
   );
 };
 

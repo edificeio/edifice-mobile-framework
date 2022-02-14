@@ -1,31 +1,30 @@
+import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 import {
   actionTypeLoggedIn,
   actionTypeLoggedOut,
   actionTypeLoginCancel,
   actionTypeLoginError,
-  actionTypeRequestLogin
-} from "../actions/actionTypes/login";
-import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
-import { actionTypePlatformSelect } from "../actions/platform";
+  actionTypeRequestLogin,
+} from '~/user/actions/actionTypes/login';
+import { actionTypeSetNotifPrefs } from '~/user/actions/notifPrefs';
+import { actionTypePlatformSelect } from '~/user/actions/platform';
 import {
   actionTypeNewVersion,
   actionTypeRequestVersion,
   actionTypeSkipVersion,
   INewVersionAction,
-  IVersionContext
-} from "../actions/version";
-import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
+  IVersionContext,
+} from '~/user/actions/version';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
-export type backendUserApp = 
-  {
-    name: string,
-    address: string,
-    displayName: string,
-    display: boolean,
-    prefix: string
-}
+export type backendUserApp = {
+  name: string;
+  address: string;
+  displayName: string;
+  display: boolean;
+  prefix: string;
+};
 
 export interface IUserAuthState {
   // user account information
@@ -61,18 +60,15 @@ export const stateDefault: IUserAuthState = {
   platformId: null,
   synced: false,
   skipVersion: false,
-  versionContext: null
+  versionContext: null,
 };
 
-const authReducer = (
-  state: IUserAuthState = stateDefault,
-  action
-): IUserAuthState => {
+const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthState => {
   switch (action.type) {
     case actionTypeSkipVersion: {
       return {
         ...state,
-        skipVersion: true
+        skipVersion: true,
       };
     }
     case actionTypeNewVersion: {
@@ -80,61 +76,61 @@ const authReducer = (
       return {
         ...state,
         loggingIn: false,
-        versionContext: { ...aVersion }
+        versionContext: { ...aVersion },
       };
     }
     case actionTypeRequestLogin:
     case actionTypeRequestVersion:
       return {
         ...state,
-        error: "",
-        loggingIn: true
+        error: '',
+        loggingIn: true,
       };
     case actionTypeLoggedIn:
       return {
         ...state,
         apps: action.userbook.apps,
         appsInfo: action.userbook.appsInfo,
-        error: "",
+        error: '',
         loggedIn: true,
         loggingIn: false,
         login: action.userbook.login,
         synced: true,
-        userId: action.userbook.id
+        userId: action.userbook.id,
       };
     case actionTypeLoginError:
       return {
         ...stateDefault,
         error: action.errmsg,
         loggingIn: false,
-        platformId: state.platformId
+        platformId: state.platformId,
       };
     case actionTypeLoginCancel:
       return {
         ...state,
-        loggingIn: false
+        loggingIn: false,
       };
     case actionTypeLoggedOut:
-      const { error } = state
+      const { error } = state;
       return {
         ...stateDefault,
         error,
-        platformId: state.platformId
+        platformId: state.platformId,
       };
     case actionTypeSetNotifPrefs:
       return {
         ...state,
-        notificationPrefs: action.notificationPrefs
+        notificationPrefs: action.notificationPrefs,
       };
-    case "NOTIFICATION_OPEN":
+    case 'NOTIFICATION_OPEN':
       return {
         ...state,
-        notification: action.notification
+        notification: action.notification,
       };
     case actionTypePlatformSelect:
       return {
         ...state,
-        platformId: action.platformId
+        platformId: action.platformId,
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

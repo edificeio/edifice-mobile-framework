@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { coursesRegisterService } from "../services/teacherCourses";
-import { ICoursesRegister, actionTypes } from "../state/teacherCourseRegister";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { coursesRegisterService } from '~/modules/viescolaire/presences/services/teacherCourses';
+import { ICoursesRegister, actionTypes } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

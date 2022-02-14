@@ -1,19 +1,16 @@
-import { connect } from "react-redux";
-import {
-  ForgotPage,
-  IForgotPageDataProps,
-  IForgotPageEventProps
-} from "../components/ForgotPage";
-import userConfig from "../config";
-import { action_forgotSubmit, action_forgotReset } from "../actions/forgot";
-import { IUserForgotState } from "../reducers/forgot";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { connect } from 'react-redux';
+
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { action_forgotSubmit, action_forgotReset } from '~/user/actions/forgot';
+import { ForgotPage, IForgotPageDataProps, IForgotPageEventProps } from '~/user/components/ForgotPage';
+import userConfig from '~/user/config';
+import { IUserForgotState } from '~/user/reducers/forgot';
 
 const mapStateToProps: (state: any) => IForgotPageDataProps = state => {
   const forgotState: IUserForgotState = state[userConfig.reducerName].forgot;
   return {
     fetching: forgotState.fetching,
-    result: forgotState.result
+    result: forgotState.result,
   };
 };
 
@@ -25,13 +22,10 @@ const mapDispatchToProps: (dispatch) => IForgotPageEventProps = dispatch => {
     },
     onReset() {
       return dispatch(action_forgotReset());
-    }
+    },
   };
 };
 
-const ConnectedForgotPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ForgotPage);
+const ConnectedForgotPage = connect(mapStateToProps, mapDispatchToProps)(ForgotPage);
 
 export default withViewTracking('auth/forgot')(ConnectedForgotPage);

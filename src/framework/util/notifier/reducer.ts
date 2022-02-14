@@ -1,12 +1,12 @@
-import createReducer from "../redux/reducerFactory";
+import createReducer from '~/framework/util/redux/reducerFactory';
 
 // State type
 export type NotifierType = 'info' | 'success' | 'warning' | 'error';
 export interface NotifierState {
-  notifierType: NotifierType,
+  notifierType: NotifierType;
   visible: boolean;
-  text?: string,
-  icon?: string,
+  text?: string;
+  icon?: string;
   loading?: boolean;
   duration?: number;
 }
@@ -16,8 +16,8 @@ export const initialState = {};
 
 // Action types
 export const notifierActionTypes = {
-  show: "NOTIFIER_SHOW",
-  hide: "NOTIFIER_HIDE"
+  show: 'NOTIFIER_SHOW',
+  hide: 'NOTIFIER_HIDE',
 };
 
 export default createReducer(initialState, {
@@ -25,14 +25,14 @@ export default createReducer(initialState, {
     const { id, type, ...actionInfos } = action;
     return {
       ...state,
-      [id]: {...actionInfos, visible: true}
-    }
+      [id]: { ...actionInfos, visible: true },
+    };
   },
   [notifierActionTypes.hide]: (state, action) => {
     const { id } = action;
     return {
       ...state,
-      [id]: {...state[id], visible: false}
-    }
-  }
-})
+      [id]: { ...state[id], visible: false },
+    };
+  },
+});

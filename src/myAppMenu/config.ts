@@ -1,9 +1,9 @@
-import FunctionalModuleConfig from "../infra/moduleTool";
+import FunctionalModuleConfig from '~/infra/moduleTool';
 
 // tslint:disable:object-literal-sort-keys
 
 export default new FunctionalModuleConfig({
-  name: "myapps",
-  displayName: "MyApplications",
-  iconName: "icon-apps"
+  name: 'myapps',
+  displayName: 'MyApplications',
+  iconName: 'icon-apps',
 });

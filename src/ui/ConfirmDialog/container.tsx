@@ -1,7 +1,8 @@
-import React from "react";
-import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
-import AnimatedModal from "react-native-modal";
-import { layoutSize } from "../../styles/common/layoutSize";
+import React from 'react';
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import AnimatedModal from 'react-native-modal';
+
+import { layoutSize } from '~/styles/common/layoutSize';
 
 type IProps = {
   visible: boolean;
@@ -21,21 +22,16 @@ export default class DialogContainer extends React.PureComponent<IProps> {
       if (!child) {
         return;
       }
-      if (child.type.name === "DialogTitle" || child.type.displayName === "DialogTitle") {
+      if (child.type.name === 'DialogTitle' || child.type.displayName === 'DialogTitle') {
         titleChildrens.push(child as never);
-      } else if (child.type.name === "DialogButton" || child.type.displayName === "DialogButton") {
+      } else if (child.type.name === 'DialogButton' || child.type.displayName === 'DialogButton') {
         buttonChildrens.push(child as never);
       } else {
         otherChildrens.push(child as never);
       }
     });
     return (
-      <AnimatedModal
-        backdropOpacity={0.3}
-        style={styles.modal}
-        isVisible={visible}
-        backdropTransitionOutTiming={0}
-        {...otherProps}>
+      <AnimatedModal backdropOpacity={0.3} style={styles.modal} isVisible={visible} backdropTransitionOutTiming={0} {...otherProps}>
         <KeyboardAvoidingView style={styles.container}>
           <View style={styles.content}>
             <View style={styles.header}>{titleChildrens}</View>
@@ -45,7 +41,7 @@ export default class DialogContainer extends React.PureComponent<IProps> {
                 {buttonChildrens.map((x, i) =>
                   React.cloneElement(x, {
                     key: `dialog-button-${i}`,
-                  })
+                  }),
                 )}
               </View>
             )}
@@ -64,26 +60,26 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   container: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   blur: {
-    position: "absolute",
-    backgroundColor: "rgb(255,255,255)",
+    position: 'absolute',
+    backgroundColor: 'rgb(255,255,255)',
     top: 0,
     left: 0,
     bottom: 0,
     right: 0,
   },
   content: {
-    flexDirection: "column",
+    flexDirection: 'column',
     borderRadius: 3,
     paddingHorizontal: layoutSize.LAYOUT_12,
     paddingVertical: layoutSize.LAYOUT_8,
     marginVertical: layoutSize.LAYOUT_0,
     marginHorizontal: layoutSize.LAYOUT_12,
-    backgroundColor: "white",
-    overflow: "hidden",
+    backgroundColor: 'white',
+    overflow: 'hidden',
     elevation: 4,
     minWidth: 300,
   },
@@ -91,15 +87,15 @@ const styles = StyleSheet.create({
     margin: layoutSize.LAYOUT_4,
   },
   footer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
     marginTop: 4,
     padding: layoutSize.LAYOUT_8,
   },
   buttonSeparator: {
-    height: "100%",
-    backgroundColor: "#A9ADAE",
+    height: '100%',
+    backgroundColor: '#A9ADAE',
     width: StyleSheet.hairlineWidth,
   },
 });

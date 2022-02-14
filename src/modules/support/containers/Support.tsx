@@ -5,17 +5,16 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import workspaceService from '../../../framework/modules/workspace/service';
-import { IUserSession } from '../../../framework/util/session';
-import pickFile from '../../../infra/actions/pickFile';
-import withViewTracking from '../../../framework/util/tracker/withViewTracking';
-import { CommonStyles } from '../../../styles/common/styles';
-import { PageContainer } from '../../../ui/ContainerContent';
-import { Text } from '../../../ui/Typography';
-import { Header } from '../../../ui/headers/Header';
-import { HeaderBackAction } from '../../../ui/headers/NewHeader';
-import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from '../actions/support';
-import Support from '../components/Support';
+import { IUserSession } from '~/framework/util/session';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import pickFile from '~/infra/actions/pickFile';
+import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from '~/modules/support/actions/support';
+import Support from '~/modules/support/components/Support';
+import { CommonStyles } from '~/styles/common/styles';
+import { PageContainer } from '~/ui/ContainerContent';
+import { Text } from '~/ui/Typography';
+import { Header } from '~/ui/headers/Header';
+import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 export type INewAttachment = {
   contentType?: string;
@@ -48,7 +47,7 @@ export type IApp = {
 };
 
 type ISupportProps = {
-  navigation: NavigationScreenProp<{}>;
+  navigation: NavigationScreenProp<object>;
   categoryList: IApp[];
   establishmentsList: IEstablishment[];
   session: IUserSession;
@@ -79,9 +78,9 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
 
   removeAttachment = (attachmentId: string) => {
     this.props.deleteAttachment(attachmentId);
-    let attachmentRemoved = this.state.ticket.attachments.find(key => key.id === attachmentId);
-    let attachmentList = [...this.state.ticket.attachments];
-    let index = attachmentList.indexOf(attachmentRemoved);
+    const attachmentRemoved = this.state.ticket.attachments.find(key => key.id === attachmentId);
+    const attachmentList = [...this.state.ticket.attachments];
+    const index = attachmentList.indexOf(attachmentRemoved);
     if (index !== -1) {
       attachmentList.splice(index, 1);
       this.setState(prevState => ({ ticket: { ...prevState.ticket, attachments: attachmentList } }));
@@ -97,7 +96,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
     this.setState({ tempAttachment: fileState });
     try {
       const newAttachment: INewAttachment = await this.props.addAttachment(file, this.props.session);
-      let joinedAttachments = this.state.ticket.attachments.concat(newAttachment);
+      const joinedAttachments = this.state.ticket.attachments.concat(newAttachment);
       this.setState(prevState => ({
         ticket: { ...prevState.ticket, attachments: joinedAttachments },
         tempAttachment: null,
@@ -204,12 +203,12 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
 const mapStateToProps: (state: any) => any = state => {
   const categoryOther: any = { address: 'modules-names.other' };
   categoryOther.name = I18n.t(categoryOther.address);
-  let categoryList = state.user.info.appsInfo
-    .filter(function(app) {
+  const categoryList = state.user.info.appsInfo
+    .filter(function (app) {
       return app.address && app.name && app.address.length > 0 && app.name.length > 0;
     })
-    .map(function(app) {
-      let translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
+    .map(function (app) {
+      const translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
       if (translation.substring(0, 9) !== '[missing ') {
         app.name = translation;
       } else {
@@ -224,8 +223,6 @@ const mapStateToProps: (state: any) => any = state => {
   const authorizedActions = state.user.info.authorizedActions;
   const hasRightToCreateTicket =
     authorizedActions && authorizedActions.some(action => action.displayName === 'support.ticket.create');
-
-  const session = state.session;
 
   return {
     categoryList,

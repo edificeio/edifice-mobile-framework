@@ -1,8 +1,8 @@
-import { IDeclarationState, stateDefault, declarationActionsTypes } from "../state/declaration";
+import { IDeclarationState, stateDefault, declarationActionsTypes } from '~/modules/viescolaire/presences/state/declaration';
 
 const reducer: (state: IDeclarationState, action: { type: string; errmsg: string }) => IDeclarationState = (
   state = stateDefault,
-  action
+  action,
 ) => {
   switch (action.type) {
     case declarationActionsTypes.error:
@@ -13,7 +13,7 @@ const reducer: (state: IDeclarationState, action: { type: string; errmsg: string
     case declarationActionsTypes.isPosting:
       return {
         isPosting: true,
-        errmsg: "",
+        errmsg: '',
       };
     case declarationActionsTypes.posted:
       return stateDefault;

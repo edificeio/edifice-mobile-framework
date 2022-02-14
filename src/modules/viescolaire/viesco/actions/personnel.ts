@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { personnelListService } from "../services/personnel";
-import { actionTypes, IPersonnelList } from "../state/personnel";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { personnelListService } from '~/modules/viescolaire/viesco/services/personnel';
+import { actionTypes, IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

@@ -1,16 +1,16 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import I18n from "i18n-js";
-import * as React from "react";
-import { View } from "react-native";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui";
-import { DialogButtonOk, DialogContainer, DialogTitle } from "../../ui/ConfirmDialog";
-import { Text, TextBold } from "../../framework/components/text";
-import { actionTypesUpload } from "../actions/upload";
-import { resetError } from "../reducers/items";
+import { Text, TextBold } from '~/framework/components/text';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import { DialogButtonOk, DialogContainer, DialogTitle } from '~/ui/ConfirmDialog';
+import { actionTypesUpload } from '~/workspace/actions/upload';
+import { resetError } from '~/workspace/reducers/items';
 
 export type IUploadErrorWrapperProps<T extends object> = T & {
   visible: boolean;
@@ -19,7 +19,7 @@ export type IUploadErrorWrapperProps<T extends object> = T & {
 };
 
 function withUploadErrorWrapper<T extends object>(
-  WrappedComponent: React.ComponentType<T>
+  WrappedComponent: React.ComponentType<T>,
 ): React.ComponentType<IUploadErrorWrapperProps<T>> {
   return class extends React.Component<IUploadErrorWrapperProps<T>> {
     render() {
@@ -32,12 +32,12 @@ function withUploadErrorWrapper<T extends object>(
                 <View style={{ marginRight: 10 }}>
                   <Icon name="warning" size={18} color={CommonStyles.orangeColorTheme} />
                 </View>
-                <TextBold>{I18n.t("workspace-quota-overflowTitle")}</TextBold>
+                <TextBold>{I18n.t('workspace-quota-overflowTitle')}</TextBold>
               </DialogTitle>
               <View style={{ padding: 10 }}>
-                <Text>{I18n.t("workspace-quota-overflowText")}</Text>
+                <Text>{I18n.t('workspace-quota-overflowText')}</Text>
               </View>
-              <DialogButtonOk label={I18n.t("common-ok")} onPress={() => this.props.resetError()} />
+              <DialogButtonOk label={I18n.t('common-ok')} onPress={() => this.props.resetError()} />
             </DialogContainer>
           )}
           <WrappedComponent {...rest} />
@@ -49,10 +49,11 @@ function withUploadErrorWrapper<T extends object>(
 
 const mapStateToProps = (state: any) => {
   const error = state.workspace.items.error;
-  const visible = !!error
-    && error.type === actionTypesUpload.fetchError
-    && (typeof error.errmsg === 'string')
-    && error.errmsg.includes("file.too.large");
+  const visible =
+    !!error &&
+    error.type === actionTypesUpload.fetchError &&
+    typeof error.errmsg === 'string' &&
+    error.errmsg.includes('file.too.large');
   return {
     visible,
   };

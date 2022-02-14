@@ -1,7 +1,8 @@
 // Libraries
-import style from "glamorous-native";
-import I18n from "i18n-js";
-import * as React from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -11,38 +12,28 @@ import {
   TouchableWithoutFeedback,
   View,
   ScrollView,
-  Linking
-} from "react-native";
-import { connect } from "react-redux";
+  Linking,
+} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { connect } from 'react-redux';
 
-// Components
-import { FlatButton } from "../../ui";
-import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { TextInputLine } from "../../ui/forms/TextInputLine";
-import { ErrorMessage } from "../../ui/Typography";
-
-// Type definitions
-import { IUserAuthState } from "../reducers/auth";
-
-import { navigate } from "../../navigation/helpers/navHelper";
-import { CommonStyles } from "../../styles/common/styles";
-import BottomSwitcher from "../../ui/BottomSwitcher";
-import { Text, TextBold, TextColorStyle, TextSizeStyle } from "../../framework/components/text";
-import { PLATFORM_STORAGE_KEY } from "../actions/platform";
-import {
-  checkVersionThenLogin,
-  IVersionContext,
-  updateVersionIfWanted
-} from "../actions/version";
-import VersionModal from "../components/VersionModal";
-import { getAuthState } from "../selectors";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { Toggle } from "../../ui/forms/Toggle";
-import theme from "../../app/theme";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
-import appConf from "~/framework/util/appConf";
+import theme from '~/app/theme';
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { navigate } from '~/navigation/helpers/navHelper';
+import { CommonStyles } from '~/styles/common/styles';
+import { FlatButton } from '~/ui';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { ErrorMessage } from '~/ui/Typography';
+import { TextInputLine } from '~/ui/forms/TextInputLine';
+import { Toggle } from '~/ui/forms/Toggle';
+import { PLATFORM_STORAGE_KEY } from '~/user/actions/platform';
+import { checkVersionThenLogin, IVersionContext, updateVersionIfWanted } from '~/user/actions/version';
+import VersionModal from '~/user/components/VersionModal';
+import { IUserAuthState } from '~/user/reducers/auth';
+import { getAuthState } from '~/user/selectors';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -68,9 +59,7 @@ export interface ILoginPageOtherProps {
   navigation?: any;
 }
 
-export type ILoginPageProps = ILoginPageDataProps &
-  ILoginPageEventProps &
-  ILoginPageOtherProps;
+export type ILoginPageProps = ILoginPageDataProps & ILoginPageEventProps & ILoginPageOtherProps;
 
 // State definition -------------------------------------------------------------------------------
 
@@ -85,24 +74,21 @@ const initialState: ILoginPageState = {
   login: undefined,
   password: undefined,
   typing: false,
-  rememberMe: true
+  rememberMe: true,
 };
 
 // Main component ---------------------------------------------------------------------------------
 
 const FormContainer = style.view({
-  alignItems: "center",
+  alignItems: 'center',
   flex: 1,
-  flexDirection: "column",
-  justifyContent: "center",
+  flexDirection: 'column',
+  justifyContent: 'center',
   padding: 40,
-  paddingTop: 80
+  paddingTop: 80,
 });
 
-export class LoginPage extends React.Component<
-  ILoginPageProps,
-  ILoginPageState
-  > {
+export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState> {
   // Refs
   private inputLogin: TextInput | null = null;
   private setInputLoginRef = (el: TextInput) => (this.inputLogin = el);
@@ -124,36 +110,43 @@ export class LoginPage extends React.Component<
   // Render
 
   public render() {
-    const {
-      versionContext,
-      versionMandatory,
-      versionModal,
-      version,
-      onSkipVersion,
-      onUpdateVersion
-    } = this.props;
+    const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion, navigation } = this.props;
+    const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
+
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-        <KeyboardAvoidingView
-          style={{ flex: 1, backgroundColor: "#ffffff" }}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <DEPRECATED_ConnectionTrackingBar style={{ position: "absolute" }} />
-          <VersionModal
-            mandatory={versionMandatory}
-            version={version}
-            visibility={versionModal}
-            onCancel={() => versionContext && onSkipVersion(versionContext)}
-            onSubmit={() => versionContext && onUpdateVersion(versionContext)}
-          />
-          <TouchableWithoutFeedback
-            style={{ flex: 1 }}
-            onPress={() => this.unfocus()}
-          >
-            {this.renderForm()}
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
+                iconSize={24}
+                onPress={() => navigation.goBack()}
+              />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{platformDisplayName}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+          <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: '#ffffff' }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <DEPRECATED_ConnectionTrackingBar style={{ position: 'absolute' }} />
+            <VersionModal
+              mandatory={versionMandatory}
+              version={version}
+              visibility={versionModal}
+              onCancel={() => versionContext && onSkipVersion(versionContext)}
+              onSubmit={() => versionContext && onUpdateVersion(versionContext)}
+            />
+            <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => this.unfocus()}>
+              {this.renderForm()}
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </>
     );
   }
 
@@ -162,54 +155,48 @@ export class LoginPage extends React.Component<
     if (DEPRECATED_getCurrentPlatform()!.logoStyle) {
       Object.assign(logoStyle, DEPRECATED_getCurrentPlatform()!.logoStyle!);
     }
-    return <View
-      style={{ flexGrow: 2, alignItems: "center", justifyContent: "center" }}
-    >
-      <Image
-        resizeMode="contain"
-        style={logoStyle}
-        source={DEPRECATED_getCurrentPlatform()!.logo}
-      />
-    </View>;
+    return (
+      <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
+        <Image resizeMode="contain" style={logoStyle} source={DEPRECATED_getCurrentPlatform()!.logo} />
+      </View>
+    );
   };
 
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
     const { login, password, typing, rememberMe } = this.state;
     const FederationTextComponent = error ? TextBold : Text;
-    const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === "Somme numérique"; // WTF ??!! 🤪🤪🤪
+    const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
 
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView keyboardShouldPersistTaps={"handled"} alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView keyboardShouldPersistTaps="handled" alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
           {/* Temporary banner displayed for Somme Numérique */}
-          {isSommeNumerique
-            ? <View
-                style={{
-                  backgroundColor: "#FCEEEA",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 5,
-                  borderColor: theme.color.failure,
-                  borderWidth: 1,
-                  borderRadius: 15,
-                  width: "90%",
-                  alignSelf: "center",
-                  position: "absolute"
-                }}
-              >
-                <TextBold style={{ textAlign: "center", color: theme.color.failure }}>{I18n.t("common.sommeNumeriqueAlert_temp")}</TextBold>
-              </View>
-            : null
-          }
+          {isSommeNumerique ? (
+            <View
+              style={{
+                backgroundColor: '#FCEEEA',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 5,
+                borderColor: theme.color.failure,
+                borderWidth: 1,
+                borderRadius: 15,
+                width: '90%',
+                alignSelf: 'center',
+                position: 'absolute',
+              }}>
+              <TextBold style={{ textAlign: 'center', color: theme.color.failure }}>
+                {I18n.t('common.sommeNumeriqueAlert_temp')}
+              </TextBold>
+            </View>
+          ) : null}
           <FormContainer>
             {this.renderLogo()}
             <TextInputLine
               inputRef={this.setInputLoginRef}
-              placeholder={I18n.t("Login")}
-              onChangeText={(login: string) =>
-                this.setState({ login: login.trim().toLowerCase(), typing: true })
-              }
+              placeholder={I18n.t('Login')}
+              onChangeText={(login: string) => this.setState({ login: login.trim().toLowerCase(), typing: true })}
               value={login}
               hasError={(error && !typing) as boolean}
               keyboardType="email-address"
@@ -219,15 +206,13 @@ export class LoginPage extends React.Component<
             <TextInputLine
               isPasswordField
               inputRef={this.setInputPasswordRef}
-              placeholder={I18n.t("Password")}
-              onChangeText={(password: string) =>
-                this.setState({ password, typing: true })
-              }
+              placeholder={I18n.t('Password')}
+              onChangeText={(password: string) => this.setState({ password, typing: true })}
               value={password}
               hasError={(error && !typing) as boolean}
             />
-            <View style={{ flexDirection: "row", alignSelf: "flex-end", marginTop: 20 }}>
-              <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t("RememberMe")}</Text>
+            <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: 20 }}>
+              <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t('RememberMe')}</Text>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
@@ -235,84 +220,73 @@ export class LoginPage extends React.Component<
               />
             </View>
             <ErrorMessage>
-              {this.state.typing ? "" : error && I18n.t('auth-error-' + error, { version: DeviceInfo.getVersion(), errorcode: error, currentplatform: DEPRECATED_getCurrentPlatform()!.url })}
+              {this.state.typing
+                ? ''
+                : error &&
+                  I18n.t('auth-error-' + error, {
+                    version: DeviceInfo.getVersion(),
+                    errorcode: error,
+                    currentplatform: DEPRECATED_getCurrentPlatform()!.url,
+                  })}
             </ErrorMessage>
 
             <View
               style={{
-                alignItems: "center",
+                alignItems: 'center',
                 flexGrow: 2,
-                justifyContent: "flex-start",
-                marginTop: error && !typing ? 10 : 20
-              }}
-            >
-              {(error === "not_premium" || error === "pre_deleted") && !this.state.typing ?
-              <FlatButton
-                onPress={() => this.handleGoToWeb()}
-                disabled={false}
-                title={I18n.t("LoginWeb")}
-                loading={false}
-              /> : <FlatButton
-                onPress={() => this.handleLogin()}
-                disabled={this.isSubmitDisabled || !this.props.connected}
-                title={I18n.t("Connect")}
-                loading={loggingIn || loggedIn}
-              />}
+                justifyContent: 'flex-start',
+                marginTop: error && !typing ? 10 : 20,
+              }}>
+              {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
+                <FlatButton onPress={() => this.handleGoToWeb()} disabled={false} title={I18n.t('LoginWeb')} loading={false} />
+              ) : (
+                <FlatButton
+                  onPress={() => this.handleLogin()}
+                  disabled={this.isSubmitDisabled || !this.props.connected}
+                  title={I18n.t('Connect')}
+                  loading={loggingIn || loggedIn}
+                />
+              )}
 
               <View
                 style={{
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-              >
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
                 <Text
-                  style={{ textDecorationLine: "underline", marginTop: 48, ...TextColorStyle.Light }}
+                  style={{ textDecorationLine: 'underline', marginTop: 48, ...TextColorStyle.Light }}
                   onPress={() => {
-                    navigate("Forgot", {forgotId: false});
-                  }}
-                >
-                  {I18n.t("forgot-password")}
+                    navigate('Forgot', { forgotId: false });
+                  }}>
+                  {I18n.t('forgot-password')}
                 </Text>
                 <Text
-                  style={{ textDecorationLine: "underline", marginTop: 20, ...TextColorStyle.Light }}
+                  style={{ textDecorationLine: 'underline', marginTop: 20, ...TextColorStyle.Light }}
                   onPress={() => {
-                    navigate("Forgot", {forgotId: true});
-                  }}
-                >
-                  {I18n.t("forgot-id")}
+                    navigate('Forgot', { forgotId: true });
+                  }}>
+                  {I18n.t('forgot-id')}
                 </Text>
-                {DEPRECATED_getCurrentPlatform()!.federation && <FederationTextComponent
-                  style={{
-                    textDecorationLine: "underline",
-                    marginTop: 48,
-                    textAlign: "center",
-                    color: error ? CommonStyles.profileTypes.Student : theme.color.text.light
-                  }}
-                  onPress={() => {
-                    navigate("FederatedAccount");
-                  }}
-                >
-                  {I18n.t("federatedAccount-link")}
-                </FederationTextComponent>}
+                {DEPRECATED_getCurrentPlatform()!.federation && (
+                  <FederationTextComponent
+                    style={{
+                      textDecorationLine: 'underline',
+                      marginTop: 48,
+                      textAlign: 'center',
+                      color: error ? CommonStyles.profileTypes.Student : theme.color.text.light,
+                    }}
+                    onPress={() => {
+                      navigate('FederatedAccount');
+                    }}>
+                    {I18n.t('federatedAccount-link')}
+                  </FederationTextComponent>
+                )}
               </View>
             </View>
           </FormContainer>
         </ScrollView>
-        {appConf.platforms.length > 1 ?
-        <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-            {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
-        </BottomSwitcher> : null}
       </View>
     );
-  }
-
-  // Lifecycle
-
-  async componentDidUpdate() {
-    // On successful login, save the platformId in Async Storage
-    const { navigation, auth: { loggedIn } } = this.props;
-    const platformId = navigation.getParam("platformId") || this.props.auth.platformId;
-    loggedIn && await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId);
   }
 
   // Event handlers
@@ -321,17 +295,13 @@ export class LoginPage extends React.Component<
     await this.props.onLogin(
       this.state.login || this.props.auth.login, // ToDo: fix this TS issue
       this.state.password,
-      this.state.rememberMe
+      this.state.rememberMe,
     );
     this.setState({ typing: false });
   }
 
   protected handleGoToWeb() {
     Linking.openURL(DEPRECATED_getCurrentPlatform()!.url);
-  }
-
-  protected handleBackToPlatformSelector() {
-    navigate("PlatformSelect");
   }
 
   // Other public methods
@@ -345,7 +315,7 @@ export class LoginPage extends React.Component<
 const ConnectedLoginPage = connect(
   (state: any, props: any): ILoginPageDataProps => {
     const auth: IUserAuthState = getAuthState(state);
-    let version = "",
+    let version = '',
       versionModal = false,
       versionMandatory = false,
       versionContext: IVersionContext | null = null;
@@ -373,11 +343,9 @@ const ConnectedLoginPage = connect(
       dispatch<any>(updateVersionIfWanted(version, true));
     },
     onLogin: (userlogin, password, rememberMe) => {
-      dispatch<any>(
-        checkVersionThenLogin(false, { username: userlogin, password, rememberMe })
-      );
-    }
-  })
+      dispatch<any>(checkVersionThenLogin(false, { username: userlogin, password, rememberMe }));
+    },
+  }),
 )(LoginPage);
 
 export default withViewTracking('auth/login')(ConnectedLoginPage);

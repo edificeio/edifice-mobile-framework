@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -32,15 +32,12 @@ export const yearInitialState: IYear = {
   end_date: moment(),
 };
 
-export const getPeriodsListState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.periods as IPeriodsListState;
+export const getPeriodsListState = (globalState: any) => viescoConfig.getState(globalState).viesco.periods as IPeriodsListState;
 
 export const getYearState = (globalState: any) => viescoConfig.getState(globalState).viesco.year as IYearState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const periodsActionTypes: AsyncActionTypes = createAsyncActionTypes(
-  viescoConfig.namespaceActionType("PERIODS_LIST")
-);
+export const periodsActionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('PERIODS_LIST'));
 
-export const yearActionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("YEAR"));
+export const yearActionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('YEAR'));

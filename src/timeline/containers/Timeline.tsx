@@ -1,29 +1,28 @@
-import I18n from "i18n-js";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { FlatList, RefreshControl, View, Text } from 'react-native';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import * as React from "react";
-import { FlatList, RefreshControl, View, Text } from "react-native";
-import { connect } from "react-redux";
-
-import { FlatButton, Loading } from "../../ui";
-import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../ui/ContainerContent";
-import { EmptyScreen } from "../../ui/EmptyScreen";
-import { ErrorMessage } from "../../ui/Typography";
-import { News } from "../components/News";
-import { FlashNews } from "../components/FlashNews";
-import styles from "../../styles";
-import Notifier from "../../infra/notifier/container";
-import { fetchTimeline, listTimeline } from "../actions/list";
-import { fetchPublishableBlogsAction } from '../actions/publish';
-import { INewsModel, IFlashMessageModel } from "../reducer";
-import { HeaderAction } from "../../ui/headers/NewHeader";
-import { ThunkDispatch } from "redux-thunk";
-import { CommonStyles } from "../../styles/common/styles";
-import { TempFloatingAction } from "../../ui/FloatingButton";
-import { Header } from "../../ui/headers/Header";
-import { IBlogList } from "../state/publishableBlogs";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { fetchFlashMessagesAction, markFlashMessageAsReadAction } from "../actions/flashList";
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import Notifier from '~/infra/notifier/container';
+import styles from '~/styles';
+import { CommonStyles } from '~/styles/common/styles';
+import { fetchFlashMessagesAction, markFlashMessageAsReadAction } from '~/timeline/actions/flashList';
+import { fetchTimeline, listTimeline } from '~/timeline/actions/list';
+import { fetchPublishableBlogsAction } from '~/timeline/actions/publish';
+import { FlashNews } from '~/timeline/components/FlashNews';
+import { News } from '~/timeline/components/News';
+import { INewsModel, IFlashMessageModel } from '~/timeline/reducer';
+import { IBlogList } from '~/timeline/state/publishableBlogs';
+import { FlatButton, Loading } from '~/ui';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
+import { EmptyScreen } from '~/ui/EmptyScreen';
+import { TempFloatingAction } from '~/ui/FloatingButton';
+import { ErrorMessage } from '~/ui/Typography';
+import { Header } from '~/ui/headers/Header';
+import { HeaderAction } from '~/ui/headers/NewHeader';
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -46,7 +45,6 @@ interface ITimelineProps {
 
 // tslint:disable-next-line:max-classes-per-file
 class Timeline extends React.Component<ITimelineProps, ITimelineState> {
-
   static _createMenuRef: React.RefObject<Menu> = React.createRef();
 
   private flatList: any;
@@ -55,13 +53,13 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
   constructor(props: ITimelineProps) {
     super(props);
     this.props.navigation.setParams({
-      onCreatePost: this.handleCreatePost.bind(this)
+      onCreatePost: this.handleCreatePost.bind(this),
     });
   }
 
   public componentDidUpdate(prevProps: any) {
-    const { isFetching } = this.props
-    if(prevProps.isFetching !== isFetching){
+    const { isFetching } = this.props;
+    if (prevProps.isFetching !== isFetching) {
       this.setState({ initialFetch: false });
     }
   }
@@ -70,33 +68,25 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
     this.flatList = null;
     this.pageNumber = 0;
     if (!this.props.isFetching) {
-      this.props.sync(
-        this.pageNumber,
-        this.props.availableApps,
-        this.props.legalapps
-      );
+      this.props.sync(this.pageNumber, this.props.availableApps, this.props.legalapps);
     }
     this.props.onMount && this.props.onMount();
   }
 
   public nextPage() {
     if (!this.props.isFetching && this.props.isAuthenticated) {
-      this.props.sync(
-        ++this.pageNumber,
-        this.props.availableApps,
-        this.props.legalapps
-      );
+      this.props.sync(++this.pageNumber, this.props.availableApps, this.props.legalapps);
     }
   }
 
   public openNews(item, expend) {
-    this.props.navigation.navigate("newsContent", {
+    this.props.navigation.navigate('newsContent', {
       expend,
-      news: item
+      news: item,
     });
   }
 
-  public dismissFlashMessage (flashMessageId: number) {
+  public dismissFlashMessage(flashMessageId: number) {
     const id = flashMessageId.toString();
     this.props.dismissFlashMessage(id);
   }
@@ -104,11 +94,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
   public UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.refresh) {
       this.pageNumber = 0;
-      this.props.sync(
-        this.pageNumber,
-        this.props.availableApps,
-        this.props.legalapps
-      );
+      this.props.sync(this.pageNumber, this.props.availableApps, this.props.legalapps);
       this.pageNumber++;
     }
   }
@@ -124,45 +110,39 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
     return false;
   }
 
-  public renderList(news: Array<IFlashMessageModel | INewsModel>) {
-    const { isFetching, endReached } = this.props
+  public renderList(news: (IFlashMessageModel | INewsModel)[]) {
+    const { isFetching, endReached } = this.props;
     const isEmpty = news && news.length === 0;
     return (
       <FlatList
         contentContainerStyle={isEmpty ? { flex: 1 } : null}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.props.isFetching}
-            onRefresh={() => this.fetchLatest()}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.fetchLatest()} />}
         data={news}
         onEndReached={() => this.nextPage()}
         onEndReachedThreshold={0.1}
         ref={list => (this.flatList = list)}
-        renderItem={({ item, index }: { item: IFlashMessageModel | INewsModel, index: number }) => item.type === "FLASHMESSAGE"
-          ? <FlashNews
-              {...item as IFlashMessageModel}
+        renderItem={({ item, index }: { item: IFlashMessageModel | INewsModel; index: number }) =>
+          item.type === 'FLASHMESSAGE' ? (
+            <FlashNews
+              {...(item as IFlashMessageModel)}
               onPress={() => this.dismissFlashMessage((item as IFlashMessageModel).id)}
             />
-          : <News
-              {...item  as INewsModel}
-              index={index}
-              onPress={expand => this.openNews(item, expand)}
-            />
+          ) : (
+            <News {...(item as INewsModel)} index={index} onPress={expand => this.openNews(item, expand)} />
+          )
         }
         keyExtractor={(item: IFlashMessageModel | INewsModel) => item.id.toString()}
         style={styles.gridWhite}
         ListEmptyComponent={
-          !isFetching && endReached ?
+          !isFetching && endReached ? (
             <EmptyScreen
-              imageSrc={require("ASSETS/images/empty-screen/timeline.png")}
+              imageSrc={require('ASSETS/images/empty-screen/timeline.png')}
               imgWidth={407}
               imgHeight={319}
-              text={I18n.t("timeline-emptyScreenText")}
-              title={I18n.t("timeline-emptyScreenTitle")}
+              text={I18n.t('timeline-emptyScreenText')}
+              title={I18n.t('timeline-emptyScreenTitle')}
             />
-            : null
+          ) : null
         }
       />
     );
@@ -171,17 +151,11 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
   public renderFetchFailed() {
     return (
       <PageContainer>
-        <View
-          style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
-        >
-          <ErrorMessage style={{ marginBottom: 20, width: "70%" }}>
-            {I18n.t("loadingFailedMessage")}
-          </ErrorMessage>
+        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <ErrorMessage style={{ marginBottom: 20, width: '70%' }}>{I18n.t('loadingFailedMessage')}</ErrorMessage>
           <FlatButton
-            onPress={() =>
-              this.props.sync(0, this.props.availableApps, this.props.legalapps)
-            }
-            title={I18n.t("tryagain")}
+            onPress={() => this.props.sync(0, this.props.availableApps, this.props.legalapps)}
+            title={I18n.t('tryagain')}
             loading={this.props.isFetching}
           />
         </View>
@@ -195,10 +169,10 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 
   public render() {
     const { fetchFailed, availableApps, navigation, authorizedActions, publishableBlogs, flashMessages, isFetching } = this.props;
-    const canCreateBlog = authorizedActions && authorizedActions.some(action => action.displayName === "blog.create");
-    let buttonMenuItems = [];
+    const canCreateBlog = authorizedActions && authorizedActions.some(action => action.displayName === 'blog.create');
+    const buttonMenuItems = [];
     if (publishableBlogs.length > 0 || canCreateBlog) {
-      buttonMenuItems.push({text: I18n.t('createPost-menu-blog'), icon: "bullhorn" });
+      buttonMenuItems.push({ text: I18n.t('createPost-menu-blog'), icon: 'bullhorn' });
     }
     // if (false) {
     //   buttonMenuItems.push({text: I18n.t("createPost-menu-news"), icon: "newspaper", id: "AddFolder"})
@@ -218,54 +192,54 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
     if (fetchFailed) {
       return this.renderFetchFailed();
     }
-    const flashMessagesData = flashMessages && flashMessages.data && flashMessages.data.map(flashMessage => ({ ...flashMessage, type: "FLASHMESSAGE"}));
+    const flashMessagesData =
+      flashMessages && flashMessages.data && flashMessages.data.map(flashMessage => ({ ...flashMessage, type: 'FLASHMESSAGE' }));
     const timelineData = flashMessagesData ? flashMessagesData.concat(news) : news;
     const isEmpty = timelineData && !timelineData.length;
 
     return (
       <PageContainer>
-        <Header customStyle={{marginBottom: 20}}>
+        <Header customStyle={{ marginBottom: 20 }}>
           <HeaderAction
             onPress={() => {
-              navigation.navigate("filterTimeline");
+              navigation.navigate('filterTimeline');
             }}
             name="filter"
           />
           <Text
             style={{
-              alignSelf: "center",
-              color: "white",
+              alignSelf: 'center',
+              color: 'white',
               fontFamily: CommonStyles.primaryFontFamily,
               fontSize: 16,
-              fontWeight: "400",
-              textAlign: "center",
-              flex: 1
-            }}
-          >
-            {I18n.t("News")}
+              fontWeight: '400',
+              textAlign: 'center',
+              flex: 1,
+            }}>
+            {I18n.t('News')}
           </Text>
-          <View style={{ width: 60 }}/>
+          <View style={{ width: 60 }} />
         </Header>
         <DEPRECATED_ConnectionTrackingBar />
         <Notifier id="timeline" style={{ marginRight: 40 }} />
-        {isFetching && isEmpty ? this.renderLoading() : this.renderList(timelineData as Array<IFlashMessageModel | INewsModel>)}
-        {buttonMenuItems.length > 0 ?
+        {isFetching && isEmpty ? this.renderLoading() : this.renderList(timelineData as (IFlashMessageModel | INewsModel)[])}
+        {buttonMenuItems.length > 0 ? (
           <TempFloatingAction
             iconName="new_post"
             menuItems={buttonMenuItems}
             onEvent={() => {
-              navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')("blog")
+              navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')('blog');
             }}
             selected={[]}
           />
-        : null }
+        ) : null}
       </PageContainer>
     );
   }
 
   handleCreatePost(postType: string) {
     Timeline._createMenuRef.current?.hide();
-    this.props.navigation.navigate("contentSelect", { postType });
+    this.props.navigation.navigate('contentSelect', { postType });
   }
 }
 
@@ -281,13 +255,12 @@ const ConnectedTimeline = connect(
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),
     fetchFlashMessages: () => dispatch(fetchFlashMessagesAction()),
     dismissFlashMessage: (flashMessageId: string) => dispatch(markFlashMessageAsReadAction(flashMessageId)),
-    sync: (page: number, availableApps, legalapps) =>
-      listTimeline(dispatch)(page, availableApps, legalapps),
+    sync: (page: number, availableApps, legalapps) => listTimeline(dispatch)(page, availableApps, legalapps),
     onMount: () => {
       dispatch(fetchPublishableBlogsAction(true));
       dispatch(fetchFlashMessagesAction());
-    }
-  })
+    },
+  }),
 )(Timeline);
 
-export default withViewTracking("timeline")(ConnectedTimeline);
+export default withViewTracking('timeline')(ConnectedTimeline);

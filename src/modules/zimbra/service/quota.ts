@@ -1,5 +1,5 @@
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { IQuota } from "../state/quota";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IQuota } from '~/modules/zimbra/state/quota';
 
 // Data type of what is given by the backend.
 export type QuotaBackend = {

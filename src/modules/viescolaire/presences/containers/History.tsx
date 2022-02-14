@@ -7,17 +7,17 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '../../../../App';
-import withViewTracking from '../../../../framework/util/tracker/withViewTracking';
-import { standardNavScreenOptions } from '../../../../navigation/helpers/navScreenOptions';
-import { PageContainer } from '../../../../ui/ContainerContent';
-import { HeaderBackAction } from '../../../../ui/headers/NewHeader';
-import { fetchPeriodsListAction, fetchYearAction } from '../../viesco/actions/periods';
-import { getSelectedChild, getSelectedChildStructure } from '../../viesco/state/children';
-import { getPeriodsListState, getYearState } from '../../viesco/state/periods';
-import { getStudentEvents } from '../actions/events';
-import HistoryComponent from '../components/History';
-import { getHistoryEvents } from '../state/events';
+import { getSessionInfo } from '~/App';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events';
+import HistoryComponent from '~/modules/viescolaire/presences/components/History';
+import { getHistoryEvents } from '~/modules/viescolaire/presences/state/events';
+import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/viesco/actions/periods';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
+import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { PageContainer } from '~/ui/ContainerContent';
+import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 interface HistoryProps {
   navigation: NavigationScreenProp<any>;
@@ -200,7 +200,7 @@ const mapStateToProps = (state: any) => {
   const type = getSessionInfo().type;
   const childId = type === 'Student' ? getSessionInfo().id : getSelectedChild(state).id;
   const groupId =
-    (type === 'Student' || getSessionInfo().classes.length >= 1)
+    type === 'Student' || getSessionInfo().classes.length >= 1
       ? getSessionInfo().classes[0]
       : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =

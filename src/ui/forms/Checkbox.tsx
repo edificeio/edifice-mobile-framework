@@ -1,35 +1,27 @@
-import style from "glamorous-native";
-import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import style from 'glamorous-native';
+import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { Icon } from "..";
-import { CommonStyles } from "../../styles/common/styles";
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const TapCircle = style(TouchableOpacity)(
   {
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 14,
     height: 25,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: 25,
   },
   ({ checked = false }) => ({
-    backgroundColor: checked ? CommonStyles.primary : "#FFFFFF",
-    borderColor: checked ? CommonStyles.primary : "#DDDDDD",
+    backgroundColor: checked ? CommonStyles.primary : '#FFFFFF',
+    borderColor: checked ? CommonStyles.primary : '#DDDDDD',
     borderWidth: checked ? 0 : 2,
-  })
+  }),
 );
 
-export const Checkbox = ({
-  checked,
-  onUncheck,
-  onCheck,
-}: {
-  checked: boolean;
-  onUncheck?: () => void;
-  onCheck?: () => void;
-}) => (
+export const Checkbox = ({ checked, onUncheck, onCheck }: { checked: boolean; onUncheck?: () => void; onCheck?: () => void }) => (
   <TapCircle onPress={() => (checked ? onUncheck && onUncheck() : onCheck && onCheck())} checked={checked}>
     <Icon size={17} name="checked" color="white" />
   </TapCircle>
@@ -37,8 +29,8 @@ export const Checkbox = ({
 
 const squareCheckboxStyle = StyleSheet.create({
   square: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 3,
     height: 25,
     width: 25,

@@ -1,6 +1,6 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { selectStructureActionType, IStructure } from "../state/structure";
+import { selectStructureActionType, IStructure } from '~/modules/viescolaire/viesco/state/structure';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

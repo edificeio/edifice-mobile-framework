@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { classesCallService } from "../services/teacherClassesCall";
-import { IClassesCall, actionTypes } from "../state/teacherClassesCall";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { classesCallService } from '~/modules/viescolaire/presences/services/teacherClassesCall';
+import { IClassesCall, actionTypes } from '~/modules/viescolaire/presences/state/teacherClassesCall';
 
 export const dataActions = createAsyncActionCreators<IClassesCall>(actionTypes);
 

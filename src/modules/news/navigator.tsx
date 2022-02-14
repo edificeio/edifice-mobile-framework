@@ -1,20 +1,22 @@
-import { createStackNavigator } from "react-navigation-stack";
-import { addViewTrackingToStackRoutes } from "../../framework/util/tracker/withViewTracking";
-import moduleConfig from "./moduleConfig";
+import { createStackNavigator } from 'react-navigation-stack';
 
-import NewsDetailsScreen from "./screens/NewsDetailsScreen";
+import moduleConfig from './moduleConfig';
+import NewsDetailsScreen from './screens/NewsDetailsScreen';
+
+import { addViewTrackingToStackRoutes } from '~/framework/util/tracker/withViewTracking';
 
 export const timelineRoutes = addViewTrackingToStackRoutes({
-    [`${moduleConfig.routeName}/details`]: {
-        screen: NewsDetailsScreen
-    },
-})
+  [`${moduleConfig.routeName}/details`]: {
+    screen: NewsDetailsScreen,
+  },
+});
 
-export default () => createStackNavigator(
+export default () =>
+  createStackNavigator(
     {
-        ...timelineRoutes
+      ...timelineRoutes,
     },
     {
-        headerMode: "none"
-    }
-);
+      headerMode: 'none',
+    },
+  );

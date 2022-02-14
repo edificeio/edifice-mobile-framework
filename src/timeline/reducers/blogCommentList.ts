@@ -2,9 +2,8 @@
  * Blog comments list state reducer
  */
 
-import { initialState } from "../state/commentList";
-import { blogCommentListActionTypes } from "../state/commentList";
-import { createSessionAsyncReducer } from "../../infra/redux/async2";
+import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import { initialState, blogCommentListActionTypes } from '~/timeline/state/commentList';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

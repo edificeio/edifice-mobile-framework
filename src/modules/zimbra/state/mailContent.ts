@@ -1,9 +1,9 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import moment from "moment";
-import { IDistantFile } from "../../../framework/util/file";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import mailConfig from "../moduleConfig";
+import { IDistantFile } from '~/framework/util/fileHandler';
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import mailConfig from '~/modules/zimbra/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -35,9 +35,8 @@ export type IMailContentState = AsyncState<IMailContent>;
 
 export const initialState: IMailContent = [];
 
-export const getMailContentState = (globalState: any) =>
-  mailConfig.getState(globalState).mailContent as IMailContentState;
+export const getMailContentState = (globalState: any) => mailConfig.getState(globalState).mailContent as IMailContentState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType("MAIL_CONTENT"));
+export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType('MAIL_CONTENT'));

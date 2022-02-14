@@ -1,8 +1,7 @@
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { IInitMail } from "../state/initMails";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IInitMail } from '~/modules/conversation/state/initMails';
 
 // Data type of what is given by the backend.
-// eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type IInitMailListBackend = {
   id: string;
   name: string;
@@ -27,11 +26,11 @@ const initMailListAdapter: (rootFoldersList: IInitMailListBackend) => IInitMail 
     user_id: rootFolder.user_id,
     depth: rootFolder.depth,
     trashed: rootFolder.trashed,
-    skip_uniq: rootFolder.skip_uniq
+    skip_uniq: rootFolder.skip_uniq,
   }));
 
   result = {
-    folders
+    folders,
   };
   return result;
 };

@@ -1,26 +1,27 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 
-import ButtonOk from "../../../../ui/ConfirmDialog/buttonOk";
-import ConnectionTrackingBar from "../../../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../../../ui/ContainerContent";
-import { Text, TextBold } from "../../../../ui/Typography";
-import { Icon } from "../../../../ui/icons/Icon";
-import { LeftColoredItem } from "../../viesco/components/Item";
-import { ICourse } from "../containers/TeacherCallList";
-import { IClassesCall } from "../state/TeacherClassesCall";
-import StudentRow from "./StudentRow";
+import StudentRow from './StudentRow';
+
+import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
+import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
+import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
+import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
+import { Text, TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
   validateButton: {
-    alignSelf: "center",
-    width: "40%",
+    alignSelf: 'center',
+    width: '40%',
     margin: 20,
   },
-  classesView: { justifyContent: "flex-end", flexDirection: "row", paddingBottom: 15 },
-  topItem: { justifyContent: "flex-end", flexDirection: "row" },
+  classesView: { justifyContent: 'flex-end', flexDirection: 'row', paddingBottom: 15 },
+  topItem: { justifyContent: 'flex-end', flexDirection: 'row' },
 });
 
 type MoveToFolderModalState = {
@@ -77,16 +78,14 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
     return (
       <>
         {studentsList.length > 0 ? (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshStudentsList} />
-            }>
+          <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshStudentsList} />}>
             {studentsList.map(student => (
               <StudentRow
                 student={student}
+                mementoNavigation={() => this.props.navigation.navigate('Memento', { studentId: student.id })}
                 lateCallback={event =>
-                  this.props.navigation.navigate("DeclareEvent", {
-                    type: "late",
+                  this.props.navigation.navigate('DeclareEvent', {
+                    type: 'late',
                     registerId,
                     student,
                     startDate: this.state.callData.start_date,
@@ -95,8 +94,8 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                   })
                 }
                 leavingCallback={event =>
-                  this.props.navigation.navigate("DeclareEvent", {
-                    type: "leaving",
+                  this.props.navigation.navigate('DeclareEvent', {
+                    type: 'leaving',
                     registerId,
                     student,
                     startDate: this.state.callData.start_date,
@@ -109,7 +108,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                     student.id,
                     registerId,
                     moment(this.state.callData.start_date),
-                    moment(this.state.callData.end_date)
+                    moment(this.state.callData.end_date),
                   );
                 }}
                 uncheckAbsent={event => {
@@ -119,7 +118,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
             ))}
             <View style={style.validateButton}>
               <ButtonOk
-                label={I18n.t("viesco-validate")}
+                label={I18n.t('viesco-validate')}
                 onPress={() => {
                   this.props.validateRegister(registerId);
                   navigation.goBack(null);
@@ -137,13 +136,13 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
       <View style={style.classesView}>
         <LeftColoredItem shadow style={style.topItem} color="#FFB600">
           <Text>
-            {moment(this.state.callData.start_date).format("LT")} - {moment(this.state.callData.end_date).format("LT")}
+            {moment(this.state.callData.start_date).format('LT')} - {moment(this.state.callData.end_date).format('LT')}
           </Text>
-          {this.state.course.classroom !== "" && (
+          {this.state.course.classroom !== '' && (
             <Text>
               &emsp;
               <Icon name="pin_drop" size={18} />
-              {I18n.t("viesco-room")} {this.state.course.classroom}
+              {I18n.t('viesco-room')} {this.state.course.classroom}
             </Text>
           )}
           <TextBold>&emsp;{this.state.course.grade}</TextBold>

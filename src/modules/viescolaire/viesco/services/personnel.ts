@@ -1,5 +1,5 @@
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IPersonnelList } from "../state/personnel";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
 
 // Data type of what is given by the backend.
 export type IPersonnelListBackend = Array<{
@@ -44,9 +44,7 @@ const personnelListAdapter: (data: IPersonnelListBackend) => IPersonnelList = da
 
 export const personnelListService = {
   get: async (structureId: string) => {
-    const personnel: any[] = await fetchJSONWithCache(
-      `/viescolaire/user/list?profile=Teacher&structureId=${structureId}`
-    );
+    const personnel: any[] = await fetchJSONWithCache(`/viescolaire/user/list?profile=Teacher&structureId=${structureId}`);
     const data: IPersonnelList = personnelListAdapter(personnel);
 
     return data;

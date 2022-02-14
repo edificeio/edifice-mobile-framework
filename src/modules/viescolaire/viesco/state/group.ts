@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -18,9 +18,8 @@ export type IGroupListState = AsyncState<IGroupList>;
 
 export const initialState: IGroupList = [];
 
-export const getGroupsListState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.group as IGroupListState;
+export const getGroupsListState = (globalState: any) => viescoConfig.getState(globalState).viesco.group as IGroupListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("GROUP_LIST"));
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('GROUP_LIST'));

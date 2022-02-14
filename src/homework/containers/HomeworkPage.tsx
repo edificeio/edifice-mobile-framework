@@ -1,22 +1,21 @@
-import * as React from "react";
-import { connect } from "react-redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationScreenProp, NavigationFocusInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
+
+import { getUserSession } from '~/framework/util/session';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
+import { homeworkTaskSelected } from '~/homework/actions/selectedTask';
+import { fetchHomeworkTasks } from '~/homework/actions/tasks';
 import {
   HomeworkPage,
   IHomeworkPageDataProps,
   IHomeworkPageEventProps,
   IHomeworkPageProps,
-} from "../components/HomeworkPage";
-import I18n from "i18n-js";
-
-import { fetchHomeworkDiaryList } from "../actions/diaryList";
-import { homeworkTaskSelected } from "../actions/selectedTask";
-import { fetchHomeworkTasks } from "../actions/tasks";
-
-import { NavigationScreenProp, NavigationFocusInjectedProps } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { getUserSession } from "../../framework/util/session";
+} from '~/homework/components/HomeworkPage';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { HeaderAction, HeaderBackAction } from '~/ui/headers/NewHeader';
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state
@@ -36,7 +35,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
         isFetching: true,
         lastUpdated: undefined,
         tasksByDay: undefined,
-        session
+        session,
       };
     else {
       return {
@@ -46,7 +45,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
         isFetching: false,
         lastUpdated: undefined,
         tasksByDay: undefined,
-        session
+        session,
       };
     }
   const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
@@ -55,9 +54,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   const tasksByDay = currentDiaryTasks.data.ids.map(diaryId => ({
     date: currentDiaryTasks.data.byId[diaryId].date,
     id: diaryId,
-    tasks: currentDiaryTasks.data.byId[diaryId].tasks.ids.map(
-      taskId => currentDiaryTasks.data.byId[diaryId].tasks.byId[taskId]
-    ),
+    tasks: currentDiaryTasks.data.byId[diaryId].tasks.ids.map(taskId => currentDiaryTasks.data.byId[diaryId].tasks.byId[taskId]),
   }));
 
   // Format props
@@ -69,7 +66,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
     tasksByDay,
     diaryListData,
     diaryInformation,
-    session
+    session,
   };
 };
 
@@ -88,21 +85,21 @@ const mapDispatchToProps: (dispatch: any) => IHomeworkPageEventProps = dispatch 
 
 class HomeworkPageContainer extends React.PureComponent<
   IHomeworkPageProps & NavigationFocusInjectedProps & { dispatch: any },
-  {}
+  object
 > {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    const diaryTitle = navigation.getParam("diaryTitle");
-    const hasMultipleDiaries = navigation.getParam("hasMultipleDiaries");
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
+    const diaryTitle = navigation.getParam('diaryTitle');
+    const hasMultipleDiaries = navigation.getParam('hasMultipleDiaries');
 
     return standardNavScreenOptions(
       {
-        title: diaryTitle || I18n.t("Homework"),
+        title: diaryTitle || I18n.t('Homework'),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: hasMultipleDiaries ? (
-          <HeaderAction name="filter" onPress={() => navigation.navigate("HomeworkFilter")} />
+          <HeaderAction name="filter" onPress={() => navigation.navigate('HomeworkFilter')} />
         ) : null,
       },
-      navigation
+      navigation,
     );
   };
 
@@ -133,4 +130,4 @@ class HomeworkPageContainer extends React.PureComponent<
 
 const HomeworkPageContainerConnected = connect(mapStateToProps, mapDispatchToProps)(HomeworkPageContainer);
 
-export default withViewTracking("homework")(HomeworkPageContainerConnected);
+export default withViewTracking('homework')(HomeworkPageContainerConnected);

@@ -1,34 +1,25 @@
 import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  TextInput,
-  ViewStyle,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  KeyboardAvoidingViewProps,
-  Keyboard,
-} from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { View, StyleSheet, TextInput, ViewStyle, SafeAreaView, Platform, Keyboard } from 'react-native';
+import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 
-import { PageView } from '../../../framework/components/page';
-import { IDistantFileWithId } from '../../../framework/util/fileHandler';
-import theme from '../../../app/theme';
-import HtmlToText from '../../../infra/htmlConverter/text';
-import { CommonStyles } from '../../../styles/common/styles';
-import { Icon, Loading } from '../../../ui';
-import TouchableOpacity from '../../../ui/CustomTouchableOpacity';
-import { HtmlContentView } from '../../../ui/HtmlContentView';
-import { Text } from '../../../ui/Typography';
-import moduleConfig from '../moduleConfig';
-import { ISearchUsers, IUser, newMailService } from '../service/newMail';
-import { IVisibleGroup, IVisibles, IVisiblesState, IVisibleUser, searchVisibles } from '../state/visibles';
 import Attachment from './Attachment';
 import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';
+
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { PageView } from '~/framework/components/page';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import HtmlToText from '~/infra/htmlConverter/text';
+import moduleConfig from '~/modules/conversation/moduleConfig';
+import { ISearchUsers, IUser } from '~/modules/conversation/service/newMail';
+import { IVisibleGroup, IVisiblesState, IVisibleUser, searchVisibles } from '~/modules/conversation/state/visibles';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon, Loading } from '~/ui';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Text } from '~/ui/Typography';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -61,77 +52,50 @@ const styles = StyleSheet.create({
 });
 
 export default (props: NewMailComponentProps) => {
-  const [showExtraFields, toggleExtraFields] = React.useState(false);
-  const [keyboardStatus, setKeyboardStatus] = React.useState(0); // State used just to force-update the component whenever it changes
   const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ to: false, cc: false, cci: false });
+  const [keyboardHeight, setkeyboardHeight] = React.useState(0);
+  const [showExtraFields, toggleExtraFields] = React.useState(false);
+
+  const isSearchingUsersFinal = Object.values(isSearchingUsers).includes(true);
+
   const setIsSearchingUsers = (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => {
     toggleIsSearchingUsers({ ...isSearchingUsers, ...val });
   };
-  const isSearchingUsersFinal = Object.values(isSearchingUsers).includes(true);
-  // console.log("render components", isSearchingUsers);
 
   React.useEffect(() => {
-    const showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
-      setKeyboardStatus(new Date().getTime());
+    const hideKeyboardListener = Keyboard.addListener('keyboardWillHide', () => {
+      setkeyboardHeight(0);
     });
-
+    const showKeyboardListener = Keyboard.addListener('keyboardDidShow', event => {
+      setkeyboardHeight(event.endCoordinates.height);
+    });
     return () => {
-      showSubscription.remove();
+      hideKeyboardListener.remove();
+      showKeyboardListener.remove();
     };
   }, []);
 
-  const keyboardAvoidingViewBehavior = Platform.select({
-    ios: 'padding',
-    android: 'height',
-  }) as KeyboardAvoidingViewProps['behavior'];
-  // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
-  // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
-  const keyboardAvoidingViewVerticalOffset = hasNotch() ? 100 : 76; // Those are "magic" values found by try&error. Seems to be fine on every phone.
   return (
     <PageView path="conversation">
-      <KeyboardAvoidingView
-        behavior={keyboardAvoidingViewBehavior}
-        keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}
-        style={{ height: '100%' }}>
-        <ScrollView
-          contentContainerStyle={
-            isSearchingUsersFinal
-              ? {
-                  flexGrow: 0,
-                  flexBasis: '100%',
-                }
-              : {
-                  flexGrow: 1,
-                }
-          }
-          alwaysBounceVertical={false}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag"
-          {...(isSearchingUsers
-            ? {
-                style: {
-                  flexBasis: '100%',
-                  flexGrow: 0,
-                  flexShrink: 0,
-                  maxHeight: '100%',
-                },
-              }
-            : {})}>
-          <View style={{ flexGrow: 1 }}>
-            {props.isFetching ? (
-              <Loading />
-            ) : (
-              <Fields
-                {...props}
-                showExtraFields={showExtraFields}
-                toggleExtraFields={toggleExtraFields}
-                setIsSearchingUsers={setIsSearchingUsers}
-                isSearchingUsersFinal={isSearchingUsersFinal}
-              />
-            )}
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      <KeyboardAvoidingScrollView
+        alwaysBounceVertical={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        style={{ height: '100%', marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.bottomInset, default: 0 }) }}>
+        <View style={{ flexGrow: 1 }}>
+          {props.isFetching ? (
+            <Loading />
+          ) : (
+            <Fields
+              {...props}
+              showExtraFields={showExtraFields}
+              toggleExtraFields={toggleExtraFields}
+              setIsSearchingUsers={setIsSearchingUsers}
+              isSearchingUsersFinal={isSearchingUsersFinal}
+            />
+          )}
+        </View>
+      </KeyboardAvoidingScrollView>
     </PageView>
   );
 };
@@ -183,14 +147,14 @@ const Fields = ({
         onSave={onDraftSave}
         key="attachments"
       />
-      <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} key="body" />
+      <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={false} key="body" />
       {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
     </SafeAreaView>
   );
 
   return (
     <MailContactField
-      autoFocus={true}
+      autoFocus
       value={headers.to}
       onChange={to => onHeaderChange({ ...headers, to })}
       rightComponent={
@@ -255,7 +219,7 @@ const MailContactField = connect(state => ({
     const selectedUsersOrGroups = value || [];
     const [search, updateSearch] = React.useState('');
     const previousVisibles = React.useRef<IVisiblesState>();
-    const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<Array<IVisibleUser | IVisibleGroup>>([]);
+    const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<(IVisibleUser | IVisibleGroup)[]>([]);
     const searchTimeout = React.useRef();
     const inputRef: { current: TextInput | undefined } = { current: undefined };
 

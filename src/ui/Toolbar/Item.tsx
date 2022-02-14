@@ -1,11 +1,12 @@
-import * as React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import I18n from "i18n-js";
-import { EVENT_TYPE } from "../../types";
-import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
-import { Text } from "../../framework/components/text";
-import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "..";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { Text } from '~/framework/components/text';
+import { DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import { EVENT_TYPE } from '~/types';
+import { Icon } from '~/ui';
 
 const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
   const { writeAccess, icon, id, options = {} } = item;
@@ -14,7 +15,7 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
 
   disable = disable || (isFolder.length && options.onlyFiles);
 
-  if (id === "nbSelected") {
+  if (id === 'nbSelected') {
     return (
       <View style={styles.nbSelected}>
         <Text numberOfLines={1} style={styles.nbSelectedText}>
@@ -24,21 +25,21 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
     );
   }
 
-  if (id === "title") {
+  if (id === 'title') {
     return (
       <View style={styles.textWrapper}>
         <Text numberOfLines={1} style={styles.headerTitleStyle}>
-          {navigation.getParam("title") || I18n.t("workspace")}
+          {navigation.getParam('title') || I18n.t('workspace')}
         </Text>
       </View>
     );
   }
 
-  if (id === "separator") {
+  if (id === 'separator') {
     return <View style={styles.separator} />;
   }
 
-  if (id === "empty") {
+  if (id === 'empty') {
     return <View style={styles.touchPanel} />;
   }
 
@@ -46,7 +47,7 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
     <TouchableOpacity
       style={styles.touchPanel}
       onPress={() => (disable ? null : onEvent && onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item }))}>
-      <Icon color={disable ? "#77777750" : "#ffffff"} size={layoutSize.LAYOUT_24} name={icon} />
+      <Icon color={disable ? '#77777750' : '#ffffff'} size={layoutSize.LAYOUT_24} name={icon} />
     </TouchableOpacity>
   );
 };
@@ -55,39 +56,39 @@ export default Item;
 
 const styles = StyleSheet.create({
   headerTitleStyle: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: layoutSize.LAYOUT_15,
-    fontWeight: "400",
-    textAlign: "center",
+    fontWeight: '400',
+    textAlign: 'center',
   },
   nbSelected: {
-    justifyContent: "center",
-    alignItems: "flex-start",
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     width: layoutSize.LAYOUT_42,
   },
   nbSelectedText: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: layoutSize.LAYOUT_16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   separator: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     flexGrow: 1,
     flexShrink: 1,
   },
   textWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     width: DEVICE_WIDTH() - layoutSize.LAYOUT_140,
   },
   touchPanel: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     width: layoutSize.LAYOUT_58,
   },
 });

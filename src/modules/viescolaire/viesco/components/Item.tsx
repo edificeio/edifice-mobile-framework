@@ -1,14 +1,14 @@
-import * as React from "react";
-import { StyleSheet, ViewStyle, StyleProp } from "react-native";
+import * as React from 'react';
+import { StyleSheet, ViewStyle, StyleProp } from 'react-native';
 
-import { CommonStyles } from "../../../../styles/common/styles";
-import TouchableOpacity from "../../../../ui/CustomTouchableOpacity";
+import { CommonStyles } from '~/styles/common/styles';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const styleConstant = StyleSheet.create({
   container: {
     borderRadius: 10,
     marginVertical: 5,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     padding: 10,
   },
   containerShadow: {
@@ -96,7 +96,7 @@ const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
  * Offer a shortcut for item with left colored
  * @param props
  */
-export const LeftColoredItem: React.FunctionComponent<Omit<SidedItemProps, "side">> = props => (
+export const LeftColoredItem: React.FunctionComponent<Omit<SidedItemProps, 'side'>> = props => (
   <SidedItem side={SidedComponentDirection.Left} {...props} />
 );
 
@@ -104,6 +104,6 @@ export const LeftColoredItem: React.FunctionComponent<Omit<SidedItemProps, "side
  * Offer a shortcut for item with bottom colored
  * @param props
  */
-export const BottomColoredItem: React.FunctionComponent<Omit<SidedItemProps, "side">> = props => (
+export const BottomColoredItem: React.FunctionComponent<Omit<SidedItemProps, 'side'>> = props => (
   <SidedItem side={SidedComponentDirection.Bottom} {...props} />
 );

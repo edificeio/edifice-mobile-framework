@@ -17,32 +17,32 @@
 
 // imports ----------------------------------------------------------------------------------------
 
-import style from "glamorous-native";
-import I18n from "i18n-js";
-import * as React from "react";
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Linking, RefreshControl } from 'react-native';
+
+import { TextBold } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IUserSession } from '~/framework/util/session';
+import { Trackers } from '~/framework/util/tracker';
+import { getHomeworkWorkflowInformation } from '~/homework/rights';
+import { Loading } from '~/ui';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { ListItem, PageContainer } from '~/ui/ContainerContent';
+import { EmptyScreen } from '~/ui/EmptyScreen';
+import { Checkbox } from '~/ui/forms/Checkbox';
+import { openUrl } from '~/framework/util/linking';
 const { FlatList, View } = style;
-import { Linking, RefreshControl } from "react-native";
-
-import { ListItem, PageContainer } from "../../ui/ContainerContent";
-
-import { Loading } from "../../ui";
-import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { EmptyScreen } from "../../ui/EmptyScreen";
-import { Checkbox } from "../../ui/forms/Checkbox";
-import { TextBold } from "../../framework/components/text";
-import { Trackers } from "../../framework/util/tracker";
-import { getHomeworkWorkflowInformation } from "../rights";
-import { IUserSession } from "../../framework/util/session";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // Main component ---------------------------------------------------------------------------------
 
 export interface IHomeworkFilterPageDataProps {
-  diaryList?: Array<{
+  diaryList?: {
     id: string;
     title: string;
     name: string;
-  }>;
+  }[];
   selectedDiaryId?: string;
   didInvalidate?: boolean;
   isFetching?: boolean;
@@ -58,18 +58,11 @@ export interface IHomeworkFilterPageOtherProps {
   session: IUserSession;
 }
 
-export type IHomeworkFilterPageProps = IHomeworkFilterPageDataProps &
-  IHomeworkFilterPageEventProps &
-  IHomeworkFilterPageOtherProps;
+export type IHomeworkFilterPageProps = IHomeworkFilterPageDataProps & IHomeworkFilterPageEventProps & IHomeworkFilterPageOtherProps;
 
 // tslint:disable-next-line:max-classes-per-file
-export class HomeworkFilterPage extends React.PureComponent<
-  IHomeworkFilterPageProps,
-  {}
-> {
-  private flatList: FlatList<
-    string
-  >; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
+export class HomeworkFilterPage extends React.PureComponent<IHomeworkFilterPageProps, object> {
+  private flatList: FlatList<string>; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -86,9 +79,7 @@ export class HomeworkFilterPage extends React.PureComponent<
 
   public render() {
     const { isFetching, didInvalidate } = this.props;
-    const pageContent = isFetching && didInvalidate
-      ? this.renderLoading()
-      : this.renderList();
+    const pageContent = isFetching && didInvalidate ? this.renderLoading() : this.renderList();
 
     return (
       <PageContainer>
@@ -111,67 +102,48 @@ export class HomeworkFilterPage extends React.PureComponent<
         renderItem={({ item }) => (
           <ListItem
             style={{
-              alignItems: "stretch",
-              justifyContent: "space-between",
-              width: "100%"
+              alignItems: 'stretch',
+              justifyContent: 'space-between',
+              width: '100%',
             }}
-            onPress={() =>
-              this.handleSelectedHomeworkChanged(item.id, item.title)
-            }
-          >
+            onPress={() => this.handleSelectedHomeworkChanged(item.id, item.title)}>
             <View
               style={{
                 flex: 1,
-                paddingRight: 4
-              }}
-            >
+                paddingRight: 4,
+              }}>
               <TextBold>{item.title}</TextBold>
             </View>
-            <View style={{ justifyContent: "center" }}>
+            <View style={{ justifyContent: 'center' }}>
               <Checkbox
                 checked={selectedDiaryId === item.id}
-                onCheck={() =>
-                  this.handleSelectedHomeworkChanged(item.id, item.title)
-                }
-                onUncheck={() =>
-                  this.handleSelectedHomeworkChanged(item.id, item.title)
-                }
+                onCheck={() => this.handleSelectedHomeworkChanged(item.id, item.title)}
+                onUncheck={() => this.handleSelectedHomeworkChanged(item.id, item.title)}
               />
             </View>
           </ListItem>
         )}
         keyExtractor={item => item.id}
-        refreshControl={
-          <RefreshControl
-            refreshing={isFetching}
-            onRefresh={() => onRefresh()}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => onRefresh()} />}
         ListEmptyComponent={
           <EmptyScreen
-            imageSrc={require("ASSETS/images/empty-screen/homework.png")}
+            imageSrc={require('ASSETS/images/empty-screen/homework.png')}
             imgWidth={265.98}
             imgHeight={279.97}
-            text={I18n.t("homework-diaries-emptyScreenText")}
-            title={I18n.t(`homework-${hasCreateHomeworkResourceRight ? "diaries" : "diaries-noCreationRight"}-emptyScreenTitle`)}
-            buttonText={hasCreateHomeworkResourceRight ? I18n.t("homework-createDiary") : undefined}
+            text={I18n.t('homework-diaries-emptyScreenText')}
+            title={I18n.t(`homework-${hasCreateHomeworkResourceRight ? 'diaries' : 'diaries-noCreationRight'}-emptyScreenTitle`)}
+            buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createDiary') : undefined}
             buttonAction={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
               if (!DEPRECATED_getCurrentPlatform()) {
-                console.warn("Must have a platform selected to redirect the user");
+                console.warn('Must have a platform selected to redirect the user');
                 return null;
               }
               const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;
-              Linking.canOpenURL(url).then(supported => {
-                if (supported) {
-                  Linking.openURL(url);
-                } else {
-                  console.warn("[homework] Don't know how to open URI: ", url);
-                }
-              });
-              Trackers.trackEvent("Homework", "GO TO", "Create in Browser");
+              openUrl(url);
+              Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
             }}
-          />        
+          />
         }
       />
     );

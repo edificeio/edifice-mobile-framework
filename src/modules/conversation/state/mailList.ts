@@ -1,8 +1,8 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import mailConfig from "../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import mailConfig from '~/modules/conversation/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ export interface IMail {
   toName: null;
   ccName: null;
   cci: [];
-  cciName:[];
+  cciName: [];
   count: number;
 }
 
@@ -39,4 +39,4 @@ export const getMailListState = (globalState: any) => mailConfig.getState(global
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType("MAIL_LIST"));
+export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType('MAIL_LIST'));

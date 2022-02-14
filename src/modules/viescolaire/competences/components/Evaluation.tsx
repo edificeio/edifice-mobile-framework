@@ -1,20 +1,20 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View, StyleSheet, Switch } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View, StyleSheet, Switch } from 'react-native';
 
-import { Loading } from "../../../../ui";
-import { PageContainer } from "../../../../ui/ContainerContent";
-import Dropdown from "../../../../ui/Dropdown";
-import { EmptyScreen } from "../../../../ui/EmptyScreen";
-import { Text, TextBold } from "../../../../framework/components/text";
-import ChildPicker from "../../viesco/containers/ChildPicker";
-import { IPeriodsList } from "../../viesco/state/periods";
-import { ILevelsList } from "../state/competencesLevels";
-import { IDevoirsMatieresState } from "../state/devoirs";
-import { IMoyenneListState } from "../state/moyennes";
-import { getSortedEvaluationList, GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
+import { Loading } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import Dropdown from '~/ui/Dropdown';
+import { EmptyScreen } from '~/ui/EmptyScreen';
+import { Text, TextBold } from '~/framework/components/text';
+import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
+import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
+import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
+import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
+import { getSortedEvaluationList, GradesDevoirs, GradesDevoirsMoyennes } from './Item';
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
@@ -67,10 +67,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       disciplineList: devoirsList.data.matieres,
       screenDisplay: ScreenDisplay.DASHBOARD,
       switchValue: SwitchState.DEFAULT,
-      currentPeriod: { type: I18n.t("viesco-competences-period"), value: undefined },
-      selectedDiscipline: I18n.t("viesco-competences-disciplines"),
-      selectedPeriod: { type: I18n.t("viesco-competences-period"), value: undefined },
-      disciplineId: "",
+      currentPeriod: { type: I18n.t('viesco-competences-period'), value: undefined },
+      selectedDiscipline: I18n.t('viesco-competences-disciplines'),
+      selectedPeriod: { type: I18n.t('viesco-competences-period'), value: undefined },
+      disciplineId: '',
     };
   }
 
@@ -103,7 +103,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     if (periods !== prevProps.periods) this.setCurrentPeriod();
     if (
       groups !== prevProps.groups ||
-      (devoirsList.data.matieres !== prevProps.devoirsList.data.matieres && devoirsList.data.matieres.length > 0)
+      (devoirsList.data !== undefined &&
+        devoirsList.data.matieres !== prevProps.devoirsList.data.matieres &&
+        devoirsList.data.matieres.length > 0)
     ) {
       this.setState({ disciplineList: devoirsList.data.matieres });
     }
@@ -122,22 +124,22 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   getSwitchDefaultPosition = async () => {
     let value = false as boolean;
-    let object = await AsyncStorage.getItem("competences-switch-color");
+    let object = await AsyncStorage.getItem('competences-switch-color');
     if (object) value = JSON.parse(object);
     this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
   };
 
   setSwitchDefaultPosition = async (value: boolean) => {
-    await AsyncStorage.setItem("competences-switch-color", JSON.stringify(value));
+    await AsyncStorage.setItem('competences-switch-color', JSON.stringify(value));
   };
 
   setCurrentPeriod = () => {
-    let current = { type: I18n.t("viesco-competences-period"), value: undefined } as ISelectedPeriod;
+    let current = { type: I18n.t('viesco-competences-period'), value: undefined } as ISelectedPeriod;
     if (this.state.currentPeriod.type === current.type) {
       this.props.periods.map(({ order, type, id_type, start_date, end_date }) => {
-        if (moment().isAfter(start_date) && moment().isBefore(end_date)) {
+        if (moment().isBetween(start_date, end_date, 'day', '[]')) {
           current = {
-            type: `${I18n.t("viesco-competences-period-" + type) + " " + order}`,
+            type: `${I18n.t('viesco-competences-period-' + type) + ' ' + order}`,
             value: id_type.toString(),
           };
         }
@@ -150,11 +152,11 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { selectedPeriod, selectedDiscipline } = this.state;
 
     if (
-      selectedPeriod.type !== I18n.t("viesco-competences-period") &&
-      selectedDiscipline === I18n.t("viesco-competences-disciplines")
+      selectedPeriod.type !== I18n.t('viesco-competences-period') &&
+      selectedDiscipline === I18n.t('viesco-competences-disciplines')
     ) {
       this.setState({ screenDisplay: ScreenDisplay.PERIOD });
-    } else if (selectedDiscipline !== I18n.t("viesco-competences-disciplines")) {
+    } else if (selectedDiscipline !== I18n.t('viesco-competences-disciplines')) {
       this.setState({ screenDisplay: ScreenDisplay.DISCIPLINE });
     } else {
       this.setState({ screenDisplay: ScreenDisplay.DASHBOARD });
@@ -166,11 +168,11 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirs, selectedPeriod } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: "row", maxWidth: "50%" }}>
+        <View style={{ flexDirection: 'row', maxWidth: '50%' }}>
           <TextBold style={{ marginBottom: 10 }} numberOfLines={1}>
             {selectedPeriod.type}
           </TextBold>
-          <Text> - {I18n.t("viesco-average").toUpperCase()}</Text>
+          <Text> - {I18n.t('viesco-average').toUpperCase()}</Text>
         </View>
         {devoirsMoyennesList.isFetching ? (
           <Loading />
@@ -178,10 +180,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           <GradesDevoirsMoyennes devoirs={devoirs} />
         ) : (
           <EmptyScreen
-            imageSrc={require("ASSETS/images/empty-screen/empty-evaluations.png")}
+            imageSrc={require('ASSETS/images/empty-screen/empty-evaluations.png')}
             imgWidth={265}
             imgHeight={280}
-            title={I18n.t("viesco-eval-EmptyScreenText")}
+            title={I18n.t('viesco-eval-EmptyScreenText')}
           />
         )}
       </View>
@@ -194,18 +196,20 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     return (
       <>
         {screenDisplay === ScreenDisplay.DISCIPLINE && <TextBold numberOfLines={1}>{selectedDiscipline}</TextBold>}
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           {screenDisplay === ScreenDisplay.DASHBOARD ? (
-            <TextBold style={{ marginBottom: 10, maxWidth: "50%" }} numberOfLines={1}>{I18n.t("viesco-last-grades")}</TextBold>
+            <TextBold style={{ marginBottom: 10, maxWidth: '50%' }} numberOfLines={1}>
+              {I18n.t('viesco-last-grades')}
+            </TextBold>
           ) : (
-            <Text style={{ color: "#AFAFAF" }}>{selectedPeriod.type}</Text>
+            <Text style={{ color: '#AFAFAF' }}>{selectedPeriod.type}</Text>
           )}
-          <View style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}>
-            <Text>{I18n.t("viesco-colors")}&ensp;</Text>
+          <View style={{ marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
+            <Text>{I18n.t('viesco-colors')}&ensp;</Text>
             <Switch
-              trackColor={{ false: "#D1D1D1", true: "#A1DED5" }}
-              thumbColor={value ? "#EFEFEF" : "#46BFAF"}
-              ios_backgroundColor={value ? "#DDDDDD" : "#46BFAF"}
+              trackColor={{ false: '#D1D1D1', true: '#A1DED5' }}
+              thumbColor={value ? '#EFEFEF' : '#46BFAF'}
+              ios_backgroundColor={value ? '#DDDDDD' : '#46BFAF'}
               onValueChange={() => {
                 this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
                 this.setSwitchDefaultPosition(value);
@@ -231,10 +235,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} levels={levels} />
         ) : (
           <EmptyScreen
-            imageSrc={require("ASSETS/images/empty-screen/empty-evaluations.png")}
+            imageSrc={require('ASSETS/images/empty-screen/empty-evaluations.png')}
             imgWidth={265}
             imgHeight={280}
-            title={I18n.t("viesco-eval-EmptyScreenText")}
+            title={I18n.t('viesco-eval-EmptyScreenText')}
           />
         )}
       </View>
@@ -245,10 +249,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { structureId, childId } = this.props;
     const { selectedPeriod, currentPeriod, disciplineList } = this.state;
 
-    let subjectId = "";
-    if (discipline !== I18n.t("viesco-competences-disciplines")) {
+    let subjectId = '';
+    if (discipline !== I18n.t('viesco-competences-disciplines')) {
       subjectId = this.state.disciplineList.find(item => item.name === discipline)!.id;
-      if (selectedPeriod.type === I18n.t("viesco-competences-period")) {
+      if (selectedPeriod.type === I18n.t('viesco-competences-period')) {
         this.setState({ selectedPeriod: currentPeriod });
         this.props.getDevoirs(structureId, childId, currentPeriod.value!, subjectId);
       } else this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
@@ -263,7 +267,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { structureId, childId } = this.props;
     const { disciplineId, selectedDiscipline } = this.state;
 
-    if (disciplineId === "" || selectedDiscipline === I18n.t("viesco-competences-disciplines")) {
+    if (disciplineId === '' || selectedDiscipline === I18n.t('viesco-competences-disciplines')) {
       this.props.getDevoirsMoyennes(structureId, childId, period.value!);
     } else {
       this.props.getDevoirs(structureId, childId, period.value!, disciplineId);
@@ -274,11 +278,12 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   private displayDisciplinesDropdown() {
     let disciplines = this.state.disciplineList
       .map(({ name }) => name)
-      .sort((a, b) => String(a.toLocaleLowerCase() ?? "").localeCompare(b.toLocaleLowerCase() ?? ""));
-    disciplines.unshift(I18n.t("viesco-competences-disciplines"));
+      .sort((a, b) => String(a.toLocaleLowerCase() ?? '').localeCompare(b.toLocaleLowerCase() ?? ''));
+    disciplines.unshift(I18n.t('viesco-competences-disciplines'));
 
     return (
       <Dropdown
+        keyId="competences.disciplines"
         data={Object.values(disciplines)}
         value={this.state.selectedDiscipline}
         onSelect={(discipline: string) => this.initDevoirsByDisciplines(discipline)}
@@ -289,17 +294,18 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   private displayPeriodsDropdown() {
     const { selectedPeriod } = this.state;
-    let periodsList = [{ type: I18n.t("viesco-competences-period"), value: undefined }] as ISelectedPeriod[];
+    let periodsList = [{ type: I18n.t('viesco-competences-period'), value: undefined }] as ISelectedPeriod[];
     this.props.periods.map(({ order, type, id_type }) =>
       periodsList.push({
-        type: `${I18n.t("viesco-competences-period-" + type) + " " + order}`,
+        type: `${I18n.t('viesco-competences-period-' + type) + ' ' + order}`,
         value: id_type.toString(),
       }),
     );
-    periodsList.push({ type: I18n.t("viesco-year"), value: undefined });
+    periodsList.push({ type: I18n.t('viesco-year'), value: undefined });
 
     return (
       <Dropdown
+        keyId="competences.periods"
         style={{ marginRight: 5 }}
         data={periodsList.map(x => x.type)}
         value={selectedPeriod.type}
@@ -317,9 +323,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   public render() {
     return (
       <PageContainer>
-        {this.props.userType === "Relative" && <ChildPicker hideButton />}
+        {this.props.userType === 'Relative' && <ChildPicker hideButton />}
         <View style={styles.dashboardPart}>
-          <Text style={styles.subtitle}>{I18n.t("viesco-report-card")}</Text>
+          <Text style={styles.subtitle}>{I18n.t('viesco-report-card')}</Text>
           <View style={styles.containerDropdowns}>
             {this.displayPeriodsDropdown()}
             {this.displayDisciplinesDropdown()}
@@ -332,12 +338,12 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 }
 
 const styles = StyleSheet.create({
-  subtitle: { color: "#AFAFAF", paddingVertical: 8 },
+  subtitle: { color: '#AFAFAF', paddingVertical: 8 },
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 },
   containerDropdowns: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginVertical: 10,
     marginHorizontal: 5,
   },

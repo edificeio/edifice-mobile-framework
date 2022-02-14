@@ -9,14 +9,16 @@
  *     active - An active `HomeworkDayCheckpoint` will be highlighted. Default `false`.
  */
 
-import style from "glamorous-native";
-import * as React from "react";
-const { View } = style;
-import { Text } from "../../framework/components/text";
-import theme from "../../app/theme";
-import { CommonStyles } from "../../styles/common/styles";
+import style from 'glamorous-native';
+import * as React from 'react';
 
-import HomeworkCircleNumber from "./HomeworkCircleNumber";
+import HomeworkCircleNumber from './HomeworkCircleNumber';
+
+import theme from '~/app/theme';
+import { Text } from '~/framework/components/text';
+import { CommonStyles } from '~/styles/common/styles';
+
+const { View } = style;
 
 export interface IHomeworkDayCheckpointProps {
   style?: any;
@@ -26,23 +28,24 @@ export interface IHomeworkDayCheckpointProps {
 }
 
 const homeworkDayCheckpointStyle = {
-  alignItems: "center",
-  flexDirection: "row",
+  alignItems: 'center',
+  flexDirection: 'row',
   backgroundColor: CommonStyles.lightGrey,
-  marginTop: 15
+  marginTop: 15,
 };
 
-export const HomeworkDayCheckpoint = ({
-  style,
-  nb,
-  text = "",
-  active = false
-}: IHomeworkDayCheckpointProps) => (
+export const HomeworkDayCheckpoint = ({ style, nb, text = '', active = false }: IHomeworkDayCheckpointProps) => (
   <View style={[homeworkDayCheckpointStyle, style]}>
     <HomeworkCircleNumber nb={nb} active={active} />
-    <View 
-      style={{ flex: 1, paddingBottom: 15, marginBottom: -15, paddingLeft: 5, marginLeft: -5, backgroundColor: CommonStyles.lightGrey}}
-    >
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: 15,
+        marginBottom: -15,
+        paddingLeft: 5,
+        marginLeft: -5,
+        backgroundColor: CommonStyles.lightGrey,
+      }}>
       <Text color={theme.color.text.light} fontSize={12}>
         {text.toUpperCase()}
       </Text>

@@ -17,10 +17,11 @@ import RNFS, {
 } from 'react-native-fs';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-import { getAuthHeader } from '../../../infra/oauth';
-import { DEPRECATED_getCurrentPlatform } from '../_legacy_appConf';
-import { assertPermissions } from '../permissions';
-import { IUserSession } from '../session';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { assertPermissions } from '~/framework/util/permissions';
+import { IUserSession } from '~/framework/util/session';
+import { getAuthHeader } from '~/infra/oauth';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };
@@ -53,7 +54,7 @@ const fileTransferService = {
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     const url = DEPRECATED_getCurrentPlatform()!.url + params.url;
     const job = RNFS.uploadFiles({
@@ -73,7 +74,9 @@ const fileTransferService = {
           const statusCode = res.statusCode || 0;
           if (statusCode >= 200 && statusCode < 300) {
             const df = adapter(res.body);
-            const sfclass = (syncedFileClass ?? SyncedFile) as new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType;
+            const sfclass = (syncedFileClass ?? SyncedFile) as new (
+              ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
+            ) => SyncedFileType;
             return new sfclass(file, df) as SyncedFileType;
           } else {
             const err = new Error('Upload failed: server error ' + JSON.stringify(res));
@@ -96,7 +99,7 @@ const fileTransferService = {
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     try {
       const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
@@ -113,7 +116,7 @@ const fileTransferService = {
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     return files.map(f => fileTransferService.startUploadFile(session, f, params, adapter, callbacks, syncedFileClass));
   },
@@ -124,9 +127,11 @@ const fileTransferService = {
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
-    return Promise.all(fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass).map(j => j.promise));
+    return Promise.all(
+      fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass).map(j => j.promise),
+    );
   },
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
@@ -135,9 +140,11 @@ const fileTransferService = {
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
-    const sfclass = (syncedFileClass ?? SyncedFile) as new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType;
+    const sfclass = (syncedFileClass ?? SyncedFile) as new (
+      ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
+    ) => SyncedFileType;
     file.filename = file.filename || file.url.split('/').pop();
     const folderDest = `${RNFS.DocumentDirectoryPath}${file.url}`;
     const downloadDest = `${folderDest}/${file.filename}`;
@@ -220,7 +227,7 @@ const fileTransferService = {
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     try {
       const job = await fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
@@ -236,7 +243,7 @@ const fileTransferService = {
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
     return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks, syncedFileClass));
   },
@@ -246,9 +253,11 @@ const fileTransferService = {
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
-    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
-    return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass).map(async j => (await j).promise));
+    return Promise.all(
+      fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass).map(async j => (await j).promise),
+    );
   },
 };
 

@@ -9,12 +9,13 @@
  * TODO: When active, the blue background should be a gradient, according to the mockup.
  */
 
-import style from "glamorous-native";
-import * as React from "react";
+import style from 'glamorous-native';
+import * as React from 'react';
+
+import theme from '~/app/theme';
+import { Text } from '~/framework/components/text';
+import { CommonStyles } from '~/styles/common/styles';
 const { View } = style;
-import { CommonStyles } from "../../styles/common/styles";
-import { Text } from "../../framework/components/text";
-import theme from "../../app/theme";
 
 export interface IHomeworkCircleNumberProps {
   style?: any;
@@ -23,31 +24,25 @@ export interface IHomeworkCircleNumberProps {
 }
 
 const homeworkCircleNumberStyle = {
-  alignItems: "center",
+  alignItems: 'center',
   borderColor: CommonStyles.tabBottomColor,
   borderRadius: 15,
-  borderStyle: "solid",
+  borderStyle: 'solid',
   borderWidth: 1,
   elevation: 3,
   height: 30,
-  justifyContent: "center",
+  justifyContent: 'center',
   marginHorizontal: 14,
-  shadowColor: "#6B7C93",
+  shadowColor: '#6B7C93',
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.2,
   shadowRadius: 4,
-  width: 30
+  width: 30,
 };
 
-export const HomeworkCircleNumber = ({
-  style,
-  nb,
-  active = false
-}: IHomeworkCircleNumberProps) => {
+export const HomeworkCircleNumber = ({ style, nb, active = false }: IHomeworkCircleNumberProps) => {
   const backgroundStyle = {
-    backgroundColor: active
-      ? CommonStyles.actionColor
-      : CommonStyles.tabBottomColor
+    backgroundColor: active ? CommonStyles.actionColor : CommonStyles.tabBottomColor,
   };
 
   return (

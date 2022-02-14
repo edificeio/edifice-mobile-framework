@@ -1,22 +1,22 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View } from "react-native";
-import { Asset } from "react-native-image-picker";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { LocalFile } from "../../../../framework/util/fileHandler";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View } from 'react-native';
+import { Asset } from 'react-native-image-picker';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import pickFile, { pickFileError } from "../../../../infra/actions/pickFile";
-import { DocumentPicked, ImagePicked } from "../../../../infra/filePicker";
-import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
-import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
-import { INavigationProps } from "../../../../types";
-import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
-import { getSelectedChild } from "../../viesco/state/children";
-import { declareAbsenceAction, declareAbsenceWithFileAction } from "../actions/declaration";
-import DeclarationComponent from "../components/Declaration";
+import { LocalFile } from '~/framework/util/fileHandler';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import pickFile, { pickFileError } from '~/infra/actions/pickFile';
+import { DocumentPicked, ImagePicked } from '~/infra/filePicker';
+import { declareAbsenceAction, declareAbsenceWithFileAction } from '~/modules/viescolaire/presences/actions/declaration';
+import DeclarationComponent from '~/modules/viescolaire/presences/components/Declaration';
+import { getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { INavigationProps } from '~/types';
+import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
@@ -37,14 +37,14 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
     return standardNavScreenOptions(
       {
-        title: `${I18n.t("viesco-absence-declaration")} ${navigation.getParam("childName")}`,
+        title: `${I18n.t('viesco-absence-declaration')} ${navigation.getParam('childName')}`,
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <View />,
         headerStyle: {
-          backgroundColor: "#FCB602",
+          backgroundColor: '#FCB602',
         },
       },
-      navigation
+      navigation,
     );
   };
 
@@ -52,13 +52,9 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
     super(props);
     this.props.navigation.setParams({ childName: this.props.childName });
     this.state = {
-      startDate: moment()
-        .startOf("day")
-        .hour(7),
-      endDate: moment()
-        .startOf("day")
-        .hour(18),
-      comment: "",
+      startDate: moment().startOf('day').hour(7),
+      endDate: moment().startOf('day').hour(18),
+      comment: '',
     };
   }
 
@@ -82,31 +78,30 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
         this.setState({ attachment: contentUri });
       })
       .catch(err => {
-        if (err.message === "Error picking image" || err.message === "Error picking document") {
-          this.props.onPickFileError("viesco");
+        if (err.message === 'Error picking image' || err.message === 'Error picking document') {
+          this.props.onPickFileError('viesco');
         }
       });
   };
 
   onPickAttachment = (att: ImagePicked | DocumentPicked) => {
     this.setState({
-      attachment: new LocalFile(att as Asset | DocumentPicked, {_needIOSReleaseSecureAccess: false})
+      attachment: new LocalFile(att as Asset | DocumentPicked, { _needIOSReleaseSecureAccess: false }),
     });
-  }
+  };
 
   submitForm = async () => {
     const { startDate, endDate, comment, attachment } = this.state;
 
     if (attachment) {
       await this.props.declareAbsenceWithFileAction(startDate, endDate, comment, attachment);
-    }
-    else await this.props.declareAbsenceAction(startDate, endDate, comment);
+    } else await this.props.declareAbsenceAction(startDate, endDate, comment);
     this.props.navigation.goBack();
   };
 
   validate = () => {
     const startBeforeEnd = this.state.startDate.isBefore(this.state.endDate);
-    const startDayNotBeforeToday = this.state.startDate.isSameOrAfter(moment(), "day");
+    const startDayNotBeforeToday = this.state.startDate.isSameOrAfter(moment(), 'day');
     return startBeforeEnd && startDayNotBeforeToday;
   };
 
@@ -132,7 +127,7 @@ const mapStateToProps = (state: any) => {
   const child = getSelectedChild(state);
 
   return {
-    childName: child.lastName + " " + child.firstName,
+    childName: child.lastName + ' ' + child.firstName,
   };
 };
 
@@ -143,8 +138,8 @@ const mapDispatchToProps = (dispatch: any) => {
       declareAbsenceWithFileAction,
       onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
     },
-    dispatch
+    dispatch,
   );
 };
 
-export default withViewTracking("viesco/absence")(connect(mapStateToProps, mapDispatchToProps)(Declaration));
+export default withViewTracking('viesco/absence')(connect(mapStateToProps, mapDispatchToProps)(Declaration));

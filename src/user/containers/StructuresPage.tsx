@@ -1,13 +1,12 @@
-import { connect } from "react-redux";
-import { StructuresPage } from "../components/StructuresPage";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { connect } from 'react-redux';
 
-const StructuresPageConnected = connect(
-    (state: any) => ({
-        schools: state.user.info.schools
-    })
-)(StructuresPage);
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { StructuresPage } from '~/user/components/StructuresPage';
 
-const StructuresPageOk = withViewTracking("user/structures")(StructuresPageConnected);
+const StructuresPageConnected = connect((state: any) => ({
+  schools: state.user.info.schools,
+}))(StructuresPage);
+
+const StructuresPageOk = withViewTracking('user/structures')(StructuresPageConnected);
 
 export default StructuresPageOk;

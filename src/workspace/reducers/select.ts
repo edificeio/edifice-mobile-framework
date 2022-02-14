@@ -2,16 +2,16 @@
  * Workspace selection state reducer
  * Holds a list of selected item in a simple Array
  */
-import { SELECT_ACTION_TYPE, SELECT_CLEAR_ACTION_TYPE } from "../actions/select";
-import { IItem } from "../types";
-import { IAction } from "../../infra/redux/async";
-import { actionTypesDelete } from "../actions/delete";
-import { actionTypesUpload } from "../actions/upload";
-import { actionTypesRename } from "../actions/rename";
-import { actionTypesDownload } from "../actions/download";
-import { actionTypesPast } from "../actions/past";
-import { actionTypesMove } from "../actions/move";
-import { actionTypesRestore } from "../actions/restore";
+import { IAction } from '~/infra/redux/async';
+import { actionTypesDelete } from '~/workspace/actions/delete';
+import { actionTypesDownload } from '~/workspace/actions/download';
+import { actionTypesMove } from '~/workspace/actions/move';
+import { actionTypesPast } from '~/workspace/actions/past';
+import { actionTypesRename } from '~/workspace/actions/rename';
+import { actionTypesRestore } from '~/workspace/actions/restore';
+import { SELECT_ACTION_TYPE, SELECT_CLEAR_ACTION_TYPE } from '~/workspace/actions/select';
+import { actionTypesUpload } from '~/workspace/actions/upload';
+import { IItem } from '~/workspace/types';
 
 export type IItems<T> = {
   [key: string]: T;

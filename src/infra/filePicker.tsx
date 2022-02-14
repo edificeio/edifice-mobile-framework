@@ -29,13 +29,15 @@ export class FilePicker extends React.PureComponent<
     multiple?: boolean;
   } & TouchableOpacityProps,
   {
+    enabled: boolean;
     showModal: boolean;
   }
 > {
-  state = { showModal: false };
+  state = { enabled: true, showModal: false };
 
   render() {
     const { callback, options, multiple, ...props } = this.props;
+    const { enabled, showModal } = this.state;
 
     const imageCallback = (images: LocalFile[], sourceType: string) => {
       try {
@@ -49,7 +51,7 @@ export class FilePicker extends React.PureComponent<
       } catch (error) {
         throw error;
       } finally {
-        this.setState({ showModal: false });
+        this.setState({ enabled: true, showModal: false });
       }
     };
 
@@ -65,7 +67,7 @@ export class FilePicker extends React.PureComponent<
       } catch (error) {
         throw error;
       } finally {
-        this.setState({ showModal: false });
+        this.setState({ enabled: true, showModal: false });
       }
     };
 
@@ -74,14 +76,22 @@ export class FilePicker extends React.PureComponent<
         id: 'camera',
         title: I18n.t('common-photoPicker-take'),
         action: async (sourceType: string) => {
-          LocalFile.pick({ source: 'camera' }).then(lf => imageCallback(lf, sourceType));
+          LocalFile.pick({ source: 'camera' })
+            .then(lf => imageCallback(lf, sourceType))
+            .catch(() => {
+              this.setState({ enabled: true });
+            });
         },
       },
       {
         id: 'gallery',
         title: I18n.t('common-photoPicker-pick'),
         action: async (sourceType: string) => {
-          LocalFile.pick({ source: 'galery', multiple }).then(lf => imageCallback(lf, sourceType));
+          LocalFile.pick({ source: 'galery', multiple })
+            .then(lf => imageCallback(lf, sourceType))
+            .catch(() => {
+              this.setState({ enabled: true });
+            });
         },
       },
       {
@@ -94,30 +104,35 @@ export class FilePicker extends React.PureComponent<
               | PlatformTypes[keyof PlatformTypes][keyof PlatformTypes[keyof PlatformTypes]][]
               | DocumentType[keyof PlatformTypes],
             ...options,
-          }).then(file => documentCallback(file, sourceType));
+          })
+            .then(file => documentCallback(file, sourceType))
+            .catch(() => {
+              this.setState({ enabled: true });
+            });
         },
       },
       {
         id: 'cancel',
         title: I18n.t('Cancel'),
         action: (sourceType: string) => {
-          this.setState({ showModal: false });
+          this.setState({ enabled: true, showModal: false });
         },
       },
     ];
 
     return (
       <>
-        <ModalBox backdropOpacity={0.5} isVisible={this.state.showModal}>
+        <ModalBox backdropOpacity={0.5} isVisible={showModal}>
           <ModalContent>
             {menuActions.map(a => (
-              <ModalContentBlock style={{ marginBottom: 20 }}>
+              <ModalContentBlock key={a.id} style={{ marginBottom: 20 }}>
                 <ButtonTextIcon
+                  disabled={!enabled}
                   style={{ width: 250 }}
                   textStyle={{ fontSize: 18, padding: 15, marginTop: -10 }}
                   title={a.title}
                   onPress={() => {
-                    // console.log("clicked", a.id);
+                    this.setState({ enabled: false });
                     a.action(a.id);
                   }}
                 />

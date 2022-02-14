@@ -2,10 +2,11 @@
  * Activate account action(s)
  * Build actions to be dispatched to activate a new account
  */
-import { Action } from "redux";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
-import { asyncActionTypes } from "../../infra/redux/async";
-import userConfig from "../config";
+import { Action } from 'redux';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { asyncActionTypes } from '~/infra/redux/async';
+import userConfig from '~/user/config';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -16,7 +17,7 @@ export interface IForgotModel {
 }
 
 export interface IForgotSubmitPayload extends IForgotModel {
-  service: "mail";
+  service: 'mail';
 }
 
 // ACTION INTERFACES ------------------------------------------------------------------------------
@@ -30,13 +31,9 @@ export interface IForgotSubmitReceivedAction extends Action {
 
 // ACTION TYPES -----------------------------------------------------------------------------------
 
-export const actionTypeForgotRequest = asyncActionTypes(
-  userConfig.createActionType("FORGOT_REQUESTED")
-);
+export const actionTypeForgotRequest = asyncActionTypes(userConfig.createActionType('FORGOT_REQUESTED'));
 
-export const actionTypeForgetReceive = asyncActionTypes(
-  userConfig.createActionType("FORGET_RECEIVED")
-);
+export const actionTypeForgetReceive = asyncActionTypes(userConfig.createActionType('FORGET_RECEIVED'));
 
 // ACTION CREATORS --------------------------------------------------------------------------------
 
@@ -44,9 +41,7 @@ function actionCreateForgotRequest(userLogin: string) {
   return { type: actionTypeForgotRequest, userLogin };
 }
 
-function actionCreateForgotReceive(
-  result: { error?: string, status?: string, structures?: Array<any>, ok: boolean | undefined }
-) {
+function actionCreateForgotReceive(result: { error?: string; status?: string; structures?: any[]; ok: boolean | undefined }) {
   return { type: actionTypeForgetReceive, result };
 }
 
@@ -62,26 +57,23 @@ export function action_forgotSubmit(userInfo: IForgotModel, forgotId?: boolean) 
             mail: userInfo.login,
             firstName: userInfo.firstName,
             structureId: userInfo.structureId,
-            service: "mail"
+            service: 'mail',
           }
         : {
             login: userInfo.login,
-            service: "mail"
+            service: 'mail',
           };
-      const res = await fetch(
-        `${DEPRECATED_getCurrentPlatform()!.url}/auth/forgot-${forgotId ? "id" : "password"}`,
-        {
-          body: JSON.stringify(payLoad),
-          method: "POST"
-        }
-      );
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/forgot-${forgotId ? 'id' : 'password'}`, {
+        body: JSON.stringify(payLoad),
+        method: 'POST',
+      });
       const resJson = await res.json();
       const resStatus = await res.status;
-      const ok = 200 <= resStatus  && resStatus < 300
-      const response = { ...resJson, ok }
+      const ok = resStatus >= 200 && resStatus < 300;
+      const response = { ...resJson, ok };
       dispatch(actionCreateForgotReceive(response));
     } catch (err) {
-      dispatch(actionCreateForgotReceive({ error: "", ok: false}));
+      dispatch(actionCreateForgotReceive({ error: '', ok: false }));
       // tslint:disable-next-line:no-console
       console.warn(err);
     }
@@ -90,6 +82,6 @@ export function action_forgotSubmit(userInfo: IForgotModel, forgotId?: boolean) 
 
 export function action_forgotReset() {
   return async dispatch => {
-    dispatch(actionCreateForgotReceive({ status: "", ok: false}));
+    dispatch(actionCreateForgotReceive({ status: '', ok: false }));
   };
 }

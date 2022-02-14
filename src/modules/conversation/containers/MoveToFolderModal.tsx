@@ -1,12 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { tryAction } from "../../../framework/util/redux/actions";
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsAction, restoreMailsToFolderAction, restoreMailsToInboxAction } from "../actions/mail";
-import MoveToFolderModalComponent from "../components/MoveToFolderModal";
-import moduleConfig from "../moduleConfig";
-import { getInitMailListState, IFolder } from "../state/initMails";
+import MoveToFolderModalComponent from '~/modules/conversation/components/MoveToFolderModal';
+import { getInitMailListState, IFolder } from '~/modules/conversation/state/initMails';
 
 type MoveToFolderModalProps = {
   folders: IFolder[];
@@ -40,15 +37,16 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   };
 
   confirm = async () => {
-    const { currentFolder, moveToFolder, moveToInbox, restoreToInbox, restoreToFolder, mail, successCallback, closeModal } = this.props;
+    const { currentFolder, moveToFolder, moveToInbox, restoreToInbox, restoreToFolder, mail, successCallback, closeModal } =
+      this.props;
     const { selectedFolder } = this.state;
     closeModal();
     if (!selectedFolder) return;
-    if (currentFolder === "trash") {
-      if (selectedFolder === "inbox") await restoreToInbox([mail.id]);
+    if (currentFolder === 'trash') {
+      if (selectedFolder === 'inbox') await restoreToInbox([mail.id]);
       else await restoreToFolder([mail.id], selectedFolder);
     } else {
-      if (selectedFolder === "inbox") await moveToInbox([mail.id]);
+      if (selectedFolder === 'inbox') await moveToInbox([mail.id]);
       else await moveToFolder([mail.id], selectedFolder);
     }
     successCallback();
@@ -73,10 +71,7 @@ const mapStateToProps = (state: any) => {
 };
 
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators(
-    {},
-    dispatch
-  );
+  return bindActionCreators({}, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MoveToFolderModal);

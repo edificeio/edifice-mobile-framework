@@ -1,11 +1,11 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import I18n from "i18n-js";
-import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import { CommonStyles } from "../../../../styles/common/styles";
-import Dropdown from "../../../../ui/Dropdown";
-import { IChildArray, IChild } from "../state/children";
+import { IChildArray, IChild } from '~/modules/viescolaire/viesco/state/children';
+import { CommonStyles } from '~/styles/common/styles';
+import Dropdown from '~/ui/Dropdown';
 
 const styles = StyleSheet.create({
   shadow: {
@@ -18,16 +18,16 @@ const styles = StyleSheet.create({
   container: {
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     zIndex: 100,
   },
   innerContainer: {
     paddingTop: 10,
     paddingBottom: 15,
     paddingHorizontal: 10,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
 });
 
@@ -50,14 +50,14 @@ export default class ChildPicker extends React.PureComponent<ChildPickerProps> {
             selectChild(child);
           }
         }}
-        title={I18n.t("viesco-pickChild")}
+        title={I18n.t('viesco-pickChild')}
         keyExtractor={item => item.id}
-        renderItem={(item: IChild) => item.lastName + " " + item.firstName}
+        renderItem={(item: IChild) => item.lastName + ' ' + item.firstName}
       />
     );
 
     const wrappedChildren = React.Children.map([dropdown, ...React.Children.toArray(children)], child =>
-      React.cloneElement(child as React.ReactElement<any>, { style: [child.props.style, { margin: 5 }] })
+      React.cloneElement(child as React.ReactElement<any>, { style: [child.props.style, { margin: 5 }] }),
     );
 
     return (

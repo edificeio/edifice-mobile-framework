@@ -1,4 +1,4 @@
-import { createAsyncActionTypes, AsyncState } from "../../infra/redux/async2";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -13,9 +13,9 @@ export interface IBlog {
   description?: string;
   created: { $date: number };
   modified: { $date: number };
-  author: { userId: string; username: string; login: string; }
-  shared?: Array<{ userId?: string; groupId?: string;[key: string]: boolean | string | undefined }>;
-  fetchPosts: any[] // ToDo: Type this.
+  author: { userId: string; username: string; login: string };
+  shared?: Array<{ userId?: string; groupId?: string; [key: string]: boolean | string | undefined }>;
+  fetchPosts: any[]; // ToDo: Type this.
 }
 
 export type IBlogList = IBlog[];
@@ -27,8 +27,7 @@ export type IPublishableBlogsState = AsyncState<IBlogList>;
 export const initialState: IBlogList = [];
 
 /** Returns the sub local state (global state -> notification -> notificationList). Give the global state as parameter. */
-export const getPublishableBlogsState = (globalState: any) =>
-  globalState.timeline.publishableBlogs as IPublishableBlogsState;
+export const getPublishableBlogsState = (globalState: any) => globalState.timeline.publishableBlogs as IPublishableBlogsState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

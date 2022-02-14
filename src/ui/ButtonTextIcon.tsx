@@ -1,9 +1,11 @@
 import style from 'glamorous-native';
 import * as React from 'react';
-import { CommonStyles } from '../styles/common/styles';
+import { TouchableOpacityProps } from 'react-native';
+
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Icon } from './icons/Icon';
-import { TouchableOpacityProps, View } from 'react-native';
+
+import { CommonStyles } from '~/styles/common/styles';
 
 export interface ButtonTextIconProps {
   onPress: () => any;

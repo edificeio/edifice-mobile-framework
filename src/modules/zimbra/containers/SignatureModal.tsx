@@ -1,10 +1,10 @@
-import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { putSignatureAction } from "../actions/signature";
-import SignatureModalComponent from "../components/Modals/SignatureModal";
-import { getSignatureState, ISignature } from "../state/signature";
+import { putSignatureAction } from '~/modules/zimbra/actions/signature';
+import SignatureModalComponent from '~/modules/zimbra/components/Modals/SignatureModal';
+import { getSignatureState, ISignature } from '~/modules/zimbra/state/signature';
 
 type SignatureModalProps = {
   signature: string;
@@ -28,7 +28,7 @@ class SignatureModal extends React.Component<SignatureModalProps, MoveToFolderMo
     const { preference } = this.props.signatureData;
     let signatureCheck = false;
     if (preference !== undefined) {
-      if (typeof preference === "object") signatureCheck = preference.useSignature;
+      if (typeof preference === 'object') signatureCheck = preference.useSignature;
       else signatureCheck = JSON.parse(preference).useSignature;
     }
 
@@ -94,7 +94,7 @@ const mapDispatchToProps = (dispatch: any) => {
     {
       putSignature: putSignatureAction,
     },
-    dispatch
+    dispatch,
   );
 };
 

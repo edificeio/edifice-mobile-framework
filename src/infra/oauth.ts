@@ -2,18 +2,19 @@
  * OAuth2 client for Ressource Owner Password Grant type flow.
  */
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { encode as btoa } from 'base-64';
 import querystring from 'querystring';
 import { ImageURISource } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ModuleArray } from '../framework/util/moduleTool';
+
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { ModuleArray } from '~/framework/util/moduleTool';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 export const AllModulesBackup = {
-  value: undefined
+  value: undefined,
 } as {
-  value?: ModuleArray
+  value?: ModuleArray;
 };
 
 export interface IOAuthToken {
@@ -25,29 +26,39 @@ export interface IOAuthToken {
   scope: string;
 }
 
+export interface IOAuthCustomToken {
+  structureName: string;
+  key: string;
+}
+
+export type OAuthCustomTokens = IOAuthCustomToken[];
+
 export enum OAuthErrorType {
   // Response errors
-  INVALID_CLIENT = 'invalid_client',
-  INVALID_GRANT = 'invalid_grant',
   BAD_CREDENTIALS = 'bad_credentials',
   BLOCKED_USER = 'blocked_user',
-  TOO_MANY_TRIES = 'too_many_tries',
+  INVALID_CLIENT = 'invalid_client',
+  INVALID_GRANT = 'invalid_grant',
+  MULTIPLE_VECTOR = 'multiple_vector_choice',
   PLATFORM_UNAVAILABLE = 'platform_unavailable',
   TOO_LOAD = 'too_load',
+  TOO_MANY_TRIES = 'too_many_tries',
   UNKNOWN_DENIED = 'unknown_denied',
   UNKNOWN_RESPONSE = 'unknown_response',
   // Non-response errors
+  BAD_RESPONSE = 'bad_response',
   NETWORK_ERROR = 'network_error',
   PARSE_ERROR = 'parse_error',
-  BAD_RESPONSE = 'bad_response',
   // Not initialized
   NOT_INITIALIZED = 'not_initilized',
 }
+
 export interface OAuthErrorDetails {
   type: OAuthErrorType;
   error?: string;
   description?: string;
 }
+
 export type OAuthError = Error & OAuthErrorDetails;
 
 export const sanitizeScope = (scopes: string[]) => (Array.isArray(scopes) ? scopes.join(' ').trim() : scopes || '');
@@ -107,20 +118,20 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Use this returns always an error.
    * @param data
    */
-  private createAuthError(body: { error: string; error_description?: string }): OAuthError;
-  private createAuthError<T extends object>(
+  public createAuthError(body: { error: string; error_description?: string }): OAuthError;
+  public createAuthError<T extends object>(
     type: OAuthErrorType,
     error: string,
     description?: string,
     additionalData?: T,
   ): OAuthError & T;
-  private createAuthError<T extends object>(
+  public createAuthError<T extends object>(
     bodyOrType: { error: string; error_description?: string } | OAuthErrorType,
     error?: string,
     description?: string,
     additionalData?: T,
   ): OAuthError & T {
-    let err: OAuthError = new Error('EAUTH: returned error') as any;
+    const err: OAuthError = new Error('EAUTH: returned error') as any;
     err.name = 'EAUTH';
     if (bodyOrType && typeof bodyOrType === 'object' && bodyOrType.hasOwnProperty('error')) {
       // create from body
@@ -148,7 +159,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       }
     } else if (bodyOrType && typeof bodyOrType === 'object' && error) {
       // create from type
-      err.type = (bodyOrType as unknown) as OAuthErrorType;
+      err.type = bodyOrType as unknown as OAuthErrorType;
       err.error = error;
       err.description = description;
       additionalData && Object.assign(err, additionalData);
@@ -254,26 +265,24 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
-   * Get a fresh new access token with owner credentials
+   * Get a fresh new access token with given grant  type and body parameters
    */
-  public async getNewToken(username: string, password: string, saveToken: boolean = true): Promise<IOAuthToken> {
+  private async getNewToken(grantType: string, parms: any, saveToken: boolean = true): Promise<IOAuthToken> {
     if (!this.clientInfo) {
       throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
     }
     // 1: Build request
     const body = {
+      ...parms,
       client_id: this.clientInfo.clientId,
       client_secret: this.clientInfo.clientSecret,
-      grant_type: 'password',
+      grant_type: grantType,
       scope: this.clientInfo.scopeString,
-      username,
-      password,
     };
     const headers = {
       ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
       Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
     };
-
     try {
       // 2: Call oAuth API
       const data = await this.request(this.accessTokenUri, {
@@ -294,11 +303,33 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
+      const error = err as Error;
       // tslint:disable-next-line:no-console
-      console.warn('Get token failed: ', err);
-      (err as Error).name = '[oAuth] getToken failed: ' + err.name;
-      throw err;
+      console.warn('Get token failed: ', error);
+      error.name = '[oAuth] getToken failed: ' + error.name;
+      throw error;
     }
+  }
+
+  /**
+   * Get a fresh new access token with custom token
+   */
+  public async getNewTokenWithCustomToken(token: string, saveToken: boolean = true): Promise<IOAuthToken> {
+    return this.getNewToken('custom_token', { custom_token: token }, saveToken);
+  }
+
+  /**
+   * Get a fresh new access token with SAML Token
+   */
+  public async getNewTokenWithSAML(saml: string, saveToken: boolean = true): Promise<IOAuthToken | IOAuthCustomToken[]> {
+    return this.getNewToken('saml2', { assertion: saml }, saveToken);
+  }
+
+  /**
+   * Get a fresh new access token with owner credentials
+   */
+  public async getNewTokenWithUserAndPassword(username: string, password: string, saveToken: boolean = true): Promise<IOAuthToken> {
+    return this.getNewToken('password', { username, password }, saveToken);
   }
 
   /**
@@ -307,10 +338,12 @@ export class OAuth2RessourceOwnerPasswordClient {
   public async loadToken(): Promise<IOAuthToken | undefined> {
     try {
       const rawStoredToken = await AsyncStorage.getItem('token');
+      console.log('rawStoredToken =  ' + rawStoredToken);
       if (!rawStoredToken) {
         return undefined;
       }
       const storedToken = JSON.parse(rawStoredToken);
+      console.log('storedToken =  ' + storedToken);
       if (!storedToken) {
         const err = new Error('[oAuth] loadToken: Unable to parse stored token');
         throw err;
@@ -320,6 +353,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         expires_at: new Date(storedToken.expires_at),
       };
       this.generateUniqueSesionIdentifier();
+      console.log('this.token =  ' + this.token);
       return this.token!;
     } catch (err) {
       console.warn('[oAuth] loadToken: ', err);
@@ -444,9 +478,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     return this.uniqueSessionIdentifier || this.generateUniqueSesionIdentifier();
   }
   public generateUniqueSesionIdentifier() {
-    this.uniqueSessionIdentifier = Math.random()
-      .toString(36)
-      .substring(7);
+    this.uniqueSessionIdentifier = Math.random().toString(36).substring(7);
     return this.uniqueSessionIdentifier;
   }
 }
@@ -555,8 +587,8 @@ export function signURISource(URISource: ImageURISource | string): ImageURISourc
  * @param images
  */
 export function signURISourceArray(
-  URISources: Array<{ src: ImageURISource | string; alt: string }>,
-): Array<{ src: ImageURISource | string; alt: string }> {
+  URISources: { src: ImageURISource | string; alt: string }[],
+): { src: ImageURISource | string; alt: string }[] {
   return URISources.map(URISource => ({ ...URISource, src: signURISource(URISource.src) }));
 }
 
@@ -565,9 +597,7 @@ export function signURISourceArray(
 /**
  * Returns a image array with signed url requests.
  */
-export function DEPRECATED_signImagesUrls(
-  images: Array<{ src: string; alt: string }>,
-): Array<{ src: ImageURISource; alt: string }> {
+export function DEPRECATED_signImagesUrls(images: { src: string; alt: string }[]): { src: ImageURISource; alt: string }[] {
   return images.map(v => ({
     ...v,
     src: DEPRECATED_signImageURISource(v.src),

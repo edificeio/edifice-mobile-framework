@@ -1,32 +1,27 @@
-import * as React from "react";
-import { View, FlatList, TouchableOpacity, RefreshControl, Linking, Platform } from "react-native";
-import { NavigationInjectedProps } from "react-navigation";
-import { ThunkDispatch } from "redux-thunk";
-import { connect } from "react-redux";
-import I18n from "i18n-js";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, FlatList, TouchableOpacity, RefreshControl, Linking, Platform } from 'react-native';
+import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import moduleConfig from "../moduleConfig";
-import { PageView } from "../../../framework/components/page";
-import { LoadingIndicator } from "../../../framework/components/loading";
-import {
-  FakeHeader,
-  HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  HeaderRow,
-  HeaderTitle,
-} from "../../../framework/components/header";
-import { TextLight, TextSemiBold } from "../../../framework/components/text";
-import { IGlobalState } from "../../../AppStore";
-import { getPublishableBlogListAction } from "../actions";
-import { IBlog, IBlogList } from "../reducer";
-import theme from "../../../app/theme";
-import { ListItem } from "../../../framework/components/listItem";
-import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { DEPRECATED_getCurrentPlatform } from "../../../framework/util/_legacy_appConf";
-import { getAuthHeader } from "../../../infra/oauth";
-import { Icon } from "../../../framework/components/icon";
-import { EmptyScreen } from "../../../framework/components/emptyScreen";
+import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { Icon } from '~/framework/components/icon';
+import { ListItem } from '~/framework/components/listItem';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { PageView } from '~/framework/components/page';
+import { TextLight, TextSemiBold } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { computeRelativePath } from '~/framework/util/navigation';
+import { getAuthHeader } from '~/infra/oauth';
+import { getPublishableBlogListAction } from '~/modules/blog/actions';
+import moduleConfig from '~/modules/blog/moduleConfig';
+import { IBlog, IBlogList } from '~/modules/blog/reducer';
+import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
 
@@ -93,13 +88,13 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
         <HeaderRow>
           <HeaderLeft>
             <HeaderAction
-              iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
               iconSize={24}
-              onPress={() => navigation.navigate("timeline")}
+              onPress={() => navigation.dispatch(NavigationActions.back())}
             />
           </HeaderLeft>
           <HeaderCenter>
-            <HeaderTitle>{I18n.t("blog.blogSelectScreen.title")}</HeaderTitle>
+            <HeaderTitle>{I18n.t('blog.blogSelectScreen.title')}</HeaderTitle>
           </HeaderCenter>
         </HeaderRow>
       </FakeHeader>
@@ -107,7 +102,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
   }
 
   renderError() {
-    return <TextSemiBold>{"Error"}</TextSemiBold>; // ToDo: great error screen here
+    return <TextSemiBold>Error</TextSemiBold>; // ToDo: great error screen here
   }
 
   renderList() {
@@ -137,26 +132,20 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
   renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("ASSETS/images/empty-screen/blog.png")}
+        imageSrc={require('ASSETS/images/empty-screen/blog.png')}
         imgWidth={265.98}
         imgHeight={279.97}
-        title={I18n.t("blog.blogSelectScreen.emptyScreenTitle")}
-        text={I18n.t("blog.blogSelectScreen.emptyScreenText")}
-        buttonText={I18n.t("blog.blogSelectScreen.emptyScreenButton")}
+        title={I18n.t('blog.blogSelectScreen.emptyScreenTitle')}
+        text={I18n.t('blog.blogSelectScreen.emptyScreenText')}
+        buttonText={I18n.t('blog.blogSelectScreen.emptyScreenButton')}
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {
-            console.warn("Must have a platform selected to redirect the user");
+            console.warn('Must have a platform selected to redirect the user');
             return null;
           }
           const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog`;
-          Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-              Linking.openURL(url);
-            } else {
-              console.warn("[timeline] Don't know how to open URI: ", url);
-            }
-          });
+          openUrl(url);
         }}
       />
     );
@@ -166,29 +155,30 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
     const { navigation } = this.props;
     const blogShareNumber = blog.shared?.length;
     return (
-      <TouchableOpacity onPress={() => navigation.navigate("timeline/blog/create", { blog })}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/create`, navigation.state), { blog })}>
         <ListItem
           leftElement={
-            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
               <GridAvatars
                 users={[
                   blog.thumbnail
                     ? { headers: getAuthHeader(), uri: DEPRECATED_getCurrentPlatform()!.url + blog.thumbnail }
-                    : require("ASSETS/images/resource-avatar.png"),
+                    : require('ASSETS/images/resource-avatar.png'),
                 ]}
-                fallback={require("ASSETS/images/resource-avatar.png")}
+                fallback={require('ASSETS/images/resource-avatar.png')}
               />
               <View style={{ flex: 1, marginLeft: 10 }}>
                 <TextSemiBold numberOfLines={1}>{blog.title}</TextSemiBold>
                 <TextLight style={{ fontSize: 12, marginTop: 8 }}>
-                  {I18n.t(`blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? "" : "s"}`, {
+                  {I18n.t(`blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? '' : 's'}`, {
                     nb: blogShareNumber || 0,
                   })}
                 </TextLight>
               </View>
             </View>
           }
-          rightElement={<Icon name="arrow_down" color={"#868CA0"} style={{ transform: [{ rotate: "270deg" }] }} />}
+          rightElement={<Icon name="arrow_down" color="#868CA0" style={{ transform: [{ rotate: '270deg' }] }} />}
         />
       </TouchableOpacity>
     );
@@ -225,7 +215,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
       const { handleGetPublishableBlogList } = this.props;
       const blogsData = await handleGetPublishableBlogList();
       if (!blogsData) {
-        throw new Error("[doGetPublishableBlogList] failed to retrieve the publishable blog list");
+        throw new Error('[doGetPublishableBlogList] failed to retrieve the publishable blog list');
       }
       this.setState({ blogsData });
     } catch (e) {
@@ -244,12 +234,12 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
 
 const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = s => ({});
 
-const mapDispatchToProps: (
-  dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
-) => IBlogSelectScreenEventProps = (dispatch, getState) => ({
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogSelectScreenEventProps = (
+  dispatch,
+  getState,
+) => ({
   handleGetPublishableBlogList: async () => {
-    const blogs = ((await dispatch(getPublishableBlogListAction())) as unknown) as IBlogList;
+    const blogs = (await dispatch(getPublishableBlogListAction())) as unknown as IBlogList;
     return blogs;
   },
 });

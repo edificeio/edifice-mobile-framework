@@ -1,14 +1,14 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
-import { CommonStyles } from "../../../../styles/common/styles";
-import { Icon } from "../../../../ui";
-import { DialogButtonCancel, DialogButtonOk } from "../../../../ui/ConfirmDialog";
-import { ModalBox, ModalContent } from "../../../../ui/Modal";
-import { Text } from "../../../../ui/Typography";
-import { IFolder } from "../../state/initMails";
+import { IFolder } from '~/modules/zimbra/state/initMails';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
+import { ModalBox, ModalContent } from '~/ui/Modal';
+import { Text } from '~/ui/Typography';
 
 type MoveToFolderModalProps = {
   show: boolean;
@@ -24,8 +24,8 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     const { selectedFolder, selectFolder } = this.props;
     const selected = selectedFolder === id;
     const touchableStyle = selected ? [style.opacity, style.selectedItem] : style.opacity;
-    const textStyle = selected ? { color: "white", fontSize: 18 } : { fontSize: 18 };
-    const iconStyle = selected ? { color: "white", margin: 10 } : { margin: 10 };
+    const textStyle = selected ? { color: 'white', fontSize: 18 } : { fontSize: 18 };
+    const iconStyle = selected ? { color: 'white', margin: 10 } : { margin: 10 };
     return (
       <>
         <TouchableOpacity
@@ -45,44 +45,42 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     );
   };
 
-  public findMainFolderId= (name: string) => {
-    const folderInfos = this.props.folders.find(item => item.folderName === name);
+  public findMainFolderId = (name: string) => {
+    const folderInfos = this.props?.folders?.find(item => item.folderName === name);
     if (folderInfos) return folderInfos.id;
-    else return ;
+    else return '';
   };
 
   public render() {
     const { show, folders, closeModal, confirm } = this.props;
-    const inboxSubFolder = folders.find(item => item.folderName === "Inbox");
+    const inboxSubFolder = folders?.find(item => item.folderName === 'Inbox');
     return (
       <ModalBox isVisible={show}>
-        <ModalContent style={{ width: Dimensions.get("window").width - 80 }}>
+        <ModalContent style={{ width: Dimensions.get('window').width - 80 }}>
           <View style={style.containerView}>
-            <View style={{ alignSelf: "baseline", paddingBottom: 8, paddingHorizontal: 12 }}>
-              <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-move-to")}</Text>
+            <View style={{ alignSelf: 'baseline', paddingBottom: 8, paddingHorizontal: 12 }}>
+              <Text style={{ fontSize: 18 }}>{I18n.t('zimbra-move-to')}</Text>
             </View>
-            <ScrollView style={{ flexGrow: 1, height: Dimensions.get("window").width }}>
-              <View style={{ backgroundColor: "#eef7fb", width: "100%", padding: 4 }}>
-                <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-messages")}</Text>
+            <ScrollView style={{ flexGrow: 1, height: Dimensions.get('window').width }}>
+              <View style={{ backgroundColor: '#eef7fb', width: '100%', padding: 4 }}>
+                <Text style={{ fontSize: 18 }}>{I18n.t('zimbra-messages')}</Text>
               </View>
-              {this.renderOption("inbox", I18n.t("zimbra-inbox"), "inbox")}
-              {this.renderOption(this.findMainFolderId("Sent"), I18n.t("zimbra-outbox"), "send")}
-              {this.renderOption(this.findMainFolderId("Drafts"), I18n.t("zimbra-drafts"), "insert_drive_file")}
-              {this.renderOption(this.findMainFolderId("Trash"), I18n.t("zimbra-trash"), "delete")}
-              {this.renderOption(this.findMainFolderId("Junk"), I18n.t("zimbra-spams"), "delete_sweep")}
-              {inboxSubFolder !== undefined &&
-                inboxSubFolder.folders !== undefined &&
-                inboxSubFolder.folders.length > 0 && (
-                  <View>
-                    <View style={{ backgroundColor: "lightblue", width: "100%", padding: 4 }}>
-                      <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-directories")}</Text>
-                    </View>
-                    <View>{inboxSubFolder.folders.map(f => this.renderOption(f.id, f.folderName, "folder"))}</View>
+              {this.renderOption('inbox', I18n.t('zimbra-inbox'), 'inbox')}
+              {this.renderOption(this.findMainFolderId('Sent'), I18n.t('zimbra-outbox'), 'send')}
+              {this.renderOption(this.findMainFolderId('Drafts'), I18n.t('zimbra-drafts'), 'insert_drive_file')}
+              {this.renderOption(this.findMainFolderId('Trash'), I18n.t('zimbra-trash'), 'delete')}
+              {this.renderOption(this.findMainFolderId('Junk'), I18n.t('zimbra-spams'), 'delete_sweep')}
+              {inboxSubFolder !== undefined && inboxSubFolder.folders !== undefined && inboxSubFolder.folders.length > 0 && (
+                <View>
+                  <View style={{ backgroundColor: 'lightblue', width: '100%', padding: 4 }}>
+                    <Text style={{ fontSize: 18 }}>{I18n.t('zimbra-directories')}</Text>
                   </View>
-                )}
+                  <View>{inboxSubFolder.folders.map(f => this.renderOption(f.id, f.folderName, 'folder'))}</View>
+                </View>
+              )}
             </ScrollView>
-            <View style={{ flexDirection: "row-reverse", padding: 20, paddingBottom: 10 }}>
-              <DialogButtonOk label={I18n.t("zimbra-move")} onPress={confirm} />
+            <View style={{ flexDirection: 'row-reverse', padding: 20, paddingBottom: 10 }}>
+              <DialogButtonOk label={I18n.t('zimbra-move')} onPress={confirm} />
               <DialogButtonCancel onPress={() => closeModal()} />
             </View>
           </View>
@@ -95,29 +93,29 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
 const style = StyleSheet.create({
   containerView: {
     flexGrow: 1,
-    width: "100%",
+    width: '100%',
     marginTop: -25,
   },
   rowView: {
-    alignItems: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    flexDirection: 'row',
     flexGrow: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
     paddingRight: 90,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,
     borderBottomWidth: 4,
-    width: "100%",
+    width: '100%',
   },
   opacity: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingHorizontal: 5,
   },
   selectedItem: {
-    backgroundColor: "#fc8500",
+    backgroundColor: '#fc8500',
   },
   itemTextSelected: {
-    color: "white",
+    color: 'white',
   },
 });

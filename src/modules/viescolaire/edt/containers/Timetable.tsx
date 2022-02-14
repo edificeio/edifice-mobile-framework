@@ -1,29 +1,29 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View } from "react-native";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View } from 'react-native';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from "../../../../App";
-import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
-import { INavigationProps } from "../../../../types";
-import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
-import { fetchGroupListAction } from "../../viesco/actions/group";
-import { getSelectedChildStructure, getSelectedChild } from "../../viesco/state/children";
-import { getChildrenGroupsState } from "../../viesco/state/childrenGroups";
-import { getGroupsListState } from "../../viesco/state/group";
-import { getPersonnelListState } from "../../viesco/state/personnel";
-import { getSelectedStructure } from "../../viesco/state/structure";
-import { getSubjectsListState } from "../../viesco/state/subjects";
-import { fetchCourseListAction, fetchCourseListFromTeacherAction } from "../actions/courses";
-import { fetchSlotListAction } from "../actions/slots";
-import { fetchUserChildrenAction } from "../actions/userChildren";
-import Timetable from "../components/Timetable";
-import { getCoursesListState } from "../state/courses";
-import { getSlotsListState } from "../state/slots";
-import { getUserChildrenState } from "../state/userChildren";
+import { getSessionInfo } from '~/App';
+import { fetchSlotListAction } from '~/modules/viescolaire/edt/actions/slots';
+import { fetchUserChildrenAction } from '~/modules/viescolaire/edt/actions/userChildren';
+import Timetable from '~/modules/viescolaire/edt/components/Timetable';
+import { getSlotsListState } from '~/modules/viescolaire/edt/state/slots';
+import { getUserChildrenState } from '~/modules/viescolaire/edt/state/userChildren';
+import { fetchCourseListAction, fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/actions/courses';
+import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
+import { getSelectedChildStructure, getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
+import { getChildrenGroupsState } from '~/modules/viescolaire/viesco/state/childrenGroups';
+import { getCoursesListState } from '~/modules/viescolaire/viesco/state/courses';
+import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
+import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
+import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
+import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { INavigationProps } from '~/types';
+import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 export type TimetableProps = {
   courses: any;
@@ -36,15 +36,10 @@ export type TimetableProps = {
   group: string;
   teacherId: string;
   fetchChildInfos: () => void;
-  fetchChildGroups: (classes: string, student: string) => any;
-  fetchChildCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, group: string) => any;
-  fetchTeacherCourses: (
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    teacherId: string
-  ) => any;
-  fetchSlots: (structureId: string) => any;
+  fetchChildGroups: (classes: string, student: string) => void;
+  fetchChildCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, group: string) => void;
+  fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
+  fetchSlots: (structureId: string) => void;
 } & INavigationProps;
 
 export type TimetableState = {
@@ -56,11 +51,11 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
-        title: I18n.t("viesco-timetable"),
+        title: I18n.t('viesco-timetable'),
         headerLeft: () => <HeaderBackAction navigation={navigation} />,
         headerRight: () => <View />,
         headerStyle: {
-          backgroundColor: "#162EAE",
+          backgroundColor: '#162EAE',
         },
       },
       navigation,
@@ -70,7 +65,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   constructor(props) {
     super(props);
     this.state = {
-      startDate: moment().startOf("week"),
+      startDate: moment().startOf('week'),
       selectedDate: moment(),
     };
   }
@@ -78,16 +73,16 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   fetchCourses = () => {
     const { startDate } = this.state;
     const { fetchTeacherCourses, fetchChildCourses, structureId, group, teacherId } = this.props;
-    if (getSessionInfo().type === "Teacher")
-      fetchTeacherCourses(structureId, startDate, startDate.clone().endOf("week"), teacherId);
-    else fetchChildCourses(structureId, startDate, startDate.clone().endOf("week"), group);
+    if (getSessionInfo().type === 'Teacher')
+      fetchTeacherCourses(structureId, startDate, startDate.clone().endOf('week'), teacherId);
+    else fetchChildCourses(structureId, startDate, startDate.clone().endOf('week'), group);
   };
 
   initComponent = async () => {
     const { structureId, childId, childClasses, group } = this.props;
-    if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
+    if (getSessionInfo().type === 'Relative') await this.props.fetchChildInfos();
     await this.props.fetchChildGroups(childClasses, childId);
-    if (getSessionInfo().type === "Teacher" || (group && group.length > 0)) this.fetchCourses();
+    if (getSessionInfo().type === 'Teacher' || (group && group.length > 0)) this.fetchCourses();
     this.props.fetchSlots(structureId);
   };
 
@@ -97,18 +92,17 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   componentDidUpdate(prevProps, prevState) {
     const { startDate, selectedDate } = this.state;
-    const { structureId, childId, childClasses, group, fetchSlots } = this.props;
+    const { structureId, childId, group, fetchSlots } = this.props;
 
     // on selectedChild change
-    if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) this.initComponent();
+    if (prevProps.childId !== childId) this.initComponent();
 
     // on selected date change
-    if (!prevState.selectedDate.isSame(selectedDate, "day"))
-      this.setState({ startDate: selectedDate.clone().startOf("week") });
+    if (!prevState.selectedDate.isSame(selectedDate, 'day')) this.setState({ startDate: selectedDate.clone().startOf('week') });
 
     // on week, structure, group change
     if (
-      !prevState.startDate.isSame(startDate, "day") ||
+      !prevState.startDate.isSame(startDate, 'day') ||
       structureId !== prevProps.structureId ||
       group.length !== prevProps.group.length
     )
@@ -121,7 +115,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   updateSelectedDate = (newDate: moment.Moment) => {
     this.setState({
       selectedDate: newDate,
-      startDate: newDate.clone().startOf("week"),
+      startDate: newDate.clone().startOf('week'),
     });
   };
 
@@ -139,16 +133,16 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
 // if no groups are found, then take className
 const filterGroups = (childClasses, initialGroups) => {
-  let group = initialGroups.find(item => item.id === childClasses);
-  return group && group.name !== undefined ? group.name : "";
+  const group = initialGroups.find(item => item.id === childClasses);
+  return group && group.name !== undefined ? group.name : '';
 };
 
 const mapStateToProps = (state: any): any => {
-  let childId: string | undefined = "";
-  let childClasses: string = "";
-  let group = [] as string[];
+  let childId: string | undefined = '';
+  let childClasses: string = '';
+  const group = [] as string[];
   // get groups and childClasses
-  if (getSessionInfo().type === "Student") {
+  if (getSessionInfo().type === 'Student') {
     childId = getSessionInfo().userId;
     childClasses = getSessionInfo().classes[0];
     const childGroups = getGroupsListState(state).data;
@@ -158,7 +152,7 @@ const mapStateToProps = (state: any): any => {
         groupsStructures?.nameGroups?.forEach(item => group.push(item));
       });
     } else group.push(getSessionInfo().realClassesNames[0]);
-  } else if (getSessionInfo().type === "Relative") {
+  } else if (getSessionInfo().type === 'Relative') {
     childId = getSelectedChild(state)?.id;
     childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
     const childGroups = getGroupsListState(state);
@@ -168,7 +162,7 @@ const mapStateToProps = (state: any): any => {
         groupsStructures?.nameGroups?.forEach(item => group.push(item));
       });
     } else {
-      let initialGroups = getChildrenGroupsState(state).data;
+      const initialGroups = getChildrenGroupsState(state).data;
       group.push(filterGroups(childClasses, initialGroups));
     }
   }
@@ -179,9 +173,9 @@ const mapStateToProps = (state: any): any => {
     teachers: getPersonnelListState(state),
     slots: getSlotsListState(state),
     structureId:
-      getSessionInfo().type === "Student"
+      getSessionInfo().type === 'Student'
         ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
-        : getSessionInfo().type === "Relative"
+        : getSessionInfo().type === 'Relative'
         ? getSelectedChildStructure(state).id
         : getSelectedStructure(state),
     childId,

@@ -1,16 +1,16 @@
-import * as React from "react";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { connect } from 'react-redux';
 
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { activationAccount, cancelActivationAccount, initActivationAccount } from "../actions/activation";
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { activationAccount, cancelActivationAccount, initActivationAccount } from '~/user/actions/activation';
 import {
   ActivationPage,
   IActivationPageDataProps,
   IActivationPageEventProps,
   IActivationPageProps,
-} from "../components/ActivationPage";
-import userConfig from "../config";
-import { IActivationState } from "../reducers/activation";
+} from '~/user/components/ActivationPage';
+import userConfig from '~/user/config';
+import { IActivationState } from '~/user/reducers/activation';
 
 const mapStateToProps: (state: any) => IActivationPageDataProps & { version: number } = state => {
   const activationState: IActivationState = state[userConfig.reducerName].activation;
@@ -20,7 +20,7 @@ const mapStateToProps: (state: any) => IActivationPageDataProps & { version: num
     contextState: activationState.contextState,
     email: activationState.submitted.email,
     emailRequired: activationState.context.mandatory.mail,
-    externalError: activationState.submitError || "",
+    externalError: activationState.submitError || '',
     login: activationState.userinfo.login,
     password: activationState.submitted.password,
     passwordRegex: activationState.context.passwordRegex,
@@ -45,16 +45,13 @@ const mapDispatchToProps: (dispatch) => IActivationPageEventProps = dispatch => 
     },
   };
 };
-class ActivationPageContainer extends React.PureComponent<
-  IActivationPageProps & { dispatch: any; version: number },
-  {}
-> {
+class ActivationPageContainer extends React.PureComponent<IActivationPageProps & { dispatch: any; version: number }, object> {
   public render() {
     // use the key to recompute state from props
-    return <ActivationPage {...this.props} key={this.props.version + ""} />;
+    return <ActivationPage {...this.props} key={this.props.version + ''} />;
   }
 }
 
 const ConnectedActivationPage = connect(mapStateToProps, mapDispatchToProps)(ActivationPageContainer);
 
-export default withViewTracking("auth/activation")(ConnectedActivationPage);
+export default withViewTracking('auth/activation')(ConnectedActivationPage);

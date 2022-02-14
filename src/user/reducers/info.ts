@@ -1,12 +1,11 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { actionTypeLoggedIn, actionTypeLoggedOut } from "../actions/actionTypes/login";
-import { actionTypeProfileUpdateSuccess, actionTypeProfileUpdateError } from "../actions/profile";
-import { createSessionReducer } from "../../infra/redux/reducerFactory";
-import { initialState } from "../state/info";
+import { createSessionReducer } from '~/infra/redux/reducerFactory';
+import { actionTypeLoggedIn, actionTypeLoggedOut } from '~/user/actions/actionTypes/login';
+import { actionTypeProfileUpdateSuccess, actionTypeProfileUpdateError } from '~/user/actions/profile';
+import { initialState } from '~/user/state/info';
 
 export default createSessionReducer(initialState, {
-
   [actionTypeLoggedIn]: (state, action) => ({
     ...initialState,
     ...action.userPublicInfo,
@@ -14,7 +13,7 @@ export default createSessionReducer(initialState, {
     ...action.userbook,
     birthDate: moment(action.userbook.birthDate),
     lastLogin: moment(action.userdata.lastLogin),
-    modified: moment(action.userdata.modified)
+    modified: moment(action.userdata.modified),
   }),
 
   [actionTypeLoggedOut]: () => initialState, // ToDo : This is a session reducer. This is not required. Just need to flush session.
@@ -22,12 +21,11 @@ export default createSessionReducer(initialState, {
   [actionTypeProfileUpdateSuccess]: (state, action) => ({
     ...state,
     ...action.updatedProfileValues,
-    modified: moment()
+    modified: moment(),
   }),
 
   [actionTypeProfileUpdateError]: (state, action) => ({
     ...state,
-    forceRefreshKey: state.forceRefreshKey + 1
-  })
-
-})
+    forceRefreshKey: state.forceRefreshKey + 1,
+  }),
+});

@@ -1,6 +1,7 @@
-import { IId } from "./iid";
-import { IFile, IItem } from "../workspace/types";
-import {IItems} from "../workspace/reducers/select";
+import { IId } from './iid';
+
+import { IItems } from '~/workspace/reducers/select';
+import { IFile, IItem } from '~/workspace/types';
 
 export enum EVENT_TYPE {
   DOWNLOAD,

@@ -1,11 +1,13 @@
-import style from "glamorous-native";
-import * as React from "react";
-import { Row, RowProperties } from ".";
-import { CommonStyles } from "../styles/common/styles";
-import { Icon } from "./icons/Icon";
-import { View, ActivityIndicator, ViewStyle, TextStyle } from "react-native";
-import styles from "../styles";
-import { Weight } from "./Typography";
+import style from 'glamorous-native';
+import * as React from 'react';
+import { View, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
+
+import { Row, RowProperties } from '.';
+import { Weight } from './Typography';
+import { Icon } from './icons/Icon';
+
+import styles from '~/styles';
+import { CommonStyles } from '~/styles/common/styles';
 
 export interface ValidTextIconProps {
   disabled?: boolean;
@@ -17,7 +19,7 @@ export interface ValidTextIconProps {
   title?: string;
   whiteSpace?: string;
   keyboardShow?: boolean;
-  loading?: boolean; // FIXME? Loading shouldn't be in state as it can change over time ?
+  loading?: boolean;
   customButtonStyle?: ViewStyle;
   customTextStyle?: TextStyle;
 }
@@ -30,14 +32,14 @@ const Disable = () => <View style={styles.Disable} />;
 
 export const FlatButton = ({
   disabled = false,
-  leftName = "",
+  leftName = '',
   onPress,
-  rightName = "",
-  title = "",
-  whiteSpace = " ",
+  rightName = '',
+  title = '',
+  whiteSpace = ' ',
   loading = false,
   customButtonStyle,
-  customTextStyle
+  customTextStyle,
 }: ValidTextIconProps) => {
   if (loading) {
     return <ActivityIndicator size="large" color={CommonStyles.primary} />;
@@ -60,26 +62,20 @@ export const FlatButton = ({
 };
 
 const ValidStyle = (props: RowProperties) => (
-  <Row
-    alignItems="center"
-    justifyContent="center"
-    height={38}
-    marginTop={0}
-    {...props}
-  />
+  <Row alignItems="center" justifyContent="center" height={38} marginTop={0} {...props} />
 );
 
 const ButtonStyleComponent = style.touchableOpacity(
   {
     borderRadius: 38 * 0.5,
     paddingHorizontal: 36,
-    paddingVertical: 9
+    paddingVertical: 9,
   },
   ({ disabled }) => ({
-    backgroundColor: disabled ? "transparent" : CommonStyles.actionColor,
+    backgroundColor: disabled ? 'transparent' : CommonStyles.actionColor,
     borderColor: disabled ? CommonStyles.actionColor : CommonStyles.lightGrey,
-    borderWidth: disabled ? 1 : 0
-  })
+    borderWidth: disabled ? 1 : 0,
+  }),
 );
 
 const TextStyleComponent = style.text(
@@ -87,9 +83,9 @@ const TextStyleComponent = style.text(
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 14,
     fontWeight: Weight.SemiBold,
-    textAlignVertical: "center"
+    textAlignVertical: 'center',
   },
   ({ disabled }) => ({
-    color: disabled ? CommonStyles.actionColor : CommonStyles.inverseColor
-  })
+    color: disabled ? CommonStyles.actionColor : CommonStyles.inverseColor,
+  }),
 );

@@ -1,16 +1,18 @@
-import { ImageURISource } from "react-native";
-import { AnyAction } from "redux";
-import { IPublishableBlogsState } from "./state/publishableBlogs";
-import { IBlogCommentListState } from "./state/commentList";
-import * as reducerActions from "./reducerActions";
-import publishableBlogsReducer, { publishStatusReducer } from "./reducers/publishableBlogs";
-import blogCommentsReducer from "./reducers/blogCommentList";
-import flashMessageList from "./reducers/flashMessageList";
-import { createEndSessionActionType } from "../infra/redux/reducerFactory";
+import { ImageURISource } from 'react-native';
+import { AnyAction } from 'redux';
+
+import * as reducerActions from './reducerActions';
+import blogCommentsReducer from './reducers/blogCommentList';
+import flashMessageList from './reducers/flashMessageList';
+import publishableBlogsReducer, { publishStatusReducer } from './reducers/publishableBlogs';
+import { IBlogCommentListState } from './state/commentList';
+import { IPublishableBlogsState } from './state/publishableBlogs';
+
+import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 
 export interface IMediaModel {
-  type: "image" | "video" | "audio" | "iframe" | "attachment";
-  src: ImageURISource | { src: ImageURISource; alt: string;};
+  type: 'image' | 'video' | 'audio' | 'iframe' | 'attachment';
+  src: ImageURISource | { src: ImageURISource; alt: string };
   posterSource?: ImageURISource;
   ratio?: number;
   name?: string;
@@ -38,7 +40,7 @@ export interface IFlashMessageModel {
     de?: string;
     pt?: string;
     it?: string;
-    null: string
+    null: string;
   };
   color: string | null;
   customColor: string | null;
@@ -56,7 +58,7 @@ export interface INewsState {
   fetchFailed: boolean;
   selectedBlogComments: IBlogCommentListState;
   publishableBlogs: IPublishableBlogsState;
-  publishStatus: { publishing: boolean }
+  publishStatus: { publishing: boolean };
 }
 
 const initialState: INewsState = {
@@ -72,18 +74,15 @@ const initialState: INewsState = {
     data: [],
     isPristine: true,
     isFetching: false,
-    error: undefined
+    error: undefined,
   },
   publishStatus: {
-    publishing: false
-  }
+    publishing: false,
+  },
 };
 
-export default (
-  state = initialState,
-  action: AnyAction
-) => {
-  for (let actionType in reducerActions) {
+export default (state = initialState, action: AnyAction) => {
+  for (const actionType in reducerActions) {
     if (action.type === actionType) {
       return reducerActions[actionType](state, action);
     }

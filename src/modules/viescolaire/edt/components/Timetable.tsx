@@ -1,15 +1,15 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
-import { getSessionInfo } from "../../../../App";
-import { Icon, Loading } from "../../../../ui";
-import Calendar from "../../../../ui/Calendar";
-import DateTimePicker from "../../../../ui/DateTimePicker";
-import { TextBold } from "../../../../ui/Typography";
-import ChildPicker from "../../viesco/containers/ChildPicker";
-import { TimetableProps, TimetableState } from "../containers/Timetable";
+import { getSessionInfo } from '~/App';
+import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
+import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import { Icon, Loading } from '~/ui';
+import Calendar from '~/ui/Calendar';
+import DateTimePicker from '~/ui/DateTimePicker';
+import { TextBold } from '~/ui/Typography';
 
 const adaptCourses = (courses, teachers) => {
   return courses.map(c => ({
@@ -18,8 +18,7 @@ const adaptCourses = (courses, teachers) => {
   }));
 };
 
-type TimetableComponentProps = TimetableProps &
-  TimetableState & { updateSelectedDate: (newDate: moment.Moment) => void };
+type TimetableComponentProps = TimetableProps & TimetableState & { updateSelectedDate: (newDate: moment.Moment) => void };
 
 export default class Timetable extends React.PureComponent<TimetableComponentProps> {
   renderChildCourse = course => {
@@ -33,7 +32,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
           <View style={style.roomView}>
             <Icon name="pin_drop" size={16} />
             <Text>
-              &ensp;{I18n.t("viesco-room")}&nbsp;{course.roomLabels && course.roomLabels[0]}
+              &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
             </Text>
           </View>
         )}
@@ -56,7 +55,9 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
         {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
           <View style={style.roomView}>
             <Icon name="pin_drop" size={16} />
-            <Text>&ensp;{I18n.t("viesco-room")}&nbsp;{course.roomLabels && course.roomLabels[0]}</Text>
+            <Text>
+              &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
+            </Text>
           </View>
         )}
       </View>
@@ -68,7 +69,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={style.courseView}>
         <View>
-          {getSessionInfo().type === "Teacher" ? (
+          {getSessionInfo().type === 'Teacher' ? (
             <View style={style.infoView}>
               <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
               <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
@@ -78,9 +79,11 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
               <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
               <Text numberOfLines={1}>{course.teacher}</Text>
               {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: 'row' }}>
                   <Icon name="pin_drop" size={16} />
-                  <Text>&ensp;{I18n.t("viesco-room")}&nbsp;{course.roomLabels && course.roomLabels[0]}</Text>
+                  <Text>
+                    &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
+                  </Text>
                 </View>
               )}
             </>
@@ -94,9 +97,9 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const { startDate, selectedDate, courses, teachers, slots, updateSelectedDate } = this.props;
     return (
       <View style={style.refreshContainer}>
-        {getSessionInfo().type === "Relative" && <ChildPicker />}
+        {getSessionInfo().type === 'Relative' && <ChildPicker />}
         <View style={style.weekPickerView}>
-          <Text>{I18n.t("viesco-edt-week-of")}</Text>
+          <Text>{I18n.t('viesco-edt-week-of')}</Text>
           <View>
             <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#162EAE" />
           </View>
@@ -108,7 +111,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
             <Calendar
               startDate={startDate}
               data={adaptCourses(courses.data, teachers.data)}
-              renderElement={getSessionInfo().type === "Teacher" ? this.renderTeacherCourse : this.renderChildCourse}
+              renderElement={getSessionInfo().type === 'Teacher' ? this.renderTeacherCourse : this.renderChildCourse}
               renderHalf={this.renderHalf}
               numberOfDays={6}
               slotHeight={70}
@@ -126,26 +129,26 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
 
 const style = StyleSheet.create({
   refreshContainer: {
-    height: "100%",
+    height: '100%',
     zIndex: 0,
   },
   calendarContainer: { height: 1, flexGrow: 1 },
   courseView: {
-    flexDirection: "row",
+    flexDirection: 'row',
     padding: 5,
-    height: "100%",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#FFF",
+    height: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
   },
-  subjectView: { maxWidth: "56%" },
-  roomView: { flexDirection: "row", alignItems: "center", paddingHorizontal: 15 },
+  subjectView: { maxWidth: '56%' },
+  roomView: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15 },
   weekPickerView: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderStyle: "solid",
-    borderColor: "rgba(0, 0, 0, 0)",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderStyle: 'solid',
+    borderColor: 'rgba(0, 0, 0, 0)',
     borderWidth: 1,
     paddingTop: 5,
   },

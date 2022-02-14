@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { signatureService } from "../service/signature";
-import { ISignature, actionTypes } from "../state/signature";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { signatureService } from '~/modules/zimbra/service/signature';
+import { ISignature, actionTypes } from '~/modules/zimbra/state/signature';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

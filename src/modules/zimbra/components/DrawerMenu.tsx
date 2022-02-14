@@ -1,16 +1,17 @@
-import I18n from "i18n-js";
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
-import { NavigationDrawerProp } from "react-navigation-drawer";
+import I18n from 'i18n-js';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
+import { NavigationDrawerProp } from 'react-navigation-drawer';
 
-import { Icon } from "../../../ui";
-import { PageContainer } from "../../../ui/ContainerContent";
-import { Text } from "../../../ui/Typography";
-import CreateFolderModal from "../containers/CreateFolderModal";
-import { IFolder, IQuota } from "../state/initMails";
-import { IRootFolderList } from "../state/rootFolders";
-import DrawerOption from "./DrawerOption";
+import DrawerOption from './DrawerOption';
+
+import CreateFolderModal from '~/modules/zimbra/containers/CreateFolderModal';
+import { IFolder, IQuota } from '~/modules/zimbra/state/initMails';
+import { IRootFolderList } from '~/modules/zimbra/state/rootFolders';
+import { Icon } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import { Text } from '~/ui/Typography';
 
 type DrawerMenuProps = {
   activeItemKey: string;
@@ -50,24 +51,24 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
 
   getCurrentFolder = state => {
-    if (this.props.activeItemKey !== "folder") return undefined;
-    const folderState = state.routes.find(r => r.key === "folder");
+    if (this.props.activeItemKey !== 'folder' || !state.routes) return undefined;
+    const folderState = state.routes.find(r => r.key === 'folder');
     if (folderState.params === undefined) return undefined;
     return folderState.params.folderName;
   };
 
   findFolder = (folderName: string) => {
-    if (this.props.folders !== undefined && this.props.folders.length > 0) {
+    if (this.props.folders && this.props.folders.length > 0) {
       const folderInfos = this.props.folders.find(item => item.folderName === folderName);
       if (folderInfos !== undefined) return folderInfos;
     }
-    return { id: "", folderName: "", path: "", unread: 0, count: 0, folders: [] };
+    return { id: '', folderName: '', path: '', unread: 0, count: 0, folders: [] };
   };
 
   renderStorage = () => {
     let quota = 0 as number;
     let storage = 0 as number;
-    let unit = "Mo" as string;
+    let unit = 'Mo' as string;
     let storagePercent = 20 as number;
     if (Number(this.props.quota.quota) > 0) {
       quota = Number(this.props.quota.quota) / (1024 * 1024);
@@ -76,7 +77,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       if (quota > 2000) {
         quota = Math.round((quota / 1024) * 10) / 10;
         storage = Math.round((storage / 1024) * 10) / 10;
-        unit = "Go";
+        unit = 'Go';
       } else {
         quota = Math.round(quota);
         storage = Math.round(storage);
@@ -89,7 +90,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     return (
       <View style={style.loadBar}>
         <View style={[style.loadBarPercent, { width: `${storagePercent}%` }]}>
-          <Text style={{ textAlign: "center", color: "white" }}>
+          <Text style={{ textAlign: 'center', color: 'white' }}>
             {storage}&ensp;{unit}
           </Text>
         </View>
@@ -100,7 +101,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   renderDrawerFolders = () => {
     const { navigation } = this.props;
     const currentFolder = this.getCurrentFolder(this.props.navigation.state);
-    const inboxFolder: IFolder = this.findFolder("Inbox");
+    const inboxFolder: IFolder = this.findFolder('Inbox');
     return (
       <View>
         {inboxFolder !== undefined &&
@@ -112,7 +113,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               iconName="folder"
               label={folder.folderName}
               navigate={() => {
-                navigation.navigate("folder", { key: folder.folderName, folderName: folder.folderName });
+                navigation.navigate('folder', { key: folder.folderName, folderName: folder.folderName });
                 navigation.closeDrawer();
               }}
               count={folder.unread}
@@ -127,37 +128,37 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     return (
       <View>
         <DrawerOption
-          selected={this.isCurrentScreen("inbox")}
+          selected={this.isCurrentScreen('inbox')}
           iconName="inbox"
-          label={I18n.t("zimbra-inbox")}
-          navigate={() => navigation.navigate("inbox", { key: "inbox", folderName: undefined })}
-          count={this.findFolder("Inbox").unread}
+          label={I18n.t('zimbra-inbox')}
+          navigate={() => navigation.navigate('inbox', { key: 'inbox', folderName: undefined })}
+          count={this.findFolder('Inbox').unread}
         />
         <DrawerOption
-          selected={this.isCurrentScreen("sendMessages")}
+          selected={this.isCurrentScreen('sendMessages')}
           iconName="send"
-          label={I18n.t("zimbra-outbox")}
-          navigate={() => navigation.navigate("sendMessages", { key: "sendMessages", folderName: undefined })}
+          label={I18n.t('zimbra-outbox')}
+          navigate={() => navigation.navigate('sendMessages', { key: 'sendMessages', folderName: undefined })}
         />
         <DrawerOption
-          selected={this.isCurrentScreen("drafts")}
+          selected={this.isCurrentScreen('drafts')}
           iconName="insert_drive_file"
-          label={I18n.t("zimbra-drafts")}
-          navigate={() => navigation.navigate("drafts", { key: "drafts", folderName: undefined })}
-          count={this.findFolder("Drafts").count}
+          label={I18n.t('zimbra-drafts')}
+          navigate={() => navigation.navigate('drafts', { key: 'drafts', folderName: undefined })}
+          count={this.findFolder('Drafts').count}
         />
         <DrawerOption
-          selected={this.isCurrentScreen("trash")}
+          selected={this.isCurrentScreen('trash')}
           iconName="delete"
-          label={I18n.t("zimbra-trash")}
-          navigate={() => navigation.navigate("trash", { key: "trash", folderName: undefined })}
+          label={I18n.t('zimbra-trash')}
+          navigate={() => navigation.navigate('trash', { key: 'trash', folderName: undefined })}
         />
         <DrawerOption
-          selected={this.isCurrentScreen("spams")}
+          selected={this.isCurrentScreen('spams')}
           iconName="delete_sweep"
-          label={I18n.t("zimbra-spams")}
-          navigate={() => navigation.navigate("spams", { key: "spams", folderName: undefined })}
-          count={this.findFolder("Junk").unread}
+          label={I18n.t('zimbra-spams')}
+          navigate={() => navigation.navigate('spams', { key: 'spams', folderName: undefined })}
+          count={this.findFolder('Junk').unread}
         />
       </View>
     );
@@ -168,27 +169,25 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       <PageContainer style={style.container}>
         <ScrollView>
           <View style={style.labelContainer}>
-            <Text style={style.labelText}>{I18n.t("zimbra-messages")}</Text>
+            <Text style={style.labelText}>{I18n.t('zimbra-messages')}</Text>
           </View>
           {this.renderDrawerMessages()}
           <View style={style.labelContainer}>
-            <Text style={style.labelText}>{I18n.t("zimbra-directories")}</Text>
+            <Text style={style.labelText}>{I18n.t('zimbra-directories')}</Text>
           </View>
           {this.renderDrawerFolders()}
           <View style={style.drawerBottom}>
-            <TouchableOpacity
-              onPress={this.onFolderCreationModalShow}
-              style={[style.labelContainer, { marginBottom: 2 }]}>
+            <TouchableOpacity onPress={this.onFolderCreationModalShow} style={[style.labelContainer, { marginBottom: 2 }]}>
               <Icon size={22} name="create_new_folder" />
-              <Text style={[style.labelText, { justifyContent: "center", marginBottom: 2 }]}>
-                {I18n.t("zimbra-create-directory")}
+              <Text style={[style.labelText, { justifyContent: 'center', marginBottom: 2 }]}>
+                {I18n.t('zimbra-create-directory')}
               </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
         <View style={style.drawerBottom}>
           <View style={style.labelContainer}>
-            <Text style={[style.labelText, { justifyContent: "center" }]}>{I18n.t("zimbra-storage")}</Text>
+            <Text style={[style.labelText, { justifyContent: 'center' }]}>{I18n.t('zimbra-storage')}</Text>
           </View>
           {this.renderStorage()}
         </View>
@@ -200,31 +199,31 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
 const style = StyleSheet.create({
   labelContainer: {
-    backgroundColor: "#eef7fb",
+    backgroundColor: '#eef7fb',
     paddingHorizontal: 5,
     paddingVertical: 10,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   labelText: {
     fontSize: 18,
     paddingLeft: 10,
   },
   container: {
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF',
   },
   loadBar: {
-    backgroundColor: "lightgrey",
-    width: "100%",
+    backgroundColor: 'lightgrey',
+    width: '100%',
     height: 20,
   },
   loadBarPercent: {
-    backgroundColor: "#444",
-    height: "100%",
+    backgroundColor: '#444',
+    height: '100%',
   },
   drawerBottom: {
     flexGrow: 1,
-    flexDirection: "column",
-    justifyContent: "flex-end",
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
   },
 });

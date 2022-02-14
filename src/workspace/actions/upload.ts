@@ -1,15 +1,17 @@
 // require the module
-import { Platform } from "react-native";
-import getPath from "@flyerhq/react-native-android-uri-path";
-import { asyncActionTypes } from "../../infra/redux/async";
-import config from "../config";
-import { formatResults, uploadDocumentAction } from "./helpers/documents";
-import { ContentUri } from "../types";
-import { Trackers } from "../../framework/util/tracker";
+import getPath from '@flyerhq/react-native-android-uri-path';
+import { Platform } from 'react-native';
+
+import { formatResults, uploadDocumentAction } from './helpers/documents';
+
+import { Trackers } from '~/framework/util/tracker';
+import { asyncActionTypes } from '~/infra/redux/async';
+import config from '~/workspace/config';
+import { ContentUri } from '~/workspace/types';
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
-export const actionTypesUpload = asyncActionTypes(config.createActionType("WORKSPACE_UPLOAD"));
+export const actionTypesUpload = asyncActionTypes(config.createActionType('WORKSPACE_UPLOAD'));
 
 export function uploadRequested(parentId) {
   return {
@@ -53,16 +55,14 @@ export function uploadAction(parentId: string, uriContent: ContentUri[] | Conten
       for (uriContent of content) {
         uriContent.uri = Platform.select({
           android: getPath(uriContent.uri),
-          default: decodeURI(
-            uriContent.uri.indexOf("file://") > -1 ? uriContent.uri.split("file://")[1] : uriContent.uri
-          ),
+          default: decodeURI(uriContent.uri.indexOf('file://') > -1 ? uriContent.uri.split('file://')[1] : uriContent.uri),
         });
       }
       dispatch(uploadRequested(parentId));
       const response = await dispatch(uploadDocumentAction(content, parentId));
       const data = response.map(item => JSON.parse(item));
       dispatch(uploadReceived(parentId, formatResults(data)));
-      doTrack && Trackers.trackEvent("Workspace", "UPLOAD");
+      doTrack && Trackers.trackEvent('Workspace', 'UPLOAD');
     } catch (ex) {
       console.log(ex);
       dispatch(uploadError(parentId, ex));

@@ -1,9 +1,10 @@
-import * as React from "react";
-import { connect } from "react-redux";
-import { setInOwnerWorkspace } from "../../navigation/NavigationService";
-import { contentUriAction } from "../actions/contentUri";
-import { uploadAction } from "../actions/upload";
-import { Trackers } from "../../framework/util/tracker";
+import * as React from 'react';
+import { connect } from 'react-redux';
+
+import { Trackers } from '~/framework/util/tracker';
+import { setInOwnerWorkspace } from '~/navigation/NavigationService';
+import { contentUriAction } from '~/workspace/actions/contentUri';
+import { uploadAction } from '~/workspace/actions/upload';
 
 export interface IProps {
   navigation: any;
@@ -15,30 +16,29 @@ export interface IProps {
 // intent managment
 function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
   return class extends React.PureComponent<T> {
-
     public componentDidMount() {
       this.handleIntent();
     }
 
     public componentDidUpdate() {
-      this.handleIntent()
+      this.handleIntent();
     }
 
     private handleIntent() {
       const { navigation, dispatch } = this.props;
-      const filterId = navigation.getParam("filter");
-      const parentId = navigation.getParam("parentId");
+      const filterId = navigation.getParam('filter');
+      const parentId = navigation.getParam('parentId');
 
       // signal we are in owner workspace
-      setInOwnerWorkspace(filterId === "owner");
+      setInOwnerWorkspace(filterId === 'owner');
 
-      if (filterId === "owner") {
+      if (filterId === 'owner') {
         const { contentUri } = this.props;
 
         if (contentUri && contentUri.length) {
           dispatch(contentUriAction(null));
           dispatch(uploadAction(parentId, contentUri, false));
-          Trackers.trackEvent("Workspace", "SHARE FROM");
+          Trackers.trackEvent('Workspace', 'SHARE FROM');
         }
       }
     }

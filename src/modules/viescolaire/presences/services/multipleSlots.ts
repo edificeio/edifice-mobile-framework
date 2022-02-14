@@ -1,5 +1,5 @@
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IMultipleSlots } from "../state/multipleSlots";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IMultipleSlots } from '~/modules/viescolaire/presences/state/multipleSlots';
 
 export type IMultipleSlotsBackend = {
   allow_multiple_slots: boolean;

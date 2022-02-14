@@ -1,13 +1,10 @@
-import style from "glamorous-native";
-import I18n from "i18n-js";
-import * as React from "react";
-import { ModalContent, ModalBox, ModalContentBlock } from "../../ui/Modal";
-import { LightP, Paragraph } from "../../ui/Typography";
-import { ButtonsOkCancel } from "../../ui";
-import {
-  ButtonsOkOnly,
-  ButtonsOkCancelReverse
-} from "../../ui/ButtonsOkCancel";
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
+
+import { ButtonsOkOnly, ButtonsOkCancelReverse } from '~/ui/ButtonsOkCancel';
+import { ModalContent, ModalBox, ModalContentBlock } from '~/ui/Modal';
+import { LightP, Paragraph } from '~/ui/Typography';
 
 export default function VersionModal(props: {
   version: string;
@@ -25,18 +22,15 @@ export default function VersionModal(props: {
       <ModalBox backdropOpacity={0.5} isVisible={visibility}>
         <ModalContent>
           <ModalContentBlock>
-            <LightP>{I18n.t("common-VersionTitle")}</LightP>
+            <LightP>{I18n.t('common-VersionTitle')}</LightP>
           </ModalContentBlock>
           <ModalContentBlock>
-            <Paragraph style={{ textAlign: "center", paddingTop: 12 }}>
-              {I18n.t("common-VersionContentMandatory", { version })}
+            <Paragraph style={{ textAlign: 'center', paddingTop: 12 }}>
+              {I18n.t('common-VersionContentMandatory', { version })}
             </Paragraph>
           </ModalContentBlock>
           <ModalContentBlock>
-            <ButtonsOkOnly
-              onValid={onSubmit}
-              title={I18n.t("common-VersionUpdate")}
-            />
+            <ButtonsOkOnly onValid={onSubmit} title={I18n.t('common-VersionUpdate')} />
           </ModalContentBlock>
         </ModalContent>
       </ModalBox>
@@ -46,19 +40,17 @@ export default function VersionModal(props: {
       <ModalBox backdropOpacity={0.5} isVisible={visibility}>
         <ModalContent>
           <ModalContentBlock>
-            <LightP>{I18n.t("common-VersionTitle")}</LightP>
+            <LightP>{I18n.t('common-VersionTitle')}</LightP>
           </ModalContentBlock>
           <ModalContentBlock>
-            <Paragraph style={{ textAlign: "center", paddingTop: 12 }}>
-              {I18n.t("common-VersionContent", { version })}
-            </Paragraph>
+            <Paragraph style={{ textAlign: 'center', paddingTop: 12 }}>{I18n.t('common-VersionContent', { version })}</Paragraph>
           </ModalContentBlock>
           <ModalContentBlock>
             <ButtonsOkCancelReverse
               onCancel={onCancel}
               onValid={onSubmit}
-              cancelText={I18n.t("common-VersionSkip")}
-              title={I18n.t("common-VersionUpdate")}
+              cancelText={I18n.t('common-VersionSkip')}
+              title={I18n.t('common-VersionUpdate')}
             />
           </ModalContentBlock>
         </ModalContent>

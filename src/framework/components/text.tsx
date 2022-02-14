@@ -53,25 +53,27 @@ export const FontStyle = Platform.select({
     }
 })! as { [key in FontStyleKey]: TextStyle };
 
-type TextColorStyleKey = 'Action' | 'Error' | 'Warning' | 'Inverse' | 'Light' | 'Heavy' | 'Normal';
+type TextColorStyleKey = 'Action' | 'Important' | 'Error' | 'Warning' | 'Inverse' | 'Light' | 'Heavy' | 'Normal';
 export const TextColorStyle = {
-    Action: { color: theme.color.secondary.regular },
-    Error: { color: theme.color.failure },
-    Warning: { color: theme.color.warning },
-    Inverse: { color: theme.color.text.inverse },
-    Light: { color: theme.color.text.light },
-    Heavy: { color: theme.color.text.heavy },
-    Normal: { color: theme.color.text.regular }
+  Action: { color: theme.color.secondary.regular },
+  Important: { color: theme.color.primary.regular },
+  Error: { color: theme.color.failure },
+  Warning: { color: theme.color.warning },
+  Inverse: { color: theme.color.text.inverse },
+  Light: { color: theme.color.text.light },
+  Heavy: { color: theme.color.text.heavy },
+  Normal: { color: theme.color.text.regular },
 } as { [key in TextColorStyleKey]: TextStyle };
 
 export const rem = (value: number) => baseFontSize * value;
 export const remlh = (value: number) => baseLineHeight * value;
 export const remStyle = (value: number) => ({ fontSize: rem(value), lineHeight: remlh(value) });
-type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'Big' | 'Huge';
+type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'Big' | 'Huge';
 export const TextSizeStyle = {
     Tiny: remStyle(10 / 14),
     Small: remStyle(12 / 14),
     Normal: remStyle(1),
+    SlightBig: remStyle(16 / 14),
     Big: remStyle(20 / 14),
     Huge: remStyle(2),
 } as { [key in TextSizeStyleKey]: TextStyle };

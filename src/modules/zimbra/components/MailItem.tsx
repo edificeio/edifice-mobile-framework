@@ -1,28 +1,17 @@
-import style from "glamorous-native";
-import I18n from "i18n-js";
-import * as React from "react";
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
 
-import { getSessionInfo } from "../../../App";
-import { CommonStyles } from "../../../styles/common/styles";
-import { BadgeAvatar } from "../../../ui/BadgeAvatar";
-import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from "../../../ui/ContainerContent";
-import { DateView } from "../../../ui/DateView";
-import { FontStyle } from "../../../framework/components/text";
+import { getSessionInfo } from '~/App';
+import { FontStyle } from '~/framework/components/text';
+import { CommonStyles } from '~/styles/common/styles';
+import { BadgeAvatar } from '~/ui/BadgeAvatar';
+import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from '~/ui/ContainerContent';
+import { DateView } from '~/ui/DateView';
 
 //TODO extract mail-specific field in order to make this component dumb
 
-export default ({
-  id,
-  subject,
-  date,
-  displayNames,
-  unread,
-  onPress,
-  to,
-  from,
-  cc,
-  ...others
-}) => {
+export default ({ id, subject, date, displayNames, unread, onPress, to, from, cc, ...others }) => {
   return (
     <ListItem nb={unread} onPress={() => onPress(id, displayNames, subject)}>
       <LeftPanel>
@@ -33,9 +22,9 @@ export default ({
           {findReceivers2(to, from, cc)
             .map(r => {
               const u = displayNames.find(dn => dn[0] === r);
-              return u ? u[1] : I18n.t("unknown-user");
+              return u ? u[1] : I18n.t('unknown-user');
             })
-            .join(", ")}
+            .join(', ')}
         </Author>
         {subject && subject.length ? (
           <Content nb={unread} numberOfLines={1}>
@@ -59,8 +48,8 @@ export const Author = style.text(
     fontSize: 14,
   },
   ({ nb }) => ({
-    ...(nb > 0 ? FontStyle.SemiBold : FontStyle.Regular)
-  })
+    ...(nb > 0 ? FontStyle.SemiBold : FontStyle.Regular),
+  }),
 );
 
 export const findReceivers2 = (to, from, cc) => {

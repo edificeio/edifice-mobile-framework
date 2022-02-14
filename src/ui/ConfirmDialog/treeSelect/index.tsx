@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { StyleSheet, View, TextInput, FlatList, Text, TouchableOpacity } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import I18n from "i18n-js";
+import I18n from 'i18n-js';
+import React, { useState } from 'react';
+import { StyleSheet, View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
 
-import { Icon } from "../..";
-import { DEVICE_HEIGHT, layoutSize } from "../../../styles/common/layoutSize";
-import { IItem } from "../../../workspace/types";
-import { ITreeItem } from "../../../workspace/actions/helpers/formatListFolders";
-import { IFile } from "../../../workspace/types/states/items";
-import { CommonStyles } from "../../../styles/common/styles";
+import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui/index';
+import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
+import { IItem } from '~/workspace/types';
+import { IFile } from '~/workspace/types/states/items';
 
 type IProps = {
   data: ITreeItem[];
@@ -24,44 +23,44 @@ type IProps = {
 
 export default function TreeSelect({
   data,
-  defaultSelectedId = ["owner"],
+  defaultSelectedId = ['owner'],
   excludeData = [],
   onClick = f => f,
-  openIds = ["owner"],
+  openIds = ['owner'],
 }: IProps) {
   const [currentNode, setCurrentNode] = useState(_initCurrentNode(defaultSelectedId));
   const [nodesStatus, setNodesStatus] = useState(_initNodesStatus(data, openIds, defaultSelectedId));
-  const [searchValue, setSearchValue] = useState("");
-  const selectedColor = "#000000";
+  const [searchValue, setSearchValue] = useState('');
+  const selectedColor = '#000000';
 
   function _initCurrentNode(defaultSelectedId) {
     if (!defaultSelectedId.length) {
-      return "owner";
+      return 'owner';
     }
-    for (let id of defaultSelectedId) {
-      let routes = _find(data, id);
+    for (const id of defaultSelectedId) {
+      const routes = _find(data, id);
 
       if (routes.length === 0) {
-        return "owner";
+        return 'owner';
       }
     }
     return defaultSelectedId[0];
   }
 
-  function _initNodesStatus(data, openIds = ["owner"] as string[], defaultSelectedId = ["owner"] as string[]) {
+  function _initNodesStatus(data, openIds = ['owner'] as string[], defaultSelectedId = ['owner'] as string[]) {
     const nodesStatus = {};
 
     if (openIds && openIds.length) {
-      for (let id of openIds) {
+      for (const id of openIds) {
         const routes = _find(data, id);
         routes.map(parent => (nodesStatus[parent.id] = true));
       }
     }
     if (defaultSelectedId && defaultSelectedId.length) {
-      for (let id of defaultSelectedId) {
+      for (const id of defaultSelectedId) {
         let routes = _find(data, id);
 
-        if (routes.length === 0) routes = _find(data, "owner");
+        if (routes.length === 0) routes = _find(data, 'owner');
         routes.map(parent => (nodesStatus[parent.id] = true));
       }
     }
@@ -80,10 +79,10 @@ export default function TreeSelect({
           name: item.name,
           parentId: item.parentId,
         });
-        if (item["id"] === innerId) {
+        if (item['id'] === innerId) {
           going = false;
-        } else if (item["children"]) {
-          walker(item["children"], innerId);
+        } else if (item['children']) {
+          walker(item['children'], innerId);
         } else {
           stack.pop();
         }
@@ -113,19 +112,19 @@ export default function TreeSelect({
     const collapseIcon = isOpen
       ? {
           borderRightWidth: 5,
-          borderRightColor: "transparent",
+          borderRightColor: 'transparent',
           borderLeftWidth: 5,
-          borderLeftColor: "transparent",
+          borderLeftColor: 'transparent',
           borderTopWidth: 10,
-          borderTopColor: "black",
+          borderTopColor: 'black',
         }
       : {
           borderBottomWidth: 5,
-          borderBottomColor: "transparent",
+          borderBottomColor: 'transparent',
           borderTopWidth: 5,
-          borderTopColor: "transparent",
+          borderTopColor: 'transparent',
           borderLeftWidth: 10,
-          borderLeftColor: "black",
+          borderLeftColor: 'black',
         };
     const openIcon = treeNodeStyle && treeNodeStyle.openIcon;
     const closeIcon = treeNodeStyle && treeNodeStyle.closeIcon;
@@ -146,7 +145,7 @@ export default function TreeSelect({
   const matchStackFilter = item => {
     if (!searchValue || searchValue.length === 0) return true;
 
-    if (item.id === "owner") return true;
+    if (item.id === 'owner') return true;
 
     return (
       item.name.toLowerCase().match(searchValue) ||
@@ -161,10 +160,7 @@ export default function TreeSelect({
     const nodesStatus = {};
 
     if (searchValue.length) {
-      const filteredItems = data.reduce(
-        (acc, child) => [...acc, ..._getFilters(child, searchValue)],
-        [] as ITreeItem[]
-      );
+      const filteredItems = data.reduce((acc, child) => [...acc, ..._getFilters(child, searchValue)], [] as ITreeItem[]);
 
       filteredItems.map(item => (nodesStatus[item.id] = true));
     }
@@ -188,14 +184,14 @@ export default function TreeSelect({
   };
 
   const _renderRow = ({ item }) => {
-    const backgroundColor = "#ffffff",
+    const backgroundColor = '#ffffff',
       fontSize = layoutSize.LAYOUT_14,
-      color = "#000000",
+      color = '#000000',
       selectedFontSize = layoutSize.LAYOUT_14,
       isCurrentNode = currentNode === item.id;
     const parentIdOfSelection = _initCurrentNode(defaultSelectedId);
-    const isParentOfSelection= parentIdOfSelection === item.id;
-    const selectedFolders = excludeData.filter(exclude => exclude.isFolder)
+    const isParentOfSelection = parentIdOfSelection === item.id;
+    const selectedFolders = excludeData.filter(exclude => exclude.isFolder);
     const allFoldersSelected = item.children.length === selectedFolders.length;
 
     if (!matchStackFilter(item) || excludeData.filter(exclude => item.id === exclude.id).length) return null;
@@ -207,11 +203,11 @@ export default function TreeSelect({
           <TouchableOpacity onPress={() => _onClick({ item, isParentOfSelection })}>
             <View
               style={{
-                flexDirection: "row",
-                backgroundColor: isCurrentNode ? "#2A9CC825" : backgroundColor || "#fff",
+                flexDirection: 'row',
+                backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || '#fff',
                 marginBottom: 2,
                 height: layoutSize.LAYOUT_30,
-                alignItems: "center",
+                alignItems: 'center',
               }}>
               {_renderTreeNodeIcon(isOpen)}
               <Text
@@ -239,17 +235,14 @@ export default function TreeSelect({
       <TouchableOpacity onPress={e => _onClick({ item, isParentOfSelection })}>
         <View
           style={{
-            flexDirection: "row",
-            backgroundColor: isCurrentNode ? "#2A9CC825" : backgroundColor || "#fff",
+            flexDirection: 'row',
+            backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || '#fff',
             marginBottom: 2,
             height: 30,
-            alignItems: "center",
+            alignItems: 'center',
           }}>
           <Text
-            style={[
-              styles.textName,
-              isCurrentNode ? { fontSize: selectedFontSize, color: selectedColor } : { fontSize, color },
-            ]}>
+            style={[styles.textName, isCurrentNode ? { fontSize: selectedFontSize, color: selectedColor } : { fontSize, color }]}>
             {item.name}
           </Text>
         </View>
@@ -266,10 +259,10 @@ export default function TreeSelect({
     return (
       <View
         style={{
-          flexDirection: "row",
-          alignItems: "center",
+          flexDirection: 'row',
+          alignItems: 'center',
           borderBottomWidth: 1,
-          borderColor: "#cccccc",
+          borderColor: '#cccccc',
           marginRight: layoutSize.LAYOUT_10,
           marginBottom: layoutSize.LAYOUT_10,
           marginTop: -layoutSize.LAYOUT_4,
@@ -282,7 +275,7 @@ export default function TreeSelect({
             flex: 1,
           }}
           value={searchValue}
-          placeholder={I18n.t("Search")}
+          placeholder={I18n.t('Search')}
           placeholderTextColor="#e9e5e1"
           returnKeyType="search"
           autoCapitalize="none"
@@ -294,15 +287,12 @@ export default function TreeSelect({
         />
         <TouchableOpacity
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             height: layoutSize.LAYOUT_34,
             paddingLeft: layoutSize.LAYOUT_3,
           }}>
-          <Icon
-            name="search2"
-            style={{ color: "#999999", fontSize: layoutSize.LAYOUT_24, marginHorizontal: 8 }}
-          />
+          <Icon name="search2" style={{ color: '#999999', fontSize: layoutSize.LAYOUT_24, marginHorizontal: 8 }} />
         </TouchableOpacity>
       </View>
     );
@@ -327,15 +317,15 @@ const styles = StyleSheet.create({
     width: 0,
     height: 0,
     marginRight: 2,
-    borderStyle: "solid",
+    borderStyle: 'solid',
   },
   container: {
     flexGrow: 0,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   contentContainer: {
     paddingBottom: layoutSize.LAYOUT_18,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   flatList: {
     flexGrow: 0,

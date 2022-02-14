@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -32,4 +32,4 @@ export const getMoyenneListState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("COMPETENCES_MOYENNE_LIST"));
+export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('COMPETENCES_MOYENNE_LIST'));

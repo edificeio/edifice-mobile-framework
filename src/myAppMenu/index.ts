@@ -1,7 +1,7 @@
-import myAppConfig from "./config";
+import myAppConfig from './config';
+import mainComp from './navigator';
 
-import mainComp from "./navigator";
-import { registerModule } from "../AppModules";
+import { registerModule } from '~/AppModules';
 
 // Main component
 export const root = mainComp;
@@ -15,14 +15,12 @@ export const getRoute = myAppConfig.createFunctionRoute(root);
 const module = {
   reducer,
   root,
-  getRoute
+  getRoute,
 };
 export default module;
 
-registerModule(
-  {
-    order: 4,
-    config: require("./config").default,
-    module
-  }
-)
+registerModule({
+  order: 4,
+  config: require('./config').default,
+  module,
+});

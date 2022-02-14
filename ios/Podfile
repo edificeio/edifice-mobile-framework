@@ -11,7 +11,7 @@ target 'appe' do
   use_react_native!(:path => config["reactNativePath"],:hermes_enabled => true)
 
   # Flipper
-  flipperkit_version = '0.99.0'
+  flipperkit_version = '0.127.0'
   use_flipper!({ 'Flipper' => flipperkit_version })
   pod 'FlipperKit/FlipperKitLayoutPlugin', flipperkit_version, :configuration => 'Debug'
   pod 'FlipperKit/SKIOSNetworkPlugin', flipperkit_version, :configuration => 'Debug'
@@ -41,7 +41,7 @@ target 'appe' do
   #pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit"
 
   # Native pods
-  pod 'MatomoTracker', '~> 7.5'
+  pod 'MatomoTracker', '7.5.1'
 
   post_install do |installer|
     react_native_post_install(installer)

@@ -1,13 +1,13 @@
-import * as React from "react";
-import { View } from "react-native";
+import * as React from 'react';
+import { View } from 'react-native';
 
-import { SquareCheckbox } from "../../../ui/forms/Checkbox";
-import { TextBold, Text } from "../../../ui/text";
-import { LeftColoredItem } from "../../viesco/components/Item";
+import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { Text, TextBold } from '~/ui/Typography';
+import { SquareCheckbox } from '~/ui/forms/Checkbox';
 
 export const HomeworkItem = ({ title, subtitle, checked, disabled, onChange, hideCheckbox }: any) => (
-  <LeftColoredItem shadow={!checked} style={{ alignItems: "center", flexDirection: "row" }} color="#FA9700">
-    <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+  <LeftColoredItem shadow={!checked} style={{ alignItems: 'center', flexDirection: 'row' }} color="#FA9700">
+    <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
       <TextBold>{title}</TextBold>
       <Text>{subtitle}</Text>
     </View>

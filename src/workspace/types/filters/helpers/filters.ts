@@ -1,15 +1,15 @@
-import { FilterId } from "../index";
+import { FilterId } from '~/workspace/types/index';
 
 export const filters = (value: string | null): FilterId => {
   switch (value) {
-    case "owner":
+    case 'owner':
     case null:
       return FilterId.owner;
-    case "shared":
+    case 'shared':
       return FilterId.shared;
-    case "protected":
+    case 'protected':
       return FilterId.protected;
-    case "trash":
+    case 'trash':
       return FilterId.trash;
     default:
       return FilterId.owner;

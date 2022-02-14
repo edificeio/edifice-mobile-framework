@@ -2,11 +2,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { NativeEventEmitter } from 'react-native';
 
-import { isInOwnerWorkspace } from '../../navigation/NavigationService';
-import { mainNavNavigate } from '../../navigation/helpers/navHelper';
-import { ContentUri } from '../../types/contentUri';
-import { contentUriAction } from '../../workspace/actions/contentUri';
-import { FilterId } from '../../workspace/types/filters';
+import { isInOwnerWorkspace } from '~/navigation/NavigationService';
+import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import { ContentUri } from '~/types/contentUri';
+import { contentUriAction } from '~/workspace/actions/contentUri';
+import { FilterId } from '~/workspace/types/filters';
 
 export interface IProps {
   dispatch: any;

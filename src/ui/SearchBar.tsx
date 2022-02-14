@@ -1,12 +1,11 @@
-import style from "glamorous-native";
-import * as React from "react";
-import { Keyboard, Platform } from "react-native";
-import { CommonStyles } from "../styles/common/styles";
-import { Header, HeaderIcon } from "./headers/Header";
-import { CloseIcon, SearchIcon } from "./icons/SearchIcon";
-import { connect } from "react-redux";
-import I18n from "i18n-js";
-import { Weight } from "./Typography";
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Keyboard, Platform } from 'react-native';
+
+import { Weight } from './Typography';
+
+import { CommonStyles } from '~/styles/common/styles';
 
 export interface SearchBarProps {
   onChange: (searchText) => void;
@@ -14,10 +13,10 @@ export interface SearchBarProps {
   autoFocus?: boolean;
 }
 
-export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
+export class SearchBar extends React.PureComponent<SearchBarProps, object> {
   private textInput: any;
   public state = {
-    value: this.props.text || ""
+    value: this.props.text || '',
   };
 
   public onChangeText(value) {
@@ -29,14 +28,14 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
     return (
       <TextInput
         autoFocus={!!this.props.autoFocus}
-        enablesReturnKeyAutomatically={true}
+        enablesReturnKeyAutomatically
         onChangeText={value => this.onChangeText(value)}
-        placeholder={I18n.t("Search")}
-        placeholderTextColor={"white"}
-        returnKeyType={"search"}
-        underlineColorAndroid={"transparent"}
+        placeholder={I18n.t('Search')}
+        placeholderTextColor="white"
+        returnKeyType="search"
+        underlineColorAndroid="transparent"
         value={this.state.value}
-        blurOnSubmit={true}
+        blurOnSubmit
         onSubmitEditing={() => Keyboard.dismiss()}
       />
     );
@@ -45,14 +44,14 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 
 const TextInput = style.textInput(
   {
-    alignSelf: "center",
-    color: "white",
+    alignSelf: 'center',
+    color: 'white',
     flex: 1,
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 18,
-    marginLeft: Platform.OS === "ios" ? 10 : 0
+    marginLeft: Platform.OS === 'ios' ? 10 : 0,
   },
   ({ value }) => ({
-    fontWeight: value.length === 0 ? Weight.Light : Weight.Normal
-  })
+    fontWeight: value.length === 0 ? Weight.Light : Weight.Normal,
+  }),
 );

@@ -2,11 +2,12 @@
  * News services
  */
 
-import moment from "moment";
-import { IResourceUriCaptureFunction } from "../../../framework/util/notifications";
-import { IUserSession } from "../../../framework/util/session";
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { INews, RightOwner } from "../reducer";
+import moment from 'moment';
+
+import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
+import { IUserSession } from '~/framework/util/session';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { INews, RightOwner } from '~/modules/news/reducer';
 
 export interface IEntcoreNews {
   comments: string;
@@ -17,7 +18,7 @@ export interface IEntcoreNews {
   modified: string | null;
   owner: string;
   publication_date: string | null;
-  shared: Array<RightOwner & any>;
+  shared: (RightOwner & any)[];
   status: number;
   thread_icon: string;
   thread_id: number;
@@ -29,48 +30,42 @@ export interface IEntcoreNews {
 
 export const newsAdapter = (n: IEntcoreNews) => {
   const ret = {
-      backupData: n,
-      comments: JSON.parse(n.comments),
-      content: n.content,
-      created: moment(n.created),
-      expiration_date: typeof n.expiration_date === "string"
-          ? moment(n.expiration_date)
-          : n.expiration_date,
-      is_headline: n.is_headline,
-      modified: typeof n.modified === "string"
-          ? moment(n.modified)
-          : n.modified,
-      owner: n.owner,
-      publication_date: typeof n.publication_date === "string"
-          ? moment(n.publication_date)
-          : n.publication_date,
-      shared: n.shared,
-      status: n.status,
-      thread_icon: n.thread_icon,
-      thread_id: n.thread_id,
-      thread_title: n.thread_title,
-      title: n.title,
-      username: n.username,
-      _id: n._id
+    backupData: n,
+    comments: JSON.parse(n.comments),
+    content: n.content,
+    created: moment(n.created),
+    expiration_date: typeof n.expiration_date === 'string' ? moment(n.expiration_date) : n.expiration_date,
+    is_headline: n.is_headline,
+    modified: typeof n.modified === 'string' ? moment(n.modified) : n.modified,
+    owner: n.owner,
+    publication_date: typeof n.publication_date === 'string' ? moment(n.publication_date) : n.publication_date,
+    shared: n.shared,
+    status: n.status,
+    thread_icon: n.thread_icon,
+    thread_id: n.thread_id,
+    thread_title: n.thread_title,
+    title: n.title,
+    username: n.username,
+    _id: n._id,
   };
   return ret as INews;
-}
+};
 
-export const newsUriCaptureFunction: IResourceUriCaptureFunction<{ threadId: string, infoId: string }> = url => {
+export const newsUriCaptureFunction: IResourceUriCaptureFunction<{ threadId: string; infoId: string }> = url => {
   const newsThreadRegex = /^\/actualites.+\/thread\/(\d+)/;
   const newsInfoRegex = /^\/actualites.+\/info\/(\d+)/;
   return {
     threadId: url.match(newsThreadRegex)?.[1],
-    infoId: url.match(newsInfoRegex)?.[1]
+    infoId: url.match(newsInfoRegex)?.[1],
   };
-}
+};
 
 export const newsService = {
-  get: async (session: IUserSession, newsId: { threadId: string, infoId: string }) => {    
-    const {threadId, infoId} = newsId;
+  get: async (session: IUserSession, newsId: { threadId: string; infoId: string }) => {
+    const { threadId, infoId } = newsId;
     const api = `/actualites/thread/${threadId}/info/${infoId}`;
-    const entcoreNews = await fetchJSONWithCache(api) as IEntcoreNews;
+    const entcoreNews = (await fetchJSONWithCache(api)) as IEntcoreNews;
     // Run the news adapter for the received news
     return newsAdapter(entcoreNews) as INews;
-  }
-}
+  },
+};

@@ -1,8 +1,8 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import querystring from "querystring";
+import querystring from 'querystring';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IMoyenneList } from "../state/moyennes";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
 
 export type IMoyenneListBackend = {
   matiere: string;
@@ -38,13 +38,13 @@ const moyenneListAdapter: (data: IMoyenneListBackend) => IMoyenneList = data => 
 
 export const moyenneListService = {
   get: async (idEtablissement: string, idEleve: string, idPeriode?: string) => {
-    let urlParameters = "" as string;
+    let urlParameters = '' as string;
     if (idPeriode) urlParameters = `&idPeriode=${idPeriode}`;
     const devoirs = await fetchJSONWithCache(
       `/competences/devoirs/notes?${querystring.stringify({
         idEtablissement,
         idEleve,
-      })}${urlParameters}`
+      })}${urlParameters}`,
     );
     return moyenneListAdapter(devoirs);
   },

@@ -1,18 +1,17 @@
-import userConfig from "../config";
-
-import { createAppScopesLegacy, OAuth2RessourceOwnerPasswordClient } from "../../infra/oauth";
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { navigate } from "../../navigation/helpers/navHelper";
-import { Trackers } from "~/framework/util/tracker";
-import { DEPRECATED_setCurrentPlatform } from "~/framework/util/_legacy_appConf";
-import appConf from "~/framework/util/appConf";
 
-export const PLATFORM_STORAGE_KEY = "currentPlatform";
+import { DEPRECATED_setCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import appConf from '~/framework/util/appConf';
+import { Trackers } from '~/framework/util/tracker';
+import { createAppScopesLegacy, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
+import { navigate } from '~/navigation/helpers/navHelper';
+import userConfig from '~/user/config';
+// eslint-disable-next-line import/order
+import { getLoginRouteName } from '~/navigation/LoginNavigator';
 
-export const actionTypePlatformSelect = userConfig.createActionType(
-  "PLATFORM_SELECT"
-);
+export const PLATFORM_STORAGE_KEY = 'currentPlatform';
+
+export const actionTypePlatformSelect = userConfig.createActionType('PLATFORM_SELECT');
 
 /**
  * Sets the current selected platform.
@@ -35,48 +34,45 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
       `${pf.url}/auth/oauth2/token`,
       pf.oauth.client_id,
       pf.oauth.client_secret,
-      createAppScopesLegacy()
+      createAppScopesLegacy(),
     );
 
     // === 4 - Dispatch the new selected platform in Redux Store
     dispatch({
       platformId,
-      type: actionTypePlatformSelect
+      type: actionTypePlatformSelect,
     });
 
     // === 5 - Track event
     doTrack && Trackers.trackEvent('Connection', 'SELECT PLATFORM', pf.url.replace(/(^\w+:|^)\/\//, ''));
 
     // === End
-    if (redirect) navigate("LoginHome", { platformId });
+    if (redirect) navigate(getLoginRouteName(), { platformId });
   };
 }
 
 /**
  * Read and select the platform stored in AsyncStorage.
  */
-  export function loadCurrentPlatform() {
-    return async (dispatch, getState) => {
-      const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
-      if (platformId) {
-        const pf = appConf.platforms.find(pf => pf.name === platformId);
-        if (!pf)
-          throw new Error(
-            `Error: LOADED platform "${platformId}" doesn't exists.`
-          );
-        else dispatch(selectPlatform(platformId));
-        return platformId;
-      } else {
-        return platformId;
-      }
-    };
-  }
+export function loadCurrentPlatform() {
+  return async (dispatch, getState) => {
+    const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+    if (platformId) {
+      const pf = appConf.platforms.find(pf => pf.name === platformId);
+      if (!pf) throw new Error(`Error: LOADED platform "${platformId}" doesn't exists.`);
+      else dispatch(selectPlatform(platformId));
+      return platformId;
+    } else {
+      return platformId;
+    }
+  };
+}
 
 /**
  * Goes to the platform selector page
  */
 export function unSelectPlatform() {
   return async (dispatch, getState) => {
-    navigate("PlatformSelect");
+    navigate('PlatformSelect');
   };
 }

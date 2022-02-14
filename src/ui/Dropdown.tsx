@@ -6,11 +6,13 @@ import { View, ViewStyle, Platform } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import { Icon, ButtonsOkCancel } from '.';
-import { CommonStyles } from '../styles/common/styles';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
-import { TextBold } from '../framework/components/text';
+
+import { TextBold } from '~/framework/components/text';
+import { CommonStyles } from '~/styles/common/styles';
 
 interface IDropdownProps {
+  keyId?: string;
   style?: ViewStyle;
   value?: string;
   data: any[];
@@ -50,12 +52,15 @@ const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyE
   );
 };
 
-const DropdownIOS = ({ title, renderItem, keyExtractor, style, data, placeholder, value, onSelect }: IDropdownProps) => {
+const DropdownIOS = ({ keyId, title, renderItem, keyExtractor, style, data, placeholder, value, onSelect }: IDropdownProps) => {
   const getItemRenderer = renderItem ? renderItem : item => item.toString();
   const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
   const [visible, toggleModal] = useState(false);
   const [selected, selectValue] = useState(value);
+  if (value !== selected && !visible && keyId === 'competences.periods') {
+    selectValue(value);
+  }
 
   return (
     <View style={{ flex: 1 }}>

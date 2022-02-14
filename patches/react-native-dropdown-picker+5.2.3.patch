@@ -1,0 +1,114 @@
+diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
+index 8ad11bf..8ba4851 100644
+--- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
++++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
+@@ -40,7 +40,8 @@ import {
+     GET_DROPDOWN_DIRECTION,
+     LANGUAGE,
+     RTL_DIRECTION,
+-    RTL_STYLE
++    RTL_STYLE,
++    ARROW_ICON_POSITION
+ } from '../constants';
+ import THEMES from '../themes';
+ import RenderBadgeItem from './RenderBadgeItem';
+@@ -127,6 +128,7 @@ function Picker({
+     activityIndicatorColor = Colors.GREY,
+     props = {},
+     itemProps = {},
++    itemLabelProps = {},
+     modalProps = {},
+     flatListProps = {},
+     scrollViewProps = {},
+@@ -151,7 +153,8 @@ function Picker({
+     rtl = false,
+     dropDownDirection = DROPDOWN_DIRECTION.DEFAULT,
+     disableLocalSearch = false,
+-    theme = THEMES.DEFAULT
++    theme = THEMES.DEFAULT,
++    arrowIconPosition = ARROW_ICON_POSITION.RIGHT
+ }) {
+     const [necessaryItems, setNecessaryItems] = useState([]);
+     const [searchText, setSearchText] = useState('');
+@@ -1334,6 +1337,7 @@ function Picker({
+                 disabled={item?.[_schema.disabled] ?? false}
+                 custom={item.custom ?? false}
+                 props={itemProps}
++                labelProps={itemLabelProps}
+                 isSelected={isSelected}
+                 IconComponent={IconComponent}
+                 TickIconComponent={_TickIconComponent}
+@@ -1380,6 +1384,7 @@ function Picker({
+         _value,
+         multiple,
+         itemProps,
++        itemLabelProps,
+         categorySelectable,
+         onPressItem,
+         theme,
+@@ -1671,6 +1676,18 @@ function Picker({
+         return null;
+     }, [open, listMode, DropDownComponent]);
+ 
++    /**
++     * The top component.
++     * @returns {JSX.Element}
++     */
++    const TopComponent = useMemo(() => {
++        switch (arrowIconPosition) {
++            case ARROW_ICON_POSITION.LEFT: return [_ArrowComponent, _BodyComponent];
++            case ARROW_ICON_POSITION.RIGHT: return [_BodyComponent, _ArrowComponent];
++            default: //
++        }
++    }, [arrowIconPosition, _ArrowComponent, _BodyComponent]);
++
+     /**
+      * onRef.
+      */
+@@ -1687,8 +1704,7 @@ function Picker({
+     return (
+         <View style={_containerStyle} {...containerProps}>
+             <TouchableOpacity style={_style} onPress={__onPress} onLayout={__onLayout} {...props} ref={onRef} pointerEvents={pointerEvents} disabled={disabled}>
+-                {_BodyComponent}
+-                {_ArrowComponent}
++                {TopComponent}
+             </TouchableOpacity>
+             {DropDownBodyComponent}
+         </View>
+diff --git a/node_modules/react-native-dropdown-picker/src/components/RenderListItem.js b/node_modules/react-native-dropdown-picker/src/components/RenderListItem.js
+index 401f5d6..110a300 100644
+--- a/node_modules/react-native-dropdown-picker/src/components/RenderListItem.js
++++ b/node_modules/react-native-dropdown-picker/src/components/RenderListItem.js
+@@ -20,6 +20,7 @@ function RenderListItem({
+     selectable,
+     disabled,
+     props,
++    labelProps,
+     custom,
+     isSelected,
+     IconComponent,
+@@ -164,7 +165,7 @@ function RenderListItem({
+     return (
+         <TouchableOpacity style={_listItemContainerStyle} onPress={__onPress} onLayout={onLayout} {...props} disabled={selectable === false || disabled} testID={item.testID}>
+             {IconComponent}
+-            <Text style={_listItemLabelStyle}>
++            <Text style={_listItemLabelStyle} {...labelProps}>
+                 {label}
+             </Text>
+             {_TickIconComponent}
+diff --git a/node_modules/react-native-dropdown-picker/src/constants/index.js b/node_modules/react-native-dropdown-picker/src/constants/index.js
+index aebde30..6d41973 100644
+--- a/node_modules/react-native-dropdown-picker/src/constants/index.js
++++ b/node_modules/react-native-dropdown-picker/src/constants/index.js
+@@ -47,6 +47,11 @@ export const LANGUAGE = {
+     TURKISH: 'TR'
+ }
+ 
++export const ARROW_ICON_POSITION = {
++    LEFT: 'LEFT',
++    RIGHT: 'RIGHT'
++}
++
+ export const GET_DROPDOWN_DIRECTION = (direction) => {
+     switch (direction) {
+         case DROPDOWN_DIRECTION.AUTO:

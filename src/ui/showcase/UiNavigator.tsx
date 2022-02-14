@@ -1,8 +1,10 @@
-import * as React from "react";
-import { createStackNavigator } from "react-navigation-stack";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { AppTitle, Header } from "../headers/Header";
-import { UiShowCase } from "./UiShowcase";
+import * as React from 'react';
+import { createStackNavigator } from 'react-navigation-stack';
+
+import { UiShowCase } from './UiShowcase';
+
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { AppTitle, Header } from '~/ui/headers/Header';
 
 export default createStackNavigator({
   UiShowcase: {
@@ -10,11 +12,11 @@ export default createStackNavigator({
     navigationOptions: ({ navigation }) =>
       standardNavScreenOptions(
         {
-          header: <UiHeader navigation={navigation} />
+          header: <UiHeader navigation={navigation} />,
         },
-        navigation
-      )
-  }
+        navigation,
+      ),
+  },
 });
 
 export class UiHeader extends React.Component<{ navigation?: any }, undefined> {

@@ -8,32 +8,31 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import Conf from '../../../ode-framework-conf';
-import { getSessionInfo } from '../../App';
-import { IGlobalState } from '../../AppStore';
-import workspaceService from '../../framework/modules/workspace/service';
-import { LocalFile, SyncedFile } from '../../framework/util/fileHandler';
-import { getUserSession } from '../../framework/util/session';
-import { pickFileError } from '../../infra/actions/pickFile';
-import { ImagePicked } from '../../infra/imagePicker';
-import { notifierShowAction } from '../../infra/notifier/actions';
-import Notifier from '../../infra/notifier/container';
-import { OAuth2RessourceOwnerPasswordClient, signURISource } from '../../infra/oauth';
-import { Trackers } from '../../framework/util/tracker';
-import withViewTracking from '../../framework/util/tracker/withViewTracking';
-import { standardNavScreenOptions } from '../../navigation/helpers/navScreenOptions';
-import { ButtonsOkCancel } from '../../ui';
-import { ButtonLine, ContainerSpacer, ContainerView } from '../../ui/ButtonLine';
-import DEPRECATED_ConnectionTrackingBar from '../../ui/ConnectionTrackingBar';
-import { PageContainer } from '../../ui/ContainerContent';
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '../../ui/Modal';
-import { Label } from '../../ui/Typography';
-import { logout } from '../actions/login';
-import { profileUpdateAction } from '../actions/profile';
-import { UserCard } from '../components/UserCard';
+import { getSessionInfo } from '~/App';
+import { IGlobalState } from '~/AppStore';
+import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { getUserSession } from '~/framework/util/session';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { pickFileError } from '~/infra/actions/pickFile';
+import { ImagePicked } from '~/infra/imagePicker';
+import { notifierShowAction } from '~/infra/notifier/actions';
+import Notifier from '~/infra/notifier/container';
+import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { ButtonsOkCancel } from '~/ui';
+import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
+import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
+import { Label } from '~/ui/Typography';
+import { logout } from '~/user/actions/login';
+import { profileUpdateAction } from '~/user/actions/profile';
+import { UserCard } from '~/user/components/UserCard';
 
-export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) =>
   standardNavScreenOptions(
     {
       headerBackTitle: null,
@@ -116,8 +115,9 @@ export class UserPage extends React.PureComponent<
     // (otherwise, a previously-loaded image is retrieved from cache)
     const sourceWithParam = signedURISource && {
       ...signedURISource,
-      uri: `${signedURISource &&
-        signedURISource.uri}?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
+      uri: `${
+        signedURISource && signedURISource.uri
+      }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
 
     return (
@@ -170,26 +170,26 @@ export class UserPage extends React.PureComponent<
             id={sourceWithParam}
             displayName={getSessionInfo().displayName!}
             type={getSessionInfo().type!}
-            touchable={true}
+            touchable
             onPress={() => this.props.navigation.navigate('MyProfile')}
           />
           <ContainerSpacer />
-          <ButtonLine title={'directory-structuresTitle'} onPress={() => this.props.navigation.navigate('Structures')} />
+          <ButtonLine title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
           <ContainerSpacer />
           {getSessionInfo().type === 'Student' ? (
             <>
-              <ButtonLine title={'directory-relativesTitle'} onPress={() => this.props.navigation.navigate('Relatives')} />
+              <ButtonLine title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />
               <ContainerSpacer />
             </>
           ) : getSessionInfo().type === 'Relative' ? (
             <>
-              <ButtonLine title={'directory-childrenTitle'} onPress={() => this.props.navigation.navigate('Children')} />
+              <ButtonLine title="directory-childrenTitle" onPress={() => this.props.navigation.navigate('Children')} />
               <ContainerSpacer />
             </>
           ) : null}
-          <ButtonLine title={'directory-notificationsTitle'} onPress={() => this.props.navigation.navigate('NotifPrefs')} />
+          <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
           <ContainerSpacer />
-          <ButtonLine title={'directory-legalNoticeTitle'} onPress={() => this.props.navigation.navigate('LegalNotice')} />
+          <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
           <ContainerSpacer />
           {/* <ButtonLine
           title={"directory-legalNoticeTitle"}
@@ -204,9 +204,9 @@ export class UserPage extends React.PureComponent<
           </ContainerView>
           <ContainerSpacer />
           <ButtonLine
-            title={'directory-disconnectButton'}
-            hideIcon={true}
-            color={'#F64D68'}
+            title="directory-disconnectButton"
+            hideIcon
+            color="#F64D68"
             onPress={() => this.setState({ showDisconnect: true })}
           />
         </ScrollView>
@@ -220,6 +220,8 @@ const uploadAvatarAction = (avatar: LocalFile) => async (dispatch: Dispatch, get
   console.log('will upp');
   const upped = await workspaceService.uploadFile(session, avatar, {});
   console.log('upped', upped);
+  console.log('SESSION = ' + session);
+  console.dir(session);
   return upped;
 };
 
@@ -236,7 +238,7 @@ const UserPageConnected = connect(
     onUploadAvatarError: () => dispatch(uploadAvatarError()),
     onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
     onUpdateAvatar: (imageWorkspaceUrl: string) =>
-      (dispatch(profileUpdateAction({ picture: imageWorkspaceUrl }, true)) as unknown) as Promise<void>,
+      dispatch(profileUpdateAction({ picture: imageWorkspaceUrl }, true)) as unknown as Promise<void>,
   }),
 )(UserPage);
 

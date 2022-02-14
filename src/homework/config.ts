@@ -1,17 +1,17 @@
-import FunctionalModuleConfig from "../infra/moduleTool";
+import FunctionalModuleConfig from '~/infra/moduleTool';
 
 // tslint:disable:object-literal-sort-keys
 
 export default new FunctionalModuleConfig({
-  name: "homework",
-  apiName: "Cahier de texte",
-  displayName: "Homework",
-  iconName: "book-alt",
-  iconColor: "#46bfaf",
+  name: 'homework',
+  apiName: 'Cahier de texte',
+  displayName: 'Homework',
+  iconName: 'book-alt',
+  iconColor: '#46bfaf',
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors
-    const res = await import("./notifHandler");
+    const res = await import('./notifHandler');
     const val: any = res.default;
     //sometime dynamic import include default in default
     if (val.default) {
@@ -19,5 +19,5 @@ export default new FunctionalModuleConfig({
     } else {
       return val;
     }
-  }
+  },
 });

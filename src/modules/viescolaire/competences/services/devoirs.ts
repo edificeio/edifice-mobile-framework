@@ -1,9 +1,9 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import moment from "moment";
-import querystring from "querystring";
+import moment from 'moment';
+import querystring from 'querystring';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IDevoirsMatieres } from "../state/devoirs";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IDevoirsMatieres } from '~/modules/viescolaire/competences/state/devoirs';
 
 export type IDevoirListBackend = {
   teacher: string;

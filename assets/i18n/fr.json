@@ -50,6 +50,7 @@
   "activation-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour activer votre compte. Veuillez réessayer ultérieurement.",
   "activation-errorSubmit": "Nous n'avons pas pu activer votre compte. Veuillez réessayer ultérieurement.",
   "activation-retryLoad": "Réessayer",
+  "activation-title": "Activation",
   "add-file": "Ajouter un fichier",
   "agoHours": "il y a {{hours}} h",
   "agoMinutes": "il y a {{minutes}} min",
@@ -92,6 +93,22 @@
       "submitSuccess": "Votre billet a bien été envoyé. Il sera publié une fois validé par le gestionnaire du blog.",
       "title": "Nouveau billet"
     },
+    "blogExplorerScreen": {
+      "emptyScreenButton": "Créer un blog sur le web",
+      "emptyScreenText": "Endossez la casquette du petit reporter en créant un Blog ! Publiez et partagez facilement vos informations, en y intégrant différents contenus multimédias.",
+      "emptyScreenTextNoCreationRights": "Il n'y a pas encore de Blog. Le Blog permet de partager facilement des informations en y intégrant différents contenus multimédias. Proposez des idées à votre école (la vie de la classe, les voyages scolaires, des expos, ...).",
+      "emptyScreenTitle": "Aucun blog à l'hoziron...",
+      "rootItemName": "Blog"
+    },
+    "blogPostListScreen": {
+      "emptyScreen": {
+        "button": "Créer un billet de blog",
+        "text": "Prenez la plume et lancez-vous !\nPensez à rajouter des images et vidéos pour que cela soit plus agréable à lire.",
+        "textNoCreationRights": "Pour le moment il n’y a pas encore de billets de blog. Un peu de patience...",
+        "title": "Votre premier billet de blog",
+        "titleNoCreationRights": "Pas encore de billet de blog"
+      }
+    },
     "blogSelectScreen": {
       "emptyScreenButton": "Créer un Blog",
       "emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
@@ -100,7 +117,14 @@
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"
     },
-    "resourceName": "Billet de blog"
+    "post": {
+      "needValidation": "Billet à valider",
+      "waitingValidation": "Billet en attente de validation",
+      "publishAction": "Publier le billet"
+    },
+    "appName": "Blog",
+    "resourceName": "Billet de blog",
+    "tabName": "Blog"
   },
   "blog-emptyScreenButton": "Créer un Blog",
   "blog-emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
@@ -109,22 +133,33 @@
   "blog-publishAction": "Publier",
   "blog-selectPublishableBlog": "Choisir un blog",
   "blog-sharedToNbPersons": "Partagé à {{nb}} personnes",
-  "by": "par : ",
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorFields": "Le formulaire contient des erreurs",
   "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
   "common": {
     "all": "Tous",
     "apply": "Appliquer",
+    "by": "Par :",
     "cancel": "Annuler",
-    "comment": "Commentaire",
-    "comments": "Commentaires",
+    "close": "Fermer",
+    "comment": {
+      "addComment": "Ajoutez un commentaire...",
+      "comment": "Commentaire",
+      "comments": "Commentaires",
+      "confirmationDelete": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer le commentaire ?",
+      "confirmationUnsavedModification": "Vous allez annuler les changements du commentaire. En êtes-vous sûr ?",
+      "confirmationUnsavedPublication": "Vous allez annuler l'ajout du commentaire. En êtes-vous sûr ?",
+      "noComments": "Pas encore de commentaires"
+    },
     "continue": "Continuer",
     "date": {
       "invalid": "",
       "now": "maintenant",
       "yesterday": "hier"
     },
+    "delete": "Supprimer",
+    "deletion": "Suppression",
+    "discard": "Abandonner",
     "error": {
       "content": {
         "text": "Il semblerait que le contenu se soit envolé.\nSi le problème persiste, contactez l'assistance."
@@ -135,8 +170,13 @@
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "infoBubble-doNotShow": "Ne plus afficher ce message",
     "infoBubble-understood": "J'ai compris",
+    "confirmationUnsavedModification": "Modification non enregistrée",
+    "confirmationUnsavedPublication": "Publication non enregistrée",
+    "modified": "(modifié)",
+    "modify": "Modifier",
     "ok": "OK",
     "openInBrowser": "Ouvrir dans le navigateur",
+    "publish": "Publier",
     "quit": "Quitter",
     "readMore": "lire plus",
     "save": "Enregistrer",
@@ -231,8 +271,8 @@
     "typeMessage": "Écrire un message...",
     "unknown": "Inconnu",
     "warning.webDraft": {
-      "title": "Brouillon incompatible",
-      "text": "Le brouillon a été initié depuis un ordinateur. En continuant sur l'application mobile, l'expérience sera dégradée. Souhaitez-vous continuer ?"
+      "text": "Le brouillon a été initié depuis un ordinateur. En continuant sur l'application mobile, l'expérience sera dégradée. Souhaitez-vous continuer ?",
+      "title": "Brouillon incompatible"
     }
   },
   "conversation-chatPlaceholder": "Ecrivez un message...",
@@ -327,13 +367,14 @@
   "download-error-unsupportedFileType": "Le format du fichier n'est pas reconnu par votre appareil",
   "download-invalidUrl": "(lien invalide)",
   "download-open": "Ouvrir",
-  "download-untitled": "Pièce jointe sans titre",
-  "download-success-name": "{{name}} enregistré dans Téléchargements",
   "download-success-all": "Fichiers enregistrés dans Téléchargements",
+  "download-success-name": "{{name}} enregistré dans Téléchargements",
+  "download-untitled": "Pièce jointe sans titre",
   "federatedAccount-instructions": "Si votre établissement vous a indiqué d'utiliser votre compte académique ou un compte de service de scolarité (EduConnect, SAPIA, ARENA ou autre), les identifiants de connexion de l'application mobile se trouvent sur la version web de votre réseau éducatif.",
   "federatedAccount-instructions-details": "• Connectez-vous sur votre réseau éducatif depuis votre navigateur web en cliquant sur le bouton ci-dessous\n\n• Accédez à la page \"Mon Compte\"\n\n• Récupérez l'identifiant et générez un mot de passe temporaire\n\n• Revenez sur l'application mobile et utilisez vos identifiants sur l'écran de connexion",
   "federatedAccount-link": "Connexion pour les comptes académiques et les comptes des services scolarité (EduConnect, SAPIA, ARENA, ...)",
   "federatedAccount-openLink": "Accéder à Mon Compte",
+  "federatedAccount-title": "Authentification",
   "files.too.large": "Espace insuffisant pour sauvegarder les fichiers",
   "forgot-id": "Identifiant oublié",
   "forgot-id-instructions": "Entrez votre adresse de courriel pour recevoir votre identifiant.",
@@ -362,6 +403,16 @@
   "loading": "Chargement",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
   "login-back": "Retour à l'écran de connexion",
+  "login-wayf-error-retry": "Réessayer",
+  "login-wayf-loading-text": "Connexion en cours...",
+  "login-wayf-main-button": "S'identifier",
+  "login-wayf-main-text": "Il est temps de sélectionner votre profil et de saisir vos identifiants !",
+  "login-wayf-main-title": "Identification",
+  "login-wayf-select-button": "Se connecter",
+  "login-wayf-select-help": "Pour mieux comprendre",
+  "login-wayf-select-placeholder": "Choisir un compte",
+  "login-wayf-select-text": "Votre compte EduConnect est lié à plusieurs comptes de l’ENT.\r\n\r\nChoisissez le compte avec lequel vous voulez vous connecter.",
+  "login-wayf-select-title": "Choix du compte",
   "mailbox": {
     "alert": {
       "deletedThread": {
@@ -500,6 +551,7 @@
       "COLLABORATIVEWALL": "Mur Collaboratif",
       "COMMUNITY": "Communautés",
       "EXERCIZER": "Exercices",
+      "FORMULAIRE": "Formulaires",
       "FORUM": "Forum",
       "HOMEWORKS": "Cahier de textes",
       "MESSAGERIE": "Messagerie",
@@ -516,7 +568,7 @@
       "SUPPORT": "Assistance ENT",
       "TIMELINE": "Signalements",
       "TIMELINEGENERATOR": "Frise chronologique",
-      "USERBOOK": "Humeurs et devises",
+      "USERBOOK": "Annuaire",
       "USERBOOK_MOOD": "Humeurs",
       "USERBOOK_MOTTO": "Devises",
       "WIKI": "Wiki",
@@ -625,17 +677,17 @@
       "workspace.share-folder": "Partage d'un dossier",
       "workspace.storage": "Espace de stockage bientôt plein"
     },
+    "reportAction": {
+      "button": "Signaler",
+      "description": "L’heure et l’origine de ce signalement seront enregistrées ainsi que votre identité et transmises à la direction de l'établissement. Etes vous sûr(e) de vouloir signaler ce contenu ?",
+      "submit": "Signaler la notification inappropriée",
+      "success": "La notification a bien été signalée.",
+      "title": "Vous allez signaler une notification"
+    },
     "tabName": "Nouveautés",
     "webViewScreen": {
       "infoBubbleText": "Pour consulter et modifier certains contenus, vous serez redirigé vers le navigateur web de votre smartphone.",
       "title": "Redirection web"
-    },
-    "reportAction": {
-      "button": "Signaler",
-      "title": "Vous allez signaler une notification",
-      "description": "L’heure et l’origine de ce signalement seront enregistrées ainsi que votre identité et transmises à la direction de l'établissement. Etes vous sûr(e) de vouloir signaler ce contenu ?",
-      "submit": "Signaler la notification inappropriée",
-      "success": "La notification a bien été signalée."
     }
   },
   "timeline-allFilter": "Tous",
@@ -728,6 +780,9 @@
   "viesco-leaving": "Départ",
   "viesco-left": "Départ à",
   "viesco-left-motive": "Motif du départ",
+  "viesco-memento": "Fiche élève",
+  "viesco-memento-born-date": "né le :",
+  "viesco-memento-relatives": "Responsables",
   "viesco-no-register-today": "Il n'y a pas d'appels aujourd'hui",
   "viesco-notifications": "Notifications",
   "viesco-pickChild": "Choisissez un enfant",
@@ -774,14 +829,14 @@
   "zimbra-inbox": "Boîte de réception",
   "zimbra-mark-unread": "Marquer comme non lu",
   "zimbra-message-deleted": "Message supprimé",
+  "zimbra-message-deleted-confirm": "Suppression de mail",
+  "zimbra-message-deleted-confirm-text": "Voulez-vous vraiment supprimer définitivement le(s) mail(s) sélectionné(s) ?",
   "zimbra-message-moved": "Message déplacé",
   "zimbra-message-restored": "Message restauré",
   "zimbra-messages": "Messages",
   "zimbra-messages-deleted": "Messages supprimés",
   "zimbra-messages-moved": "Messages déplacés",
   "zimbra-messages-restored": "Messages restaurés",
-  "zimbra-message-deleted-confirm": "Suppression de mail",
-  "zimbra-message-deleted-confirm-text": "Voulez-vous vraiment supprimer définitivement le(s) mail(s) sélectionné(s) ?",
   "zimbra-missing-receiver": "Ce message doit contenir au moins un destinataire",
   "zimbra-move": "Déplacer",
   "zimbra-move-to": "Déplacer vers",

@@ -1,6 +1,5 @@
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { ICountMailboxes } from "../state/count";
-import { IFolderList } from "../state/folders";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ICountMailboxes } from '~/modules/conversation/state/count';
 
 // Data type of what is given by the backend.
 export type FoldersBackend = {
@@ -28,16 +27,16 @@ export const foldersService = {
     } as any;
     if (parentId) body.parentId = parentId;
     const response = await fetchJSONWithCache(`/conversation/folder`, {
-      method: "post",
+      method: 'post',
       body: JSON.stringify(body),
     });
     return response;
   },
   count: async () => {
-    const ids = ["INBOX", "DRAFT"];
+    const ids = ['INBOX', 'DRAFT'];
     const promises: Promise<any>[] = [];
     ids.forEach(id => {
-      promises.push(fetchJSONWithCache(`/conversation/count/${id}?unread=${id === "DRAFT" ? "false" : "true"}`));
+      promises.push(fetchJSONWithCache(`/conversation/count/${id}?unread=${id === 'DRAFT' ? 'false' : 'true'}`));
     });
     const results = await Promise.all(promises);
     const ret: ICountMailboxes = results.reduce((acc, res, i) => {

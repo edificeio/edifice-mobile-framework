@@ -1,16 +1,16 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { TextInput, View, ViewStyle, Dimensions, Platform } from "react-native";
-import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { TextInput, View, ViewStyle, Dimensions, Platform } from 'react-native';
+import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 
-import { Text } from "../../../framework/components/text";
-import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
-import { newMailService } from "../service/newMail";
-import { getProfileColor } from "../utils/userColor";
+import { Text } from '~/framework/components/text';
+import { newMailService } from '~/modules/zimbra/service/newMail';
+import { getProfileColor } from '~/modules/zimbra/utils/userColor';
+import { CommonStyles, IOSShadowStyle } from '~/styles/common/styles';
 
 const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExternalMails }) => {
-  const [search, updateSearch] = React.useState("");
+  const [search, updateSearch] = React.useState('');
   const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState([]);
   const searchTimeout = React.useRef();
 
@@ -38,13 +38,10 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
 
   const removeUser = id => onChange(selectedUsersOrGroups.filter(user => user.id !== id));
   const addUser = userOrGroup => {
-    onChange([
-      ...selectedUsersOrGroups,
-      { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id },
-    ]);
-    updateSearch("");
+    onChange([...selectedUsersOrGroups, { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id }]);
+    updateSearch('');
   };
-  const hasAtChar = search.includes("@") as boolean;
+  const hasAtChar = search.includes('@') as boolean;
 
   const inputValidateAction = (onBlur: boolean = false) => {
     if (!onBlur && !hasAtChar) {
@@ -54,17 +51,17 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
     } else {
       if (search !== '') {
         updateSearch('');
-        Toast.show(I18n.t("zimbra-external-mail-right-error"), {
+        Toast.show(I18n.t('zimbra-external-mail-right-error'), {
           position: Platform.OS === 'ios' ? Toast.position.CENTER : Toast.position.BOTTOM,
           mask: false,
-          containerStyle: { width: "95%", backgroundColor: "black" },
+          containerStyle: { width: '95%', backgroundColor: 'black' },
         });
       }
     }
   };
 
   return (
-    <View style={{ overflow: "visible", marginHorizontal: 5, flex: 1 }}>
+    <View style={{ overflow: 'visible', marginHorizontal: 5, flex: 1 }}>
       <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
       <Input
         value={search}
@@ -82,7 +79,7 @@ const Input = ({ value, onChangeText, onSubmit, onBlur }) => {
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
-    borderBottomColor: "#EEEEEE",
+    borderBottomColor: '#EEEEEE',
     borderBottomWidth: 2,
   } as ViewStyle;
 
@@ -104,11 +101,11 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     top: 0,
     left: 0,
     right: 0,
-    width: "100%",
+    width: '100%',
     zIndex: 10,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     elevation: CommonStyles.elevation,
-    maxHeight: Dimensions.get("window").height * 0.25,
+    maxHeight: Dimensions.get('window').height * 0.25,
     flexGrow: 1,
     ...IOSShadowStyle,
   } as ViewStyle;
@@ -120,15 +117,13 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     }, [profile]);
 
     return (
-      <TouchableOpacity
-        style={{ flexDirection: "row", alignItems: "center", marginVertical: 5, marginLeft: 10 }}
-        onPress={onPress}>
+      <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5, marginLeft: 10 }} onPress={onPress}>
         <Text numberOfLines={1} lineHeight={30} ellipsizeMode="tail">
           <Text
             style={{
               color,
             }}>
-            {"\u25CF "}
+            {'\u25CF '}
           </Text>
           {displayName}
         </Text>
@@ -142,11 +137,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
         style={absoluteListStyle}
         data={foundUserOrGroup}
         renderItem={({ item }) => (
-          <FoundUserOrGroup
-            profile={item.profile}
-            displayName={item.name || item.displayName}
-            onPress={() => addUser(item)}
-          />
+          <FoundUserOrGroup profile={item.profile} displayName={item.name || item.displayName} onPress={() => addUser(item)} />
         )}
       />
     </View>
@@ -166,7 +157,7 @@ const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
       margin: 2,
     } as ViewStyle;
 
-    const userLabel = { color: CommonStyles.primary, textAlignVertical: "center" } as ViewStyle;
+    const userLabel = { color: CommonStyles.primary, textAlignVertical: 'center' } as ViewStyle;
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
@@ -176,7 +167,7 @@ const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
   };
 
   return selectedUsersOrGroups.length > 0 ? (
-    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
       {selectedUsersOrGroups.map(userOrGroup => (
         <SelectedUserOrGroup
           key={userOrGroup.id}

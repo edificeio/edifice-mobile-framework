@@ -1,11 +1,11 @@
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { ISubjectList } from "../state/subjects";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ISubjectList } from '~/modules/viescolaire/viesco/state/subjects';
 
 // Data type of what is given by the backend.
 export type ISubjectListBackend = Array<{
-    subjectCode: string;
-    subjectId: string;
-    subjectLabel: string;
+  subjectCode: string;
+  subjectId: string;
+  subjectLabel: string;
 }>;
 
 const subjectListAdapter: (data: ISubjectListBackend) => ISubjectList = data => {

@@ -1,17 +1,24 @@
+import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 import {
-  actionTypeActivationContext, IActivationContextFetchedAction, IActivationUserInfo, IActivationContextRequestedAction, IActivationModel, actionTypeActivationSubmit, IActivationSubmitRequestedAction, IActivationSubmitErrorAction
-} from "../actions/activation";
-import { SubmitState, ContextState, IActivationContext } from "../../utils/SubmitState";
-import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
+  actionTypeActivationContext,
+  IActivationContextFetchedAction,
+  IActivationUserInfo,
+  IActivationContextRequestedAction,
+  IActivationModel,
+  actionTypeActivationSubmit,
+  IActivationSubmitRequestedAction,
+  IActivationSubmitErrorAction,
+} from '~/user/actions/activation';
+import { SubmitState, ContextState, IActivationContext } from '~/utils/SubmitState';
 
 export interface IActivationState {
-  isActivating: boolean
-  context: IActivationContext
-  userinfo: IActivationUserInfo
-  submitted: IActivationModel,
-  submitState: SubmitState
-  contextState: ContextState,
-  submitError: string
+  isActivating: boolean;
+  context: IActivationContext;
+  userinfo: IActivationUserInfo;
+  submitted: IActivationModel;
+  submitState: SubmitState;
+  contextState: ContextState;
+  submitError: string;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -20,21 +27,21 @@ export const stateDefault: IActivationState = {
   isActivating: false,
   context: {
     cgu: true,
-    passwordRegex: "",
-    mandatory: { mail: false, phone: false }
+    passwordRegex: '',
+    mandatory: { mail: false, phone: false },
   },
   submitted: {
-    phone: "",
-    login: "",
-    activationCode: "",
-    confirm: "",
-    email: "",
-    password: ""
+    phone: '',
+    login: '',
+    activationCode: '',
+    confirm: '',
+    email: '',
+    password: '',
   },
-  userinfo: { activationCode: "", login: "" },
+  userinfo: { activationCode: '', login: '' },
   contextState: ContextState.Void,
   submitState: SubmitState.Void,
-  submitError: ""
+  submitError: '',
 };
 
 const activationReducer = (state: IActivationState = stateDefault, action): IActivationState => {
@@ -43,38 +50,38 @@ const activationReducer = (state: IActivationState = stateDefault, action): IAct
       return {
         ...state,
         userinfo: (action as IActivationContextRequestedAction).userinfo,
-        contextState: ContextState.Loading
+        contextState: ContextState.Loading,
       };
     case actionTypeActivationContext.received:
       return {
         ...state,
         context: (action as IActivationContextFetchedAction).context,
         contextState: ContextState.Success,
-        isActivating: true
+        isActivating: true,
       };
     case actionTypeActivationContext.fetchError:
       return {
         ...state,
         submitError: (action as IActivationSubmitErrorAction).message,
-        contextState: ContextState.Failed
+        contextState: ContextState.Failed,
       };
     case actionTypeActivationSubmit.requested:
       return {
         ...state,
         submitted: (action as IActivationSubmitRequestedAction).model,
-        submitState: SubmitState.Loading
+        submitState: SubmitState.Loading,
       };
     case actionTypeActivationSubmit.received:
       return {
         ...state,
         isActivating: false,
-        submitState: SubmitState.Success
+        submitState: SubmitState.Success,
       };
     case actionTypeActivationSubmit.fetchError:
       return {
         ...state,
-        submitError: (action as IActivationSubmitErrorAction).message || "",
-        submitState: SubmitState.Failed
+        submitError: (action as IActivationSubmitErrorAction).message || '',
+        submitState: SubmitState.Failed,
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

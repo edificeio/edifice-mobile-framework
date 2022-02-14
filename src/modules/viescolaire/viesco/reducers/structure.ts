@@ -1,6 +1,6 @@
-import { createSessionReducer } from "../../../../infra/redux/reducerFactory";
-import { actionTypeLoggedIn } from "../../../../user/actions/actionTypes/login";
-import { selectStructureActionType, initialState } from "../state/structure";
+import { createSessionReducer } from '~/infra/redux/reducerFactory';
+import { selectStructureActionType, initialState } from '~/modules/viescolaire/viesco/state/structure';
+import { actionTypeLoggedIn } from '~/user/actions/actionTypes/login';
 
 export default createSessionReducer(initialState, {
   [actionTypeLoggedIn]: (state, action) => ({

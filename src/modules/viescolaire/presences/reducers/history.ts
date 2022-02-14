@@ -1,6 +1,5 @@
-import { createSessionReducer } from "../../../../infra/redux/reducerFactory";
-import { studentEventsActionsTypes, initialState } from "../state/events";
-import { studentEventsActions } from "../actions/events";
+import { createSessionReducer } from '~/infra/redux/reducerFactory';
+import { studentEventsActionsTypes, initialState } from '~/modules/viescolaire/presences/state/events';
 
 export default createSessionReducer(initialState, {
   [studentEventsActionsTypes.event]: (state = initialState, action) => {
@@ -28,9 +27,9 @@ export default createSessionReducer(initialState, {
   [studentEventsActionsTypes.clear]: () => {
     return initialState;
   },
-  [studentEventsActionsTypes.error] : (state, action) => {
-    const new_state = { ... state };
+  [studentEventsActionsTypes.error]: (state, action) => {
+    const new_state = { ...state };
     new_state.error = action.data;
     return new_state;
-  }
+  },
 });

@@ -11,6 +11,7 @@ import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messag
 import { ThunkDispatch } from "redux-thunk";
 import SplashScreen from "react-native-splash-screen";
 import { DEPRECATED_getCurrentPlatform } from "./framework/util/_legacy_appConf";
+import { openUrl } from "./framework/util/linking";
 
 const normalizeUrl = (url:string)=>{
   try{
@@ -60,13 +61,7 @@ export const handleNotificationAction = (data: NotificationData, apps: string[],
       console.log("data", data.resourceUri.split('/'));
       const notifPathBegin = '/' + data.resourceUri.replace(/^\/+/g, '').split('/')[0];
       trackType && Trackers.trackEvent(trackType, "Browser", notifPathBegin);
-      Linking.canOpenURL(url).then(supported => {
-        if (supported) {
-          Linking.openURL(url);
-        } else {
-          console.warn("[pushNotification] Don't know how to open URI: ", url);
-        }
-      });
+      openUrl(url);
     }
   }
 

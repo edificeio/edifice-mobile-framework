@@ -1,6 +1,5 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IUserChildren } from "../state/userChildren";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IUserChildren } from '~/modules/viescolaire/edt/state/userChildren';
 
 export type IUserChildrenBackend = {
   classes: string[];

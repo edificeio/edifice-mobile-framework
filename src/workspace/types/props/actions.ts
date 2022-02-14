@@ -1,6 +1,6 @@
-import { IFiltersParameters } from "../filters";
-import { IId } from "../../../types";
-import { ContentUri, IItem } from "..";
+import { IId } from '~/types';
+import { ContentUri, IItem } from '~/workspace/types';
+import { IFiltersParameters } from '~/workspace/types/filters';
 
 export interface IActionProps {
   trashAction: (parentId: string, selected: IId[]) => void;

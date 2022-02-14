@@ -1,17 +1,17 @@
-import { ViewStyle } from "react-native";
-import { EVENT_TYPE, IId } from "../../types";
+import { ViewStyle } from 'react-native';
 
-import { IEvent } from "../../types/ievents";
-import {IItems} from "../../workspace/reducers/select";
-import {IItem} from "../../workspace/types/states";
+import { EVENT_TYPE, IId } from '~/types';
+import { IEvent } from '~/types/ievents';
+import { IItems } from '~/workspace/reducers/select';
+import { IItem } from '~/workspace/types/states';
 
 type IMenuEvent = {
-  cut?: boolean,
+  cut?: boolean;
   dispatch: any;
   navigation: any;
-  selected: IItems<IItem>,
+  selected: IItems<IItem>;
   item?: any;
-  filterId: string,
+  filterId: string;
   parentId: string;
 };
 
@@ -20,22 +20,22 @@ export type IMenuItem = IId & {
   icon: string;
   text: string;
   type: EVENT_TYPE;
-  options?: any,
+  options?: any;
   dialog?: any;
 };
 
 export const initialMenuItem = {
-  id: "",
-  icon: "",
-  text: "",
+  id: '',
+  icon: '',
+  text: '',
   type: EVENT_TYPE.MENU_SELECT,
   dialog: null,
   onEvent: (params: IMenuEvent) => null,
-}
+};
 
 export type IFloatingProps = {
-  iconName: string,
-  iconSize?: number,
+  iconName: string;
+  iconSize?: number;
   menuItems?: IMenuItem[];
   onEvent: (event: IEvent) => void;
   eventHandleData: any;

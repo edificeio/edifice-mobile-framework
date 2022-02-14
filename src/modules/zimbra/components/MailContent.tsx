@@ -1,14 +1,15 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 
-import { getSessionInfo } from "../../../App";
-import { Loading } from "../../../ui";
-import { PageContainer } from "../../../ui/ContainerContent";
-import { HtmlContentView } from "../../../ui/HtmlContentView";
-import { DraftType } from "../containers/NewMail";
-import { getUserColor } from "../utils/userColor";
-import { RenderPJs, HeaderMail, FooterButton, HeaderMailDetails } from "./MailContentItems";
+import { RenderPJs, HeaderMail, FooterButton, HeaderMailDetails } from './MailContentItems';
+
+import { getSessionInfo } from '~/App';
+import { DraftType } from '~/modules/zimbra/containers/NewMail';
+import { getUserColor } from '~/modules/zimbra/utils/userColor';
+import { Loading } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import { HtmlContentView } from '~/ui/HtmlContentView';
 
 type MailContentProps = {
   navigation: any;
@@ -38,8 +39,8 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
   private mailFooterTrash() {
     return (
       <View style={styles.containerFooter}>
-        <FooterButton icon="delete-restore" text={I18n.t("zimbra-restore")} onPress={this.props.restore} />
-        <FooterButton icon="delete" text={I18n.t("zimbra-delete")} onPress={this.props.delete} />
+        <FooterButton icon="delete-restore" text={I18n.t('zimbra-restore')} onPress={this.props.restore} />
+        <FooterButton icon="delete" text={I18n.t('zimbra-delete')} onPress={this.props.delete} />
       </View>
     );
   }
@@ -50,10 +51,10 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
       <View style={styles.containerFooter}>
         <FooterButton
           icon="reply"
-          text={I18n.t("zimbra-reply")}
+          text={I18n.t('zimbra-reply')}
           onPress={() =>
             checkStorage() &&
-            this.props.navigation.navigate("newMail", {
+            this.props.navigation.navigate('newMail', {
               type: DraftType.REPLY,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
@@ -62,10 +63,10 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
         />
         <FooterButton
           icon="reply_all"
-          text={I18n.t("zimbra-replyAll")}
+          text={I18n.t('zimbra-replyAll')}
           onPress={() =>
             checkStorage() &&
-            this.props.navigation.navigate("newMail", {
+            this.props.navigation.navigate('newMail', {
               type: DraftType.REPLY_ALL,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
@@ -74,17 +75,17 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
         />
         <FooterButton
           icon="forward"
-          text={I18n.t("zimbra-forward")}
+          text={I18n.t('zimbra-forward')}
           onPress={() =>
             checkStorage() &&
-            this.props.navigation.navigate("newMail", {
+            this.props.navigation.navigate('newMail', {
               type: DraftType.FORWARD,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
             })
           }
         />
-        <FooterButton icon="delete" text={I18n.t("zimbra-delete")} onPress={this.props.delete} />
+        <FooterButton icon="delete" text={I18n.t('zimbra-delete')} onPress={this.props.delete} />
       </View>
     );
   }
@@ -127,18 +128,21 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
             <Loading />
           ) : (
             <View style={{ flex: 1 }}>
-              {this.props.mail.id && (
-                <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />
-              )}
+              {this.props.mail.id && <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />}
               {this.props.mail.id &&
                 this.mailHeader(v => {
                   this.setState({ detailsVisible: v });
                 })}
               {this.props.mail.hasAttachment && (
-                  <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} onDownload={this.props.downloadAttachment} dispatch={this.props.dispatch} />
+                <RenderPJs
+                  attachments={this.props.mail.attachments}
+                  mailId={this.props.mail.id}
+                  onDownload={this.props.downloadAttachment}
+                  dispatch={this.props.dispatch}
+                />
               )}
               {this.props.mail.body !== undefined && this.mailContent()}
-              {navigation.getParam("isTrashed") || navigation.state.routeName === "trash"
+              {navigation.getParam('isTrashed') || navigation.state.routeName === 'trash'
                 ? this.mailFooterTrash()
                 : this.mailFooter()}
               {this.state.detailsVisible && (
@@ -159,20 +163,20 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
 
 const styles = StyleSheet.create({
   topBar: {
-    width: "100%",
+    width: '100%',
     height: 12,
   },
   shadowContainer: {
     flexGrow: 1,
     marginTop: 5,
     marginBottom: 0,
-    flexDirection: "column-reverse",
-    backgroundColor: "white",
+    flexDirection: 'column-reverse',
+    backgroundColor: 'white',
   },
   scrollContainer: {
     flexGrow: 1,
-    backgroundColor: "#FFF",
-    shadowColor: "#000",
+    backgroundColor: '#FFF',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 5,
@@ -182,10 +186,10 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   containerFooter: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    position: "absolute",
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    position: 'absolute',
+    width: '100%',
     bottom: 0,
     zIndex: 10,
     elevation: 10,

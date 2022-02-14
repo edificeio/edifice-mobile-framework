@@ -1,10 +1,10 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import ButtonOk from "../../../../ui/ConfirmDialog/buttonOk";
-import { ModalBox } from "../../../../ui/Modal";
-import { Text } from "../../../../framework/components/text";
+import { Text } from '~/framework/components/text';
+import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
+import { ModalBox } from '~/ui/Modal';
 
 export default class NotificationsModal extends React.PureComponent<
   { modal: boolean; onClose?: any; data: any },
@@ -27,30 +27,30 @@ export default class NotificationsModal extends React.PureComponent<
   public render() {
     const data = [
       {
-        name: "BABIN Loïc",
+        name: 'BABIN Loïc',
         events: [
           {
-            type: "absences non justifiées",
-            color: "red",
+            type: 'absences non justifiées',
+            color: 'red',
             occurrences: [
               {
-                primaryText: "17/01/21",
-                secondaryText: "8:30 - 9:25",
+                primaryText: '17/01/21',
+                secondaryText: '8:30 - 9:25',
               },
             ],
           },
         ],
       },
       {
-        name: "BABIN Noémie",
+        name: 'BABIN Noémie',
         events: [
           {
-            type: "retard",
-            color: "purple",
+            type: 'retard',
+            color: 'purple',
             occurrences: [
               {
-                primaryText: "17/01/21",
-                secondaryText: "8:30 - 9:25 - 5mn",
+                primaryText: '17/01/21',
+                secondaryText: '8:30 - 9:25 - 5mn',
               },
             ],
           },
@@ -62,7 +62,7 @@ export default class NotificationsModal extends React.PureComponent<
       <ModalBox backdropOpacity={0.5} isVisible={this.state.visible}>
         <View style={style.modalContainerView}>
           <View style={style.modalContentView}>
-            <Text style={style.modalTitle}>{I18n.t("viesco-notifications")}</Text>
+            <Text style={style.modalTitle}>{I18n.t('viesco-notifications')}</Text>
             {data.map(child => (
               <View>
                 <Text style={style.bold}>{child.name}</Text>
@@ -80,7 +80,7 @@ export default class NotificationsModal extends React.PureComponent<
                 </View>
               </View>
             ))}
-            <ButtonOk label={I18n.t("common-ok")} onPress={this.onClose} />
+            <ButtonOk label={I18n.t('common-ok')} onPress={this.onClose} />
           </View>
         </View>
       </ModalBox>
@@ -90,7 +90,7 @@ export default class NotificationsModal extends React.PureComponent<
 
 const style = StyleSheet.create({
   bold: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   modalTitle: {
     marginBottom: 10,
@@ -101,19 +101,19 @@ const style = StyleSheet.create({
     marginBottom: 15,
   },
   eventTitle: {
-    textTransform: "uppercase",
-    color: "grey",
+    textTransform: 'uppercase',
+    color: 'grey',
   },
   modalContainerView: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContentView: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 5,
     padding: 25,
-    alignItems: "stretch",
+    alignItems: 'stretch',
   },
 });

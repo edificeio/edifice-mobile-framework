@@ -1,16 +1,27 @@
-import { SubmitState, ContextState, IActivationContext } from "../../utils/SubmitState";
-import { IChangePasswordUserInfo, IChangePasswordModel, actionTypeActivationContext, IChangePasswordContextRequestedAction, IChangePasswordContextFetchedAction, IChangePasswordSubmitErrorAction, actionTypeChangePasswordSubmit, IChangePasswordSubmitRequestedAction, actionTypeChangePasswordReset } from "../actions/changePassword";
-import { AnyAction } from "redux";
-import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
+import { AnyAction } from 'redux';
+
+import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
+import {
+  IChangePasswordUserInfo,
+  IChangePasswordModel,
+  actionTypeActivationContext,
+  IChangePasswordContextRequestedAction,
+  IChangePasswordContextFetchedAction,
+  IChangePasswordSubmitErrorAction,
+  actionTypeChangePasswordSubmit,
+  IChangePasswordSubmitRequestedAction,
+  actionTypeChangePasswordReset,
+} from '~/user/actions/changePassword';
+import { SubmitState, ContextState, IActivationContext } from '~/utils/SubmitState';
 
 export interface IChangePasswordState {
-  isPerforming: boolean
-  context: IActivationContext
-  userinfo: IChangePasswordUserInfo
-  submitted: IChangePasswordModel,
-  submitState: SubmitState
-  contextState: ContextState,
-  submitError: string
+  isPerforming: boolean;
+  context: IActivationContext;
+  userinfo: IChangePasswordUserInfo;
+  submitted: IChangePasswordModel;
+  submitState: SubmitState;
+  contextState: ContextState;
+  submitError: string;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -19,18 +30,18 @@ export const stateDefault: IChangePasswordState = {
   isPerforming: false,
   context: {
     cgu: true,
-    passwordRegex: "",
-    mandatory: { mail: false, phone: false }
+    passwordRegex: '',
+    mandatory: { mail: false, phone: false },
   },
   submitted: {
-    oldPassword: "",
-    newPassword: "",
-    confirm: ""
+    oldPassword: '',
+    newPassword: '',
+    confirm: '',
   },
-  userinfo: { login: "" },
+  userinfo: { login: '' },
   contextState: ContextState.Void,
   submitState: SubmitState.Void,
-  submitError: ""
+  submitError: '',
 };
 
 const changePasswordReducer = (state: IChangePasswordState = stateDefault, action: AnyAction): IChangePasswordState => {
@@ -39,46 +50,46 @@ const changePasswordReducer = (state: IChangePasswordState = stateDefault, actio
       return {
         ...state,
         userinfo: (action as IChangePasswordContextRequestedAction).userinfo,
-        contextState: ContextState.Loading
+        contextState: ContextState.Loading,
       };
     case actionTypeActivationContext.received:
       return {
         ...state,
         context: (action as IChangePasswordContextFetchedAction).context,
         contextState: ContextState.Success,
-        isPerforming: true
+        isPerforming: true,
       };
     case actionTypeActivationContext.fetchError:
       return {
         ...state,
         submitError: (action as IChangePasswordSubmitErrorAction).message!,
-        contextState: ContextState.Failed
+        contextState: ContextState.Failed,
       };
     case actionTypeChangePasswordSubmit.requested:
       return {
         ...state,
         submitted: (action as IChangePasswordSubmitRequestedAction).model,
         submitState: SubmitState.Loading,
-        submitError: ""
+        submitError: '',
       };
     case actionTypeChangePasswordSubmit.received:
       return {
         ...state,
         isPerforming: false,
         submitState: SubmitState.Success,
-        submitError: "",
+        submitError: '',
       };
     case actionTypeChangePasswordSubmit.fetchError:
       return {
         ...state,
-        submitError: (action as IChangePasswordSubmitErrorAction).message || "",
-        submitState: SubmitState.Failed
+        submitError: (action as IChangePasswordSubmitErrorAction).message || '',
+        submitState: SubmitState.Failed,
       };
     case actionTypeChangePasswordReset:
       return {
         ...state,
-        submitted: stateDefault.submitted
-      }
+        submitted: stateDefault.submitted,
+      };
     // Session flush forward-compatibility.
     case createEndSessionActionType():
       return stateDefault;

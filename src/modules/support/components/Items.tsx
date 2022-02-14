@@ -1,10 +1,10 @@
-import * as React from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from "react-native";
+import * as React from 'react';
+import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
-import Dropdown from "../../../ui/Dropdown";
-import { IApp, IEstablishment } from "../containers/Support";
+import { IApp, IEstablishment } from '~/modules/support/containers/Support';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import Dropdown from '~/ui/Dropdown';
 
 export const EstablishmentPicker = ({
   list,
@@ -13,8 +13,7 @@ export const EstablishmentPicker = ({
   list: IEstablishment[];
   onFieldChange: (field: string) => void;
 }) => {
-  const [currentValue, updateCurrentValue] =
-    list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
+  const [currentValue, updateCurrentValue] = list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
   return (
     <View style={{ flex: 1 }}>
       <Dropdown
@@ -35,8 +34,7 @@ export const EstablishmentPicker = ({
 };
 
 export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldChange: (field: string) => void }) => {
-  const [currentValue, updateCurrentValue] =
-    list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
+  const [currentValue, updateCurrentValue] = list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
   return (
     <View style={{ flex: 1 }}>
       <Dropdown
@@ -56,7 +54,11 @@ export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldC
   );
 };
 
-export const FormInputs = ({ fieldName, onChange, setResetter }: {
+export const FormInputs = ({
+  fieldName,
+  onChange,
+  setResetter,
+}: {
   fieldName: string;
   onChange: (field: string) => void;
   setResetter: (resetter: () => void) => void;
@@ -65,16 +67,16 @@ export const FormInputs = ({ fieldName, onChange, setResetter }: {
     flex: 1,
     marginHorizontal: 10,
     color: CommonStyles.textColor,
-    borderBottomColor: "#EEEEEE",
+    borderBottomColor: '#EEEEEE',
     borderBottomWidth: 2,
   } as ViewStyle;
   const textInputMultiline = {
-    maxHeight: 115
+    maxHeight: 115,
   } as ViewStyle;
   const textUpdateTimeout = React.useRef();
-  const [currentValue, updateCurrentValue] = React.useState<string>("");
+  const [currentValue, updateCurrentValue] = React.useState<string>('');
   const notFirstRender = React.useRef(false);
-  setResetter(() => updateCurrentValue(""));
+  setResetter(() => updateCurrentValue(''));
 
   React.useEffect(() => {
     if (!notFirstRender.current) {
@@ -90,13 +92,8 @@ export const FormInputs = ({ fieldName, onChange, setResetter }: {
     };
   }, [currentValue]);
 
-  return fieldName === "subject" ? (
-    <TextInput
-      style={textInputStyle}
-      numberOfLines={1}
-      value={currentValue}
-      onChangeText={text => updateCurrentValue(text)}
-    />
+  return fieldName === 'subject' ? (
+    <TextInput style={textInputStyle} numberOfLines={1} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
   ) : (
     <TextInput
       style={[textInputStyle, textInputMultiline]}
@@ -117,7 +114,7 @@ export const IconButton = ({ icon, color, onPress }) => {
 
 const styles = StyleSheet.create({
   dropdown: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     borderRadius: 0,
     borderWidth: 0,
     borderBottomWidth: 2,

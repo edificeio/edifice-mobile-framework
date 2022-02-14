@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { mailContentService } from "../service/mailContent";
-import { actionTypes, IMail } from "../state/mailContent";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { mailContentService } from '~/modules/zimbra/service/mailContent';
+import { actionTypes, IMail } from '~/modules/zimbra/state/mailContent';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

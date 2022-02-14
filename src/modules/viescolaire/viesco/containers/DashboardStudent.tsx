@@ -1,30 +1,33 @@
-import moment from "moment";
-import * as React from "react";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import moment from 'moment';
+import * as React from 'react';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from "../../../../App";
-import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
-import { fetchHomeworkListAction, updateHomeworkProgressAction } from "../../cdt/actions/homeworks";
-import { getHomeworksListState } from "../../cdt/state/homeworks";
-import { fetchLevelsAction } from "../../competences/actions/competencesLevels";
-import { fetchDevoirListAction } from "../../competences/actions/devoirs";
-import { getLevelsListState, ILevelsList } from "../../competences/state/competencesLevels";
-import { getDevoirListState } from "../../competences/state/devoirs";
-import { fetchPersonnelListAction } from "../actions/personnel";
-import { fetchSubjectListAction } from "../actions/subjects";
-import DashboardComponent from "../components/DashboardStudent";
-import { getSubjectsListState } from "../state/subjects";
+import { IAuthorizedViescoApps } from './Dashboard';
+
+import { getSessionInfo } from '~/App';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchHomeworkListAction, updateHomeworkProgressAction } from '~/modules/viescolaire/cdt/actions/homeworks';
+import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
+import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
+import { getLevelsListState, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
+import { getDevoirListState } from '~/modules/viescolaire/competences/state/devoirs';
+import { fetchPersonnelListAction } from '~/modules/viescolaire/viesco/actions/personnel';
+import { fetchSubjectListAction } from '~/modules/viescolaire/viesco/actions/subjects';
+import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardStudent';
+import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
 
 class Dashboard extends React.PureComponent<{
-  homeworks: any[];
+  authorizedViescoApps: IAuthorizedViescoApps;
+  homeworks: IHomeworkListState;
   structureId: string;
   childId: string;
   levels: ILevelsList;
-  getSubjects: (structureId: string) => any;
-  getTeachers: (structureId: string) => any;
-  getHomeworks: (structureId: string, startDate: string, endDate: string) => any;
+  getSubjects: (structureId: string) => void;
+  getTeachers: (structureId: string) => void;
+  getHomeworks: (structureId: string, startDate: string, endDate: string) => void;
   getDevoirs: (structureId: string, childId: string) => void;
   getLevels: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;
@@ -34,14 +37,8 @@ class Dashboard extends React.PureComponent<{
     const { structureId, getHomeworks, childId } = props;
     this.state = {
       // fetching next month homeworks only, when screen is focused
-      focusListener: this.props.navigation.addListener("willFocus", () => {
-        getHomeworks(
-          structureId,
-          moment().format("YYYY-MM-DD"),
-          moment()
-            .add(1, "month")
-            .format("YYYY-MM-DD")
-        );
+      focusListener: this.props.navigation.addListener('willFocus', () => {
+        getHomeworks(structureId, moment().format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD'));
         this.props.getDevoirs(structureId, childId);
       }),
     };
@@ -62,7 +59,7 @@ class Dashboard extends React.PureComponent<{
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  const homeworks = getHomeworksListState(state);
+const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
   const childId = getSessionInfo().userId;
@@ -89,8 +86,8 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getDevoirs: fetchDevoirListAction,
       getLevels: fetchLevelsAction,
     },
-    dispatch
+    dispatch,
   );
 };
 
-export default withViewTracking("viesco")(connect(mapStateToProps, mapDispatchToProps)(Dashboard));
+export default withViewTracking('viesco')(connect(mapStateToProps, mapDispatchToProps)(Dashboard));

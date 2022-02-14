@@ -1,16 +1,18 @@
-import { createStackNavigator } from "react-navigation-stack";
+import { createStackNavigator } from 'react-navigation-stack';
 
-import Homework from "./containers/Homework";
-import HomeworkList from "./containers/HomeworkList";
-import Session from "./containers/Session";
+import CdtTimetableTeachers from './containers/CdtTimetableTeachers';
+import Homework from './containers/Homework';
+import HomeworkList from './containers/HomeworkList';
+import Session from './containers/Session';
 
 export default createStackNavigator(
   {
     HomeworkList,
     HomeworkPage: Homework,
     SessionPage: Session,
+    CdtTeachers: CdtTimetableTeachers,
   },
   {
-    headerMode: "screen",
-  }
+    headerMode: 'screen',
+  },
 );

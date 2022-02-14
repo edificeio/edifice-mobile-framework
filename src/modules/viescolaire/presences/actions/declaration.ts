@@ -1,12 +1,12 @@
-import moment from "moment";
-import { Dispatch } from "redux";
-import { LocalFile } from "../../../../framework/util/fileHandler";
-import { getUserSession } from "../../../../framework/util/session";
+import moment from 'moment';
+import { Dispatch } from 'redux';
 
-import { Trackers } from "../../../../framework/util/tracker";
-import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
-import { absenceDeclarationService } from "../services/declaration";
-import { declarationActionsTypes } from "../state/declaration";
+import { LocalFile } from '~/framework/util/fileHandler';
+import { getUserSession } from '~/framework/util/session';
+import { Trackers } from '~/framework/util/tracker';
+import { absenceDeclarationService } from '~/modules/viescolaire/presences/services/declaration';
+import { declarationActionsTypes } from '~/modules/viescolaire/presences/state/declaration';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 
 export const declarationActions = {
   isPosting: () => ({ type: declarationActionsTypes.isPosting }),
@@ -24,22 +24,17 @@ export function declareAbsenceAction(startDate: moment.Moment, endDate: moment.M
         endDate,
         getSelectedChild(state).id,
         getSelectedChildStructure(state)!.id,
-        comment
+        comment,
       );
       dispatch(declarationActions.posted());
-      Trackers.trackEvent("viesco", "DECLARE ABSENCE");
+      Trackers.trackEvent('viesco', 'DECLARE ABSENCE');
     } catch (errmsg) {
       dispatch(declarationActions.error(errmsg));
     }
   };
 }
 
-export function declareAbsenceWithFileAction(
-  startDate: moment.Moment,
-  endDate: moment.Moment,
-  comment: string,
-  file: LocalFile
-) {
+export function declareAbsenceWithFileAction(startDate: moment.Moment, endDate: moment.Moment, comment: string, file: LocalFile) {
   return async (dispatch: Dispatch, getState: any) => {
     const state = getState();
     try {
@@ -51,10 +46,10 @@ export function declareAbsenceWithFileAction(
         getSelectedChildStructure(state)!.id,
         comment,
         file,
-        getUserSession(state)
+        getUserSession(state),
       );
       dispatch(declarationActions.posted());
-      Trackers.trackEvent("viesco", "DECLARE ABSENCE");
+      Trackers.trackEvent('viesco', 'DECLARE ABSENCE');
     } catch (errmsg) {
       dispatch(declarationActions.error(errmsg));
     }

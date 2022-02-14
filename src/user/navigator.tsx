@@ -1,25 +1,25 @@
-import { createStackNavigator } from "react-navigation-stack";
+import { createStackNavigator } from 'react-navigation-stack';
 
-import UserPage, { UserPageNavigationOptions } from "./containers/UserPage";
-import ProfilePage from "./containers/ProfilePage";
-import ChangePasswordPage from "./containers/ChangePasswordPage";
-import StructuresPage from "./containers/StructuresPage";
-import RelativesPage from "./containers/RelativesPage";
-import ChildrenPage from "./containers/ChildrenPage";
-import PushNotifsSettingsScreen from "./containers/PushNotifsSettingsScreen";
-import LegalNoticeScreen from "./containers/LegalNoticeScreen";
+import ChangePasswordPage from './containers/ChangePasswordPage';
+import ChildrenPage from './containers/ChildrenPage';
+import LegalNoticeScreen from './containers/LegalNoticeScreen';
+import ProfilePage from './containers/ProfilePage';
+import PushNotifsSettingsScreen from './containers/PushNotifsSettingsScreen';
+import RelativesPage from './containers/RelativesPage';
+import StructuresPage from './containers/StructuresPage';
+import UserPage, { UserPageNavigationOptions } from './containers/UserPage';
 
 export default createStackNavigator({
   Profile: {
     navigationOptions: UserPageNavigationOptions,
-    screen: UserPage
+    screen: UserPage,
   },
 
   NotifPrefs: {
     navigationOptions: {
       header: () => null,
     },
-    screen: PushNotifsSettingsScreen
+    screen: PushNotifsSettingsScreen,
   },
 
   LegalNotice: {
@@ -27,26 +27,26 @@ export default createStackNavigator({
       // Note: a FakeHeader is used inside LegalNoticeScreen, so that it doesn't limite the backdrop shadow
       header: () => null,
     },
-    screen: LegalNoticeScreen
+    screen: LegalNoticeScreen,
   },
 
   MyProfile: {
-    screen: ProfilePage
+    screen: ProfilePage,
   },
 
   ChangePassword: {
-    screen: ChangePasswordPage
+    screen: ChangePasswordPage,
   },
 
   Structures: {
-    screen: StructuresPage
+    screen: StructuresPage,
   },
 
   Relatives: {
-    screen: RelativesPage
+    screen: RelativesPage,
   },
 
   Children: {
-    screen: ChildrenPage
-  }
+    screen: ChildrenPage,
+  },
 });

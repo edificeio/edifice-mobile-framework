@@ -3,11 +3,11 @@
  * Build actions to be dispatched to the comment list reducer.
  */
 
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { IBlogCommentList, blogCommentListActionTypes } from "../state/commentList";
-import { createAsyncActionCreators } from "../../infra/redux/async2";
-import { blogCommentListService } from "../service/commentList";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { blogCommentListService } from '~/timeline/service/commentList';
+import { IBlogCommentList, blogCommentListActionTypes } from '~/timeline/state/commentList';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -36,4 +36,3 @@ export function fetchBlogCommentListAction(blogPostId: string, clear: boolean = 
  * Calls a fetch operation to get news comment list from the backend.
  * Dispatches ...
  */
- 

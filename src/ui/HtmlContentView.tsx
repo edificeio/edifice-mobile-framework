@@ -6,17 +6,18 @@
  * Has a `opts` prop that are the HtmlConverter's options.
  */
 
-import I18n from "i18n-js";
-import * as React from "react";
-import { View, ViewProps } from "react-native";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, ViewProps } from 'react-native';
 
-import { Loading } from ".";
-import { fetchJSONWithCache } from "../infra/fetchWithCache";
-import HtmlParserRN, { IHtmlParserRNOptions } from "../framework/util/htmlParser/rn";
-import { Italic } from "./Typography";
-import { IRemoteAttachment } from "./Attachment";
-import { AttachmentGroup } from "./AttachmentGroup";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { Loading } from '.';
+import { IRemoteAttachment } from './Attachment';
+import { AttachmentGroup } from './AttachmentGroup';
+import { Italic } from './Typography';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;
@@ -37,14 +38,11 @@ interface IHtmlContentViewState {
   done?: boolean; // Is content fully loaded?
   error?: boolean; // Has loading ressource failed?
   html?: string; // Loaded html
-  attachments: IRemoteAttachment[] // Attachments in html
+  attachments: IRemoteAttachment[]; // Attachments in html
   jsx?: JSX.Element; // Computed jsx
 }
 
-export class HtmlContentView extends React.PureComponent<
-  IHtmlContentViewProps,
-  IHtmlContentViewState
-> {
+export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlContentViewState> {
   public constructor(props) {
     super(props);
     this.state = {
@@ -53,7 +51,7 @@ export class HtmlContentView extends React.PureComponent<
       error: false,
       html: this.props.html || undefined,
       attachments: [],
-      jsx: undefined
+      jsx: undefined,
     };
   }
 
@@ -75,21 +73,23 @@ export class HtmlContentView extends React.PureComponent<
     const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
     const attachmentGroupsHtml = html.match(attachmentGroupRegex);
     const attachmentsHtml = attachmentGroupsHtml && attachmentGroupsHtml.join().match(/<a.*?>.*?<\/a>/g);
-    const attachments = attachmentsHtml && attachmentsHtml.map(attHtml => {
-      const attUrl = attHtml.match(/href="(.*?)"/g);
-      const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
-      return ({
-        url: attUrl && `${DEPRECATED_getCurrentPlatform()!.url}${attUrl[0].replace('href="', "").replace('"', "")}`,
-        displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, "").replace(/<\/a>/g, ""),
-      } as IRemoteAttachment)
-    });
-    html = html.replace(attachmentGroupRegex, "");
+    const attachments =
+      attachmentsHtml &&
+      attachmentsHtml.map(attHtml => {
+        const attUrl = attHtml.match(/href="(.*?)"/g);
+        const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
+        return {
+          url: attUrl && `${DEPRECATED_getCurrentPlatform()!.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
+          displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, '').replace(/<\/a>/g, ''),
+        } as IRemoteAttachment;
+      });
+    html = html.replace(attachmentGroupRegex, '');
     this.setState({ html });
     attachments && this.setState({ attachments });
   }
 
   public async compute() {
-    const { loading, done, html, jsx } = this.state
+    const { loading, done, html, jsx } = this.state;
     const { getContentFromResource, source, opts } = this.props;
     const hasAttachments = html && html.includes('<div class="download-attachments">');
     if (done) return;
@@ -99,7 +99,7 @@ export class HtmlContentView extends React.PureComponent<
       // If there is no Html, try to load it
       if (!getContentFromResource || !source)
         throw new Error(
-          "HtmlContentView: When the html prop isn't provided, you must provide both the `getContentFromResource` and `source` props."
+          "HtmlContentView: When the html prop isn't provided, you must provide both the `getContentFromResource` and `source` props.",
         );
       if (loading) return;
 
@@ -117,49 +117,49 @@ export class HtmlContentView extends React.PureComponent<
         const htmlParser = new HtmlParserRN(opts);
         this.setState({
           done: true,
-          jsx: htmlParser.parse(html) as JSX.Element
+          jsx: htmlParser.parse(html) as JSX.Element,
         });
       }
     }
   }
-  
+
   public render() {
-    const { error, jsx, attachments, loading } = this.state
-    const { loadingComp, emptyMessage, onDownload, onError, onDownloadAll, onOpen } = this.props
-    const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null)
+    const { error, jsx, attachments, loading } = this.state;
+    const { loadingComp, emptyMessage, onDownload, onError, onDownloadAll, onOpen } = this.props;
+    const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null);
     const loadingComponent = loadingComp || <Loading />;
     const hasAttachments = attachments && attachments.length;
 
     if (error) {
       return (
         <View {...this.props}>
-          <Italic>{I18n.t("common-ErrorLoadingResource")}</Italic>
+          <Italic>{I18n.t('common-ErrorLoadingResource')}</Italic>
         </View>
       );
     } else if (!loading && !hasContent) {
-      return typeof emptyMessage === "string" ?
+      return typeof emptyMessage === 'string' ? (
         <View {...this.props}>
           <Italic>{emptyMessage}</Italic>
         </View>
-      : 
-        emptyMessage || <Italic>{I18n.t("noContent")}</Italic>
+      ) : (
+        emptyMessage || <Italic>{I18n.t('noContent')}</Italic>
+      );
     } else {
       return (
         <>
           <View {...this.props}>{jsx || loadingComponent}</View>
-          {hasAttachments
-            ? <AttachmentGroup
-                attachments={attachments}
-                containerStyle={{ marginTop: 12 }}
-                onDownload={onDownload}
-                onError={onError}
-                onDownloadAll={onDownloadAll}
-                onOpen={onOpen}
-              />
-            : null
-          }
+          {hasAttachments ? (
+            <AttachmentGroup
+              attachments={attachments}
+              containerStyle={{ marginTop: 12 }}
+              onDownload={onDownload}
+              onError={onError}
+              onDownloadAll={onDownloadAll}
+              onOpen={onOpen}
+            />
+          ) : null}
         </>
-      )
+      );
     }
   }
 }

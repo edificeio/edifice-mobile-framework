@@ -1,5 +1,5 @@
-import { createSessionAsyncReducer } from "../../../../infra/redux/async2";
-import { initialState, actionTypes } from "../state/structureMatieres";
+import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import { initialState, actionTypes } from '~/modules/viescolaire/competences/state/structureMatieres';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

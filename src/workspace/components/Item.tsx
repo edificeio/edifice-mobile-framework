@@ -1,14 +1,14 @@
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
-import I18n from 'i18n-js';
-import { IEventProps, EVENT_TYPE } from '../types';
 
-import { Text, NestedText } from '../../framework/components/text';
-import { CenterPanel, LeftIconPanel, LeftSmallIconPanel, ListItem } from '../../ui/ContainerContent';
-import { DateView } from '../../ui/DateView';
-import { renderIcon, renderSmallIcon } from '../utils/image';
-import { layoutSize } from '../../styles/common/layoutSize';
-import { CommonStyles } from '../../styles/common/styles';
+import { Text, NestedText } from '~/framework/components/text';
+import { layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
+import { DateView } from '~/ui/DateView';
+import { IEventProps, EVENT_TYPE } from '~/workspace/types';
+import { renderIcon } from '~/workspace/utils/image';
 
 const style = StyleSheet.create({
   centerPanel: {
@@ -29,7 +29,7 @@ const style = StyleSheet.create({
 
 export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any) => {
   const { id, isFolder, name, date, ownerName = '', contentType } = item;
-  const longOwnerName = `${I18n.t('by')}${ownerName}`;
+  const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
 
   return (
     <ListItem

@@ -3,17 +3,17 @@
  * Build actions to be dispatched to the Connector reducer.
  */
 
-import { Linking } from "react-native";
+import { Linking } from 'react-native';
 
-import { signedFetch } from "../../../infra/fetchWithCache";
-import pronoteConfig from "../moduleConfig";
+import { signedFetch } from '~/infra/fetchWithCache';
+import pronoteConfig from '~/modules/pronote/moduleConfig';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
 export const actionTypes = {
-  connecting: pronoteConfig.namespaceActionType("CONNECTOR") + "_CONNECTING",
-  connected: pronoteConfig.namespaceActionType("CONNECTOR") + "_CONNECTED",
-  error: pronoteConfig.namespaceActionType("CONNECTOR") + "_ERROR",
+  connecting: pronoteConfig.namespaceActionType('CONNECTOR') + '_CONNECTING',
+  connected: pronoteConfig.namespaceActionType('CONNECTOR') + '_CONNECTED',
+  error: pronoteConfig.namespaceActionType('CONNECTOR') + '_ERROR',
 };
 
 // ACTION CREATORS --------------------------------------------------------------------------------
@@ -37,14 +37,14 @@ export function openConnector(connectorAddress: string, successCallback: Functio
     dispatch(connectorConnecting());
     try {
       const intermediateResponse = await signedFetch(connectorAddress);
-      const finalUrl = intermediateResponse.headers.get("location");
+      const finalUrl = intermediateResponse.headers.get('location');
       const isSupported = await Linking.canOpenURL(finalUrl);
       if (isSupported === true) {
         await Linking.openURL(finalUrl);
         dispatch(connectorConnected());
-        successCallback()
+        successCallback();
       } else {
-        dispatch(connectorError("Not supported"));
+        dispatch(connectorError('Not supported'));
       }
     } catch (errmsg) {
       dispatch(connectorError(errmsg));

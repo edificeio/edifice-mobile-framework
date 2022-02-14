@@ -1,7 +1,7 @@
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { ICount } from "../state/count";
-import { IFolderList } from "../state/folders";
-import { IFolder } from "../state/rootFolders";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ICount } from '~/modules/zimbra/state/count';
+import { IFolderList } from '~/modules/zimbra/state/folders';
+import { IFolder } from '~/modules/zimbra/state/rootFolders';
 
 // Data type of what is given by the backend.
 export type RootFoldersBackend = {
@@ -29,7 +29,7 @@ const rootFoldersAdapter: (data: RootFoldersBackend) => IFolder[] = data => {
     unread: folder.unread,
     count: folder.count,
     folders: folder.folders,
-  }))
+  }));
 };
 
 const foldersAdapter: (data: FoldersBackend) => IFolderList = data => {
@@ -57,15 +57,15 @@ export const foldersService = {
     } as any;
     if (parentId) body.parentId = parentId;
     await fetchJSONWithCache(`/zimbra/folder`, {
-      method: "post",
+      method: 'post',
       body: JSON.stringify(body),
     });
   },
   count: async (folderIds: string[]) => {
-    const ids = folderIds.concat(["INBOX", "SPAMS", "DRAFTS"]);
+    const ids = folderIds.concat(['INBOX', 'SPAMS', 'DRAFTS']);
     const promises: Promise<any>[] = [];
     ids.forEach(id => {
-      promises.push(fetchJSONWithCache(`/zimbra/count/${id}?unread=${id === "DRAFTS" ? "false" : "true"}`));
+      promises.push(fetchJSONWithCache(`/zimbra/count/${id}?unread=${id === 'DRAFTS' ? 'false' : 'true'}`));
     });
     const results = await Promise.all(promises);
     const ret: ICount = results.reduce((acc, res, i) => {

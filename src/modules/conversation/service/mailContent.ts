@@ -1,8 +1,8 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { IMail } from "../state/mailContent";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IMail } from '~/modules/conversation/state/mailContent';
 
 // Data type of what is given by the backend.
 export type IMailContentBackend = {
@@ -50,7 +50,7 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
     ccName: data.ccName,
     language: data.language,
     text_searchable: data.text_searchable,
-    cciName: data.cciName
+    cciName: data.cciName,
   };
   return result;
 };

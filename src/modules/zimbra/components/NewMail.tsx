@@ -1,19 +1,20 @@
-import I18n from "i18n-js";
-import React from "react";
-import { ScrollView, View, StyleSheet, TextInput, ViewStyle, Dimensions, KeyboardAvoidingView, Platform } from "react-native";
-import { hasNotch } from "react-native-device-info";
+import I18n from 'i18n-js';
+import React from 'react';
+import { ScrollView, View, StyleSheet, TextInput, ViewStyle, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
 
-import Notifier from "../../../infra/notifier/container";
-import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
-import { Icon, Loading } from "../../../ui";
-import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../../ui/ContainerContent";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
-import { HtmlContentView } from "../../../ui/HtmlContentView";
-import { Text } from "../../../ui/Typography";
-import { ISearchUsers } from "../service/newMail";
-import Attachment from "./Attachment";
-import SearchUserMail from "./SearchUserMail";
+import Attachment from './Attachment';
+import SearchUserMail from './SearchUserMail';
+
+import Notifier from '~/infra/notifier/container';
+import { ISearchUsers } from '~/modules/zimbra/service/newMail';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon, Loading } from '~/ui';
+import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Text } from '~/ui/Typography';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
 
@@ -43,19 +44,19 @@ interface NewMailComponentProps {
 const styles = StyleSheet.create({
   mailPart: {
     padding: 5,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   lineSeparator: {
     marginLeft: 15,
-    width: "50%",
+    width: '50%',
     borderColor: CommonStyles.grey,
     borderBottomWidth: 1,
     borderRadius: 1,
   },
   signatureZone: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     minHeight: 40,
-    maxHeight: Dimensions.get("window").height / 3,
+    maxHeight: Dimensions.get('window').height / 3,
     paddingHorizontal: 10,
   },
 });
@@ -131,8 +132,8 @@ const HeaderUsers = ({
   hasRightToSendExternalMails: boolean;
 }>) => {
   const headerStyle = {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 5,
     paddingHorizontal: 10,
   } as ViewStyle;
@@ -158,8 +159,8 @@ const HeaderSubject = ({
   value,
 }: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
   const headerStyle = {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 5,
     paddingHorizontal: 10,
   } as ViewStyle;
@@ -168,7 +169,7 @@ const HeaderSubject = ({
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
-    borderBottomColor: "#EEEEEE",
+    borderBottomColor: '#EEEEEE',
     borderBottomWidth: 2,
   } as ViewStyle;
 
@@ -209,17 +210,17 @@ const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails
         value={to}
         onChange={to => onChange({ ...headers, to })}
         onSave={() => onSave()}
-        title={I18n.t("zimbra-to")}
+        title={I18n.t('zimbra-to')}
         hasRightToSendExternalMails={hasRightToSendExternalMails}>
         <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
-          <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
+          <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
         </TouchableOpacity>
       </HeaderUsers>
       {showExtraFields && (
         <>
           <HeaderUsers
             style={{ zIndex: 3 }}
-            title={I18n.t("zimbra-cc")}
+            title={I18n.t('zimbra-cc')}
             value={cc}
             onChange={cc => onChange({ ...headers, cc })}
             onSave={() => onSave()}
@@ -227,7 +228,7 @@ const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails
           />
           <HeaderUsers
             style={{ zIndex: 2 }}
-            title={I18n.t("zimbra-bcc")}
+            title={I18n.t('zimbra-bcc')}
             value={bcc}
             onChange={bcc => onChange({ ...headers, bcc })}
             onSave={() => onSave()}
@@ -236,7 +237,7 @@ const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails
         </>
       )}
       <HeaderSubject
-        title={I18n.t("zimbra-subject")}
+        title={I18n.t('zimbra-subject')}
         value={subject}
         onChange={subject => onChange({ ...headers, subject })}
         onSave={() => onSave()}
@@ -287,7 +288,7 @@ const Body = ({ style, value, onChange, onSave }) => {
   return (
     <View style={[styles.mailPart, style, { flexGrow: 1 }]}>
       <TextInput
-        placeholder={I18n.t("zimbra-type-message")}
+        placeholder={I18n.t('zimbra-type-message')}
         textAlignVertical="top"
         multiline
         scrollEnabled={false}

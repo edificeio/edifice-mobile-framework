@@ -1,12 +1,12 @@
-import { CommonStyles } from "../../../styles/common/styles";
-import { mailContentService } from "../service/mailContent";
+import { mailContentService } from '~/modules/zimbra/service/mailContent';
+import { CommonStyles } from '~/styles/common/styles';
 
 enum UserRole {
-  STUDENT = "STUDENT",
-  RELATIVE = "RELATIVE",
-  TEACHER = "TEACHER",
-  PERSONNEL = "PERSONNEL",
-  GUEST = "GUEST",
+  STUDENT = 'STUDENT',
+  RELATIVE = 'RELATIVE',
+  TEACHER = 'TEACHER',
+  PERSONNEL = 'PERSONNEL',
+  GUEST = 'GUEST',
 }
 
 export const getUserColor = async (userId: string) => {
@@ -28,11 +28,11 @@ export const getProfileColor = (role?) => {
       return CommonStyles.profileTypes.Teacher;
     case UserRole.PERSONNEL:
       return CommonStyles.profileTypes.Personnel;
-    case "PrincTeacherGroup":
-      return "#8C939E";
+    case 'PrincTeacherGroup':
+      return '#8C939E';
     case UserRole.GUEST:
       return CommonStyles.profileTypes.Guest;
     default:
-      return "#BBBFC6";
+      return '#BBBFC6';
   }
 };

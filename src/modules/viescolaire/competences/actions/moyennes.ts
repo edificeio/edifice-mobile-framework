@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { moyenneListService } from "../services/moyennes";
-import { actionTypes, IMoyenneList } from "../state/moyennes";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { moyenneListService } from '~/modules/viescolaire/competences/services/moyennes';
+import { actionTypes, IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

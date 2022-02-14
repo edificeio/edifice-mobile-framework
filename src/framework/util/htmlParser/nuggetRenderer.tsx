@@ -3,16 +3,9 @@
  * The aim is to render a React Native Element from INugget array.
  */
 
-import * as React from "react";
-import {
-  Image,
-  Linking,
-  TextStyle,
-  View,
-  ViewStyle
-} from "react-native";
-import Player from "../../../ui/Player";
-import Images from "../../../ui/Images";
+import * as React from 'react';
+import { Image, ImageURISource, Linking, TextStyle, View, ViewStyle } from 'react-native';
+
 import {
   NestedText,
   NestedTextBold,
@@ -22,10 +15,12 @@ import {
   TextBold,
   TextColorStyle,
   TextItalic,
-  TextAction
-} from "../../../framework/components/text";
-import { IFrame } from "../../../ui/IFrame";
-import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource, signURISource, transformedSrc } from "../../../infra/oauth";
+  TextAction,
+} from '~/framework/components/text';
+import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource, signURISource, transformedSrc } from '~/infra/oauth';
+import { IFrame } from '~/ui/IFrame';
+import Images from '~/ui/Images';
+import Player from '~/ui/Player';
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -34,7 +29,7 @@ export enum HtmlParserJsxTextVariant {
   Link,
   Underline,
   Color,
-  BgColor
+  BgColor,
 }
 
 export enum HtmlParserNuggetTypes {
@@ -43,7 +38,7 @@ export enum HtmlParserNuggetTypes {
   Iframe,
   InlineImage,
   Audio,
-  Video
+  Video,
 }
 
 export interface INugget {
@@ -52,7 +47,7 @@ export interface INugget {
 
 export interface ITextNugget extends INugget {
   variant: HtmlParserJsxTextVariant;
-  children: Array<ITextNugget | IInlineImageNugget | string>;
+  children: (ITextNugget | IInlineImageNugget | string)[];
   parent?: ITextNugget;
 }
 
@@ -89,6 +84,8 @@ export interface IAudioNugget extends INugget {
 
 export interface IVideoNugget extends INugget {
   src: string;
+  ratio?: number;
+  posterSource?: ImageURISource;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -113,7 +110,7 @@ export function renderNuggets(
     [HtmlParserNuggetTypes.Iframe]: ViewStyle;
     [HtmlParserNuggetTypes.Audio]: ViewStyle;
     [HtmlParserNuggetTypes.Video]: ViewStyle;
-  }
+  },
 ): JSX.Element {
   // console.log("globalStyles", globalStyles);
   return (
@@ -123,33 +120,26 @@ export function renderNuggets(
         const style = index === 0 ? {} : { marginTop: 15 };
 
         if (nugget.type === HtmlParserNuggetTypes.Text) {
-          return renderParseText(
-            nugget,
-            index,
-            style,
-            globalStyles[HtmlParserNuggetTypes.Text],
-            false,
-            selectable,
-          );
+          return renderParseText(nugget, index, style, globalStyles[HtmlParserNuggetTypes.Text], false, selectable);
         } else if (nugget.type === HtmlParserNuggetTypes.Images) {
           return renderParseImages(nugget, index, {
             ...globalStyles[HtmlParserNuggetTypes.Images],
-            ...style
+            ...style,
           });
         } else if (nugget.type === HtmlParserNuggetTypes.Iframe) {
           return renderParseIframe(nugget, index, {
             ...globalStyles[HtmlParserNuggetTypes.Iframe],
-            ...style
+            ...style,
           });
         } else if (nugget.type === HtmlParserNuggetTypes.Audio) {
           return renderParseAudio(nugget, index, {
             ...globalStyles[HtmlParserNuggetTypes.Audio],
-            ...style
+            ...style,
           });
         } else if (nugget.type === HtmlParserNuggetTypes.Video) {
           return renderParseVideo(nugget, index, {
             ...globalStyles[HtmlParserNuggetTypes.Video],
-            ...style
+            ...style,
           });
         } else {
           return null;
@@ -185,13 +175,11 @@ function renderParseText(
   // -1 - Default opts
   textStyles = {
     [HtmlParserJsxTextVariant.Link]: { ...TextColorStyle.Action },
-    ...textStyles
+    ...textStyles,
   };
   // console.log("textStyles", textStyles);
   // 0 - If the text is acually an inline image, render it elsewhere.
-  if (
-    (nugget as IInlineImageNugget).type === HtmlParserNuggetTypes.InlineImage
-  ) {
+  if ((nugget as IInlineImageNugget).type === HtmlParserNuggetTypes.InlineImage) {
     return renderParseInlineImage(nugget as IInlineImageNugget, key, style);
   }
 
@@ -201,11 +189,11 @@ function renderParseText(
   }
   // 1 - Compute recursively all children of nugget
   const children = (nugget as ITextNugget).children.map((child, index) => {
-    if (typeof child === "string") {
+    if (typeof child === 'string') {
       return child;
     } else {
       const { all, ...newTextStyles } = textStyles; // Omit global text styles in children text nuggets
-      return renderParseText(child, key + "-" + index, {}, newTextStyles, true);
+      return renderParseText(child, key + '-' + index, {}, newTextStyles, true);
     }
   });
 
@@ -221,22 +209,14 @@ function renderParseText(
     case HtmlParserJsxTextVariant.Bold:
       const BoldTextComp = nested ? NestedTextBold : TextBold;
       return (
-        <BoldTextComp
-          key={key}
-          selectable={selectable}
-          style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Bold] }}
-        >
+        <BoldTextComp key={key} selectable={selectable} style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Bold] }}>
           {children}
         </BoldTextComp>
       );
     case HtmlParserJsxTextVariant.Italic:
       const ItalicTextComp = nested ? NestedTextItalic : TextItalic;
       return (
-        <ItalicTextComp
-          key={key}
-          selectable={selectable}
-          style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Italic] }}
-        >
+        <ItalicTextComp key={key} selectable={selectable} style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Italic] }}>
           {children}
         </ItalicTextComp>
       );
@@ -249,32 +229,30 @@ function renderParseText(
           style={{
             ...style,
             ...textStyles[HtmlParserJsxTextVariant.Underline],
-            textDecorationLine: "underline"
-          }}
-        >
+            textDecorationLine: 'underline',
+          }}>
           {children}
         </UnderlineTextComp>
       );
     case HtmlParserJsxTextVariant.Link:
-      const LinkTextComp = (nugget as ILinkTextNugget).url
-        ? nested ? NestedTextAction : TextAction
-        : nested ? NestedText : Text;
-        // console.log("rendering", nugget);
+      const LinkTextComp = (nugget as ILinkTextNugget).url ? (nested ? NestedTextAction : TextAction) : nested ? NestedText : Text;
+      // console.log("rendering", nugget);
       return (
         <LinkTextComp
           key={key}
           selectable={selectable}
-          {...((nugget as ILinkTextNugget).url ? {
-            onPress: () => {
-              // console.log("touched", (nugget as ILinkTextNugget).url);
-              (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
-            }
-          }: {})}
+          {...((nugget as ILinkTextNugget).url
+            ? {
+                onPress: () => {
+                  // console.log("touched", (nugget as ILinkTextNugget).url);
+                  (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
+                },
+              }
+            : {})}
           style={{
             ...style,
-            ...textStyles[HtmlParserJsxTextVariant.Link]
-          }}
-        >
+            ...textStyles[HtmlParserJsxTextVariant.Link],
+          }}>
           {children}
         </LinkTextComp>
       );
@@ -286,9 +264,8 @@ function renderParseText(
           selectable={selectable}
           style={{
             ...style,
-            color: (nugget as IColorTextNugget).color
-          }}
-        >
+            color: (nugget as IColorTextNugget).color,
+          }}>
           {children}
         </ColorTextComp>
       );
@@ -300,9 +277,8 @@ function renderParseText(
           selectable={selectable}
           style={{
             ...style,
-            backgroundColor: (nugget as IColorTextNugget).color
-          }}
-        >
+            backgroundColor: (nugget as IColorTextNugget).color,
+          }}>
           {children}
         </BgColorTextComp>
       );
@@ -315,14 +291,8 @@ function renderParseText(
  * @param key the traditional React key prop
  * @param style
  */
-function renderParseImages(
-  nugget: IImagesNugget,
-  key: string,
-  style: ViewStyle = {}
-): JSX.Element {
-  return (
-    <Images images={DEPRECATED_signImagesUrls(nugget.images)} key={key} style={style} />
-  );
+function renderParseImages(nugget: IImagesNugget, key: string, style: ViewStyle = {}): JSX.Element {
+  return <Images images={DEPRECATED_signImagesUrls(nugget.images)} key={key} style={style} />;
 }
 
 /**
@@ -331,17 +301,13 @@ function renderParseImages(
  * @param key the traditional React key prop
  * @param style
  */
-function renderParseInlineImage(
-  nugget: IInlineImageNugget,
-  key: string,
-  style: ViewStyle = {}
-): JSX.Element {
+function renderParseInlineImage(nugget: IInlineImageNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <Image
       source={DEPRECATED_signImageURISource(nugget.src)}
       style={{
         height: 20,
-        width: 20
+        width: 20,
       }}
       key={key}
     />
@@ -354,11 +320,7 @@ function renderParseInlineImage(
  * @param key string the traditional React key prop
  * @param style ViewStyle
  */
-function renderParseIframe(
-  nugget: IIframeNugget,
-  key: string,
-  style: ViewStyle = {}
-): JSX.Element {
+function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <View key={key}>
       <IFrame source={nugget.src} style={style} />
@@ -372,18 +334,10 @@ function renderParseIframe(
  * @param key the traditional React key prop
  * @param style
  */
-function renderParseAudio(
-  nugget: IAudioNugget,
-  key: string,
-  style: ViewStyle = {}
-): JSX.Element {
+function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <View key={key}>
-      <Player
-        type="audio"
-        source={signURISource(transformedSrc(nugget.src))}
-        style={style}
-      />
+      <Player type="audio" source={signURISource(transformedSrc(nugget.src))} style={style} />
     </View>
   );
 }
@@ -394,17 +348,15 @@ function renderParseAudio(
  * @param key the traditional React key prop
  * @param style
  */
-function renderParseVideo(
-  nugget: IVideoNugget,
-  key: string,
-  style: ViewStyle = {}
-): JSX.Element {
+function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <View key={key}>
       <Player
         type="video"
         source={signURISource(transformedSrc(nugget.src))}
         style={style}
+        {...(nugget.ratio ? { ratio: nugget.ratio } : {})}
+        {...(nugget.posterSource ? { posterSource: nugget.posterSource } : {})}
       />
     </View>
   );

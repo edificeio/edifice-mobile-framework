@@ -1,11 +1,11 @@
-import * as React from "react";
-import { withNavigationFocus } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import * as React from 'react';
+import { withNavigationFocus } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from "../../../../App";
-import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
-import DashboardComponent from "../components/DashboardTeacher";
+import { getSessionInfo } from '~/App';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardTeacher';
 
 class Dashboard extends React.PureComponent<any> {
   public render() {
@@ -25,4 +25,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators({}, dispatch);
 };
 
-export default withViewTracking("viesco")(connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(Dashboard)));
+export default withViewTracking('viesco')(connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(Dashboard)));

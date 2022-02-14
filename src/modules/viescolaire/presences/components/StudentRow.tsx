@@ -1,11 +1,12 @@
-import * as React from "react";
-import { View, StyleSheet } from "react-native";
-import Swipeable from "react-native-swipeable";
+import * as React from 'react';
+import { View, StyleSheet } from 'react-native';
+import Swipeable from 'react-native-swipeable';
 
-import { CommonStyles } from "../../../../styles/common/styles";
-import TouchableOpacity from "../../../../ui/CustomTouchableOpacity";
-import { Icon } from "../../../../ui/icons/Icon";
-import { Text } from "../../../../framework/components/text";
+import { Text } from '~/framework/components/text';
+import { CommonStyles } from '~/styles/common/styles';
+import { INavigationProps } from '~/types';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Icon } from '~/ui/icons/Icon';
 
 type Student = {
   birth_date: string;
@@ -29,11 +30,12 @@ type StudentRowState = {
 
 type StudentRowProps = {
   student: Student;
+  mementoNavigation: () => void;
   lateCallback: (event: any) => any;
   leavingCallback: (event: any) => any;
   checkAbsent: () => void;
   uncheckAbsent: (event: any) => any;
-};
+} & INavigationProps;
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
   swipeableRef = null;
@@ -95,7 +97,7 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
     const { lateEvent, leavingEvent, absentEvent } = this.state;
     return (
       <Swipeable
-        onRef={ref => this.swipeableRef = ref}
+        onRef={ref => (this.swipeableRef = ref)}
         leftButtonWidth={120}
         leftButtons={this.swipeButtons(
           () => {
@@ -105,16 +107,18 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
           () => {
             this.swipeableRef && this.swipeableRef.recenter();
             leavingCallback(leavingEvent);
-          }
+          },
         )}>
         <View style={style.studentsList}>
           <TouchableOpacity onPress={this.handleCheck}>
             <View style={[style.tick, this.getCheckColor()]} />
           </TouchableOpacity>
-          <Text style={style.studentName}>{student.name}</Text>
+          <TouchableOpacity onPress={() => this.props.mementoNavigation()}>
+            <Text style={style.studentName}>{student.name}</Text>
+          </TouchableOpacity>
           <View style={style.iconsView}>
             {student.last_course_absent && (
-              <Icon style={{ transform: [{ rotateY: "180deg" }] }} color="red" size={20} name="refresh" />
+              <Icon style={{ transform: [{ rotateY: '180deg' }] }} color="red" size={20} name="refresh" />
             )}
             {student.forgotten_notebook && <Icon color="#b0ead5" size={20} name="bookmark-remove" />}
           </View>
@@ -139,31 +143,31 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
 
 const style = StyleSheet.create({
   studentsList: {
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 5,
     elevation: 2,
     paddingRight: 10,
     paddingVertical: 5,
-    backgroundColor: "#FFF",
-    flexWrap: "wrap",
+    backgroundColor: '#FFF',
+    flexWrap: 'wrap',
   },
   tick: {
-    borderStyle: "solid",
+    borderStyle: 'solid',
     height: 45,
     borderRadius: 100,
     width: 45,
     marginLeft: 10,
   },
-  alignRightContainer: { flexGrow: 1, flexDirection: "row-reverse" },
+  alignRightContainer: { flexGrow: 1, flexDirection: 'row-reverse' },
   dash: { height: 10, width: 30, borderRadius: 10 },
-  swipeButtons: { flexDirection: "row-reverse", flexGrow: 1 },
-  swipeButton: { width: 60, alignItems: "center", justifyContent: "center" },
+  swipeButtons: { flexDirection: 'row-reverse', flexGrow: 1 },
+  swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
   studentName: { marginLeft: 10, marginVertical: 15 },
-  iconsView: { flexDirection: "row", marginLeft: 5 },
-  grey: { backgroundColor: "grey" },
-  lightGrey: { backgroundColor: "lightgrey" },
+  iconsView: { flexDirection: 'row', marginLeft: 5 },
+  grey: { backgroundColor: 'grey' },
+  lightGrey: { backgroundColor: 'lightgrey' },
   red: { backgroundColor: CommonStyles.themeOpenEnt.red },
   blue: { backgroundColor: CommonStyles.themeOpenEnt.cyan },
   purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },

@@ -1,12 +1,13 @@
-import { ViewStyle } from "react-native";
-import style from "glamorous-native";
-import { CommonStyles } from "../styles/common/styles";
+import style from 'glamorous-native';
+import { ViewStyle } from 'react-native';
+
+import { CommonStyles } from '~/styles/common/styles';
 
 export const BubbleStyle = style.view(
   {
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
     elevation: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
     marginBottom: 10,
     marginTop: 6,
     paddingHorizontal: 16,
@@ -14,19 +15,19 @@ export const BubbleStyle = style.view(
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius
+    shadowRadius: CommonStyles.shadowRadius,
   },
   ({ my, style }): ViewStyle => ({
-    backgroundColor: my ? CommonStyles.iconColorOn : "white",
-    ...style
-  })
+    backgroundColor: my ? CommonStyles.iconColorOn : 'white',
+    ...style,
+  }),
 );
 
 export const BubbleScrollStyle = style.scrollView(
   {
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
     elevation: 2,
-    justifyContent: "center",
+    justifyContent: 'center',
     marginBottom: 10,
     marginTop: 6,
     paddingHorizontal: 16,
@@ -34,10 +35,10 @@ export const BubbleScrollStyle = style.scrollView(
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius
+    shadowRadius: CommonStyles.shadowRadius,
   },
   ({ my, style }): ViewStyle => ({
-    backgroundColor: my ? CommonStyles.iconColorOn : "white",
-    ...style
-  })
+    backgroundColor: my ? CommonStyles.iconColorOn : 'white',
+    ...style,
+  }),
 );
