@@ -12,10 +12,11 @@ interface LoadingProps {
   small?: boolean;
   customColor?: ColorValue;
   customStyle?: ViewStyle;
+  withMargins?: boolean;
 }
 
-export const LoadingIndicator = ({ small, customColor, customStyle }: LoadingProps) => (
-  <View style={customStyle || { flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+export const LoadingIndicator = ({ small, customColor, customStyle, withMargins }: LoadingProps) => (
+  <View style={customStyle || { flex: 1, alignItems: 'center', justifyContent: 'center', ...(withMargins ? { margin: 12 } : {}) }}>
     <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.color.secondary.regular} />
   </View>
 );

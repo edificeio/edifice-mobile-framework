@@ -29,7 +29,7 @@ import {
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { ButtonIcon } from '~/framework/components/popupMenu';
-import { AsyncLoadingState } from '~/framework/util/redux/async';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResourceCard';
 import moduleConfig from '~/modules/blog/moduleConfig';
@@ -41,7 +41,7 @@ import { computeRelativePath } from '~/framework/util/navigation';
 // TYPES ==========================================================================================
 
 export interface IBlogPostListScreen_DataProps {
-  initialLoadingState: AsyncLoadingState;
+  initialLoadingState: AsyncPagedLoadingState;
   session: IUserSession;
 }
 export interface IBlogPostListScreen_EventProps {
@@ -67,14 +67,14 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   // ToDo : Make this in a useLoadingState.
 
-  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncLoadingState.PRISTINE);
-  const loadingRef = React.useRef<AsyncLoadingState>();
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
   React.useEffect(() => {
     focusEventListener = props.navigation.addListener('didFocus', () => {
-      if (loadingRef.current === AsyncLoadingState.PRISTINE) init(selectedBlogId);
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init(selectedBlogId);
       else refreshSilent(selectedBlogId);
     });
     return () => {
@@ -84,50 +84,99 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   const init = (selectedBlogId: string) => {
     if (selectedBlogId) {
-      setLoadingState(AsyncLoadingState.INIT);
-      fetchBlogPosts(selectedBlogId)
-        .then(() => setLoadingState(AsyncLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
+      setLoadingState(AsyncPagedLoadingState.INIT);
+      fetchFromStart(selectedBlogId)
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
     }
   };
 
   const reload = (selectedBlogId: string) => {
     if (selectedBlogId) {
-      setLoadingState(AsyncLoadingState.RETRY);
-      fetchBlogPosts(selectedBlogId)
-        .then(() => setLoadingState(AsyncLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
+      setLoadingState(AsyncPagedLoadingState.RETRY);
+      fetchFromStart(selectedBlogId)
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
     }
   };
 
   const refresh = (selectedBlogId: string) => {
     if (selectedBlogId) {
-      setLoadingState(AsyncLoadingState.REFRESH);
-      fetchBlogPosts(selectedBlogId)
-        .then(() => setLoadingState(AsyncLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
+      setLoadingState(AsyncPagedLoadingState.REFRESH);
+      fetchFromStart(selectedBlogId)
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
     }
   };
   const refreshSilent = (selectedBlogId: string) => {
     if (selectedBlogId) {
-      setLoadingState(AsyncLoadingState.REFRESH_SILENT);
-      fetchBlogPosts(selectedBlogId)
-        .then(() => setLoadingState(AsyncLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
+      setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+      fetchFromStart(selectedBlogId)
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+    }
+  };
+  const fetchNextPage = (selectedBlogId: string) => {
+    if (selectedBlogId) {
+      setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
+      fetchPage(selectedBlogId)
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
     }
   };
 
   // EVENTS =====================================================================================
 
   const [blogPosts, setBlogPosts] = React.useState([] as IBlogPostList);
+  const [nextPageToFetch_state, setNextPageToFetch] = React.useState(0);
+  const [pagingSize_state, setPagingSize] = React.useState<number | undefined>(undefined);
+
+  // Fetch all blog posts in a row
   const fetchBlogPosts = async (blogId: string) => {
     try {
       const session = props.session;
-      const blogPosts = await blogService.posts.get(session, blogId, ['PUBLISHED', 'SUBMITTED']);
-      setBlogPosts(blogPosts);
+      const newBlogPosts = await blogService.posts.get(session, blogId, ['PUBLISHED', 'SUBMITTED']);
+      setBlogPosts(newBlogPosts);
     } catch (e) {
       throw e;
     }
+  };
+
+  // Fetch a page of blog posts.
+  // Auto-increment nextPageNumber unless `fromPage` is provided.
+  // If `flushAfter` is also provided along `fromPage`, all content after the loaded page will be erased.
+  const fetchPage = async (blogId: string, fromPage?: number, flushAfter?: boolean) => {
+    try {
+      const pageToFetch = fromPage ?? nextPageToFetch_state; // If page is not defined, automatically fetch the next page
+      if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
+      const session = props.session;
+      const newBlogPosts = await blogService.posts.page(session, blogId, pageToFetch, ['PUBLISHED', 'SUBMITTED']);
+      let pagingSize = pagingSize_state;
+      if (pagingSize === undefined) {
+        setPagingSize(newBlogPosts.length);
+        pagingSize = newBlogPosts.length;
+      }
+      if (pagingSize) {
+        newBlogPosts.length &&
+          setBlogPosts([
+            ...blogPosts.slice(0, pagingSize * pageToFetch),
+            ...newBlogPosts,
+            ...(flushAfter ? [] : blogPosts.slice(pagingSize * (pageToFetch + 1))),
+          ]);
+
+        if (fromPage === undefined) {
+          setNextPageToFetch(newBlogPosts.length === 0 || newBlogPosts.length < pagingSize ? -1 : pageToFetch + 1);
+        } else if (flushAfter) {
+          setNextPageToFetch(fromPage + 1);
+        }
+        // Only increment pagecount when fromPage is not specified
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+  const fetchFromStart = async (blogId: string) => {
+    await fetchPage(blogId, 0, true);
   };
 
   const onGoToPostCreationScreen = () =>
@@ -214,7 +263,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
     return (
       <ScrollView
         refreshControl={
-          <RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload(selectedBlogId)} />
+          <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload(selectedBlogId)} />
         }>
         <EmptyContentScreen />
       </ScrollView>
@@ -244,12 +293,21 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         keyExtractor={item => item._id}
         ListEmptyComponent={renderEmpty()}
         ListHeaderComponent={hasBlogPostCreationRights ? <View style={{ height: 12 }} /> : null}
-        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.bottomInset }} />}
+        ListFooterComponent={
+          <>
+            {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
+            <View style={{ paddingBottom: UI_SIZES.bottomInset }} />
+          </>
+        }
         refreshControl={
-          <RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />
+          <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />
         }
         contentContainerStyle={{ flexGrow: 1 }}
         scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
+        onEndReached={() => {
+          fetchNextPage(selectedBlogId);
+        }}
+        onEndReachedThreshold={0.5}
       />
     );
   };
@@ -261,16 +319,18 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
       return renderError();
     }
     switch (loadingState) {
-      case AsyncLoadingState.DONE:
-      case AsyncLoadingState.REFRESH:
-      case AsyncLoadingState.REFRESH_FAILED:
-      case AsyncLoadingState.REFRESH_SILENT:
+      case AsyncPagedLoadingState.DONE:
+      case AsyncPagedLoadingState.REFRESH:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
+      case AsyncPagedLoadingState.REFRESH_SILENT:
+      case AsyncPagedLoadingState.FETCH_NEXT:
+      case AsyncPagedLoadingState.FETCH_NEXT_FAILED:
         return renderBlogPostList();
-      case AsyncLoadingState.PRISTINE:
-      case AsyncLoadingState.INIT:
+      case AsyncPagedLoadingState.PRISTINE:
+      case AsyncPagedLoadingState.INIT:
         return <LoadingIndicator />;
-      case AsyncLoadingState.INIT_FAILED:
-      case AsyncLoadingState.RETRY:
+      case AsyncPagedLoadingState.INIT_FAILED:
+      case AsyncPagedLoadingState.RETRY:
         return renderError();
     }
   };
@@ -290,7 +350,7 @@ export default connect(
   (gs: IGlobalState) => {
     return {
       session: getUserSession(gs),
-      initialLoadingState: AsyncLoadingState.PRISTINE,
+      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
     };
   },
   dispatch => bindActionCreators({}, dispatch),
