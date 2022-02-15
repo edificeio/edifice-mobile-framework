@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { IUserInfoState } from '../state/info';
+
 import { getSessionInfo } from '~/App';
 import { IGlobalState } from '~/AppStore';
 import workspaceService from '~/framework/modules/workspace/service';
@@ -106,9 +108,92 @@ export class UserPage extends React.PureComponent<
     </ModalContent>
   ); // TS-ISSUE
 
+  public async onChangeAvatar(image: ImagePicked) {
+    const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError } = this.props;
+    // setTimeout(async () => {
+    try {
+      const lc = new LocalFile(
+        {
+          filename: image.fileName as string,
+          filepath: image.uri as string,
+          filetype: image.type as string,
+        },
+        { _needIOSReleaseSecureAccess: false },
+      );
+      this.setState({ updatingAvatar: true });
+      const sc = await onUploadAvatar(lc);
+      await onUpdateAvatar(sc.url);
+    } catch (err: any) {
+      if (err.message === 'Error picking image') {
+        onPickFileError('profileOne');
+      } else if (!(err instanceof Error)) {
+        onUploadAvatarError();
+      }
+    } finally {
+      this.setState({ updatingAvatar: false });
+    }
+    //}, 0);
+    /*try {
+      const lc = new LocalFile(
+        {
+          filename: image.fileName as string,
+          filepath: image.uri as string,
+          filetype: image.type as string,
+        },
+        { _needIOSReleaseSecureAccess: false },
+      );
+      this.setState({ updatingAvatar: true });
+      onUploadAvatar(lc)
+        .then(sc => {
+          onUpdateAvatar(sc.url)
+            .then(() => {
+              this.setState({ updatingAvatar: false });
+            })
+            .catch((updateError: Error) => {
+              throw updateError;
+            });
+        })
+        .catch((uploadError: Error) => {
+          throw uploadError;
+        });
+    } catch (err: any) {
+      const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError } = this.props;
+      if (err.message === 'Error picking image') {
+        onPickFileError('profileOne');
+      } else if (!(err instanceof Error)) {
+        onUploadAvatarError();
+      }
+      this.setState({ updatingAvatar: false });
+    }*/
+  }
+
+  public async onDeleteAvatar() {
+    const { onUpdateAvatar } = this.props;
+    // setTimeout(async () => {
+    try {
+      this.setState({ updatingAvatar: true });
+      await onUpdateAvatar('');
+    } finally {
+      this.setState({ updatingAvatar: false });
+    }
+    //}, 0);
+    /*try {
+      this.setState({ updatingAvatar: true });
+      onUpdateAvatar('')
+        .then(() => {
+          this.setState({ updatingAvatar: false });
+        })
+        .catch((deleteError: Error) => {
+          throw deleteError;
+        });
+    } finally {
+      this.setState({ updatingAvatar: false });
+    }*/
+  }
+
   public render() {
     //avoid setstate on modalbox when unmounted
-    const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError, userinfo } = this.props;
+    const { userinfo } = this.props;
     const { showDisconnect, showVersionType, versionOverride, versionType, updatingAvatar } = this.state;
     const signedURISource = userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`);
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
@@ -134,39 +219,8 @@ export class UserPage extends React.PureComponent<
             canEdit
             hasAvatar={userinfo.photo !== ''}
             updatingAvatar={updatingAvatar}
-            onChangeAvatar={async (image: ImagePicked) => {
-              try {
-                const lc = new LocalFile(
-                  {
-                    filename: image.fileName as string,
-                    filepath: image.uri as string,
-                    filetype: image.type as string,
-                  },
-                  { _needIOSReleaseSecureAccess: false },
-                );
-
-                this.setState({ updatingAvatar: true });
-                const sc = await onUploadAvatar(lc);
-                await onUpdateAvatar(sc.url);
-              } catch (err) {
-                console.warn(err);
-                if (err.message === 'Error picking image') {
-                  onPickFileError('profileOne');
-                } else if (!(err instanceof Error)) {
-                  onUploadAvatarError();
-                }
-              } finally {
-                this.setState({ updatingAvatar: false });
-              }
-            }}
-            onDeleteAvatar={async () => {
-              try {
-                this.setState({ updatingAvatar: true });
-                await onUpdateAvatar('');
-              } finally {
-                this.setState({ updatingAvatar: false });
-              }
-            }}
+            onChangeAvatar={this.onChangeAvatar.bind(this)}
+            onDeleteAvatar={this.onDeleteAvatar.bind(this)}
             id={sourceWithParam}
             displayName={getSessionInfo().displayName!}
             type={getSessionInfo().type!}
@@ -215,14 +269,8 @@ export class UserPage extends React.PureComponent<
   }
 }
 
-const uploadAvatarAction = (avatar: LocalFile) => async (dispatch: Dispatch, getState: () => IGlobalState) => {
-  const session = getUserSession(getState());
-  console.log('will upp');
-  const upped = await workspaceService.uploadFile(session, avatar, {});
-  console.log('upped', upped);
-  console.log('SESSION = ' + session);
-  console.dir(session);
-  return upped;
+const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch, getState: () => IGlobalState) => {
+  return await workspaceService.uploadFile(getUserSession(getState()), avatar, {});
 };
 
 const UserPageConnected = connect(
