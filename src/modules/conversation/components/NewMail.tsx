@@ -76,12 +76,16 @@ export default (props: NewMailComponentProps) => {
   }, []);
 
   return (
-    <PageView path="conversation">
+    <PageView path="conversation" style={{backgroundColor: theme.color.background.card}}>
       <KeyboardAvoidingScrollView
         alwaysBounceVertical={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
-        style={{ height: '100%', marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.bottomInset, default: 0 }) }}>
+        contentContainerStyle={{ flexGrow: 1 }}
+        style={{
+          flexGrow: 1,
+          marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.bottomInset, default: 0 }),
+        }}>
         <View style={{ flexGrow: 1 }}>
           {props.isFetching ? (
             <Loading />
@@ -147,7 +151,7 @@ const Fields = ({
         onSave={onDraftSave}
         key="attachments"
       />
-      <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={false} key="body" />
+      <Body style={{ zIndex: 1, flex: 1 }} value={body} onChange={onBodyChange} autofocus={false} key="body" />
       {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
     </SafeAreaView>
   );
