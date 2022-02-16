@@ -136,6 +136,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     const hasPastHomeWork = pastHomework.length > 0;
     const noRemainingPastHomework = remainingPastHomework.length === 0;
     const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), 'day');
+    const noHomework = data.length === 0;
     const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
 
@@ -184,7 +185,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             const labelText = I18n.t(
               `homework.homeworkTaskListScreen.${noRemainingPastHomework ? 'noMorePastHomework' : 'displayPastDays'}`,
             );
-            return (
+            return noHomework ? null : (
               <TouchableOpacity
                 style={{ alignSelf: 'center' }}
                 disabled={noRemainingPastHomework}
