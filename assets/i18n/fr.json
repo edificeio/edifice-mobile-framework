@@ -395,7 +395,7 @@
   "homework": {
     "homeworkTaskListScreen": {
       "displayPastDays": "Afficher les jours précédents",
-      "noMorePastHomework": "Vous n'avez plus d'anciens devoirs"
+      "noMorePastHomework": "Pas d'activités précédentes"
     },
     "homeworkExplorerScreen": {
       "homeworks": "Cahiers de textes"

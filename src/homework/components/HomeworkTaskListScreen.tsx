@@ -197,7 +197,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                 <Label
                   labelStyle="outline"
                   labelSize="large"
-                  icon="back"
+                  icon={noRemainingPastHomework ? undefined : 'back'}
                   iconStyle={{ transform: [{ rotate: '90deg' }] }}
                   color={labelColor}
                   text={labelText}
