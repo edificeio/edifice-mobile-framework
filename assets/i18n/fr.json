@@ -80,6 +80,7 @@
   "back": "Retour",
   "blog": {
     "blogCreatePostScreen": {
+      "confirmationUnsavedPublication": "Si vous quittez, le billet que vous avez rédigé sera perdu.",
       "createAction": "Enregistrer",
       "createSuccess": "Votre billet a bien été enregistré.",
       "postContent": "Contenu du billet",

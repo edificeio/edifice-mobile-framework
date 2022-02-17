@@ -1,6 +1,16 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, ScrollView, TouchableWithoutFeedback, Keyboard, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  BackHandler,
+} from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -127,7 +137,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
               iconSize={24}
-              onPress={() => navigation.dispatch(NavigationActions.back())}
+              onPress={() => this.doHandleGoBack()}
             />
           </HeaderLeft>
           <HeaderCenter>
@@ -273,7 +283,42 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
   // LIFECYCLE ====================================================================================
 
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', () => this.doHandleGoBack());
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', () => this.doHandleGoBack());
+  }
+
   // METHODS ======================================================================================
+
+  doHandleGoBack() {
+    const { navigation } = this.props;
+    const { content, title, images } = this.state;
+    const isCreatingPost = content || title || images.length;
+    if (isCreatingPost) {
+      Alert.alert(
+        I18n.t('common.confirmationUnsavedPublication'),
+        I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
+        [
+          {
+            text: I18n.t('common.quit'),
+            onPress: () => navigation.dispatch(NavigationActions.back()),
+            style: 'destructive',
+          },
+          {
+            text: I18n.t('common.continue'),
+            style: 'default',
+          },
+        ],
+      );
+      return true;
+    } else {
+      navigation.dispatch(NavigationActions.back());
+      return false;
+    }
+  }
 
   async doSend() {
     try {
