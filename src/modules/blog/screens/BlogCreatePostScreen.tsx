@@ -1,15 +1,15 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import {
-  View,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
   Alert,
   BackHandler,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
