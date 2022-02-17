@@ -53,7 +53,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
         leftButtonProperties.leftAction = restoreMail;
         break;
       default:
-        leftButtonProperties.leftActionColor = theme.color.secondary.regular;
+        leftButtonProperties.leftActionColor = theme.color.info;
         leftButtonProperties.leftActionText = I18n.t(`conversation.mark${unread ? 'Read' : 'Unread'}`);
         leftButtonProperties.leftActionIcon = `eye${unread ? '' : '-slash'}`;
         leftButtonProperties.leftAction = toggleRead;
