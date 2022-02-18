@@ -92,6 +92,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   componentWillUpdate(nextProps) {
     const { auth } = nextProps;
+    // Detect && display potenttial login error sent after checkVersionThenLogin(false) call
     auth?.error?.length > 0 && auth.error !== this.error && this.displayError(auth.error);
   }
 
@@ -123,7 +124,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     });
   }
 
-  // Display loading screen
+  // Display loading
   displayLoading() {
     this.setState({ mode: WAYFPageMode.LOADING });
   }
