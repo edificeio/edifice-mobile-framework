@@ -452,7 +452,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           {hasUpdateCommentBlogPostRight ? (
             <TouchableOpacity
               onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
-              <Icon name="pencil" color={theme.color.secondary.regular} size={UI_SIZES.actionButtonSize} />
+              <Icon name="pencil" color={theme.greyPalette.black} size={UI_SIZES.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
         </View>
