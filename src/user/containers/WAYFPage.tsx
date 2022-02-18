@@ -5,7 +5,7 @@ import { ActivityIndicator, Platform, SafeAreaView, StyleSheet, Text, TouchableW
 import DeviceInfo from 'react-native-device-info';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
-import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
+import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -68,8 +68,6 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   dropdownValue: string | null = null;
   // Error if any
   private error: string = '';
-  // Platform logo
-  private pfLogo: any = '';
   // Platform url
   private pfUrl: string = '';
   // SAMLResponse if any
@@ -87,7 +85,6 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   constructor(props: IWAYFPageProps) {
     super(props);
     const pfConf = DEPRECATED_getCurrentPlatform();
-    this.pfLogo = pfConf?.logo || '';
     this.pfUrl = pfConf?.url || '';
     this.wayfUrl = pfConf?.wayf || '';
     this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
@@ -236,6 +233,27 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         break;
     }
   }
+
+  // Called each time a navigation error occurs in WebView
+  // See WebView onError property
+  onError(event: WebViewErrorEvent) {
+    const { nativeEvent } = event;
+    // Update WebView back history flag
+    this.webviewCanGoBack = nativeEvent.canGoBack;
+    // Display error messsage
+    this.displayError(OAuthErrorType.PLATFORM_UNAVAILABLE);
+  }
+
+  // Called each time an http error occurs in WebView
+  // See WebView onError property
+  onHttpError(event: WebViewHttpErrorEvent) {
+    const { nativeEvent } = event;
+    // Update WebView back history flag
+    this.webviewCanGoBack = nativeEvent.canGoBack;
+    // Display error messsage
+    this.displayError(OAuthErrorType.PLATFORM_UNAVAILABLE);
+  }
+
   // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)
   // See WebView onMessage property
   onMessage(event: WebViewMessageEvent) {
@@ -295,10 +313,10 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     switch (mode) {
       case WAYFPageMode.ERROR:
         // Display error messsage
-        Trackers.trackDebugEvent('Auth', 'WAYF', 'ERROR');
+        Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
         return (
           <View style={WAYFPage.STYLES.container}>
-            <Logo source={this.pfLogo} />
+            <PFLogo />
             <ErrorMessage>
               {I18n.t('auth-error-' + this.error, {
                 version: DeviceInfo.getVersion(),
@@ -362,6 +380,8 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
             ref={(ref: WebView) => this.setWebView(ref)}
             injectedJavaScript={WAYFPage.POST_HTML_CONTENT}
             javaScriptEnabled
+            onError={event => this.onError(event)}
+            onHttpError={event => this.onHttpError(event)}
             onMessage={(event: WebViewMessageEvent) => this.onMessage(event)}
             onNavigationStateChange={(navigationState: WebViewNavigation) => this.onNavigationStateChange(navigationState)}
             onShouldStartLoadWithRequest={(request: ShouldStartLoadRequest) => this.onShouldStartLoadWithRequest(request)}
