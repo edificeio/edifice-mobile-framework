@@ -79,6 +79,10 @@
   "auth-error-unknown_response": "Unable to log in. Incorrect server response ({{errorcode}}). Please try again or contact support.",
   "back": "Back",
   "blog": {
+    "blogsEmptyScreen": {
+      "button": "Create a blog online",
+      "title": "No Blogs in sight"
+    },
     "blogCreatePostScreen": {
       "createAction": "Save",
       "createSuccess": "Your post was saved.",
@@ -94,10 +98,6 @@
       "title": "New post"
     },
     "blogExplorerScreen": {
-      "emptyScreenButton": "Create a blog online",
-      "emptyScreenText": "Put on your junior reporter’s hat and write a Blog! Easily publish and share information and incorporate a wide range of multimedia content.",
-      "emptyScreenTextNoCreationRights": "No Blogs have been created yet. The Blog lets you easily share information by incorporating a wide range of multimedia content. Use it to suggest ideas to your school (for your next discussion group, field trip, exposition, etc.)",
-      "emptyScreenTitle": "No Blogs in sight...",
       "rootItemName": "Blog"
     },
     "blogPostListScreen": {
@@ -110,9 +110,6 @@
       }
     },
     "blogSelectScreen": {
-      "emptyScreenButton": "Create a blog",
-      "emptyScreenText": "You don’t have any shared blogs. To publish a post, you’ll need to first create a blog and share it from the web version of your virtual learning environment.",
-      "emptyScreenTitle": "It’s a bit quiet around here...",
       "sharedToNbPerson": "Shared with {{nb}} person",
       "sharedToNbPersons": "Shared with {{nb}} people",
       "title": "Choose a blog"

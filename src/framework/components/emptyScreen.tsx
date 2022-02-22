@@ -6,72 +6,76 @@
  */
 
 import * as React from 'react';
-import { Dimensions, Image, ImageSourcePropType, ViewStyle, View, Text } from 'react-native';
+import { Dimensions, Image, ImageSourcePropType, ViewStyle, View } from 'react-native';
 
 import { PageView } from './page';
-import { TextSemiBold } from './text';
-
+import { Text, TextSemiBold } from './text';
 import theme from '~/app/theme';
 import { FlatButton } from '~/ui/FlatButton';
+import { UI_SIZES } from './constants';
 
 export const EmptyScreen = ({
   imageSrc,
-  imgWidth,
-  imgHeight,
   title,
   text,
-  scale,
   buttonText,
   buttonAction,
   customStyle,
 }: {
   imageSrc: ImageSourcePropType;
-  imgWidth: number;
-  imgHeight: number;
   title: string;
   text: string;
-  scale?: number;
   buttonText?: string;
   buttonAction?: () => void;
   customStyle?: ViewStyle;
 }) => {
-  const hasButton = buttonText && buttonAction;
   const { width } = Dimensions.get('window');
-  const ratio = imgWidth / imgHeight;
-  scale = scale || 0.6;
+  const imageWidth = width - 4 * UI_SIZES.spacing.extraLarge;
+  const imageRatio = 7 / 5;
+  const hasButton = buttonText && buttonAction;
 
   return (
-    <PageView>
-      <View style={[{ flex: 1, alignItems: 'center', justifyContent: 'center' }, customStyle]}>
+    <PageView
+      style={[
+        {
+          paddingTop: UI_SIZES.spacing.huge,
+          paddingHorizontal: UI_SIZES.spacing.extraLarge,
+        },
+        customStyle,
+      ]}>
+      <View style={{ paddingHorizontal: UI_SIZES.spacing.extraLarge }}>
         <Image
           source={imageSrc}
           resizeMode="contain"
           style={{
-            height: scale * (width / ratio),
-            width: scale * width,
+            width: '100%',
+            height: imageWidth / imageRatio,
           }}
         />
-        <TextSemiBold
-          style={{
-            textAlign: 'center',
-            width: '80%',
-            marginVertical: 20,
-            color: theme.color.secondary.regular,
-          }}>
-          {title}
-        </TextSemiBold>
-        <Text
-          style={{
-            color: theme.color.text.light,
-            fontSize: 12,
-            textAlign: 'center',
-            width: '80%',
-            marginBottom: hasButton ? 40 : undefined,
-          }}>
-          {text}
-        </Text>
-        {hasButton ? <FlatButton title={buttonText} onPress={buttonAction} /> : null}
       </View>
+      <TextSemiBold
+        numberOfLines={2}
+        style={{
+          textAlign: 'center',
+          fontSize: 18,
+          color: theme.color.secondary.regular,
+          marginTop: UI_SIZES.spacing.extraLargePlus,
+        }}>
+        {title}
+      </TextSemiBold>
+      <Text
+        numberOfLines={3}
+        style={{
+          textAlign: 'center',
+          marginTop: UI_SIZES.spacing.medium,
+        }}>
+        {text}
+      </Text>
+      {hasButton ? (
+        <View style={{ marginTop: UI_SIZES.spacing.extraLargePlus }}>
+          <FlatButton title={buttonText} onPress={buttonAction} />
+        </View>
+      ) : null}
     </PageView>
   );
 };

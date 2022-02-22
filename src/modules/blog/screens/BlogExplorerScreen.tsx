@@ -165,13 +165,11 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   const renderEmpty = () => {
     return (
       <EmptyScreen
-        imageSrc={require('ASSETS/images/empty-screen/empty-search.png')}
-        imgWidth={265.98}
-        imgHeight={279.97}
         customStyle={{ backgroundColor: theme.color.background.card }}
-        title={I18n.t('blog.blogExplorerScreen.emptyScreenTitle')}
-        text={I18n.t(`blog.blogExplorerScreen.emptyScreenText${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        buttonText={hasBlogCreationRights ? I18n.t('blog.blogExplorerScreen.emptyScreenButton') : undefined}
+        imageSrc={require('ASSETS/images/empty-screen/empty-search.png')}
+        title={I18n.t('blog.blogsEmptyScreen.title')}
+        text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {

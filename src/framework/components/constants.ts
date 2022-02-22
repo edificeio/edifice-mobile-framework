@@ -44,6 +44,8 @@ export const UI_SIZES = {
     large: 16,
     largePlus: 22,
     extraLarge: 24,
+    extraLargePlus: 36,
+    huge: 64,
   },
   tabsHeight: 56,
   topInset: initialWindowMetrics?.insets?.top || 0,

@@ -225,7 +225,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                         },
                         'close',
                         I18n.t('common.close'),
-                        theme.color.failure
+                        theme.color.failure,
                       )
                     : undefined,
                 ]
@@ -240,8 +240,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     return (
       <EmptyScreen
         imageSrc={require('ASSETS/images/empty-screen/timeline.png')}
-        imgWidth={407}
-        imgHeight={319}
         title={I18n.t('timeline.emptyScreenTitle')}
         text={I18n.t('timeline.emptyScreenText')}
       />

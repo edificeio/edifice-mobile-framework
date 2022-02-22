@@ -79,6 +79,12 @@
   "auth-error-unknown_response": "Impossible de s'identifier. Mauvaise réponse serveur ({{errorcode}}). Veuillez réessayer ou contacter le support.",
   "back": "Retour",
   "blog": {
+    "blogsEmptyScreen": {
+      "button": "Créer un blog sur le web",
+      "text": "Endossez la casquette du petit reporter en créant votre premier blog !",
+      "textNoCreationRights": "Proposez des idées de blog à votre école (la vie de la classe, les sorties scolaires, les exposés, ...)",
+      "title": "Aucun blog à l'horizon"
+    },
     "blogCreatePostScreen": {
       "confirmationUnsavedPublication": "Si vous quittez, le billet que vous avez rédigé sera perdu.",
       "createAction": "Enregistrer",
@@ -95,10 +101,6 @@
       "title": "Nouveau billet"
     },
     "blogExplorerScreen": {
-      "emptyScreenButton": "Créer un blog sur le web",
-      "emptyScreenText": "Endossez la casquette du petit reporter en créant un Blog ! Publiez et partagez facilement vos informations, en y intégrant différents contenus multimédias.",
-      "emptyScreenTextNoCreationRights": "Il n'y a pas encore de Blog. Le Blog permet de partager facilement des informations en y intégrant différents contenus multimédias. Proposez des idées à votre école (la vie de la classe, les voyages scolaires, des expos, ...).",
-      "emptyScreenTitle": "Aucun blog à l'hoziron...",
       "rootItemName": "Blog"
     },
     "blogPostListScreen": {
@@ -111,9 +113,6 @@
       }
     },
     "blogSelectScreen": {
-      "emptyScreenButton": "Créer un Blog",
-      "emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
-      "emptyScreenTitle": "C'est un peu calme ici...",
       "sharedToNbPerson": "Partagé à {{nb}} personne",
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"
