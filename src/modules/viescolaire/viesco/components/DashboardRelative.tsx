@@ -63,6 +63,7 @@ export type IHomeworkByDateList = {
 
 type IDashboardProps = {
   authorizedViescoApps: IAuthorizedViescoApps;
+  userId: string;
   homeworks: IHomeworkListState;
   evaluations: IDevoirsMatieresState;
   levels: ILevelsList;
@@ -108,6 +109,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
                   routeName: 'History',
                   params: {
                     user_type: 'Relative',
+                    userId: this.props.userId,
                   },
                 }),
               )

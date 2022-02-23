@@ -8,28 +8,36 @@ import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events';
+import { fetchUserChildrenAction } from '~/modules/viescolaire/presences/actions/userChildren';
 import HistoryComponent from '~/modules/viescolaire/presences/components/History';
 import { getHistoryEvents } from '~/modules/viescolaire/presences/state/events';
+import { getUserChildrenState, IPresencesUserChildrenState } from '~/modules/viescolaire/presences/state/userChildren';
 import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/viesco/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
 
 interface HistoryProps extends NavigationInjectedProps {
   data: any;
-  getEvents: any;
-  getPeriods: any;
-  getYear: any;
   events: any;
   year: any;
   periods: any;
+  userType: string;
+  userId: string;
   childId: string;
   structureId: string;
   groupId: string;
+  childrenInfos: IPresencesUserChildrenState;
+  getEvents: (childId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => void;
+  getPeriods: (structureId: string, groupId: string) => void;
+  getChildInfos: (relativeId: string) => void;
+  getYear: (strunctureId: string) => void;
 }
 
 interface HistoryState {
+  groupId: string;
   selected: number;
   period: {
     order: number;
@@ -56,6 +64,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
     const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
     const period = fullPeriods.find(o => o.order === -1);
     this.state = {
+      groupId: '',
       selected: -1,
       period,
       events,
@@ -64,18 +73,40 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
   }
 
   public componentDidMount() {
-    const { childId, structureId, groupId, year, periods } = this.props;
-    if (periods.isPristine) this.props.getPeriods(structureId, groupId);
+    const { userType, userId, childId, structureId, groupId, year, periods } = this.props;
+    if (userType === 'Relative') {
+      if (userId !== undefined) {
+        this.props.getChildInfos(userId);
+      } else if (this.props.navigation.state.params.userId !== undefined) {
+        this.props.getChildInfos(this.props.navigation.state.params.userId);
+      }
+    }
+    if (periods.isPristine && groupId && groupId !== undefined) this.props.getPeriods(structureId, groupId);
     if (year.isPristine) this.props.getYear(structureId);
     else this.props.getEvents(childId, structureId, year.data.start_date, year.data.end_date);
   }
 
   public componentDidUpdate(prevProps, prevState) {
-    const { periods, year, childId, structureId, groupId, events } = this.props;
+    const { periods, year, userType, userId, childId, structureId, groupId, events } = this.props;
     const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
 
+    // if user is a relative, get child informations
+    if (userType === 'Relative') {
+      if (!groupId && groupId === undefined && !this.props.childrenInfos.isFetching) {
+        if (userId !== undefined) {
+          this.props.getChildInfos(userId);
+        } else {
+          this.props.getChildInfos(this.props.navigation.state.params.userId);
+        }
+      } else if (this.state.groupId !== this.props.groupId && this.props.groupId !== undefined && this.state.groupId === '') {
+        this.setState({ groupId: this.props.groupId });
+        this.props.getPeriods(structureId, groupId);
+        this.props.getYear(structureId);
+      }
+    }
+
     // on child change
-    if (prevProps.childId !== childId) {
+    if (prevProps.childId !== childId && periods.data.length === 0) {
       this.props.getPeriods(structureId, groupId);
       this.props.getYear(structureId);
     }
@@ -186,26 +217,32 @@ const mapStateToProps = (state: any) => {
   const events = getHistoryEvents(state);
   const periods = getPeriodsListState(state);
   const year = getYearState(state);
-  const type = getSessionInfo().type;
-  const childId = type === 'Student' ? getSessionInfo().id : getSelectedChild(state).id;
+  const userType = getSessionInfo().type;
+  const userId = getUserSession(state).user.id;
+  const childId = userType === 'Student' ? getUserSession(state).user.id : getSelectedChild(state).id;
   const groupId =
-    type === 'Student' || getSessionInfo().classes.length >= 1
+    userType === 'Student'
       ? getSessionInfo().classes[0]
-      : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
+      : getUserChildrenState(state).data.find(child => child.id === childId)?.structures[0].classes[0].id;
   const structureId =
-    type === 'Student'
+    userType === 'Student'
       ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
       : getSelectedChildStructure(state)?.id;
+
+  const childrenInfos = getUserChildrenState(state);
   const isFetchingData = events.isFetching || periods.isFetching || year.isFetching;
   const isPristineData = events.isPristine || periods.isPristine || year.isPristine;
 
   return {
     events,
     structureId,
+    userType,
+    userId,
     childId,
     periods,
     year,
     groupId,
+    childrenInfos,
     isFetchingData,
     isPristineData,
   };
@@ -217,6 +254,7 @@ const mapDispatchToProps = (dispatch: any) =>
       getEvents: getStudentEvents,
       getPeriods: fetchPeriodsListAction,
       getYear: fetchYearAction,
+      getChildInfos: fetchUserChildrenAction,
     },
     dispatch,
   );

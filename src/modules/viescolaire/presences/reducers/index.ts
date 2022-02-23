@@ -6,6 +6,7 @@ import registerPreferences from './registerPreferences';
 import callList from './teacherClassesCall';
 import coursesRegister from './teacherCourseRegister';
 import coursesList from './teacherCourses';
+import userChildren from './userChildren';
 
 const combinedReducer = combineReducers({
   coursesList,
@@ -14,6 +15,7 @@ const combinedReducer = combineReducers({
   history,
   multipleSlots,
   registerPreferences,
+  userChildren,
 });
 
 export default combinedReducer;
