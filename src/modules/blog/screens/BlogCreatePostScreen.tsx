@@ -19,13 +19,8 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import {
-  FakeHeader_Container,
   HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  HeaderRight,
-  FakeHeader_Row,
-  HeaderTitle_Style,
+  HeaderBackAction,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -91,37 +86,11 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
   attachmentPickerRef: any;
 
-  // RENDER =======================================================================================
+  // NAVBAR =======================================================================================
 
-  render() {
-    const { navigation } = this.props;
-    const routeName = navigation.state.routeName;
-    return (
-      <>
-        {this.renderHeader()}
-        <PageView path={routeName}>
-          <Notifier id="createPost" />
-          <KeyboardAvoidingView
-            enabled
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
-            style={{ flex: 1 }}>
-            <ScrollView
-              alwaysBounceVertical={false}
-              contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}>
-              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </PageView>
-      </>
-    );
-  }
-
-  renderHeader() {
-    const { navigation, session } = this.props;
-    const { title, content, sendLoadingState } = this.state;
-    const blog = navigation.getParam('blog');
-    const blogPostRight = blog && session && getBlogPostRight(blog, session);
+  navBarInfo = () => {
+    const blog = this.props.navigation.getParam('blog');
+    const blogPostRight = blog && this.props.session && getBlogPostRight(blog, this.props.session);
     const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
     const actionText =
       blogPostDisplayRight &&
@@ -130,32 +99,43 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         [submitBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.submitAction'),
         [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishAction'),
       }[blogPostDisplayRight];
+    return {
+      left: <HeaderBackAction navigation={this.props.navigation} />,
+      title: I18n.t('blog.blogCreatePostScreen.title'),
+      right: this.state.sendLoadingState ? (
+        <LoadingIndicator
+          small
+          customColor={theme.color.neutral.extraLight}
+          customStyle={{ justifyContent: 'center', paddingHorizontal: 18 }}
+        />
+      ) : (
+        <HeaderAction
+          text={actionText}
+          disabled={this.state.title.length === 0 || this.state.content.length === 0}
+          onPress={() => this.doSend()}
+        />
+      ),
+    };
+  };
+
+  // RENDER =======================================================================================
+
+  render() {
     return (
-      <FakeHeader_Container>
-        <FakeHeader_Row>
-          <HeaderLeft>
-            <HeaderAction
-              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-              iconSize={24}
-              onPress={() => this.doHandleGoBack()}
-            />
-          </HeaderLeft>
-          <HeaderCenter>
-            <HeaderTitle_Style>{I18n.t('blog.blogCreatePostScreen.title')}</HeaderTitle_Style>
-          </HeaderCenter>
-          <HeaderRight>
-            {sendLoadingState ? (
-              <LoadingIndicator
-                small
-                customColor={theme.color.neutral.extraLight}
-                customStyle={{ justifyContent: 'center', paddingHorizontal: 18 }}
-              />
-            ) : (
-              <HeaderAction text={actionText} disabled={title.length === 0 || content.length === 0} onPress={() => this.doSend()} />
-            )}
-          </HeaderRight>
-        </FakeHeader_Row>
-      </FakeHeader_Container>
+      <PageView path={this.props.navigation.state.routeName} navBar={this.navBarInfo()}>
+        <Notifier id="createPost" />{/* ToDo : don't use magic keywords like this. */}
+        <KeyboardAvoidingView // ToDo : use <KeyboardAvoidingScrollView instead ?
+          enabled
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
+          style={{ flex: 1 }}>
+          <ScrollView
+            alwaysBounceVertical={false}
+            contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </PageView>
     );
   }
 

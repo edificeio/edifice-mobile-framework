@@ -29,14 +29,10 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import {
-  FakeHeader_Container,
-  HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
   HeaderRight,
-  FakeHeader_Row,
   HeaderSubtitle_Style,
   HeaderTitle_Style,
+  HeaderBackAction,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
@@ -186,8 +182,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
     return (
       <>
-        {this.renderHeader()}
-        <PageView path={`${moduleConfig.routeName}/details`}>
+        <PageView path={navigation.state.routeName} navBar={this.navBarInfo()}>
           <SafeAreaView
             style={{
               backgroundColor: theme.color.background.card,
@@ -211,7 +206,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     );
   }
 
-  renderHeader() {
+  navBarInfo() {
     const { navigation } = this.props;
     const { blogPostData } = this.state;
     const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
@@ -220,40 +215,33 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     if (!resourceUri && blogPostData && blogId) {
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
-    return (
-      <FakeHeader_Container>
-        <FakeHeader_Row>
-          <HeaderLeft>
-            <HeaderAction
-              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-              iconSize={24}
-              onPress={() => {
-                const commentFieldComment = this.commentFieldRef?.current?.getComment();
-                const goBack = () => navigation.dispatch(NavigationActions.back());
-                commentFieldComment ? this.commentFieldRef?.current?.confirmDiscard(() => goBack()) : goBack();
-              }}
-            />
-          </HeaderLeft>
-          <HeaderCenter>
-            {blogPostData?.title && this.state.showHeaderTitle ? (
-              <>
-                <HeaderTitle_Style numberOfLines={1}>{blogPostData?.title}</HeaderTitle_Style>
-                <HeaderSubtitle_Style>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle_Style>
-              </>
-            ) : (
-              <HeaderTitle_Style numberOfLines={2}>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle_Style>
-            )}
-          </HeaderCenter>
-          {resourceUri ? (
-            <HeaderRight style={{ alignItems: 'center' }}>
-              <TouchableOpacity onPress={this.showMenu}>
-                <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
-              </TouchableOpacity>
-            </HeaderRight>
-          ) : null}
-        </FakeHeader_Row>
-      </FakeHeader_Container>
-    );
+    return {
+      left: (
+        <HeaderBackAction
+          onPress={() => {
+            const commentFieldComment = this.commentFieldRef?.current?.getComment();
+            const goBack = () => navigation.dispatch(NavigationActions.back());
+            commentFieldComment ? this.commentFieldRef?.current?.confirmDiscard(() => goBack()) : goBack();
+          }}
+        />
+      ),
+      title:
+        blogPostData?.title && this.state.showHeaderTitle ? (
+          <>
+            <HeaderTitle_Style numberOfLines={1}>{blogPostData?.title}</HeaderTitle_Style>
+            <HeaderSubtitle_Style>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle_Style>
+          </>
+        ) : (
+          <HeaderTitle_Style numberOfLines={2}>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle_Style>
+        ),
+      right: resourceUri ? (
+        <HeaderRight style={{ alignItems: 'center' }}>
+          <TouchableOpacity onPress={this.showMenu}>
+            <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
+          </TouchableOpacity>
+        </HeaderRight>
+      ) : undefined,
+    };
   }
 
   renderError() {

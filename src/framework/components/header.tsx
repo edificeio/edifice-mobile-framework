@@ -15,7 +15,7 @@
 import styled from '@emotion/native';
 import * as React from 'react';
 import { Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
-import type { NavigationScreenProp, NavigationParams } from 'react-navigation';
+import { NavigationScreenProp, NavigationParams, NavigationActions } from 'react-navigation';
 
 import { UI_SIZES } from './constants';
 import theme from '~/app/theme';
@@ -169,8 +169,18 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
   );
 };
 
-export const HeaderBackAction = ({ navigation }: { navigation: NavigationScreenProp<NavigationParams> }) => (
-  <HeaderAction iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'} iconSize={24} onPress={() => navigation.goBack()} />
+export const HeaderBackAction = ({
+  navigation,
+  onPress,
+}: {
+  navigation?: NavigationScreenProp<NavigationParams>;
+  onPress?: () => void;
+}) => (
+  <HeaderAction
+    iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
+    iconSize={24}
+    onPress={onPress ? onPress : navigation ? () => navigation.dispatch(NavigationActions.back()) : () => {}}
+  />
 );
 
 export const HeaderTitle_Style = styled(TextInverse)({

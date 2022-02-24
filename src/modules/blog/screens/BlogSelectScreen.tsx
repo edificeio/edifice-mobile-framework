@@ -1,14 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, FlatList, TouchableOpacity, RefreshControl, Platform } from 'react-native';
-import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import { View, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -70,8 +70,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
     const { loadingState, errorState } = this.state;
     return (
       <>
-        {this.renderHeader()}
-        <PageView>
+        <PageView path={this.props.navigation.state.routeName} navBar={this.navBarInfo()}>
           {[BlogSelectLoadingState.PRISTINE, BlogSelectLoadingState.INIT].includes(loadingState) ? (
             <LoadingIndicator />
           ) : errorState ? (
@@ -84,24 +83,11 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
     );
   }
 
-  renderHeader() {
-    const { navigation } = this.props;
-    return (
-      <FakeHeader_Container>
-        <FakeHeader_Row>
-          <HeaderLeft>
-            <HeaderAction
-              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-              iconSize={24}
-              onPress={() => navigation.dispatch(NavigationActions.back())}
-            />
-          </HeaderLeft>
-          <HeaderCenter>
-            <HeaderTitle_Style>{I18n.t('blog.blogSelectScreen.title')}</HeaderTitle_Style>
-          </HeaderCenter>
-        </FakeHeader_Row>
-      </FakeHeader_Container>
-    );
+  navBarInfo() {
+    return {
+      left: <HeaderBackAction navigation={this.props.navigation} />,
+      title: I18n.t('blog.blogSelectScreen.title'),
+    };
   }
 
   renderError() {

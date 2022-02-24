@@ -21,13 +21,9 @@ import Explorer, {
   IExplorerResourceItemWithImage,
 } from '~/framework/components/explorer';
 import {
-  FakeHeader_Container,
-  HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  FakeHeader_Row,
   HeaderSubtitle_Style,
   HeaderTitle_Style,
+  HeaderBackAction,
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -42,6 +38,7 @@ import { getBlogWorkflowInformation } from '~/modules/blog/rights';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { openUrl } from '~/framework/util/linking';
 import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
+import { StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 
 // TYPES ==========================================================================================
 
@@ -118,7 +115,10 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     }
   };
   const onOpenFolder = (item: IBlogFolder | 'root') => {
-    props.navigation.push(`${moduleConfig.routeName}`, { folderId: item === 'root' ? undefined : item.id });
+    (props.navigation as StackNavigationProp).push &&
+      (props.navigation as StackNavigationProp).push(`${moduleConfig.routeName}`, {
+        folderId: item === 'root' ? undefined : item.id,
+      });
   };
   const onOpenBlog = (item: IDisplayedBlog) => {
     props.navigation.navigate(`${moduleConfig.routeName}/posts`, { selectedBlog: item });
@@ -126,7 +126,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
   // HEADER =====================================================================================
 
-  const renderHeader = ({
+  const navBarInfo = ({
     resources,
     folders,
   }: {
@@ -135,29 +135,17 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   }) => {
     const currentFolderId = props.navigation.getParam('folderId');
     const currentFolder = folders.find(f => f.id === currentFolderId);
-    return (
-      <FakeHeader_Container>
-        <FakeHeader_Row>
-          <HeaderLeft>
-            <HeaderAction
-              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-              iconSize={24}
-              onPress={() => props.navigation.dispatch(NavigationActions.back())}
-            />
-          </HeaderLeft>
-          <HeaderCenter>
-            {currentFolder ? (
-              <>
-                <HeaderTitle_Style numberOfLines={1}>{currentFolder.name}</HeaderTitle_Style>
-                <HeaderSubtitle_Style>{I18n.t('blog.appName')}</HeaderSubtitle_Style>
-              </>
-            ) : (
-              <HeaderTitle_Style>{I18n.t('blog.appName')}</HeaderTitle_Style>
-            )}
-          </HeaderCenter>
-        </FakeHeader_Row>
-      </FakeHeader_Container>
-    );
+    return {
+      left: <HeaderBackAction navigation={props.navigation} />,
+      title: currentFolder ? (
+        <>
+          <HeaderTitle_Style numberOfLines={1}>{currentFolder.name}</HeaderTitle_Style>
+          <HeaderSubtitle_Style>{I18n.t('blog.appName')}</HeaderSubtitle_Style>
+        </>
+      ) : (
+        <HeaderTitle_Style>{I18n.t('blog.appName')}</HeaderTitle_Style>
+      ),
+    };
   };
 
   // EMPTY SCREEN =================================================================================
@@ -272,8 +260,9 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
   return (
     <>
-      {renderHeader(props.tree || { resources: [], folders: [] })}
-      <PageView path={props.navigation.state.routeName}>{renderPage()}</PageView>
+      <PageView path={props.navigation.state.routeName} navBar={navBarInfo(props.tree || { resources: [], folders: [] })}>
+        {renderPage()}
+      </PageView>
     </>
   );
 };

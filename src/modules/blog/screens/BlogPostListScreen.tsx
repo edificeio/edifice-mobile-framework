@@ -7,7 +7,7 @@ import moment from 'moment';
 import React from 'react';
 import { Platform, RefreshControl, View, ScrollView, FlatList } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
-import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
+import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -18,13 +18,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import {
-  FakeHeader_Container,
-  HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  FakeHeader_Row,
-  HeaderSubtitle_Style,
-  HeaderTitle_Style,
+  HeaderBackAction,
+  HeaderTitle,
+  HeaderSubtitle,
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -195,29 +191,17 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   // HEADER =====================================================================================
 
-  const header = (
-    <FakeHeader_Container>
-      <FakeHeader_Row>
-        <HeaderLeft>
-          <HeaderAction
-            iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-            iconSize={24}
-            onPress={() => props.navigation.dispatch(NavigationActions.back())}
-          />
-        </HeaderLeft>
-        <HeaderCenter>
-          {selectedBlogTitle ? (
-            <>
-              <HeaderTitle_Style numberOfLines={1}>{selectedBlogTitle}</HeaderTitle_Style>
-              <HeaderSubtitle_Style>{I18n.t('blog.appName')}</HeaderSubtitle_Style>
-            </>
-          ) : (
-            <HeaderTitle_Style numberOfLines={2}>{I18n.t('blog.appName')}</HeaderTitle_Style>
-          )}
-        </HeaderCenter>
-      </FakeHeader_Row>
-    </FakeHeader_Container>
-  );
+  const navBarInfo = {
+    left: <HeaderBackAction navigation={props.navigation} />,
+    title: selectedBlogTitle ? (
+      <>
+        <HeaderTitle>{selectedBlogTitle}</HeaderTitle>
+        <HeaderSubtitle>{I18n.t('blog.appName')}</HeaderSubtitle>
+      </>
+    ) : (
+      <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
+    ),
+  };
 
   // CREATE BUTTON ================================================================================
 
@@ -336,9 +320,9 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   return (
     <>
-      {header}
-      {renderCreateButton()}
-      <PageView path={props.navigation.state.routeName}>{renderPage()}</PageView>
+      <PageView path={props.navigation.state.routeName} navBar={navBarInfo} navBarNode={renderCreateButton()}>
+        {renderPage()}
+      </PageView>
     </>
   );
 };
