@@ -14,6 +14,12 @@ import LoginWAYFPage from '~/user/containers/LoginWAYFPage';
 import OnboardingScreen from '~/user/containers/OnboardingScreen';
 import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
 import WAYFPage from '~/user/containers/WAYFPage';
+import ChangePasswordPage from '~/user/containers/ChangePasswordPage';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { checkVersionThenLogin } from '~/user/actions/version';
+import { actionTypeLoginError } from '~/user/actions/actionTypes/login';
+import { navigate } from './helpers/navHelper';
+import { redirectAfterChangePassword } from '~/user/actions/login';
 
 /**
  * # Login Navigator
@@ -52,6 +58,13 @@ export default createStackNavigator(
     Onboarding: { screen: OnboardingScreen },
     PlatformSelect: { screen: PlatformSelectPage },
     WAYF: { screen: WAYFPage },
+    ChangePassword: {
+      screen: withViewTracking('auth/ChangePassword')(ChangePasswordPage),
+      params: {
+        redirectCallback: redirectAfterChangePassword,
+        forceChange: true
+      },
+    },
   },
   {
     initialRouteName: 'Empty',

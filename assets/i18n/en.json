@@ -77,6 +77,7 @@
   "auth-error-too_many_tries": "For security reasons, your account has been temporarily blocked due to too many sign-in attempts. Please try again later.",
   "auth-error-unknown_denied": "Unable to log in. Incorrect server response ({{errorcode}}). Please try again or contact support.",
   "auth-error-unknown_response": "Unable to log in. Incorrect server response ({{errorcode}}). Please try again or contact support.",
+  "auth-error-must_log_again": "Please log in again with your new password.",
   "back": "Back",
   "blog": {
     "blogCreatePostScreen": {

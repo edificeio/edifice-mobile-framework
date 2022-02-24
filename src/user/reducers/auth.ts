@@ -1,6 +1,7 @@
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 import {
   actionTypeLoggedIn,
+  actionTypeLoggedInPartial,
   actionTypeLoggedOut,
   actionTypeLoginCancel,
   actionTypeLoginError,
@@ -97,6 +98,17 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         login: action.userbook.login,
         synced: true,
         userId: action.userbook.id,
+      };
+    case actionTypeLoggedInPartial:
+      return {
+        ...state,
+        login: action.userbook.login,
+        userId: action.userbook.id,
+        apps: action.userbook.apps,
+        appsInfo: action.userbook.appsInfo,
+        error: '',
+        loggedIn: false,
+        loggingIn: false,
       };
     case actionTypeLoginError:
       return {

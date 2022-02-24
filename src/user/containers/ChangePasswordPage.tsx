@@ -39,8 +39,8 @@ const mapDispatchToProps: (
 ) => IChangePasswordPageEventProps = dispatch => {
   return {
     dispatch,
-    onSubmit: async model => {
-      dispatch(changePasswordAction(model));
+    onSubmit: async (model, redirectCallback, forceChange) => {
+      dispatch(changePasswordAction(model, redirectCallback, forceChange));
     },
     onCancelLoad() {
       dispatch(cancelChangePasswordAction());
@@ -67,7 +67,7 @@ class ChangePasswordPageContainer extends React.PureComponent<
 
   public render() {
     // use the key to recompute state from props
-    return <ChangePasswordPage {...this.props} key={this.props.version + ''} />;
+    return <ChangePasswordPage {...this.props} key={this.props.version + ''} navigation={this.props.navigation} />;
   }
 }
 

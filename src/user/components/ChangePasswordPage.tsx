@@ -15,6 +15,7 @@ import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 import { ValueChangeArgs, ValidatorBuilder, ValueGetter, ValueChange } from '~/utils/form';
+import { NavigationInjectedProps } from 'react-navigation';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -31,12 +32,17 @@ export interface IChangePasswordPageDataProps extends IChangePasswordModel {
   submitState: SubmitState;
 }
 export interface IChangePasswordPageEventProps {
-  onSubmit(model: IChangePasswordModel): Promise<void>;
+  onSubmit(model: IChangePasswordModel, redirectCallback?: (dispatch) => void, forceChange?: boolean): Promise<void>;
   onRetryLoad: (arg: IChangePasswordUserInfo) => void;
   onCancelLoad: () => void;
   dispatch: Dispatch;
 }
-export type IChangePasswordPageProps = IChangePasswordPageDataProps & IChangePasswordPageEventProps;
+export type IChangePasswordPageProps = IChangePasswordPageDataProps &
+  IChangePasswordPageEventProps &
+  NavigationInjectedProps<{
+    redirectCallback: (dispatch) => void;
+    forceChange?: boolean;
+  }>;
 
 // Form Model -------------------------------------------------------------------------------------
 
@@ -107,7 +113,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
   };
 
   private handleSubmit() {
-    this.props.onSubmit({ ...this.state });
+    this.props.onSubmit(
+      { ...this.state },
+      this.props.navigation.getParam('redirectCallback'),
+      this.props.navigation.getParam('forceChange'),
+    );
     this.setState({ typing: false });
   }
 

@@ -77,6 +77,7 @@
   "auth-error-too_many_tries": "Pour des raisons de sécurité, votre compte est bloqué temporairement suite à un trop grand nombre de tentatives de connexion. Veuillez réessayer ultérieurement.",
   "auth-error-unknown_denied": "Impossible de s'identifier. Mauvaise réponse serveur ({{errorcode}}). Veuillez réessayer ou contacter le support.",
   "auth-error-unknown_response": "Impossible de s'identifier. Mauvaise réponse serveur ({{errorcode}}). Veuillez réessayer ou contacter le support.",
+  "auth-error-must_log_again": "Merci de bien vouloir vous identifier à nouveau avec votre nouveau mot de passe.",
   "back": "Retour",
   "blog": {
     "blogCreatePostScreen": {

@@ -77,6 +77,7 @@
   "auth-error-too_many_tries": "Por razones de seguridad, su cuenta se ha bloqueado temporalmente tras demasiados intentos de inicio de sesión. Inténtelo de nuevo más tarde.",
   "auth-error-unknown_denied": "Identificación imposible. Respuesta incorrecta del servidor ({{errorcode}}). Por favor intente nuevamente o contacte a soporte.",
   "auth-error-unknown_response": "Identificación imposible. Respuesta incorrecta del servidor ({{errorcode}}). Por favor intente nuevamente o contacte a soporte.",
+  "auth-error-must_log_again": "Vuelva a conectarse con su nueva contraseña.",
   "back": "Atrás",
   "blog": {
     "blogCreatePostScreen": {

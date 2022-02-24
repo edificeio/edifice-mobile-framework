@@ -184,6 +184,7 @@ export default AppStore();
 export const getSessionInfo = () =>
   ({
     ...(getStore().getState() as any).user.info,
+    ...(getStore().getState() as any).user.auth,
   } as IUserInfoState & IUserAuthState);
 
 AllModulesBackup.value = AppModules();

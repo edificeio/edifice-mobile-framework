@@ -4,12 +4,12 @@ import SplashScreen from 'react-native-splash-screen';
 import { ThunkDispatch } from 'redux-thunk';
 import { NavigationActions } from 'react-navigation';
 
-import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut } from './actionTypes/login';
+import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut, actionTypeLoggedInPartial } from './actionTypes/login';
 import { PLATFORM_STORAGE_KEY } from './platform';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
-import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { clearRequestsCache, fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/LoginNavigator';
@@ -27,6 +27,7 @@ enum LoginFlowErrorType {
   FIREBASE_ERROR = 'firebase_error',
   NOT_PREMIUM = 'not_premium',
   PRE_DELETED = 'pre_deleted',
+  MUST_CHANGE_PASSWORD = 'must-change-password',
 }
 export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
 
@@ -149,10 +150,14 @@ export function loginAction(
         const err = new Error("[loginAction]: User's structure is not premium.");
         (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
         throw err;
+      } else if (userinfo2.forceChangePassword) {
+        const err = new Error("[loginAction]: User must change password.");
+        (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
+        (err as any).userinfo2 = userinfo2;
+        throw err;
       }
-
-      // === 4: Gather another user information
-      console.log('4: Gather another user information');
+        // === 4: Gather another user information
+        console.log('4: Gather another user information');
       let userdata: any, userPublicInfo: any;
       try {
         userdata = (await fetchJSONWithCache(`/directory/user/${userinfo2.userId}`)) as any;
@@ -229,6 +234,7 @@ export function loginAction(
       navigate('Main');
     } catch (err) {
       // In case of error...
+      let routeToGo;
 
       // === 1: Check if user is in activation mode
       if (err.type === OAuthErrorType.BAD_CREDENTIALS) {
@@ -266,30 +272,43 @@ export function loginAction(
         } catch (activationErr) {
           console.warn('[activation] check failed:', activationErr);
         }
+      } else if (err.type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
+        routeToGo = 'ChangePassword';
       }
 
-      // === 2: Log error (Continue only if activation match failed)
-      console.warn(err, 'type:', err.type);
-      // ToDo Tracking
+      if (routeToGo) {
+        dispatch({
+          type: actionTypeLoggedInPartial,
+          userbook: (err as any).userinfo2,
+        });
+        navigate(routeToGo);
+      } else {
+        // === 2: Log error (Continue only if activation match failed)
+        console.warn(err, 'type:', err.type);
+        // ToDo Tracking
 
-      // === 3: dispatch error
-      dispatch({
-        errmsg: err.type,
-        type: actionTypeLoginError,
-      });
+        // === 3: dispatch error
+        dispatch({
+          type: actionTypeLoginError,
+          errmsg: err.type,
+        });
 
-      // Track
+        // Track
 
-      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', err.type);
-      // Track manual login (with credentials)
-      else await Trackers.trackEvent('Auth', 'RESTORE ERROR', err.type); // track separately auto login (with stored token)
+        if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', err.type);
+        // Track manual login (with credentials)
+        else await Trackers.trackEvent('Auth', 'RESTORE ERROR', err.type); // track separately auto login (with stored token)
 
-      // === 4: Redirect if asked
-      if (redirectOnError) {
-        resetNavigation([
-          NavigationActions.navigate({ routeName: 'PlatformSelect' }),
-          NavigationActions.navigate({ routeName: getLoginRouteName() }),
-        ], 1);
+        // === 4: Redirect if asked
+        if (redirectOnError) {
+          resetNavigation(
+            [
+              NavigationActions.navigate({ routeName: 'PlatformSelect' }),
+              NavigationActions.navigate({ routeName: getLoginRouteName() }),
+            ],
+            1,
+          );
+        }
       }
     } finally {
       SplashScreen.hide();
@@ -352,4 +371,12 @@ export function refreshToken(newToken: string) {
       console.warn(e);
     }
   };
+}
+
+export async function redirectAfterChangePassword(dispatch) {
+  dispatch({
+    type: actionTypeLoginError,
+    errmsg: 'must_log_again',
+  });
+  navigate(getLoginRouteName());
 }

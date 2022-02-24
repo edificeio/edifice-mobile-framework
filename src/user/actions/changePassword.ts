@@ -104,7 +104,7 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
   };
 }
 
-export function changePasswordAction(model: IChangePasswordModel) {
+export function changePasswordAction(model: IChangePasswordModel, redirectCallback?: (dispatch) => void, forceChange?: boolean) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
     try {
       // === 1 - prepare payload
@@ -114,6 +114,7 @@ export function changePasswordAction(model: IChangePasswordModel) {
         confirmPassword: model.confirm,
         login: getSessionInfo().login!,
         callback: '',
+        ...(forceChange ? { forceChange: 'force' } : {}),
       };
       const formdata = new FormData();
       for (const key in payload) {
@@ -150,7 +151,10 @@ export function changePasswordAction(model: IChangePasswordModel) {
 
       // === 5 - change password finished successfully
       dispatch(changePasswordSubmitReceivedAction());
-      mainNavNavigate('MyProfile');
+
+      if (redirectCallback) redirectCallback(dispatch);
+      else mainNavNavigate('MyProfile');
+
       dispatch(
         notifierShowAction({
           id: 'profile',
