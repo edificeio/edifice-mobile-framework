@@ -7,8 +7,8 @@ import { Text, NestedText, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { ContainerView } from '~/ui/ButtonLine';
 import { H4 } from '~/ui/Typography';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import { PageView } from '~/framework/components/page';
+import { HeaderBackAction } from '~/framework/components/header';
 
 // TYPES ------------------------------------------------------------------------------------------
 

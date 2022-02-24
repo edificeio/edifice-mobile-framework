@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FakeHeader_Row, HeaderTitle } from '~/framework/components/header';
 
 import { Text } from '~/framework/components/text';
 import { DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
@@ -17,21 +18,17 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
 
   if (id === 'nbSelected') {
     return (
-      <View style={styles.nbSelected}>
-        <Text numberOfLines={1} style={styles.nbSelectedText}>
-          {selected.length}
-        </Text>
-      </View>
+      <FakeHeader_Row>
+        <HeaderTitle>{selected.length}</HeaderTitle>
+      </FakeHeader_Row>
     );
   }
 
   if (id === 'title') {
     return (
-      <View style={styles.textWrapper}>
-        <Text numberOfLines={1} style={styles.headerTitleStyle}>
-          {navigation.getParam('title') || I18n.t('workspace')}
-        </Text>
-      </View>
+      <FakeHeader_Row>
+        <HeaderTitle>{navigation.getParam('title') || I18n.t('workspace')}</HeaderTitle>
+      </FakeHeader_Row>
     );
   }
 

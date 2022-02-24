@@ -5,8 +5,8 @@ import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import { UserCard } from './UserCard';
 
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import { PageView } from '~/framework/components/page';
+import { HeaderBackAction } from '~/framework/components/header';
 
 // TYPES ------------------------------------------------------------------------------------------
 

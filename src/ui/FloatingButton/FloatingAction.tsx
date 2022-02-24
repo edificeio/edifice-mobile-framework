@@ -6,8 +6,9 @@ import { CommonStyles } from "~/styles/common/styles";
 import { IFloatingProps, IMenuItem } from "~/ui/types";
 import { ISelected } from '~/ui/Toolbar/Toolbar';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { iosStatusBarHeight } from '~/ui/headers/Header';
-import { ButtonIcon, getMenuShadow } from '~/ui/ButtonIconText';
+import { getMenuShadow } from '~/ui/ButtonIconText';
+import { UI_SIZES } from "~/framework/components/constants";
+import { ButtonIcon } from "~/framework/components/popupMenu";
 import { hasNotch } from "react-native-device-info";
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
@@ -54,7 +55,18 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
       return null;
     }
 
-    return <ButtonIcon style={styles.button} name={iconName} onPress={this.animateButton} />;
+    return (
+      <ButtonIcon
+        name={iconName}
+        onPress={this.animateButton}
+        style={{
+          position: 'absolute',
+          zIndex: 100,
+          right: 20,
+          top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
+        }}
+      />
+    );
   }
 
   renderActions() {
@@ -79,7 +91,7 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
   render() {
     const { selected } = this.props;
 
-    if (selected.length) {
+    if (selected?.length) {
       return null;
     }
 
@@ -112,32 +124,32 @@ interface IState {
 const styles = StyleSheet.create({
   actions: {
     borderRadius: layoutSize.LAYOUT_4,
-    overflow: "visible",
-    backgroundColor: "#ffffff",
-    position: "absolute",
+    overflow: 'visible',
+    backgroundColor: '#ffffff',
+    position: 'absolute',
     right: 12,
     top: 78,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
-    ...getMenuShadow()
+    ...getMenuShadow(),
   },
   button: {
-    position: "absolute",
+    position: 'absolute',
     right: 20,
-    top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 44 : 44 : 22,
+    top: UI_SIZES.topInset,
     zIndex: 10,
   },
   overlayActions: {
     bottom: 0,
     left: 0,
-    position: "absolute",
+    position: 'absolute',
     right: 0,
-    top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 23 : 23 : 0,
+    top: UI_SIZES.topInset,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,
     borderBottomWidth: 1,
-    width: "100%",
+    width: '100%',
   },
 });
 

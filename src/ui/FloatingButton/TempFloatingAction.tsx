@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Keyboard, Platform, StyleSheet, View } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { FlatList, Keyboard, StyleSheet, View } from 'react-native';
 
 import FloatingActionItem from './FloatingActionItem';
 
@@ -9,8 +8,8 @@ import { CommonStyles } from '~/styles/common/styles';
 import { ButtonIcon, getMenuShadow } from '~/ui/ButtonIconText';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { ISelected } from '~/ui/Toolbar/Toolbar';
-import { iosStatusBarHeight } from '~/ui/headers/Header';
 import { IFloatingProps, IMenuItem } from '~/ui/types';
+import { UI_SIZES } from '~/framework/components/constants';
 
 class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
@@ -132,14 +131,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     // top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 44 : 44) : 22,
-    top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
+    top: UI_SIZES.topInset,
   },
   overlayActions: {
     bottom: 0,
     left: 0,
     position: 'absolute',
     right: 0,
-    top: Platform.OS === 'ios' ? (hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight) : -3,
+    top: UI_SIZES.topInset,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

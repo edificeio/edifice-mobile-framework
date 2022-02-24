@@ -1,15 +1,14 @@
 import I18n from 'i18n-js';
 import React from 'react';
 import { View, Platform, StatusBar, ViewStyle, TouchableOpacity, SafeAreaView } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
 
 import { Loading } from '.';
 import { MediaAction } from './MediaAction';
 import { Italic } from './Typography';
 import { SafeWebView } from './Webview';
-import { iosStatusBarHeight } from './headers/Header';
 
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export class IFrame extends React.Component<
   {
@@ -108,7 +107,7 @@ export class IFrame extends React.Component<
             action={() => navigation.goBack()}
             customStyle={{
               backgroundColor: 'rgba(63,63,63,0.8)',
-              top: Platform.OS === 'ios' ? (hasNotch() ? iosStatusBarHeight + 30 : 25) : 0,
+              top: UI_SIZES.topInset,
             }}
           />
         ) : null}

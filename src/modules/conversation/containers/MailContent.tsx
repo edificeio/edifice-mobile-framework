@@ -32,14 +32,12 @@ import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
 import { DraftType } from '~/modules/conversation/containers/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { getMailContentState } from '~/modules/conversation/state/mailContent';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { HeaderAction } from '~/ui/headers/NewHeader';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { PageView } from '~/framework/components/page';
-import { HeaderBackAction } from '~/framework/components/header';
+import { HeaderAction, HeaderBackAction } from '~/framework/components/header';
 
 class MailContentContainer extends React.PureComponent<
   NavigationInjectedProps<NavigationParams> & {
@@ -173,7 +171,7 @@ class MailContentContainer extends React.PureComponent<
     const navBarInfo = {
       left: <HeaderBackAction navigation={navigation} onPress={this.goBack} />,
       title: (this.state.showHeaderSubject ? mail.subject : undefined),
-      right: <HeaderAction onPress={this.showMenu} name="more_vert" iconSize={24} />,
+      right: <HeaderAction onPress={this.showMenu} iconName="more_vert" iconSize={24} />,
     };
 
     return (

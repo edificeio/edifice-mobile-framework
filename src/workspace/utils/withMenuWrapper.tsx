@@ -7,10 +7,8 @@ import { nbItems } from './index';
 import { EVENT_TYPE, IEvent } from '~/types/ievents';
 import { ProgressBar } from '~/ui';
 import { ConfirmDialog } from '~/ui/ConfirmDialog';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { FloatingAction } from '~/ui/FloatingButton';
 import { ToolbarAction } from '~/ui/Toolbar';
-import { Header } from '~/ui/headers/Header';
 import { IMenuItem, initialMenuItem } from '~/ui/types';
 import { newDownloadThenOpenAction } from '~/workspace/actions/download';
 import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
@@ -19,6 +17,7 @@ import { selectAction, selectClearAction } from '~/workspace/actions/select';
 import { IItems } from '~/workspace/reducers/select';
 import { IFile, IItem } from '~/workspace/types';
 import { FilterId } from '~/workspace/types/filters';
+import { FakeHeader_Container, FakeHeader_Row } from '~/framework/components/header';
 
 export interface IProps {
   dispatch: any;
@@ -129,15 +128,16 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
       return (
         <View style={{ flex: 1 }}>
-          <Header>
-            <ToolbarAction
-              menuItems={toolbarItems}
-              navigation={navigation}
-              onEvent={this.handleEvent.bind(this)}
-              selected={selectedArrayItems}
-            />
-          </Header>
-          <DEPRECATED_ConnectionTrackingBar />
+          <FakeHeader_Container>
+            <FakeHeader_Row>
+              <ToolbarAction
+                menuItems={toolbarItems}
+                navigation={navigation}
+                onEvent={this.handleEvent.bind(this)}
+                selected={selectedArrayItems}
+              />
+            </FakeHeader_Row>
+          </FakeHeader_Container>
           <ProgressBar />
           {dialogVisible && (
             <ConfirmDialog

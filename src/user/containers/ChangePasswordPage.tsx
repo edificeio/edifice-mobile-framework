@@ -1,13 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Dispatch } from 'react';
-import { NavigationInjectedProps, NavigationScreenProp, NavigationState } from 'react-navigation';
+import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import {
   changePasswordAction,
   cancelChangePasswordAction,

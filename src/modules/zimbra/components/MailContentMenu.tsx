@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity, FlatList, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { UI_SIZES } from '~/framework/components/constants';
 
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import { Text } from '~/ui/Typography';
-import { iosStatusBarHeight } from '~/ui/headers/Header';
 
 type MailContentMenuProps = {
   data: {
@@ -71,7 +70,7 @@ const style = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: Platform.OS === 'ios' ? (hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight) : -3,
+    top: UI_SIZES.topInset,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,
