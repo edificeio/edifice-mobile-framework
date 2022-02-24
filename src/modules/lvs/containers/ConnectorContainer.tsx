@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -9,12 +9,9 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { openConnector } from '~/modules/lvs/actions/connector';
 import ConnectorView from '~/modules/lvs/components/ConnectorView';
 import connectorConfig from '~/modules/lvs/moduleConfig';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
-import { Back } from '~/ui/headers/Back';
-import { AppTitle, Header, HeaderIcon } from '~/ui/headers/Header';
 import userConfig from '~/user/config';
+import { PageView } from '~/framework/components/page';
+import { HeaderBackAction } from '~/framework/components/header';
 
 interface IApplicationBackend {
   name: string;
@@ -36,38 +33,24 @@ interface IConnectorContainerEventProps {
   openConnector: (connectorAddress: string, successCallback: Function) => void;
 }
 
-interface IConnectorContainerNavigationProps {
-  navigation?: any;
-}
-
-type IConnectorContainerProps = IConnectorContainerDataProps & IConnectorContainerEventProps & IConnectorContainerNavigationProps;
+type IConnectorContainerProps = IConnectorContainerDataProps & IConnectorContainerEventProps & NavigationInjectedProps;
 
 class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        header: (
-          <Header>
-            <Back navigation={navigation} />
-            <AppTitle>{I18n.t(connectorConfig.displayName)}</AppTitle>
-            <HeaderIcon name={null} hidden />
-          </Header>
-        ),
-      },
-      navigation,
-    );
-  };
 
   public render() {
     return (
-      <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t(connectorConfig.displayName),
+        }}>
         <ConnectorView
           openConnector={() => this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))}
           isLoading={this.props.isLoading}
           error={this.props.error}
         />
-      </PageContainer>
+      </PageView>
     );
   }
 }
