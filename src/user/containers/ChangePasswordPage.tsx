@@ -5,6 +5,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { FakeHeader, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
 
 import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
@@ -55,19 +56,27 @@ class ChangePasswordPageContainer extends React.PureComponent<
   IChangePasswordPageProps & { dispatch: any; version: number },
   object
 > {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return alternativeNavScreenOptions(
-      {
-        title: I18n.t('PasswordChange'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-      },
-      navigation,
-    );
-  };
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => ({
+    header: null
+  });
 
   public render() {
     // use the key to recompute state from props
-    return <ChangePasswordPage {...this.props} key={this.props.version + ''} navigation={this.props.navigation} />;
+    return (
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderBackAction navigation={this.props.navigation} />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{I18n.t('PasswordChange')}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        <ChangePasswordPage {...this.props} key={this.props.version + ''} navigation={this.props.navigation} />
+      </>
+    );
   }
 }
 

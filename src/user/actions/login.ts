@@ -4,7 +4,13 @@ import SplashScreen from 'react-native-splash-screen';
 import { ThunkDispatch } from 'redux-thunk';
 import { NavigationActions } from 'react-navigation';
 
-import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut, actionTypeLoggedInPartial } from './actionTypes/login';
+import {
+  actionTypeRequestLogin,
+  actionTypeLoggedIn,
+  actionTypeLoginError,
+  actionTypeLoggedOut,
+  actionTypeLoggedInPartial,
+} from './actionTypes/login';
 import { PLATFORM_STORAGE_KEY } from './platform';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -151,13 +157,13 @@ export function loginAction(
         (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
         throw err;
       } else if (userinfo2.forceChangePassword) {
-        const err = new Error("[loginAction]: User must change password.");
+        const err = new Error('[loginAction]: User must change password.');
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
       }
-        // === 4: Gather another user information
-        console.log('4: Gather another user information');
+      // === 4: Gather another user information
+      console.log('4: Gather another user information');
       let userdata: any, userPublicInfo: any;
       try {
         userdata = (await fetchJSONWithCache(`/directory/user/${userinfo2.userId}`)) as any;
@@ -281,7 +287,18 @@ export function loginAction(
           type: actionTypeLoggedInPartial,
           userbook: (err as any).userinfo2,
         });
-        navigate(routeToGo);
+        if (credentials) {
+          navigate(routeToGo);
+        } else {
+          resetNavigation(
+            [
+              NavigationActions.navigate({ routeName: 'PlatformSelect' }),
+              NavigationActions.navigate({ routeName: getLoginRouteName() }),
+              NavigationActions.navigate({ routeName: routeToGo }),
+            ],
+            2,
+          );
+        }
       } else {
         // === 2: Log error (Continue only if activation match failed)
         console.warn(err, 'type:', err.type);
@@ -377,6 +394,10 @@ export async function redirectAfterChangePassword(dispatch) {
   dispatch({
     type: actionTypeLoginError,
     errmsg: 'must_log_again',
+    errtype: 'warning'
   });
-  navigate(getLoginRouteName());
+  resetNavigation(
+    [NavigationActions.navigate({ routeName: 'PlatformSelect' }), NavigationActions.navigate({ routeName: getLoginRouteName() })],
+    1,
+  );
 }

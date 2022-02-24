@@ -32,6 +32,7 @@ export interface IUserAuthState {
   login?: string;
   userId?: string;
   error?: string;
+  errtype?: string;
   notificationPrefs?: any[];
   // user auth state
   loggedIn: boolean;
@@ -85,6 +86,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
       return {
         ...state,
         error: '',
+        errtype: '',
         loggingIn: true,
       };
     case actionTypeLoggedIn:
@@ -93,6 +95,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         apps: action.userbook.apps,
         appsInfo: action.userbook.appsInfo,
         error: '',
+        errtype: '',
         loggedIn: true,
         loggingIn: false,
         login: action.userbook.login,
@@ -107,6 +110,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         apps: action.userbook.apps,
         appsInfo: action.userbook.appsInfo,
         error: '',
+        errtype: '',
         loggedIn: false,
         loggingIn: false,
       };
@@ -114,6 +118,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
       return {
         ...stateDefault,
         error: action.errmsg,
+        errtype: action.errtype,
         loggingIn: false,
         platformId: state.platformId,
       };
@@ -127,6 +132,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
       return {
         ...stateDefault,
         error,
+        errtype: '',
         platformId: state.platformId,
       };
     case actionTypeSetNotifPrefs:

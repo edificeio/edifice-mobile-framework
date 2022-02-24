@@ -163,7 +163,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   };
 
   protected renderForm() {
-    const { loggingIn, loggedIn, error } = this.props.auth;
+    const { loggingIn, loggedIn, error, errtype } = this.props.auth;
     const { login, password, typing, rememberMe } = this.state;
     const FederationTextComponent = error ? TextBold : Text;
     const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
@@ -198,7 +198,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               placeholder={I18n.t('Login')}
               onChangeText={(login: string) => this.setState({ login: login.trim().toLowerCase(), typing: true })}
               value={login}
-              hasError={(error && !typing) as boolean}
+              hasError={(error && !typing && !errtype) as boolean}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -209,7 +209,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               placeholder={I18n.t('Password')}
               onChangeText={(password: string) => this.setState({ password, typing: true })}
               value={password}
-              hasError={(error && !typing) as boolean}
+              hasError={(error && !typing && !errtype) as boolean}
             />
             <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: 20 }}>
               <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t('RememberMe')}</Text>
@@ -219,7 +219,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <ErrorMessage>
+            <ErrorMessage style={errtype === 'warning' ? {color: theme.color.warning} : {}}>
               {this.state.typing
                 ? ''
                 : error &&
