@@ -52,7 +52,7 @@ export const FakeHeader = (props: React.PropsWithChildren<FakeHeaderProps>) => {
     <FakeHeader_Container {...viewProps}>
       <FakeHeader_Row>
         {left ? <HeaderLeft>{left}</HeaderLeft> : null}
-        {title ? <HeaderCenter>{typeof title === 'string' ? <HeaderTitle>{title}</HeaderTitle> : title}</HeaderCenter> : null}
+        {title ? <HeaderCenter>{typeof title === 'string' ? <HeaderTitle>{title}</HeaderTitle> : title}</HeaderCenter> : <HeaderCenter/>}
         {right ? <HeaderRight>{right}</HeaderRight> : null}
       </FakeHeader_Row>
     </FakeHeader_Container>

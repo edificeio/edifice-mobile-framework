@@ -1,14 +1,16 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, RefreshControl, FlatList } from 'react-native';
+import { View, RefreshControl, FlatList, Platform } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
 import { Swipeable } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 import { NavigationState, NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { Drawer } from '~/framework/components/drawer';
-import { FakeHeader_Container, HeaderCenter, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { PageView } from '~/framework/components/page';
+import { ButtonIcon } from '~/framework/components/popupMenu';
 import { Trackers } from '~/framework/util/tracker';
 import MailListItem from '~/modules/conversation/components/MailListItem';
 import CreateFolderModal from '~/modules/conversation/containers/CreateFolderModal';
@@ -20,9 +22,7 @@ import { ICountMailboxes } from '~/modules/conversation/state/count';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { Loading } from '~/ui';
-import { PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
-import TempFloatingAction from '~/ui/FloatingButton/TempFloatingAction';
 import { Weight } from '~/ui/Typography';
 
 interface IMailListDataProps {
@@ -286,31 +286,34 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     drawerFolders && drawerFolders.push(createFolderItem);
     const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
 
+    const navBarInfo = {
+      // ToDo : add search mails here
+      title: I18n.t('conversation.appName'),
+    };
+
+    const headerButton = (
+      <ButtonIcon
+        name="new_message"
+        onPress={() => {
+          Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
+          this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
+            type: DraftType.NEW,
+            mailId: undefined,
+            currentFolder: this.getActiveRouteState(navigation.state).key,
+          });
+        }}
+        style={{
+          position: 'absolute',
+          zIndex: 100,
+          right: 20,
+          top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
+        }}
+      />
+    );
+
     return (
       <>
-        <PageContainer>
-          <FakeHeader_Container>
-            <FakeHeader_Row>
-              {/* <HeaderLeft> // TODO: add action for searching messages 
-                <HeaderAction name="search"/>
-              </HeaderLeft> */}
-              <HeaderCenter>
-                <HeaderTitle_Style>{I18n.t('conversation.appName')}</HeaderTitle_Style>
-              </HeaderCenter>
-            </FakeHeader_Row>
-          </FakeHeader_Container>
-          <TempFloatingAction
-            buttonStyle={{ zIndex: 1 }}
-            iconName="new_message"
-            onEvent={() => {
-              Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
-              this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
-                type: DraftType.NEW,
-                mailId: undefined,
-                currentFolder: this.getActiveRouteState(navigation.state).key,
-              });
-            }}
-          />
+        <PageView path={navigation.state.routeName} navBar={navBarInfo} navBarNode={headerButton}>
           <View style={{ flex: 1 }}>
             {isFetching && !isRefreshing && !isChangingPage ? (
               <Loading />
@@ -416,7 +419,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             />
             <CreateFolderModal show={showFolderCreationModal} onClose={() => this.setState({ showFolderCreationModal: false })} />
           </View>
-        </PageContainer>
+        </PageView>
         <MoveModal
           currentFolder={navigationKey}
           mail={selectedMail}

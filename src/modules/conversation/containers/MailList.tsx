@@ -76,14 +76,6 @@ type MailListContainerState = {
 };
 
 class MailListContainer extends React.PureComponent<MailListContainerProps, MailListContainerState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
-    return standardNavScreenOptions(
-      {
-        header: null,
-      },
-      navigation,
-    );
-  };
 
   constructor(props) {
     super(props);

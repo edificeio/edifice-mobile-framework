@@ -17,6 +17,5 @@ export default () =>
       screen: CreateMail
     }
   }, {
-    initialRouteName: `${moduleConfig.routeName}`,
-    headerMode: "screen"
+    headerMode: "none",
   });

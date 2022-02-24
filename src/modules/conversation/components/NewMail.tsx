@@ -20,6 +20,7 @@ import { Icon, Loading } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Text } from '~/ui/Typography';
+import { FakeHeaderProps } from '~/framework/components/header';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -42,6 +43,7 @@ interface NewMailComponentProps {
   onAttachmentDelete: (attachmentId: string) => void;
   prevBody: any;
   isReplyDraft: boolean;
+  navBarInfo: FakeHeaderProps;
 }
 
 const styles = StyleSheet.create({
@@ -76,7 +78,7 @@ export default (props: NewMailComponentProps) => {
   }, []);
 
   return (
-    <PageView path="conversation" style={{ backgroundColor: theme.color.background.card }}>
+    <PageView path="conversation" navBar={props.navBarInfo} style={{ backgroundColor: theme.color.background.card }}>
       <KeyboardAvoidingScrollView
         alwaysBounceVertical={false}
         keyboardShouldPersistTaps="handled"

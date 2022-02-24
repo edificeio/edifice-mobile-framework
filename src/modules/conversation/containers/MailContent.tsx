@@ -4,7 +4,7 @@ import * as React from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
-import { NavigationScreenProp, NavigationActions, NavigationState } from 'react-navigation';
+import { NavigationScreenProp, NavigationActions, NavigationState, NavigationInjectedProps, NavigationParams } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -33,17 +33,16 @@ import { DraftType } from '~/modules/conversation/containers/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { getMailContentState } from '~/modules/conversation/state/mailContent';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { CommonStyles } from '~/styles/common/styles';
 import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { Header as HeaderComponent } from '~/ui/headers/Header';
 import { HeaderAction } from '~/ui/headers/NewHeader';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { PageView } from '~/framework/components/page';
+import { HeaderBackAction } from '~/framework/components/header';
 
 class MailContentContainer extends React.PureComponent<
-  {
-    navigation: NavigationScreenProp<NavigationState>;
+  NavigationInjectedProps<NavigationParams> & {
     fetchMailContentAction: (mailId: string) => void;
     toggleRead: (mailIds: string[], read: boolean) => void;
     trashMails: (mailIds: string[]) => void;
@@ -180,28 +179,15 @@ class MailContentContainer extends React.PureComponent<
     // console.log("Container MailContent mail prop", mail, navigation.state.params);
     const ViewportAwareSubject = Viewport.Aware(View);
 
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} onPress={this.goBack} />,
+      title: (this.state.showHeaderSubject ? mail.subject : undefined),
+      right: <HeaderAction onPress={this.showMenu} name="more_vert" iconSize={24} />,
+    };
+
     return (
       <>
-        <PageContainer>
-          <HeaderComponent>
-            <HeaderAction onPress={this.goBack} name="back" />
-            <Text
-              numberOfLines={1}
-              style={{
-                alignSelf: 'center',
-                color: 'white',
-                fontFamily: CommonStyles.primaryFontFamily,
-                fontSize: 16,
-                fontWeight: '400',
-                textAlign: 'center',
-                flex: 1,
-              }}>
-              {this.state.showHeaderSubject ? mail.subject : ''}
-            </Text>
-            <TouchableOpacity onPress={this.showMenu}>
-              <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
-            </TouchableOpacity>
-          </HeaderComponent>
+        <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo}>
 
           <PageContainer style={{ backgroundColor: theme.color.background.page }}>
             {this.props.isFetching ? (
@@ -227,7 +213,7 @@ class MailContentContainer extends React.PureComponent<
               </>
             )}
           </PageContainer>
-        </PageContainer>
+        </PageView>
         <MoveModal
           currentFolder={currentFolder}
           mail={mail}

@@ -11,7 +11,7 @@ import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import theme from '~/app/theme';
-import { HeaderIcon } from '~/framework/components/header';
+import { HeaderAction, HeaderBackAction, HeaderIcon } from '~/framework/components/header';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -35,9 +35,7 @@ import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { getMailContentState, IMail } from '~/modules/conversation/state/mailContent';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { CommonStyles } from '~/styles/common/styles';
 import { INavigationProps } from '~/types';
-import { HeaderAction } from '~/ui/headers/NewHeader';
 
 export enum DraftType {
   NEW,
@@ -89,44 +87,73 @@ type newMail = {
 };
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        title: I18n.t('conversation.newMessage'),
-        headerLeft: () => {
-          const goBack = navigation.getParam('getGoBack', navigation.goBack);
+  // static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
+  //   return standardNavScreenOptions(
+  //     {
+  //       title: I18n.t('conversation.newMessage'),
+  //       headerLeft: () => {
+  //         const goBack = navigation.getParam('getGoBack', navigation.goBack);
 
-          return <HeaderAction onPress={() => goBack()} name="back" />;
-        },
-        headerRight: () => {
-          // const askForAttachment = navigation.getParam('getAskForAttachment');
-          const addGivenAttachment = navigation.getParam('addGivenAttachment');
-          const sendDraft = navigation.getParam('getSendDraft');
-          const deleteDraft = navigation.getParam('getDeleteDraft');
-          const draftType = navigation.getParam('type');
-          const isSavedDraft = draftType === DraftType.DRAFT;
+  //         return <HeaderAction onPress={() => goBack()} iconName="back" />;
+  //       },
+  //       headerRight: () => {
+  //         // const askForAttachment = navigation.getParam('getAskForAttachment');
+  //         const addGivenAttachment = navigation.getParam('addGivenAttachment');
+  //         const sendDraft = navigation.getParam('getSendDraft');
+  //         const deleteDraft = navigation.getParam('getDeleteDraft');
+  //         const draftType = navigation.getParam('type');
+  //         const isSavedDraft = draftType === DraftType.DRAFT;
 
-          return (
-            <View style={{ flexDirection: 'row' }}>
-              {addGivenAttachment && (
-                // <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={askForAttachment} name="attachment" />
-                <FilePicker multiple callback={addGivenAttachment}>
-                  <HeaderIcon name="attachment" />
-                </FilePicker>
-              )}
-              {sendDraft && <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={sendDraft} name="outbox" />}
-              {deleteDraft && isSavedDraft && (
-                <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={deleteDraft} name="delete" />
-              )}
+  //         return (
+  //           <View style={{ flexDirection: 'row' }}>
+  //             {addGivenAttachment && (
+  //               // <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={askForAttachment} name="attachment" />
+  //               <FilePicker multiple callback={addGivenAttachment}>
+  //                 <HeaderIcon name="attachment" />
+  //               </FilePicker>
+  //             )}
+  //             {sendDraft && <HeaderAction onPress={sendDraft} iconName="outbox" />}
+  //             {deleteDraft && isSavedDraft && (
+  //               <HeaderAction onPress={deleteDraft} iconName="delete" />
+  //             )}
+  //           </View>
+  //         );
+  //       },
+  //       headerStyle: {
+  //         backgroundColor: theme.color.secondary.regular,
+  //       },
+  //     },
+  //     navigation,
+  //   );
+  // };
+
+  navBarInfo = () => {
+    const { navigation } = this.props;
+    // const askForAttachment = navigation.getParam('getAskForAttachment');
+    const addGivenAttachment = navigation.getParam('addGivenAttachment');
+    const sendDraft = navigation.getParam('getSendDraft');
+    // const deleteDraft = navigation.getParam('getDeleteDraft');
+    const draftType = navigation.getParam('type');
+    const isSavedDraft = draftType === DraftType.DRAFT;
+    return {
+      left: <HeaderBackAction navigation={navigation} onPress={navigation.getParam('getGoBack', navigation.goBack)} />,
+      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
+      right: (
+        <View style={{ flexDirection: 'row' }}>
+          {addGivenAttachment && (
+            <View style={{ width: 48, alignItems: 'center' }}>
+              <FilePicker multiple callback={addGivenAttachment}>
+                <HeaderIcon name="attachment" />
+              </FilePicker>
             </View>
-          );
-        },
-        headerStyle: {
-          backgroundColor: theme.color.secondary.regular,
-        },
-      },
-      navigation,
-    );
+          )}
+          {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
+          {/* {deleteDraft && isSavedDraft && (
+            <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={deleteDraft} iconName="delete" />
+          )} */}
+        </View>
+      ),
+    };
   };
 
   constructor(props) {
@@ -320,35 +347,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           mask: false,
           containerStyle: { width: '95%', backgroundColor: 'black' },
         });
-      } else if (!isDraftEmpty && !isSavedDraft) {
-        Alert.alert(I18n.t('conversation.saveDraftTitle'), I18n.t('conversation.saveDraftMessage'), [
+      } else if (!isDraftEmpty) {
+        const textToDisplay = {
+          title: 'conversation.saveDraftTitle',
+          text: isSavedDraft ? 'conversation.saveAgainDraftMessage' : 'conversation.saveDraftMessage',
+        };
+        Alert.alert(I18n.t(textToDisplay.title), I18n.t(textToDisplay.text), [
           {
-            text: I18n.t('common.discard'),
-            onPress: async () => {
-              try {
-                if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
-                  await trashMessage([id]);
-                  await deleteMessage([id]);
-                }
-                onGoBack && onGoBack();
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
-                );
-              } catch (err) {
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
-                );
-              }
-              navigation.goBack();
-            },
-            style: 'destructive',
-          },
-          {
-            text: I18n.t('common.save'),
+            text: isSavedDraft ? I18n.t('conversation.saveModifications') : I18n.t('common.save'),
             onPress: async () => {
               try {
                 await this.saveDraft();
@@ -369,6 +375,64 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             },
             style: 'default',
           },
+          {
+            text: isSavedDraft ? I18n.t('conversation.cancelModifications') : I18n.t('common.delete'),
+            onPress: async () => {
+              try {
+                if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
+                  await trashMessage([id]);
+                  await deleteMessage([id]);
+                }
+                onGoBack && onGoBack();
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  isSavedDraft
+                    ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
+                );
+              } catch (err) {
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  isSavedDraft
+                    ? 'Rédaction mail - Sortir - Annuler les modifications - Échec'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
+                );
+              }
+              navigation.goBack();
+            },
+            style: 'destructive',
+          },
+          ...(isSavedDraft
+            ? [
+                {
+                  text: isSavedDraft ? I18n.t('conversation.deleteDraft') : I18n.t('common.delete'),
+                  onPress: async () => {
+                    try {
+                      if (id) {
+                        await trashMessage([id]);
+                        await deleteMessage([id]);
+                      }
+                      onGoBack && onGoBack();
+                      Trackers.trackEventOfModule(
+                        moduleConfig,
+                        'Ecrire un mail',
+                        'Rédaction mail - Sortir - Supprimer le brouillon - Succès',
+                      );
+                    } catch (err) {
+                      Trackers.trackEventOfModule(
+                        moduleConfig,
+                        'Ecrire un mail',
+                        'Rédaction mail - Sortir - Supprimer le brouillon - Échec',
+                      );
+                    }
+                    navigation.goBack();
+                  },
+                  style: 'destructive' as 'destructive',
+                },
+              ]
+            : []),
         ]);
       } else {
         if ((isNewDraft && id) || (!isNewDraft && !isSavedDraft && id && id !== mailId)) {
@@ -614,6 +678,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
         prevBody={this.state.prevBody}
         isReplyDraft={isReplyDraft}
+        navBarInfo={this.navBarInfo()}
       />
     );
   }
