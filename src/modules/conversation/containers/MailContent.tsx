@@ -35,7 +35,7 @@ import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { PageView } from '~/framework/components/page';
-import { HeaderAction, HeaderBackAction } from '~/framework/components/header';
+import { HeaderAction } from '~/framework/components/header';
 
 class MailContentContainer extends React.PureComponent<
   NavigationInjectedProps<NavigationParams> & {
@@ -167,14 +167,13 @@ class MailContentContainer extends React.PureComponent<
     const ViewportAwareSubject = Viewport.Aware(View);
 
     const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} onPress={this.goBack} />,
       title: (this.state.showHeaderSubject ? mail.subject : undefined),
       right: <HeaderAction onPress={this.showMenu} iconName="more_vert" iconSize={24} />,
     };
 
     return (
       <>
-        <PageView navigation={navigation} navBar={navBarInfo}>
+        <PageView navigation={navigation} navBarWithBack={navBarInfo} onBack={this.goBack}>
 
           <PageContainer style={{ backgroundColor: theme.color.background.page }}>
             {this.props.isFetching ? (

@@ -23,7 +23,7 @@ import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
 import { PageView } from '~/framework/components/page';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { HeaderAction, HeaderBackAction } from '~/framework/components/header';
+import { HeaderAction } from '~/framework/components/header';
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -284,11 +284,10 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps 
         }
       : {
           title: I18n.t('MyProfile'),
-          left: <HeaderBackAction navigation={navigation} />,
           right: canEdit ? <HeaderAction onPress={() => navigation.setParams({ edit: true })} text={I18n.t('Edit')} /> : null,
         };
     return (
-      <PageView navigation={navigation} navBar={navBarInfo}>
+      <PageView navigation={navigation} {...(isEditMode ? { navBar: navBarInfo } : { navBarWithBack: navBarInfo })}>
         <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />
       </PageView>
     );

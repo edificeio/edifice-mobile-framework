@@ -9,7 +9,6 @@ import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { PageView } from '~/framework/components/page';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
 import moduleConfig from '~/modules/conversation/moduleConfig';
@@ -20,7 +19,6 @@ import { Icon, Loading } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Text } from '~/ui/Typography';
-import { FakeHeaderProps } from '~/framework/components/header';
 import { NavigationInjectedProps } from 'react-navigation';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
@@ -44,7 +42,6 @@ interface NewMailComponentProps extends NavigationInjectedProps {
   onAttachmentDelete: (attachmentId: string) => void;
   prevBody: any;
   isReplyDraft: boolean;
-  navBarInfo: FakeHeaderProps;
 }
 
 const styles = StyleSheet.create({
@@ -79,31 +76,29 @@ export default (props: NewMailComponentProps) => {
   }, []);
 
   return (
-    <PageView navigation={props.navigation} navBar={props.navBarInfo} style={{ backgroundColor: theme.color.background.card }}>
-      <KeyboardAvoidingScrollView
-        alwaysBounceVertical={false}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        contentContainerStyle={{ flexGrow: 1 }}
-        style={{
-          flexGrow: 1,
-          marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.bottomInset, default: 0 }),
-        }}>
-        <View style={{ flexGrow: 1 }}>
-          {props.isFetching ? (
-            <Loading />
-          ) : (
-            <Fields
-              {...props}
-              showExtraFields={showExtraFields}
-              toggleExtraFields={toggleExtraFields}
-              setIsSearchingUsers={setIsSearchingUsers}
-              isSearchingUsersFinal={isSearchingUsersFinal}
-            />
-          )}
-        </View>
-      </KeyboardAvoidingScrollView>
-    </PageView>
+    <KeyboardAvoidingScrollView
+      alwaysBounceVertical={false}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+      contentContainerStyle={{ flexGrow: 1 }}
+      style={{
+        flexGrow: 1,
+        marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.bottomInset, default: 0 }),
+      }}>
+      <View style={{ flexGrow: 1 }}>
+        {props.isFetching ? (
+          <Loading />
+        ) : (
+          <Fields
+            {...props}
+            showExtraFields={showExtraFields}
+            toggleExtraFields={toggleExtraFields}
+            setIsSearchingUsers={setIsSearchingUsers}
+            isSearchingUsersFinal={isSearchingUsersFinal}
+          />
+        )}
+      </View>
+    </KeyboardAvoidingScrollView>
   );
 };
 

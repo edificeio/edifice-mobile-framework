@@ -2,16 +2,17 @@ import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, Alert, Keyboard, BackHandler, AlertOptions, AlertButton, Platform } from 'react-native';
+import { View, Alert, Keyboard, AlertButton, Platform } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps, NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import theme from '~/app/theme';
-import { HeaderAction, HeaderBackAction, HeaderIcon } from '~/framework/components/header';
+import { HeaderAction, HeaderIcon } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -34,8 +35,6 @@ import NewMailComponent from '~/modules/conversation/components/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { getMailContentState, IMail } from '~/modules/conversation/state/mailContent';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { INavigationProps } from '~/types';
 
 export enum DraftType {
   NEW,
@@ -87,36 +86,6 @@ type newMail = {
 };
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
-
-  navBarInfo = () => {
-    const { navigation } = this.props;
-    // const askForAttachment = navigation.getParam('getAskForAttachment');
-    const addGivenAttachment = navigation.getParam('addGivenAttachment');
-    const sendDraft = navigation.getParam('getSendDraft');
-    // const deleteDraft = navigation.getParam('getDeleteDraft');
-    const draftType = navigation.getParam('type');
-    const isSavedDraft = draftType === DraftType.DRAFT;
-    return {
-      left: <HeaderBackAction navigation={navigation} onPress={navigation.getParam('getGoBack', navigation.goBack)} />,
-      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
-      right: (
-        <View style={{ flexDirection: 'row' }}>
-          {addGivenAttachment && (
-            <View style={{ width: 48, alignItems: 'center' }}>
-              <FilePicker multiple callback={addGivenAttachment}>
-                <HeaderIcon name="attachment" />
-              </FilePicker>
-            </View>
-          )}
-          {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
-          {/* {deleteDraft && isSavedDraft && (
-            <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={deleteDraft} iconName="delete" />
-          )} */}
-        </View>
-      ),
-    };
-  };
-
   constructor(props) {
     super(props);
 
@@ -143,7 +112,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
     this.props.clearContent();
     this.props.setup();
-    BackHandler.addEventListener('hardwareBackPress', () => this.navigationHeaderFunction.getGoBack());
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
@@ -192,10 +160,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }
     }
   };
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', () => this.navigationHeaderFunction.getGoBack());
-  }
 
   navigationHeaderFunction = {
     // getAskForAttachment: (dispatch: Dispatch) => {
@@ -395,10 +359,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
               ]
             : []),
         ] as AlertButton[];
-        Alert.alert(I18n.t(textToDisplay.title), I18n.t(textToDisplay.text), Platform.select({
-          ios: options,
-          android: options.reverse() // F*CK YOU Android !
-        }));
+        Alert.alert(
+          I18n.t(textToDisplay.title),
+          I18n.t(textToDisplay.text),
+          Platform.select({
+            ios: options,
+            android: options.reverse(), // F*CK YOU Android !
+          }),
+        );
       } else {
         if ((isNewDraft && id) || (!isNewDraft && !isSavedDraft && id && id !== mailId)) {
           await trashMessage([id]);
@@ -621,6 +589,34 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
+  navBarInfo = () => {
+    const { navigation } = this.props;
+    // const askForAttachment = navigation.getParam('getAskForAttachment');
+    const addGivenAttachment = navigation.getParam('addGivenAttachment');
+    const sendDraft = navigation.getParam('getSendDraft');
+    // const deleteDraft = navigation.getParam('getDeleteDraft');
+    const draftType = navigation.getParam('type');
+    const isSavedDraft = draftType === DraftType.DRAFT;
+    return {
+      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
+      right: (
+        <View style={{ flexDirection: 'row' }}>
+          {addGivenAttachment && (
+            <View style={{ width: 48, alignItems: 'center' }}>
+              <FilePicker multiple callback={addGivenAttachment}>
+                <HeaderIcon name="attachment" />
+              </FilePicker>
+            </View>
+          )}
+          {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
+          {/* {deleteDraft && isSavedDraft && (
+            <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={deleteDraft} iconName="delete" />
+          )} */}
+        </View>
+      ),
+    };
+  };
+
   public render() {
     const { navigation } = this.props;
     const { isPrefilling, mail } = this.state;
@@ -629,23 +625,29 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const { attachments, body, ...headers } = mail;
 
     return (
-      <NewMailComponent
-        isFetching={this.props.isFetching || !!isPrefilling}
-        headers={headers}
-        onDraftSave={this.saveDraft}
-        onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
-        body={this.state.mail.body.replace(/<br>/gs, '\n')}
-        onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
-        attachments={
-          this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
-        }
-        onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
-        onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
-        prevBody={this.state.prevBody}
-        isReplyDraft={isReplyDraft}
-        navBarInfo={this.navBarInfo()}
+      <PageView
         navigation={navigation}
-      />
+        navBarWithBack={this.navBarInfo()}
+        onBack={() => {
+          navigation.getParam('getGoBack', navigation.goBack)();
+        }}
+        style={{ backgroundColor: theme.color.background.card }}>
+        <NewMailComponent
+          isFetching={this.props.isFetching || !!isPrefilling}
+          headers={headers}
+          onDraftSave={this.saveDraft}
+          onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
+          body={this.state.mail.body.replace(/<br>/gs, '\n')}
+          onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
+          attachments={
+            this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
+          }
+          onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
+          onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
+          prevBody={this.state.prevBody}
+          isReplyDraft={isReplyDraft}
+        />
+      </PageView>
     );
   }
 }

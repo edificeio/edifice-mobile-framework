@@ -28,12 +28,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import {
-  HeaderRight,
-  HeaderSubtitle_Style,
-  HeaderTitle_Style,
-  HeaderBackAction,
-} from '~/framework/components/header';
+import { HeaderRight, HeaderSubtitle_Style, HeaderTitle_Style } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
@@ -182,7 +177,19 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
     return (
       <>
-        <PageView navigation={navigation} navBar={this.navBarInfo()}>
+        <PageView
+          navigation={navigation}
+          navBarWithBack={this.navBarInfo()}
+          onBack={() => {
+            const commentFieldComment = this.commentFieldRef?.current?.getComment();
+            if (commentFieldComment) {
+              this.commentFieldRef?.current?.confirmDiscard(() => {
+                navigation.dispatch(NavigationActions.back());
+              });
+            } else {
+              return true;
+            }
+          }}>
           <SafeAreaView
             style={{
               backgroundColor: theme.color.background.card,
@@ -216,15 +223,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
     return {
-      left: (
-        <HeaderBackAction
-          onPress={() => {
-            const commentFieldComment = this.commentFieldRef?.current?.getComment();
-            const goBack = () => navigation.dispatch(NavigationActions.back());
-            commentFieldComment ? this.commentFieldRef?.current?.confirmDiscard(() => goBack()) : goBack();
-          }}
-        />
-      ),
       title:
         blogPostData?.title && this.state.showHeaderTitle ? (
           <>

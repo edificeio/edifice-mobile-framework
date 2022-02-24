@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';

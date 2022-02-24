@@ -1,13 +1,27 @@
 /**
  * ODE Mobile UI - Page
- * Build Page components in a reusable way.
+ * All the page logic in a component syntax.
+ *
+ * Features :
+ * - NavBar configuration
+ * - Displays Connection tracker and notifier
+ * - Handle keyboard
  */
 
 import styled from '@emotion/native';
 import * as React from 'react';
-import { KeyboardAvoidingView, KeyboardAvoidingViewProps, Platform, SafeAreaView, ScrollView, View, ViewProps } from 'react-native';
+import {
+  BackHandler,
+  KeyboardAvoidingView,
+  KeyboardAvoidingViewProps,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  View,
+  ViewProps,
+} from 'react-native';
 import { hasNotch } from 'react-native-device-info';
-import { NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import Notifier from '~/framework/util/notifier';
@@ -21,6 +35,8 @@ export interface PageViewProps extends ViewProps {
   navBarWithBack?: Omit<FakeHeaderProps, 'left'>; // Forwared as FakeHeader props...
   navBarNode?: React.ReactNode; // ... or rendered as-is.
   // Use multiple navBar for a super combo plus ultra !
+  onBack?: () => boolean | void; // call when trigger a Back event. The given function returns true to perform the back action, false to cancel it.
+  // Fixme : Currently not working for iOS swipe back.
 }
 
 export const PageView_Style = styled.View({
@@ -28,11 +44,41 @@ export const PageView_Style = styled.View({
   backgroundColor: theme.color.background.page,
 });
 export const PageView = (props: PageViewProps) => {
-  const { navigation, children, navBar, navBarWithBack, navBarNode, ...viewProps } = props;
+  const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, ...viewProps } = props;
+
+  // Handle Back Android
+  React.useEffect(() => {
+    if (onBack) {
+      const callback = () => {
+        return onBack() || undefined;
+      };
+      BackHandler.addEventListener('hardwareBackPress', callback);
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', callback);
+      };
+    }
+  });
+
   return (
     <PageView_Style {...viewProps}>
       {navBar ? <FakeHeader {...navBar} /> : null}
-      {navBarWithBack ? <FakeHeader left={<HeaderBackAction navigation={navigation} />} {...navBarWithBack} /> : null}
+      {navBarWithBack ? (
+        <FakeHeader
+          left={
+            <HeaderBackAction
+              navigation={navigation}
+              {...(onBack
+                ? {
+                    onPress: () => {
+                      onBack() && navigation.dispatch(NavigationActions.back());
+                    },
+                  }
+                : {})}
+            />
+          }
+          {...navBarWithBack}
+        />
+      ) : null}
       {navBarNode ? navBarNode : null}
       <DEPRECATED_ConnectionTrackingBar />
       <Notifier id={navigation.state.routeName} />

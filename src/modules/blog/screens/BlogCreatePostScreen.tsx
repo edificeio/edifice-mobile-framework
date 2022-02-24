@@ -2,7 +2,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import {
   Alert,
-  BackHandler,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -18,10 +17,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import {
-  HeaderAction,
-  HeaderBackAction,
-} from '~/framework/components/header';
+import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -121,8 +117,9 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
   render() {
     return (
-      <PageView navigation={this.props.navigation} navBarWithBack={this.navBarInfo()}>
-        <Notifier id="createPost" />{/* ToDo : don't use magic keywords like this. */}
+      <PageView navigation={this.props.navigation} navBarWithBack={this.navBarInfo()} onBack={this.doHandleGoBack}>
+        <Notifier id="createPost" />
+        {/* ToDo : don't use magic keywords like this. */}
         <KeyboardAvoidingView // ToDo : use <KeyboardAvoidingScrollView instead ?
           enabled
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -258,16 +255,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         />
       </View>
     );
-  }
-
-  // LIFECYCLE ====================================================================================
-
-  componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', () => this.doHandleGoBack());
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', () => this.doHandleGoBack());
   }
 
   // METHODS ======================================================================================

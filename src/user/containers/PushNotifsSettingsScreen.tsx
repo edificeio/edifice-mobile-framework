@@ -15,7 +15,6 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { HeaderBackAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -85,28 +84,38 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     const settings = timelineState.notifSettings.pushNotifsSettings;
     const hasPendingPrefsChanges = Object.keys(pendingPrefsChanges).length > 0;
     const navBarInfo = {
-      left: [PushNotifsSettingsLoadingState.UPDATE].includes(loadingState) ? (
-        <LoadingIndicator
-          small
-          customColor={theme.color.neutral.extraLight}
-          customStyle={{ justifyContent: 'center', paddingHorizontal: 22 }}
-        />
-      ) : (
-        <HeaderBackAction
-          onPress={async () => {
-            if (hasPendingPrefsChanges) {
-              this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
-              await handleUpdatePushNotifSettings(pendingPrefsChanges);
-              this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsSettingsLoadingState.DONE });
-            }
-            navigation.dispatch(NavigationActions.back());
-          }}
-        />
-      ),
       title: I18n.t('directory-notificationsTitle'),
+      ...([PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)
+        ? {
+            left: (
+              <LoadingIndicator
+                small
+                customColor={theme.color.neutral.extraLight}
+                customStyle={{ justifyContent: 'center', paddingHorizontal: 22 }}
+              />
+            ),
+          }
+        : {}),
     };
     return (
-      <PageView navigation={navigation} navBar={navBarInfo}>
+      <PageView
+        navigation={navigation}
+        {...([PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)
+          ? { navBar: navBarInfo }
+          : {
+              navBarWithBack: navBarInfo,
+              onBack: () => {
+                if (hasPendingPrefsChanges) {
+                  this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
+                  handleUpdatePushNotifSettings(pendingPrefsChanges).then(() => {
+                    this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsSettingsLoadingState.DONE });
+                    navigation.dispatch(NavigationActions.back());
+                  });
+                } else {
+                  return true;
+                }
+              },
+            })}>
         <Notifier id="timeline/push-notifications" />
         {[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(loadingState) ? (
           <LoadingIndicator />
@@ -148,7 +157,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         renderItem={({ item }: { item: [string, IPushNotifsSettings] }) => this.renderMainItem(item)}
         ListEmptyComponent={<EmptyContentScreen />}
         alwaysBounceVertical={false}
-        ListFooterComponent={<View style={{height: UI_SIZES.bottomInset}} />}
+        ListFooterComponent={<View style={{ height: UI_SIZES.bottomInset }} />}
       />
     );
   }

@@ -9,7 +9,7 @@ import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { HeaderBackAction, HeaderTitle } from '~/framework/components/header';
+import { HeaderTitle } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
@@ -298,18 +298,6 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     return true;
   }
 
-  // Render header left button depending on current display mode
-  renderHeaderLeft(mode: WAYFPageMode) {
-    return mode === WAYFPageMode.LOADING ? null : (
-      <HeaderBackAction onPress={() => this.onBack(mode)}/>
-    );
-  }
-
-  // Render header title depending on current display mode
-  renderHeaderTitle(mode: WAYFPageMode) {
-    return <HeaderTitle>{I18n.t(mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title')}</HeaderTitle>;
-  }
-
   // Render content depending on current display mode
   renderContent(mode: WAYFPageMode, dropdownOpened: boolean) {
     switch (mode) {
@@ -399,15 +387,23 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     }
   }
 
+  // Render header title depending on current display mode
+  renderHeaderTitle(mode: WAYFPageMode) {
+    return <HeaderTitle>{I18n.t(mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title')}</HeaderTitle>;
+  }
+
   public render() {
     const { dropdownOpened, mode } = this.state;
     const navBarInfo = {
-      left: this.renderHeaderLeft(mode),
       title: this.renderHeaderTitle(mode),
     };
     return (
-      <PageView navigation={this.props.navigation} navBar={navBarInfo}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>{this.renderContent(mode, dropdownOpened)}</SafeAreaView>
+      <PageView
+        navigation={this.props.navigation}
+        {...(mode === WAYFPageMode.LOADING
+          ? { navBar: navBarInfo }
+          : { navBarWithBack: navBarInfo, onBack: () => this.onBack(mode) })}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.color.background.card }}>{this.renderContent(mode, dropdownOpened)}</SafeAreaView>
       </PageView>
     );
   }
