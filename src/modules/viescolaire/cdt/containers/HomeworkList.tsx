@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import {
   fetchChildHomeworkAction,
@@ -18,9 +19,6 @@ import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks
 import { getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getPersonnelListState, IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { INavigationProps } from '~/types';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 type HomeworkListProps = {
   homeworks: any;
@@ -35,24 +33,9 @@ type HomeworkListProps = {
   updateHomeworkProgress?: any;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    const diaryTitle = navigation.getParam('diaryTitle');
-
-    return standardNavScreenOptions(
-      {
-        title: diaryTitle || I18n.t('Homework'),
-        headerLeft: () => <HeaderBackAction navigation={navigation} />,
-        headerRight: () => <View />,
-        headerStyle: {
-          backgroundColor: '#2BAB6F',
-        },
-      },
-      navigation,
-    );
-  };
 
   private fetchHomeworks = (startDate, endDate) =>
     getSessionInfo().type === 'Student'
@@ -65,19 +48,30 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
       : this.props.fetchChildSessions(this.props.childId, startDate, endDate);
 
   public render() {
+    const diaryTitle = this.props.navigation.getParam('diaryTitle');
     return (
-      <HomeworkList
-        navigation={this.props.navigation}
-        personnel={this.props.personnel}
-        isFetchingHomework={this.props.isFetchingHomework}
-        isFetchingSession={this.props.isFetchingSession}
-        updateHomeworkProgress={this.props.updateHomeworkProgress}
-        homeworks={this.props.homeworks}
-        sessions={this.props.sessions}
-        onRefreshHomeworks={this.fetchHomeworks}
-        onRefreshSessions={this.fetchSessions}
-        childId={this.props.childId}
-      />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: diaryTitle || I18n.t('Homework'),
+          style: {
+            backgroundColor: '#2BAB6F',
+          },
+        }}>
+        <HomeworkList
+          navigation={this.props.navigation}
+          personnel={this.props.personnel}
+          isFetchingHomework={this.props.isFetchingHomework}
+          isFetchingSession={this.props.isFetchingSession}
+          updateHomeworkProgress={this.props.updateHomeworkProgress}
+          homeworks={this.props.homeworks}
+          sessions={this.props.sessions}
+          onRefreshHomeworks={this.fetchHomeworks}
+          onRefreshSessions={this.fetchSessions}
+          childId={this.props.childId}
+        />
+      </PageView>
     );
   }
 }

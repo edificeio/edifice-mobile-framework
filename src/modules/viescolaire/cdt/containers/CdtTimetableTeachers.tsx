@@ -1,12 +1,13 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import { fetchHomeworkListAction } from '~/modules/viescolaire/cdt/actions/homeworks';
 import { fetchSessionListAction } from '~/modules/viescolaire/cdt/actions/sessions';
 import { fetchSlotListAction } from '~/modules/viescolaire/cdt/actions/timeSlots';
@@ -17,9 +18,6 @@ import { getSlotsListState, ITimeSlotsState } from '~/modules/viescolaire/cdt/st
 import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/actions/courses';
 import { getCoursesListState, ICourseListState } from '~/modules/viescolaire/viesco/state/courses';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { INavigationProps } from '~/types';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 export type TimetableProps = {
   courses: ICourseListState;
@@ -32,7 +30,7 @@ export type TimetableProps = {
   fetchHomeworks: (structureId: string, startDate: string, endDAte: string) => void;
   fetchSessions: (structureId: string, startDate: string, endDAte: string) => void;
   fetchSlots: (structureId: string) => void;
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 export type TimetableState = {
   startDate: moment.Moment;
@@ -40,20 +38,6 @@ export type TimetableState = {
 };
 
 class TeacherTimetableContainer extends React.PureComponent<TimetableProps, TimetableState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        title: I18n.t('viesco-timetable'),
-        headerLeft: () => <HeaderBackAction navigation={navigation} />,
-        headerRight: () => <View />,
-        headerStyle: {
-          backgroundColor: '#00AB6F',
-        },
-      },
-      navigation,
-    );
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -99,12 +83,22 @@ class TeacherTimetableContainer extends React.PureComponent<TimetableProps, Time
 
   public render() {
     return (
-      <TeacherCdtTimetable
-        {...this.props}
-        startDate={this.state.startDate}
-        selectedDate={this.state.selectedDate}
-        updateSelectedDate={this.updateSelectedDate}
-      />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          title: I18n.t('viesco-timetable'),
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          style: {
+            backgroundColor: '#00AB6F',
+          },
+        }}>
+        <TeacherCdtTimetable
+          {...this.props}
+          startDate={this.state.startDate}
+          selectedDate={this.state.selectedDate}
+          updateSelectedDate={this.updateSelectedDate}
+        />
+      </PageView>
     );
   }
 }

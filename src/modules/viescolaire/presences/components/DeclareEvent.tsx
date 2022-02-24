@@ -2,9 +2,11 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { View, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 
 import {
   postLateEvent,
@@ -14,13 +16,10 @@ import {
   deleteEvent,
 } from '~/modules/viescolaire/presences/actions/events';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { Icon } from '~/ui';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
-import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 import { Text, TextBold, Label } from '~/ui/Typography';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 type DeclarationState = {
   date: Date;
@@ -33,24 +32,9 @@ type DeclarationProps = {
   declareLeaving: any;
   updateLeaving: any;
   deleteEvent: any;
-  navigation: NavigationScreenProp<any>;
-};
+} & NavigationInjectedProps<any>;
 
 export class DeclareEvent extends React.PureComponent<DeclarationProps, DeclarationState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        title: navigation.getParam('title'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View />,
-        headerStyle: {
-          backgroundColor: navigation.getParam('color'),
-        },
-      },
-      navigation,
-    );
-  };
-
   constructor(props) {
     super(props);
     const { event } = props.navigation.state.params;
@@ -153,8 +137,17 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties(type);
     const startDateString = moment(startDate).format('H:mm');
     const endDateString = moment(endDate).format('H:mm');
+
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={this.props.navigation} />,
+      title: this.props.navigation.getParam('title'),
+      style: {
+        backgroundColor: this.props.navigation.getParam('color'),
+      },
+    };
+
     return (
-      <PageContainer>
+      <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo}>
         <KeyboardAvoidingView style={[style.container]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <LeftColoredItem color={mainColor} style={style.recapHeader}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -195,7 +188,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
             />
           </View>
         </KeyboardAvoidingView>
-      </PageContainer>
+      </PageView>
     );
   }
 }

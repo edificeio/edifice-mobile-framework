@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 
 import { LocalFile } from '~/framework/util/fileHandler';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -14,16 +15,13 @@ import { DocumentPicked, ImagePicked } from '~/infra/filePicker';
 import { declareAbsenceAction, declareAbsenceWithFileAction } from '~/modules/viescolaire/presences/actions/declaration';
 import DeclarationComponent from '~/modules/viescolaire/presences/components/Declaration';
 import { getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { INavigationProps } from '~/types';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
   declareAbsenceWithFileAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string, file: LocalFile) => void;
   onPickFileError: (notifierId: string) => void;
   childName: string;
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 type DeclarationState = {
   startDate: moment.Moment;
@@ -34,20 +32,6 @@ type DeclarationState = {
 };
 
 class Declaration extends React.PureComponent<DeclarationProps, DeclarationState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
-    return standardNavScreenOptions(
-      {
-        title: `${I18n.t('viesco-absence-declaration')} ${navigation.getParam('childName')}`,
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View />,
-        headerStyle: {
-          backgroundColor: '#FCB602',
-        },
-      },
-      navigation,
-    );
-  };
-
   constructor(props) {
     super(props);
     this.props.navigation.setParams({ childName: this.props.childName });
@@ -107,18 +91,28 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
 
   public render() {
     return (
-      <DeclarationComponent
-        {...this.props}
-        {...this.state}
-        validate={this.validate}
-        updateEndDate={this.updateEndDate}
-        updateStartDate={this.updateStartDate}
-        updateComment={this.updateComment}
-        pickAttachment={this.pickAttachment}
-        onPickAttachment={this.onPickAttachment}
-        removeAttachment={() => this.setState({ attachment: null })}
-        submit={this.submitForm}
-      />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: `${I18n.t('viesco-absence-declaration')} ${this.props.navigation.getParam('childName')}`,
+          style: {
+            backgroundColor: '#FCB602',
+          },
+        }}>
+        <DeclarationComponent
+          {...this.props}
+          {...this.state}
+          validate={this.validate}
+          updateEndDate={this.updateEndDate}
+          updateStartDate={this.updateStartDate}
+          updateComment={this.updateComment}
+          pickAttachment={this.pickAttachment}
+          onPickAttachment={this.onPickAttachment}
+          removeAttachment={() => this.setState({ attachment: null })}
+          submit={this.submitForm}
+        />
+      </PageView>
     );
   }
 }

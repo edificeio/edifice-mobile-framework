@@ -1,13 +1,14 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events';
 import HistoryComponent from '~/modules/viescolaire/presences/components/History';
@@ -15,12 +16,8 @@ import { getHistoryEvents } from '~/modules/viescolaire/presences/state/events';
 import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/viesco/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { PageContainer } from '~/ui/ContainerContent';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
-interface HistoryProps {
-  navigation: NavigationScreenProp<any>;
+interface HistoryProps extends NavigationInjectedProps {
   data: any;
   getEvents: any;
   getPeriods: any;
@@ -54,20 +51,6 @@ interface HistoryState {
 }
 
 class History extends React.PureComponent<HistoryProps, HistoryState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        title: I18n.t('viesco-history'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View />,
-        headerStyle: {
-          backgroundColor: '#FCB602',
-        },
-      },
-      navigation,
-    );
-  };
-
   constructor(props) {
     super(props);
     const { periods, events, year } = this.props;
@@ -180,7 +163,15 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
 
   public render() {
     return (
-      <PageContainer>
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('viesco-history'),
+          style: {
+            backgroundColor: '#FCB602',
+          },
+        }}>
         <HistoryComponent
           {...this.props}
           events={this.state.events}
@@ -188,7 +179,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
           periods={this.state.periods}
           selected={this.state.selected}
         />
-      </PageContainer>
+      </PageView>
     );
   }
 }

@@ -13,6 +13,6 @@ export default createStackNavigator(
     CdtTeachers: CdtTimetableTeachers,
   },
   {
-    headerMode: 'screen',
+    headerMode: 'none',
   },
 );

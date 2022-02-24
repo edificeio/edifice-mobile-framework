@@ -9,32 +9,25 @@ import Dashboard from './viesco/containers/Dashboard';
 import Memento from './viesco/containers/Memento';
 
 export default () =>
-  createStackNavigator({
-    Dashboard,
-    Declaration,
-    Memento,
-    edt: {
-      screen: EdtNavigator,
-      navigationOptions: {
-        header: null,
+  createStackNavigator(
+    {
+      Dashboard,
+      Declaration,
+      Memento,
+      edt: {
+        screen: EdtNavigator,
+      },
+      cdt: {
+        screen: HomeworkNavigator,
+      },
+      presences: {
+        screen: PresencesNavigator,
+      },
+      competences: {
+        screen: CompetencesNavigator,
       },
     },
-    cdt: {
-      screen: HomeworkNavigator,
-      navigationOptions: {
-        header: null,
-      },
+    {
+      headerMode: 'none',
     },
-    presences: {
-      screen: PresencesNavigator,
-      navigationOptions: {
-        header: null,
-      },
-    },
-    competences: {
-      screen: CompetencesNavigator,
-      navigationOptions: {
-        header: null,
-      },
-    },
-  });
+  );

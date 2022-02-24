@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
 import { fetchDevoirMoyennesListAction } from '~/modules/viescolaire/competences/actions/moyennes';
@@ -20,10 +21,6 @@ import { fetchPeriodsListAction } from '~/modules/viescolaire/viesco/actions/per
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
 import { getPeriodsListState, IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { INavigationProps } from '~/types';
-import { PageContainer } from '~/ui/ContainerContent';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 export type CompetencesProps = {
   devoirsList: IDevoirsMatieresState;
@@ -41,23 +38,9 @@ export type CompetencesProps = {
   getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
   getPeriods: (structureId: string, groupId: string) => void;
   getLevels: (structureIs: string) => void;
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 export class Evaluation extends React.PureComponent<CompetencesProps, any> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
-    return standardNavScreenOptions(
-      {
-        title: I18n.t('viesco-tests'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View />,
-        headerStyle: {
-          backgroundColor: '#F95303',
-        },
-      },
-      navigation,
-    );
-  };
-
   componentDidMount = async () => {
     const { structureId, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
@@ -79,9 +62,17 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
 
   public render() {
     return (
-      <PageContainer>
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('viesco-tests'),
+          style: {
+            backgroundColor: '#F95303',
+          },
+        }}>
         <Competences {...this.props} />
-      </PageContainer>
+      </PageView>
     );
   }
 }

@@ -1,38 +1,21 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 
 import { fetchMementoAction } from '~/modules/viescolaire/viesco/actions/memento';
 import { RelativesInfos, StudentInfos } from '~/modules/viescolaire/viesco/components/Memento';
 import { getMementoState, IMementoState } from '~/modules/viescolaire/viesco/state/memento';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { PageContainer } from '~/ui/ContainerContent';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 export type IMementoContainerProps = {
-  navigation: NavigationScreenProp<any>;
   memento: IMementoState;
   fetchMemento: (studentId: string) => void;
-};
+} & NavigationInjectedProps<any>;
 
 class Memento extends React.PureComponent<IMementoContainerProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        title: I18n.t('viesco-memento'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View />,
-        headerStyle: {
-          backgroundColor: '#FCB602',
-        },
-      },
-      navigation,
-    );
-  };
-
   componentDidMount() {
     this.props.fetchMemento(this.props.navigation.state.params.studentId);
   }
@@ -41,10 +24,18 @@ class Memento extends React.PureComponent<IMementoContainerProps> {
     const { memento } = this.props;
 
     return (
-      <PageContainer>
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('viesco-memento'),
+          style: {
+            backgroundColor: '#FCB602',
+          },
+        }}>
         <StudentInfos memento={memento?.data} />
         {memento.data && memento.data.relatives && <RelativesInfos relatives={memento.data?.relatives} />}
-      </PageContainer>
+      </PageView>
     );
   }
 }
