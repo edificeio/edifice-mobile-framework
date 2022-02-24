@@ -10,6 +10,7 @@ import { getMenuShadow } from '~/ui/ButtonIconText';
 import { UI_SIZES } from "~/framework/components/constants";
 import { ButtonIcon } from "~/framework/components/popupMenu";
 import { hasNotch } from "react-native-device-info";
+import { DEPRECATED_HeaderPrimaryAction } from "~/framework/components/header";
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
@@ -56,15 +57,9 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
     }
 
     return (
-      <ButtonIcon
-        name={iconName}
+      <DEPRECATED_HeaderPrimaryAction
+        iconName={iconName}
         onPress={this.animateButton}
-        style={{
-          position: 'absolute',
-          zIndex: 100,
-          right: 20,
-          top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
-        }}
       />
     );
   }

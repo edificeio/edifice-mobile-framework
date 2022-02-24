@@ -13,7 +13,7 @@ import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaMod
 import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
 import { Icon } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { HeaderAction, HeaderTitle } from '~/framework/components/header';
+import { DEPRECATED_HeaderPrimaryAction, HeaderAction, HeaderTitle } from '~/framework/components/header';
 import { ButtonIcon } from '~/framework/components/popupMenu';
 import { hasNotch } from 'react-native-device-info';
 import { PageView } from '~/framework/components/page';
@@ -122,8 +122,8 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
           }
         : undefined;
     const navBarBigButton = (!params || !params.selectedMails) && (
-      <ButtonIcon
-        name="new_message"
+      <DEPRECATED_HeaderPrimaryAction
+        iconName="new_message"
         onPress={() => {
           if (!this.isStorageFull() || this.state.isShownStorageWarning) {
             this.props.navigation.navigate('newMail', {
@@ -132,12 +132,6 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
               currentFolder: this.getActiveRouteState(navigation.state).key,
             });
           }
-        }}
-        style={{
-          position: 'absolute',
-          zIndex: 100,
-          right: 20,
-          top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
         }}
       />
     );

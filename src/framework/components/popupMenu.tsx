@@ -15,6 +15,7 @@ import { Text } from './text';
 
 import theme from '~/app/theme';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import { DEPRECATED_HeaderPrimaryAction } from './header';
 
 export interface IPopupMenuProps {
   iconName: string;
@@ -84,17 +85,11 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
     const { active } = this.state;
     return (
       <>
-        <ButtonIcon
-          name={active ? 'close' : iconName}
+        <DEPRECATED_HeaderPrimaryAction
+          iconName={active ? 'close' : iconName}
           onPress={() => {
             this.setState({ active: !active });
             this.props.onPress?.();
-          }}
-          style={{
-            position: 'absolute',
-            zIndex: 100,
-            right: 20,
-            top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
           }}
         />
         {active ? (

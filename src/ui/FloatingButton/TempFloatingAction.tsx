@@ -10,6 +10,7 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { ISelected } from '~/ui/Toolbar/Toolbar';
 import { IFloatingProps, IMenuItem } from '~/ui/types';
 import { UI_SIZES } from '~/framework/components/constants';
+import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 
 class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
@@ -53,10 +54,9 @@ class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
     const displayedIconName = this.state.active && !noMenuItems ? 'close' : iconName;
 
     return (
-      <ButtonIcon
+      <DEPRECATED_HeaderPrimaryAction
         size={iconSize}
-        style={[styles.button, buttonStyle]}
-        name={displayedIconName}
+        iconName={displayedIconName}
         onPress={noMenuItems ? this.handleEvent.bind(this) : this.animateButton}
       />
     );

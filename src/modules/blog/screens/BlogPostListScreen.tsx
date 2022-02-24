@@ -20,6 +20,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import {
   HeaderTitle,
   HeaderSubtitle,
+  DEPRECATED_HeaderPrimaryAction,
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -205,16 +206,10 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   const renderCreateButton = () => {
     return hasBlogPostCreationRights ? (
-      <ButtonIcon
-        name="new_post"
+      <DEPRECATED_HeaderPrimaryAction
+        iconName="new_post"
         onPress={() => {
           onGoToPostCreationScreen();
-        }}
-        style={{
-          position: 'absolute',
-          zIndex: 100,
-          right: 20,
-          top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
         }}
       />
     ) : null;

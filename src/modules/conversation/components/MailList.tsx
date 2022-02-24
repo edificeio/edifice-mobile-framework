@@ -8,6 +8,7 @@ import { NavigationState, NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { Drawer } from '~/framework/components/drawer';
+import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { ButtonIcon } from '~/framework/components/popupMenu';
@@ -287,8 +288,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
 
     const headerButton = (
-      <ButtonIcon
-        name="new_message"
+      <DEPRECATED_HeaderPrimaryAction
+        iconName="new_message"
         onPress={() => {
           Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
           this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
@@ -296,12 +297,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             mailId: undefined,
             currentFolder: this.getActiveRouteState(navigation.state).key,
           });
-        }}
-        style={{
-          position: 'absolute',
-          zIndex: 100,
-          right: 20,
-          top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
         }}
       />
     );

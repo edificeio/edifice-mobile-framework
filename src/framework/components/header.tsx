@@ -21,6 +21,8 @@ import { UI_SIZES } from './constants';
 import theme from '~/app/theme';
 import { Icon } from './icon';
 import { FontWeightIOS, rem, TextInverse } from './text';
+import { ButtonIcon } from './popupMenu';
+import { hasNotch } from 'react-native-device-info';
 
 /**
  * FakeHeader_Container
@@ -52,7 +54,11 @@ export const FakeHeader = (props: React.PropsWithChildren<FakeHeaderProps>) => {
     <FakeHeader_Container {...viewProps}>
       <FakeHeader_Row>
         {left ? <HeaderLeft>{left}</HeaderLeft> : null}
-        {title ? <HeaderCenter>{typeof title === 'string' ? <HeaderTitle>{title}</HeaderTitle> : title}</HeaderCenter> : <HeaderCenter/>}
+        {title ? (
+          <HeaderCenter>{typeof title === 'string' ? <HeaderTitle>{title}</HeaderTitle> : title}</HeaderCenter>
+        ) : (
+          <HeaderCenter />
+        )}
         {right ? <HeaderRight>{right}</HeaderRight> : null}
       </FakeHeader_Row>
     </FakeHeader_Container>
@@ -88,7 +94,13 @@ const iconSpecificSizes = {
 };
 const iconDefaultSize = 20;
 
-export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconSize?: number; primary?: boolean; style?: ViewStyle }) => {
+export const HeaderIcon = (props: {
+  name: string | null;
+  hidden?: boolean;
+  iconSize?: number;
+  primary?: boolean;
+  style?: ViewStyle;
+}) => {
   const HeaderIconView = props.primary
     ? styled.View({
         height: 50,
@@ -102,7 +114,7 @@ export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconS
         backgroundColor: theme.color.secondary.regular,
         alignItems: 'center',
         justifyContent: 'center',
-        ...props.style
+        ...props.style,
       })
     : styled.View({
         height: UI_SIZES.headerHeight,
@@ -110,7 +122,7 @@ export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconS
         flex: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        ...props.style
+        ...props.style,
       });
 
   return (
@@ -202,4 +214,24 @@ export const HeaderSubtitle_Style = styled(HeaderTitle_Style)({
 });
 export const HeaderSubtitle = (props: TextProps) => {
   return <HeaderSubtitle_Style numberOfLines={1} {...props} />;
+};
+
+export const DEPRECATED_HeaderPrimaryAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
+  const { onPress, style, iconName, iconStyle, ...otherProps } = props as IHeaderActionGenericProps;
+  return (
+    <ButtonIcon
+      onPress={() => {
+        onPress?.();
+      }}
+      name={iconName!}
+      style={{
+        position: 'absolute',
+        zIndex: 100,
+        right: 20,
+        top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
+        ...iconStyle,
+      }}
+      {...otherProps}
+    />
+  );
 };
