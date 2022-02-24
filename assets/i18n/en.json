@@ -158,9 +158,6 @@
     "deletion": "Deletion",
     "discard": "Cancel",
     "error": {
-      "content": {
-        "text": "It looks like the contents have disappeared.\nIf the problem continues, contact the help desk."
-      },
       "text": "An error occurred. Please try again later.",
       "title": "Whoops..."
     },

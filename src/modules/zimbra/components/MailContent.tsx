@@ -10,11 +10,13 @@ import { getUserColor } from '~/modules/zimbra/utils/userColor';
 import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 type MailContentProps = {
   navigation: any;
   mail: any;
   isFetching: boolean;
+  error?: Error;
   restore: (mailIds: string[]) => void;
   delete: (mailIds: string[]) => void;
   checkStorage: () => boolean;
@@ -33,7 +35,12 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
 
     this.state = {
       detailsVisible: false,
+      htmlError: false,
     };
+  }
+
+  private renderError() {
+    return <EmptyContentScreen />;
   }
 
   private mailFooterTrash() {
@@ -104,7 +111,9 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
             contentContainerStyle={{
               padding: 10,
             }}>
-            {mail.body ? <HtmlContentView html={mail.body} opts={htmlOpts} /> : null}
+            {mail.body ? (
+              <HtmlContentView onHtmlError={() => this.setState({ htmlError: true })} html={mail.body} opts={htmlOpts} />
+            ) : null}
           </ScrollView>
         </View>
       </View>
@@ -120,12 +129,15 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
   }
 
   public render() {
-    const { navigation } = this.props;
+    const { navigation, error } = this.props;
+    const { htmlError } = this.state;
     return (
       <PageContainer>
         <SafeAreaView style={{ flex: 1 }}>
           {this.props.isFetching ? (
             <Loading />
+          ) : error || htmlError ? (
+            this.renderError()
           ) : (
             <View style={{ flex: 1 }}>
               {this.props.mail.id && <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />}

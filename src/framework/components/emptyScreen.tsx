@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import { Dimensions, Image, ImageSourcePropType, ViewStyle, View } from 'react-native';
+import { Dimensions, View, ViewStyle } from 'react-native';
 
 import { PageView } from './page';
 import { Text, TextSemiBold } from './text';
@@ -15,14 +15,14 @@ import { FlatButton } from '~/ui/FlatButton';
 import { UI_SIZES } from './constants';
 
 export const EmptyScreen = ({
-  imageSrc,
+  svgImage,
   title,
   text,
   buttonText,
   buttonAction,
   customStyle,
 }: {
-  imageSrc: ImageSourcePropType;
+  svgImage: any;
   title: string;
   text: string;
   buttonText?: string;
@@ -44,14 +44,7 @@ export const EmptyScreen = ({
         customStyle,
       ]}>
       <View style={{ paddingHorizontal: UI_SIZES.spacing.extraLarge }}>
-        <Image
-          source={imageSrc}
-          resizeMode="contain"
-          style={{
-            width: '100%',
-            height: imageWidth / imageRatio,
-          }}
-        />
+        <View style={{ height: imageWidth / imageRatio }}>{svgImage}</View>
       </View>
       <TextSemiBold
         numberOfLines={2}

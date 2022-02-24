@@ -26,6 +26,7 @@ export interface IHtmlContentViewProps extends ViewProps {
   emptyMessage?: string | JSX.Element;
   opts?: IHtmlParserRNOptions;
   loadingComp?: JSX.Element;
+  onHtmlError?: () => void;
   getContentFromResource?: (responseJson: any) => string;
   onDownload?: (att: IRemoteAttachment) => void;
   onError?: (att: IRemoteAttachment) => void;
@@ -60,11 +61,14 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
   }
 
   public async componentDidUpdate() {
-    if (this.state.jsx) return;
+    const { onHtmlError } = this.props;
+    const { jsx } = this.state;
+    if (jsx) return;
     try {
       await this.compute();
     } catch (e) {
       this.setState({ error: true });
+      onHtmlError && onHtmlError();
       throw e;
     }
   }
@@ -90,7 +94,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
 
   public async compute() {
     const { loading, done, html, jsx } = this.state;
-    const { getContentFromResource, source, opts } = this.props;
+    const { getContentFromResource, source, opts, onHtmlError } = this.props;
     const hasAttachments = html && html.includes('<div class="download-attachments">');
     if (done) return;
     this.setState({ loading: true });
@@ -108,6 +112,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
 
       if (!responseHtml) {
         this.setState({ error: true });
+        onHtmlError && onHtmlError();
       } else this.setState({ html: responseHtml });
     } else if (!jsx) {
       // Else, if there is not JSX, try to compute it

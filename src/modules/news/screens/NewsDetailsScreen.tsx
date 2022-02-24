@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, Linking, Platform, RefreshControl, View } from 'react-native';
+import { FlatList, Platform, RefreshControl, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -36,6 +36,7 @@ import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { openUrl } from '~/framework/util/linking';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 // TYPES ==========================================================================================
 
@@ -124,7 +125,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
   }
 
   renderError() {
-    return <TextSemiBold>Error</TextSemiBold>; // ToDo: great error screen here
+    return <EmptyContentScreen />;
   }
 
   renderContent() {
@@ -163,6 +164,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           <NotificationTopInfo notification={notification} />
           <HtmlContentView
             html={newsContent}
+            onHtmlError={() => this.setState({ errorState: true })}
             onDownload={() => Trackers.trackEvent('News', 'DOWNLOAD ATTACHMENT', 'Read mode')}
             onError={() => Trackers.trackEvent('News', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
             onDownloadAll={() => Trackers.trackEvent('News', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}

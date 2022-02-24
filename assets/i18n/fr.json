@@ -166,7 +166,8 @@
     "discard": "Abandonner",
     "error": {
       "content": {
-        "text": "Il semblerait que le contenu se soit envolé.\nSi le problème persiste, contactez l'assistance."
+        "text": "Il semblerait que le contenu a été supprimé ou que vous n'y avez plus accès.",
+        "title": "Oups...\nLe contenu s'est envolé"
       },
       "text": "Une erreur est survenue. Veuillez réessayer plus tard.",
       "title": "Oups..."

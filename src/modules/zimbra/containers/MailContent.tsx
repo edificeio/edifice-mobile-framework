@@ -241,11 +241,12 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  const { isPristine, isFetching, data } = getMailContentState(state);
+  const { isPristine, isFetching, data, error } = getMailContentState(state);
 
   return {
     isPristine,
     isFetching,
+    error,
     mail: data,
     storage: getQuotaState(state).data,
   };

@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Linking, Platform, Text, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
@@ -13,6 +13,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { FlatButton } from '~/ui';
 import { openUrl } from '~/framework/util/linking';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 // TYPES ==========================================================================================
 
@@ -63,7 +64,7 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
   }
 
   renderError() {
-    return <Text>Error</Text>; // ToDo: great error screen here
+    return <EmptyContentScreen />;
   }
 
   renderRedirection() {

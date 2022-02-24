@@ -25,6 +25,7 @@ import theme from '~/app/theme';
 import config from '../config';
 import { PageView } from '~/framework/components/page';
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -32,6 +33,8 @@ export interface IHomeworkTaskListScreenDataProps {
   isFetching?: boolean;
   diaryId?: string;
   didInvalidate?: boolean;
+  error?: boolean;
+  errmsg?: any;
   diaryListData?: IHomeworkDiaryList;
   diaryInformation?: IHomeworkDiary;
   tasksByDay?: {
@@ -90,9 +93,9 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   // Render
 
   render() {
-    const { isFetching, didInvalidate, diaryInformation, navigation } = this.props;
+    const { isFetching, didInvalidate, diaryInformation, navigation, error } = this.props;
     const diaryTitle = diaryInformation?.title;
-    const pageContent = isFetching && didInvalidate ? <Loading /> : this.renderList();
+    const pageContent = isFetching && didInvalidate ? <Loading /> : error ? this.renderError() : this.renderList();
 
     return (
       <>
@@ -113,6 +116,10 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
         <PageView>{pageContent}</PageView>
       </>
     );
+  }
+
+  private renderError() {
+    return <EmptyContentScreen />;
   }
 
   private renderList() {

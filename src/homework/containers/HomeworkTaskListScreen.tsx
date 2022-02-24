@@ -44,7 +44,7 @@ const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state 
         session,
       };
     }
-  const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
+  const { didInvalidate, isFetching, lastUpdated, error, errmsg } = currentDiaryTasks;
 
   // Flatten two-dimensional IOrderedArrayById
   const tasksByDay = currentDiaryTasks.data.ids.map(diaryId => ({
@@ -59,6 +59,8 @@ const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state 
     didInvalidate,
     isFetching,
     lastUpdated,
+    error,
+    errmsg,
     tasksByDay,
     diaryListData,
     diaryInformation,
