@@ -5,7 +5,6 @@ import { Asset } from 'react-native-image-picker';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -92,9 +91,8 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
   public render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: `${I18n.t('viesco-absence-declaration')} ${this.props.navigation.getParam('childName')}`,
           style: {
             backgroundColor: '#FCB602',

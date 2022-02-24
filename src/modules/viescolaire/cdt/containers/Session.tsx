@@ -2,7 +2,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
 import DisplaySession from '~/modules/viescolaire/cdt/components/DisplaySession';
@@ -11,9 +10,8 @@ class Session extends React.PureComponent<any> {
   public render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('Homework'),
           style: {
             backgroundColor: '#2BAB6F',

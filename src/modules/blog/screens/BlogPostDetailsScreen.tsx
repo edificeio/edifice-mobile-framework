@@ -182,7 +182,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
     return (
       <>
-        <PageView path={navigation.state.routeName} navBar={this.navBarInfo()}>
+        <PageView navigation={navigation} navBar={this.navBarInfo()}>
           <SafeAreaView
             style={{
               backgroundColor: theme.color.background.card,

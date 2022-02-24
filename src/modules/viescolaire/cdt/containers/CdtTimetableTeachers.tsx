@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { fetchHomeworkListAction } from '~/modules/viescolaire/cdt/actions/homeworks';
 import { fetchSessionListAction } from '~/modules/viescolaire/cdt/actions/sessions';
@@ -84,10 +83,9 @@ class TeacherTimetableContainer extends React.PureComponent<TimetableProps, Time
   public render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('viesco-timetable'),
-          left: <HeaderBackAction navigation={this.props.navigation} />,
           style: {
             backgroundColor: '#00AB6F',
           },

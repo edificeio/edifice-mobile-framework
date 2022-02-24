@@ -8,7 +8,7 @@
 import * as React from 'react';
 import { Dimensions, View, ViewStyle } from 'react-native';
 
-import { PageView } from './page';
+import { PageView_Style } from './page';
 import { Text, TextSemiBold } from './text';
 import theme from '~/app/theme';
 import { FlatButton } from '~/ui/FlatButton';
@@ -35,7 +35,7 @@ export const EmptyScreen = ({
   const hasButton = buttonText && buttonAction;
 
   return (
-    <PageView
+    <PageView_Style
       style={[
         {
           paddingTop: UI_SIZES.spacing.huge,
@@ -69,6 +69,6 @@ export const EmptyScreen = ({
           <FlatButton title={buttonText} onPress={buttonAction} />
         </View>
       ) : null}
-    </PageView>
+    </PageView_Style>
   );
 };

@@ -41,7 +41,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps, any> {
 
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
+        navigation={this.props.navigation}
         navBar={{
           title: I18n.t('viesco'),
         }}>

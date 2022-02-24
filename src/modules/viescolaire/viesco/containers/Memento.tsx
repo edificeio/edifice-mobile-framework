@@ -3,7 +3,6 @@ import * as React from 'react';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
 import { fetchMementoAction } from '~/modules/viescolaire/viesco/actions/memento';
@@ -25,9 +24,8 @@ class Memento extends React.PureComponent<IMementoContainerProps> {
 
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('viesco-memento'),
           style: {
             backgroundColor: '#FCB602',

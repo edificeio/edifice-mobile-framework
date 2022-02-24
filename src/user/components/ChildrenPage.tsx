@@ -7,7 +7,6 @@ import { UserCard } from './UserCard';
 
 import { H4 } from '~/ui/Typography';
 import { PageView } from '~/framework/components/page';
-import { HeaderBackAction } from '~/framework/components/header';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -27,9 +26,8 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps & Navig
   render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('directory-childrenTitle'),
         }}>
         <ScrollView alwaysBounceVertical={false}>

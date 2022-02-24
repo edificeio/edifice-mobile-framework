@@ -37,7 +37,7 @@ export class SearchContainer extends React.PureComponent<SearchProps, SearchStat
     const { navigation } = this.props;
     return (
       <PageView
-        path={navigation.state.routeName}
+        navigation={navigation}
         navBarNode={
           <FakeHeader_Container>
             <FakeHeader_Row style={{alignItems: 'stretch'}}>

@@ -3,7 +3,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, SafeAreaView, ScrollView } from 'react-native';
 
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
@@ -22,13 +21,12 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
   public render() {
     const { onLink, navigation } = this.props;
 
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-      title: I18n.t('federatedAccount-title'),
-    };
-
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView
+        navigation={navigation}
+        navBarWithBack={{
+          title: I18n.t('federatedAccount-title'),
+        }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <FormWrapper>

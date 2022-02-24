@@ -288,7 +288,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps 
           right: canEdit ? <HeaderAction onPress={() => navigation.setParams({ edit: true })} text={I18n.t('Edit')} /> : null,
         };
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView navigation={navigation} navBar={navBarInfo}>
         <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />
       </PageView>
     );

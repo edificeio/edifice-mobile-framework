@@ -1,7 +1,7 @@
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
@@ -18,7 +18,6 @@ import ThursdayImage from 'ode-images/days/thursday.svg';
 import FridayImage from 'ode-images/days/friday.svg';
 import SaturdayImage from 'ode-images/days/saturday.svg';
 import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
-import { HeaderBackAction } from '~/framework/components/header';
 import config from '../config';
 
 export interface IHomeworkTaskDetailsScreenNavigationParams {
@@ -50,13 +49,8 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     };
     const dayImage = dayImages[dayOfTheWeek];
 
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-
-    }
-
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView navigation={navigation} navBarWithBack={{}}>
         <View style={[styles.banner, { backgroundColor: bannerColor }]}>
           <View>
             <HomeworkDayCheckpoint date={date} />

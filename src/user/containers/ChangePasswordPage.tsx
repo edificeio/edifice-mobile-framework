@@ -5,7 +5,6 @@ import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
 import {
@@ -60,9 +59,8 @@ class ChangePasswordPageContainer extends React.PureComponent<
     // use the key to recompute state from props
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('PasswordChange'),
         }}>
         <ChangePasswordPage {...this.props} key={this.props.version + ''} />

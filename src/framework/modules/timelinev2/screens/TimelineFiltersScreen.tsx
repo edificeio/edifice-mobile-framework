@@ -8,10 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
-import {
-  HeaderAction,
-  HeaderBackAction,
-} from '~/framework/components/header';
+import { HeaderAction } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
@@ -53,9 +50,8 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     const noneSet = !Object.values(selectedFilters).find(value => value);
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           right: (
             <HeaderAction text={I18n.t('common.apply')} disabled={noneSet} onPress={() => this.doSetFilters(selectedFilters)} />
           ),

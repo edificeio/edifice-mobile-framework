@@ -2,19 +2,17 @@ import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
-import { NavigationScreenProp, NavigationActions, NavigationState, NavigationInjectedProps, NavigationParams } from 'react-navigation';
+import { NavigationActions, NavigationInjectedProps, NavigationParams } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { Icon } from '~/ui';
 import theme from '~/app/theme';
 import ActionsMenu from '~/framework/components/actionsMenu';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import {
@@ -176,7 +174,7 @@ class MailContentContainer extends React.PureComponent<
 
     return (
       <>
-        <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo}>
+        <PageView navigation={navigation} navBar={navBarInfo}>
 
           <PageContainer style={{ backgroundColor: theme.color.background.page }}>
             {this.props.isFetching ? (

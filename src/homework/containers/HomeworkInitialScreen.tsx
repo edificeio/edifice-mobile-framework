@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
 import HomeworkTaskListScreen from '~/homework/containers/HomeworkTaskListScreen';
 import HomeworkExplorerScreen from '~/homework/containers/HomeworkExplorerScreen';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Loading } from '~/ui';
 
@@ -42,12 +41,8 @@ class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatc
     const { diaryList, didInvalidate, isFetching, navigation } = this.props;
     const hasOneDiary = diaryList?.length === 1;
 
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-    }
-
     return isFetching && didInvalidate ? (
-      <PageView navBar={navBarInfo}>
+      <PageView navigation={navigation} navBarWithBack={{}}>
         <Loading />
       </PageView>
     ) : hasOneDiary ? (

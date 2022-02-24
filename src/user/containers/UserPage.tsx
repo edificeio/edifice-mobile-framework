@@ -193,12 +193,12 @@ export class UserPage extends React.PureComponent<
       }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
 
-    const navBarInfo = {
-      title: I18n.t('MyAccount'),
-    };
-
     return (
-      <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo}>
+      <PageView
+        navigation={this.props.navigation}
+        navBar={{
+          title: I18n.t('MyAccount'),
+        }}>
         <ScrollView style={{ flex: 1 }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
           <Notifier id="profileOne" />
           {showDisconnect && (

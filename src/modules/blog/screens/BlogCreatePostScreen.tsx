@@ -100,7 +100,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishAction'),
       }[blogPostDisplayRight];
     return {
-      left: <HeaderBackAction navigation={this.props.navigation} />,
       title: I18n.t('blog.blogCreatePostScreen.title'),
       right: this.state.sendLoadingState ? (
         <LoadingIndicator
@@ -122,7 +121,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
   render() {
     return (
-      <PageView path={this.props.navigation.state.routeName} navBar={this.navBarInfo()}>
+      <PageView navigation={this.props.navigation} navBarWithBack={this.navBarInfo()}>
         <Notifier id="createPost" />{/* ToDo : don't use magic keywords like this. */}
         <KeyboardAvoidingView // ToDo : use <KeyboardAvoidingScrollView instead ?
           enabled

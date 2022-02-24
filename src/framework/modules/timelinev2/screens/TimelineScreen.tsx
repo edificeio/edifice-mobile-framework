@@ -101,7 +101,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     return (
       <>
         <PageView
-          path={this.props.navigation.state.routeName}
+          navigation={this.props.navigation}
           navBar={{
             left: <HeaderAction iconName="filter" onPress={() => this.goToFilters()} />,
             title: I18n.t('timeline.appName'),

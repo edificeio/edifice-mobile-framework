@@ -106,7 +106,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
       title: I18n.t('directory-notificationsTitle'),
     };
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView navigation={navigation} navBar={navBarInfo}>
         <Notifier id="timeline/push-notifications" />
         {[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(loadingState) ? (
           <LoadingIndicator />

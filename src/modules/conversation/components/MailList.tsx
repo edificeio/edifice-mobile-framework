@@ -286,11 +286,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     drawerFolders && drawerFolders.push(createFolderItem);
     const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
 
-    const navBarInfo = {
-      // ToDo : add search mails here
-      title: I18n.t('conversation.appName'),
-    };
-
     const headerButton = (
       <ButtonIcon
         name="new_message"
@@ -313,7 +308,12 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
     return (
       <>
-        <PageView path={navigation.state.routeName} navBar={navBarInfo} navBarNode={headerButton}>
+        <PageView
+          navigation={navigation}
+          navBar={{
+            title: I18n.t('conversation.appName'),
+          }}
+          navBarNode={headerButton}>
           <View style={{ flex: 1 }}>
             {isFetching && !isRefreshing && !isChangingPage ? (
               <Loading />

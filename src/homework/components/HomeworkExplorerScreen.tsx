@@ -14,7 +14,6 @@ import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Loading } from '~/ui';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import config from '../config';
-import { HeaderBackAction } from '~/framework/components/header';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export interface IHomeworkExplorerScreenDataProps {
@@ -48,13 +47,12 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     const { isFetching, didInvalidate, navigation } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : this.renderList();
 
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-      title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
-    };
-
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView
+        navigation={navigation}
+        navBarWithBack={{
+          title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
+        }}>
         {pageContent}
       </PageView>
     );

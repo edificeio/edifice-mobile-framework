@@ -1,18 +1,14 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, Platform, RefreshControl, View } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import {
-  HeaderBackAction,
-  HeaderSubtitle,
-  HeaderTitle,
-} from '~/framework/components/header';
+import { HeaderSubtitle, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -74,32 +70,28 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
 
   // RENDER =======================================================================================
 
-  navBarInfo = () => ({
-    left: <HeaderBackAction navigation={this.props.navigation} />,
-    title: this.state.newsData?.title ? (
-      <>
-        <HeaderTitle>{this.state.newsData?.title}</HeaderTitle>
-        <HeaderSubtitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderSubtitle>
-      </>
-    ) : (
-      <HeaderTitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderTitle>
-    ),
-  });
-
   render() {
     const { loadingState, errorState } = this.state;
+    const navBarInfo = {
+      title: this.state.newsData?.title ? (
+        <>
+          <HeaderTitle>{this.state.newsData?.title}</HeaderTitle>
+          <HeaderSubtitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderSubtitle>
+        </>
+      ) : (
+        <HeaderTitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderTitle>
+      ),
+    };
     return (
-      <>
-        <PageView path={this.props.navigation.state.routeName} navBar={this.navBarInfo()}>
-          {[NewsDetailsLoadingState.PRISTINE, NewsDetailsLoadingState.INIT].includes(loadingState) ? (
-            <LoadingIndicator />
-          ) : errorState ? (
-            this.renderError()
-          ) : (
-            this.renderContent()
-          )}
-        </PageView>
-      </>
+      <PageView navigation={this.props.navigation} navBarWithBack={navBarInfo}>
+        {[NewsDetailsLoadingState.PRISTINE, NewsDetailsLoadingState.INIT].includes(loadingState) ? (
+          <LoadingIndicator />
+        ) : errorState ? (
+          this.renderError()
+        ) : (
+          this.renderContent()
+        )}
+      </PageView>
     );
   }
 

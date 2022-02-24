@@ -6,7 +6,6 @@ import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { UserCard } from './UserCard';
 
 import { PageView } from '~/framework/components/page';
-import { HeaderBackAction } from '~/framework/components/header';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -23,9 +22,8 @@ export class RelativesPage extends React.PureComponent<IRelativesPageProps & Nav
   render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('directory-relativesTitle'),
         }}>
         <ScrollView alwaysBounceVertical={false}>

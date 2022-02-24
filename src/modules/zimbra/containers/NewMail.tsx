@@ -512,10 +512,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       { text: I18n.t('zimbra-signature-add'), icon: 'pencil', onPress: this.showSignatureModal },
       { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: deleteDraft },
     ];
-    console.log('isSet>NewSignature: ', this.state.isNewSignature);
 
     return (
-      <PageView path={this.props.navigation.state.routeName} navBar={this.navBarInfo()}>
+      <PageView navigation={this.props.navigation} navBar={this.navBarInfo()}>
         <NewMailComponent
           isFetching={this.props.isFetching || !!isPrefilling}
           headers={headers}

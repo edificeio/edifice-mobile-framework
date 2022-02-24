@@ -95,7 +95,7 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
 
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
+        navigation={this.props.navigation}
         navBar={{
           title: I18n.t('MyApplications'),
         }}>

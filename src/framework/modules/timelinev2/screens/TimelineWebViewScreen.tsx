@@ -1,11 +1,10 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { HeaderBackAction } from '~/framework/components/header';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
@@ -14,7 +13,6 @@ import { IResourceUriNotification, ITimelineNotification } from '~/framework/uti
 import { FlatButton } from '~/ui';
 import { openUrl } from '~/framework/util/linking';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import moduleConfig from '../moduleConfig';
 
 // TYPES ==========================================================================================
 
@@ -38,9 +36,8 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
   render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('timeline.webViewScreen.title'),
         }}>
         {this.renderRedirection()}

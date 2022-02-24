@@ -21,6 +21,7 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Text } from '~/ui/Typography';
 import { FakeHeaderProps } from '~/framework/components/header';
+import { NavigationInjectedProps } from 'react-navigation';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -31,7 +32,7 @@ type IAttachment = {
   size?: number;
 };
 
-interface NewMailComponentProps {
+interface NewMailComponentProps extends NavigationInjectedProps {
   isFetching: boolean;
   headers: HeadersProps;
   onDraftSave: () => void;
@@ -78,7 +79,7 @@ export default (props: NewMailComponentProps) => {
   }, []);
 
   return (
-    <PageView path="conversation" navBar={props.navBarInfo} style={{ backgroundColor: theme.color.background.card }}>
+    <PageView navigation={props.navigation} navBar={props.navBarInfo} style={{ backgroundColor: theme.color.background.card }}>
       <KeyboardAvoidingScrollView
         alwaysBounceVertical={false}
         keyboardShouldPersistTaps="handled"

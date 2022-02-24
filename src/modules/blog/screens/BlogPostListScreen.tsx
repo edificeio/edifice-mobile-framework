@@ -18,7 +18,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import {
-  HeaderBackAction,
   HeaderTitle,
   HeaderSubtitle,
 } from '~/framework/components/header';
@@ -192,7 +191,6 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   // HEADER =====================================================================================
 
   const navBarInfo = {
-    left: <HeaderBackAction navigation={props.navigation} />,
     title: selectedBlogTitle ? (
       <>
         <HeaderTitle>{selectedBlogTitle}</HeaderTitle>
@@ -320,7 +318,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   return (
     <>
-      <PageView path={props.navigation.state.routeName} navBar={navBarInfo} navBarNode={renderCreateButton()}>
+      <PageView navigation={props.navigation} navBarWithBack={navBarInfo} navBarNode={renderCreateButton()}>
         {renderPage()}
       </PageView>
     </>

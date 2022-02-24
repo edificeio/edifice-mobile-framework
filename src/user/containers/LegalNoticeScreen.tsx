@@ -1,11 +1,10 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
-import { HeaderBackAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
@@ -36,12 +35,13 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
     const { navigation } = this.props;
     const { legalTitle, legalUrl } = this.state;
     const legalItems = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-      title: I18n.t('directory-legalNoticeTitle'),
-    };
+
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView
+        navigation={navigation}
+        navBarWithBack={{
+          title: I18n.t('directory-legalNoticeTitle'),
+        }}>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropPdfReader
           handleClose={() => this.setState({ legalTitle: '', legalUrl: '' })}

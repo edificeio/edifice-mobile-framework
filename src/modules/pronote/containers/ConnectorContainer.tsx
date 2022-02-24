@@ -11,7 +11,6 @@ import ConnectorView from '~/modules/pronote/components/ConnectorView';
 import connectorConfig from '~/modules/pronote/moduleConfig';
 import userConfig from '~/user/config';
 import { PageView } from '~/framework/components/page';
-import { HeaderBackAction } from '~/framework/components/header';
 
 interface IApplicationBackend {
   name: string;
@@ -40,9 +39,8 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
   public render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('Pronote'),
         }}>
         <ConnectorView

@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events';
@@ -164,9 +163,8 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
   public render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('viesco-history'),
           style: {
             backgroundColor: '#FCB602',

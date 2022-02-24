@@ -144,7 +144,7 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
 
     return (
       <>
-        <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo} navBarNode={navBarBigButton}>
+        <PageView navigation={this.props.navigation} navBar={navBarInfo} navBarNode={navBarBigButton}>
           <DrawerNavigatorComponent navigation={navigation} />
         </PageView>
 

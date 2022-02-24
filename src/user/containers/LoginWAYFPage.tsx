@@ -3,7 +3,6 @@ import * as React from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { HeaderBackAction } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -28,12 +27,12 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
 
   public render() {
     const { navigation } = this.props;
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-      title: this.pfConf.displayName,
-    };
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView
+        navigation={navigation}
+        navBarWithBack={{
+          title: this.pfConf.displayName,
+        }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <View
             style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 }}>

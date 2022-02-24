@@ -5,7 +5,7 @@ import React from 'react';
 import { View, Alert, Keyboard, BackHandler, AlertOptions, AlertButton, Platform } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps, NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -65,7 +65,7 @@ interface ICreateMailOtherProps {
   mail: IMail;
 }
 
-type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & INavigationProps;
+type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & NavigationInjectedProps;
 
 interface ICreateMailState {
   id?: string;
@@ -644,6 +644,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         prevBody={this.state.prevBody}
         isReplyDraft={isReplyDraft}
         navBarInfo={this.navBarInfo()}
+        navigation={navigation}
       />
     );
   }

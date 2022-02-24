@@ -15,7 +15,6 @@ import {
 
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text, TextAction } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -122,13 +121,12 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const path = I18n.t('common.url.cgu');
     const cguUrl = `${platform}${path}`;
 
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-      title: I18n.t('activation-title'),
-    };
-
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView
+        navigation={navigation}
+        navBarWithBack={{
+          title: I18n.t('activation-title'),
+        }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#ffffff' }}

@@ -1,7 +1,7 @@
 import CookieManager from '@react-native-cookies/cookies';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ActivityIndicator, Platform, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
@@ -9,7 +9,7 @@ import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { HeaderAction, HeaderTitle } from '~/framework/components/header';
+import { HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
@@ -301,7 +301,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Render header left button depending on current display mode
   renderHeaderLeft(mode: WAYFPageMode) {
     return mode === WAYFPageMode.LOADING ? null : (
-      <HeaderAction iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'} iconSize={24} onPress={() => this.onBack(mode)} />
+      <HeaderBackAction onPress={() => this.onBack(mode)}/>
     );
   }
 
@@ -406,7 +406,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       title: this.renderHeaderTitle(mode),
     };
     return (
-      <PageView path={this.props.navigation?.state.routeName} navBar={navBarInfo}>
+      <PageView navigation={this.props.navigation} navBar={navBarInfo}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>{this.renderContent(mode, dropdownOpened)}</SafeAreaView>
       </PageView>
     );

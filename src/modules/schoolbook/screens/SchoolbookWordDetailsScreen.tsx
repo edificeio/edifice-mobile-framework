@@ -8,11 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import {
-  HeaderBackAction,
-  HeaderTitle,
-  HeaderSubtitle,
-} from '~/framework/components/header';
+import { HeaderTitle, HeaderSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -92,11 +88,13 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
 
   // RENDER =======================================================================================
 
-  navBarInfo() {
-    const { navigation } = this.props;
-    const { schoolbookWordData } = this.state;
-    return {
-      left: <HeaderBackAction navigation={navigation} />,
+  render() {
+    const { navigation, session } = this.props;
+    const { type } = session.user;
+    const { schoolbookWordData, loadingState, errorState } = this.state;
+    const confirmBackSchoolbook = navigation.getParam('confirmBackSchoolbook');
+    const isRelative = type === UserType.RELATIVE;
+    const navBarInfo = {
       title: schoolbookWordData?.word?.title ? (
         <>
           <HeaderTitle>{schoolbookWordData?.word?.title}</HeaderTitle>
@@ -106,17 +104,9 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
         <HeaderTitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle>
       ),
     };
-  }
-
-  render() {
-    const { navigation, session } = this.props;
-    const { type } = session.user;
-    const { schoolbookWordData, loadingState, errorState } = this.state;
-    const confirmBackSchoolbook = navigation.getParam('confirmBackSchoolbook');
-    const isRelative = type === UserType.RELATIVE;
     return (
       <>
-        <PageView path={navigation.state.routeName} navBar={this.navBarInfo()}>
+        <PageView navigation={navigation} navBarWithBack={navBarInfo}>
           {schoolbookWordData && isRelative ? (
             <ModalBox backdropOpacity={0.5} isVisible={confirmBackSchoolbook || false}>
               {this.renderBackModal()}

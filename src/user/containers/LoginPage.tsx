@@ -17,7 +17,6 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { HeaderBackAction } from '~/framework/components/header';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -111,13 +110,8 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion, navigation } = this.props;
     const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
 
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation}/>,
-      title: platformDisplayName,
-    };
-
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView navigation={navigation} navBarWithBack={{ title: platformDisplayName }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#ffffff' }}

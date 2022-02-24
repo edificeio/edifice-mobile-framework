@@ -5,7 +5,6 @@ import { View, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'rea
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
 import {
@@ -139,7 +138,6 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     const endDateString = moment(endDate).format('H:mm');
 
     const navBarInfo = {
-      left: <HeaderBackAction navigation={this.props.navigation} />,
       title: this.props.navigation.getParam('title'),
       style: {
         backgroundColor: this.props.navigation.getParam('color'),
@@ -147,7 +145,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     };
 
     return (
-      <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo}>
+      <PageView navigation={this.props.navigation} navBarWithBack={navBarInfo}>
         <KeyboardAvoidingView style={[style.container]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <LeftColoredItem color={mainColor} style={style.recapHeader}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>

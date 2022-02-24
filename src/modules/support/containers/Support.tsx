@@ -11,7 +11,6 @@ import pickFile from '~/infra/actions/pickFile';
 import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from '~/modules/support/actions/support';
 import Support from '~/modules/support/components/Support';
 import { PageView } from '~/framework/components/page';
-import { HeaderBackAction } from '~/framework/components/header';
 
 export type INewAttachment = {
   contentType?: string;
@@ -158,9 +157,8 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
   public render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('support'),
         }}>
         <Support

@@ -63,9 +63,8 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   public render() {
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('viesco-tests'),
           style: {
             backgroundColor: '#F95303',

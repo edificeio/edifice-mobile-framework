@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import {
@@ -51,9 +50,8 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
     const diaryTitle = this.props.navigation.getParam('diaryTitle');
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: diaryTitle || I18n.t('Homework'),
           style: {
             backgroundColor: '#2BAB6F',

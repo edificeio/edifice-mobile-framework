@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { HeaderBackAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -70,7 +69,11 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
     const { loadingState, errorState } = this.state;
     return (
       <>
-        <PageView path={this.props.navigation.state.routeName} navBar={this.navBarInfo()}>
+        <PageView
+          navigation={this.props.navigation}
+          navBarWithBack={{
+            title: I18n.t('blog.blogSelectScreen.title'),
+          }}>
           {[BlogSelectLoadingState.PRISTINE, BlogSelectLoadingState.INIT].includes(loadingState) ? (
             <LoadingIndicator />
           ) : errorState ? (
@@ -81,13 +84,6 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
         </PageView>
       </>
     );
-  }
-
-  navBarInfo() {
-    return {
-      left: <HeaderBackAction navigation={this.props.navigation} />,
-      title: I18n.t('blog.blogSelectScreen.title'),
-    };
   }
 
   renderError() {

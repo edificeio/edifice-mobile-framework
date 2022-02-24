@@ -18,7 +18,7 @@ import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
 import { getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
 import { PageView } from '~/framework/components/page';
-import { HeaderAction, HeaderBackAction } from '~/framework/components/header';
+import { HeaderAction } from '~/framework/components/header';
 
 type MailContentContainerProps = {
   mail: any;
@@ -186,14 +186,13 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     const menuData = this.setMenuData();
 
     const navBarInfo = {
-      left: <HeaderBackAction onPress={this.goBack} />,
       title: navigation.state.params.subject,
       right: <HeaderAction iconName="more_vert" onPress={this.showMenu} />,
     };
 
     return (
       <>
-        <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+        <PageView navigation={navigation} navBarWithBack={navBarInfo}>
           <MailContent {...this.props} delete={this.delete} restore={this.restore} checkStorage={this.checkStorage} />
         </PageView>
 

@@ -5,8 +5,8 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Platform, RefreshControl, View, ScrollView } from 'react-native';
-import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import { RefreshControl, View, ScrollView } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -21,9 +21,8 @@ import Explorer, {
   IExplorerResourceItemWithImage,
 } from '~/framework/components/explorer';
 import {
-  HeaderSubtitle_Style,
-  HeaderTitle_Style,
-  HeaderBackAction,
+  HeaderSubtitle,
+  HeaderTitle,
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -136,14 +135,13 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     const currentFolderId = props.navigation.getParam('folderId');
     const currentFolder = folders.find(f => f.id === currentFolderId);
     return {
-      left: <HeaderBackAction navigation={props.navigation} />,
       title: currentFolder ? (
         <>
-          <HeaderTitle_Style numberOfLines={1}>{currentFolder.name}</HeaderTitle_Style>
-          <HeaderSubtitle_Style>{I18n.t('blog.appName')}</HeaderSubtitle_Style>
+          <HeaderTitle>{currentFolder.name}</HeaderTitle>
+          <HeaderSubtitle>{I18n.t('blog.appName')}</HeaderSubtitle>
         </>
       ) : (
-        <HeaderTitle_Style>{I18n.t('blog.appName')}</HeaderTitle_Style>
+        <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
       ),
     };
   };
@@ -260,7 +258,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
   return (
     <>
-      <PageView path={props.navigation.state.routeName} navBar={navBarInfo(props.tree || { resources: [], folders: [] })}>
+      <PageView navigation={props.navigation} navBarWithBack={navBarInfo(props.tree || { resources: [], folders: [] })}>
         {renderPage()}
       </PageView>
     </>

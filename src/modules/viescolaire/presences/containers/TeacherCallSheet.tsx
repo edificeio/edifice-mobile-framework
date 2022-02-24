@@ -2,7 +2,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -17,9 +16,8 @@ class CallSheet extends React.PureComponent<any> {
     const course = this.props.courses.find(course => course.id === this.props.navigation.state.params.courseInfos.id);
     return (
       <PageView
-        path={this.props.navigation.state.routeName}
-        navBar={{
-          left: <HeaderBackAction navigation={this.props.navigation} />,
+        navigation={this.props.navigation}
+        navBarWithBack={{
           title: I18n.t('viesco-register'),
           style: {
             backgroundColor: '#ffb600',

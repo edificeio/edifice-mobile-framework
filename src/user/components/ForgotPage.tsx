@@ -4,7 +4,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 
-import { HeaderBackAction } from '~/framework/components/header';
 import { Text, H1, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton, Icon } from '~/ui';
@@ -109,13 +108,12 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
         ? !firstName || !structureName || !login
         : !login || (forgotId && !isValidEmail) || (isError && !editing);
 
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-      title: I18n.t(`forgot-${forgotId ? 'id' : 'password'}`),
-    };
-
     return (
-      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+      <PageView
+        navigation={navigation}
+        navBarWithBack={{
+          title: I18n.t(`forgot-${forgotId ? 'id' : 'password'}`),
+        }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <KeyboardAvoidingView
