@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, RefreshControl, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { NavigationInjectedProps, NavigationActions, NavigationStateRoute, StackActions } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
@@ -9,13 +9,9 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import {
-  FakeHeader_Container,
-  HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  FakeHeader_Row,
-  HeaderSubtitle_Style,
-  HeaderTitle_Style,
+  HeaderBackAction,
+  HeaderTitle,
+  HeaderSubtitle,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -42,6 +38,7 @@ import { HtmlContentView } from '~/ui/HtmlContentView';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
 import { openUrl } from '~/framework/util/linking';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // TYPES ==========================================================================================
 
@@ -95,6 +92,22 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
 
   // RENDER =======================================================================================
 
+  navBarInfo() {
+    const { navigation } = this.props;
+    const { schoolbookWordData } = this.state;
+    return {
+      left: <HeaderBackAction navigation={navigation} />,
+      title: schoolbookWordData?.word?.title ? (
+        <>
+          <HeaderTitle>{schoolbookWordData?.word?.title}</HeaderTitle>
+          <HeaderSubtitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderSubtitle>
+        </>
+      ) : (
+        <HeaderTitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle>
+      ),
+    };
+  }
+
   render() {
     const { navigation, session } = this.props;
     const { type } = session.user;
@@ -103,8 +116,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const isRelative = type === UserType.RELATIVE;
     return (
       <>
-        {this.renderHeader()}
-        <PageView>
+        <PageView path={navigation.state.routeName} navBar={this.navBarInfo()}>
           {schoolbookWordData && isRelative ? (
             <ModalBox backdropOpacity={0.5} isVisible={confirmBackSchoolbook || false}>
               {this.renderBackModal()}
@@ -119,34 +131,6 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
           )}
         </PageView>
       </>
-    );
-  }
-
-  renderHeader() {
-    const { navigation } = this.props;
-    const { schoolbookWordData } = this.state;
-    return (
-      <FakeHeader_Container>
-        <FakeHeader_Row>
-          <HeaderLeft>
-            <HeaderAction
-              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-              iconSize={24}
-              onPress={() => navigation.navigate('timeline')}
-            />
-          </HeaderLeft>
-          <HeaderCenter>
-            {schoolbookWordData?.word?.title ? (
-              <>
-                <HeaderTitle_Style>{schoolbookWordData?.word?.title}</HeaderTitle_Style>
-                <HeaderSubtitle_Style>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderSubtitle_Style>
-              </>
-            ) : (
-              <HeaderTitle_Style>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle_Style>
-            )}
-          </HeaderCenter>
-        </FakeHeader_Row>
-      </FakeHeader_Container>
     );
   }
 
@@ -178,7 +162,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
               onRefresh={() => this.doRefresh()}
             />
           }>
-          {this.renderSchoolbookWordDetails(schoolbookWordData)}
+          <SafeAreaView>{this.renderSchoolbookWordDetails(schoolbookWordData)}</SafeAreaView>
         </ScrollView>
         {isRelative ? this.renderAckButton(schoolbookWordData) : null}
       </>
@@ -235,29 +219,30 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       <View
         style={{
           alignSelf: 'center',
-          paddingVertical: 20,
           position: 'absolute',
           bottom: 0,
         }}>
-        {isWordAcknowledged ? (
-          <View
-            style={{
-              width: 25,
-              height: 25,
-              borderRadius: 14,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: theme.color.secondary.regular,
-            }}>
-            <Icon size={15} name="checked" color={theme.color.text.inverse} />
-          </View>
-        ) : (
-          <FlatButton
-            onPress={() => this.doAcknowledge()}
-            title={I18n.t('schoolbook.schoolbookWordDetailsScreen.acknowledge')}
-            loading={ackLoadingState}
-          />
-        )}
+        <SafeAreaView>
+          {isWordAcknowledged ? (
+            <View
+              style={{
+                width: 25,
+                height: 25,
+                borderRadius: 14,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: theme.color.secondary.regular,
+              }}>
+              <Icon size={15} name="checked" color={theme.color.text.inverse} />
+            </View>
+          ) : (
+            <FlatButton
+              onPress={() => this.doAcknowledge()}
+              title={I18n.t('schoolbook.schoolbookWordDetailsScreen.acknowledge')}
+              loading={ackLoadingState}
+            />
+          )}
+        </SafeAreaView>
       </View>
     );
   }
