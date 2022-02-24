@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import Toast from 'react-native-tiny-toast';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -10,11 +10,8 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile from '~/infra/actions/pickFile';
 import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from '~/modules/support/actions/support';
 import Support from '~/modules/support/components/Support';
-import { CommonStyles } from '~/styles/common/styles';
-import { PageContainer } from '~/ui/ContainerContent';
-import { Text } from '~/ui/Typography';
-import { Header } from '~/ui/headers/Header';
-import { HeaderBackAction } from '~/ui/headers/NewHeader';
+import { PageView } from '~/framework/components/page';
+import { HeaderBackAction } from '~/framework/components/header';
 
 export type INewAttachment = {
   contentType?: string;
@@ -47,14 +44,13 @@ export type IApp = {
 };
 
 type ISupportProps = {
-  navigation: NavigationScreenProp<object>;
   categoryList: IApp[];
   establishmentsList: IEstablishment[];
   session: IUserSession;
   createTicket: (ticket: ITicket) => any;
   addAttachment: (attachment: object, session: IUserSession) => INewAttachment;
   deleteAttachment: (attachmentId: string) => void;
-};
+} & NavigationInjectedProps;
 
 type ISupportState = {
   ticket: ITicket;
@@ -161,25 +157,12 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
 
   public render() {
     return (
-      <PageContainer>
-        <Header>
-          <HeaderBackAction navigation={this.props.navigation} />
-          <Text
-            numberOfLines={1}
-            style={{
-              alignSelf: 'center',
-              paddingRight: 10,
-              marginRight: 50,
-              color: 'white',
-              fontFamily: CommonStyles.primaryFontFamily,
-              fontSize: 16,
-              fontWeight: '400',
-              textAlign: 'center',
-              flex: 1,
-            }}>
-            {I18n.t('support')}
-          </Text>
-        </Header>
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('support'),
+        }}>
         <Support
           {...this.props}
           ticket={this.state.ticket}
@@ -193,7 +176,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
           removeAttachment={this.removeAttachment}
           sendTicket={this.sendTicket}
         />
-      </PageContainer>
+      </PageView>
     );
   }
 }
