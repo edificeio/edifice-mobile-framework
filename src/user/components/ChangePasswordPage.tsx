@@ -7,7 +7,6 @@ import { Dispatch } from 'redux';
 import { getSessionInfo } from '~/App';
 import { Text } from '~/framework/components/text';
 import { NoTouchableContainer } from '~/ui/ButtonLine';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
@@ -176,7 +175,6 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-        <DEPRECATED_ConnectionTrackingBar />
         <FormPage>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#ffffff' }}

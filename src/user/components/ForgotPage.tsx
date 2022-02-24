@@ -4,7 +4,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { Text, H1, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton, Icon } from '~/ui';
@@ -12,6 +12,7 @@ import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
+import { PageView } from '~/framework/components/page';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -108,22 +109,13 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
         ? !firstName || !structureName || !login
         : !login || (forgotId && !isValidEmail) || (isError && !editing);
 
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} />,
+      title: I18n.t(`forgot-${forgotId ? 'id' : 'password'}`),
+    };
+
     return (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => navigation.goBack()}
-              />
-            </HeaderLeft>
-            <HeaderCenter>
-              <HeaderTitle_Style>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeaderTitle_Style>
-            </HeaderCenter>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <KeyboardAvoidingView
@@ -254,7 +246,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
             </KeyboardAvoidingView>
           </FormPage>
         </SafeAreaView>
-      </>
+      </PageView>
     );
   }
 }

@@ -5,9 +5,9 @@
 import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { NavigationInjectedProps, StackActions } from 'react-navigation';
+import { NavigationActions, NavigationInjectedProps, StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -15,7 +15,7 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -33,6 +33,7 @@ import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/noti
 import Notifier from '~/framework/util/notifier';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { UI_SIZES } from '~/framework/components/constants';
 
 // TYPES ==========================================================================================
 
@@ -83,50 +84,40 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     const { loadingState, pendingPrefsChanges } = this.state;
     const settings = timelineState.notifSettings.pushNotifsSettings;
     const hasPendingPrefsChanges = Object.keys(pendingPrefsChanges).length > 0;
+    const navBarInfo = {
+      left: [PushNotifsSettingsLoadingState.UPDATE].includes(loadingState) ? (
+        <LoadingIndicator
+          small
+          customColor={theme.color.neutral.extraLight}
+          customStyle={{ justifyContent: 'center', paddingHorizontal: 22 }}
+        />
+      ) : (
+        <HeaderBackAction
+          onPress={async () => {
+            if (hasPendingPrefsChanges) {
+              this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
+              await handleUpdatePushNotifSettings(pendingPrefsChanges);
+              this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsSettingsLoadingState.DONE });
+            }
+            navigation.dispatch(NavigationActions.back());
+          }}
+        />
+      ),
+      title: I18n.t('directory-notificationsTitle'),
+    };
     return (
-      <>
-        <PageView>
-          <FakeHeader_Container>
-            <FakeHeader_Row>
-              <HeaderLeft>
-                {[PushNotifsSettingsLoadingState.UPDATE].includes(loadingState) ? (
-                  <LoadingIndicator
-                    small
-                    customColor={theme.color.neutral.extraLight}
-                    customStyle={{ justifyContent: 'center', paddingHorizontal: 22 }}
-                  />
-                ) : (
-                  <HeaderAction
-                    iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                    iconSize={24}
-                    onPress={async () => {
-                      if (hasPendingPrefsChanges) {
-                        this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
-                        await handleUpdatePushNotifSettings(pendingPrefsChanges);
-                        this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsSettingsLoadingState.DONE });
-                      }
-                      navigation.goBack();
-                    }}
-                  />
-                )}
-              </HeaderLeft>
-              <HeaderCenter>
-                <HeaderTitle_Style>{I18n.t('directory-notificationsTitle')}</HeaderTitle_Style>
-              </HeaderCenter>
-            </FakeHeader_Row>
-          </FakeHeader_Container>
-          <Notifier id="timeline/push-notifications" />
-          {[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(loadingState) ? (
-            <LoadingIndicator />
-          ) : settings.error && !settings.lastSuccess ? (
-            this.renderError()
-          ) : navigation.getParam('type') ? (
-            this.renderSubList()
-          ) : (
-            this.renderMainList()
-          )}
-        </PageView>
-      </>
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+        <Notifier id="timeline/push-notifications" />
+        {[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(loadingState) ? (
+          <LoadingIndicator />
+        ) : settings.error && !settings.lastSuccess ? (
+          this.renderError()
+        ) : navigation.getParam('type') ? (
+          this.renderSubList()
+        ) : (
+          this.renderMainList()
+        )}
+      </PageView>
     );
   }
 
@@ -157,7 +148,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         renderItem={({ item }: { item: [string, IPushNotifsSettings] }) => this.renderMainItem(item)}
         ListEmptyComponent={<EmptyContentScreen />}
         alwaysBounceVertical={false}
-        ListFooterComponent={<SafeAreaView />}
+        ListFooterComponent={<View style={{height: UI_SIZES.bottomInset}} />}
       />
     );
   }
@@ -233,7 +224,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         renderItem={({ item }: { item: [string, boolean] }) => this.renderSubItem(item)}
         ListEmptyComponent={<EmptyContentScreen />}
         alwaysBounceVertical={false}
-        ListFooterComponent={<SafeAreaView />}
+        ListFooterComponent={<View style={{ height: UI_SIZES.bottomInset }} />}
         ListHeaderComponent={
           <TouchableOpacity onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}>
             <ListItem

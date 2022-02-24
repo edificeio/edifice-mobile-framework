@@ -5,7 +5,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
@@ -36,22 +36,12 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
     const { navigation } = this.props;
     const { legalTitle, legalUrl } = this.state;
     const legalItems = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} />,
+      title: I18n.t('directory-legalNoticeTitle'),
+    };
     return (
-      <PageView>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => navigation.goBack()}
-              />
-            </HeaderLeft>
-            <HeaderCenter>
-              <HeaderTitle_Style>{I18n.t('directory-legalNoticeTitle')}</HeaderTitle_Style>
-            </HeaderCenter>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropPdfReader
           handleClose={() => this.setState({ legalTitle: '', legalUrl: '' })}

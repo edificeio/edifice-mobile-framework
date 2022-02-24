@@ -7,46 +7,43 @@ import ProfilePage from './containers/ProfilePage';
 import PushNotifsSettingsScreen from './containers/PushNotifsSettingsScreen';
 import RelativesPage from './containers/RelativesPage';
 import StructuresPage from './containers/StructuresPage';
-import UserPage, { UserPageNavigationOptions } from './containers/UserPage';
+import UserPage from './containers/UserPage';
 
-export default createStackNavigator({
-  Profile: {
-    navigationOptions: UserPageNavigationOptions,
-    screen: UserPage,
-  },
-
-  NotifPrefs: {
-    navigationOptions: {
-      header: () => null,
+export default createStackNavigator(
+  {
+    Profile: {
+      screen: UserPage,
     },
-    screen: PushNotifsSettingsScreen,
-  },
 
-  LegalNotice: {
-    navigationOptions: {
-      // Note: a FakeHeader is used inside LegalNoticeScreen, so that it doesn't limite the backdrop shadow
-      header: () => null,
+    NotifPrefs: {
+      screen: PushNotifsSettingsScreen,
     },
-    screen: LegalNoticeScreen,
-  },
 
-  MyProfile: {
-    screen: ProfilePage,
-  },
+    LegalNotice: {
+      screen: LegalNoticeScreen,
+    },
 
-  ChangePassword: {
-    screen: ChangePasswordPage,
-  },
+    MyProfile: {
+      screen: ProfilePage,
+    },
 
-  Structures: {
-    screen: StructuresPage,
-  },
+    ChangePassword: {
+      screen: ChangePasswordPage,
+    },
 
-  Relatives: {
-    screen: RelativesPage,
-  },
+    Structures: {
+      screen: StructuresPage,
+    },
 
-  Children: {
-    screen: ChildrenPage,
+    Relatives: {
+      screen: RelativesPage,
+    },
+
+    Children: {
+      screen: ChildrenPage,
+    },
   },
-});
+  {
+    headerMode: 'none',
+  },
+);

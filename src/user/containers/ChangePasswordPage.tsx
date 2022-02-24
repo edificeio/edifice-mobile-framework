@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Dispatch } from 'react';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps, NavigationScreenProp, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import { FakeHeader, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import {
@@ -52,29 +52,21 @@ const mapDispatchToProps: (
 };
 
 class ChangePasswordPageContainer extends React.PureComponent<
-  IChangePasswordPageProps & { dispatch: any; version: number },
+  IChangePasswordPageProps & { dispatch: any; version: number; navigation: NavigationInjectedProps<NavigationState>['navigation'] },
   object
 > {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => ({
-    header: null
-  });
 
   public render() {
     // use the key to recompute state from props
     return (
-      <>
-        <FakeHeader>
-          <HeaderRow>
-            <HeaderLeft>
-              <HeaderBackAction navigation={this.props.navigation} />
-            </HeaderLeft>
-            <HeaderCenter>
-              <HeaderTitle>{I18n.t('PasswordChange')}</HeaderTitle>
-            </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
-        <ChangePasswordPage {...this.props} key={this.props.version + ''} navigation={this.props.navigation} />
-      </>
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('PasswordChange'),
+        }}>
+        <ChangePasswordPage {...this.props} key={this.props.version + ''} />
+      </PageView>
     );
   }
 }

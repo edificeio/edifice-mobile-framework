@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, KeyboardTypeOptions, Alert } from 'react-native';
-import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
+import { View, ScrollView, KeyboardAvoidingView, Platform, KeyboardTypeOptions, Alert } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -11,19 +11,19 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
 import { signURISource } from '~/infra/oauth';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { CommonStyles } from '~/styles/common/styles';
 import { ContainerView, ContainerLabel, ContainerTextInput, ButtonLine } from '~/ui/ButtonLine';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Label } from '~/ui/Typography';
-import { HeaderAction, HeaderBackAction } from '~/ui/headers/NewHeader';
 import { changePasswordResetAction } from '~/user/actions/changePassword';
 import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
+import { PageView } from '~/framework/components/page';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderAction, HeaderBackAction } from '~/framework/components/header';
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -35,11 +35,7 @@ export interface IProfilePageEventProps {
   dispatch: Dispatch;
 }
 
-export interface IProfilePageOtherProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-}
-
-export type IProfilePageProps = IProfilePageDataProps & IProfilePageEventProps & IProfilePageOtherProps;
+export type IProfilePageProps = IProfilePageDataProps & IProfilePageEventProps & NavigationInjectedProps;
 
 export type IProfilePageState = IUpdatableProfileValues & {
   emailValid?: boolean;
@@ -77,14 +73,13 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     const isEditMode = this.props.navigation.getParam('edit', false);
     return (
       <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
         <Notifier id="profileTwo" />
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: '#ffffff' }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}>
           <ScrollView alwaysBounceVertical={false}>
-            <SafeAreaView>
+            <SafeAreaView edges={['bottom', 'left', 'right']}>
               <UserCard
                 id={
                   this.props.userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
@@ -251,24 +246,24 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
   }
 }
 
-export class ProfilePageContainer extends React.PureComponent<IProfilePageProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
+export class ProfilePageContainer extends React.PureComponent<IProfilePageProps & NavigationInjectedProps> {
+  render() {
+    const { navigation } = this.props;
     const canEdit = getSessionInfo().type !== 'Student';
     const isEditMode = navigation.getParam('edit', false);
-    if (isEditMode) {
-      return standardNavScreenOptions(
-        {
+    const navBarInfo = isEditMode
+      ? {
           title: I18n.t('MyProfile'),
-          headerLeft: (
+          left: (
             <HeaderAction
               onPress={() => {
                 navigation.setParams({ edit: false });
                 navigation.getParam('onCancel') && navigation.getParam('onCancel')();
               }}
-              title={I18n.t('Cancel')}
+              text={I18n.t('Cancel')}
             />
           ),
-          headerRight: canEdit ? (
+          right: canEdit ? (
             <HeaderAction
               onPress={() => {
                 const values = navigation.getParam('updatedProfileValues') as IProfilePageState;
@@ -283,28 +278,20 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
                   navigation.setParams({ edit: false });
                 }
               }}
-              title={I18n.t('Save')}
+              text={I18n.t('Save')}
             />
           ) : null,
-        },
-        navigation,
-      );
-    } else {
-      return standardNavScreenOptions(
-        {
+        }
+      : {
           title: I18n.t('MyProfile'),
-          headerLeft: <HeaderBackAction navigation={navigation} />,
-          headerRight: canEdit ? (
-            <HeaderAction onPress={() => navigation.setParams({ edit: true })} title={I18n.t('Edit')} />
-          ) : null,
-        },
-        navigation,
-      );
-    }
-  };
-
-  render() {
-    return <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />;
+          left: <HeaderBackAction navigation={navigation} />,
+          right: canEdit ? <HeaderAction onPress={() => navigation.setParams({ edit: true })} text={I18n.t('Edit')} /> : null,
+        };
+    return (
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+        <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />
+      </PageView>
+    );
   }
 
   constructor(props: IProfilePageProps) {

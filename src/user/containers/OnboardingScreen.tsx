@@ -4,7 +4,7 @@ import OnboardingTwo from 'ode-images/onboarding/onboarding_2.svg';
 import OnboardingThree from 'ode-images/onboarding/onboarding_3.svg';
 import OnboardingFour from 'ode-images/onboarding/onboarding_4.svg';
 import * as React from 'react';
-import { View, Linking, Dimensions, Platform } from 'react-native';
+import { View, Dimensions, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import { NavigationInjectedProps } from 'react-navigation';

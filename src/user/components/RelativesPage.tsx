@@ -1,14 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ScrollView, SafeAreaView, View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import { UserCard } from './UserCard';
 
-import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
+import { PageView } from '~/framework/components/page';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -21,21 +19,15 @@ export interface IRelativesPageProps {
 
 // COMPONENT --------------------------------------------------------------------------------------
 
-export class RelativesPage extends React.PureComponent<IRelativesPageProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return alternativeNavScreenOptions(
-      {
-        title: I18n.t('directory-relativesTitle'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-      },
-      navigation,
-    );
-  };
-
+export class RelativesPage extends React.PureComponent<IRelativesPageProps & NavigationInjectedProps<NavigationState>> {
   render() {
     return (
-      <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('directory-relativesTitle'),
+        }}>
         <ScrollView alwaysBounceVertical={false}>
           <View style={{ marginTop: 40 }} />
           <SafeAreaView>
@@ -49,7 +41,7 @@ export class RelativesPage extends React.PureComponent<IRelativesPageProps> {
               })}
           </SafeAreaView>
         </ScrollView>
-      </PageContainer>
+      </PageView>
     );
   }
 }

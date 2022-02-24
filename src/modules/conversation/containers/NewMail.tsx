@@ -87,45 +87,6 @@ type newMail = {
 };
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
-  // static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-  //   return standardNavScreenOptions(
-  //     {
-  //       title: I18n.t('conversation.newMessage'),
-  //       headerLeft: () => {
-  //         const goBack = navigation.getParam('getGoBack', navigation.goBack);
-
-  //         return <HeaderAction onPress={() => goBack()} iconName="back" />;
-  //       },
-  //       headerRight: () => {
-  //         // const askForAttachment = navigation.getParam('getAskForAttachment');
-  //         const addGivenAttachment = navigation.getParam('addGivenAttachment');
-  //         const sendDraft = navigation.getParam('getSendDraft');
-  //         const deleteDraft = navigation.getParam('getDeleteDraft');
-  //         const draftType = navigation.getParam('type');
-  //         const isSavedDraft = draftType === DraftType.DRAFT;
-
-  //         return (
-  //           <View style={{ flexDirection: 'row' }}>
-  //             {addGivenAttachment && (
-  //               // <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={askForAttachment} name="attachment" />
-  //               <FilePicker multiple callback={addGivenAttachment}>
-  //                 <HeaderIcon name="attachment" />
-  //               </FilePicker>
-  //             )}
-  //             {sendDraft && <HeaderAction onPress={sendDraft} iconName="outbox" />}
-  //             {deleteDraft && isSavedDraft && (
-  //               <HeaderAction onPress={deleteDraft} iconName="delete" />
-  //             )}
-  //           </View>
-  //         );
-  //       },
-  //       headerStyle: {
-  //         backgroundColor: theme.color.secondary.regular,
-  //       },
-  //     },
-  //     navigation,
-  //   );
-  // };
 
   navBarInfo = () => {
     const { navigation } = this.props;

@@ -1,15 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ScrollView, SafeAreaView, View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import { UserCard } from './UserCard';
 
-import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
 import { H4 } from '~/ui/Typography';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
+import { PageView } from '~/framework/components/page';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -25,21 +23,15 @@ export interface IChildrenPageProps {
 
 // COMPONENT --------------------------------------------------------------------------------------
 
-export class ChildrenPage extends React.PureComponent<IChildrenPageProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return alternativeNavScreenOptions(
-      {
-        title: I18n.t('directory-childrenTitle'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-      },
-      navigation,
-    );
-  };
-
+export class ChildrenPage extends React.PureComponent<IChildrenPageProps & NavigationInjectedProps<NavigationState>> {
   render() {
     return (
-      <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('directory-childrenTitle'),
+        }}>
         <ScrollView alwaysBounceVertical={false}>
           <SafeAreaView>
             {this.props.schools
@@ -62,7 +54,7 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps> {
               : null}
           </SafeAreaView>
         </ScrollView>
-      </PageContainer>
+      </PageView>
     );
   }
 }

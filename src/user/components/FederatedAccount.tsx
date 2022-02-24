@@ -1,9 +1,10 @@
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, SafeAreaView, ScrollView, Platform } from 'react-native';
+import { View, SafeAreaView, ScrollView } from 'react-native';
 
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
 import { FlatButton } from '~/ui';
@@ -21,22 +22,13 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
   public render() {
     const { onLink, navigation } = this.props;
 
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} />,
+      title: I18n.t('federatedAccount-title'),
+    };
+
     return (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => navigation.goBack()}
-              />
-            </HeaderLeft>
-            <HeaderCenter>
-              <HeaderTitle_Style>{I18n.t('federatedAccount-title')}</HeaderTitle_Style>
-            </HeaderCenter>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <FormWrapper>
@@ -65,7 +57,7 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
             </FormWrapper>
           </FormPage>
         </SafeAreaView>
-      </>
+      </PageView>
     );
   }
 }

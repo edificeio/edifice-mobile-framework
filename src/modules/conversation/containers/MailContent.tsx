@@ -82,15 +82,6 @@ class MailContentContainer extends React.PureComponent<
     }
   }
 
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        header: null,
-      },
-      navigation,
-    );
-  };
-
   public showMenu = () => {
     const { showMenu } = this.state;
     this.setState({

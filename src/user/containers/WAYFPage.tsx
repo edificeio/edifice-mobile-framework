@@ -9,7 +9,7 @@ import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderAction, HeaderTitle } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
@@ -20,6 +20,7 @@ import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
+import { PageView } from '~/framework/components/page';
 
 enum WAYFPageMode {
   ERROR,
@@ -306,7 +307,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Render header title depending on current display mode
   renderHeaderTitle(mode: WAYFPageMode) {
-    return <HeaderTitle_Style>{I18n.t(mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title')}</HeaderTitle_Style>;
+    return <HeaderTitle>{I18n.t(mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title')}</HeaderTitle>;
   }
 
   // Render content depending on current display mode
@@ -400,16 +401,14 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   public render() {
     const { dropdownOpened, mode } = this.state;
+    const navBarInfo = {
+      left: this.renderHeaderLeft(mode),
+      title: this.renderHeaderTitle(mode),
+    };
     return (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>{this.renderHeaderLeft(mode)}</HeaderLeft>
-            <HeaderCenter>{this.renderHeaderTitle(mode)}</HeaderCenter>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
+      <PageView path={this.props.navigation?.state.routeName} navBar={navBarInfo}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>{this.renderContent(mode, dropdownOpened)}</SafeAreaView>
-      </>
+      </PageView>
     );
   }
 }

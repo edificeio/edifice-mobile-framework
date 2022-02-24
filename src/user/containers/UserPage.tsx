@@ -3,7 +3,6 @@ import * as React from 'react';
 import { ScrollView } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
-import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -23,25 +22,14 @@ import { ImagePicked } from '~/infra/imagePicker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { ButtonsOkCancel } from '~/ui';
 import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
 import { Label } from '~/ui/Typography';
 import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
-
-export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) =>
-  standardNavScreenOptions(
-    {
-      headerBackTitle: null,
-      title: I18n.t('MyAccount'),
-    },
-    navigation,
-  );
+import { PageView } from '~/framework/components/page';
 
 const uploadAvatarError = () => {
   return dispatch => {
@@ -205,10 +193,13 @@ export class UserPage extends React.PureComponent<
       }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
 
+    const navBarInfo = {
+      title: I18n.t('MyAccount'),
+    };
+
     return (
-      <PageContainer>
+      <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo}>
         <ScrollView style={{ flex: 1 }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-          <DEPRECATED_ConnectionTrackingBar />
           <Notifier id="profileOne" />
           {showDisconnect && (
             <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
@@ -264,7 +255,7 @@ export class UserPage extends React.PureComponent<
             onPress={() => this.setState({ showDisconnect: true })}
           />
         </ScrollView>
-      </PageContainer>
+      </PageView>
     );
   }
 }

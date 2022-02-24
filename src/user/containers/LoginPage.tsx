@@ -1,5 +1,4 @@
 // Libraries
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -18,22 +17,21 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
-import { PLATFORM_STORAGE_KEY } from '~/user/actions/platform';
 import { checkVersionThenLogin, IVersionContext, updateVersionIfWanted } from '~/user/actions/version';
 import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
+import { PageView } from '~/framework/components/page';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -113,27 +111,17 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion, navigation } = this.props;
     const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
 
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation}/>,
+      title: platformDisplayName,
+    };
+
     return (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => navigation.goBack()}
-              />
-            </HeaderLeft>
-            <HeaderCenter>
-              <HeaderTitle_Style>{platformDisplayName}</HeaderTitle_Style>
-            </HeaderCenter>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#ffffff' }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <DEPRECATED_ConnectionTrackingBar style={{ position: 'absolute' }} />
             <VersionModal
               mandatory={versionMandatory}
               version={version}
@@ -146,7 +134,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
         </SafeAreaView>
-      </>
+      </PageView>
     );
   }
 

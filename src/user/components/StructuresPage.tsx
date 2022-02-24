@@ -1,16 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ScrollView, SafeAreaView, View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import { Text, NestedText, TextColorStyle } from '~/framework/components/text';
-import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { CommonStyles } from '~/styles/common/styles';
 import { ContainerView } from '~/ui/ButtonLine';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
 import { H4 } from '~/ui/Typography';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
+import { PageView } from '~/framework/components/page';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -24,21 +22,15 @@ export interface IStructuresPageProps {
 
 // COMPONENT --------------------------------------------------------------------------------------
 
-export class StructuresPage extends React.PureComponent<IStructuresPageProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return alternativeNavScreenOptions(
-      {
-        title: I18n.t('directory-structuresTitle'),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-      },
-      navigation,
-    );
-  };
-
+export class StructuresPage extends React.PureComponent<IStructuresPageProps & NavigationInjectedProps<NavigationState>> {
   render() {
     return (
-      <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('directory-structuresTitle'),
+        }}>
         <ScrollView alwaysBounceVertical={false}>
           <SafeAreaView>
             <H4>{I18n.t('structuresTitle')}</H4>
@@ -70,7 +62,7 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps> {
               : null}
           </SafeAreaView>
         </ScrollView>
-      </PageContainer>
+      </PageView>
     );
   }
 }
