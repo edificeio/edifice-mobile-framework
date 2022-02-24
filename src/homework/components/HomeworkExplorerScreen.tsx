@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, RefreshControl, View } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { RefreshControl, View } from 'react-native';
 
 import theme from '~/app/theme';
 import Explorer from '~/framework/components/explorer';
@@ -15,7 +14,7 @@ import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Loading } from '~/ui';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import config from '../config';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export interface IHomeworkExplorerScreenDataProps {
@@ -49,24 +48,15 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     const { isFetching, didInvalidate, navigation } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : this.renderList();
 
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} />,
+      title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
+    };
+
     return (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => navigation.dispatch(NavigationActions.back())}
-              />
-            </HeaderLeft>
-            <HeaderCenter>
-              <HeaderTitle_Style>{I18n.t('homework.homeworkExplorerScreen.homeworks')}</HeaderTitle_Style>
-            </HeaderCenter>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
-        <PageView>{pageContent}</PageView>
-      </>
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+        {pageContent}
+      </PageView>
     );
   }
 

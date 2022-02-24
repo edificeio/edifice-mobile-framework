@@ -39,7 +39,6 @@ export default () => {
       ...namespaceTimelineSubModules(timelineSubModules.get()),
     },
     {
-      // Note: In Timeline module, there is NO native header. Only FakeHeaders allowed.
       headerMode: 'none',
     },
   );

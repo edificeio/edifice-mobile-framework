@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Platform } from 'react-native';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
 import HomeworkTaskListScreen from '~/homework/containers/HomeworkTaskListScreen';
 import HomeworkExplorerScreen from '~/homework/containers/HomeworkExplorerScreen';
-import { FakeHeader_Container, HeaderAction, HeaderLeft, FakeHeader_Row } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Loading } from '~/ui';
 
@@ -43,23 +41,15 @@ class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatc
   render() {
     const { diaryList, didInvalidate, isFetching, navigation } = this.props;
     const hasOneDiary = diaryList?.length === 1;
+
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} />,
+    }
+
     return isFetching && didInvalidate ? (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => navigation.dispatch(NavigationActions.back())}
-              />
-            </HeaderLeft>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
-        <PageView>
-          <Loading />
-        </PageView>
-      </>
+      <PageView navBar={navBarInfo}>
+        <Loading />
+      </PageView>
     ) : hasOneDiary ? (
       <HomeworkTaskListScreen {...this.props} />
     ) : (

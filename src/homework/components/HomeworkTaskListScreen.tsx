@@ -1,9 +1,9 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, RefreshControl, SectionList, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, SectionList, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
-import { NavigationActions, NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import HomeworkCard from './HomeworkCard';
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
@@ -25,7 +25,7 @@ import theme from '~/app/theme';
 import config from '../config';
 import { PageView } from '~/framework/components/page';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -51,10 +51,6 @@ export interface IHomeworkTaskListScreenEventProps {
   onScrollBeginDrag?: () => void;
 }
 
-export interface IHomeworkTaskListScreenOtherProps {
-  navigation?: NavigationScreenProp<object>;
-}
-
 interface IHomeworkTaskListScreenState {
   fetching: boolean;
   pastDateLimit: moment.Moment;
@@ -62,7 +58,7 @@ interface IHomeworkTaskListScreenState {
 
 export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
   IHomeworkTaskListScreenEventProps &
-  IHomeworkTaskListScreenOtherProps &
+  NavigationInjectedProps<{}> &
   IHomeworkTaskListScreenState;
 
 // Main component ---------------------------------------------------------------------------------
@@ -97,24 +93,15 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     const diaryTitle = diaryInformation?.title;
     const pageContent = isFetching && didInvalidate ? <Loading /> : error ? this.renderError() : this.renderList();
 
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} />,
+      title: diaryTitle || I18n.t('Homework'),
+    };
+
     return (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => navigation?.dispatch(NavigationActions.back())}
-              />
-            </HeaderLeft>
-            <HeaderCenter>
-              <HeaderTitle_Style>{diaryTitle || I18n.t('Homework')}</HeaderTitle_Style>
-            </HeaderCenter>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
-        <PageView>{pageContent}</PageView>
-      </>
+      <PageView path={navigation?.state.routeName} navBar={navBarInfo}>
+        {pageContent}
+      </PageView>
     );
   }
 
@@ -182,7 +169,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               refreshing={fetching}
               onRefresh={() => {
                 this.setState({ fetching: true });
-                onRefresh(diaryId);
+                onRefresh && diaryId && onRefresh(diaryId);
               }}
             />
           }

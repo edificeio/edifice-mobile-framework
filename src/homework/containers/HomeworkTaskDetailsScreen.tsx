@@ -18,7 +18,7 @@ import ThursdayImage from 'ode-images/days/thursday.svg';
 import FridayImage from 'ode-images/days/friday.svg';
 import SaturdayImage from 'ode-images/days/saturday.svg';
 import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
-import { FakeHeader_Container, HeaderAction, HeaderLeft, FakeHeader_Row } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import config from '../config';
 
 export interface IHomeworkTaskDetailsScreenNavigationParams {
@@ -50,41 +50,33 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     };
     const dayImage = dayImages[dayOfTheWeek];
 
+    const navBarInfo = {
+      left: <HeaderBackAction navigation={navigation} />,
+
+    }
+
     return (
-      <>
-        <FakeHeader_Container>
-          <FakeHeader_Row>
-            <HeaderLeft>
-              <HeaderAction
-                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-                iconSize={24}
-                onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
-              />
-            </HeaderLeft>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
-        <PageView>
-          <View style={[styles.banner, { backgroundColor: bannerColor }]}>
-            <View>
-              <HomeworkDayCheckpoint date={date} />
-            </View>
-            {dayImage}
+      <PageView path={navigation.state.routeName} navBar={navBarInfo}>
+        <View style={[styles.banner, { backgroundColor: bannerColor }]}>
+          <View>
+            <HomeworkDayCheckpoint date={date} />
           </View>
-          <ScrollView contentContainerStyle={styles.contentContainer}>
-            {title ? <TextSemiBold style={styles.title}>{title}</TextSemiBold> : null}
-            {content ? (
-              <HtmlContentView
-                html={content}
-                opts={{ globalTextStyle: styles.content }}
-                onDownload={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT', 'Read mode')}
-                onError={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
-                onDownloadAll={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
-                onOpen={() => Trackers.trackEvent('Homeworks', 'OPEN ATTACHMENT', 'Read mode')}
-              />
-            ) : null}
-          </ScrollView>
-        </PageView>
-      </>
+          {dayImage}
+        </View>
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          {title ? <TextSemiBold style={styles.title}>{title}</TextSemiBold> : null}
+          {content ? (
+            <HtmlContentView
+              html={content}
+              opts={{ globalTextStyle: styles.content }}
+              onDownload={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT', 'Read mode')}
+              onError={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
+              onDownloadAll={() => Trackers.trackEvent('Homeworks', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
+              onOpen={() => Trackers.trackEvent('Homeworks', 'OPEN ATTACHMENT', 'Read mode')}
+            />
+          ) : null}
+        </ScrollView>
+      </PageView>
     );
   }
 }
