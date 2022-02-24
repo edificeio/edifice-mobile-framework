@@ -9,15 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import {
-  FakeHeader_Container,
-  HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  FakeHeader_Row,
-  HeaderTitle_Style,
-  FakeHeader,
-} from '~/framework/components/header';
+import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -106,12 +98,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   // RENDER =======================================================================================
 
   render() {
-    const { navigation } = this.props;
-    const routeName = navigation.state.routeName;
     return (
       <>
         <PageView
-          path={routeName}
+          path={this.props.navigation.state.routeName}
           navBar={{
             left: <HeaderAction iconName="filter" onPress={() => this.goToFilters()} />,
             title: I18n.t('timeline.appName'),

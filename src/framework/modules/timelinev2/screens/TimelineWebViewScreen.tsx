@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderBackAction } from '~/framework/components/header';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
@@ -14,6 +14,7 @@ import { IResourceUriNotification, ITimelineNotification } from '~/framework/uti
 import { FlatButton } from '~/ui';
 import { openUrl } from '~/framework/util/linking';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import moduleConfig from '../moduleConfig';
 
 // TYPES ==========================================================================================
 
@@ -36,30 +37,14 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
   // RENDER =======================================================================================
   render() {
     return (
-      <>
-        {this.renderHeader()}
-        <PageView>{this.renderRedirection()}</PageView>
-      </>
-    );
-  }
-
-  renderHeader() {
-    const { navigation } = this.props;
-    return (
-      <FakeHeader_Container>
-        <FakeHeader_Row>
-          <HeaderLeft>
-            <HeaderAction
-              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-              iconSize={24}
-              onPress={() => navigation.goBack()}
-            />
-          </HeaderLeft>
-          <HeaderCenter>
-            <HeaderTitle_Style>{I18n.t('timeline.webViewScreen.title')}</HeaderTitle_Style>
-          </HeaderCenter>
-        </FakeHeader_Row>
-      </FakeHeader_Container>
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          title: I18n.t('timeline.webViewScreen.title'),
+        }}>
+        {this.renderRedirection()}
+      </PageView>
     );
   }
 

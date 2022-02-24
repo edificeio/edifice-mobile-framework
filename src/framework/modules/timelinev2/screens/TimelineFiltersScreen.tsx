@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { FlatList, Platform, Text, TouchableOpacity } from 'react-native';
+import { FlatList, Text, TouchableOpacity } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -9,13 +9,8 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import {
-  FakeHeader_Container,
   HeaderAction,
-  HeaderCenter,
-  HeaderLeft,
-  HeaderRight,
-  FakeHeader_Row,
-  HeaderTitle_Style,
+  HeaderBackAction,
 } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
@@ -23,7 +18,7 @@ import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
-import { PageContainer } from '~/ui/ContainerContent';
+import { PageView } from '~/framework/components/page';
 
 // TYPES ==========================================================================================
 
@@ -54,36 +49,20 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
   // RENDER =======================================================================================
 
   render() {
-    return (
-      <>
-        {this.renderHeader()}
-        <PageContainer>{this.renderList()}</PageContainer>
-      </>
-    );
-  }
-
-  renderHeader() {
-    const { navigation } = this.props;
     const { selectedFilters } = this.state;
     const noneSet = !Object.values(selectedFilters).find(value => value);
     return (
-      <FakeHeader_Container>
-        <FakeHeader_Row>
-          <HeaderLeft>
-            <HeaderAction
-              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
-              iconSize={24}
-              onPress={() => navigation.goBack()}
-            />
-          </HeaderLeft>
-          <HeaderCenter>
-            <HeaderTitle_Style>{I18n.t('timeline.filtersScreen.title')}</HeaderTitle_Style>
-          </HeaderCenter>
-          <HeaderRight>
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          left: <HeaderBackAction navigation={this.props.navigation} />,
+          right: (
             <HeaderAction text={I18n.t('common.apply')} disabled={noneSet} onPress={() => this.doSetFilters(selectedFilters)} />
-          </HeaderRight>
-        </FakeHeader_Row>
-      </FakeHeader_Container>
+          ),
+          title: I18n.t('timeline.filtersScreen.title'),
+        }}>
+        {this.renderList()}
+      </PageView>
     );
   }
 
