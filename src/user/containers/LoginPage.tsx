@@ -18,7 +18,7 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -115,8 +115,8 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
 
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -125,10 +125,10 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{platformDisplayName}</HeaderTitle>
+              <HeaderTitle_Style>{platformDisplayName}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#ffffff' }}

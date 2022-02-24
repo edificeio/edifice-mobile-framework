@@ -9,13 +9,13 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import {
-  FakeHeader,
+  FakeHeader_Container,
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
   HeaderRight,
-  HeaderRow,
-  HeaderTitle,
+  FakeHeader_Row,
+  HeaderTitle_Style,
 } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
@@ -67,8 +67,8 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     const { selectedFilters } = this.state;
     const noneSet = !Object.values(selectedFilters).find(value => value);
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -77,13 +77,13 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
             />
           </HeaderLeft>
           <HeaderCenter>
-            <HeaderTitle>{I18n.t('timeline.filtersScreen.title')}</HeaderTitle>
+            <HeaderTitle_Style>{I18n.t('timeline.filtersScreen.title')}</HeaderTitle_Style>
           </HeaderCenter>
           <HeaderRight>
             <HeaderAction text={I18n.t('common.apply')} disabled={noneSet} onPress={() => this.doSetFilters(selectedFilters)} />
           </HeaderRight>
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   }
 

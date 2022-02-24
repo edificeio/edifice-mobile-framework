@@ -15,7 +15,7 @@ import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Loading } from '~/ui';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import config from '../config';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export interface IHomeworkExplorerScreenDataProps {
@@ -51,8 +51,8 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
 
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -61,10 +61,10 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t('homework.homeworkExplorerScreen.homeworks')}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t('homework.homeworkExplorerScreen.homeworks')}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <PageView>{pageContent}</PageView>
       </>
     );

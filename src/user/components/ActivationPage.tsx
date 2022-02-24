@@ -15,7 +15,7 @@ import {
 
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text, TextAction } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -123,8 +123,8 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
 
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -133,10 +133,10 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t('activation-title')}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t('activation-title')}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <KeyboardAvoidingView

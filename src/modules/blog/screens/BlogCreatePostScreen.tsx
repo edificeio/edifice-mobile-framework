@@ -19,13 +19,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import {
-  FakeHeader,
+  FakeHeader_Container,
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
   HeaderRight,
-  HeaderRow,
-  HeaderTitle,
+  FakeHeader_Row,
+  HeaderTitle_Style,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -131,8 +131,8 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishAction'),
       }[blogPostDisplayRight];
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -141,7 +141,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             />
           </HeaderLeft>
           <HeaderCenter>
-            <HeaderTitle>{I18n.t('blog.blogCreatePostScreen.title')}</HeaderTitle>
+            <HeaderTitle_Style>{I18n.t('blog.blogCreatePostScreen.title')}</HeaderTitle_Style>
           </HeaderCenter>
           <HeaderRight>
             {sendLoadingState ? (
@@ -154,8 +154,8 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
               <HeaderAction text={actionText} disabled={title.length === 0 || content.length === 0} onPress={() => this.doSend()} />
             )}
           </HeaderRight>
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   }
 

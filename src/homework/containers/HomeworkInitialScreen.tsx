@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
 import HomeworkTaskListScreen from '~/homework/containers/HomeworkTaskListScreen';
 import HomeworkExplorerScreen from '~/homework/containers/HomeworkExplorerScreen';
-import { FakeHeader, HeaderAction, HeaderLeft, HeaderRow } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderLeft, FakeHeader_Row } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Loading } from '~/ui';
 
@@ -45,8 +45,8 @@ class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatc
     const hasOneDiary = diaryList?.length === 1;
     return isFetching && didInvalidate ? (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -54,8 +54,8 @@ class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatc
                 onPress={() => navigation.dispatch(NavigationActions.back())}
               />
             </HeaderLeft>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <PageView>
           <Loading />
         </PageView>

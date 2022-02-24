@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform, SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -29,8 +29,8 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
     const { navigation } = this.props;
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -39,10 +39,10 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{this.pfConf.displayName}</HeaderTitle>
+              <HeaderTitle_Style>{this.pfConf.displayName}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <View
             style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 }}>

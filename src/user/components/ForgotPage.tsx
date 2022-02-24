@@ -4,7 +4,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { Text, H1, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton, Icon } from '~/ui';
@@ -110,8 +110,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
 
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -120,10 +120,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <KeyboardAvoidingView

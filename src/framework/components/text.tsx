@@ -23,11 +23,12 @@ const baseLineHeight = 20;
  * Font variations
  */
 export const FontWeightIOS = {
-    Normal: "400",
-    Light: "300",
-    SemiBold: "600",
-    Bold: "700",
-}
+  // 🤣🤣🤣 MEGA LOL Typescript. I must explicitly type these as their value otherwise it is treated as string
+  Normal: '400' as '400',
+  Light: '300' as '300',
+  SemiBold: '600' as '600',
+  Bold: '700' as '700',
+};
 
 type FontStyleKey = 'Regular' | 'Italic' | 'Bold' | 'BoldItalic' | 'SemiBold' | 'SemiBoldItalic' | 'Light' | 'LightItalic';
 export const FontStyle = Platform.select({

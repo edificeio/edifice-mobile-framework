@@ -5,7 +5,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
@@ -46,8 +46,8 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
   renderHeader() {
     const { navigation } = this.props;
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -56,10 +56,10 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
             />
           </HeaderLeft>
           <HeaderCenter>
-            <HeaderTitle>{I18n.t('timeline.webViewScreen.title')}</HeaderTitle>
+            <HeaderTitle_Style>{I18n.t('timeline.webViewScreen.title')}</HeaderTitle_Style>
           </HeaderCenter>
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   }
 

@@ -29,14 +29,14 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import {
-  FakeHeader,
+  FakeHeader_Container,
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
   HeaderRight,
-  HeaderRow,
-  HeaderSubtitle,
-  HeaderTitle,
+  FakeHeader_Row,
+  HeaderSubtitle_Style,
+  HeaderTitle_Style,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
@@ -221,8 +221,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -237,11 +237,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           <HeaderCenter>
             {blogPostData?.title && this.state.showHeaderTitle ? (
               <>
-                <HeaderTitle numberOfLines={1}>{blogPostData?.title}</HeaderTitle>
-                <HeaderSubtitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle>
+                <HeaderTitle_Style numberOfLines={1}>{blogPostData?.title}</HeaderTitle_Style>
+                <HeaderSubtitle_Style>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle_Style>
               </>
             ) : (
-              <HeaderTitle numberOfLines={2}>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle>
+              <HeaderTitle_Style numberOfLines={2}>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle_Style>
             )}
           </HeaderCenter>
           {resourceUri ? (
@@ -251,8 +251,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               </TouchableOpacity>
             </HeaderRight>
           ) : null}
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   }
 

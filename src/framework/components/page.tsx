@@ -11,22 +11,32 @@ import { hasNotch } from 'react-native-device-info';
 import theme from '~/app/theme';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { FakeHeader, FakeHeaderProps } from './header';
 
-const PageView_StyleComponent = styled.View({
+export interface PageViewProps extends ViewProps {
+  path?: string; // Path of the view as it is supplied by the navigator. Used as a key for showing Notifier.
+  // Navbar setup.
+  navBar?: FakeHeaderProps; // Forwared as FakeHeader props...
+  navBarNode?: React.ReactNode; // ... or rendered as-is.
+  // Use both for a super combo plus ultra !
+}
+
+const PageView_Style = styled.View({
   flex: 1,
   backgroundColor: theme.color.background.page,
 });
-
-export const PageView = (props: React.PropsWithChildren<ViewProps & { path?: string }>) => {
-  const {path, children, ...viewProps} = props;
+export const PageView = (props: PageViewProps) => {
+  const { path, children, navBar, navBarNode, ...viewProps } = props;
   return (
-    <PageView_StyleComponent {...viewProps}>
+    <PageView_Style {...viewProps}>
+      {navBar ? <FakeHeader {...navBar} /> : null}
+      {navBarNode ? navBarNode : null}
       <DEPRECATED_ConnectionTrackingBar />
       {path ? <Notifier id={path} /> : null}
       {children}
-    </PageView_StyleComponent>
+    </PageView_Style>
   );
-}
+};
 
 export const KeyboardPageView = (props: React.PropsWithChildren<ViewProps & { path?: string; scrollable?: boolean }>) => {
   const keyboardAvoidingViewBehavior = Platform.select({

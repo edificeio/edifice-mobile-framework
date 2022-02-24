@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -87,8 +87,8 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
   renderHeader() {
     const { navigation } = this.props;
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -97,10 +97,10 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
             />
           </HeaderLeft>
           <HeaderCenter>
-            <HeaderTitle>{I18n.t('blog.blogSelectScreen.title')}</HeaderTitle>
+            <HeaderTitle_Style>{I18n.t('blog.blogSelectScreen.title')}</HeaderTitle_Style>
           </HeaderCenter>
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   }
 

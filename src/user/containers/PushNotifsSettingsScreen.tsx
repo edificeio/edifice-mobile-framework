@@ -15,7 +15,7 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -86,8 +86,8 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     return (
       <>
         <PageView>
-          <FakeHeader>
-            <HeaderRow>
+          <FakeHeader_Container>
+            <FakeHeader_Row>
               <HeaderLeft>
                 {[PushNotifsSettingsLoadingState.UPDATE].includes(loadingState) ? (
                   <LoadingIndicator
@@ -111,10 +111,10 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
                 )}
               </HeaderLeft>
               <HeaderCenter>
-                <HeaderTitle>{I18n.t('directory-notificationsTitle')}</HeaderTitle>
+                <HeaderTitle_Style>{I18n.t('directory-notificationsTitle')}</HeaderTitle_Style>
               </HeaderCenter>
-            </HeaderRow>
-          </FakeHeader>
+            </FakeHeader_Row>
+          </FakeHeader_Container>
           <Notifier id="timeline/push-notifications" />
           {[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(loadingState) ? (
             <LoadingIndicator />

@@ -5,7 +5,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
@@ -38,8 +38,8 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
     const legalItems = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
     return (
       <PageView>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -48,10 +48,10 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t('directory-legalNoticeTitle')}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t('directory-legalNoticeTitle')}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropPdfReader
           handleClose={() => this.setState({ legalTitle: '', legalUrl: '' })}

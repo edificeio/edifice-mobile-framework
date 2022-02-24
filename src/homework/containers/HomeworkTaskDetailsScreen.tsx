@@ -18,7 +18,7 @@ import ThursdayImage from 'ode-images/days/thursday.svg';
 import FridayImage from 'ode-images/days/friday.svg';
 import SaturdayImage from 'ode-images/days/saturday.svg';
 import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
-import { FakeHeader, HeaderAction, HeaderLeft, HeaderRow } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderLeft, FakeHeader_Row } from '~/framework/components/header';
 import config from '../config';
 
 export interface IHomeworkTaskDetailsScreenNavigationParams {
@@ -52,8 +52,8 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
 
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -61,8 +61,8 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
                 onPress={() => this.props.navigation.dispatch(NavigationActions.back())}
               />
             </HeaderLeft>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <PageView>
           <View style={[styles.banner, { backgroundColor: bannerColor }]}>
             <View>

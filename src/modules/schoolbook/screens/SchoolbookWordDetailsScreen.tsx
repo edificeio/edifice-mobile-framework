@@ -9,13 +9,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import {
-  FakeHeader,
+  FakeHeader_Container,
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
-  HeaderRow,
-  HeaderSubtitle,
-  HeaderTitle,
+  FakeHeader_Row,
+  HeaderSubtitle_Style,
+  HeaderTitle_Style,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -126,8 +126,8 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const { navigation } = this.props;
     const { schoolbookWordData } = this.state;
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -138,15 +138,15 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
           <HeaderCenter>
             {schoolbookWordData?.word?.title ? (
               <>
-                <HeaderTitle>{schoolbookWordData?.word?.title}</HeaderTitle>
-                <HeaderSubtitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderSubtitle>
+                <HeaderTitle_Style>{schoolbookWordData?.word?.title}</HeaderTitle_Style>
+                <HeaderSubtitle_Style>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderSubtitle_Style>
               </>
             ) : (
-              <HeaderTitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle_Style>
             )}
           </HeaderCenter>
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   }
 

@@ -18,13 +18,13 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import {
-  FakeHeader,
+  FakeHeader_Container,
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
-  HeaderRow,
-  HeaderSubtitle,
-  HeaderTitle,
+  FakeHeader_Row,
+  HeaderSubtitle_Style,
+  HeaderTitle_Style,
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -196,8 +196,8 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   // HEADER =====================================================================================
 
   const header = (
-    <FakeHeader>
-      <HeaderRow>
+    <FakeHeader_Container>
+      <FakeHeader_Row>
         <HeaderLeft>
           <HeaderAction
             iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -208,15 +208,15 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         <HeaderCenter>
           {selectedBlogTitle ? (
             <>
-              <HeaderTitle numberOfLines={1}>{selectedBlogTitle}</HeaderTitle>
-              <HeaderSubtitle>{I18n.t('blog.appName')}</HeaderSubtitle>
+              <HeaderTitle_Style numberOfLines={1}>{selectedBlogTitle}</HeaderTitle_Style>
+              <HeaderSubtitle_Style>{I18n.t('blog.appName')}</HeaderSubtitle_Style>
             </>
           ) : (
-            <HeaderTitle numberOfLines={2}>{I18n.t('blog.appName')}</HeaderTitle>
+            <HeaderTitle_Style numberOfLines={2}>{I18n.t('blog.appName')}</HeaderTitle_Style>
           )}
         </HeaderCenter>
-      </HeaderRow>
-    </FakeHeader>
+      </FakeHeader_Row>
+    </FakeHeader_Container>
   );
 
   // CREATE BUTTON ================================================================================

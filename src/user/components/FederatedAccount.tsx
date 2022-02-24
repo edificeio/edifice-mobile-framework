@@ -3,7 +3,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, SafeAreaView, ScrollView, Platform } from 'react-native';
 
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
 import { FlatButton } from '~/ui';
@@ -23,8 +23,8 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
 
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -33,10 +33,10 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t('federatedAccount-title')}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t('federatedAccount-title')}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <FormWrapper>

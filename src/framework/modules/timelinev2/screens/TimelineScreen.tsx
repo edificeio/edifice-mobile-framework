@@ -9,7 +9,15 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import {
+  FakeHeader_Container,
+  HeaderAction,
+  HeaderCenter,
+  HeaderLeft,
+  FakeHeader_Row,
+  HeaderTitle_Style,
+  FakeHeader,
+} from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -102,9 +110,13 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     const routeName = navigation.state.routeName;
     return (
       <>
-        {this.renderHeader()}
-        {this.renderHeaderButton()}
-        <PageView path={routeName}>
+        <PageView
+          path={routeName}
+          navBar={{
+            left: <HeaderAction iconName="filter" onPress={() => this.goToFilters()} />,
+            title: I18n.t('timeline.appName'),
+          }}
+          navBarNode={this.renderHeaderButton()}>
           {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
             <LoadingIndicator />
           ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
@@ -114,21 +126,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           )}
         </PageView>
       </>
-    );
-  }
-
-  renderHeader() {
-    return (
-      <FakeHeader>
-        <HeaderRow>
-          <HeaderLeft>
-            <HeaderAction iconName="filter" onPress={() => this.goToFilters()} />
-          </HeaderLeft>
-          <HeaderCenter>
-            <HeaderTitle>{I18n.t('timeline.appName')}</HeaderTitle>
-          </HeaderCenter>
-        </HeaderRow>
-      </FakeHeader>
     );
   }
 

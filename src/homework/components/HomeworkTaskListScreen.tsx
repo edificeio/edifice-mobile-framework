@@ -24,8 +24,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import theme from '~/app/theme';
 import config from '../config';
 import { PageView } from '~/framework/components/page';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -99,8 +99,8 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
 
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -109,10 +109,10 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{diaryTitle || I18n.t('Homework')}</HeaderTitle>
+              <HeaderTitle_Style>{diaryTitle || I18n.t('Homework')}</HeaderTitle_Style>
             </HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <PageView>{pageContent}</PageView>
       </>
     );

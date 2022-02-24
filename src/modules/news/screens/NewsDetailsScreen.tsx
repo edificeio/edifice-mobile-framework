@@ -9,13 +9,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import {
-  FakeHeader,
+  FakeHeader_Container,
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
-  HeaderRow,
-  HeaderSubtitle,
-  HeaderTitle,
+  FakeHeader_Row,
+  HeaderSubtitle_Style,
+  HeaderTitle_Style,
 } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
@@ -100,8 +100,8 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
     const { navigation } = this.props;
     const { newsData } = this.state;
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -112,15 +112,15 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           <HeaderCenter>
             {newsData?.title ? (
               <>
-                <HeaderTitle>{newsData?.title}</HeaderTitle>
-                <HeaderSubtitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderSubtitle>
+                <HeaderTitle_Style>{newsData?.title}</HeaderTitle_Style>
+                <HeaderSubtitle_Style>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderSubtitle_Style>
               </>
             ) : (
-              <HeaderTitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderTitle_Style>
             )}
           </HeaderCenter>
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   }
 

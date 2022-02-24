@@ -9,7 +9,7 @@ import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderAction, HeaderCenter, HeaderLeft, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
@@ -306,7 +306,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Render header title depending on current display mode
   renderHeaderTitle(mode: WAYFPageMode) {
-    return <HeaderTitle>{I18n.t(mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title')}</HeaderTitle>;
+    return <HeaderTitle_Style>{I18n.t(mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title')}</HeaderTitle_Style>;
   }
 
   // Render content depending on current display mode
@@ -402,12 +402,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     const { dropdownOpened, mode } = this.state;
     return (
       <>
-        <FakeHeader>
-          <HeaderRow>
+        <FakeHeader_Container>
+          <FakeHeader_Row>
             <HeaderLeft>{this.renderHeaderLeft(mode)}</HeaderLeft>
             <HeaderCenter>{this.renderHeaderTitle(mode)}</HeaderCenter>
-          </HeaderRow>
-        </FakeHeader>
+          </FakeHeader_Row>
+        </FakeHeader_Container>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>{this.renderContent(mode, dropdownOpened)}</SafeAreaView>
       </>
     );

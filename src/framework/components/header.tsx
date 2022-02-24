@@ -1,42 +1,64 @@
 /**
  * ODE Mobile UI - Header
  * Build Headers components for React Navigation or for custom hand-made screens.
+ *
+ * Usage :
+ * Use <FakeHeader_Container> component by giving these props :
+ * - left: React Nodes to place into the left part
+ * - right: React Nodes to place into the right part
+ * - title: React Nodes OR string to place at the center of the header
+ * every additional viewProp will be forwarded to the container
+ *
+ * If `children` prop is given, it will override all `left`, `right` and `title` props.
  */
 
 import styled from '@emotion/native';
 import * as React from 'react';
-import { Platform, SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
 
 import { UI_SIZES } from './constants';
 import theme from '~/app/theme';
 import { Icon } from './icon';
 import { FontWeightIOS, rem, TextInverse } from './text';
 
-const HeaderMinHeight = 52;
+/**
+ * FakeHeader_Container
+ */
 
-const FakeHeader_StyleComponent = styled.View({
+export const FakeHeader_Container = styled.View({
   flexDirection: 'row',
   alignItems: 'center',
   flex: 0,
   backgroundColor: theme.color.secondary.regular,
   elevation: 5,
-  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
+  minHeight: UI_SIZES.headerHeight + UI_SIZES.topInset,
+  paddingTop: UI_SIZES.topInset,
 });
-
-export const FakeHeader = (props: React.PropsWithChildren<ViewProps>) => (
-  <FakeHeader_StyleComponent>
-    <SafeAreaView style={{ width: '100%', height: '100%' }}>{props.children}</SafeAreaView>
-  </FakeHeader_StyleComponent>
-);
-
-export const HeaderRow = styled.View({
-  minHeight: HeaderMinHeight,
+export const FakeHeader_Row = styled.View({
+  minHeight: UI_SIZES.headerHeight,
   flexDirection: 'row',
   alignItems: 'center',
 });
 
-export const HeaderLeft = styled(HeaderRow)({
+export interface FakeHeaderProps extends ViewProps {
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+  title?: React.ReactNode | string;
+}
+export const FakeHeader = (props: React.PropsWithChildren<FakeHeaderProps>) => {
+  const { left, right, title, ...viewProps } = props;
+  return (
+    <FakeHeader_Container {...viewProps}>
+      <FakeHeader_Row>
+        {left ? <HeaderLeft>{left}</HeaderLeft> : null}
+        {title ? <HeaderCenter>{typeof title === 'string' ? <HeaderTitle>{title}</HeaderTitle> : title}</HeaderCenter> : null}
+        {right ? <HeaderRight>{right}</HeaderRight> : null}
+      </FakeHeader_Row>
+    </FakeHeader_Container>
+  );
+};
+
+export const HeaderLeft = styled(FakeHeader_Row)({
   position: 'absolute',
   left: 0,
   height: '100%',
@@ -44,7 +66,7 @@ export const HeaderLeft = styled(HeaderRow)({
   alignItems: 'stretch',
   zIndex: 1,
 });
-export const HeaderRight = styled(HeaderRow)({
+export const HeaderRight = styled(FakeHeader_Row)({
   position: 'absolute',
   right: 0,
   height: '100%',
@@ -56,7 +78,7 @@ export const HeaderCenter = styled.View({
   flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: HeaderMinHeight,
+  minHeight: UI_SIZES.headerHeight,
   marginHorizontal: 60,
 });
 
@@ -81,7 +103,7 @@ export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconS
         justifyContent: 'center',
       })
     : styled.View({
-        height: HeaderMinHeight,
+        height: UI_SIZES.headerHeight,
         width: 60,
         flex: 0,
         alignItems: 'center',
@@ -146,13 +168,19 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
   );
 };
 
-export const HeaderTitle = styled(TextInverse)({
+export const HeaderTitle_Style = styled(TextInverse)({
   textAlign: 'center',
   textAlignVertical: 'center',
   fontWeight: FontWeightIOS.Bold,
   fontSize: rem(16 / 14),
 });
-export const HeaderSubtitle = styled(HeaderTitle)({
+export const HeaderTitle = (props: TextProps) => {
+  return <HeaderTitle_Style numberOfLines={1} {...props}/>
+}
+export const HeaderSubtitle_Style = styled(HeaderTitle_Style)({
   fontWeight: FontWeightIOS.Normal,
   fontSize: rem(14 / 14),
 });
+export const HeaderSubtitle = (props: TextProps) => {
+  return <HeaderSubtitle_Style numberOfLines={1} {...props} />;
+};

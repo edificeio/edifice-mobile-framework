@@ -7,7 +7,7 @@ import { NavigationState, NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { Drawer } from '~/framework/components/drawer';
-import { FakeHeader, HeaderCenter, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { FakeHeader_Container, HeaderCenter, FakeHeader_Row, HeaderTitle_Style } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Trackers } from '~/framework/util/tracker';
 import MailListItem from '~/modules/conversation/components/MailListItem';
@@ -289,16 +289,16 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     return (
       <>
         <PageContainer>
-          <FakeHeader>
-            <HeaderRow>
+          <FakeHeader_Container>
+            <FakeHeader_Row>
               {/* <HeaderLeft> // TODO: add action for searching messages 
                 <HeaderAction name="search"/>
               </HeaderLeft> */}
               <HeaderCenter>
-                <HeaderTitle>{I18n.t('conversation.appName')}</HeaderTitle>
+                <HeaderTitle_Style>{I18n.t('conversation.appName')}</HeaderTitle_Style>
               </HeaderCenter>
-            </HeaderRow>
-          </FakeHeader>
+            </FakeHeader_Row>
+          </FakeHeader_Container>
           <TempFloatingAction
             buttonStyle={{ zIndex: 1 }}
             iconName="new_message"

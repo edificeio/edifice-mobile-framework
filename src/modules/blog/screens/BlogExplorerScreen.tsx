@@ -21,13 +21,13 @@ import Explorer, {
   IExplorerResourceItemWithImage,
 } from '~/framework/components/explorer';
 import {
-  FakeHeader,
+  FakeHeader_Container,
   HeaderAction,
   HeaderCenter,
   HeaderLeft,
-  HeaderRow,
-  HeaderSubtitle,
-  HeaderTitle,
+  FakeHeader_Row,
+  HeaderSubtitle_Style,
+  HeaderTitle_Style,
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -136,8 +136,8 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     const currentFolderId = props.navigation.getParam('folderId');
     const currentFolder = folders.find(f => f.id === currentFolderId);
     return (
-      <FakeHeader>
-        <HeaderRow>
+      <FakeHeader_Container>
+        <FakeHeader_Row>
           <HeaderLeft>
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
@@ -148,15 +148,15 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
           <HeaderCenter>
             {currentFolder ? (
               <>
-                <HeaderTitle numberOfLines={1}>{currentFolder.name}</HeaderTitle>
-                <HeaderSubtitle>{I18n.t('blog.appName')}</HeaderSubtitle>
+                <HeaderTitle_Style numberOfLines={1}>{currentFolder.name}</HeaderTitle_Style>
+                <HeaderSubtitle_Style>{I18n.t('blog.appName')}</HeaderSubtitle_Style>
               </>
             ) : (
-              <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
+              <HeaderTitle_Style>{I18n.t('blog.appName')}</HeaderTitle_Style>
             )}
           </HeaderCenter>
-        </HeaderRow>
-      </FakeHeader>
+        </FakeHeader_Row>
+      </FakeHeader_Container>
     );
   };
 
