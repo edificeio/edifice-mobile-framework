@@ -5,4 +5,6 @@ import ConnectorContainer from "./containers/ConnectorContainer";
 export default () =>
   createStackNavigator({
     Connector: ConnectorContainer,
+  }, {
+    headerMode: 'none'
   });

@@ -3,7 +3,7 @@ import * as React from 'react';
 // @ts-ignore’
 import { View, ScrollView, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { NavigationScreenProp, NavigationState } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import MyAppItem from './MyAppItem';
 
@@ -13,13 +13,12 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { AnyModule } from '~/framework/util/moduleTool';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import { FlatButton } from '~/ui/FlatButton';
 import { openUrl } from '~/framework/util/linking';
+import { PageView } from '~/framework/components/page';
 
-class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<NavigationState> }, object> {
+class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
   renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
     const allModules = [...modules, ...(newModules || [])]?.sort((a, b) =>
       I18n.t(a.config.displayName).localeCompare(I18n.t(b.config.displayName)),
@@ -95,10 +94,13 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
     }
 
     return (
-      <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
+      <PageView
+        path={this.props.navigation.state.routeName}
+        navBar={{
+          title: I18n.t('MyApplications'),
+        }}>
         {pageContent}
-      </PageContainer>
+      </PageView>
     );
   }
 }

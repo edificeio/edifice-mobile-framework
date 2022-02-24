@@ -15,23 +15,9 @@ const MyAppGridContainer = (modules: IAppModule[], newModules: AnyModule[]) =>
   createStackNavigator({
     myAppsGrid: {
       screen: (props: any) => <MyAppGrid {...props} modules={modules} newModules={newModules} />,
-      navigationOptions: ({ navigation }: { navigation: NavigationScreenProp<object> }) =>
-        standardNavScreenOptions(
-          {
-            title: I18n.t('MyApplications'),
-            headerLeftContainerStyle: {
-              alignItems: 'flex-start',
-            },
-            headerRightContainerStyle: {
-              alignItems: 'flex-start',
-            },
-            headerTitleContainerStyle: {
-              alignItems: 'flex-start',
-            },
-          },
-          navigation,
-        ),
     },
+  }, {
+    headerMode: 'none'
   });
 
 export default (apps: any[]) => {
