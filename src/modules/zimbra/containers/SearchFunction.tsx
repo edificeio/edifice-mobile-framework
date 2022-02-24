@@ -1,22 +1,17 @@
 import React from 'react';
 import { View } from 'react-native';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import MailListContainer from './MailList';
 
 import { Input } from '~/modules/zimbra/components/SearchFunction';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
-import { PageContainer } from '~/ui/ContainerContent';
-import { Header as HeaderComponent } from '~/ui/headers/Header';
-import { HeaderAction } from '~/ui/headers/NewHeader';
+import { PageView } from '~/framework/components/page';
+import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
 
-type SearchProps = {
-  navigation: any;
-};
+type SearchProps = {} & NavigationInjectedProps;
 
 type SearchState = {
   isShownHeader: boolean;
@@ -24,14 +19,6 @@ type SearchState = {
 };
 
 export class SearchContainer extends React.PureComponent<SearchProps, SearchState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        header: null,
-      },
-      navigation,
-    );
-  };
 
   constructor(props) {
     super(props);
@@ -49,24 +36,34 @@ export class SearchContainer extends React.PureComponent<SearchProps, SearchStat
   render() {
     const { navigation } = this.props;
     return (
-      <PageContainer>
-        {this.state.isShownHeader && (
-          <HeaderComponent>
-            <Icon name="search2" size={20} color="white" style={{ marginHorizontal: 10 }} />
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Input value={this.state.searchText} onChange={text => this.setState({ searchText: text })} />
-              <HeaderAction name="close2" onPress={() => navigation.goBack()} />
-            </View>
-          </HeaderComponent>
-        )}
-
+      <PageView
+        path={navigation.state.routeName}
+        navBarNode={
+          <FakeHeader_Container>
+            <FakeHeader_Row style={{alignItems: 'stretch'}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  flex: 1,
+                  marginRight: 60,
+                }}>
+                <Icon name="search2" size={20} color="white" style={{ marginHorizontal: 20 }} />
+                <Input value={this.state.searchText} onChange={text => this.setState({ searchText: text })} />
+              </View>
+              <HeaderRight>
+                <HeaderAction iconName="close2" onPress={() => navigation.goBack()} />
+              </HeaderRight>
+            </FakeHeader_Row>
+          </FakeHeader_Container>
+        }>
         <MailListContainer
           {...this.props}
           setSearchHeaderVisibility={isShown => this.setHeaderVisibility(isShown)}
           isSearch
           searchString={this.state.searchText}
         />
-      </PageContainer>
+      </PageView>
     );
   }
 }

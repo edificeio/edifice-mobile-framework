@@ -1,8 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
-import { NavigationScreenProp, NavigationActions } from 'react-navigation';
+import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -18,16 +17,10 @@ import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaMod
 import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
 import { getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
-import { PageContainer } from '~/ui/ContainerContent';
-import { Text } from '~/ui/Typography';
-import { Header as HeaderComponent } from '~/ui/headers/Header';
-import { HeaderAction } from '~/ui/headers/NewHeader';
+import { PageView } from '~/framework/components/page';
+import { HeaderAction, HeaderBackAction } from '~/framework/components/header';
 
 type MailContentContainerProps = {
-  navigation: any;
   mail: any;
   storage: IQuota;
   fetchMailContentAction: (mailId: string) => void;
@@ -37,7 +30,7 @@ type MailContentContainerProps = {
   restoreMails: (mailIds: string[]) => void;
   deleteMails: (mailIds: string[]) => void;
   fetchStorage: () => void;
-};
+} & NavigationInjectedProps<any>;
 
 type MailContentContainerState = {
   mailId: string;
@@ -69,15 +62,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
     }
   }
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        header: null,
-      },
-      navigation,
-    );
-  };
 
   public showMenu = () => {
     const { showMenu } = this.state;
@@ -200,29 +184,18 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     const { navigation, mail } = this.props;
     const { showMenu, showMoveModal } = this.state;
     const menuData = this.setMenuData();
+
+    const navBarInfo = {
+      left: <HeaderBackAction onPress={this.goBack} />,
+      title: navigation.state.params.subject,
+      right: <HeaderAction iconName="more_vert" onPress={this.showMenu} />,
+    };
+
     return (
       <>
-        <PageContainer>
-          <HeaderComponent>
-            <HeaderAction onPress={this.goBack} name="back" />
-            <Text
-              style={{
-                alignSelf: 'center',
-                color: 'white',
-                fontFamily: CommonStyles.primaryFontFamily,
-                fontSize: 16,
-                fontWeight: '400',
-                textAlign: 'center',
-                flex: 1,
-              }}>
-              {navigation.state.params.subject}
-            </Text>
-            <TouchableOpacity onPress={this.showMenu}>
-              <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
-            </TouchableOpacity>
-          </HeaderComponent>
+        <PageView path={navigation.state.routeName} navBar={navBarInfo}>
           <MailContent {...this.props} delete={this.delete} restore={this.restore} checkStorage={this.checkStorage} />
-        </PageContainer>
+        </PageView>
 
         <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />

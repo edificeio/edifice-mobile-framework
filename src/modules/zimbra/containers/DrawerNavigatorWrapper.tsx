@@ -1,8 +1,8 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { View } from 'react-native';
-import { NavigationState } from 'react-navigation';
-import { createDrawerNavigator, NavigationDrawerProp } from 'react-navigation-drawer';
+import { Platform, View } from 'react-native';
+import { NavigationInjectedProps, NavigationState } from 'react-navigation';
+import { createDrawerNavigator, NavigationDrawerScreenProps } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 
 import DrawerMenuContainer from './DrawerMenu';
@@ -11,19 +11,17 @@ import { DraftType } from './NewMail';
 
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
-import { PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import TempFloatingAction from '~/ui/FloatingButton/TempFloatingAction';
-import { Text } from '~/ui/Typography';
-import { Header as HeaderComponent } from '~/ui/headers/Header';
-import { HeaderAction } from '~/ui/headers/NewHeader';
+import { HeaderAction, HeaderTitle } from '~/framework/components/header';
+import { ButtonIcon } from '~/framework/components/popupMenu';
+import { hasNotch } from 'react-native-device-info';
+import { PageView } from '~/framework/components/page';
 
 type DrawerNavigatorWrapperProps = {
   storage: IQuota;
-};
+} & NavigationInjectedProps &
+  NavigationDrawerScreenProps;
 
 type DrawerNavigatorWrapperState = {
   isShownStorageWarning: boolean;
@@ -54,14 +52,6 @@ export const IconButton = ({ icon, color, onPress }) => {
 
 export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapperProps, DrawerNavigatorWrapperState> {
   static router = DrawerNavigatorComponent.router;
-  static navigationOptions = ({ navigation }: { navigation: NavigationDrawerProp<any> }) => {
-    return standardNavScreenOptions(
-      {
-        header: null,
-      },
-      navigation,
-    );
-  };
 
   constructor(props) {
     super(props);
@@ -112,53 +102,51 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
     const title = this.getTitle(this.getActiveRouteState(navigation.state));
     const params = this.getActiveRouteState(navigation.state).params;
 
-    return (
-      <>
-        <PageContainer>
-          {(!params || !params.selectedMails) && (
-            <HeaderComponent>
+    const navBarInfo =
+      !params || !params.selectedMails
+        ? {
+            left: (
               <HeaderAction
-                name="menu"
+                iconName="menu"
                 onPress={() => {
                   navigation.toggleDrawer();
                 }}
               />
-              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                <Text
-                  numberOfLines={1}
-                  style={{
-                    alignSelf: 'center',
-                    paddingRight: 10,
-                    color: 'white',
-                    fontFamily: CommonStyles.primaryFontFamily,
-                    fontSize: 16,
-                    fontWeight: '400',
-                    textAlign: 'center',
-                  }}>
-                  {title}
-                </Text>
-                <View style={{ marginRight: 50, marginTop: 3 }}>
-                  <IconButton onPress={() => navigation.navigate('search')} color="#FFF" icon="search2" />
-                </View>
+            ),
+            title: (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <HeaderTitle>{title}</HeaderTitle>
+                <HeaderAction iconName="search2" iconSize={16} iconStyle={{width: 30, alignItems: 'flex-end'}} onPress={() => navigation.navigate('search')} />
               </View>
-            </HeaderComponent>
-          )}
+            ),
+          }
+        : undefined;
+    const navBarBigButton = (!params || !params.selectedMails) && (
+      <ButtonIcon
+        name="new_message"
+        onPress={() => {
+          if (!this.isStorageFull() || this.state.isShownStorageWarning) {
+            this.props.navigation.navigate('newMail', {
+              type: DraftType.NEW,
+              mailId: undefined,
+              currentFolder: this.getActiveRouteState(navigation.state).key,
+            });
+          }
+        }}
+        style={{
+          position: 'absolute',
+          zIndex: 100,
+          right: 20,
+          top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
+        }}
+      />
+    );
+
+    return (
+      <>
+        <PageView path={this.props.navigation.state.routeName} navBar={navBarInfo} navBarNode={navBarBigButton}>
           <DrawerNavigatorComponent navigation={navigation} />
-          {(!params || !params.selectedMails) && (
-            <TempFloatingAction
-              iconName="new_message"
-              onEvent={() => {
-                if (!this.isStorageFull() || this.state.isShownStorageWarning) {
-                  this.props.navigation.navigate('newMail', {
-                    type: DraftType.NEW,
-                    mailId: undefined,
-                    currentFolder: this.getActiveRouteState(navigation.state).key,
-                  });
-                }
-              }}
-            />
-          )}
-        </PageContainer>
+        </PageView>
 
         <ModalStorageWarning
           isVisible={this.state.isShownStorageWarning}

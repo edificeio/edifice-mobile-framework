@@ -4,7 +4,7 @@ import moment from 'moment';
 import React from 'react';
 import { View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 
@@ -32,10 +32,8 @@ import NewMailComponent from '~/modules/zimbra/components/NewMail';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { getMailContentState, IMail } from '~/modules/zimbra/state/mailContent';
 import { getSignatureState, ISignature } from '~/modules/zimbra/state/signature';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import { INavigationProps } from '~/types';
-import { HeaderAction } from '~/ui/headers/NewHeader';
-import theme from '~/app/theme';
+import { HeaderBackAction, HeaderAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 
 export enum DraftType {
   NEW,
@@ -75,7 +73,7 @@ interface ICreateMailOtherProps {
   hasRightToSendExternalMails: boolean;
 }
 
-type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & INavigationProps;
+type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & NavigationInjectedProps<any>;
 
 interface ICreateMailState {
   id?: string;
@@ -101,35 +99,23 @@ type newMail = {
 };
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    return standardNavScreenOptions(
-      {
-        title: null,
-        headerLeft: () => {
-          const goBack = navigation.getParam('getGoBack', navigation.goBack);
-
-          return <HeaderAction onPress={() => goBack()} name="back" />;
-        },
-        headerRight: () => {
-          const askForAttachment = navigation.getParam('getAskForAttachment');
-          const sendDraft = navigation.getParam('getSendDraft');
-          const showMenu = navigation.getParam('showHeaderMenu');
-
-          return (
-            <View style={{ flexDirection: 'row' }}>
-              {askForAttachment && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={askForAttachment} name="attachment" />}
-              {sendDraft && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={sendDraft} name="outbox" />}
-              {showMenu && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={showMenu} name="more_vert" />}
-            </View>
-          );
-        },
-        headerStyle: {
-          backgroundColor: theme.color.secondary.regular,
-        },
-      },
-      navigation,
-    );
-  };
+  navBarInfo() {
+    const { navigation } = this.props;
+    const goBack = navigation.getParam('getGoBack', navigation.goBack);
+    const askForAttachment = navigation.getParam('getAskForAttachment');
+    const sendDraft = navigation.getParam('getSendDraft');
+    const showMenu = navigation.getParam('showHeaderMenu');
+    return {
+      left: <HeaderBackAction onPress={goBack} />,
+      right: (
+        <View style={{ flexDirection: 'row' }}>
+          {askForAttachment && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={askForAttachment} iconName="attachment" />}
+          {sendDraft && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={sendDraft} iconName="outbox" />}
+          {showMenu && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={showMenu} iconName="more_vert" />}
+        </View>
+      ),
+    };
+  }
 
   constructor(props) {
     super(props);
@@ -529,7 +515,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     console.log('isSet>NewSignature: ', this.state.isNewSignature);
 
     return (
-      <>
+      <PageView path={this.props.navigation.state.routeName} navBar={this.navBarInfo()}>
         <NewMailComponent
           isFetching={this.props.isFetching || !!isPrefilling}
           headers={headers}
@@ -551,7 +537,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
         />
 
-        <MailContentMenu newMailStyle={{ top: 0 }} onClickOutside={showMenu} show={this.state.isShownHeaderMenu} data={menuData} />
+        <MailContentMenu onClickOutside={showMenu} show={this.state.isShownHeaderMenu} data={menuData} />
         <ModalPermanentDelete
           deleteModal={this.state.deleteModal}
           closeModal={this.closeDeleteModal}
@@ -564,7 +550,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           closeModal={this.closeSignatureModal}
           successCallback={() => this.setSignatureState(true, true)}
         />
-      </>
+      </PageView>
     );
   }
 }

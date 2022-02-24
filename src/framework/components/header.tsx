@@ -88,7 +88,7 @@ const iconSpecificSizes = {
 };
 const iconDefaultSize = 20;
 
-export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconSize?: number; primary?: boolean }) => {
+export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconSize?: number; primary?: boolean; style?: ViewStyle }) => {
   const HeaderIconView = props.primary
     ? styled.View({
         height: 50,
@@ -102,6 +102,7 @@ export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconS
         backgroundColor: theme.color.secondary.regular,
         alignItems: 'center',
         justifyContent: 'center',
+        ...props.style
       })
     : styled.View({
         height: UI_SIZES.headerHeight,
@@ -109,6 +110,7 @@ export const HeaderIcon = (props: { name: string | null; hidden?: boolean; iconS
         flex: 0,
         alignItems: 'center',
         justifyContent: 'center',
+        ...props.style
       });
 
   return (
@@ -131,6 +133,7 @@ interface IHeaderActionGenericProps extends IHeaderActionCommonProps {
   text?: string;
   iconName?: string | null;
   iconSize?: number;
+  iconStyle?: ViewStyle;
   hidden?: boolean;
 }
 interface IHeaderActionCustomProps extends IHeaderActionCommonProps {
@@ -158,6 +161,7 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
               name={(props as IHeaderActionGenericProps).iconName || null}
               iconSize={(props as IHeaderActionGenericProps).iconSize}
               hidden={(props as IHeaderActionGenericProps).hidden}
+              style={(props as IHeaderActionGenericProps).iconStyle}
             />
           ) : null}
           {(props as IHeaderActionGenericProps).text ? (
