@@ -2,7 +2,7 @@ import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, Alert, Keyboard, BackHandler } from 'react-native';
+import { View, Alert, Keyboard, BackHandler, AlertOptions, AlertButton, Platform } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationScreenProp } from 'react-navigation';
@@ -352,7 +352,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           title: 'conversation.saveDraftTitle',
           text: isSavedDraft ? 'conversation.saveAgainDraftMessage' : 'conversation.saveDraftMessage',
         };
-        Alert.alert(I18n.t(textToDisplay.title), I18n.t(textToDisplay.text), [
+        const options = [
           {
             text: isSavedDraft ? I18n.t('conversation.saveModifications') : I18n.t('common.save'),
             onPress: async () => {
@@ -429,11 +429,15 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                     }
                     navigation.goBack();
                   },
-                  style: 'destructive' as 'destructive',
+                  style: 'destructive',
                 },
               ]
             : []),
-        ]);
+        ] as AlertButton[];
+        Alert.alert(I18n.t(textToDisplay.title), I18n.t(textToDisplay.text), Platform.select({
+          ios: options,
+          android: options.reverse() // F*CK YOU Android !
+        }));
       } else {
         if ((isNewDraft && id) || (!isNewDraft && !isSavedDraft && id && id !== mailId)) {
           await trashMessage([id]);
