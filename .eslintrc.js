@@ -1,5 +1,13 @@
 module.exports = {
-  extends: "universe/native",
+  root: true,
+  extends: [
+    '@react-native-community',
+    'airbnb-typescript',
+    'prettier',
+    'prettier/@typescript-eslint',
+    'prettier/react',
+    'universe/native',
+  ],
   rules: {
     "react/jsx-no-bind": [
       0,
