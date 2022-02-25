@@ -25,6 +25,7 @@ import { userService } from '~/user/service';
 
 // eslint-disable-next-line import/order
 import { initActivationAccount as initActivationAccountAction } from './activation';
+import AppConf from '~/framework/util/appConf';
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -292,7 +293,9 @@ export function loginAction(
         } else {
           resetNavigation(
             [
-              NavigationActions.navigate({ routeName: 'PlatformSelect' }),
+              ...(AppConf.platforms && AppConf.platforms.length > 1
+                ? [NavigationActions.navigate({ routeName: 'PlatformSelect' })]
+                : []),
               NavigationActions.navigate({ routeName: getLoginRouteName() }),
               NavigationActions.navigate({ routeName: routeToGo }),
             ],
@@ -320,7 +323,9 @@ export function loginAction(
         if (redirectOnError) {
           resetNavigation(
             [
-              NavigationActions.navigate({ routeName: 'PlatformSelect' }),
+              ...(AppConf.platforms && AppConf.platforms.length > 1
+                ? [NavigationActions.navigate({ routeName: 'PlatformSelect' })]
+                : []),
               NavigationActions.navigate({ routeName: getLoginRouteName() }),
             ],
             1,
@@ -394,10 +399,13 @@ export async function redirectAfterChangePassword(dispatch) {
   dispatch({
     type: actionTypeLoginError,
     errmsg: 'must_log_again',
-    errtype: 'warning'
+    errtype: 'warning',
   });
   resetNavigation(
-    [NavigationActions.navigate({ routeName: 'PlatformSelect' }), NavigationActions.navigate({ routeName: getLoginRouteName() })],
+    [
+      ...(AppConf.platforms && AppConf.platforms.length > 1 ? [NavigationActions.navigate({ routeName: 'PlatformSelect' })] : []),
+      NavigationActions.navigate({ routeName: getLoginRouteName() }),
+    ],
     1,
   );
 }
