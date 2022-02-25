@@ -73,6 +73,7 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 // TYPES ==========================================================================================
 
@@ -256,7 +257,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   renderError() {
-    return <TextSemiBold>Error</TextSemiBold>; // ToDo: great error screen here
+    return <EmptyContentScreen />;
   }
 
   renderContent() {
@@ -387,6 +388,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             </ViewportAwareTitle>
             <HtmlContentView
               html={blogPostContent}
+              onHtmlError={() => this.setState({ errorState: true })}
               onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
               onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
               onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
@@ -452,7 +454,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           {hasUpdateCommentBlogPostRight ? (
             <TouchableOpacity
               onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
-              <Icon name="pencil" color={theme.color.secondary.regular} size={UI_SIZES.actionButtonSize} />
+              <Icon name="pencil" color={theme.greyPalette.black} size={UI_SIZES.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
         </View>

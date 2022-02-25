@@ -74,10 +74,18 @@ const homeworkAllTasksReducer = (state: IAllHomeworkTasksByHomeworkIds = homewor
     case actionTypes.invalidated: // params: homeworkId:string
     case actionTypes.requested:
     case actionTypes.received:
-    case actionTypes.fetchError:
       return {
         ...state,
         [action.diaryId]: homeworkSingleTasksAsyncReducer(state[action.diaryId], action),
+      };
+    case actionTypes.fetchError:
+      return {
+        ...state,
+        [action.diaryId]: {
+          ...homeworkSingleTasksAsyncReducer(state[action.diaryId], action),
+          error: action.error,
+          errmsg: action.errmsg,
+        },
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

@@ -3,7 +3,6 @@
  * Build actions to be dispatched to the diary selected reducer.
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Action } from 'redux';
 
 import { fetchHomeworkTasks } from './tasks';
@@ -24,7 +23,6 @@ export const createActionDiarySelected: (diaryId: string) => IActionDiarySelecte
 
 export function homeworkDiarySelected(diaryId: string) {
   return async dispatch => {
-    await AsyncStorage.setItem('diary-selected', diaryId);
     dispatch(createActionDiarySelected(diaryId));
     dispatch(fetchHomeworkTasks(diaryId));
     Trackers.trackEvent('Homework', 'SELECT');

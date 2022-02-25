@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, FlatList, TouchableOpacity, RefreshControl, Linking, Platform } from 'react-native';
+import { View, FlatList, TouchableOpacity, RefreshControl, Platform } from 'react-native';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -22,11 +22,14 @@ import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog, IBlogList } from '~/modules/blog/reducer';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { openUrl } from '~/framework/util/linking';
+import { getBlogWorkflowInformation } from '../rights';
+import { getUserSession, IUserSession } from '~/framework/util/session';
+import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
 
 // TYPES ==========================================================================================
 
 export interface IBlogSelectScreenDataProps {
-  // Add data props here
+  session: IUserSession;
 }
 export interface IBlogSelectScreenEventProps {
   handleGetPublishableBlogList(): Promise<IBlogList | undefined>;
@@ -118,7 +121,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
           paddingBottom: isEmpty ? undefined : 12,
           backgroundColor: theme.color.background.card,
         }}
-        ListEmptyComponent={this.renderEmpty}
+        ListEmptyComponent={this.renderEmpty()}
         refreshControl={
           <RefreshControl
             refreshing={[BlogSelectLoadingState.REFRESH, BlogSelectLoadingState.INIT].includes(loadingState)}
@@ -130,21 +133,22 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
   }
 
   renderEmpty() {
+    const { session } = this.props;
+    const hasBlogCreationRights = getBlogWorkflowInformation(session)?.blog.create;
     return (
       <EmptyScreen
-        imageSrc={require('ASSETS/images/empty-screen/blog.png')}
-        imgWidth={265.98}
-        imgHeight={279.97}
-        title={I18n.t('blog.blogSelectScreen.emptyScreenTitle')}
-        text={I18n.t('blog.blogSelectScreen.emptyScreenText')}
-        buttonText={I18n.t('blog.blogSelectScreen.emptyScreenButton')}
+        customStyle={{ backgroundColor: theme.color.background.card }}
+        svgImage={<EmptySearch />}
+        title={I18n.t('blog.blogsEmptyScreen.title')}
+        text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {
             console.warn('Must have a platform selected to redirect the user');
             return null;
           }
-          const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog`;
+          const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog#/edit/new`;
           openUrl(url);
         }}
       />
@@ -232,7 +236,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = s => ({});
+const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = s => ({ session: getUserSession(s) });
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogSelectScreenEventProps = (
   dispatch,

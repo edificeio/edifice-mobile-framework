@@ -4,19 +4,21 @@
 
 import styled from '@emotion/native';
 import * as React from 'react';
-import { ColorValue, TextProps, ViewProps } from 'react-native';
+import { ColorValue, TextProps, View, ViewProps, TextStyle } from 'react-native';
 import theme from '~/app/theme';
+import { UI_SIZES } from './constants';
 import { Icon } from './icon';
-import { rem, TextBold, TextSizeStyle } from './text';
+import { TextBold, TextSizeStyle } from './text';
 
 // PROPS ==========================================================================================
 
 export interface ILabelProps extends React.PropsWithChildren<{}>, ViewProps {
   text?: string;
   icon?: string;
+  iconStyle?: TextStyle;
   color?: ColorValue;
   labelStyle?: 'plain' | 'outline';
-  labelSize?: 'normal' | 'small';
+  labelSize?: 'normal' | 'small' | 'large';
   textProps?: TextProps;
 }
 
@@ -24,10 +26,9 @@ export interface ILabelProps extends React.PropsWithChildren<{}>, ViewProps {
 
 export const LabelView = styled.View({
   alignSelf: 'baseline',
-  borderWidth: 1,
-  borderRadius: 21,
-  paddingVertical: 6,
-  paddingHorizontal: 12,
+  borderRadius: UI_SIZES.radius.large,
+  paddingVertical: UI_SIZES.spacing.small,
+  paddingHorizontal: UI_SIZES.spacing.medium,
 });
 export const LabelText = styled(TextBold)({
   // No common style except bold
@@ -39,6 +40,7 @@ export default (props: ILabelProps) => {
   const {
     text,
     icon,
+    iconStyle,
     color = theme.color.text.regular,
     labelStyle = 'plain',
     labelSize = 'normal',
@@ -47,16 +49,23 @@ export default (props: ILabelProps) => {
     ...viewProps
   } = props;
   const LabelViewWithPadding = styled(LabelView)({
-    paddingVertical: labelSize === 'normal' ? 6 : 2,
-    paddingHorizontal: labelSize === 'normal' ? 12 : 8,
+    paddingVertical:
+      labelSize === 'small' ? UI_SIZES.spacing.tiny : labelSize === 'large' ? UI_SIZES.spacing.medium : UI_SIZES.spacing.small,
+    paddingHorizontal:
+      labelSize === 'small'
+        ? UI_SIZES.spacing.smallPlus
+        : labelSize === 'large'
+        ? UI_SIZES.spacing.extraLarge
+        : UI_SIZES.spacing.medium,
+    borderRadius: labelSize === 'large' ? UI_SIZES.radius.extraLarge : UI_SIZES.radius.large,
   });
   const LabelViewWithColor = styled(LabelViewWithPadding)({
     ...(labelStyle === 'plain'
       ? {
           backgroundColor: color,
-          borderColor: color,
         }
       : {
+          borderWidth: labelSize === 'large' ? UI_SIZES.dimensions.width.small : UI_SIZES.dimensions.width.tiny,
           borderColor: color,
         }),
   });
@@ -68,19 +77,43 @@ export default (props: ILabelProps) => {
       : {
           color,
         }),
-    ...(labelSize === 'normal'
+    ...(labelSize === 'small'
       ? {
-          ...TextSizeStyle.Normal,
+          ...TextSizeStyle.Small,
+        }
+      : labelSize === 'large'
+      ? {
+          ...TextSizeStyle.SlightBig,
         }
       : {
-          ...TextSizeStyle.Small,
+          ...TextSizeStyle.Normal,
         }),
   });
   return (
     <LabelViewWithColor {...viewProps}>
       <LabelTextWithColor {...textProps}>
-        <Icon name={icon} color={labelStyle === 'plain' ? theme.color.text.inverse : color} size={rem(10/14)} />
-        &nbsp;
+        {icon ? (
+          <>
+            <View>
+              <Icon
+                name={icon}
+                color={labelStyle === 'plain' ? theme.color.text.inverse : color}
+                size={
+                  labelSize === 'small'
+                    ? TextSizeStyle.Small.fontSize
+                    : labelSize === 'large'
+                    ? TextSizeStyle.SlightBig.fontSize
+                    : TextSizeStyle.Normal.fontSize
+                }
+                style={{
+                  marginRight: labelSize === 'large' ? UI_SIZES.spacing.large : undefined,
+                  ...iconStyle,
+                }}
+              />
+            </View>
+            &nbsp;
+          </>
+        ) : null}
         {text}
         {children}
       </LabelTextWithColor>

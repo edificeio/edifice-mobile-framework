@@ -2,7 +2,7 @@ import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, Alert, Keyboard } from 'react-native';
+import { View, Alert, Keyboard, BackHandler } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationScreenProp } from 'react-navigation';
@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
+import theme from '~/app/theme';
 import { HeaderIcon } from '~/framework/components/header';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
@@ -121,7 +122,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           );
         },
         headerStyle: {
-          backgroundColor: CommonStyles.primary,
+          backgroundColor: theme.color.secondary.regular,
         },
       },
       navigation,
@@ -154,6 +155,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
     this.props.clearContent();
     this.props.setup();
+    BackHandler.addEventListener('hardwareBackPress', () => this.navigationHeaderFunction.getGoBack());
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
@@ -202,6 +204,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }
     }
   };
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', () => this.navigationHeaderFunction.getGoBack());
+  }
 
   navigationHeaderFunction = {
     // getAskForAttachment: (dispatch: Dispatch) => {

@@ -121,3 +121,16 @@ export function createSessionAsyncPagedReducer<DataType extends any[]>(
 ): Reducer<AsyncState<DataType>> {
     return _createAsyncPagedReducer(initialState, actionTypes, pageSize, reducerActionsHandlerMap, createSessionReducer, [sessionNamesUppercase]);
 }
+
+export enum AsyncPagedLoadingState {
+  PRISTINE,           // When no data has been fetched yet
+  INIT,               // When data is fetching for the first time
+  INIT_FAILED,        // When the first-time fetch failed
+  RETRY,              // When we fetch again after a failing first-time fetch
+  REFRESH,            // When we refresh the list
+  REFRESH_SILENT,     // When we refresh the list without feedback
+  REFRESH_FAILED,     // When the refresh has failed
+  FETCH_NEXT,         // When fetching next content
+  FETCH_NEXT_FAILED,  // When fetching next content failed
+  DONE,               // When the last fetch has been successful
+};

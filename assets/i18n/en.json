@@ -80,6 +80,10 @@
   "auth-error-must_log_again": "Please log in again with your new password.",
   "back": "Back",
   "blog": {
+    "blogsEmptyScreen": {
+      "button": "Create a blog online",
+      "title": "No Blogs in sight"
+    },
     "blogCreatePostScreen": {
       "createAction": "Save",
       "createSuccess": "Your post was saved.",
@@ -111,9 +115,6 @@
       }
     },
     "blogSelectScreen": {
-      "emptyScreenButton": "Create a blog",
-      "emptyScreenText": "You don’t have any shared blogs. To publish a post, you’ll need to first create a blog and share it from the web version of your virtual learning environment.",
-      "emptyScreenTitle": "It’s a bit quiet around here...",
       "sharedToNbPerson": "Shared with {{nb}} person",
       "sharedToNbPersons": "Shared with {{nb}} people",
       "title": "Choose a blog"
@@ -162,9 +163,6 @@
     "deletion": "Deletion",
     "discard": "Cancel",
     "error": {
-      "content": {
-        "text": "It looks like the contents have disappeared.\nIf the problem continues, contact the help desk."
-      },
       "text": "An error occurred. Please try again later.",
       "title": "Whoops..."
     },
@@ -389,6 +387,11 @@
   "forgot-several-emails-no-match": "This information does not match the email address that was provided.",
   "forgot-submit": "Send",
   "forgot-success": "Email sent",
+  "homework": {
+    "homeworkTaskListScreen": {
+      "homeworks": "Homework notebooks"
+    }
+  },
   "homework-createDiary": "Create an online Diary",
   "homework-diaries-emptyScreenText": "With the Homework Notebook app, absent-minded students no longer have any excuse. Write down all of the class's assignments, share them with your students and their parents, and everyone will stay up to date!",
   "homework-diaries-emptyScreenTitle": "Time to create a digital homework notebook.",

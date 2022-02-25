@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import deviceInfoModule from 'react-native-device-info';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -18,7 +19,7 @@ export const standardNavScreenOptions = (props, { state }) => {
     headerBackTitle: null,
     ...props,
     headerStyle: {
-      backgroundColor: CommonStyles.mainColorTheme,
+      backgroundColor: theme.color.secondary.regular,
       elevation: 5,
       height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
       ...(props.headerStyle || {}),

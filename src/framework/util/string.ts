@@ -1,4 +1,10 @@
-import unorm from "unorm";
+import unorm from 'unorm';
+
+/**
+ * Uppercase the first letter of a string.
+ * @param str
+ */
+export const uppercaseFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
  * Return a string that have no more accents.
@@ -7,7 +13,7 @@ import unorm from "unorm";
 // from https://stackoverflow.com/a/37511463/6111343 but using unorm package instead of String.normalize (not available on Android Release mode)
 export const removeAccents = (str: string) => {
   const combiningChars = /[\u0300-\u036F]/g;
-  return unorm.nfd(str).replace(combiningChars, "") as string;
+  return unorm.nfd(str).replace(combiningChars, '') as string;
 };
 
 /**
@@ -19,11 +25,11 @@ export const removeAccents = (str: string) => {
  */
 export const computeSearchQuery = (str: string) => {
   return removeAccents(str).toLocaleLowerCase().split(/\s+/);
-}
+};
 
 export const computeSearchValue = (str: string) => {
   return removeAccents(str).toLocaleLowerCase();
-}
+};
 
 /**
  * Returns a converted string from camelCase (or UppercasedCamelCase) to snake_case.
@@ -37,10 +43,10 @@ export function toSnakeCase(camelCase: string) {
 
   let str = camelCase;
   for (let i = 0, n = upperChars.length; i < n; i++) {
-    str = str.replace(new RegExp(upperChars[i]), "_" + upperChars[i].toLowerCase());
+    str = str.replace(new RegExp(upperChars[i]), '_' + upperChars[i].toLowerCase());
   }
 
-  if (str.slice(0, 1) === "_") {
+  if (str.slice(0, 1) === '_') {
     str = str.slice(1);
   }
 
@@ -49,7 +55,7 @@ export function toSnakeCase(camelCase: string) {
 
 // From https://dev.to/cod3pineapple/1143-longest-common-subsequence-javascript-solution-5bgp
 export const findLongestCommonSubstring = function (a: string, b: string) {
-  var longest = "";
+  var longest = '';
   // loop through the first string
   for (var i = 0; i < a.length; ++i) {
     // loop through the second string
@@ -59,16 +65,21 @@ export const findLongestCommonSubstring = function (a: string, b: string) {
         var str = a[i];
         var k = 1;
         // keep going until the letters no longer match, or we reach end
-        while (i + k < a.length && j + k < b.length // haven't reached end
-          && a[i + k] === b[j + k]) { // same letter
+        while (
+          i + k < a.length &&
+          j + k < b.length && // haven't reached end
+          a[i + k] === b[j + k]
+        ) {
+          // same letter
           str += a[i + k];
           ++k;
         }
         // if this substring is longer than the longest, save it as the longest
-        if (str.length > longest.length) { longest = str }
+        if (str.length > longest.length) {
+          longest = str;
+        }
       }
     }
   }
   return longest;
-}
-
+};

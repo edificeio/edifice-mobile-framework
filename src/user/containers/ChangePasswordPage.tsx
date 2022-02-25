@@ -7,7 +7,6 @@ import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { FakeHeader, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
 
-import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import {
   changePasswordAction,

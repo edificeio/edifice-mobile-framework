@@ -2,6 +2,7 @@ import style from 'glamorous-native';
 import * as React from 'react';
 import { View, Animated } from 'react-native';
 
+import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
@@ -20,7 +21,7 @@ const TapCircle = style(TouchableOpacity)(
     elevation: 2,
   },
   ({ checked = false }) => ({
-    borderColor: checked ? CommonStyles.primary : '#DDDDDD',
+    borderColor: checked ? theme.color.secondary.regular : '#DDDDDD',
   }),
 );
 
@@ -37,7 +38,7 @@ const Container = style(TouchableOpacity)(
     top: 0,
   },
   ({ checked = false }) => ({
-    backgroundColor: checked ? CommonStyles.primary : '#efefef',
+    backgroundColor: checked ? theme.color.secondary.regular : '#efefef',
     borderColor: checked ? CommonStyles.primary : '#DDDDDD',
     borderWidth: checked ? 0 : 1,
   }),
@@ -72,7 +73,6 @@ export class Toggle extends React.Component<
     return (
       <View style={{ width: 40, height: 22 }}>
         <Container onPress={() => this.switchCheck()} checked={this.props.checked} />
-
         <Animated.View style={{ left: this.state.positionAnim }}>
           <TapCircle onPress={() => this.switchCheck()} checked={this.props.checked} />
         </Animated.View>

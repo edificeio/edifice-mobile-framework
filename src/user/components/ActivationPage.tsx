@@ -16,6 +16,7 @@ import {
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { PFLogo } from '~/framework/components/pfLogo';
 import { Text, TextAction } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
@@ -146,7 +147,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                   <FormWrapper>
                     <FormContainer>
                       <LogoWrapper>
-                        <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
+                        <PFLogo />
                       </LogoWrapper>
                       <InputLogin login={login} form={formModel} onChange={this.onChange('login')} />
                       <InputPassword password={password} form={formModel} onChange={this.onChange('password')} />
@@ -217,7 +218,6 @@ const LogoWrapper = style.view({
   alignItems: 'center',
   justifyContent: 'center',
 });
-const Logo = style.image({ height: 50, width: 200, resizeMode: 'contain' });
 const ButtonWrapper = style.view(
   {
     alignItems: 'center',

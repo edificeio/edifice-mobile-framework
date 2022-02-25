@@ -5,14 +5,15 @@
 import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, SafeAreaView, View } from 'react-native';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { NavigationInjectedProps, StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { Checkbox } from '~/framework/components/checkbox';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
@@ -20,7 +21,6 @@ import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Text, TextAction, TextSizeStyle } from '~/framework/components/text';
-import { Toggle } from '~/framework/components/toggle';
 import { loadPushNotifsSettingsAction, updatePushNotifsSettingsAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import {
@@ -235,18 +235,23 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         alwaysBounceVertical={false}
         ListFooterComponent={<SafeAreaView />}
         ListHeaderComponent={
-          <ListItem
-            leftElement={<Text>{I18n.t('common.all')}</Text>}
-            rightElement={
-              <Toggle
-                checked={areAllChecked}
-                onCheckChange={() => {
-                  console.log('toggle all', !areAllChecked);
-                  this.doTogglePushNotifSettingForAppType(type, !areAllChecked);
-                }}
-              />
-            }
-          />
+          <TouchableOpacity onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}>
+            <ListItem
+              leftElement={<Text>{I18n.t('common.all')}</Text>}
+              rightElement={
+                <Checkbox
+                  customCheckboxColor={areAllChecked ? theme.color.text.light : undefined}
+                  customContainerStyle={{
+                    backgroundColor: theme.color.background.card,
+                    borderColor: theme.color.text.light,
+                    borderWidth: 2,
+                  }}
+                  checked={areAllChecked}
+                  onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
+                />
+              }
+            />
+          </TouchableOpacity>
         }
       />
     );
@@ -254,24 +259,19 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
 
   renderSubItem(item: [string, boolean]) {
     return (
-      <ListItem
-        leftElement={
-          <Text>
-            {I18n.t(`timeline.notifType.${item[0]}`, {
-              // defaultValue: item[0]
-            })}
-          </Text>
-        }
-        rightElement={
-          <Toggle
-            checked={item[1]}
-            onCheckChange={() => {
-              console.log('toggle', [item[0], !item[1]]);
-              this.doTogglePushNotifSetting([item[0], !item[1]]);
-            }}
-          />
-        }
-      />
+      <TouchableOpacity onPress={() => this.doTogglePushNotifSetting([item[0], !item[1]])}>
+        <ListItem
+          leftElement={<Text>{I18n.t(`timeline.notifType.${item[0]}`, {})}</Text>}
+          rightElement={
+            <Checkbox
+              checked={item[1]}
+              onPress={() => {
+                this.doTogglePushNotifSetting([item[0], !item[1]]);
+              }}
+            />
+          }
+        />
+      </TouchableOpacity>
     );
   }
 

@@ -18,7 +18,7 @@ export interface ITheme {
     };
     primary: {
       regular: ColorValue;
-      subleShadow: ColorValue;
+      subtleShadow: ColorValue;
       shadow: ColorValue;
       light: ColorValue;
       extraLight: ColorValue;
@@ -48,6 +48,31 @@ export interface ITheme {
     failure: ColorValue;
     warning: ColorValue;
   };
+  days: {
+    monday: ColorValue;
+    tuesday: ColorValue;
+    wednesday: ColorValue;
+    thursday: ColorValue;
+    friday: ColorValue;
+    saturday: ColorValue;
+  };
+  flashMessages: {
+    'grey-dark': ColorValue;
+    red: ColorValue;
+    orange: ColorValue;
+    green: ColorValue;
+    blue: ColorValue;
+  };
+  greyPalette: {
+    black: ColorValue;
+    graphite: ColorValue;
+    stone: ColorValue;
+    grey: ColorValue;
+    cloudy: ColorValue;
+    pearl: ColorValue;
+    fog: ColorValue;
+    white: ColorValue;
+  };
   themeOpenEnt: {
     cyan: ColorValue;
     green: ColorValue;
@@ -56,13 +81,6 @@ export interface ITheme {
     pink: ColorValue;
     purple: ColorValue;
     indigo: ColorValue;
-  };
-  flashMessages: {
-    'grey-dark': ColorValue;
-    red: ColorValue;
-    orange: ColorValue;
-    green: ColorValue;
-    blue: ColorValue;
   };
 }
 
@@ -79,7 +97,7 @@ export const defaultTheme: ITheme = {
     },
     primary: {
       regular: '#ff8000',
-      subleShadow: 'magenta',
+      subtleShadow: 'magenta',
       shadow: 'magenta',
       light: 'magenta',
       extraLight: 'magenta',
@@ -109,6 +127,31 @@ export const defaultTheme: ITheme = {
     failure: '#e13a3a',
     warning: '#f59700',
   },
+  days: {
+    monday: '#6fbe2e',
+    tuesday: '#a348c0',
+    wednesday: '#46afe6',
+    thursday: '#ff3a55',
+    friday: '#ff8d2e',
+    saturday: '#eac403',
+  },
+  flashMessages: {
+    'grey-dark': '#5b6472',
+    red: '#c74848',
+    orange: '#ff9057',
+    green: '#3cb371',
+    blue: '#2a9cc8',
+  },
+  greyPalette: {
+    black: '#4a4a4a',
+    graphite: '#7a7a7a',
+    stone: '#a9a9a9',
+    grey: '#c7c7c7',
+    cloudy: '#e4e4e4',
+    pearl: '#f2f2f2',
+    fog: '#fafafa',
+    white: '#ffffff',
+  },
   themeOpenEnt: {
     cyan: '#4bafd5',
     green: '#46bfaf',
@@ -117,13 +160,6 @@ export const defaultTheme: ITheme = {
     pink: '#b930a2',
     purple: '#763294',
     indigo: '#1a22a2',
-  },
-  flashMessages: {
-    'grey-dark': '#5b6472',
-    red: '#c74848',
-    orange: '#ff9057',
-    green: '#3cb371',
-    blue: '#2a9cc8',
   },
 };
 

@@ -2,8 +2,6 @@
  * Homework diary list actions
  * Build actions to be dispatched to the homework diary list reducer.
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { homeworkDiarySelected } from './selectedDiary';
 
 import homeworkConfig from '~/homework/config';
@@ -46,6 +44,7 @@ const homeworkDiaryListAdapter: (data: IHomeworkDiaryListBackend) => IHomeworkDi
       id: item._id,
       name: item.name,
       title: item.title,
+      thumbnail: item.thumbnail,
     };
   }
   return result;
@@ -87,13 +86,8 @@ export function fetchHomeworkDiaryList() {
 
       // This block accesses to another chunk of state and fire action outside his scope. (homework -> selectedDiary)
       const dataIds = Object.keys(data);
-      let savedSelectedId = await AsyncStorage.getItem('diary-selected');
-      if (savedSelectedId && !dataIds.includes(savedSelectedId)) {
-        await AsyncStorage.removeItem('diary-selected');
-        savedSelectedId = null;
-      }
-      if (dataIds.length > 0) {
-        dispatch(homeworkDiarySelected(savedSelectedId || dataIds[0]));
+      if (dataIds.length === 1) {
+        dispatch(homeworkDiarySelected(dataIds[0]));
       }
     } catch (errmsg) {
       dispatch(homeworkDiaryListFetchError(errmsg));

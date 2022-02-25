@@ -4,6 +4,7 @@ import { Platform, ViewStyle, SafeAreaView, StyleProp } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { connect } from 'react-redux';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
@@ -16,15 +17,6 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const isIphoneX = () => false; // ToDo use React Navigation iPhoneX Compatibility here
 export const iosStatusBarHeight = isIphoneX() ? 40 : 20;
-
-const containerBar: ViewStyle = {
-  alignItems: 'center',
-  elevation: 5,
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  justifyContent: 'flex-start',
-  paddingTop: Platform.OS === 'ios' ? iosStatusBarHeight : 0,
-};
 
 const HeaderStyle = style(SafeAreaView)({
   flexDirection: 'row',
@@ -53,7 +45,7 @@ export const HeaderComponent = ({
     style={[
       {
         elevation: connectionTracker.visible ? 0 : 5,
-        backgroundColor: color ? color : CommonStyles.mainColorTheme,
+        backgroundColor: color ? color : theme.color.secondary.regular,
       },
       customStyle,
     ]}>

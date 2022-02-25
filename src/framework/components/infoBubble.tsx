@@ -86,7 +86,6 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
             iconName="interrogation-mark"
             iconSize={iconSize}
             buttonStyle={{
-              backgroundColor: displayToggle ? theme.color.primary.regular : theme.color.secondary.regular,
               height: infoBubbleDiameter,
               width: infoBubbleDiameter,
               borderRadius: infoBubbleRadius,

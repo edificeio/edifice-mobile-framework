@@ -80,7 +80,14 @@
   "auth-error-must_log_again": "Merci de bien vouloir vous identifier à nouveau avec votre nouveau mot de passe.",
   "back": "Retour",
   "blog": {
+    "blogsEmptyScreen": {
+      "button": "Créer un blog sur le web",
+      "text": "Endossez la casquette du petit reporter en créant votre premier blog !",
+      "textNoCreationRights": "Proposez des idées de blog à votre école (la vie de la classe, les sorties scolaires, les exposés, ...)",
+      "title": "Aucun blog à l'horizon"
+    },
     "blogCreatePostScreen": {
+      "confirmationUnsavedPublication": "Si vous quittez, le billet que vous avez rédigé sera perdu.",
       "createAction": "Enregistrer",
       "createSuccess": "Votre billet a bien été enregistré.",
       "postContent": "Contenu du billet",
@@ -111,9 +118,6 @@
       }
     },
     "blogSelectScreen": {
-      "emptyScreenButton": "Créer un Blog",
-      "emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
-      "emptyScreenTitle": "C'est un peu calme ici...",
       "sharedToNbPerson": "Partagé à {{nb}} personne",
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"
@@ -152,10 +156,14 @@
       "confirmationUnsavedPublication": "Vous allez annuler l'ajout du commentaire. En êtes-vous sûr ?",
       "noComments": "Pas encore de commentaires"
     },
+    "confirmationUnsavedModification": "Modification non enregistrée",
+    "confirmationUnsavedPublication": "Publication non enregistrée",
     "continue": "Continuer",
     "date": {
       "invalid": "",
       "now": "maintenant",
+      "today": "aujourd'hui",
+      "tomorrow": "demain",
       "yesterday": "hier"
     },
     "delete": "Supprimer",
@@ -163,16 +171,16 @@
     "discard": "Abandonner",
     "error": {
       "content": {
-        "text": "Il semblerait que le contenu se soit envolé.\nSi le problème persiste, contactez l'assistance."
+        "text": "Il semblerait que le contenu a été supprimé ou que vous n'y avez plus accès.",
+        "title": "Oups...\nLe contenu s'est envolé"
       },
       "text": "Une erreur est survenue. Veuillez réessayer plus tard.",
       "title": "Oups..."
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
+    "for": "Pour",
     "infoBubble-doNotShow": "Ne plus afficher ce message",
     "infoBubble-understood": "J'ai compris",
-    "confirmationUnsavedModification": "Modification non enregistrée",
-    "confirmationUnsavedPublication": "Publication non enregistrée",
     "modified": "(modifié)",
     "modify": "Modifier",
     "ok": "OK",
@@ -389,6 +397,15 @@
   "forgot-several-emails-no-match": "Les informations saisies ne correspondent pas à l'adresse mail renseignée.",
   "forgot-submit": "Envoyer",
   "forgot-success": "Courriel envoyé.",
+  "homework": {
+    "homeworkTaskListScreen": {
+      "displayPastDays": "Afficher les jours précédents",
+      "noMorePastHomework": "Pas d'activités précédentes"
+    },
+    "homeworkExplorerScreen": {
+      "homeworks": "Cahiers de textes"
+    }
+  },
   "homework-createDiary": "Créer un cahier de textes sur le web",
   "homework-diaries-emptyScreenText": "Avec l'application Cahier de textes, plus d'excuse pour les jeunes étourdis. Notez toutes les activités, partagez-les aux enfants, aux parents et tout le monde est au courant !",
   "homework-diaries-emptyScreenTitle": "C'est l'heure de créer un cahier de textes numérique.",

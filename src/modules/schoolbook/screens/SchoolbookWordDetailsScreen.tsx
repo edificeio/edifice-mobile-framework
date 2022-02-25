@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Linking, Platform, RefreshControl, ScrollView, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, View } from 'react-native';
 import { NavigationInjectedProps, NavigationActions, NavigationStateRoute, StackActions } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
@@ -41,6 +41,7 @@ import { ButtonsOkCancel, FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
 import { openUrl } from '~/framework/util/linking';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 // TYPES ==========================================================================================
 
@@ -150,7 +151,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
   }
 
   renderError() {
-    return <TextItalic>Error</TextItalic>; // ToDo: great error screen here
+    return <EmptyContentScreen />;
   }
 
   renderContent(schoolbookWordData: ISchoolbookWordReport) {
@@ -196,6 +197,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
         {this.renderSchoolbookWordAckState(schoolbookWordData)}
         <HtmlContentView
           html={schoolbookWordData.word.text}
+          onHtmlError={() => this.setState({ errorState: true })}
           onDownload={() => Trackers.trackEvent('Schoolbook', 'DOWNLOAD ATTACHMENT', 'Read mode')}
           onError={() => Trackers.trackEvent('Schoolbook', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
           onDownloadAll={() => Trackers.trackEvent('Schoolbook', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}

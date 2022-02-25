@@ -4,8 +4,8 @@ import * as React from 'react';
 import { View, SafeAreaView, ScrollView, Platform } from 'react-native';
 
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { FlatButton } from '~/ui';
 
 // TYPES ---------------------------------------------------------------------------
@@ -43,7 +43,7 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
               <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
                 <FormContainer>
                   <LogoWrapper>
-                    <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
+                    <PFLogo />
                   </LogoWrapper>
                   <View style={{ flexGrow: 4, justifyContent: 'flex-start' }}>
                     <TextLightItalic>{I18n.t('federatedAccount-instructions')}</TextLightItalic>
@@ -87,4 +87,3 @@ const LogoWrapper = style.view({
   justifyContent: 'center',
   marginBottom: 20,
 });
-const Logo = style.image({ height: 50, width: 200, resizeMode: 'contain' });

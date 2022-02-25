@@ -25,7 +25,7 @@ export type ICommentField_Props = ICommentField_DataProps & ICommentField_EventP
 const CommentField = (props: ICommentField_Props, ref) => {
   //  Due to Alert + Keyboard bug, we need to set/unset a flag when Alert is displayed/discarded
   let alertDisplayed = false;
-  const resetAlertDisplay = () => setTimeout(() => (alertDisplayed = false), 0);
+  const resetAlertDisplay = () => setTimeout(() => (alertDisplayed = false), 1000);
 
   const inputRef: { current: TextInput | undefined } = React.useRef();
   const session = useSelector(state => getUserSession(state));

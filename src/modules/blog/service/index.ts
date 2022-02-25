@@ -222,6 +222,18 @@ export const blogService = {
       const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList;
       return blogPosts;
     },
+    page: async (session: IUserSession, blogId: string, page: number, state?: string | string[]) => {
+      // Compute state parameter
+      let stateAsArray: string[] | undefined;
+      if (typeof state === 'string') stateAsArray = [state];
+      else stateAsArray = state;
+      // Call API
+      let api = `/blog/post/list/all/${blogId}?content=true&page=${page}`;
+      if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
+      const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
+      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList;
+      return blogPosts;
+    }
   },
   post: {
     get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, state?: string) => {

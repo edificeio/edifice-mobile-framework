@@ -1,33 +1,9 @@
-/**
- * HomeworkPage
- *
- * Display page for all homework in a calendar-like way.
- *
- * Props :
- *    `isFetching` - is data currently fetching from the server.
- *    `diaryId` - displayed diaryId.
- *    `tasksByDay` - list of data.
- *
- *    `onMount` - fired when component did mount.
- *    `onRefresh` - fired when the user ask to refresh the list.
- *    `onSelect` - fired when the user touches a displayed task.
- *
- *    `navigation` - React Navigation instance.
- */
-
-// Imports ----------------------------------------------------------------------------------------
-
-// Libraries
-import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Linking, RefreshControl, SectionList, Text } from 'react-native';
+import { Platform, RefreshControl, SectionList, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
-
-// Components
-
-import { NavigationScreenProp } from 'react-navigation';
+import { NavigationActions, NavigationScreenProp } from 'react-navigation';
 
 import HomeworkCard from './HomeworkCard';
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
@@ -39,22 +15,26 @@ import { Trackers } from '~/framework/util/tracker';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
-import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton, Loading } from '~/ui';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
+import { Loading } from '~/ui';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import today from '~/utils/today';
 import { openUrl } from '~/framework/util/linking';
-
-const { View } = style;
+import Label from '~/framework/components/label';
+import { UI_SIZES } from '~/framework/components/constants';
+import theme from '~/app/theme';
+import config from '../config';
+import { PageView } from '~/framework/components/page';
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 // Props definition -------------------------------------------------------------------------------
 
-export interface IHomeworkPageDataProps {
+export interface IHomeworkTaskListScreenDataProps {
   isFetching?: boolean;
   diaryId?: string;
   didInvalidate?: boolean;
+  error?: boolean;
+  errmsg?: any;
   diaryListData?: IHomeworkDiaryList;
   diaryInformation?: IHomeworkDiary;
   tasksByDay?: {
@@ -65,31 +45,30 @@ export interface IHomeworkPageDataProps {
   session: IUserSession;
 }
 
-export interface IHomeworkPageEventProps {
+export interface IHomeworkTaskListScreenEventProps {
   onFocus?: () => void;
   onRefresh?: (diaryId: string) => void;
-  onSelect?: (diaryId: string, date: moment.Moment, itemId: string) => void;
   onScrollBeginDrag?: () => void;
 }
 
-export interface IHomeworkPageOtherProps {
+export interface IHomeworkTaskListScreenOtherProps {
   navigation?: NavigationScreenProp<object>;
 }
 
-interface IHomeworkPageState {
+interface IHomeworkTaskListScreenState {
   fetching: boolean;
   pastDateLimit: moment.Moment;
 }
 
-export type IHomeworkPageProps = IHomeworkPageDataProps & IHomeworkPageEventProps & IHomeworkPageOtherProps & IHomeworkPageState;
+export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
+  IHomeworkTaskListScreenEventProps &
+  IHomeworkTaskListScreenOtherProps &
+  IHomeworkTaskListScreenState;
 
 // Main component ---------------------------------------------------------------------------------
 
-export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object> {
-  constructor(props) {
-    super(props);
-  }
-  public state = {
+export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, object> {
+  state = {
     fetching: false,
     pastDateLimit: today(),
   };
@@ -113,20 +92,38 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
 
   // Render
 
-  public render() {
-    const { isFetching, didInvalidate } = this.props;
-    const pageContent = isFetching && didInvalidate ? this.renderLoading() : this.renderList();
+  render() {
+    const { isFetching, didInvalidate, diaryInformation, navigation, error } = this.props;
+    const diaryTitle = diaryInformation?.title;
+    const pageContent = isFetching && didInvalidate ? <Loading /> : error ? this.renderError() : this.renderList();
 
     return (
-      <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
-        {pageContent}
-      </PageContainer>
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
+                iconSize={24}
+                onPress={() => navigation?.dispatch(NavigationActions.back())}
+              />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{diaryTitle || I18n.t('Homework')}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        <PageView>{pageContent}</PageView>
+      </>
     );
   }
 
+  private renderError() {
+    return <EmptyContentScreen />;
+  }
+
   private renderList() {
-    const { diaryListData, diaryId, tasksByDay, navigation, onRefresh, onSelect, onScrollBeginDrag, session } = this.props;
+    const { diaryListData, diaryId, tasksByDay, navigation, onRefresh, session } = this.props;
     const { fetching, pastDateLimit } = this.state;
     const hasNoDiaries = !diaryListData || (diaryListData && Object.keys(diaryListData).length === 0);
     const data = tasksByDay
@@ -151,44 +148,32 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
 
     return (
       <View style={{ flex: 1 }}>
-        {noFutureHomeworkHiddenPast ? null : (
-          <>
-            <HomeworkTimeline />
-            <View
-              style={{
-                backgroundColor: CommonStyles.lightGrey,
-                height: 15,
-                marginLeft: 50,
-                width: '100%',
-                position: 'absolute',
-                zIndex: 1,
-                top: 0,
-              }}
-            />
-          </>
-        )}
+        {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.extraLarge} />}
         <SectionList
           scrollEnabled={!hasNoDiaries}
-          contentContainerStyle={noFutureHomeworkHiddenPast ? { flex: 1 } : null}
+          contentContainerStyle={{
+            padding: UI_SIZES.spacing.large,
+            flex: noFutureHomeworkHiddenPast ? 1 : undefined,
+          }}
           sections={displayedHomework}
-          CellRendererComponent={ViewOverflow} /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
-          stickySectionHeadersEnabled
+          CellRendererComponent={ViewOverflow}
+          stickySectionHeadersEnabled={false}
           renderSectionHeader={({ section: { title } }) => (
-            <HomeworkDayCheckpoint
-              nb={title.date()}
-              text={title.format('dddd D MMMM YYYY')}
-              active={title.isSame(today(), 'day')}
-            />
+            <View
+              style={{
+                marginBottom: UI_SIZES.spacing.extraSmall,
+                marginTop: UI_SIZES.spacing.extraLarge,
+              }}>
+              <HomeworkDayCheckpoint date={title} />
+            </View>
           )}
           renderItem={({ item, index }) => (
             <HomeworkCard
-              key={item.id}
+              key={index}
               title={item.title}
               content={item.content}
-              onPress={() => {
-                onSelect!(diaryId!, item.date, item.id);
-                navigation!.navigate('HomeworkTask', { title: item.title });
-              }}
+              date={item.date}
+              onPress={() => navigation!.navigate(`${config.name}/details`, { task: item })}
             />
           )}
           keyExtractor={item => item.id}
@@ -201,27 +186,32 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
               }}
             />
           }
-          onScrollBeginDrag={() => onScrollBeginDrag()}
-          ListHeaderComponent={
-            hasPastHomeWork ? (
-              <View style={{ height: 45, justifyContent: 'center', alignItems: 'center', marginTop: 15 }}>
-                {noRemainingPastHomework ? (
-                  <Text style={{ fontStyle: 'italic', color: CommonStyles.grey }}>{I18n.t('homework-previousNoMore')}</Text>
-                ) : (
-                  <FlatButton
-                    loading={false}
-                    title={I18n.t('homework-previousSee')}
-                    onPress={() => {
-                      const newestRemainingPastHW = remainingPastHomework[remainingPastHomework.length - 1];
-                      const newestRemainingPastHWDate = newestRemainingPastHW.title;
-                      const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf('isoWeek');
-                      this.setState({ pastDateLimit: newestRemainingPastHWWeekStart });
-                    }}
-                  />
-                )}
-              </View>
-            ) : null
-          }
+          ListHeaderComponent={() => {
+            const labelColor = noRemainingPastHomework ? theme.greyPalette.grey : theme.greyPalette.black;
+            const labelText = I18n.t(
+              `homework.homeworkTaskListScreen.${noRemainingPastHomework ? 'noMorePastHomework' : 'displayPastDays'}`,
+            );
+            return hasPastHomeWork ? (
+              <TouchableOpacity
+                style={{ alignSelf: 'center' }}
+                disabled={noRemainingPastHomework}
+                onPress={() => {
+                  const newestRemainingPastHW = remainingPastHomework[remainingPastHomework.length - 1];
+                  const newestRemainingPastHWDate = newestRemainingPastHW.title;
+                  const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf('isoWeek');
+                  this.setState({ pastDateLimit: newestRemainingPastHWWeekStart });
+                }}>
+                <Label
+                  labelStyle="outline"
+                  labelSize="large"
+                  icon={noRemainingPastHomework ? undefined : 'back'}
+                  iconStyle={{ transform: [{ rotate: '90deg' }] }}
+                  color={labelColor}
+                  text={labelText}
+                />
+              </TouchableOpacity>
+            ) : null;
+          }}
           ListFooterComponent={noFutureHomeworkHiddenPast ? null : <View style={{ height: 15 }} />}
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
@@ -254,10 +244,6 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
       </View>
     );
   }
-
-  private renderLoading() {
-    return <Loading />;
-  }
 }
 
-export default HomeworkPage;
+export default HomeworkTaskListScreen;

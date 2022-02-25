@@ -5,7 +5,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Linking, Platform, RefreshControl, View, ScrollView } from 'react-native';
+import { Platform, RefreshControl, View, ScrollView } from 'react-native';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,7 +13,6 @@ import { bindActionCreators } from 'redux';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Drawer } from '~/framework/components/drawer';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import Explorer, {
@@ -42,6 +41,7 @@ import { IBlog, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources, 
 import { getBlogWorkflowInformation } from '~/modules/blog/rights';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { openUrl } from '~/framework/util/linking';
+import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
 
 // TYPES ==========================================================================================
 
@@ -165,13 +165,11 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   const renderEmpty = () => {
     return (
       <EmptyScreen
-        imageSrc={require('ASSETS/images/empty-screen/empty-search.png')}
-        imgWidth={265.98}
-        imgHeight={279.97}
         customStyle={{ backgroundColor: theme.color.background.card }}
-        title={I18n.t('blog.blogExplorerScreen.emptyScreenTitle')}
-        text={I18n.t(`blog.blogExplorerScreen.emptyScreenText${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        buttonText={hasBlogCreationRights ? I18n.t('blog.blogExplorerScreen.emptyScreenButton') : undefined}
+        svgImage={<EmptySearch />}
+        title={I18n.t('blog.blogsEmptyScreen.title')}
+        text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {

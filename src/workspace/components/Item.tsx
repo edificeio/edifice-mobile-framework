@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 
+import theme from '~/app/theme';
 import { Text, NestedText } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
@@ -43,7 +44,7 @@ export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any
         });
         onEvent(eventInfos);
       }}
-      style={{ backgroundColor: selected ? '#2A9CC825' : '#fff', margin: 0 }}
+      style={{ backgroundColor: selected ? theme.color.secondary.extraLight : theme.color.background.card, margin: 0 }}
       borderBottomWidth={0}>
       <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>

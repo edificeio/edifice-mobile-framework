@@ -18,6 +18,7 @@ import { Header, HeaderIcon, Title } from '~/ui/headers/Header';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import { action_toggleNotifPrefsByApp, includeNotifKeys, DEPRECATED_loadNotificationPrefs } from '~/user/actions/notifPrefs';
 import { NotifPrefLine } from '~/user/components/NotifPrefLine';
+import { uppercaseFirstLetter } from '~/framework/util/string';
 
 // tslint:disable-next-line:max-classes-per-file
 export class NotifPrefsPageHeader extends React.PureComponent<
@@ -86,8 +87,6 @@ export class NotifPrefsPage extends React.PureComponent<INotifPrefsPageProps, un
       availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
     });
     // Do verification
-    const stringCapitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-
     if (
       !availableAppsWithUppercase.hasOwnProperty(notifPref.type) && // TODO: Get the available apps NOT from timeline
       notifPref.type !== 'MESSAGERIE' &&
@@ -96,7 +95,7 @@ export class NotifPrefsPage extends React.PureComponent<INotifPrefsPageProps, un
     )
       return false;
 
-    if (!this.props.legalapps.includes(stringCapitalize(notifPref['type'].toLowerCase()))) return false;
+    if (!this.props.legalapps.includes(uppercaseFirstLetter(notifPref['type'].toLowerCase()))) return false;
     return true;
   }
 
@@ -109,7 +108,6 @@ export class NotifPrefsPage extends React.PureComponent<INotifPrefsPageProps, un
       availableAppsWithUppercase[app] = availableApps[app];
       availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
     });
-    const stringCapitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
     // Do verification
     if (
       !availableAppsWithUppercase.hasOwnProperty(appName.toUpperCase()) && // TODO: Get the available apps NOT from timeline
@@ -118,7 +116,7 @@ export class NotifPrefsPage extends React.PureComponent<INotifPrefsPageProps, un
       appName.toUpperCase() !== 'WORKSPACE'
     )
       return false;
-    if (!this.props.legalapps.includes(stringCapitalize(appName.toLowerCase()))) return false;
+    if (!this.props.legalapps.includes(uppercaseFirstLetter(appName.toLowerCase()))) return false;
     return true;
   }
 

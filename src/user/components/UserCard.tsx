@@ -73,13 +73,7 @@ export const UserCard = ({
           callback={image => (updatingAvatar ? null : onChangeAvatar(image))}
           activeOpacity={updatingAvatar ? 1 : 0}
           cameraOptions={{ cameraType: 'front' }}>
-          <IconButton
-            disabled={updatingAvatar}
-            iconName="pencil"
-            iconColor={CommonStyles.white}
-            iconSize={15}
-            buttonStyle={{ backgroundColor: CommonStyles.primary }}
-          />
+          <IconButton disabled={updatingAvatar} iconName="pencil" iconColor={CommonStyles.white} iconSize={15} />
         </ImagePicker>
       ) : (
         <View style={{ height: 30, width: 30 }} />
@@ -89,25 +83,14 @@ export const UserCard = ({
           disallowInterruption
           onPress={() => (updatingAvatar ? null : onDeleteAvatar())}
           activeOpacity={updatingAvatar ? 1 : 0}>
-          <IconButton
-            disabled={updatingAvatar}
-            iconName="trash"
-            iconColor={CommonStyles.white}
-            buttonStyle={{ backgroundColor: CommonStyles.primary }}
-          />
+          <IconButton disabled={updatingAvatar} iconName="trash" iconColor={CommonStyles.white} />
         </TouchableOpacity>
       ) : (
         <ImagePicker
           callback={image => (updatingAvatar ? null : onChangeAvatar(image))}
           activeOpacity={updatingAvatar ? 1 : 0}
           cameraOptions={{ cameraType: 'front' }}>
-          <IconButton
-            disabled={updatingAvatar}
-            iconName="camera-on"
-            iconColor={CommonStyles.white}
-            iconSize={15}
-            buttonStyle={{ backgroundColor: CommonStyles.primary }}
-          />
+          <IconButton disabled={updatingAvatar} iconName="camera-on" iconColor={CommonStyles.white} iconSize={15} />
         </ImagePicker>
       )}
     </View>

@@ -16,9 +16,6 @@ import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
 import WAYFPage from '~/user/containers/WAYFPage';
 import ChangePasswordPage from '~/user/containers/ChangePasswordPage';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { checkVersionThenLogin } from '~/user/actions/version';
-import { actionTypeLoginError } from '~/user/actions/actionTypes/login';
-import { navigate } from './helpers/navHelper';
 import { redirectAfterChangePassword } from '~/user/actions/login';
 
 /**

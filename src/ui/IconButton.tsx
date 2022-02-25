@@ -3,7 +3,7 @@ import { View, ViewStyle } from 'react-native';
 
 import { Icon } from '.';
 
-import { CommonStyles } from '~/styles/common/styles';
+import theme from '~/app/theme';
 
 export const IconButton = (props: {
   iconName: string;
@@ -17,7 +17,7 @@ export const IconButton = (props: {
     <View
       style={[
         {
-          backgroundColor: CommonStyles.secondary,
+          backgroundColor: theme.color.secondary.regular,
           borderRadius: 15,
           height: 30,
           width: 30,

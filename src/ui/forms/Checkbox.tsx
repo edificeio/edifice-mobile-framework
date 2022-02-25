@@ -2,6 +2,7 @@ import style from 'glamorous-native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -15,7 +16,7 @@ const TapCircle = style(TouchableOpacity)(
     width: 25,
   },
   ({ checked = false }) => ({
-    backgroundColor: checked ? CommonStyles.primary : '#FFFFFF',
+    backgroundColor: checked ? theme.color.secondary.regular : '#FFFFFF',
     borderColor: checked ? CommonStyles.primary : '#DDDDDD',
     borderWidth: checked ? 0 : 2,
   }),

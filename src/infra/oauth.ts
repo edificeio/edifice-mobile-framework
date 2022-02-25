@@ -178,11 +178,11 @@ export class OAuth2RessourceOwnerPasswordClient {
     try {
       return await response.json();
     } catch (e) {
-      const err: OAuthError = new Error('EAUTH: invalid Json oauth response') as any;
+      const err: OAuthError = new Error('EAUTH: invalid Json oauth response') as OAuthError;
       err.name = 'EAUTH';
       err.type = OAuthErrorType.UNKNOWN_RESPONSE;
       err.description = 'Body is not JSON data.';
-      throw err as OAuthError;
+      throw err;
     }
   }
 

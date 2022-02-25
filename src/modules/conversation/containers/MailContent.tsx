@@ -39,6 +39,7 @@ import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Header as HeaderComponent } from '~/ui/headers/Header';
 import { HeaderAction } from '~/ui/headers/NewHeader';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 
 class MailContentContainer extends React.PureComponent<
   {
@@ -54,6 +55,7 @@ class MailContentContainer extends React.PureComponent<
     dispatch: ThunkDispatch<any, any, any>;
     isPristine: boolean;
     isFetching: boolean;
+    error?: Error;
     mail: any;
   },
   any
@@ -67,6 +69,7 @@ class MailContentContainer extends React.PureComponent<
       showMenu: false,
       showModal: false,
       showHeaderSubject: false,
+      htmlError: false,
     };
   }
   public componentDidMount() {
@@ -160,8 +163,8 @@ class MailContentContainer extends React.PureComponent<
   };
 
   public render() {
-    const { navigation, mail } = this.props;
-    const { showMenu, showModal } = this.state;
+    const { navigation, mail, error } = this.props;
+    const { showMenu, showModal, htmlError } = this.state;
     const currentFolder = navigation.getParam('currentFolder');
     const isCurrentFolderTrash = currentFolder === 'trash';
     const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
@@ -203,6 +206,8 @@ class MailContentContainer extends React.PureComponent<
           <PageContainer style={{ backgroundColor: theme.color.background.page }}>
             {this.props.isFetching ? (
               <Loading />
+            ) : error || htmlError ? (
+              this.renderError()
             ) : (
               <>
                 <Viewport.Tracker>
@@ -301,7 +306,13 @@ class MailContentContainer extends React.PureComponent<
   private mailContent() {
     return (
       <View style={{ flexGrow: 1, padding: 12, backgroundColor: theme.color.background.card }}>
-        {this.props.mail.body !== undefined && <HtmlContentView html={this.props.mail.body} opts={{ selectable: true }} />}
+        {this.props.mail.body !== undefined && (
+          <HtmlContentView
+            onHtmlError={() => this.setState({ htmlError: true })}
+            html={this.props.mail.body}
+            opts={{ selectable: true }}
+          />
+        )}
         <View style={{ marginTop: 20 }} />
         {this.props.mail.attachments && this.props.mail.attachments.length > 0 && (
           <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} dispatch={this.props.dispatch} />
@@ -314,14 +325,19 @@ class MailContentContainer extends React.PureComponent<
     const currentFolder = this.props.navigation.getParam('currentFolder');
     return <HeaderMail mailInfos={this.props.mail} currentFolder={currentFolder} />;
   }
+
+  private renderError() {
+    return <EmptyContentScreen />;
+  }
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  const { isPristine, isFetching, data } = getMailContentState(state);
+  const { isPristine, isFetching, data, error } = getMailContentState(state);
 
   return {
     isPristine,
     isFetching,
+    error,
     mail: data,
   };
 };

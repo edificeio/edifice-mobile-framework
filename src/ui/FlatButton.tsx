@@ -6,6 +6,7 @@ import { Row, RowProperties } from '.';
 import { Weight } from './Typography';
 import { Icon } from './icons/Icon';
 
+import theme from '~/app/theme';
 import styles from '~/styles';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -42,7 +43,7 @@ export const FlatButton = ({
   customTextStyle,
 }: ValidTextIconProps) => {
   if (loading) {
-    return <ActivityIndicator size="large" color={CommonStyles.primary} />;
+    return <ActivityIndicator size="large" color={theme.color.secondary.regular} />;
   }
 
   return (
@@ -72,8 +73,8 @@ const ButtonStyleComponent = style.touchableOpacity(
     paddingVertical: 9,
   },
   ({ disabled }) => ({
-    backgroundColor: disabled ? 'transparent' : CommonStyles.actionColor,
-    borderColor: disabled ? CommonStyles.actionColor : CommonStyles.lightGrey,
+    backgroundColor: disabled ? 'transparent' : theme.color.secondary.regular,
+    borderColor: disabled ? theme.color.secondary.regular : CommonStyles.lightGrey,
     borderWidth: disabled ? 1 : 0,
   }),
 );
@@ -86,6 +87,6 @@ const TextStyleComponent = style.text(
     textAlignVertical: 'center',
   },
   ({ disabled }) => ({
-    color: disabled ? CommonStyles.actionColor : CommonStyles.inverseColor,
+    color: disabled ? theme.color.secondary.regular : CommonStyles.inverseColor,
   }),
 );
