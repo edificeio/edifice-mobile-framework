@@ -25,7 +25,6 @@ import theme from '~/app/theme';
 import config from '../config';
 import { PageView } from '~/framework/components/page';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { HeaderBackAction } from '~/framework/components/header';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -92,11 +91,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     const { isFetching, didInvalidate, diaryInformation, navigation, error } = this.props;
     const diaryTitle = diaryInformation?.title;
     const pageContent = isFetching && didInvalidate ? <Loading /> : error ? this.renderError() : this.renderList();
-
-    const navBarInfo = {
-      left: <HeaderBackAction navigation={navigation} />,
-      title: diaryTitle || I18n.t('Homework'),
-    };
 
     return (
       <PageView

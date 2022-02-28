@@ -29,7 +29,7 @@ type IAttachment = {
   size?: number;
 };
 
-interface NewMailComponentProps {
+interface NewMailComponentProps extends NavigationInjectedProps {
   isFetching: boolean;
   headers: HeadersProps;
   onDraftSave: () => void;
