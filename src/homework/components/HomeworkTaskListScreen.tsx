@@ -16,7 +16,6 @@ import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryLis
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { Loading } from '~/ui';
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import today from '~/utils/today';
 import { openUrl } from '~/framework/util/linking';
 import Label from '~/framework/components/label';
@@ -25,6 +24,8 @@ import theme from '~/app/theme';
 import config from '../config';
 import { PageView } from '~/framework/components/page';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyHammock from 'ode-images/empty-screen/empty-hammock.svg';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -120,6 +121,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           })),
         }))
       : [];
+    const hasHomework = data.length > 0;
     const pastHomework = data.filter(item => item.title.isBefore(today(), 'day'));
     const remainingPastHomework = pastHomework.filter(item => item.title.isBefore(pastDateLimit, 'day'));
     const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
@@ -138,6 +140,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           scrollEnabled={!hasNoDiaries}
           contentContainerStyle={{
             padding: UI_SIZES.spacing.large,
+            paddingTop: hasHomework ? undefined : 0,
             flex: noFutureHomeworkHiddenPast ? 1 : undefined,
           }}
           sections={displayedHomework}
@@ -201,16 +204,24 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
               <EmptyScreen
-                imageSrc={require('ASSETS/images/empty-screen/homework.png')}
-                imgWidth={265.98}
-                imgHeight={279.97}
-                text={I18n.t(`homework-${hasNoDiaries ? 'diaries' : 'tasks'}-emptyScreenText`)}
+                svgImage={<EmptyHammock />}
                 title={I18n.t(
-                  `homework-${
-                    hasNoDiaries ? (hasCreateHomeworkResourceRight ? 'diaries' : 'diaries-noCreationRight') : 'tasks'
-                  }-emptyScreenTitle`,
+                  `homework-tasks-emptyScreenTitle${
+                    hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? '-NoTasks' : '-NoTasks-NoCreationRights'
+                  }`,
                 )}
-                buttonText={hasNoDiaries && hasCreateHomeworkResourceRight ? I18n.t('homework-createDiary') : undefined}
+                text={I18n.t(
+                  `homework-tasks-emptyScreenText${
+                    hasPastHomeWork
+                      ? hasCreateHomeworkResourceRight
+                        ? ''
+                        : '-NoCreationRights'
+                      : hasCreateHomeworkResourceRight
+                      ? '-NoTasks'
+                      : '-NoTasks-NoCreationRights'
+                  }`,
+                )}
+                buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createActivity') : undefined}
                 buttonAction={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
                   if (!DEPRECATED_getCurrentPlatform()) {
@@ -221,7 +232,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                   openUrl(url);
                   Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
                 }}
-                customStyle={{ marginBottom: hasPastHomeWork ? 60 : 0 }}
               />
             ) : null
           }

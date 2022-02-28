@@ -151,7 +151,6 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   const renderEmpty = () => {
     return (
       <EmptyScreen
-        customStyle={{ backgroundColor: theme.color.background.card }}
         svgImage={<EmptySearch />}
         title={I18n.t('blog.blogsEmptyScreen.title')}
         text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}

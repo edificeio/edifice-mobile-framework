@@ -18,11 +18,12 @@ import { IBlogList } from '~/timeline/state/publishableBlogs';
 import { FlatButton, Loading } from '~/ui';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import { TempFloatingAction } from '~/ui/FloatingButton';
 import { ErrorMessage } from '~/ui/Typography';
 import { Header } from '~/ui/headers/Header';
 import { HeaderAction } from '~/ui/headers/NewHeader';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyTimeline from 'ode-images/empty-screen/empty-timeline.svg';
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -136,9 +137,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
         ListEmptyComponent={
           !isFetching && endReached ? (
             <EmptyScreen
-              imageSrc={require('ASSETS/images/empty-screen/timeline.png')}
-              imgWidth={407}
-              imgHeight={319}
+              svgImage={<EmptyTimeline />}
               text={I18n.t('timeline-emptyScreenText')}
               title={I18n.t('timeline-emptyScreenTitle')}
             />

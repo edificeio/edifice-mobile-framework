@@ -20,11 +20,12 @@ import { IBlogList, IBlog, getPublishableBlogsState } from '~/timeline/state/pub
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import CustomTouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import { Loading } from '~/ui/Loading';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
 import { Icon } from '~/ui/icons/Icon';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyBlog from 'ode-images/empty-screen/empty-blog.svg';
 
 export interface IContentSelectorPageDataProps {
   blogs: IBlogList;
@@ -92,9 +93,7 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
               <Loading />
             ) : (
               <EmptyScreen
-                imageSrc={require('ASSETS/images/empty-screen/blog.png')}
-                imgWidth={265.98}
-                imgHeight={279.97}
+                svgImage={<EmptyBlog />}
                 text={I18n.t('blog-emptyScreenText')}
                 title={I18n.t('blog-emptyScreenTitle')}
                 buttonText={I18n.t('blog-emptyScreenButton')}

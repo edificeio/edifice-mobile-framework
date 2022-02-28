@@ -12,9 +12,10 @@ import { Trackers } from '~/framework/util/tracker';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Loading } from '~/ui';
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import config from '../config';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
 
 export interface IHomeworkExplorerScreenDataProps {
   diaryList?: {
@@ -72,12 +73,10 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
     return (
       <EmptyScreen
-        imageSrc={require('ASSETS/images/empty-screen/homework.png')}
-        imgWidth={265.98}
-        imgHeight={279.97}
         customStyle={{ backgroundColor: theme.color.background.card }}
+        svgImage={<EmptySearch />}
+        title={I18n.t(`homework-diaries-emptyScreenTitle`)}
         text={I18n.t('homework-diaries-emptyScreenText')}
-        title={I18n.t(`homework-${hasCreateHomeworkResourceRight ? 'diaries' : 'diaries-noCreationRight'}-emptyScreenTitle`)}
         buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createDiary') : undefined}
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)

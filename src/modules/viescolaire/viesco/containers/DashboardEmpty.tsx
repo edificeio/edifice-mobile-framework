@@ -5,17 +5,17 @@ import { bindActionCreators } from 'redux';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { PageContainer } from '~/ui/ContainerContent';
-import { EmptyScreen } from '~/ui/EmptyScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyViesco from 'ode-images/empty-screen/empty-viesco.svg';
 
 class Dashboard extends React.PureComponent<any> {
   public render() {
     return (
       <PageContainer>
         <EmptyScreen
-          imageSrc={require('ASSETS/images/empty-screen/empty-viesco.png')}
-          imgWidth={265.98}
-          imgHeight={279.97}
-          title={I18n.t('viesco-empty-screen')}
+          svgImage={<EmptyViesco />}
+          title={I18n.t('viesco-empty-screen-title')}
+          text={I18n.t('viesco-empty-screen-text')}
         />
       </PageContainer>
     );

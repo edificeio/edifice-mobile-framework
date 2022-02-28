@@ -8,6 +8,7 @@ import { NavigationState, NavigationInjectedProps } from 'react-navigation';
 import theme from '~/app/theme';
 import { Drawer } from '~/framework/components/drawer';
 import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Trackers } from '~/framework/util/tracker';
@@ -21,8 +22,9 @@ import { ICountMailboxes } from '~/modules/conversation/state/count';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { Loading } from '~/ui';
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import { Weight } from '~/ui/Typography';
+import EmptyConversation from 'ode-images/empty-screen/empty-conversation.svg';
+import EmptyTrash from 'ode-images/empty-screen/empty-trash.svg';
 
 interface IMailListDataProps {
   notifications: any;
@@ -136,6 +138,18 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const indexMail = mails.findIndex(item => item.id === mailInfos.id);
     this.setState(prevState => ({ mails: { ...prevState.mails, [prevState.mails[indexMail]]: mailInfos } }));
   };
+
+  renderEmpty() {
+    const { isTrashed, navigation } = this.props;
+    const navigationKey = navigation.getParam('key');
+    const isFolderDrafts = navigationKey === 'drafts';
+    const isFolderOutbox = navigationKey === 'sendMessages';
+    const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox';
+    const svgImage = isTrashed ? <EmptyTrash /> : <EmptyConversation />;
+    const text = I18n.t(`conversation.emptyScreen.${folder}.text`);
+    const title = I18n.t(`conversation.emptyScreen.${folder}.title`);
+    return <EmptyScreen svgImage={svgImage} text={text} title={title} />;
+  }
 
   renderMailContent = mailInfos => {
     const navigationKey = this.props.navigation.getParam('key');
@@ -376,18 +390,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   }
                 }}
                 ListFooterComponent={isChangingPage ? <LoadingIndicator /> : null}
-                ListEmptyComponent={
-                  <View style={{ flex: 1 }}>
-                    <EmptyScreen
-                      imageSrc={require('ASSETS/images/empty-screen/conversations.png')}
-                      imgWidth={571}
-                      imgHeight={261}
-                      text={I18n.t('conversation.emptyScreenText')}
-                      title={I18n.t('conversation.emptyScreenTitle')}
-                      scale={0.76}
-                    />
-                  </View>
-                }
+                ListEmptyComponent={this.renderEmpty()}
               />
             )}
             <Drawer

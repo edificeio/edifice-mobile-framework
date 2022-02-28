@@ -1,8 +1,8 @@
 /**
  * EmptyScreen
  *
- * Show a large component with an image (bitmap), a title at the top and a little paragraph at the bottom.
- * Used to display a friendly empty screen when there is no data to show.
+ * A friendly empty screen for when there is no data to show.
+ * Shows a large image (svg) with a title, an optional paragraph and an optional action button.
  */
 
 import * as React from 'react';
@@ -24,7 +24,7 @@ export const EmptyScreen = ({
 }: {
   svgImage: any;
   title: string;
-  text: string;
+  text?: string;
   buttonText?: string;
   buttonAction?: () => void;
   customStyle?: ViewStyle;
@@ -56,14 +56,16 @@ export const EmptyScreen = ({
         }}>
         {title}
       </TextSemiBold>
-      <Text
-        numberOfLines={3}
-        style={{
-          textAlign: 'center',
-          marginTop: UI_SIZES.spacing.medium,
-        }}>
-        {text}
-      </Text>
+      {text ? (
+        <Text
+          numberOfLines={3}
+          style={{
+            textAlign: 'center',
+            marginTop: UI_SIZES.spacing.medium,
+          }}>
+          {text}
+        </Text>
+      ) : null}
       {hasButton ? (
         <View style={{ marginTop: UI_SIZES.spacing.extraLargePlus }}>
           <FlatButton title={buttonText} onPress={buttonAction} />
