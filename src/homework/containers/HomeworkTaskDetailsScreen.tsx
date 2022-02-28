@@ -53,7 +53,10 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
       <PageView navigation={navigation} navBarWithBack={{}}>
         <View style={[styles.banner, { backgroundColor: bannerColor }]}>
           <View>
-            <HomeworkDayCheckpoint date={date} />
+            <View>
+              <HomeworkDayCheckpoint date={date} />
+            </View>
+            {dayImage}
           </View>
           {dayImage}
         </View>
