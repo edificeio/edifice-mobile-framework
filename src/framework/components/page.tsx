@@ -46,17 +46,20 @@ export const PageView_Style = styled.View({
 export const PageView = (props: PageViewProps) => {
   const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, ...viewProps } = props;
 
+  const goBack = () => {
+    return onBack && onBack() && navigation.dispatch(NavigationActions.back()) || undefined;
+  };
+
   // Handle Back Android
   React.useEffect(() => {
-    if (onBack) {
-      const callback = () => {
-        return onBack() || undefined;
-      };
-      BackHandler.addEventListener('hardwareBackPress', callback);
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', callback);
-      };
-    }
+    const callback = () => {
+      goBack();
+      return true;
+    };
+    BackHandler.addEventListener('hardwareBackPress', callback);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', callback);
+    };
   });
 
   return (
@@ -69,9 +72,7 @@ export const PageView = (props: PageViewProps) => {
               navigation={navigation}
               {...(onBack
                 ? {
-                    onPress: () => {
-                      onBack() && navigation.dispatch(NavigationActions.back());
-                    },
+                    onPress: goBack,
                   }
                 : {})}
             />
