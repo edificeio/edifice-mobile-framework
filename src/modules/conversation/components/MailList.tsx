@@ -11,7 +11,6 @@ import { Drawer } from '~/framework/components/drawer';
 import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { ButtonIcon } from '~/framework/components/popupMenu';
 import { Trackers } from '~/framework/util/tracker';
 import MailListItem from '~/modules/conversation/components/MailListItem';
 import CreateFolderModal from '~/modules/conversation/containers/CreateFolderModal';

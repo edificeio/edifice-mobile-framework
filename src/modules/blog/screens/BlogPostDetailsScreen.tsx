@@ -28,7 +28,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { HeaderRight, HeaderSubtitle_Style, HeaderTitle_Style } from '~/framework/components/header';
+import { HeaderSubtitle, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
@@ -226,18 +226,16 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       title:
         blogPostData?.title && this.state.showHeaderTitle ? (
           <>
-            <HeaderTitle_Style numberOfLines={1}>{blogPostData?.title}</HeaderTitle_Style>
-            <HeaderSubtitle_Style>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle_Style>
+            <HeaderTitle>{blogPostData?.title}</HeaderTitle>
+            <HeaderSubtitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle>
           </>
         ) : (
-          <HeaderTitle_Style numberOfLines={2}>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle_Style>
+          <HeaderTitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle>
         ),
       right: resourceUri ? (
-        <HeaderRight style={{ alignItems: 'center' }}>
-          <TouchableOpacity onPress={this.showMenu}>
-            <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
-          </TouchableOpacity>
-        </HeaderRight>
+        <TouchableOpacity onPress={this.showMenu}>
+          <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
+        </TouchableOpacity>
       ) : undefined,
     };
   }
