@@ -5,7 +5,7 @@ import FloatingActionItem from './FloatingActionItem';
 
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
-import { ButtonIcon, getMenuShadow } from '~/ui/ButtonIconText';
+import { getMenuShadow } from '~/ui/ButtonIconText';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { ISelected } from '~/ui/Toolbar/Toolbar';
 import { IFloatingProps, IMenuItem } from '~/ui/types';

@@ -8,6 +8,7 @@ import { CommonStyles } from '~/styles/common/styles';
 import { ContainerView } from '~/ui/ButtonLine';
 import { H4 } from '~/ui/Typography';
 import { PageView } from '~/framework/components/page';
+import { HeaderBackAction } from '~/framework/components/header';
 
 // TYPES ------------------------------------------------------------------------------------------
 

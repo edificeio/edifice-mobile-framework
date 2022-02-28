@@ -7,6 +7,7 @@ import { UserCard } from './UserCard';
 
 import { H4 } from '~/ui/Typography';
 import { PageView } from '~/framework/components/page';
+import { HeaderBackAction } from '~/framework/components/header';
 
 // TYPES ------------------------------------------------------------------------------------------
 

@@ -8,8 +8,6 @@ import { ISelected } from '~/ui/Toolbar/Toolbar';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { getMenuShadow } from '~/ui/ButtonIconText';
 import { UI_SIZES } from "~/framework/components/constants";
-import { ButtonIcon } from "~/framework/components/popupMenu";
-import { hasNotch } from "react-native-device-info";
 import { DEPRECATED_HeaderPrimaryAction } from "~/framework/components/header";
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {

@@ -5,6 +5,7 @@ import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { HeaderBackAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 
 import {
