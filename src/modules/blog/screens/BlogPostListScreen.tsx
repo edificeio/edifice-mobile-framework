@@ -5,8 +5,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Platform, RefreshControl, View, ScrollView, FlatList } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { RefreshControl, View, ScrollView, FlatList } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,7 +23,6 @@ import {
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { ButtonIcon } from '~/framework/components/popupMenu';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResourceCard';
