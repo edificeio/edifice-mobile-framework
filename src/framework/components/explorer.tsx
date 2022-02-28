@@ -205,7 +205,7 @@ const FolderItemTouchable = styled.TouchableOpacity(folderItemTouchableStyle);
 const EmptyItemTouchable = styled.TouchableOpacity(empyItemTouchableStyle);
 
 const ThumbnailView = styled.View({
-  height: 108,
+  aspectRatio: 7/5,
   justifyContent: 'center',
   alignItems: 'center',
   borderTopLeftRadius: 17,
