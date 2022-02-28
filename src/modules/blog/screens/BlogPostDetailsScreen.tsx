@@ -28,7 +28,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { HeaderSubtitle, HeaderTitle } from '~/framework/components/header';
+import { HeaderIcon, HeaderSubtitle, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
@@ -235,7 +235,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         ),
       right: resourceUri ? (
         <TouchableOpacity onPress={this.showMenu}>
-          <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
+          <HeaderIcon name="more_vert" iconSize={24} />
         </TouchableOpacity>
       ) : undefined,
     };
