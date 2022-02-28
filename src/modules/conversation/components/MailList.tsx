@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, RefreshControl, FlatList, Platform } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { View, RefreshControl, FlatList } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 import { NavigationState, NavigationInjectedProps } from 'react-navigation';

@@ -19,7 +19,6 @@ import { Icon, Loading } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Text } from '~/ui/Typography';
-import { NavigationInjectedProps } from 'react-navigation';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -30,7 +29,7 @@ type IAttachment = {
   size?: number;
 };
 
-interface NewMailComponentProps extends NavigationInjectedProps {
+interface NewMailComponentProps {
   isFetching: boolean;
   headers: HeadersProps;
   onDraftSave: () => void;

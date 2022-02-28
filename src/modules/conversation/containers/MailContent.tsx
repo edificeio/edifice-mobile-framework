@@ -230,7 +230,7 @@ class MailContentContainer extends React.PureComponent<
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY,
                 mailId: this.props.mail.id,
-                onGoBack: this.props.navigation.state.params.onGoBack,
+                onGoBack: this.props.navigation.state.params?.onGoBack,
                 currentFolder: this.props.navigation.getParam('currentFolder'),
               });
             }}
@@ -245,7 +245,7 @@ class MailContentContainer extends React.PureComponent<
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY_ALL,
                 mailId: this.props.mail.id,
-                onGoBack: this.props.navigation.state.params.onGoBack,
+                onGoBack: this.props.navigation.state.params?.onGoBack,
                 currentFolder: this.props.navigation.getParam('currentFolder'),
               });
             }}
@@ -260,7 +260,7 @@ class MailContentContainer extends React.PureComponent<
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.FORWARD,
                 mailId: this.props.mail.id,
-                onGoBack: this.props.navigation.state.params.onGoBack,
+                onGoBack: this.props.navigation.state.params?.onGoBack,
               });
             }}
           />
