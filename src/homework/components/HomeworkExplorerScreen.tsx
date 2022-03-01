@@ -16,6 +16,7 @@ import config from '../config';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
+import { computeRelativePath } from '~/framework/util/navigation';
 
 export interface IHomeworkExplorerScreenDataProps {
   diaryList?: {
@@ -63,7 +64,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     const { navigation, onSelect } = this.props;
     const diaryId = diary?.id;
     onSelect(diaryId);
-    navigation.navigate(`${config.name}/tasks`, { diary });
+    navigation.navigate(computeRelativePath(`${config.name}/tasks`, navigation.state), { diary });
     Trackers.trackEvent('Homework', 'SELECT');
   }
 

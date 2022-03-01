@@ -1,8 +1,9 @@
 import homeworkConfig from './config';
-import mainComp from './navigator';
+import mainComp, { homeworkViews } from './navigator';
 import mainReducer from './reducers';
 
 import { registerModule } from '~/AppModules';
+import { timelineSubModules } from '~/framework/modules/timelinev2/timelineModules';
 
 // Main component
 export const root = mainComp;
@@ -25,3 +26,5 @@ registerModule({
   config: require('./config').default,
   module,
 });
+
+timelineSubModules.register(homeworkViews);

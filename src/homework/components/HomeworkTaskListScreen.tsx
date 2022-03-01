@@ -26,6 +26,7 @@ import { PageView } from '~/framework/components/page';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import EmptyHammock from 'ode-images/empty-screen/empty-hammock.svg';
+import { computeRelativePath } from '~/framework/util/navigation';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -161,7 +162,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               title={item.title}
               content={item.content}
               date={item.date}
-              onPress={() => navigation!.navigate(`${config.name}/details`, { task: item })}
+              onPress={() => navigation!.navigate(computeRelativePath(`${config.name}/details`, navigation.state), { task: item })}
             />
           )}
           keyExtractor={item => item.id}
