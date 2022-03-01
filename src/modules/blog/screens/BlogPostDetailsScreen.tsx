@@ -28,7 +28,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { HeaderIcon, HeaderSubtitle, HeaderTitle } from '~/framework/components/header';
+import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
@@ -226,12 +226,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return {
       title:
         blogPostData?.title && this.state.showHeaderTitle ? (
-          <>
-            <HeaderTitle>{blogPostData?.title}</HeaderTitle>
-            <HeaderSubtitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle>
-          </>
+          <HeaderTitleAndSubtitle title={blogPostData?.title} subtitle={I18n.t('timeline.blogPostDetailsScreen.title')}/>
         ) : (
-          <HeaderTitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle>
+          I18n.t('timeline.blogPostDetailsScreen.title')
         ),
       right: resourceUri ? (
         <TouchableOpacity onPress={this.showMenu}>

@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { HeaderSubtitle, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -29,6 +28,7 @@ import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { openUrl } from '~/framework/util/linking';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 
 // TYPES ==========================================================================================
 
@@ -74,12 +74,9 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
     const { loadingState, errorState } = this.state;
     const navBarInfo = {
       title: this.state.newsData?.title ? (
-        <>
-          <HeaderTitle>{this.state.newsData?.title}</HeaderTitle>
-          <HeaderSubtitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderSubtitle>
-        </>
+        <HeaderTitleAndSubtitle title={this.state.newsData?.title} subtitle={I18n.t('timeline.newsDetailsScreen.title')} />
       ) : (
-        <HeaderTitle>{I18n.t('timeline.newsDetailsScreen.title')}</HeaderTitle>
+        I18n.t('timeline.newsDetailsScreen.title')
       ),
     };
     return (

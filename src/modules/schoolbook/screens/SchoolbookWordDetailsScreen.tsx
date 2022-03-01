@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { HeaderTitle, HeaderSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -35,6 +34,7 @@ import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/u
 import { openUrl } from '~/framework/util/linking';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 
 // TYPES ==========================================================================================
 
@@ -96,12 +96,12 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const isRelative = type === UserType.RELATIVE;
     const navBarInfo = {
       title: schoolbookWordData?.word?.title ? (
-        <>
-          <HeaderTitle>{schoolbookWordData?.word?.title}</HeaderTitle>
-          <HeaderSubtitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderSubtitle>
-        </>
+        <HeaderTitleAndSubtitle
+          title={schoolbookWordData?.word?.title}
+          subtitle={I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}
+        />
       ) : (
-        <HeaderTitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle>
+        I18n.t('schoolbook.schoolbookWordDetailsScreen.title')
       ),
     };
     return (

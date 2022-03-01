@@ -16,11 +16,7 @@ import { IGlobalState } from '~/AppStore';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import {
-  HeaderTitle,
-  HeaderSubtitle,
-  DEPRECATED_HeaderPrimaryAction,
-} from '~/framework/components/header';
+import { DEPRECATED_HeaderPrimaryAction, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -191,12 +187,9 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   const navBarInfo = {
     title: selectedBlogTitle ? (
-      <>
-        <HeaderTitle>{selectedBlogTitle}</HeaderTitle>
-        <HeaderSubtitle>{I18n.t('blog.appName')}</HeaderSubtitle>
-      </>
+      <HeaderTitleAndSubtitle title={selectedBlogTitle} subtitle={I18n.t('blog.appName')} />
     ) : (
-      <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
+      I18n.t('blog.appName')
     ),
   };
 

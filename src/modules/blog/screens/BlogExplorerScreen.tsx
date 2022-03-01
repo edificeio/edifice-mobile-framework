@@ -20,10 +20,7 @@ import Explorer, {
   IExplorerResourceItemWithIcon,
   IExplorerResourceItemWithImage,
 } from '~/framework/components/explorer';
-import {
-  HeaderSubtitle,
-  HeaderTitle,
-} from '~/framework/components/header';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -136,12 +133,9 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     const currentFolder = folders.find(f => f.id === currentFolderId);
     return {
       title: currentFolder ? (
-        <>
-          <HeaderTitle>{currentFolder.name}</HeaderTitle>
-          <HeaderSubtitle>{I18n.t('blog.appName')}</HeaderSubtitle>
-        </>
+        <HeaderTitleAndSubtitle title={currentFolder.name} subtitle={I18n.t('blog.appName')} />
       ) : (
-        <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
+        I18n.t('blog.appName')
       ),
     };
   };
