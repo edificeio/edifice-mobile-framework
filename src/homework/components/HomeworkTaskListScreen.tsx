@@ -140,7 +140,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
         <SectionList
           scrollEnabled={!hasNoDiaries}
           contentContainerStyle={{
-            padding: UI_SIZES.spacing.large,
+            padding: hasHomework ? UI_SIZES.spacing.large : undefined,
             paddingTop: hasHomework ? undefined : 0,
             flex: noFutureHomeworkHiddenPast ? 1 : undefined,
           }}

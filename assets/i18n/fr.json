@@ -170,6 +170,10 @@
     "deletion": "Suppression",
     "discard": "Abandonner",
     "error": {
+      "connection": {
+        "text": "Un problème est survenu. Nous n'arrivons pas à afficher la page. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+        "title": "Désolé...\nLa lumière s'est éteinte"
+      },
       "content": {
         "text": "Il semblerait que le contenu a été supprimé ou que vous n'y avez plus accès.",
         "title": "Oups...\nLe contenu s'est envolé"

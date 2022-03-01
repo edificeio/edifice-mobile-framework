@@ -125,7 +125,6 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
     const newsContent = newsData?.content;
     const newsComments = newsData?.comments;
     const hasComments = newsComments && newsComments.length > 0;
-    if (!notification) return this.renderError();
     return (
       <View>
         <View style={{ paddingHorizontal: 16 }}>

@@ -74,7 +74,6 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
     return (
       <EmptyScreen
-        customStyle={{ backgroundColor: theme.color.background.card }}
         svgImage={<EmptySearch />}
         title={I18n.t(`homework-diaries-emptyScreenTitle`)}
         text={I18n.t('homework-diaries-emptyScreenText')}
