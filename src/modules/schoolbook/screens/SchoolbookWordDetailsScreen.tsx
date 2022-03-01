@@ -52,6 +52,7 @@ export interface ISchoolbookWordDetailsScreenInternalNavParams {
   confirmBackSchoolbook: boolean;
   _forceBack: boolean;
   _isAck: boolean;
+  _error: boolean;
 }
 export type ISchoolbookWordDetailsScreenProps = ISchoolbookWordDetailsScreenDataProps &
   ISchoolbookWordDetailsScreenEventProps &
@@ -368,9 +369,11 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       } else if (getIsWordAcknowledgedForParent(id, schoolbookWordData)) {
         !navigation.getParam('_isAck') && navigation.setParams({ _isAck: true });
       }
+      this.setState({ errorState: false });
     } catch (e) {
       // ToDo: Error handling
       this.setState({ errorState: true });
+      this.props.navigation.setParams({ _error: true });
       console.warn(`[${moduleConfig.name}] doGetSchoolbookWordDetails failed`, e);
     }
   }
@@ -445,7 +448,7 @@ SchoolbookWordDetailsScreenRouter.router.getStateForAction = (action, state: Nav
       action.type === NavigationActions.BACK ||
       action.type === StackActions.POP)
   ) {
-    if (state?.routes?.[0]?.params?._forceBack || state?.routes?.[0]?.params?._isAck) {
+    if (state?.routes?.[0]?.params?._forceBack || state?.routes?.[0]?.params?._isAck || state?.routes?.[0]?.params?._error) {
       return defaultGetStateForAction(action, state);
     }
 
