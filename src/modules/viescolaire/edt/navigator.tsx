@@ -7,6 +7,6 @@ export default createStackNavigator(
     Timetable,
   },
   {
-    headerMode: "screen",
+    headerMode: "none",
   }
 );
