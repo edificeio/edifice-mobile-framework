@@ -6,7 +6,7 @@
  */
 
 import * as React from 'react';
-import { Dimensions, View, ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 
 import { PageView_Style } from './page';
 import { Text, TextSemiBold } from './text';
@@ -29,8 +29,7 @@ export const EmptyScreen = ({
   buttonAction?: () => void;
   customStyle?: ViewStyle;
 }) => {
-  const { width } = Dimensions.get('window');
-  const imageWidth = width - 4 * UI_SIZES.spacing.extraLarge;
+  const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.extraLarge;
   const imageRatio = 7 / 5;
   const hasButton = buttonText && buttonAction;
 

@@ -4,7 +4,7 @@ import OnboardingTwo from 'ode-images/onboarding/onboarding_2.svg';
 import OnboardingThree from 'ode-images/onboarding/onboarding_3.svg';
 import OnboardingFour from 'ode-images/onboarding/onboarding_4.svg';
 import * as React from 'react';
-import { View, Dimensions, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import { NavigationInjectedProps } from 'react-navigation';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { TextSemiBold, H1 } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -38,7 +39,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
     const isPlatformIos = Platform.OS === 'ios';
     const appName = I18n.t('user.onboardingScreen.appName');
     const isOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
-    const { width } = Dimensions.get('window');
+    const { width } = UI_SIZES.screen;
     const svgSize = width * 0.8;
     const imageStyle = { width: svgSize, height: svgSize, maxHeight: '60%', maxWidth: '80%', marginTop: 4, marginBottom: 30 };
     const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');

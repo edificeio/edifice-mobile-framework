@@ -1,12 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, Image, Dimensions, TouchableOpacity, ImageSourcePropType, ViewStyle } from 'react-native';
+import { View, Image, TouchableOpacity, ImageSourcePropType, ViewStyle } from 'react-native';
 
 import { Card, InfoCard } from './card';
+import { UI_SIZES } from './constants';
 import { Text, TextBold } from './text';
 import { Toggle } from './toggle';
 
-import theme from '~/app/theme';
 import { getItemJson, setItemJson, removeItemJson } from '~/framework/util/storage';
 import { FlatButton } from '~/ui';
 import { IconButton } from '~/ui/IconButton';
@@ -50,8 +50,8 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
   renderFloatingInfoBubble() {
     const { infoText, infoTitle, infoImage, style } = this.props;
     const { displayToggle } = this.state;
-    const textContainerWidth = Dimensions.get('window').width * 0.9;
-    const infoBubbleRightMargin = Dimensions.get('window').width * 0.05;
+    const textContainerWidth = UI_SIZES.screen.width * 0.9;
+    const infoBubbleRightMargin = UI_SIZES.screen.width * 0.05;
     const infoBubbleDiameter = 38;
     const infoBubbleRadius = infoBubbleDiameter / 2;
     const iconSize = infoBubbleDiameter * 0.7;
