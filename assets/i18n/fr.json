@@ -425,6 +425,8 @@
   "homework": {
     "homeworkTaskListScreen": {
       "displayPastDays": "Afficher les jours précédents",
+      "noFutureHomework": "Pas d'autres activités",
+      "noFutureHomeworkTryAgain": "Pas d'autres acitivités à l'horizon, revenez plus tard !",
       "noMorePastHomework": "Pas d'activités précédentes"
     },
     "homeworkExplorerScreen": {

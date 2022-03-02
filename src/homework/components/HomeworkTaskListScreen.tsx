@@ -27,6 +27,8 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import EmptyHammock from 'ode-images/empty-screen/empty-hammock.svg';
 import { computeRelativePath } from '~/framework/util/navigation';
+import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Icon } from '~/framework/components/icon';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -124,11 +126,12 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
       : [];
     const hasHomework = data.length > 0;
     const pastHomework = data.filter(item => item.title.isBefore(today(), 'day'));
+    const hasPastHomeWork = pastHomework.length > 0;
     const remainingPastHomework = pastHomework.filter(item => item.title.isBefore(pastDateLimit, 'day'));
     const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
     const futureHomework = data.filter(item => item.title.isSameOrAfter(today(), 'day'));
+    const hasFutureHomework = futureHomework.length > 0;
     const displayedHomework = [...displayedPastHomework, ...futureHomework];
-    const hasPastHomeWork = pastHomework.length > 0;
     const noRemainingPastHomework = remainingPastHomework.length === 0;
     const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), 'day');
     const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
@@ -201,7 +204,40 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               </TouchableOpacity>
             ) : null;
           }}
-          ListFooterComponent={noFutureHomeworkHiddenPast ? null : <View style={{ height: 15 }} />}
+          ListFooterComponent={
+            hasFutureHomework ? (
+              <>
+                <HomeworkTimeline topPosition={26} leftPosition={UI_SIZES.spacing.smallPlus} />
+                <View
+                  style={{
+                    marginTop: UI_SIZES.spacing.extraLarge,
+                    marginBottom: UI_SIZES.spacing.mediumPlus,
+                  }}>
+                  <Label color={theme.greyPalette.grey} text={I18n.t('homework.homeworkTaskListScreen.noFutureHomework')} />
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    borderWidth: UI_SIZES.dimensions.width.tiny,
+                    borderRadius: UI_SIZES.radius.madium,
+                    borderColor: theme.greyPalette.cloudy,
+                    paddingVertical: UI_SIZES.spacing.large,
+                    paddingRight: UI_SIZES.spacing.extraLarge,
+                    paddingLeft: UI_SIZES.spacing.large,
+                    marginLeft: UI_SIZES.spacing.largePlus,
+                  }}>
+                  <View style={{ justifyContent: 'center', marginRight: UI_SIZES.spacing.large }}>
+                    <Icon name="informations" color={theme.greyPalette.stone} size={TextSizeStyle.Huge.fontSize} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: theme.greyPalette.graphite }}>
+                      {I18n.t('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            ) : null
+          }
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
               <EmptyScreen

@@ -29,6 +29,7 @@ export const UI_SIZES = {
   headerHeight: 56,
   radius: {
     small: 4,
+    madium: 8,
     large: 21,
     extraLarge: 24,
   },
