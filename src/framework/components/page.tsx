@@ -17,13 +17,15 @@ const PageView_StyleComponent = styled.View({
   backgroundColor: theme.color.background.page,
 });
 
-export const PageView = (props: React.PropsWithChildren<ViewProps & { path?: string }>) => (
-  <PageView_StyleComponent>
+export const PageView = (props: React.PropsWithChildren<ViewProps & { path?: string }>) => {
+  const {style, path, children, ...pageProps} = props;
+  return (
+  <PageView_StyleComponent style={style} {...pageProps}>
     <DEPRECATED_ConnectionTrackingBar />
-    {props.path ? <Notifier id={props.path} /> : null}
-    {props.children}
+    {path ? <Notifier id={path} /> : null}
+    {children}
   </PageView_StyleComponent>
-);
+)};
 
 export const KeyboardPageView = (props: React.PropsWithChildren<ViewProps & { path?: string; scrollable?: boolean }>) => {
   const keyboardAvoidingViewBehavior = Platform.select({

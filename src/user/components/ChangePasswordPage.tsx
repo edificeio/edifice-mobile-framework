@@ -1,13 +1,11 @@
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, TextInput, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import { Alert, TextInput, View, ScrollView } from 'react-native';
 import { Dispatch } from 'redux';
 
 import { getSessionInfo } from '~/App';
-import { Text } from '~/framework/components/text';
-import { NoTouchableContainer } from '~/ui/ButtonLine';
-import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { remlh, Text, TextSizeStyle } from '~/framework/components/text';
 import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
@@ -16,6 +14,10 @@ import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/ch
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 import { ValueChangeArgs, ValidatorBuilder, ValueGetter, ValueChange } from '~/utils/form';
 import { NavigationInjectedProps } from 'react-navigation';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { KeyboardPageView } from '~/framework/components/page';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -42,6 +44,7 @@ export type IChangePasswordPageProps = IChangePasswordPageDataProps &
   NavigationInjectedProps<{
     redirectCallback: (dispatch) => void;
     forceChange?: boolean;
+    isLoginNavigator?: boolean;
   }>;
 
 // Form Model -------------------------------------------------------------------------------------
@@ -159,9 +162,10 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     const { externalError, contextState, submitState } = this.props;
     const { oldPassword, newPassword, confirm, typing } = this.state;
 
-    if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
-      return <Loading />;
-    }
+    // This is a hack, again... now context is loaded on submit.
+    // if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
+    //   return <Loading />;
+    // }
 
     const formModel = new ChangePasswordFormModel({
       ...this.props,
@@ -174,47 +178,97 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
 
+    const isIDF = DEPRECATED_getCurrentPlatform()!.displayName === 'MonLycée.net'; // WTF ??!! 🤪🤪🤪
+
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-        <DEPRECATED_ConnectionTrackingBar />
-        <FormPage>
-          <KeyboardAvoidingView
-            style={{ flex: 1, backgroundColor: '#ffffff' }}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <FormTouchable onPress={() => formModel.blur()}>
-              <FormWrapper>
-                <FormContainer>
-                  <NoTouchableContainer>
-                    <Text>{I18n.t('PasswordOld')}</Text>
-                  </NoTouchableContainer>
-                  <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />
-                  <MiniSpacer />
-                  <NoTouchableContainer>
-                    <Text>{I18n.t('PasswordNew')}</Text>
-                  </NoTouchableContainer>
-                  <NewPasswordField newPassword={newPassword} form={formModel} onChange={this.onChange('newPassword')} />
-                  <MiniSpacer />
-                  <NoTouchableContainer>
-                    <Text>{I18n.t('PasswordNewConfirm')}</Text>
-                  </NoTouchableContainer>
-                  <PasswordConfirmField confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
-                  <MiniSpacer />
-                  <MiniSpacer />
-                  <ButtonWrapper error={hasErrorKey} typing={typing}>
-                    <FlatButton
-                      onPress={() => this.handleSubmit()}
-                      disabled={isNotValid}
-                      title={I18n.t('Save')}
-                      loading={isSubmitLoading}
-                    />
-                  </ButtonWrapper>
-                  <ErrorMessage> {hasErrorKey && !typing ? errorText : ''} </ErrorMessage>
-                </FormContainer>
-              </FormWrapper>
-            </FormTouchable>
-          </KeyboardAvoidingView>
-        </FormPage>
-      </SafeAreaView>
+      <View style={{ backgroundColor: theme.color.background.card, flex: 1}}>
+        <KeyboardPageView
+          style={{
+            marginBottom: UI_SIZES.bottomInset,
+            flex: 1,
+            backgroundColor: theme.color.background.card
+          }}>
+          <View style={{ height: '100%' }}>
+            <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+              <FormPage>
+                <FormTouchable onPress={() => formModel.blur()}>
+                  <FormWrapper>
+                    <FormContainer style={{ justifyContent: 'space-between', alignItems: 'stretch' }}>
+                      <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
+                        {
+                          this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
+                            <View
+                              style={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: 5,
+                                flex: 0,
+                              }}>
+                              <Text style={{ ...TextSizeStyle.SlightBig, textAlign: 'center' }}>
+                                {I18n.t('PasswordChangeWarning')}
+                              </Text>
+                              <MiniSpacer />
+                              <MiniSpacer />
+                            </View>
+                          ) : null
+                        }
+                        {
+                          isIDF ? (
+                            <View
+                              style={{
+                                backgroundColor: theme.color.secondary.light,
+                                paddingVertical: 6,
+                                paddingHorizontal: 14,
+                                borderColor: theme.color.secondary.regular,
+                                borderWidth: 1,
+                                borderRadius: 10,
+                                flex: 0,
+                              }}>
+                              <Text style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
+                                {I18n.t('common.idf.passwordRules')}
+                              </Text>
+                            </View>
+                          ) : null
+                        }
+                      </View>
+                      <View style={{ flexShrink: 0 }}>
+                        <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />
+                        <MiniSpacer />
+                      </View>
+                      <View style={{ flexShrink: 0 }}>
+                        <NewPasswordField newPassword={newPassword} form={formModel} onChange={this.onChange('newPassword')} />
+                        <MiniSpacer />
+                      </View>
+                      <View style={{ flexShrink: 0 }}>
+                        <PasswordConfirmField confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
+                        <MiniSpacer />
+                      </View>
+                      <View style={{ flexShrink: 0 }}>
+                        <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
+                          {hasErrorKey && !typing ? errorText : ' \n '}
+                        </ErrorMessage>
+                      </View>
+                      <View style={{ flexShrink: 0 }}>
+                        <ButtonWrapper error={hasErrorKey} typing={typing}>
+                          <FlatButton
+                            onPress={() => this.handleSubmit()}
+                            disabled={isNotValid}
+                            title={I18n.t('Save')}
+                            loading={isSubmitLoading}
+                          />
+                        </ButtonWrapper>
+                        <MiniSpacer />
+                        <MiniSpacer />
+                        <MiniSpacer />
+                      </View>
+                    </FormContainer>
+                  </FormWrapper>
+                </FormTouchable>
+              </FormPage>
+            </ScrollView>
+          </View>
+        </KeyboardPageView>
+      </View>
     );
   }
 }
@@ -225,7 +279,7 @@ function OldPasswordField(props: { oldPassword: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputOldPassword = ref)}
-      placeholder="●●●●●●●"
+      placeholder={I18n.t('PasswordOld')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.oldPassword}
       hasError={props.form.showOldPasswordError(props.oldPassword)}
@@ -238,7 +292,7 @@ function NewPasswordField(props: { newPassword: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputNewPassword = ref)}
-      placeholder="●●●●●●●●●"
+      placeholder={I18n.t('PasswordNew')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.newPassword}
       hasError={props.form.showNewPasswordError(props.newPassword)}
@@ -251,7 +305,7 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputPasswordConfirm = ref)}
-      placeholder="●●●●●●●●●"
+      placeholder={I18n.t('PasswordNewConfirm')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.confirm}
       hasError={props.form.showPasswordConfirmError(props.confirm)}
@@ -260,7 +314,6 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
 }
 
 const FormPage = style.view({
-  backgroundColor: '#ffffff',
   flex: 1,
 });
 const FormTouchable = style.touchableWithoutFeedback({ flex: 1 });
