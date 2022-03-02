@@ -2,6 +2,9 @@ import { Dimensions, Platform } from 'react-native';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const screenDimensions = Dimensions.get('window');
+const standardScreen = { height: 667, width: 375 }; // iPhone 8
+
+const responsiveSpacing = (value: number) => Math.round((value * screenDimensions.width) / standardScreen.width);
 
 export const UI_ANIMATIONS = {
   fade: {
@@ -38,18 +41,19 @@ export const UI_SIZES = {
     width: screenDimensions.width,
   },
   spacing: {
-    tiny: 2,
-    extraSmall: 4,
-    small: 6,
-    smallPlus: 8,
-    medium: 12,
-    mediumPlus: 14,
-    large: 16,
-    largePlus: 22,
-    extraLarge: 24,
-    extraLargePlus: 36,
-    huge: 64,
+    tiny: responsiveSpacing(2),
+    extraSmall: responsiveSpacing(4),
+    small: responsiveSpacing(6),
+    smallPlus: responsiveSpacing(8),
+    medium: responsiveSpacing(12),
+    mediumPlus: responsiveSpacing(14),
+    large: responsiveSpacing(16),
+    largePlus: responsiveSpacing(22),
+    extraLarge: responsiveSpacing(24),
+    extraLargePlus: responsiveSpacing(36),
+    huge: responsiveSpacing(64),
   },
+  standardScreen,
   tabsHeight: 56,
   topInset: initialWindowMetrics?.insets?.top || 0,
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
