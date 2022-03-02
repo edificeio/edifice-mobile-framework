@@ -179,6 +179,8 @@
   "linkTo": "Ligação para",
   "loadingFailedMessage": "O carregamento falhou. Confire sua conexão.",
   "login-back": "Voltar para a tela de acesso",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
   "login-wayf-error-retry": "Tentar novamente",
   "login-wayf-loading-text": "Connexion en cours...",
   "login-wayf-main-button": "S'identifier",

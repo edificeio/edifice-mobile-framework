@@ -447,6 +447,8 @@
   "loading": "Chargement",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
   "login-back": "Retour à l'écran de connexion",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
   "login-wayf-error-retry": "Réessayer",
   "login-wayf-loading-text": "Connexion en cours...",
   "login-wayf-main-button": "S'identifier",
