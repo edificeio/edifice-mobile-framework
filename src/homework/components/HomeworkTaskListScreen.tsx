@@ -29,6 +29,7 @@ import EmptyHammock from 'ode-images/empty-screen/empty-hammock.svg';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { Icon } from '~/framework/components/icon';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -100,7 +101,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
       <PageView
         navigation={navigation}
         navBarWithBack={{
-          title: diaryTitle || I18n.t('Homework'),
+          title: diaryTitle ? <HeaderTitleAndSubtitle title={diaryTitle} subtitle={I18n.t('Homework')} /> : I18n.t('Homework'),
         }}>
         {pageContent}
       </PageView>
