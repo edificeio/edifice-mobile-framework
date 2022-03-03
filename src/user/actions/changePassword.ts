@@ -98,6 +98,7 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
       const activationContext: IActivationContext = await res.json();
       // console.log("[User][Change password] fetched context :", activationContext)
       dispatch(changePasswordContextReceivedAction(activationContext));
+      return initChangePasswordAction;
     } catch (e) {
       dispatch(changePasswordContextErrorAction());
     }
@@ -107,6 +108,8 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
 export function changePasswordAction(model: IChangePasswordModel, redirectCallback?: (dispatch) => void, forceChange?: boolean) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
     try {
+      // === 0 load context
+      await dispatch(initChangePasswordAction({login: getState().user.auth.login}));
       // === 1 - prepare payload
       const payload: IChangePasswordSubmitPayload = {
         oldPassword: model.oldPassword,
@@ -143,8 +146,13 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
         // checking response header
         const resBody = await res.json();
         if (resBody.error) {
-          // console.log("[User][Change password] failed with error", res.status, resBody)
-          dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorFields')));
+          const pwdRegex = getState().user.changePassword?.context?.passwordRegex;
+          const regexp = new RegExp(pwdRegex);
+          if (pwdRegex && !regexp.test(model.newPassword)) {
+            dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorRegex')));
+          } else {
+            dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorFields')));
+          }
           return;
         }
       }

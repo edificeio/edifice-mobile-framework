@@ -59,7 +59,8 @@ export default createStackNavigator(
       screen: withViewTracking('auth/ChangePassword')(ChangePasswordPage),
       params: {
         redirectCallback: redirectAfterChangePassword,
-        forceChange: true
+        forceChange: true,
+        isLoginNavigator: true
       },
     },
   },
