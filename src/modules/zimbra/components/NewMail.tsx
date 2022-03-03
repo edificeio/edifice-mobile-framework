@@ -1,13 +1,13 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { ScrollView, View, StyleSheet, TextInput, ViewStyle, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, View, StyleSheet, TextInput, ViewStyle, KeyboardAvoidingView, Platform } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
 import Attachment from './Attachment';
 import SearchUserMail from './SearchUserMail';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import Notifier from '~/infra/notifier/container';
-import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon, Loading } from '~/ui';
 import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   signatureZone: {
     backgroundColor: 'white',
     minHeight: 40,
-    maxHeight: Dimensions.get('window').height / 3,
+    maxHeight: UI_SIZES.screen.height / 3,
     paddingHorizontal: 10,
   },
 });

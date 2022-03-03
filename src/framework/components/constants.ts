@@ -29,11 +29,15 @@ export const UI_SIZES = {
   headerHeight: 56,
   radius: {
     small: 4,
+    madium: 8,
     large: 21,
     extraLarge: 24,
   },
-  screenHeight: screenDimensions.height,
-  screenWidth: screenDimensions.width,
+  screen: {
+    height: screenDimensions.height,
+    scale: screenDimensions.scale,
+    width: screenDimensions.width,
+  },
   spacing: {
     tiny: 2,
     extraSmall: 4,
@@ -52,7 +56,7 @@ export const UI_SIZES = {
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (
-      UI_SIZES.screenHeight -
+      UI_SIZES.screen.height -
       (UI_SIZES.topInset ?? 0) -
       (UI_SIZES.bottomInset ?? 0) -
       (isNavbar ? UI_SIZES.headerHeight : 0) -

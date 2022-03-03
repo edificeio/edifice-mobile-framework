@@ -146,14 +146,18 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  const coursesData = getCoursesListState(state);
+  const courses = getCoursesListState(state);
+  const coursesData = (courses.data.length > 0 ? [] : courses.data) as ICourses[];
+  courses.data.forEach(course => {
+    if (course.allowRegister === true) coursesData.push(course);
+  });
   const registerData = getCoursesRegisterState(state);
 
   return {
-    courses: coursesData.data,
+    courses: coursesData,
     teacherId: getSessionInfo().id,
     structureId: getSelectedStructure(state),
-    isFetching: coursesData.isFetching || registerData.isFetching,
+    isFetching: courses.isFetching || registerData.isFetching,
     multipleSlots: getMultipleSlotsState(state),
     registerPreferences: getRegisterPreferencesState(state),
   };

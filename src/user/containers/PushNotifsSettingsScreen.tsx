@@ -14,7 +14,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -33,6 +32,8 @@ import Notifier from '~/framework/util/notifier';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 
 // TYPES ==========================================================================================
 
@@ -155,7 +156,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         data={mainListData}
         keyExtractor={(item: [string, IPushNotifsSettings]) => item[0]}
         renderItem={({ item }: { item: [string, IPushNotifsSettings] }) => this.renderMainItem(item)}
-        ListEmptyComponent={<EmptyContentScreen />}
+        ListEmptyComponent={<EmptyConnectionScreen />}
         alwaysBounceVertical={false}
         ListFooterComponent={<View style={{ height: UI_SIZES.bottomInset }} />}
       />
@@ -226,32 +227,35 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
             I18n.t(`timeline.notifType.${a[0]}`).localeCompare(I18n.t(`timeline.notifType.${b[0]}`)),
           )
         : [];
+    const hasEmptySubListData = subListData.length === 0;
     return (
       <FlatList
         data={subListData}
         keyExtractor={(item: [string, boolean]) => item[0]}
         renderItem={({ item }: { item: [string, boolean] }) => this.renderSubItem(item)}
-        ListEmptyComponent={<EmptyContentScreen />}
+        ListEmptyComponent={<EmptyConnectionScreen />}
         alwaysBounceVertical={false}
         ListFooterComponent={<View style={{ height: UI_SIZES.bottomInset }} />}
         ListHeaderComponent={
-          <TouchableOpacity onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}>
-            <ListItem
-              leftElement={<Text>{I18n.t('common.all')}</Text>}
-              rightElement={
-                <Checkbox
-                  customCheckboxColor={areAllChecked ? theme.color.text.light : undefined}
-                  customContainerStyle={{
-                    backgroundColor: theme.color.background.card,
-                    borderColor: theme.color.text.light,
-                    borderWidth: 2,
-                  }}
-                  checked={areAllChecked}
-                  onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
-                />
-              }
-            />
-          </TouchableOpacity>
+          hasEmptySubListData ? null : (
+            <TouchableOpacity onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}>
+              <ListItem
+                leftElement={<Text>{I18n.t('common.all')}</Text>}
+                rightElement={
+                  <Checkbox
+                    customCheckboxColor={areAllChecked ? theme.color.text.light : undefined}
+                    customContainerStyle={{
+                      backgroundColor: theme.color.background.card,
+                      borderColor: theme.color.text.light,
+                      borderWidth: 2,
+                    }}
+                    checked={areAllChecked}
+                    onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
+                  />
+                }
+              />
+            </TouchableOpacity>
+          )
         }
       />
     );
@@ -276,12 +280,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
   }
 
   renderError() {
-    return (
-      <>
-        <Text>{`Error: ${this.props.timelineState.notifSettings.pushNotifsSettings.error?.name}`}</Text>
-        <Text>{`Error: ${this.props.timelineState.notifDefinitions.notifTypes.error?.name}`}</Text>
-      </>
-    ); // ToDo: great error screen here
+    return <EmptyContentScreen />;
   }
 
   // LIFECYCLE ====================================================================================

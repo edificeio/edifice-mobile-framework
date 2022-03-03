@@ -215,6 +215,12 @@ export const HeaderSubtitle_Style = styled(HeaderTitle_Style)({
 export const HeaderSubtitle = (props: TextProps) => {
   return <HeaderSubtitle_Style numberOfLines={1} {...props} />;
 };
+export const HeaderTitleAndSubtitle = (props: { title?: string; subtitle?: string }) => (
+  <>
+    {props.subtitle ? <HeaderSubtitle>{props.subtitle}</HeaderSubtitle> : null}
+    {props.title ? <HeaderTitle>{props.title}</HeaderTitle> : null}
+  </>
+);
 
 export const DEPRECATED_HeaderPrimaryAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
   const { onPress, style, iconName, iconStyle, ...otherProps } = props as IHeaderActionGenericProps;

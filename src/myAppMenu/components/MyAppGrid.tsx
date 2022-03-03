@@ -13,10 +13,11 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { AnyModule } from '~/framework/util/moduleTool';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
-import { EmptyScreen } from '~/ui/EmptyScreen';
+import { PageView } from '~/framework/components/page';
 import { FlatButton } from '~/ui/FlatButton';
 import { openUrl } from '~/framework/util/linking';
-import { PageView } from '~/framework/components/page';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyHammock from 'ode-images/empty-screen/empty-hammock.svg';
 
 class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
   renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
@@ -73,13 +74,7 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
 
   private renderEmpty() {
     return (
-      <EmptyScreen
-        imageSrc={require('ASSETS/images/empty-screen/homework.png')}
-        imgWidth={407}
-        imgHeight={319}
-        text={I18n.t('myapp-emptyScreenText')}
-        title={I18n.t('myapp-emptyScreenTitle')}
-      />
+      <EmptyScreen svgImage={<EmptyHammock />} text={I18n.t('myapp-emptyScreenText')} title={I18n.t('myapp-emptyScreenTitle')} />
     );
   }
 

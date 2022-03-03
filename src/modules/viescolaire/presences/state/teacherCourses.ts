@@ -7,6 +7,7 @@ import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 export interface ICourses {
   id: string;
+  allowRegister: boolean;
   subjectId: string;
   classes: string[];
   structureId: string;

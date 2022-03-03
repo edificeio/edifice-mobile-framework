@@ -7,16 +7,17 @@ import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
+import { fetchEdtCourseListAction, fetchEdtCourseListFromTeacherAction } from '~/modules/viescolaire/edt/actions/edtCourses';
 import { fetchSlotListAction } from '~/modules/viescolaire/edt/actions/slots';
 import { fetchUserChildrenAction } from '~/modules/viescolaire/edt/actions/userChildren';
 import Timetable from '~/modules/viescolaire/edt/components/Timetable';
+import { getEdtCoursesListState } from '~/modules/viescolaire/edt/state/edtCourses';
 import { getSlotsListState } from '~/modules/viescolaire/edt/state/slots';
 import { getUserChildrenState } from '~/modules/viescolaire/edt/state/userChildren';
-import { fetchCourseListAction, fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/actions/courses';
 import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
 import { getSelectedChildStructure, getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
 import { getChildrenGroupsState } from '~/modules/viescolaire/viesco/state/childrenGroups';
-import { getCoursesListState } from '~/modules/viescolaire/viesco/state/courses';
 import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
 import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
@@ -31,10 +32,17 @@ export type TimetableProps = {
   childId: string;
   childClasses: string;
   group: string;
+  groupsIds: string[];
   teacherId: string;
   fetchChildInfos: () => void;
   fetchChildGroups: (classes: string, student: string) => void;
-  fetchChildCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, group: string) => void;
+  fetchChildCourses: (
+    structureId: string,
+    startDate: moment.Moment,
+    endDate: moment.Moment,
+    group: string,
+    groupsIds: string[],
+  ) => void;
   fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
   fetchSlots: (structureId: string) => void;
 } & NavigationInjectedProps;
@@ -55,10 +63,10 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   fetchCourses = () => {
     const { startDate } = this.state;
-    const { fetchTeacherCourses, fetchChildCourses, structureId, group, teacherId } = this.props;
+    const { fetchTeacherCourses, fetchChildCourses, structureId, group, groupsIds, teacherId } = this.props;
     if (getSessionInfo().type === 'Teacher')
       fetchTeacherCourses(structureId, startDate, startDate.clone().endOf('week'), teacherId);
-    else fetchChildCourses(structureId, startDate, startDate.clone().endOf('week'), group);
+    else fetchChildCourses(structureId, startDate, startDate.clone().endOf('week'), group, groupsIds);
   };
 
   initComponent = async () => {
@@ -123,16 +131,23 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   }
 }
 
-// if no groups are found, then take className
+// if no groups are found, then take classInfos
 const filterGroups = (childClasses, initialGroups) => {
-  const group = initialGroups.find(item => item.id === childClasses);
-  return group && group.name !== undefined ? group.name : '';
+  let group = {
+    id: '',
+    name: '',
+  };
+  if (initialGroups.find(item => item.id === childClasses) !== undefined) {
+    group = initialGroups.find(item => item.id === childClasses);
+  }
+  return group;
 };
 
 const mapStateToProps = (state: any): any => {
   let childId: string | undefined = '';
   let childClasses: string = '';
   const group = [] as string[];
+  const groupsIds = [] as string[];
   // get groups and childClasses
   if (getSessionInfo().type === 'Student') {
     childId = getSessionInfo().userId;
@@ -140,27 +155,43 @@ const mapStateToProps = (state: any): any => {
     const childGroups = getGroupsListState(state).data;
     if (childGroups !== undefined && childGroups[0] !== undefined) {
       childGroups.forEach(groupsStructures => {
-        if (groupsStructures.nameClass !== undefined) group.push(groupsStructures.nameClass);
+        if (groupsStructures.idClass !== null && groupsStructures.idClass !== undefined) {
+          groupsIds.push(groupsStructures.idClass);
+        }
+        if (groupsStructures.nameClass !== null && groupsStructures.nameClass !== undefined) {
+          group.push(groupsStructures.nameClass);
+        }
+        groupsStructures?.idGroups?.forEach(item => groupsIds.push(item));
         groupsStructures?.nameGroups?.forEach(item => group.push(item));
       });
-    } else group.push(getSessionInfo().realClassesNames[0]);
+    } else {
+      groupsIds.push(getUserSession(state).user.groupsIds);
+      group.push(getSessionInfo().realClassesNames[0]);
+    }
   } else if (getSessionInfo().type === 'Relative') {
     childId = getSelectedChild(state)?.id;
     childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
     const childGroups = getGroupsListState(state);
     if (childGroups !== undefined && childGroups.data[0] !== undefined) {
       childGroups.data.forEach(groupsStructures => {
-        if (groupsStructures.nameClass !== undefined) group.push(groupsStructures.nameClass);
+        if (groupsStructures.idClass !== null && groupsStructures.idClass !== undefined) {
+          groupsIds.push(groupsStructures.idClass);
+        }
+        if (groupsStructures.nameClass !== null && groupsStructures.nameClass !== undefined) {
+          group.push(groupsStructures.nameClass);
+        }
+        groupsStructures?.idGroups?.forEach(item => groupsIds.push(item));
         groupsStructures?.nameGroups?.forEach(item => group.push(item));
       });
     } else {
       const initialGroups = getChildrenGroupsState(state).data;
-      group.push(filterGroups(childClasses, initialGroups));
+      groupsIds.push(filterGroups(childClasses, initialGroups).name);
+      group.push(filterGroups(childClasses, initialGroups).id);
     }
   }
 
   return {
-    courses: getCoursesListState(state),
+    courses: getEdtCoursesListState(state),
     subjects: getSubjectsListState(state),
     teachers: getPersonnelListState(state),
     slots: getSlotsListState(state),
@@ -173,6 +204,7 @@ const mapStateToProps = (state: any): any => {
     childId,
     childClasses,
     group,
+    groupsIds,
     teacherId: getSessionInfo().id,
   };
 };
@@ -182,8 +214,8 @@ const mapDispatchToProps = (dispatch: any): any =>
     {
       fetchChildInfos: fetchUserChildrenAction,
       fetchChildGroups: fetchGroupListAction,
-      fetchChildCourses: fetchCourseListAction,
-      fetchTeacherCourses: fetchCourseListFromTeacherAction,
+      fetchChildCourses: fetchEdtCourseListAction,
+      fetchTeacherCourses: fetchEdtCourseListFromTeacherAction,
       fetchSlots: fetchSlotListAction,
     },
     dispatch,

@@ -4,12 +4,12 @@ import viescoConfig from '~/modules/viescolaire/moduleConfig';
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IUserChild {
-  classes: string[];
   displayName: string;
   firstName: string;
-  lastName: string;
   id: string;
-  idClasses: string;
+  idClasse: string;
+  idStructure: string;
+  lastName: string;
 }
 
 export type IUserChildren = IUserChild[];

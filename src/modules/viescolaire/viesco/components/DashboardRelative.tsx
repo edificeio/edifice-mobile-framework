@@ -16,7 +16,9 @@ import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/D
 import { INavigationProps } from '~/types';
 import { Icon, Loading } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { EmptyScreen } from '~/ui/EmptyScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyEvaluations from 'ode-images/empty-screen/empty-evaluations.svg';
+import EmptyHomework from 'ode-images/empty-screen/empty-homework.svg';
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -61,6 +63,7 @@ export type IHomeworkByDateList = {
 
 type IDashboardProps = {
   authorizedViescoApps: IAuthorizedViescoApps;
+  userId: string;
   homeworks: IHomeworkListState;
   evaluations: IDevoirsMatieresState;
   levels: ILevelsList;
@@ -106,6 +109,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
                   routeName: 'History',
                   params: {
                     user_type: 'Relative',
+                    userId: this.props.userId,
                   },
                 }),
               )
@@ -171,12 +175,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t('viesco-homework')}</TextBold>
         {Object.values(homeworks.data).length === 0 && (
-          <EmptyScreen
-            imageSrc={require('ASSETS/images/empty-screen/empty-homework.png')}
-            imgWidth={64}
-            imgHeight={64}
-            title={I18n.t('viesco-homework-EmptyScreenText')}
-          />
+          <EmptyScreen svgImage={<EmptyHomework />} title={I18n.t('viesco-homework-EmptyScreenText')} />
         )}
         {Object.keys(homeworksByDate).map(date => (
           <>
@@ -234,12 +233,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
         {evaluations && evaluations.data.devoirs.length > 0 ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
-          <EmptyScreen
-            imageSrc={require('ASSETS/images/empty-screen/empty-evaluations.png')}
-            imgWidth={64}
-            imgHeight={64}
-            title={I18n.t('viesco-eval-EmptyScreenText')}
-          />
+          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );

@@ -20,7 +20,8 @@ import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
 import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
-import { EmptyScreen } from '~/ui/EmptyScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyHomework from 'ode-images/empty-screen/empty-homework.svg';
 
 const style = StyleSheet.create({
   homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
@@ -170,9 +171,7 @@ export default (props: HomeworkListProps) => {
   );
 };
 
-const EmptyComponent = ({ title }) => (
-  <EmptyScreen imageSrc={require('ASSETS/images/empty-screen/empty-homework.png')} imgWidth={265} imgHeight={280} title={title} />
-);
+const EmptyComponent = ({ title }) => <EmptyScreen svgImage={<EmptyHomework />} title={title} />;
 
 const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomeworkTap, onHomeworkStatusUpdate }) => {
   React.useEffect(() => {

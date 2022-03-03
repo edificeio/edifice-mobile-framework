@@ -10,11 +10,11 @@ export const dataActions = createAsyncActionCreators<IUserChildren>(actionTypes)
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchUserChildrenAction() {
+export function fetchUserChildrenAction(relativeId: string) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await userChildrenService.get();
+      const data = await userChildrenService.get(relativeId);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

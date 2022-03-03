@@ -99,7 +99,7 @@ export interface IExplorerResourceItemWithIcon extends IExplorerResourceItemBase
 }
 
 export default <FolderType extends {}, ResourceType extends {}>(props: IExplorerProps<FolderType, ResourceType>) => {
-  const { data, folders, resources, keyExtractor, ...otherProps } = props;
+  const { data, folders, resources, keyExtractor, contentContainerStyle, ...otherProps } = props;
   const explorerData: (
     | (IExplorerFolderItem & FolderType)
     | (IExplorerResourceItemWithImage & ResourceType)
@@ -128,10 +128,15 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
         alignItems: 'stretch',
         justifyContent: 'space-around',
       }}
-      style={{
-        backgroundColor: theme.color.background.card,
-        padding: 16,
-      }}
+      contentContainerStyle={[
+        explorerData.length === 0
+          ? {}
+          : {
+              backgroundColor: theme.color.background.card,
+              padding: 16,
+            },
+        contentContainerStyle,
+      ]}
       {...(keyExtractor
         ? {
             keyExtractor: (item, index) => (item.type === 'empty' ? item.type : keyExtractor(item, index)),
@@ -205,7 +210,7 @@ const FolderItemTouchable = styled.TouchableOpacity(folderItemTouchableStyle);
 const EmptyItemTouchable = styled.TouchableOpacity(empyItemTouchableStyle);
 
 const ThumbnailView = styled.View({
-  height: 108,
+  aspectRatio: 7 / 5,
   justifyContent: 'center',
   alignItems: 'center',
   borderTopLeftRadius: 17,

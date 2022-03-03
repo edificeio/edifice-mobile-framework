@@ -1,68 +1,55 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import { FilterId } from '~/workspace/types/filters';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyTrash from 'ode-images/empty-screen/empty-trash.svg';
+import EmptyWorkspace from 'ode-images/empty-screen/empty-workspace.svg';
 
 export const getEmptyScreen = (parentId: string): React.ReactElement => {
   switch (parentId) {
     case FilterId.owner: {
       return (
         <EmptyScreen
-          imageSrc={require('ASSETS/images/empty-screen/empty-workspace.png')}
-          imgWidth={400}
-          imgHeight={316}
-          text={I18n.t('owner-emptyScreenText')}
-          title={I18n.t('owner-emptyScreenTitle')}
-          scale={0.76}
+          svgImage={<EmptyWorkspace />}
+          text={I18n.t('workspaceEmptyScreen.owner.text')}
+          title={I18n.t('workspaceEmptyScreen.owner.title')}
         />
       );
     }
     case FilterId.protected: {
       return (
         <EmptyScreen
-          imageSrc={require('ASSETS/images/empty-screen/empty-workspace.png')}
-          imgWidth={400}
-          imgHeight={316}
-          text={I18n.t('protected-emptyScreenText')}
-          title={I18n.t('protected-emptyScreenTitle')}
-          scale={0.76}
+          svgImage={<EmptyWorkspace />}
+          text={I18n.t('workspaceEmptyScreen.protected.text')}
+          title={I18n.t('workspaceEmptyScreen.protected.title')}
         />
       );
     }
     case FilterId.shared: {
       return (
         <EmptyScreen
-          imageSrc={require('ASSETS/images/empty-screen/empty-workspace.png')}
-          imgWidth={400}
-          imgHeight={316}
-          text={I18n.t('share-emptyScreenText')}
-          title={I18n.t('share-emptyScreenTitle')}
-          scale={0.76}
+          svgImage={<EmptyWorkspace />}
+          text={I18n.t('workspaceEmptyScreen.shared.text')}
+          title={I18n.t('workspaceEmptyScreen.shared.title')}
         />
       );
     }
     case FilterId.trash: {
       return (
         <EmptyScreen
-          imageSrc={require('ASSETS/images/empty-screen/empty-trash.png')}
-          imgWidth={400}
-          imgHeight={507}
-          text={I18n.t('trash-emptyScreenText')}
-          title={I18n.t('trash-emptyScreenTitle')}
-          scale={0.76}
+          svgImage={<EmptyTrash />}
+          text={I18n.t('workspaceEmptyScreen.trashed.text')}
+          title={I18n.t('workspaceEmptyScreen.trashed.title')}
         />
       );
     }
     default: {
       return (
         <EmptyScreen
-          imageSrc={require('ASSETS/images/empty-screen/empty-search.png')}
-          imgWidth={400}
-          imgHeight={393}
-          text={I18n.t('subFolder-emptyScreenText')}
-          title={I18n.t('subFolder-emptyScreenTitle')}
-          scale={0.76}
+          svgImage={<EmptyWorkspace />}
+          text={I18n.t('workspaceEmptyScreen.subfolder.text')}
+          title={I18n.t('workspaceEmptyScreen.subfolder.title')}
         />
       );
     }

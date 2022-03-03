@@ -22,7 +22,11 @@ import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 import { PageView } from '~/framework/components/page';
 
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyContent from 'ode-images/empty-screen/empty-content.svg';
+
 enum WAYFPageMode {
+  EMPTY,
   ERROR,
   LOADING,
   SELECT,
@@ -115,6 +119,13 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         // Go to WAYF stack home
         navigation.navigate('LoginWAYF');
       });
+  }
+
+  // Display empty screen
+  displayEmpty() {
+    this.clearDatas(() => {
+      this.setState({ mode: WAYFPageMode.EMPTY });
+    });
   }
 
   // Display error message
@@ -220,6 +231,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   onBack(mode: WAYFPageMode) {
     const { navigation } = this.props;
     switch (mode) {
+      case WAYFPageMode.EMPTY:
       case WAYFPageMode.ERROR:
         // Go to top of wayf navigation stack
         navigation.navigate('LoginWAYF');
@@ -240,20 +252,16 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // See WebView onError property
   onError(event: WebViewErrorEvent) {
     const { nativeEvent } = event;
-    // Update WebView back history flag
-    this.webviewCanGoBack = nativeEvent.canGoBack;
-    // Display error messsage
-    this.displayError(OAuthErrorType.PLATFORM_UNAVAILABLE);
+    // Display empty screen
+    this.displayEmpty();
   }
 
   // Called each time an http error occurs in WebView
   // See WebView onError property
   onHttpError(event: WebViewHttpErrorEvent) {
     const { nativeEvent } = event;
-    // Update WebView back history flag
-    this.webviewCanGoBack = nativeEvent.canGoBack;
-    // Display error messsage
-    this.displayError(OAuthErrorType.PLATFORM_UNAVAILABLE);
+    // Display empty screen
+    this.displayEmpty();
   }
 
   // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)
@@ -301,6 +309,16 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Render content depending on current display mode
   renderContent(mode: WAYFPageMode, dropdownOpened: boolean) {
     switch (mode) {
+      case WAYFPageMode.EMPTY:
+        // Display empty screen
+        Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
+        return (
+          <EmptyScreen
+            svgImage={<EmptyContent />}
+            text={I18n.t('login-wayf-empty-text')}
+            title={I18n.t('login-wayf-empty-title')}
+          />
+        );
       case WAYFPageMode.ERROR:
         // Display error messsage
         Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
@@ -403,7 +421,9 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         {...(mode === WAYFPageMode.LOADING
           ? { navBar: navBarInfo }
           : { navBarWithBack: navBarInfo, onBack: () => this.onBack(mode) })}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: theme.color.background.card }}>{this.renderContent(mode, dropdownOpened)}</SafeAreaView>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.color.background.card }}>
+          {this.renderContent(mode, dropdownOpened)}
+        </SafeAreaView>
       </PageView>
     );
   }

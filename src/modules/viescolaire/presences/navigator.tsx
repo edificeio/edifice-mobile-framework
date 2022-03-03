@@ -11,6 +11,6 @@ export default createStackNavigator(
     History,
   },
   {
-    headerMode: 'screen',
+    headerMode: 'none',
   },
 );

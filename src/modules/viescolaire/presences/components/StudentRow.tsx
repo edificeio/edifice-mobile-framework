@@ -169,6 +169,6 @@ const style = StyleSheet.create({
   grey: { backgroundColor: 'grey' },
   lightGrey: { backgroundColor: 'lightgrey' },
   red: { backgroundColor: CommonStyles.themeOpenEnt.red },
-  blue: { backgroundColor: CommonStyles.themeOpenEnt.cyan },
+  blue: { backgroundColor: '#ed9ffd' },
   purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },
 });

@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import { IAuthorizedViescoApps } from './Dashboard';
 
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchChildHomeworkAction } from '~/modules/viescolaire/cdt/actions/homeworks';
 import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
@@ -22,6 +23,7 @@ import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subject
 
 type IDashboardContainerProps = {
   authorizedViescoApps: IAuthorizedViescoApps;
+  userId: string;
   homeworks: IHomeworkListState;
   evaluations: IDevoirsMatieresState;
   hasRightToCreateAbsence: boolean;
@@ -81,6 +83,7 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps> {
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
+  const userId = getUserSession(state).user.id;
   const childId = getSelectedChild(state).id;
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
@@ -93,6 +96,7 @@ const mapStateToProps: (state: any) => any = state => {
     authorizedActions && authorizedActions.some(action => action.displayName === 'presences.absence.statements.create');
 
   return {
+    userId,
     homeworks,
     evaluations,
     hasRightToCreateAbsence,

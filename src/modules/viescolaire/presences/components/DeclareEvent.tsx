@@ -120,8 +120,8 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
         result.inputLabel = I18n.t('viesco-arrived-motive');
         break;
       case 'leaving':
-        result.mainColor = '#24a1ac';
-        result.lightColor = '#2dc5d2';
+        result.mainColor = '#ed9ffd';
+        result.lightColor = '#ed9ffd';
         result.title = I18n.t('viesco-leaving');
         result.mainText = I18n.t('viesco-left');
         result.inputLabel = I18n.t('viesco-left-motive');

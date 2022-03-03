@@ -9,11 +9,11 @@ import {
   KeyboardAvoidingViewProps,
   Platform,
   RefreshControl,
-  SafeAreaView,
   View,
   TouchableOpacity,
   Keyboard,
   EmitterSubscription,
+  SafeAreaView,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
@@ -28,7 +28,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { HeaderSubtitle, HeaderTitle } from '~/framework/components/header';
+import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
@@ -192,12 +192,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           }}>
           <SafeAreaView
             style={{
-              backgroundColor: theme.color.background.card,
+              flex: 1,
+              backgroundColor: errorState ? undefined : theme.color.background.card,
             }}>
             <KeyboardAvoidingView
+              style={{ flex: 1 }}
               behavior={keyboardAvoidingViewBehavior}
-              keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}
-              style={{ height: '100%' }}>
+              keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}>
               {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
                 <LoadingIndicator />
               ) : errorState ? (
@@ -225,16 +226,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return {
       title:
         blogPostData?.title && this.state.showHeaderTitle ? (
-          <>
-            <HeaderTitle>{blogPostData?.title}</HeaderTitle>
-            <HeaderSubtitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderSubtitle>
-          </>
+          <HeaderTitleAndSubtitle title={blogPostData?.title} subtitle={I18n.t('timeline.blogPostDetailsScreen.title')}/>
         ) : (
-          <HeaderTitle>{I18n.t('timeline.blogPostDetailsScreen.title')}</HeaderTitle>
+          I18n.t('timeline.blogPostDetailsScreen.title')
         ),
       right: resourceUri ? (
         <TouchableOpacity onPress={this.showMenu}>
-          <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
+          <HeaderIcon name="more_vert" iconSize={24} />
         </TouchableOpacity>
       ) : undefined,
     };
@@ -268,7 +266,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             }
             renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
             scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-            style={{ backgroundColor: theme.color.background.page }}
+            style={{ backgroundColor: theme.color.background.page, flex: 1 }}
             onLayout={() => {
               // Scroll to last comment if coming from blog spot comment notification
               this.flatListRef &&

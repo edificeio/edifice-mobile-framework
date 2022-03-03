@@ -14,7 +14,9 @@ import { ILevelsList } from '~/modules/viescolaire/competences/state/competences
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { isHomeworkDone, homeworkListDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
 import { Icon, Loading } from '~/ui';
-import { EmptyScreen } from '~/ui/EmptyScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyEvaluations from 'ode-images/empty-screen/empty-evaluations.svg';
+import EmptyHomework from 'ode-images/empty-screen/empty-homework.svg';
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -150,12 +152,7 @@ export default class Dashboard extends React.PureComponent<any> {
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t('viesco-homework')}</TextBold>
         {Object.values(homeworks).length === 0 && (
-          <EmptyScreen
-            imageSrc={require('ASSETS/images/empty-screen/empty-homework.png')}
-            imgWidth={64}
-            imgHeight={64}
-            title={I18n.t('viesco-homework-EmptyScreenText')}
-          />
+          <EmptyScreen svgImage={<EmptyHomework />} title={I18n.t('viesco-homework-EmptyScreenText')} />
         )}
         {Object.keys(homeworksByDate).map(date => (
           <>
@@ -216,12 +213,7 @@ export default class Dashboard extends React.PureComponent<any> {
         {evaluations && evaluations.data.devoirs && evaluationList !== undefined ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
-          <EmptyScreen
-            imageSrc={require('ASSETS/images/empty-screen/empty-evaluations.png')}
-            imgWidth={64}
-            imgHeight={64}
-            title={I18n.t('viesco-eval-EmptyScreenText')}
-          />
+          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );

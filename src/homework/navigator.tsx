@@ -6,22 +6,21 @@ import HomeworkTaskListScreen from './containers/HomeworkTaskListScreen';
 import HomeworkTaskDetailsScreen from './containers/HomeworkTaskDetailsScreen';
 import config from './config';
 
-export default createStackNavigator(
-  {
-    [`${config.name}/loader`]: {
-      screen: HomeworkInitialScreen,
-    },
-    [`${config.name}`]: {
-      screen: HomeworkExplorerScreen,
-    },
-    [`${config.name}/tasks`]: {
-      screen: HomeworkTaskListScreen,
-    },
-    [`${config.name}/details`]: {
-      screen: HomeworkTaskDetailsScreen,
-    },
+export const homeworkViews = {
+  [`${config.name}`]: {
+    screen: HomeworkInitialScreen,
   },
-  {
-    headerMode: 'none',
+  [`${config.name}/explorer`]: {
+    screen: HomeworkExplorerScreen,
   },
-);
+  [`${config.name}/tasks`]: {
+    screen: HomeworkTaskListScreen,
+  },
+  [`${config.name}/details`]: {
+    screen: HomeworkTaskDetailsScreen,
+  },
+};
+
+export default createStackNavigator(homeworkViews, {
+  headerMode: 'none',
+});

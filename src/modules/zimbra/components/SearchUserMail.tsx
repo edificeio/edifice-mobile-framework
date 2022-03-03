@@ -1,9 +1,10 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TextInput, View, ViewStyle, Dimensions, Platform } from 'react-native';
+import { TextInput, View, ViewStyle, Platform } from 'react-native';
 import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Text } from '~/framework/components/text';
 import { newMailService } from '~/modules/zimbra/service/newMail';
 import { getProfileColor } from '~/modules/zimbra/utils/userColor';
@@ -105,7 +106,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     zIndex: 10,
     backgroundColor: 'white',
     elevation: CommonStyles.elevation,
-    maxHeight: Dimensions.get('window').height * 0.25,
+    maxHeight: UI_SIZES.screen.height * 0.25,
     flexGrow: 1,
     ...IOSShadowStyle,
   } as ViewStyle;

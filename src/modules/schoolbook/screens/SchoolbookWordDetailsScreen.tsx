@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { HeaderTitle, HeaderSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -35,6 +34,7 @@ import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/u
 import { openUrl } from '~/framework/util/linking';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 
 // TYPES ==========================================================================================
 
@@ -52,6 +52,7 @@ export interface ISchoolbookWordDetailsScreenInternalNavParams {
   confirmBackSchoolbook: boolean;
   _forceBack: boolean;
   _isAck: boolean;
+  _error: boolean;
 }
 export type ISchoolbookWordDetailsScreenProps = ISchoolbookWordDetailsScreenDataProps &
   ISchoolbookWordDetailsScreenEventProps &
@@ -96,12 +97,12 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const isRelative = type === UserType.RELATIVE;
     const navBarInfo = {
       title: schoolbookWordData?.word?.title ? (
-        <>
-          <HeaderTitle>{schoolbookWordData?.word?.title}</HeaderTitle>
-          <HeaderSubtitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderSubtitle>
-        </>
+        <HeaderTitleAndSubtitle
+          title={schoolbookWordData?.word?.title}
+          subtitle={I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}
+        />
       ) : (
-        <HeaderTitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle>
+        I18n.t('schoolbook.schoolbookWordDetailsScreen.title')
       ),
     };
     return (
@@ -163,7 +164,6 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const { navigation } = this.props;
     const notification = navigation.getParam('notification');
     const resourceUri = notification?.resource.uri;
-    if (!notification || !resourceUri) return this.renderError();
 
     return (
       <>
@@ -368,9 +368,11 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       } else if (getIsWordAcknowledgedForParent(id, schoolbookWordData)) {
         !navigation.getParam('_isAck') && navigation.setParams({ _isAck: true });
       }
+      this.setState({ errorState: false });
     } catch (e) {
       // ToDo: Error handling
       this.setState({ errorState: true });
+      this.props.navigation.setParams({ _error: true });
       console.warn(`[${moduleConfig.name}] doGetSchoolbookWordDetails failed`, e);
     }
   }
@@ -445,7 +447,7 @@ SchoolbookWordDetailsScreenRouter.router.getStateForAction = (action, state: Nav
       action.type === NavigationActions.BACK ||
       action.type === StackActions.POP)
   ) {
-    if (state?.routes?.[0]?.params?._forceBack || state?.routes?.[0]?.params?._isAck) {
+    if (state?.routes?.[0]?.params?._forceBack || state?.routes?.[0]?.params?._isAck || state?.routes?.[0]?.params?._error) {
       return defaultGetStateForAction(action, state);
     }
 

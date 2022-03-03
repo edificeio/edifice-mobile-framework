@@ -7,7 +7,6 @@ import { View, StyleSheet, Switch } from 'react-native';
 import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import Dropdown from '~/ui/Dropdown';
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
@@ -15,6 +14,8 @@ import { ILevelsList } from '~/modules/viescolaire/competences/state/competences
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
 import { getSortedEvaluationList, GradesDevoirs, GradesDevoirsMoyennes } from './Item';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyEvaluations from 'ode-images/empty-screen/empty-evaluations.svg';
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
@@ -179,12 +180,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         ) : devoirs !== undefined && devoirs.length > 0 ? (
           <GradesDevoirsMoyennes devoirs={devoirs} />
         ) : (
-          <EmptyScreen
-            imageSrc={require('ASSETS/images/empty-screen/empty-evaluations.png')}
-            imgWidth={265}
-            imgHeight={280}
-            title={I18n.t('viesco-eval-EmptyScreenText')}
-          />
+          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );
@@ -234,12 +230,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data.devoirs ? (
           <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} levels={levels} />
         ) : (
-          <EmptyScreen
-            imageSrc={require('ASSETS/images/empty-screen/empty-evaluations.png')}
-            imgWidth={265}
-            imgHeight={280}
-            title={I18n.t('viesco-eval-EmptyScreenText')}
-          />
+          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );

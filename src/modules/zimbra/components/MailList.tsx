@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from 'react-native';
+import { View, StyleSheet, RefreshControl, FlatList } from 'react-native';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import { Text, TextBold } from '~/framework/components/text';
@@ -12,8 +12,10 @@ import { CommonStyles } from '~/styles/common/styles';
 import { Icon, Loading } from '~/ui';
 import { Header, LeftPanel, CenterPanel, PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { EmptyScreen } from '~/ui/EmptyScreen';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import EmptyConversation from 'ode-images/empty-screen/empty-conversation.svg';
 
 type MailListProps = {
   notifications: any;
@@ -221,10 +223,9 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             ) : (
               <View style={{ flex: 1 }}>
                 <EmptyScreen
-                  imageSrc={require('ASSETS/images/empty-screen/empty-mailBox.png')}
-                  imgWidth={265.98}
-                  imgHeight={279.97}
-                  title={I18n.t('zimbra-empty-mailbox')}
+                  svgImage={<EmptyConversation />}
+                  title={I18n.t('zimbra-empty-mailbox-title')}
+                  text={I18n.t('zimbra-empty-mailbox-text')}
                 />
               </View>
             )
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
   containerMail: {
     marginTop: 5,
     marginHorizontal: 8,
-    maxWidth: Dimensions.get('window').width - 16,
+    maxWidth: UI_SIZES.screen.width - 16,
     padding: 10,
     backgroundColor: 'white',
   },

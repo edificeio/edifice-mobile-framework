@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 import { CommonStyles } from '~/styles/common/styles';
@@ -8,6 +8,7 @@ import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
 import { Text } from '~/ui/Typography';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
+import { UI_SIZES } from '~/framework/components/constants';
 
 type SignatureModalProps = {
   show: boolean;
@@ -26,7 +27,7 @@ export default class SignatureModal extends React.Component<SignatureModalProps>
     const { show, closeModal, confirm } = this.props;
     return (
       <ModalBox isVisible={show}>
-        <ModalContent style={{ width: Dimensions.get('window').width - 80 }}>
+        <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
           <View style={style.containerView}>
             <View style={{ alignSelf: 'baseline', paddingBottom: 8, paddingHorizontal: 12 }}>
               <Text style={{ fontSize: 18, color: 'black' }}>{I18n.t('zimbra-signature')}</Text>
@@ -68,7 +69,7 @@ const style = StyleSheet.create({
     marginHorizontal: 10,
     borderBottomWidth: 0.5,
     borderColor: 'lightgrey',
-    maxHeight: Dimensions.get('window').height / 4,
+    maxHeight: UI_SIZES.screen.height / 4,
   },
   infosView: {
     flexDirection: 'row',

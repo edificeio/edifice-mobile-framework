@@ -1,10 +1,11 @@
 import style from 'glamorous-native';
 import * as React from 'react';
-import { View, Dimensions, ImageURISource } from 'react-native';
+import { View, ImageURISource } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 
 import { Avatar, Size } from './Avatar';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
 const SkippedContainer = style.view({
@@ -69,7 +70,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 
   public render() {
     const { size = Size.verylarge, images } = this.props;
-    const { width, height } = Dimensions.get('window');
+    const { width, height } = UI_SIZES.screen;
 
     let skipped = 0;
     if (images.length > 4 && size !== Size.verylarge) {
