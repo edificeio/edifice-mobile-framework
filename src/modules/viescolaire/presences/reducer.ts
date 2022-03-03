@@ -8,6 +8,7 @@ import { IRegisterPreferencesState } from './state/registerPreferences';
 import { IClassesCallListState } from './state/teacherClassesCall';
 import { ICoursesRegisterInfosState } from './state/teacherCourseRegister';
 import { ICoursesListState } from './state/teacherCourses';
+import { IPresencesUserChildrenState } from './state/userChildren';
 
 // State
 
@@ -19,4 +20,5 @@ export interface IPresences_State {
   notification: INotifiationChildren[];
   multipleSlots: IMultipleSlotsState;
   registerPreferences: IRegisterPreferencesState;
+  userChildren: IPresencesUserChildrenState;
 }

@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { IFolder } from '~/modules/zimbra/state/initMails';
@@ -9,6 +9,7 @@ import { Icon } from '~/ui';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
 import { Text } from '~/ui/Typography';
+import { UI_SIZES } from '~/framework/components/constants';
 
 type MoveToFolderModalProps = {
   show: boolean;
@@ -56,12 +57,12 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     const inboxSubFolder = folders?.find(item => item.folderName === 'Inbox');
     return (
       <ModalBox isVisible={show}>
-        <ModalContent style={{ width: Dimensions.get('window').width - 80 }}>
+        <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
           <View style={style.containerView}>
             <View style={{ alignSelf: 'baseline', paddingBottom: 8, paddingHorizontal: 12 }}>
               <Text style={{ fontSize: 18 }}>{I18n.t('zimbra-move-to')}</Text>
             </View>
-            <ScrollView style={{ flexGrow: 1, height: Dimensions.get('window').width }}>
+            <ScrollView style={{ flexGrow: 1, height: UI_SIZES.screen.width }}>
               <View style={{ backgroundColor: '#eef7fb', width: '100%', padding: 4 }}>
                 <Text style={{ fontSize: 18 }}>{I18n.t('zimbra-messages')}</Text>
               </View>

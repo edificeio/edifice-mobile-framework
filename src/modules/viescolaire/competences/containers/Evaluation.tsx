@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
 import { fetchDevoirMoyennesListAction } from '~/modules/viescolaire/competences/actions/moyennes';
@@ -26,12 +27,13 @@ export type CompetencesProps = {
   devoirsMoyennesList: IMoyenneListState;
   levels: ILevelsList;
   userType: string;
+  userId: string;
   periods: IPeriodsList;
   groups: string[];
   childClasses: string;
   structureId: string;
   childId: string;
-  fetchChildInfos: () => void;
+  fetchChildInfos: (userId: string) => void;
   fetchChildGroups: (classes: string, student: string) => any;
   getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
   getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
@@ -41,18 +43,18 @@ export type CompetencesProps = {
 
 export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   componentDidMount = async () => {
-    const { structureId, childId, childClasses } = this.props;
+    const { structureId, userId, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
     this.props.getLevels(structureId);
-    if (getSessionInfo().type === 'Relative') await this.props.fetchChildInfos();
+    if (getSessionInfo().type === 'Relative' && userId !== undefined) await this.props.fetchChildInfos(userId);
     this.props.getPeriods(structureId, childClasses);
     this.props.fetchChildGroups(childClasses, childId);
   };
 
   componentDidUpdate = async prevProps => {
-    const { structureId, childId, childClasses } = this.props;
+    const { structureId, userId, childId, childClasses } = this.props;
     if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) {
-      if (prevProps.childId !== childId && getSessionInfo().type === 'Relative') await this.props.fetchChildInfos();
+      if (getSessionInfo().type === 'Relative') await this.props.fetchChildInfos(userId);
       this.props.getDevoirs(structureId, childId);
       this.props.getPeriods(structureId, childClasses);
       this.props.fetchChildGroups(childClasses, childId);
@@ -77,6 +79,7 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
 
 const mapStateToProps: (state: any) => any = state => {
   const userType = getSessionInfo().type;
+  const userId = getUserSession(state).user.id; // used to find groups of relatives' children
   const childId = userType === 'Student' ? getSessionInfo().userId : getSelectedChild(state)?.id;
   const structureId =
     userType === 'Student'
@@ -90,7 +93,7 @@ const mapStateToProps: (state: any) => any = state => {
   if (getSessionInfo().type === 'Student') {
     childClasses = getSessionInfo().classes[0];
   } else {
-    childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
+    childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasse!;
   }
   if (childGroups !== undefined && childGroups[0] !== undefined) {
     if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);
@@ -104,6 +107,7 @@ const mapStateToProps: (state: any) => any = state => {
     devoirsMoyennesList: getMoyenneListState(state),
     levels: getLevelsListState(state).data,
     userType,
+    userId,
     periods: getPeriodsListState(state).data,
     groups: getGroupsListState(state).data,
     structureId,

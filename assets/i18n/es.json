@@ -394,6 +394,8 @@
   "loading": "Carga",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "login-back": "Regresar a la autenticación",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
   "login-wayf-error-retry": "Volver a intentar",
   "login-wayf-loading-text": "Conexión en curso...",
   "login-wayf-main-button": "Iniciar sesión",

@@ -1,7 +1,6 @@
-import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Dimensions, ImageURISource, Linking, Platform, Image, Text, View, ScrollView, StatusBar, Animated } from 'react-native';
+import { ImageURISource, Linking, Image, Text, View, ScrollView, StatusBar, Animated } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { PinchGestureHandler, State, PanGestureHandler } from 'react-native-gesture-handler';
 import RNCarousel from 'react-native-snap-carousel';
@@ -12,6 +11,7 @@ import ImageOptional from './ImageOptional';
 import { MediaAction } from './MediaAction';
 import { A, Italic } from './Typography';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -53,8 +53,8 @@ class Carousel extends React.Component<
 
   public state = {
     viewport: {
-      height: Dimensions.get('window').height,
-      width: Dimensions.get('window').width,
+      height: UI_SIZES.screen.height,
+      width: UI_SIZES.screen.width,
     },
     imageSizes: [],
     currentIndex: (this.props.navigation && this.props.navigation.getParam('startIndex')) || 0,
@@ -155,37 +155,34 @@ class Carousel extends React.Component<
 
       let displayedWidth;
       let displayedHeight;
-      const isWithinScreeen =
-        currentImageWidth <= Dimensions.get('window').width && currentImageHeight <= Dimensions.get('window').height;
+      const isWithinScreeen = currentImageWidth <= UI_SIZES.screen.width && currentImageHeight <= UI_SIZES.screen.height;
       const isVerticalImage = currentImageWidth < currentImageHeight;
-      const isThinVerticalImage = isVerticalImage && currentImageWidth < Dimensions.get('window').width;
+      const isThinVerticalImage = isVerticalImage && currentImageWidth < UI_SIZES.screen.width;
       if (isWithinScreeen) {
         displayedWidth = currentImageWidth;
         displayedHeight = currentImageHeight;
       } else if (isThinVerticalImage) {
-        displayedWidth = currentImageWidth * (Dimensions.get('window').height / currentImageHeight);
-        displayedHeight = Dimensions.get('window').height;
+        displayedWidth = currentImageWidth * (UI_SIZES.screen.height / currentImageHeight);
+        displayedHeight = UI_SIZES.screen.height;
       } else {
-        displayedWidth = Dimensions.get('window').width;
-        displayedHeight = currentImageHeight * (Dimensions.get('window').width / currentImageWidth);
+        displayedWidth = UI_SIZES.screen.width;
+        displayedHeight = currentImageHeight * (UI_SIZES.screen.width / currentImageWidth);
       }
 
       const scaledImageWidth = this.lastScale < maxScale ? this.lastScale * displayedWidth : maxScale * displayedWidth;
-      const totalHiddenWidth =
-        scaledImageWidth - Dimensions.get('window').width < 0 ? 0 : scaledImageWidth - Dimensions.get('window').width;
+      const totalHiddenWidth = scaledImageWidth - UI_SIZES.screen.width < 0 ? 0 : scaledImageWidth - UI_SIZES.screen.width;
       const sideHiddenWidth = totalHiddenWidth / 2;
       this.sideHiddenWidth = sideHiddenWidth;
 
       const scaledImageHeight = this.lastScale < maxScale ? this.lastScale * displayedHeight : maxScale * displayedHeight;
-      const totalHiddenHeight =
-        scaledImageHeight - Dimensions.get('window').height < 0 ? 0 : scaledImageHeight - Dimensions.get('window').height;
+      const totalHiddenHeight = scaledImageHeight - UI_SIZES.screen.height < 0 ? 0 : scaledImageHeight - UI_SIZES.screen.height;
       const sideHiddenHeight = totalHiddenHeight / 2;
       this.sideHiddenHeight = sideHiddenHeight;
 
-      scaledImageWidth > Dimensions.get('window').width
+      scaledImageWidth > UI_SIZES.screen.width
         ? this.setState({ canPanHorizontal: true })
         : this.setState({ canPanHorizontal: false });
-      scaledImageHeight > Dimensions.get('window').height
+      scaledImageHeight > UI_SIZES.screen.height
         ? this.setState({ canPanVertical: true })
         : this.setState({ canPanVertical: false });
 
@@ -256,8 +253,8 @@ class Carousel extends React.Component<
     const currentImageWidth = currentImageSizes && currentImageSizes.width;
     const currentImageHeight = currentImageSizes && currentImageSizes.height;
 
-    const imageWidth = currentImageWidth && Math.min(Dimensions.get('window').width, currentImageWidth);
-    const imageHeight = currentImageHeight && Math.min(Dimensions.get('window').height, currentImageHeight);
+    const imageWidth = currentImageWidth && Math.min(UI_SIZES.screen.width, currentImageWidth);
+    const imageHeight = currentImageHeight && Math.min(UI_SIZES.screen.height, currentImageHeight);
 
     return (
       <View
@@ -265,8 +262,8 @@ class Carousel extends React.Component<
         onLayout={() => {
           this.setState({
             viewport: {
-              height: Dimensions.get('window').height,
-              width: Dimensions.get('window').width,
+              height: UI_SIZES.screen.height,
+              width: UI_SIZES.screen.width,
             },
           });
         }}>
@@ -279,7 +276,7 @@ class Carousel extends React.Component<
               scrollEnabled={false}
               contentContainerStyle={{
                 height: '100%',
-                width: Dimensions.get('window').width,
+                width: UI_SIZES.screen.width,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>

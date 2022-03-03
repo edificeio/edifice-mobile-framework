@@ -170,6 +170,10 @@
     "deletion": "Suppression",
     "discard": "Abandonner",
     "error": {
+      "connection": {
+        "text": "Un problème est survenu. Nous n'arrivons pas à afficher la page. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+        "title": "Désolé...\nLa lumière s'est éteinte"
+      },
       "content": {
         "text": "Il semblerait que le contenu a été supprimé ou que vous n'y avez plus accès.",
         "title": "Oups...\nLe contenu s'est envolé"
@@ -421,6 +425,8 @@
   "homework": {
     "homeworkTaskListScreen": {
       "displayPastDays": "Afficher les jours précédents",
+      "noFutureHomework": "Pas d'autres activités",
+      "noFutureHomeworkTryAgain": "Pas d'autres acitivités à l'horizon, revenez plus tard !",
       "noMorePastHomework": "Pas d'activités précédentes"
     },
     "homeworkExplorerScreen": {
@@ -443,6 +449,8 @@
   "loading": "Chargement",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
   "login-back": "Retour à l'écran de connexion",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
   "login-wayf-error-retry": "Réessayer",
   "login-wayf-loading-text": "Connexion en cours...",
   "login-wayf-main-button": "S'identifier",

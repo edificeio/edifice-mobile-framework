@@ -1,7 +1,7 @@
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Dimensions, View, ViewStyle, ImageProps, ImageURISource } from 'react-native';
+import { View, ViewStyle, ImageProps, ImageURISource } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { withNavigation } from 'react-navigation';
 
@@ -10,6 +10,7 @@ import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
 import { Italic } from './Typography';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
 const BubbleText = style.text({
@@ -101,8 +102,8 @@ class Images extends React.Component<
 
   public images() {
     const { images } = this.props;
-    const scale = Dimensions.get('window').scale;
-    const width = Dimensions.get('window').width;
+    const scale = UI_SIZES.screen.scale;
+    const width = UI_SIZES.screen.width;
     const heightRatio = width * 0.6;
     const getThumbnailWidth = (isFullWidth?: boolean) => {
       const pixelWidth = isFullWidth ? width * scale : (width * scale) / 2;
@@ -195,7 +196,7 @@ class Images extends React.Component<
 
   public render() {
     const { images, style } = this.props;
-    const width = Dimensions.get('window').width;
+    const width = UI_SIZES.screen.width;
     const heightRatio = width * 0.6;
 
     if (images.length === 0) return <View />;

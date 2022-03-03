@@ -1,8 +1,8 @@
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { userChildrenService } from '~/modules/viescolaire/competences/services/userChildren';
-import { IUserChildren, actionTypes } from '~/modules/viescolaire/competences/state/userChildren';
+import { userChildrenService } from '~/modules/viescolaire/presences/services/userChildren';
+import { IUserChildren, actionTypes } from '~/modules/viescolaire/presences/state/userChildren';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

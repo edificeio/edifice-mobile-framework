@@ -23,7 +23,7 @@ type HistoryProps = {
   data: any;
   events: any;
   periods: any;
-  onPeriodChange: any;
+  onPeriodChange: (newPeriod) => void;
   navigation: NavigationScreenProp<any>;
   selected: number;
   isFetchingData: boolean;

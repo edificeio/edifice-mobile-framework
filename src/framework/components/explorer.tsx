@@ -129,10 +129,12 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
         justifyContent: 'space-around',
       }}
       contentContainerStyle={[
-        {
-          backgroundColor: theme.color.background.card,
-          padding: 16,
-        },
+        explorerData.length === 0
+          ? {}
+          : {
+              backgroundColor: theme.color.background.card,
+              padding: 16,
+            },
         contentContainerStyle,
       ]}
       {...(keyExtractor

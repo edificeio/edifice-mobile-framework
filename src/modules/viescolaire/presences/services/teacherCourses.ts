@@ -1,28 +1,30 @@
-import querystring from "querystring";
-import moment from "moment";
+import moment from 'moment';
+import querystring from 'querystring';
 
-import { fetchJSONWithCache } from "~/infra/fetchWithCache";
-import { ICoursesList } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { ICoursesRegister } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
+import { ICoursesList } from '~/modules/viescolaire/presences/state/teacherCourses';
 
-export type ICoursesListBackend = Array <{
+export type ICoursesListBackend = {
   id: string;
+  allowRegister: boolean;
   subjectId: string;
   classes: string[];
   structureId: string;
-  startDate:  string;
-  endDate:  string;
+  startDate: string;
+  endDate: string;
   roomLabels: string[];
   groups: string[];
   registerId: string;
   splitSlot: boolean;
-}>
+}[];
 
 const coursesAdapter: (data: ICoursesListBackend) => ICoursesList = data => {
   let result = [] as ICoursesList;
   if (!data) return result;
   result = data.map(item => ({
     id: item.id,
+    allowRegister: item.allowRegister,
     subjectId: item.subjectId,
     classes: item.classes,
     structureId: item.structureId,
@@ -79,9 +81,7 @@ const coursesRegisterAdapter: (data: ICoursesRegisterBackend) => ICoursesRegiste
 };
 
 export const coursesRegisterService = {
-  get: async (course_data) => {
-    return coursesRegisterAdapter(
-        await fetchJSONWithCache(`/presences/registers`, {body: course_data, method: "post"})
-    );
-  }
-}
+  get: async course_data => {
+    return coursesRegisterAdapter(await fetchJSONWithCache(`/presences/registers`, { body: course_data, method: 'post' }));
+  },
+};

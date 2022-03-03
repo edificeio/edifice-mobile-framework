@@ -164,7 +164,6 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const { navigation } = this.props;
     const notification = navigation.getParam('notification');
     const resourceUri = notification?.resource.uri;
-    if (!notification || !resourceUri) return this.renderError();
 
     return (
       <>

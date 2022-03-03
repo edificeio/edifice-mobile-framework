@@ -1,6 +1,6 @@
-import { Dimensions } from "react-native";
+import { UI_SIZES } from '~/framework/components/constants';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = UI_SIZES.screen;
 const [shortDimension] = width < height ? [width, height] : [height, width];
 export const DEVICE_SCALE = shortDimension / 440;
 
@@ -8,7 +8,7 @@ export const DEVICE_SCALE = shortDimension / 440;
 const scale = (size: number) => DEVICE_SCALE * size;
 
 function normalize(size: number): number {
-  return size // + (scale(size) - size) * 0.1; until will not be use on all the appli, its unneccessary
+  return size; // + (scale(size) - size) * 0.1; until will not be use on all the appli, its unneccessary
 }
 
 /* export =================================================================== */
@@ -92,6 +92,6 @@ export const layoutSize = {
   LAYOUT_450: normalize(450),
 };
 
-export const DEVICE_HEIGHT = () => Dimensions.get("window").height;
+export const DEVICE_HEIGHT = () => UI_SIZES.screen.height;
 
-export const DEVICE_WIDTH = () => Dimensions.get("window").width;
+export const DEVICE_WIDTH = () => UI_SIZES.screen.width;

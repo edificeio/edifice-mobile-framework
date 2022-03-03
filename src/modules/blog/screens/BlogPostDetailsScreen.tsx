@@ -192,8 +192,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           }}>
           <SafeAreaView
             style={{
-              backgroundColor: theme.color.background.card,
               flex: 1,
+              backgroundColor: errorState ? undefined : theme.color.background.card,
             }}>
             <KeyboardAvoidingView
               style={{ flex: 1 }}

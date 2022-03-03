@@ -4,13 +4,14 @@
 
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, ViewStyle, Dimensions, TouchableOpacity, Platform, Image, ImageURISource } from 'react-native';
+import { View, ViewStyle, TouchableOpacity, Platform, Image, ImageURISource } from 'react-native';
 import VideoPlayer from 'react-native-video';
 import VideoPlayerAndroid from 'react-native-video-player';
 
 import { Loading } from './Loading';
 import { MediaAction } from './MediaAction';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { TextItalic } from '~/framework/components/text';
 
 export interface IPlayerProps {
@@ -38,7 +39,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
   public render() {
     const { type, source, posterSource, ratio, style } = this.props;
     const { loadMedia, loaded, error } = this.state;
-    const { height } = Dimensions.get('window');
+    const { height } = UI_SIZES.screen;
     const thirdOfScreenHeight = 0.33 * height;
     const isAudio = type === 'audio';
     const isVideo = type === 'video';

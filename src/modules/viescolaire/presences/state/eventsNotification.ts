@@ -5,14 +5,14 @@ const notificationPrefix = viescoConfig.createActionType('NOTIFICATION');
 
 export interface INotifiationChildren {
   childId: string;
-  lateness: Array<any>;
-  departure: Array<any>;
-  no_reason: Array<any>;
-  regularized: Array<any>;
-  unregularized: Array<any>;
-  notebooks: Array<any>;
-  punishments: Array<any>;
-  incidents: Array<any>;
+  lateness: any[];
+  departure: any[];
+  no_reason: any[];
+  regularized: any[];
+  unregularized: any[];
+  notebooks: any[];
+  punishments: any[];
+  incidents: any[];
   isPristine: boolean;
   error: string;
 }
