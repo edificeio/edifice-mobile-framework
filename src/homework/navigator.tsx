@@ -7,10 +7,10 @@ import HomeworkTaskDetailsScreen from './containers/HomeworkTaskDetailsScreen';
 import config from './config';
 
 export const homeworkViews = {
-  [`${config.name}/loader`]: {
+  [`${config.name}`]: {
     screen: HomeworkInitialScreen,
   },
-  [`${config.name}`]: {
+  [`${config.name}/explorer`]: {
     screen: HomeworkExplorerScreen,
   },
   [`${config.name}/tasks`]: {
