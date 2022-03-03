@@ -70,6 +70,7 @@ export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
 export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, object> {
   state = {
     fetching: false,
+    refreshing: false,
     pastDateLimit: today(),
   };
 
@@ -114,7 +115,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
 
   private renderList() {
     const { diaryListData, diaryId, tasksByDay, navigation, onRefresh, session } = this.props;
-    const { fetching, pastDateLimit } = this.state;
+    const { refreshing, pastDateLimit } = this.state;
     const hasNoDiaries = !diaryListData || (diaryListData && Object.keys(diaryListData).length === 0);
     const data = tasksByDay
       ? tasksByDay.map(day => ({
@@ -172,10 +173,13 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           keyExtractor={item => item.id}
           refreshControl={
             <RefreshControl
-              refreshing={fetching}
-              onRefresh={() => {
-                this.setState({ fetching: true });
-                onRefresh && diaryId && onRefresh(diaryId);
+              refreshing={refreshing}
+              onRefresh={async () => {
+                this.setState({ fetching: true, refreshing: true });
+                if (onRefresh && diaryId) {
+                  await onRefresh(diaryId);
+                }
+                this.setState({ refreshing: false });
               }}
             />
           }

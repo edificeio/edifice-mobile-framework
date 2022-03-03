@@ -45,6 +45,10 @@ export type IHomeworkExplorerScreenProps = IHomeworkExplorerScreenDataProps &
   IHomeworkExplorerScreenOtherProps;
 
 export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplorerScreenProps, object> {
+  state = {
+    refreshing: false,
+  };
+
   render() {
     const { isFetching, didInvalidate, navigation } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : this.renderList();
@@ -93,7 +97,8 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
   }
 
   renderList() {
-    const { diaryList, isFetching, onRefresh } = this.props;
+    const { diaryList, onRefresh } = this.props;
+    const { refreshing } = this.state;
     const displayedDiaries = diaryList?.map(bb => {
       const { thumbnail, ...b } = bb;
       return {
@@ -107,7 +112,16 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
       <Explorer
         resources={displayedDiaries}
         onItemPress={diary => this.onOpenItem(diary)}
-        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => onRefresh()} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={async () => {
+              this.setState({ refreshing: true });
+              await onRefresh();
+              this.setState({ refreshing: false });
+            }}
+          />
+        }
         ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.bottomInset }} />}
         ListEmptyComponent={this.renderEmpty()}
         contentContainerStyle={{ flexGrow: 1 }}
