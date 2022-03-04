@@ -15,8 +15,6 @@ import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/d
 import { isHomeworkDone, homeworkListDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
 import { Icon, Loading } from '~/ui';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyEvaluations from 'ode-images/empty-screen/empty-evaluations.svg';
-import EmptyHomework from 'ode-images/empty-screen/empty-homework.svg';
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -152,7 +150,7 @@ export default class Dashboard extends React.PureComponent<any> {
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t('viesco-homework')}</TextBold>
         {Object.values(homeworks).length === 0 && (
-          <EmptyScreen svgImage={<EmptyHomework />} title={I18n.t('viesco-homework-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
         )}
         {Object.keys(homeworksByDate).map(date => (
           <>
@@ -213,7 +211,7 @@ export default class Dashboard extends React.PureComponent<any> {
         {evaluations && evaluations.data.devoirs && evaluationList !== undefined ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
-          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );

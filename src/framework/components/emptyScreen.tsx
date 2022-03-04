@@ -14,6 +14,8 @@ import theme from '~/app/theme';
 import { FlatButton } from '~/ui/FlatButton';
 import { UI_SIZES } from './constants';
 
+import { NamedSVG } from '~/framework/components/namedSVG';
+
 export const EmptyScreen = ({
   svgImage,
   title,
@@ -22,7 +24,7 @@ export const EmptyScreen = ({
   buttonAction,
   customStyle,
 }: {
-  svgImage: any;
+  svgImage: string;
   title: string;
   text?: string;
   buttonText?: string;
@@ -30,9 +32,8 @@ export const EmptyScreen = ({
   customStyle?: ViewStyle;
 }) => {
   const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.extraLarge;
-  const imageRatio = 7 / 5;
+  const imageHeight = imageWidth / (7 / 5);
   const hasButton = buttonText && buttonAction;
-
   return (
     <PageView_Style
       style={[
@@ -43,7 +44,9 @@ export const EmptyScreen = ({
         customStyle,
       ]}>
       <View style={{ paddingHorizontal: UI_SIZES.spacing.extraLarge }}>
-        <View style={{ height: imageWidth / imageRatio }}>{svgImage}</View>
+        <View style={{ height: imageHeight }}>
+          <NamedSVG name={svgImage} width={imageWidth} height={imageHeight} />
+        </View>
       </View>
       <TextSemiBold
         numberOfLines={2}

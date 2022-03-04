@@ -15,7 +15,6 @@ import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/d
 import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
 import { getSortedEvaluationList, GradesDevoirs, GradesDevoirsMoyennes } from './Item';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyEvaluations from 'ode-images/empty-screen/empty-evaluations.svg';
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
@@ -180,7 +179,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         ) : devoirs !== undefined && devoirs.length > 0 ? (
           <GradesDevoirsMoyennes devoirs={devoirs} />
         ) : (
-          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );
@@ -230,7 +229,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data.devoirs ? (
           <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} levels={levels} />
         ) : (
-          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );

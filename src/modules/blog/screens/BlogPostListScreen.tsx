@@ -27,7 +27,6 @@ import { IBlogPost, IBlogPostList } from '~/modules/blog/reducer';
 import { getBlogPostRight } from '~/modules/blog/rights';
 import { blogService } from '~/modules/blog/service';
 import { computeRelativePath } from '~/framework/util/navigation';
-import EmptyBlog from 'ode-images/empty-screen/empty-blog.svg';
 
 // TYPES ==========================================================================================
 
@@ -51,7 +50,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const selectedBlog = props.navigation.getParam('selectedBlog');
   const selectedBlogTitle = selectedBlog && selectedBlog.title;
   const selectedBlogId = selectedBlog && selectedBlog.id;
-  const hasBlogPostCreationRights = getBlogPostRight(selectedBlog, props.session)?.actionRight;
+  const hasBlogPostCreationRights = selectedBlog && getBlogPostRight(selectedBlog, props.session)?.actionRight;
   let focusEventListener: NavigationEventSubscription;
 
   // LOADER =====================================================================================
@@ -196,7 +195,9 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   // CREATE BUTTON ================================================================================
 
   const renderCreateButton = () => {
-    return hasBlogPostCreationRights ? (
+    const hasError =
+      !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
+    return hasBlogPostCreationRights && !hasError ? (
       <DEPRECATED_HeaderPrimaryAction
         iconName="new_post"
         onPress={() => {
@@ -211,7 +212,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const renderEmpty = () => {
     return (
       <EmptyScreen
-        svgImage={<EmptyBlog />}
+        svgImage="empty-blog"
         title={I18n.t(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         text={I18n.t(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         {...(hasBlogPostCreationRights

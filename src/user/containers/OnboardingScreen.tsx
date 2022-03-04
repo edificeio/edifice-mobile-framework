@@ -1,8 +1,4 @@
 import I18n from 'i18n-js';
-import OnboardingOne from 'ode-images/onboarding/onboarding_1.svg';
-import OnboardingTwo from 'ode-images/onboarding/onboarding_2.svg';
-import OnboardingThree from 'ode-images/onboarding/onboarding_3.svg';
-import OnboardingFour from 'ode-images/onboarding/onboarding_4.svg';
 import * as React from 'react';
 import { View, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,6 +16,7 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/LoginNavigator';
 import { FlatButton } from '~/ui';
 import { selectPlatform } from '~/user/actions/platform';
+import { NamedSVG } from '~/framework/components/namedSVG';
 
 // TYPES ==========================================================================================
 
@@ -41,14 +38,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
     const isOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
     const { width } = UI_SIZES.screen;
     const svgSize = width * 0.8;
-    const imageStyle = { width: svgSize, height: svgSize, maxHeight: '60%', maxWidth: '80%', marginTop: 4, marginBottom: 30 };
     const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
-    const onboardingImages = [
-      <OnboardingOne style={imageStyle} />,
-      <OnboardingTwo style={imageStyle} />,
-      <OnboardingThree style={imageStyle} />,
-      <OnboardingFour style={imageStyle} />,
-    ];
 
     return (
       <SafeAreaView
@@ -94,8 +84,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                   height: '85%',
                   width: '80%',
                 }}>
-                {onboardingImages[index]}
-                <TextSemiBold style={{ textAlign: 'center', fontSize: 18 }}>{onboardingTexts[index]}</TextSemiBold>
+                <NamedSVG name={`onboarding-${index + 1}`} width={svgSize} height={svgSize} />
+                <TextSemiBold style={{ textAlign: 'center', fontSize: 18 }}>{onboardingText}</TextSemiBold>
               </View>
             ))}
           </Swiper>

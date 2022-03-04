@@ -1,12 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { LayoutEvent } from 'react-navigation';
 import { Text, View } from 'react-native';
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
-import { LayoutEvent } from 'react-navigation';
 
 import { A } from './Typography';
 
 import { contentStyle } from '~/myAppMenu/components/NewContainerContent';
+import { CommonStyles } from '~/styles/common/styles';
 
 export interface ITextPreviewProps {
   textContent: string;
@@ -29,6 +30,18 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   state = {
     longText: false,
     isExpanded: false,
+  };
+
+  static defaultProps = {
+    expandMessage: I18n.t('common.readMore'),
+    numberOfLines: 5,
+    expansionTextStyle: { fontSize: 12 },
+    textStyle: {
+      color: CommonStyles.textColor,
+      fontFamily: CommonStyles.primaryFontFamily,
+      fontSize: 12,
+      marginTop: 5,
+    },
   };
 
   public measureText = (numberOfLines: number | undefined) => async (evt: LayoutEvent) => {

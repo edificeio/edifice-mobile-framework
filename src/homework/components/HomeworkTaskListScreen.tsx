@@ -25,7 +25,6 @@ import config from '../config';
 import { PageView } from '~/framework/components/page';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyHammock from 'ode-images/empty-screen/empty-hammock.svg';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { Icon } from '~/framework/components/icon';
@@ -246,7 +245,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
               <EmptyScreen
-                svgImage={<EmptyHammock />}
+                svgImage="empty-hammock"
                 title={I18n.t(
                   `homework-tasks-emptyScreenTitle${
                     hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? '-NoTasks' : '-NoTasks-NoCreationRights'

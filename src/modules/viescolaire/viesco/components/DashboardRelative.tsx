@@ -17,8 +17,6 @@ import { INavigationProps } from '~/types';
 import { Icon, Loading } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyEvaluations from 'ode-images/empty-screen/empty-evaluations.svg';
-import EmptyHomework from 'ode-images/empty-screen/empty-homework.svg';
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -175,7 +173,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t('viesco-homework')}</TextBold>
         {Object.values(homeworks.data).length === 0 && (
-          <EmptyScreen svgImage={<EmptyHomework />} title={I18n.t('viesco-homework-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
         )}
         {Object.keys(homeworksByDate).map(date => (
           <>
@@ -233,7 +231,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
         {evaluations && evaluations.data.devoirs.length > 0 ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
-          <EmptyScreen svgImage={<EmptyEvaluations />} title={I18n.t('viesco-eval-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />
         )}
       </View>
     );

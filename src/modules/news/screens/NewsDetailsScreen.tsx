@@ -200,18 +200,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
               </TextSemiBold>
               <TextLight style={{ fontSize: 10 }}>{moment(newsComment.created).fromNow()}</TextLight>
             </View>
-            <TextPreview
-              textContent={newsComment.comment}
-              numberOfLines={5}
-              textStyle={{
-                color: CommonStyles.textColor,
-                fontFamily: CommonStyles.primaryFontFamily,
-                fontSize: 12,
-                marginTop: 5,
-              }}
-              expandMessage={I18n.t('common.readMore')}
-              expansionTextStyle={{ fontSize: 12 }}
-            />
+            <TextPreview textContent={newsComment.comment} />
           </View>
         }
       />
