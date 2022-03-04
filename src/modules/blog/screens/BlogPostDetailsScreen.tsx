@@ -465,15 +465,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               </View>
               <TextPreview
                 textContent={blogPostComment.comment}
-                numberOfLines={5}
-                textStyle={{
-                  color: CommonStyles.textColor,
-                  fontFamily: CommonStyles.primaryFontFamily,
-                  fontSize: 12,
-                  marginTop: 5,
-                }}
-                expandMessage={I18n.t('common.readMore')}
-                expansionTextStyle={{ fontSize: 12 }}
                 additionalText={
                   blogPostComment.modified ? (
                     <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>
