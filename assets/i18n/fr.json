@@ -25,10 +25,11 @@
   "Password": "Mot de passe",
   "PasswordChange": "Modifier mon mot de passe",
   "PasswordChangeSuccess": "Mot de passe modifié avec succès.",
+  "PasswordChangeWarning": "Pour des raisons de sécurité, vous devez renouveler votre mot de passe.",
   "PasswordConfirm": "Confirmation du mot de passe",
   "PasswordNew": "Nouveau mot de passe",
-  "PasswordNewConfirm": "Confirmation du nouveau mot de passe",
-  "PasswordOld": "Ancien mot de passe",
+  "PasswordNewConfirm": "Confirmation du mot de passe",
+  "PasswordOld": "Mot de passe actuel",
   "Phone": "Téléphone",
   "Profile": "Profil",
   "ProfileChangeAvatarErrorAssign": "Votre image a été envoyée mais une erreur est survenue lors du changement d'avatar.",
@@ -140,6 +141,7 @@
   "blog-sharedToNbPersons": "Partagé à {{nb}} personnes",
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorFields": "Le formulaire contient des erreurs",
+  "changePassword-errorRegex": "Le nouveau mot de passe ne correspond pas aux critères de sécurité.",
   "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
   "common": {
     "all": "Tous",
@@ -183,6 +185,9 @@
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "for": "Pour",
+    "idf": {
+      "passwordRules": "Le nouveau mot de passe doit comporter 12 caractères minimum, incluant au minimum 1 majuscule, 1 minuscule et 1 chiffre ou 1 caractère spécial parmi les suivants : $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- ."
+    },
     "infoBubble-doNotShow": "Ne plus afficher ce message",
     "infoBubble-understood": "J'ai compris",
     "modified": "(modifié)",
@@ -425,6 +430,8 @@
   "homework": {
     "homeworkTaskListScreen": {
       "displayPastDays": "Afficher les jours précédents",
+      "noFutureHomework": "Pas d'autres activités",
+      "noFutureHomeworkTryAgain": "Pas d'autres acitivités à l'horizon, revenez plus tard !",
       "noMorePastHomework": "Pas d'activités précédentes"
     },
     "homeworkExplorerScreen": {
@@ -447,6 +454,8 @@
   "loading": "Chargement",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
   "login-back": "Retour à l'écran de connexion",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
   "login-wayf-error-retry": "Réessayer",
   "login-wayf-loading-text": "Connexion en cours...",
   "login-wayf-main-button": "S'identifier",

@@ -52,14 +52,16 @@ export const PageView = (props: PageViewProps) => {
 
   // Handle Back Android
   React.useEffect(() => {
-    const callback = () => {
-      goBack();
-      return true;
-    };
-    BackHandler.addEventListener('hardwareBackPress', callback);
-    return () => {
-      BackHandler.removeEventListener('hardwareBackPress', callback);
-    };
+    if (onBack) {
+      const callback = () => {
+        goBack();
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', callback);
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', callback);
+      };
+    }
   });
 
   return (

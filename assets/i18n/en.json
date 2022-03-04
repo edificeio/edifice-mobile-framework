@@ -136,6 +136,7 @@
   "blog-sharedToNbPersons": "Shared with {{nb}} people",
   "change-password-errorLoading": "We were not able to upload the data needed to change your password. Please try again later.",
   "changePassword-errorFields": "The form contains errors",
+  "changePassword-errorRegex": "The new password does not meet the security criteria.",
   "changePassword-errorSubmit": "Error while resetting password",
   "common": {
     "all": "All",
@@ -166,6 +167,9 @@
       "title": "Whoops..."
     },
     "errorLoadingResource": "This content is inaccessible.",
+    "idf": {
+      "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|'<>_.\/^*(){}%µ!£- ."
+    },
     "infoBubble-doNotShow": "Do not show this message",
     "infoBubble-understood": "Understood",
     "confirmationUnsavedModification": "Change not saved",
@@ -394,6 +398,8 @@
   "loading": "Loading",
   "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
   "login-back": "Back to login",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
   "login-wayf-error-retry": "Try again",
   "login-wayf-loading-text": "Loading...",
   "login-wayf-main-button": "Login",

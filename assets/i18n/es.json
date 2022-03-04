@@ -136,6 +136,7 @@
   "blog-sharedToNbPersons": "Compartido con {{nb}} personas",
   "change-password-errorLoading": "No pudimos cargar los datos necesarios para cambiar su contraseña. Por favor intente nuevamente más tarde.",
   "changePassword-errorFields": "El formulario contiene errores",
+  "changePassword-errorRegex": "La nueva contraseña no cumple los criterios de seguridad.",
   "changePassword-errorSubmit": "Error al restablecer la contraseña.",
   "common": {
     "all": "Todo",
@@ -166,6 +167,9 @@
       "title": "Ups..."
     },
     "errorLoadingResource": "Este contenido es inaccesible.",
+    "idf": {
+      "passwordRules": "La nueva contraseña debe tener al menos 12 caracteres, incluyendo al menos 1 mayúscula, 1 minúscula y 1 número o carácter especial de los siguientes: $&+,~:;=?@#|'<>_.\/^*(){}%µ!£- ."
+    },
     "infoBubble-doNotShow": "No volver a mostrar este mensaje",
     "infoBubble-understood": "He entendido",
     "confirmationUnsavedModification": "Modificación no guardada",
@@ -394,6 +398,8 @@
   "loading": "Carga",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "login-back": "Regresar a la autenticación",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
   "login-wayf-error-retry": "Volver a intentar",
   "login-wayf-loading-text": "Conexión en curso...",
   "login-wayf-main-button": "Iniciar sesión",

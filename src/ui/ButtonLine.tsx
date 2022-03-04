@@ -33,7 +33,6 @@ export const ContainerLabel = style.text({
 export const NoTouchableContainer = style.view({
   alignItems: 'center',
   flexDirection: 'row',
-  height: 46,
   justifyContent: 'flex-start',
   alignSelf: 'stretch',
 });
