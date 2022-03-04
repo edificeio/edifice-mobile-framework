@@ -26,7 +26,7 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
         borderTopColor: CommonStyles.borderColorLighter,
         borderTopWidth: 1,
         elevation: 1,
-        height: UI_SIZES.headerHeight,
+        height: UI_SIZES.elements.navbarHeight,
       },
       tabStyle: {
         flexDirection: 'column',

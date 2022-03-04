@@ -24,7 +24,7 @@ const HeaderStyle = style(SafeAreaView)({
   alignItems: 'center',
   backgroundColor: CommonStyles.mainColorTheme,
   paddingTop: Platform.OS === 'ios' ? iosStatusBarHeight : 0,
-  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
+  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.elements.navbarHeight }),
 });
 
 export const HeaderComponent = ({
@@ -59,7 +59,7 @@ export const Header = connect((state: any) => ({
 
 export const sensitiveStylePanel: ViewStyle = {
   alignItems: 'center',
-  height: UI_SIZES.headerHeight,
+  height: UI_SIZES.elements.navbarHeight,
   justifyContent: 'center',
   paddingLeft: 18,
   paddingRight: 18,
@@ -94,7 +94,7 @@ export const TouchableEndBarPanel = style(TouchableOpacity)({
 export const CenterPanel = style(TouchableOpacity)({
   alignItems: 'center',
   flex: 1,
-  height: UI_SIZES.headerHeight,
+  height: UI_SIZES.elements.navbarHeight,
   justifyContent: 'center',
 });
 
@@ -105,8 +105,8 @@ export const AppTitle = style.text({
   fontSize: 16,
   flex: 1,
   textAlign: 'center',
-  height: UI_SIZES.headerHeight,
-  lineHeight: UI_SIZES.headerHeight,
+  height: UI_SIZES.elements.navbarHeight,
+  lineHeight: UI_SIZES.elements.navbarHeight,
 });
 
 export const HeaderAction = style.text(
@@ -117,8 +117,8 @@ export const HeaderAction = style.text(
     flex: 1,
     textAlign: 'right',
     paddingRight: 20,
-    height: UI_SIZES.headerHeight,
-    lineHeight: UI_SIZES.headerHeight,
+    height: UI_SIZES.elements.navbarHeight,
+    lineHeight: UI_SIZES.elements.navbarHeight,
   },
   ({ disabled }: { disabled?: boolean }) => ({
     opacity: disabled ? 0.7 : 1,

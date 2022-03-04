@@ -130,15 +130,14 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     right: 20,
-    // top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 44 : 44) : 22,
-    top: UI_SIZES.topInset,
+    top: UI_SIZES.screen.topInset,
   },
   overlayActions: {
     bottom: 0,
     left: 0,
     position: 'absolute',
     right: 0,
-    top: UI_SIZES.topInset,
+    top: UI_SIZES.screen.topInset,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

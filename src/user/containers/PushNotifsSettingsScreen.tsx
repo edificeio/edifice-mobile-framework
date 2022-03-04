@@ -158,7 +158,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         renderItem={({ item }: { item: [string, IPushNotifsSettings] }) => this.renderMainItem(item)}
         ListEmptyComponent={<EmptyConnectionScreen />}
         alwaysBounceVertical={false}
-        ListFooterComponent={<View style={{ height: UI_SIZES.bottomInset }} />}
+        ListFooterComponent={<View style={{ height: UI_SIZES.screen.bottomInset }} />}
       />
     );
   }
@@ -235,7 +235,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         renderItem={({ item }: { item: [string, boolean] }) => this.renderSubItem(item)}
         ListEmptyComponent={<EmptyConnectionScreen />}
         alwaysBounceVertical={false}
-        ListFooterComponent={<View style={{ height: UI_SIZES.bottomInset }} />}
+        ListFooterComponent={<View style={{ height: UI_SIZES.screen.bottomInset }} />}
         ListHeaderComponent={
           hasEmptySubListData ? null : (
             <TouchableOpacity onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}>

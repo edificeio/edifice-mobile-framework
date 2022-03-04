@@ -181,13 +181,13 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     const isIDF = DEPRECATED_getCurrentPlatform()!.displayName === 'MonLycée.net'; // WTF ??!! 🤪🤪🤪
 
     return (
-      <View style={{ backgroundColor: theme.color.background.card, flex: 1}}>
+      <View style={{ backgroundColor: theme.color.background.card, flex: 1 }}>
         <KeyboardPageView
           navigation={this.props.navigation}
           style={{
-            marginBottom: UI_SIZES.bottomInset,
+            marginBottom: UI_SIZES.screen.bottomInset,
             flex: 1,
-            backgroundColor: theme.color.background.card
+            backgroundColor: theme.color.background.card,
           }}>
           <View style={{ height: '100%' }}>
             <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
@@ -196,41 +196,37 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                   <FormWrapper>
                     <FormContainer style={{ justifyContent: 'space-between', alignItems: 'stretch' }}>
                       <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
-                        {
-                          this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
-                            <View
-                              style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: 5,
-                                flex: 0,
-                              }}>
-                              <Text style={{ ...TextSizeStyle.SlightBig, textAlign: 'center' }}>
-                                {I18n.t('PasswordChangeWarning')}
-                              </Text>
-                              <MiniSpacer />
-                              <MiniSpacer />
-                            </View>
-                          ) : null
-                        }
-                        {
-                          isIDF ? (
-                            <View
-                              style={{
-                                backgroundColor: theme.color.secondary.light,
-                                paddingVertical: 6,
-                                paddingHorizontal: 14,
-                                borderColor: theme.color.secondary.regular,
-                                borderWidth: 1,
-                                borderRadius: 10,
-                                flex: 0,
-                              }}>
-                              <Text style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
-                                {I18n.t('common.idf.passwordRules')}
-                              </Text>
-                            </View>
-                          ) : null
-                        }
+                        {this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
+                          <View
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              padding: 5,
+                              flex: 0,
+                            }}>
+                            <Text style={{ ...TextSizeStyle.SlightBig, textAlign: 'center' }}>
+                              {I18n.t('PasswordChangeWarning')}
+                            </Text>
+                            <MiniSpacer />
+                            <MiniSpacer />
+                          </View>
+                        ) : null}
+                        {isIDF ? (
+                          <View
+                            style={{
+                              backgroundColor: theme.color.secondary.light,
+                              paddingVertical: 6,
+                              paddingHorizontal: 14,
+                              borderColor: theme.color.secondary.regular,
+                              borderWidth: 1,
+                              borderRadius: 10,
+                              flex: 0,
+                            }}>
+                            <Text style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
+                              {I18n.t('common.idf.passwordRules')}
+                            </Text>
+                          </View>
+                        ) : null}
                       </View>
                       <View style={{ flexShrink: 0 }}>
                         <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />

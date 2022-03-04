@@ -121,7 +121,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
             }}
           />
         }
-        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.bottomInset }} />}
+        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         ListEmptyComponent={this.renderEmpty()}
         contentContainerStyle={{ flexGrow: 1 }}
         keyExtractor={item => item.id}

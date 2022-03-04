@@ -220,7 +220,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         folders={displayedFolders}
         resources={displayedblogs}
         onItemPress={onOpenItem}
-        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.bottomInset }} />}
+        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
         ListEmptyComponent={renderEmpty()}
         contentContainerStyle={{ flexGrow: 1 }}

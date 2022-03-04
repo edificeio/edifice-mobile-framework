@@ -36,6 +36,8 @@ import {
 } from 'react-native';
 import styled from '@emotion/native';
 
+import { UI_SIZES } from './constants';
+
 import { Icon } from '~/framework/components/icon';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
@@ -210,7 +212,7 @@ const FolderItemTouchable = styled.TouchableOpacity(folderItemTouchableStyle);
 const EmptyItemTouchable = styled.TouchableOpacity(empyItemTouchableStyle);
 
 const ThumbnailView = styled.View({
-  aspectRatio: 7 / 5,
+  aspectRatio: UI_SIZES.aspectRatios.thumbnail,
   justifyContent: 'center',
   alignItems: 'center',
   borderTopLeftRadius: 17,
