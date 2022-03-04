@@ -173,7 +173,7 @@ class MailContentContainer extends React.PureComponent<
 
     return (
       <>
-        <PageView navigation={navigation} navBarWithBack={navBarInfo} onBack={this.goBack}>
+        <PageView navigation={navigation} navBarWithBack={navBarInfo} onBack={this.goBack.bind(this)}>
 
           <PageContainer style={{ backgroundColor: theme.color.background.page }}>
             {this.props.isFetching ? (
