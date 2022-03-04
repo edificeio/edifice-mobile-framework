@@ -51,7 +51,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const selectedBlog = props.navigation.getParam('selectedBlog');
   const selectedBlogTitle = selectedBlog && selectedBlog.title;
   const selectedBlogId = selectedBlog && selectedBlog.id;
-  const hasBlogPostCreationRights = getBlogPostRight(selectedBlog, props.session)?.actionRight;
+  const hasBlogPostCreationRights = selectedBlog && getBlogPostRight(selectedBlog, props.session)?.actionRight;
   let focusEventListener: NavigationEventSubscription;
 
   // LOADER =====================================================================================
@@ -196,7 +196,9 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   // CREATE BUTTON ================================================================================
 
   const renderCreateButton = () => {
-    return hasBlogPostCreationRights ? (
+    const hasError =
+      !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
+    return hasBlogPostCreationRights && !hasError ? (
       <DEPRECATED_HeaderPrimaryAction
         iconName="new_post"
         onPress={() => {

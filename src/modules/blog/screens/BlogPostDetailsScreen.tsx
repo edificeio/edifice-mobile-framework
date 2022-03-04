@@ -216,7 +216,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   navBarInfo() {
     const { navigation } = this.props;
-    const { blogPostData } = this.state;
+    const { blogPostData, errorState } = this.state;
     const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
     const blogId = navigation.getParam('blog')?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -226,15 +226,16 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return {
       title:
         blogPostData?.title && this.state.showHeaderTitle ? (
-          <HeaderTitleAndSubtitle title={blogPostData?.title} subtitle={I18n.t('timeline.blogPostDetailsScreen.title')}/>
+          <HeaderTitleAndSubtitle title={blogPostData?.title} subtitle={I18n.t('timeline.blogPostDetailsScreen.title')} />
         ) : (
           I18n.t('timeline.blogPostDetailsScreen.title')
         ),
-      right: resourceUri ? (
-        <TouchableOpacity onPress={this.showMenu}>
-          <HeaderIcon name="more_vert" iconSize={24} />
-        </TouchableOpacity>
-      ) : undefined,
+      right:
+        resourceUri && !errorState ? (
+          <TouchableOpacity onPress={this.showMenu}>
+            <HeaderIcon name="more_vert" iconSize={24} />
+          </TouchableOpacity>
+        ) : undefined,
     };
   }
 
