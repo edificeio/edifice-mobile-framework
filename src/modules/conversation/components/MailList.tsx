@@ -23,8 +23,6 @@ import { IFolder } from '~/modules/conversation/state/initMails';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { Loading } from '~/ui';
 import { Weight } from '~/ui/Typography';
-import EmptyConversation from 'ode-images/empty-screen/empty-conversation.svg';
-import EmptyTrash from 'ode-images/empty-screen/empty-trash.svg';
 
 interface IMailListDataProps {
   notifications: any;
@@ -145,10 +143,9 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const isFolderDrafts = navigationKey === 'drafts';
     const isFolderOutbox = navigationKey === 'sendMessages';
     const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox';
-    const svgImage = isTrashed ? <EmptyTrash /> : <EmptyConversation />;
     const text = I18n.t(`conversation.emptyScreen.${folder}.text`);
     const title = I18n.t(`conversation.emptyScreen.${folder}.title`);
-    return <EmptyScreen svgImage={svgImage} text={text} title={title} />;
+    return <EmptyScreen svgImage={isTrashed ? 'empty-trash' : 'empty-conversation'} text={text} title={title} />;
   }
 
   renderMailContent = mailInfos => {

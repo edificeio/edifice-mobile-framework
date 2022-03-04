@@ -27,7 +27,6 @@ import { IBlogPost, IBlogPostList } from '~/modules/blog/reducer';
 import { getBlogPostRight } from '~/modules/blog/rights';
 import { blogService } from '~/modules/blog/service';
 import { computeRelativePath } from '~/framework/util/navigation';
-import EmptyBlog from 'ode-images/empty-screen/empty-blog.svg';
 
 // TYPES ==========================================================================================
 
@@ -213,7 +212,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const renderEmpty = () => {
     return (
       <EmptyScreen
-        svgImage={<EmptyBlog />}
+        svgImage="empty-blog"
         title={I18n.t(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         text={I18n.t(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         {...(hasBlogPostCreationRights

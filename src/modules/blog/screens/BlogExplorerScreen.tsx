@@ -33,7 +33,6 @@ import { IBlog, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources, 
 import { getBlogWorkflowInformation } from '~/modules/blog/rights';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { openUrl } from '~/framework/util/linking';
-import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
 import { StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 
 // TYPES ==========================================================================================
@@ -145,7 +144,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   const renderEmpty = () => {
     return (
       <EmptyScreen
-        svgImage={<EmptySearch />}
+        svgImage="empty-search"
         title={I18n.t('blog.blogsEmptyScreen.title')}
         text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
         buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}
