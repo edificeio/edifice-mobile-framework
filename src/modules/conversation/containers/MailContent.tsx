@@ -167,14 +167,13 @@ class MailContentContainer extends React.PureComponent<
     const ViewportAwareSubject = Viewport.Aware(View);
 
     const navBarInfo = {
-      title: (this.state.showHeaderSubject ? mail.subject : undefined),
-      right: <HeaderAction onPress={this.showMenu} iconName="more_vert" iconSize={24} />,
+      title: this.state.showHeaderSubject ? mail.subject : undefined,
+      right: error || htmlError ? undefined : <HeaderAction onPress={this.showMenu} iconName="more_vert" iconSize={24} />,
     };
 
     return (
       <>
-        <PageView navigation={navigation} navBarWithBack={navBarInfo} onBack={this.goBack}>
-
+        <PageView navigation={navigation} navBarWithBack={navBarInfo} onBack={this.goBack.bind(this)}>
           <PageContainer style={{ backgroundColor: theme.color.background.page }}>
             {this.props.isFetching ? (
               <Loading />

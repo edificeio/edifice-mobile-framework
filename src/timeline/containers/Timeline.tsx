@@ -21,9 +21,8 @@ import { PageContainer } from '~/ui/ContainerContent';
 import { TempFloatingAction } from '~/ui/FloatingButton';
 import { ErrorMessage } from '~/ui/Typography';
 import { Header } from '~/ui/headers/Header';
-import { HeaderAction } from '~/ui/headers/NewHeader';
+import { HeaderAction } from '~/framework/components/header';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyTimeline from 'ode-images/empty-screen/empty-timeline.svg';
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -137,7 +136,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
         ListEmptyComponent={
           !isFetching && endReached ? (
             <EmptyScreen
-              svgImage={<EmptyTimeline />}
+              svgImage="empty-timeline"
               text={I18n.t('timeline-emptyScreenText')}
               title={I18n.t('timeline-emptyScreenTitle')}
             />

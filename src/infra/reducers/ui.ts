@@ -7,7 +7,7 @@ interface UiState {
 }
 
 const initialState = {
-  headerHeight: UI_SIZES.headerHeight + getStatusBarHeight(),
+  headerHeight: UI_SIZES.elements.navbarHeight + getStatusBarHeight(),
 };
 
 export default (state: UiState = initialState, action): UiState => {

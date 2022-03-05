@@ -42,7 +42,6 @@ import {
   NotifHandlerThunkAction,
 } from '~/framework/util/notifications/routing';
 import { getUserSession, IUserSession } from '~/framework/util/session';
-import EmptyTimeline from 'ode-images/empty-screen/empty-timeline.svg';
 
 // TYPES ==========================================================================================
 
@@ -227,7 +226,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   renderEmpty() {
     return (
       <EmptyScreen
-        svgImage={<EmptyTimeline />}
+        svgImage="empty-timeline"
         title={I18n.t('timeline.emptyScreenTitle')}
         text={I18n.t('timeline.emptyScreenText')}
       />

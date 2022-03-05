@@ -216,7 +216,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   navBarInfo() {
     const { navigation } = this.props;
-    const { blogPostData } = this.state;
+    const { blogPostData, errorState } = this.state;
     const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
     const blogId = navigation.getParam('blog')?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -226,15 +226,16 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return {
       title:
         blogPostData?.title && this.state.showHeaderTitle ? (
-          <HeaderTitleAndSubtitle title={blogPostData?.title} subtitle={I18n.t('timeline.blogPostDetailsScreen.title')}/>
+          <HeaderTitleAndSubtitle title={blogPostData?.title} subtitle={I18n.t('timeline.blogPostDetailsScreen.title')} />
         ) : (
           I18n.t('timeline.blogPostDetailsScreen.title')
         ),
-      right: resourceUri ? (
-        <TouchableOpacity onPress={this.showMenu}>
-          <HeaderIcon name="more_vert" iconSize={24} />
-        </TouchableOpacity>
-      ) : undefined,
+      right:
+        resourceUri && !errorState ? (
+          <TouchableOpacity onPress={this.showMenu}>
+            <HeaderIcon name="more_vert" iconSize={24} />
+          </TouchableOpacity>
+        ) : undefined,
     };
   }
 
@@ -430,13 +431,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                   },
                 ]);
               }}>
-              <Icon name="trash" color={theme.color.failure} size={UI_SIZES.actionButtonSize} />
+              <Icon name="trash" color={theme.color.failure} size={UI_SIZES.elements.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
           {hasUpdateCommentBlogPostRight ? (
             <TouchableOpacity
               onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
-              <Icon name="pencil" color={theme.greyPalette.black} size={UI_SIZES.actionButtonSize} />
+              <Icon name="pencil" color={theme.greyPalette.black} size={UI_SIZES.elements.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -464,15 +465,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               </View>
               <TextPreview
                 textContent={blogPostComment.comment}
-                numberOfLines={5}
-                textStyle={{
-                  color: CommonStyles.textColor,
-                  fontFamily: CommonStyles.primaryFontFamily,
-                  fontSize: 12,
-                  marginTop: 5,
-                }}
-                expandMessage={I18n.t('common.readMore')}
-                expansionTextStyle={{ fontSize: 12 }}
                 additionalText={
                   blogPostComment.modified ? (
                     <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>

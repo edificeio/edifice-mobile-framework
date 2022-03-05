@@ -20,6 +20,7 @@ type MailContentProps = {
   restore: (mailIds: string[]) => void;
   delete: (mailIds: string[]) => void;
   checkStorage: () => boolean;
+  onHtmlError: () => void;
 };
 
 const GetTopBarColor = ({ senderId, receiverId }) => {
@@ -98,7 +99,7 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
   }
 
   private mailContent() {
-    const { mail } = this.props;
+    const { mail, onHtmlError } = this.props;
     const htmlOpts = {
       selectable: true,
     };
@@ -112,7 +113,14 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
               padding: 10,
             }}>
             {mail.body ? (
-              <HtmlContentView onHtmlError={() => this.setState({ htmlError: true })} html={mail.body} opts={htmlOpts} />
+              <HtmlContentView
+                onHtmlError={() => {
+                  onHtmlError();
+                  this.setState({ htmlError: true });
+                }}
+                html={mail.body}
+                opts={htmlOpts}
+              />
             ) : null}
           </ScrollView>
         </View>

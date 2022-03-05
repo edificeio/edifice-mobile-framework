@@ -38,6 +38,7 @@ type MailContentContainerState = {
   showMoveModal: boolean;
   deleteModal: { isShown: boolean; mailsIds: string[] };
   isShownStorageWarning: boolean;
+  htmlError: boolean;
 };
 
 class MailContentContainer extends React.PureComponent<MailContentContainerProps, MailContentContainerState> {
@@ -50,6 +51,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       showMoveModal: false,
       deleteModal: { isShown: false, mailsIds: [] },
       isShownStorageWarning: false,
+      htmlError: false,
     };
   }
   public componentDidMount() {
@@ -181,19 +183,25 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   };
 
   public render() {
-    const { navigation, mail } = this.props;
-    const { showMenu, showMoveModal } = this.state;
+    const { error, navigation, mail } = this.props;
+    const { htmlError, showMenu, showMoveModal } = this.state;
     const menuData = this.setMenuData();
 
     const navBarInfo = {
       title: navigation.state.params.subject,
-      right: <HeaderAction iconName="more_vert" onPress={this.showMenu} />,
+      right: error || htmlError ? undefined : <HeaderAction iconName="more_vert" onPress={this.showMenu} />,
     };
 
     return (
       <>
         <PageView navigation={navigation} navBarWithBack={navBarInfo}>
-          <MailContent {...this.props} delete={this.delete} restore={this.restore} checkStorage={this.checkStorage} />
+          <MailContent
+            {...this.props}
+            onHtmlError={() => this.setState({ htmlError: true })}
+            delete={this.delete}
+            restore={this.restore}
+            checkStorage={this.checkStorage}
+          />
         </PageView>
 
         <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />

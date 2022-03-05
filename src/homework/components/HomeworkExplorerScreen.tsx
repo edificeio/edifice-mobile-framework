@@ -15,7 +15,6 @@ import { Loading } from '~/ui';
 import config from '../config';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
 import { computeRelativePath } from '~/framework/util/navigation';
 
 export interface IHomeworkExplorerScreenDataProps {
@@ -78,7 +77,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
     return (
       <EmptyScreen
-        svgImage={<EmptySearch />}
+        svgImage="empty-search"
         title={I18n.t(`homework-diaries-emptyScreenTitle`)}
         text={I18n.t('homework-diaries-emptyScreenText')}
         buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createDiary') : undefined}
@@ -122,7 +121,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
             }}
           />
         }
-        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.bottomInset }} />}
+        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         ListEmptyComponent={this.renderEmpty()}
         contentContainerStyle={{ flexGrow: 1 }}
         keyExtractor={item => item.id}

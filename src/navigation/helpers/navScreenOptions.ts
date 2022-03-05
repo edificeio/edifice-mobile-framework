@@ -21,7 +21,7 @@ export const standardNavScreenOptions = (props, { state }) => {
     headerStyle: {
       backgroundColor: theme.color.secondary.regular,
       elevation: 5,
-      height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
+      height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: UI_SIZES.elements.navbarHeight }),
       ...(props.headerStyle || {}),
     },
     headerTitleStyle: {

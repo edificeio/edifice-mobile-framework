@@ -82,7 +82,7 @@ export default (props: NewMailComponentProps) => {
       contentContainerStyle={{ flexGrow: 1 }}
       style={{
         flexGrow: 1,
-        marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.bottomInset, default: 0 }),
+        marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.screen.bottomInset, default: 0 }),
       }}>
       <View style={{ flexGrow: 1 }}>
         {props.isFetching ? (

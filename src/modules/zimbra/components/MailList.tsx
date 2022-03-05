@@ -15,7 +15,6 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyConversation from 'ode-images/empty-screen/empty-conversation.svg';
 
 type MailListProps = {
   notifications: any;
@@ -223,7 +222,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             ) : (
               <View style={{ flex: 1 }}>
                 <EmptyScreen
-                  svgImage={<EmptyConversation />}
+                  svgImage="empty-conversation"
                   title={I18n.t('zimbra-empty-mailbox-title')}
                   text={I18n.t('zimbra-empty-mailbox-text')}
                 />
