@@ -23,7 +23,6 @@ import { getAuthState } from '~/user/selectors';
 import { PageView } from '~/framework/components/page';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyContent from 'ode-images/empty-screen/empty-content.svg';
 
 enum WAYFPageMode {
   EMPTY,
@@ -313,11 +312,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         // Display empty screen
         Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
         return (
-          <EmptyScreen
-            svgImage={<EmptyContent />}
-            text={I18n.t('login-wayf-empty-text')}
-            title={I18n.t('login-wayf-empty-title')}
-          />
+          <EmptyScreen svgImage="empty-content" text={I18n.t('login-wayf-empty-text')} title={I18n.t('login-wayf-empty-title')} />
         );
       case WAYFPageMode.ERROR:
         // Display error messsage

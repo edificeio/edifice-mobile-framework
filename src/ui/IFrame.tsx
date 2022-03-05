@@ -107,7 +107,7 @@ export class IFrame extends React.Component<
             action={() => navigation.goBack()}
             customStyle={{
               backgroundColor: 'rgba(63,63,63,0.8)',
-              top: UI_SIZES.topInset,
+              top: UI_SIZES.screen.topInset,
             }}
           />
         ) : null}

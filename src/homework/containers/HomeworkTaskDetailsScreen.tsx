@@ -11,14 +11,18 @@ import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import MondayImage from 'ode-images/days/monday.svg';
-import TuesdayImage from 'ode-images/days/tuesday.svg';
-import WednesdayImage from 'ode-images/days/wednesday.svg';
-import ThursdayImage from 'ode-images/days/thursday.svg';
-import FridayImage from 'ode-images/days/friday.svg';
-import SaturdayImage from 'ode-images/days/saturday.svg';
+import { NamedSVG } from '~/framework/components/namedSVG';
 import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
 import config from '../config';
+
+const dayImages = {
+  monday: 'days-monday',
+  tuesday: 'days-tuesday',
+  wednesday: 'days-wednesday',
+  thursday: 'days-thursday',
+  friday: 'days-friday',
+  saturday: 'days-saturday',
+};
 
 export interface IHomeworkTaskDetailsScreenNavigationParams {
   task: {
@@ -39,23 +43,13 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const dayColor = theme.days[dayOfTheWeek];
     const opacity = 80;
     const bannerColor = `${dayColor}${opacity}`;
-    const dayImages = {
-      monday: <MondayImage style={styles.dayImage} />,
-      tuesday: <TuesdayImage style={styles.dayImage} />,
-      wednesday: <WednesdayImage style={styles.dayImage} />,
-      thursday: <ThursdayImage style={styles.dayImage} />,
-      friday: <FridayImage style={styles.dayImage} />,
-      saturday: <SaturdayImage style={styles.dayImage} />,
-    };
-    const dayImage = dayImages[dayOfTheWeek];
-
     return (
       <PageView navigation={navigation} navBarWithBack={{}}>
         <View style={[styles.banner, { backgroundColor: bannerColor }]}>
           <View>
             <HomeworkDayCheckpoint date={date} />
           </View>
-          {dayImage}
+          <NamedSVG name={dayImages[dayOfTheWeek]} style={styles.dayImage} />
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer}>
           {title ? <TextSemiBold style={styles.title}>{title}</TextSemiBold> : null}

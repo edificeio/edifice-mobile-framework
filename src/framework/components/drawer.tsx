@@ -62,7 +62,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
     // Calculate backdrop max height depending on UI elements
     this.backdropMaxHeight = UI_SIZES.getViewHeight({ isNavbar, isTabbar });
     // Calculate dropdown list max height
-    this.listMaxHeight = this.backdropMaxHeight - ITEM_HEIGHT + LIST_RADIUS - 2 * UI_SIZES.tabsHeight;
+    this.listMaxHeight = this.backdropMaxHeight - ITEM_HEIGHT + LIST_RADIUS - 2 * UI_SIZES.elements.tabbarHeight;
   }
 
   // Return backdrop animation depending on future state (Open||Close)

@@ -23,7 +23,6 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { openUrl } from '~/framework/util/linking';
 import { getBlogWorkflowInformation } from '../rights';
 import { getUserSession, IUserSession } from '~/framework/util/session';
-import EmptySearch from 'ode-images/empty-screen/empty-search.svg';
 
 // TYPES ==========================================================================================
 
@@ -119,7 +118,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
     const hasBlogCreationRights = getBlogWorkflowInformation(session)?.blog.create;
     return (
       <EmptyScreen
-        svgImage={<EmptySearch />}
+        svgImage="empty-search"
         title={I18n.t('blog.blogsEmptyScreen.title')}
         text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
         buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}

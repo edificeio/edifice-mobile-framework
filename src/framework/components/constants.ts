@@ -15,8 +15,9 @@ export const UI_ANIMATIONS = {
 };
 
 export const UI_SIZES = {
-  actionButtonSize: 20,
-  bottomInset: initialWindowMetrics?.insets?.bottom || 0,
+  aspectRatios: {
+    thumbnail: 7 / 5,
+  },
   dimensions: {
     height: {
       medium: 104,
@@ -26,7 +27,11 @@ export const UI_SIZES = {
       small: 2,
     },
   },
-  headerHeight: 56,
+  elements: {
+    actionButtonSize: 20,
+    navbarHeight: 56,
+    tabbarHeight: 56,
+  },
   radius: {
     small: 4,
     madium: 8,
@@ -34,8 +39,10 @@ export const UI_SIZES = {
     extraLarge: 24,
   },
   screen: {
+    bottomInset: initialWindowMetrics?.insets?.bottom || 0,
     height: screenDimensions.height,
     scale: screenDimensions.scale,
+    topInset: initialWindowMetrics?.insets?.top || 0,
     width: screenDimensions.width,
   },
   spacing: {
@@ -51,16 +58,14 @@ export const UI_SIZES = {
     extraLargePlus: 36,
     huge: 64,
   },
-  tabsHeight: 56,
-  topInset: initialWindowMetrics?.insets?.top || 0,
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (
       UI_SIZES.screen.height -
-      (UI_SIZES.topInset ?? 0) -
-      (UI_SIZES.bottomInset ?? 0) -
-      (isNavbar ? UI_SIZES.headerHeight : 0) -
-      (isTabbar ? UI_SIZES.tabsHeight : 0) +
+      UI_SIZES.screen.topInset -
+      UI_SIZES.screen.bottomInset -
+      (isNavbar ? UI_SIZES.elements.navbarHeight : 0) -
+      (isTabbar ? UI_SIZES.elements.tabbarHeight : 0) +
       Platform.select({ ios: 4, default: 24 })
     );
   },

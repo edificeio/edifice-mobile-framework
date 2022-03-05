@@ -117,7 +117,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
   render() {
     return (
-      <PageView navigation={this.props.navigation} navBarWithBack={this.navBarInfo()} onBack={this.doHandleGoBack}>
+      <PageView navigation={this.props.navigation} navBarWithBack={this.navBarInfo()} onBack={this.doHandleGoBack.bind(this)}>
         <Notifier id="createPost" />{/* ToDo : don't use magic keywords like this. */}
         <KeyboardAvoidingView // ToDo : use <KeyboardAvoidingScrollView instead ?
           enabled

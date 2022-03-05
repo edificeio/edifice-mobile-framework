@@ -17,7 +17,6 @@ import { PageView } from '~/framework/components/page';
 import { FlatButton } from '~/ui/FlatButton';
 import { openUrl } from '~/framework/util/linking';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import EmptyHammock from 'ode-images/empty-screen/empty-hammock.svg';
 
 class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
   renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
@@ -73,9 +72,7 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
   }
 
   private renderEmpty() {
-    return (
-      <EmptyScreen svgImage={<EmptyHammock />} text={I18n.t('myapp-emptyScreenText')} title={I18n.t('myapp-emptyScreenTitle')} />
-    );
+    return <EmptyScreen svgImage="empty-hammock" text={I18n.t('myapp-emptyScreenText')} title={I18n.t('myapp-emptyScreenTitle')} />;
   }
 
   public render() {

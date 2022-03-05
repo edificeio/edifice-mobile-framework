@@ -411,18 +411,7 @@ class NewsContentPage_Unconnected extends React.Component<INewsContentPageProps,
             </CommentAuthor>
             <CommentDate>{moment(comment.created).fromNow()}</CommentDate>
           </View>
-          <TextPreview
-            numberOfLines={5}
-            textContent={comment.comment}
-            textStyle={{
-              color: CommonStyles.textColor,
-              fontFamily: CommonStyles.primaryFontFamily,
-              fontSize: 12,
-              marginTop: 5,
-            }}
-            expandMessage={I18n.t('readMore')}
-            expansionTextStyle={{ fontSize: 12 }}
-          />
+          <TextPreview textContent={comment.comment} />
         </CenterPanel>
       </ListItem>
     );

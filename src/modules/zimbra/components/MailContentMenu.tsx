@@ -70,7 +70,7 @@ const style = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: UI_SIZES.topInset,
+    top: UI_SIZES.screen.topInset,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,
