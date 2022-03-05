@@ -32,7 +32,7 @@ export const EmptyScreen = ({
   customStyle?: ViewStyle;
 }) => {
   const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.extraLarge;
-  const imageHeight = imageWidth / (7 / 5);
+  const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
   const hasButton = buttonText && buttonAction;
   return (
     <PageView_Style
