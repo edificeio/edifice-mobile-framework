@@ -264,7 +264,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         ListFooterComponent={
           <>
             {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
-            <View style={{ paddingBottom: UI_SIZES.bottomInset }} />
+            <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
           </>
         }
         refreshControl={

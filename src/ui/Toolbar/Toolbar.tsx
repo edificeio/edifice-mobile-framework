@@ -104,19 +104,19 @@ interface IState {}
 const styles = StyleSheet.create({
   firstActions: {
     alignItems: 'center',
-    height: UI_SIZES.headerHeight,
+    height: UI_SIZES.elements.navbarHeight,
     justifyContent: 'flex-start',
     flexDirection: 'row',
   },
   middleActions: {
     alignItems: 'center',
-    height: UI_SIZES.headerHeight,
+    height: UI_SIZES.elements.navbarHeight,
     justifyContent: 'space-between',
   },
   lastActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: UI_SIZES.headerHeight,
+    height: UI_SIZES.elements.navbarHeight,
     justifyContent: 'flex-end',
     paddingRight: layoutSize.LAYOUT_16,
   },

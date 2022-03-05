@@ -1,7 +1,7 @@
-import * as React from "react";
-import { TouchableOpacity, Platform } from "react-native";
-import { UI_SIZES } from "~/framework/components/constants";
-import { Icon } from ".";
+import * as React from 'react';
+import { TouchableOpacity, Platform } from 'react-native';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '.';
 
 interface MediaActionProps {
   iconName: string;
@@ -23,7 +23,7 @@ export const MediaAction = ({ iconName, action, customStyle, customIconSize, cus
         height: 40,
         width: 40,
         right: 5,
-        top: UI_SIZES.topInset,
+        top: UI_SIZES.screen.topInset,
         backgroundColor: 'rgba(0,0,0,0.3)',
       },
       customStyle,

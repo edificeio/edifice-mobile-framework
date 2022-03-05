@@ -24,7 +24,7 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
     const RenderComp = () => {
       const insets = useSafeAreaInsets();
       return (
-        <View style={[style.overlayActions, { top: UI_SIZES.headerHeight + insets.top }]}>
+        <View style={[style.overlayActions, { top: UI_SIZES.elements.navbarHeight + insets.top }]}>
           <TouchableWithoutFeedback style={{ width: '100%', height: '100%' }} onPress={onClickOutside}>
             <FlatList
               style={style.actions}

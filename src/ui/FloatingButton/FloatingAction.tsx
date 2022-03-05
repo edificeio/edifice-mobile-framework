@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     right: 20,
-    top: UI_SIZES.topInset,
+    top: UI_SIZES.screen.topInset,
     zIndex: 10,
   },
   overlayActions: {
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: UI_SIZES.topInset,
+    top: UI_SIZES.screen.topInset,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

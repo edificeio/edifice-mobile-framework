@@ -34,11 +34,11 @@ export const FakeHeader_Container = styled.View({
   flex: 0,
   backgroundColor: theme.color.secondary.regular,
   elevation: 5,
-  minHeight: UI_SIZES.headerHeight + UI_SIZES.topInset,
-  paddingTop: UI_SIZES.topInset,
+  minHeight: UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset,
+  paddingTop: UI_SIZES.screen.topInset,
 });
 export const FakeHeader_Row = styled.View({
-  minHeight: UI_SIZES.headerHeight,
+  minHeight: UI_SIZES.elements.navbarHeight,
   flexDirection: 'row',
   alignItems: 'center',
 });
@@ -85,7 +85,7 @@ export const HeaderCenter = styled.View({
   flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: UI_SIZES.headerHeight,
+  minHeight: UI_SIZES.elements.navbarHeight,
   marginHorizontal: 60,
 });
 
@@ -117,7 +117,7 @@ export const HeaderIcon = (props: {
         ...props.style,
       })
     : styled.View({
-        height: UI_SIZES.headerHeight,
+        height: UI_SIZES.elements.navbarHeight,
         width: 60,
         flex: 0,
         alignItems: 'center',

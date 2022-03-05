@@ -431,13 +431,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                   },
                 ]);
               }}>
-              <Icon name="trash" color={theme.color.failure} size={UI_SIZES.actionButtonSize} />
+              <Icon name="trash" color={theme.color.failure} size={UI_SIZES.elements.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
           {hasUpdateCommentBlogPostRight ? (
             <TouchableOpacity
               onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
-              <Icon name="pencil" color={theme.greyPalette.black} size={UI_SIZES.actionButtonSize} />
+              <Icon name="pencil" color={theme.greyPalette.black} size={UI_SIZES.elements.actionButtonSize} />
             </TouchableOpacity>
           ) : null}
         </View>

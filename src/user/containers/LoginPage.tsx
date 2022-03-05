@@ -201,7 +201,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <ErrorMessage style={errtype === 'warning' ? {color: theme.color.warning} : {}}>
+            <ErrorMessage style={errtype === 'warning' ? { color: theme.color.warning } : {}}>
               {this.state.typing
                 ? ''
                 : error &&
