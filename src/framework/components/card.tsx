@@ -3,13 +3,13 @@ import { Moment } from 'moment';
 import * as React from 'react';
 import { ColorValue, Image, ImageSourcePropType, TextProps, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
 
-import { Icon } from './icon';
-import { FontStyle, Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from './text';
-
 import theme from '~/app/theme';
 import { displayPastDate } from '~/framework/util/date';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+
+import { Icon } from './icon';
+import { FontStyle, Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from './text';
 
 const cardPaddingV = 12;
 const cardPaddingH = 16;

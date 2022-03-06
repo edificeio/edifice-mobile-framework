@@ -1,8 +1,11 @@
 {
-  "printWidth": 132,
-  "tabWidth": 2,
-  "singleQuote": true,
+  "arrowParens": "avoid",
+  "importOrder": ["^[~/]","^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
   "jsxBracketSameLine": true,
-  "trailingComma": "all",
-  "arrowParens": "avoid"
+  "printWidth": 132,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "all"
 }

@@ -127,6 +127,7 @@
     "@babel/runtime": "7.16.5",
     "@jumpn/react-native-jetifier": "0.1.4",
     "@react-native-community/eslint-config": "3.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^3.2.0",
     "@types/i18n-js": "3.8.2",
     "@types/jest": "27.0.3",
     "@types/mime": "2.0.3",
