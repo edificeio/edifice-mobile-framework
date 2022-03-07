@@ -127,7 +127,7 @@
     "@babel/runtime": "7.16.5",
     "@jumpn/react-native-jetifier": "0.1.4",
     "@react-native-community/eslint-config": "3.0.1",
-    "@trivago/prettier-plugin-sort-imports": "^3.2.0",
+    "@trivago/prettier-plugin-sort-imports": "3.2.0",
     "@types/i18n-js": "3.8.2",
     "@types/jest": "27.0.3",
     "@types/mime": "2.0.3",
@@ -146,6 +146,7 @@
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.28.0",
+    "husky": "7.0.4",
     "jest": "27.3.1",
     "metro-react-native-babel-preset": "0.66.2",
     "patch-package": "6.4.7",
@@ -177,6 +178,11 @@
       "<rootDir>/node_modules/"
     ],
     "cacheDirectory": ".jest/cache"
+  },
+  "todo-husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged && npm run lint"
+    }
   },
   "ode": {
     "override": {
