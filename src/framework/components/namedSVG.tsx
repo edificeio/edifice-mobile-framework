@@ -27,7 +27,6 @@ export const NamedSVG = ({ name, ...rest }): JSX.Element | null => {
     'onboarding-3': import(`../../../assets/images/onboarding/onboarding_3.svg`),
     'onboarding-4': import(`../../../assets/images/onboarding/onboarding_4.svg`),
   };
-
   useEffect((): void => {
     setLoading(true);
     const importSVG = async (): Promise<void> => {
