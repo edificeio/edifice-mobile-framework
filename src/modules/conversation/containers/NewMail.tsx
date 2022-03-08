@@ -327,7 +327,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
               }
               navigation.goBack();
             },
-            style: 'destructive',
+            style: isSavedDraft ? 'default' : 'destructive',
           },
           ...(isSavedDraft
             ? [
@@ -363,7 +363,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           I18n.t(textToDisplay.title),
           I18n.t(textToDisplay.text),
           Platform.select({
-            ios: options,
+            ios: options.reverse(),
             android: options.reverse(), // F*CK YOU Android !
           }),
         );
