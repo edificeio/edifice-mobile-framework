@@ -208,7 +208,7 @@ export default class Dashboard extends React.PureComponent<any> {
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t('viesco-lasteval')}</TextBold>
-        {evaluations && evaluations.data.devoirs && evaluationList !== undefined ? (
+        {evaluations && evaluations.data.devoirs && evaluationList !== undefined && evaluationList.length > 0 ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
           <EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />

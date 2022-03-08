@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { getSessionInfo } from '~/App';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
@@ -88,75 +88,51 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     );
   };
 
-  renderHalfChildCourse = course => {
-    const isCourseWithTags = !!(
-      course.tags &&
-      course.tags !== undefined &&
-      course.tags.length > 0 &&
-      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
-    );
+  renderHalfCourse = (course, firstJSX: JSX.Element, secondJSX: JSX.Element) => {
+    const isCourseWithTags = !!(course.tags && course.tags !== undefined && course.tags.length > 0);
+    const isCourseTagNotUlis = !!(course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS');
+    const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
 
     return (
-      <View style={[style.courseView, { backgroundColor: isCourseWithTags ? '#E8E8E8' : '#FFF' }]}>
-        <View style={style.halfCourseView}>
-          <View style={{ maxWidth: '50%' }}>
-            <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
-            <Text numberOfLines={1}>{course.teacher}</Text>
-          </View>
-          <View style={style.courseHalfStatus}>
-            {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
-              <View style={{ flexDirection: 'row' }}>
-                <Icon name="pin_drop" size={16} />
-                <Text numberOfLines={1}>
-                  &ensp;{course.roomLabels && course.roomLabels[0]}
-                </Text>
-              </View>
-            )}
-            {course.tags && course.tags !== undefined && course.tags.length > 0 && (
-              <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
-            )}
-          </View>
-        </View>
-      </View>
-    );
-  }
-
-  renderHalfTeacherCourse = course => {
-    const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
-    const isCourseWithTags = !!(
-      course.tags &&
-      course.tags !== undefined &&
-      course.tags.length > 0 &&
-      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
-    );
-
-    return (
-      <View style={[style.courseView, { backgroundColor: isCourseWithTags ? '#E8E8E8' : '#FFF' }]}>
-        <View style={style.halfCourseView}>
-          <View style={{ flexDirection: 'column', maxWidth: '50%' }}>
-            <TextBold style={{ fontSize: 18 }}>{className}</TextBold>
-            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
-          </View>
-          <View style={style.courseHalfStatus}>
-            {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
-              <View style={{ flexDirection: 'row', padding: 3 }}>
-                <Icon name="pin_drop" size={16} />
-                <Text numberOfLines={1}>
-                  &ensp;{course.roomLabels && course.roomLabels[0]}
-                </Text>
-              </View>
-            )}
-            {course.tags && course.tags !== undefined && course.tags.length > 0 && (
-              <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
-            )}
+      <View style={[style.halfCourseView, { backgroundColor: isCourseWithTags && isCourseTagNotUlis ? '#E8E8E8' : '#FFF' }]}>
+        <View style={style.halfSplitLineView}>
+          {firstJSX}
+          {isCourseWithRoomLabel && (
+            <View style={{ flexDirection: 'row' }}>
+              <Icon name="pin_drop" size={16} />
+              <Text numberOfLines={1}>&ensp;{course.roomLabels && course.roomLabels[0]}</Text>
             </View>
+          )}
+        </View>
+        <View style={style.halfSplitLineView}>
+          {secondJSX}
+          {isCourseWithTags && <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>}
         </View>
       </View>
     );
   };
 
   renderHalf = course => {
-    return getSessionInfo().type === 'Teacher' ? this.renderHalfTeacherCourse(course) : this.renderHalfChildCourse(course);
+    const subjectJSX = (
+      <TextBold style={{ flex: 1 }} numberOfLines={1}>
+        {course.subject?.name || course.exceptionnal}
+      </TextBold>
+    );
+    if (getSessionInfo().type === 'Teacher') {
+      const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
+      const classJSX = (
+        <TextBold style={{ fontSize: 18 }} numberOfLines={1}>
+          {className}
+        </TextBold>
+      );
+      return this.renderHalfCourse(course, classJSX, subjectJSX);
+    }
+    const teacherJSX = (
+      <Text style={{ flex: 1 }} numberOfLines={1}>
+        {course.teacher}
+      </Text>
+    );
+    return this.renderHalfCourse(course, subjectJSX, teacherJSX);
   };
 
   public render() {
@@ -199,20 +175,9 @@ const style = StyleSheet.create({
     height: '100%',
     zIndex: 0,
   },
-  calendarContainer: { height: 1, flexGrow: 1 },
-  courseView: {
-    flexDirection: 'row',
-    padding: 5,
-    height: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-  },
-  subjectView: { maxWidth: '56%' },
-  roomView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
+  calendarContainer: {
+    height: 1,
+    flexGrow: 1,
   },
   weekPickerView: {
     flexDirection: 'row',
@@ -223,19 +188,38 @@ const style = StyleSheet.create({
     borderWidth: 1,
     paddingTop: 5,
   },
-  infoView: { paddingHorizontal: 15 },
-  halfCourseView: {
+  courseView: {
     flexDirection: 'row',
+    padding: 5,
     height: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+  },
+  halfCourseView: {
+    flexShrink: 1,
+    padding: 5,
+    height: '100%',
+    justifyContent: 'center',
+  },
+  subjectView: {
+    maxWidth: '56%',
+  },
+  halfSplitLineView: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   courseStatus: {
     alignItems: 'center',
+    paddingHorizontal: 15,
   },
-  courseHalfStatus: {
-    maxWidth: '50%',
-    flexDirection: 'column',
-    paddingLeft: 10,
+  roomView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoView: {
+    paddingHorizontal: 15,
   },
   tagsLabel: {
     fontStyle: 'italic',
