@@ -79,8 +79,8 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
 
 const mapStateToProps: (state: any) => any = state => {
   const userType = getSessionInfo().type;
-  const userId = getUserSession(state).user.id; // used to find groups of relatives' children
-  const childId = userType === 'Student' ? getSessionInfo().userId : getSelectedChild(state)?.id;
+  const userId = getUserSession(state).user.id;
+  const childId = userType === 'Student' ? userId : getSelectedChild(state)?.id;
   const structureId =
     userType === 'Student'
       ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
