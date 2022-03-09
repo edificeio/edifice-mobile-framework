@@ -23,7 +23,7 @@ class CallSheet extends React.PureComponent<any> {
             backgroundColor: '#ffb600',
           },
         }}>
-        <TeacherCallSheet {...this.props} course={course} />;
+        <TeacherCallSheet {...this.props} course={course} />
       </PageView>
     );
   }

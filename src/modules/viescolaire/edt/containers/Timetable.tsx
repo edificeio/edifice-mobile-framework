@@ -16,7 +16,7 @@ import { getEdtCoursesListState } from '~/modules/viescolaire/edt/state/edtCours
 import { getSlotsListState } from '~/modules/viescolaire/edt/state/slots';
 import { getUserChildrenState } from '~/modules/viescolaire/edt/state/userChildren';
 import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
-import { getSelectedChildStructure, getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getChildrenGroupsState } from '~/modules/viescolaire/viesco/state/childrenGroups';
 import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
 import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
@@ -150,7 +150,7 @@ const mapStateToProps = (state: any): any => {
   const groupsIds = [] as string[];
   // get groups and childClasses
   if (getSessionInfo().type === 'Student') {
-    childId = getSessionInfo().userId;
+    childId = getUserSession(state).user.id;
     childClasses = getSessionInfo().classes[0];
     const childGroups = getGroupsListState(state).data;
     if (childGroups !== undefined && childGroups[0] !== undefined) {

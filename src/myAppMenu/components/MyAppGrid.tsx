@@ -1,22 +1,21 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 // @ts-ignore’
-import { View, ScrollView, Platform } from 'react-native';
+import { Platform, ScrollView, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
-import MyAppItem from './MyAppItem';
-
 import theme from '~/app/theme';
 import { InfoBubble } from '~/framework/components/infoBubble';
+import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { AnyModule } from '~/framework/util/moduleTool';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
-import { PageView } from '~/framework/components/page';
 import { FlatButton } from '~/ui/FlatButton';
-import { openUrl } from '~/framework/util/linking';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+
+import MyAppItem from './MyAppItem';
 
 class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
   renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
@@ -71,27 +70,15 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
     );
   }
 
-  private renderEmpty() {
-    return <EmptyScreen svgImage="empty-hammock" text={I18n.t('myapp-emptyScreenText')} title={I18n.t('myapp-emptyScreenTitle')} />;
-  }
-
   public render() {
-    let pageContent = null;
     const { modules, newModules } = this.props;
-
-    if (modules.length === 0 && newModules.length === 0) {
-      pageContent = this.renderEmpty();
-    } else {
-      pageContent = this.renderGrid(modules, newModules);
-    }
-
     return (
       <PageView
         navigation={this.props.navigation}
         navBar={{
           title: I18n.t('MyApplications'),
         }}>
-        {pageContent}
+        {this.renderGrid(modules, newModules)}
       </PageView>
     );
   }

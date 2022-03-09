@@ -10,12 +10,12 @@ import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { HeaderAction } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
+import { PageView } from '~/framework/components/page';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
-import { PageView } from '~/framework/components/page';
 
 // TYPES ==========================================================================================
 
@@ -143,7 +143,8 @@ const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s 
   const ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
-    notifFilters: ts.notifDefinitions.notifFilters.data.sort((a, b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale)),
+    notifFilters:
+      ts?.notifDefinitions?.notifFilters?.data?.sort((a, b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale)) || [],
   };
 };
 

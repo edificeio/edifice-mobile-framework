@@ -63,12 +63,7 @@ export const BlogPostResourceCard = ({
         title={
           <>
             {state === 'SUBMITTED' ? (
-              <Label
-                text={I18n.t('blog.post.needValidation')}
-                color={theme.color.primary.regular}
-                labelStyle="outline"
-                labelSize="small"
-              />
+              <Label text={I18n.t('blog.post.needValidation')} color={theme.color.warning} labelStyle="outline" labelSize="small" />
             ) : null}
             <ContentCardTitle>{title}</ContentCardTitle>
           </>

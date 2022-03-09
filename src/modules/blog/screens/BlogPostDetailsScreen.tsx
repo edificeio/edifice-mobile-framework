@@ -355,7 +355,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             {blogPostData?.state === 'SUBMITTED' ? (
               <Label
                 text={I18n.t('blog.post.needValidation')}
-                color={theme.color.primary.regular}
+                color={theme.color.warning}
                 labelStyle="outline"
                 labelSize="small"
                 style={{ marginTop: 4, marginBottom: 2 }}
