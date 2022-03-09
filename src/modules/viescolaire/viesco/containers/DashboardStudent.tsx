@@ -18,6 +18,7 @@ import { fetchPersonnelListAction } from '~/modules/viescolaire/viesco/actions/p
 import { fetchSubjectListAction } from '~/modules/viescolaire/viesco/actions/subjects';
 import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardStudent';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
+import { getUserSession } from '~/framework/util/session';
 
 class Dashboard extends React.PureComponent<{
   authorizedViescoApps: IAuthorizedViescoApps;
@@ -62,7 +63,7 @@ const mapStateToProps: (state: any) => any = state => {
 const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
-  const childId = getSessionInfo().userId;
+  const childId = getUserSession(state).user.id;
   const evaluations = getDevoirListState(state);
   const levels = getLevelsListState(state).data;
 
