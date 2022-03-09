@@ -113,26 +113,31 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   };
 
   renderHalf = course => {
-    const subjectJSX = (
-      <TextBold style={{ flex: 1 }} numberOfLines={1}>
-        {course.subject?.name || course.exceptionnal}
-      </TextBold>
-    );
     if (getSessionInfo().type === 'Teacher') {
       const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
-      const classJSX = (
+      const classNameJSX = (
         <TextBold style={{ fontSize: 18 }} numberOfLines={1}>
           {className}
         </TextBold>
       );
-      return this.renderHalfCourse(course, classJSX, subjectJSX);
+      const subjectNameJSX = (
+        <Text style={{ flex: 1 }} numberOfLines={1}>
+          {course.subject?.name || course.exceptionnal}
+        </Text>
+      );
+      return this.renderHalfCourse(course, classNameJSX, subjectNameJSX);
     }
-    const teacherJSX = (
+    const teacherNameJSX = (
       <Text style={{ flex: 1 }} numberOfLines={1}>
         {course.teacher}
       </Text>
     );
-    return this.renderHalfCourse(course, subjectJSX, teacherJSX);
+    const subjectNameJSX = (
+      <TextBold style={{ flex: 1 }} numberOfLines={1}>
+        {course.subject?.name || course.exceptionnal}
+      </TextBold>
+    );
+    return this.renderHalfCourse(course, subjectNameJSX, teacherNameJSX);
   };
 
   public render() {
