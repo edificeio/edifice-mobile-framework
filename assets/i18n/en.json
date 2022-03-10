@@ -25,6 +25,7 @@
   "Password": "Password",
   "PasswordChange": "Change my password",
   "PasswordChangeSuccess": "Password successfully updated.",
+  "PasswordChangeWarning": "Por razones de seguridad, debe renovar su contraseña.",
   "PasswordConfirm": "Password confirmed",
   "PasswordNew": "Confirm new password",
   "PasswordNewConfirm": "Password confirmed",
@@ -82,9 +83,12 @@
   "blog": {
     "blogsEmptyScreen": {
       "button": "Create a blog online",
+      "text": "Put on the little reporter's hat and create your first blog!",
+      "textNoCreationRights": "Suggest blog ideas for your school (class life, school outings, presentations, ...)",
       "title": "No Blogs in sight"
     },
     "blogCreatePostScreen": {
+      "confirmationUnsavedPublication": "If you leave, the post you wrote will be lost.",
       "createAction": "Save",
       "createSuccess": "Your post was saved.",
       "postContent": "Post content",
@@ -107,6 +111,7 @@
     },
     "blogPostListScreen": {
       "emptyScreen": {
+        "button": "Add a blog post",
         "text": "Pick up your pen and get started!\nDon't forget to add images and videos to make it easier to read.",
         "textNoCreationRights": "Hold your horses! No blog posts have been created yet.",
         "title": "Your first blog post",
@@ -157,16 +162,27 @@
     "date": {
       "invalid": "",
       "now": "now",
+      "today": "today",
+      "tomorrow": "tomorrow",
       "yesterday": "yesterday"
     },
     "delete": "Delete",
     "deletion": "Deletion",
     "discard": "Cancel",
     "error": {
+      "connection": {
+        "text": "A problem has occurred. We cannot display the page. Please check your network connection or try again later.",
+        "title": "Sorry... \nThe light went out."
+      },
+      "content": {
+        "text": "It seems that the content has been deleted or that you no longer have access to it.",
+        "title": "Oops... \nThe content is gone"
+      },
       "text": "An error occurred. Please try again later.",
       "title": "Whoops..."
     },
     "errorLoadingResource": "This content is inaccessible.",
+    "for": "For",
     "idf": {
       "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|'<>_.\/^*(){}%µ!£- ."
     },
@@ -233,6 +249,25 @@
     "directoryName": "Directory name",
     "downloadAll": "Download all attachments",
     "drafts": "Drafts",
+    "draft": "Draft",
+    "emptyScreen": {
+      "drafts": {
+        "text": "Didn't have time to finish your message? No problem, you can save it as a draft.",
+        "title": "No drafts"
+      },
+      "mailbox": {
+        "text": "With Messaging, start communicating with your network members now.",
+        "title": "Not a single message..."
+      },
+      "sent": {
+        "text": "With Messaging, start communicating with your network members now.",
+        "title": "No message sent"
+      },
+      "trash": {
+        "text": "Here you can find your deleted messages. Currently, everything is clean.",
+        "title": "The basket is empty"
+      }
+    },
     "emptyTo": "(No recipient)",
     "forward": "Forward",
     "forwardSubject": "FWD: ",
@@ -256,7 +291,11 @@
     "restore": "Restore",
     "restoreTo": "Restore to",
     "saveDraftMessage": "Would you like to save your message as a draft and finish it later?",
+    "saveAgainDraftMessage": "Do you want to save the changes made to your draft?",
     "saveDraftTitle": "Draft",
+    "saveModifications": "Save changes",
+    "cancelModifications": "Cancel changes",
+    "deleteDraft": "Delete draft",
     "seeDetail": "See details",
     "selectDirectory": "Select folder",
     "sendAttachmentProgress": "Please wait until the attachment has been added",
@@ -389,10 +428,27 @@
   "forgot-submit": "Send",
   "forgot-success": "Email sent",
   "homework": {
+    "homeworkExplorerScreen": {
+      "homeworks": "Homework notebook"
+    },
     "homeworkTaskListScreen": {
-      "homeworks": "Homework notebooks"
+      "displayPastDays": "View previous days",
+      "noFutureHomework": "No other activities",
+      "noFutureHomeworkTryAgain": "No other activities on the horizon, come back later!",
+      "noMorePastHomework": "No previous activities"
     }
   },
+  "homework-createDiary": "Create a homework notebook",
+  "homework-createActivity": "Add an activity",
+  "homework-diaries-emptyScreenText": "With the Homework notebook application, there is no excuse for careless youngsters. Write down all your homework!",
+  "homework-diaries-emptyScreenTitle": "No homework notebook yet",
+  "homework-tasks-emptyScreenText": "Add new activities to your homework notebook.",
+  "homework-tasks-emptyScreenText-NoCreationRights": "Enjoy this moment of calm. Is it the holidays?",
+  "homework-tasks-emptyScreenText-NoTasks": "Add an activity to your week. This can be useful for listing your tasks or just writing notes.",
+  "homework-tasks-emptyScreenText-NoTasks-NoCreationRights": "You will find the list of activities for the coming days in your homework notebook.",
+  "homework-tasks-emptyScreenTitle": "Relax, there are no activities",
+  "homework-tasks-emptyScreenTitle-NoTasks": "Start filling in your homework notebook",
+  "homework-tasks-emptyScreenTitle-NoTasks-NoCreationRights": "No activities yet",
   "imageNotAvailable": "Image not available",
   "linkTo": "Link",
   "loading": "Loading",
@@ -738,6 +794,8 @@
   "viesco-declareAbsence": "Report absence",
   "viesco-edt-week-of": "Week of",
   "viesco-empty-card": "Nothing to display",
+  "viesco-empty-screen-text": "School life on the application is reserved for families and teachers.",
+  "viesco-empty-screen-title": "Sorry, there is no content for your profile",
   "viesco-enter-text": "Enter Text",
   "viesco-eval-EmptyScreenText": "No new evaluation...",
   "viesco-from": "From",
@@ -787,6 +845,28 @@
   "viesco-year": "Year",
   "welcome": "Welcome",
   "workspace": "Workspace",
+  "workspaceEmptyScreen": {
+    "owner": {
+      "text": "Store your personal documents here: photos, videos, audio, PDF files, ...",
+      "title": "There is nothing on your personal shelf"
+    },
+    "protected": {
+      "text": "Find here all the photos, videos and documents you have used in your educational network.",
+      "title": "There is nothing on the shelf"
+    },
+    "shared": {
+      "text": "Find here all the documents you have shared with others and also those that have been shared with you.",
+      "title": "No shared resources"
+    },
+    "subfolder": {
+      "text": "There are no documents in this file.",
+      "title": "Esta carpeta está vacía"
+    },
+    "trashed": {
+      "text": "Here you can find your deleted documents. At present, everything is clean.",
+      "title": "The basket is empty"
+    }
+  },
   "workspace-quota-overflowText": "Your storage space is full. You cannot upload more files.",
   "workspace-quota-overflowTitle": "Quota reached",
   "workspace-uploadFailed": "Error importing document",
@@ -804,6 +884,8 @@
   "zimbra-directory-name": "Directory name",
   "zimbra-download-all": "Download all attachments",
   "zimbra-drafts": "Drafts",
+  "zimbra-empty-mailbox-text": "With Mailbox, start communicating with your network members now.",
+  "zimbra-empty-mailbox-title": "Not a single message...",
   "zimbra-external-mail-right-error": "You are not authorized to send external emails",
   "zimbra-forward": "Forward",
   "zimbra-forward-subject": "FWD: ",
