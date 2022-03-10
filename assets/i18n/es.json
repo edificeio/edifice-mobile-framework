@@ -184,7 +184,7 @@
     "errorLoadingResource": "Este contenido es inaccesible.",
     "for": "Para",
     "idf": {
-      "passwordRules": "La nueva contraseña debe tener al menos 12 caracteres, incluyendo al menos 1 mayúscula, 1 minúscula y 1 número o carácter especial de los siguientes: $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- . ."
+      "passwordRules": "La nueva contraseña debe tener al menos 12 caracteres, incluyendo al menos 1 mayúscula, 1 minúscula y 1 número o carácter especial de los siguientes: $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- ."
     },
     "infoBubble-doNotShow": "No volver a mostrar este mensaje",
     "infoBubble-understood": "He entendido",
