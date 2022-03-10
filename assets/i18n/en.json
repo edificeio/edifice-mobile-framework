@@ -184,7 +184,7 @@
     "errorLoadingResource": "This content is inaccessible.",
     "for": "For",
     "idf": {
-      "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|'<>_./^*(){}%µ!£- ."
+      "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- . ."
     },
     "infoBubble-doNotShow": "Do not show this message",
     "infoBubble-understood": "Understood",
