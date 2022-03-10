@@ -9,20 +9,19 @@ import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { IOAuthToken, OAuthCustomTokens, OAuthErrorType, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
+import { IOAuthToken, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, OAuthErrorType } from '~/infra/oauth';
 import { FlatButton, Loading } from '~/ui';
 import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
-import { PageView } from '~/framework/components/page';
-
-import { EmptyScreen } from '~/framework/components/emptyScreen';
 
 enum WAYFPageMode {
   EMPTY,
@@ -96,7 +95,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   componentWillUpdate(nextProps) {
     const { auth } = nextProps;
-    // Detect && display potenttial login error sent after checkVersionThenLogin(false) call
+    // Detect && display potential login error sent after checkVersionThenLogin(false) call
     auth?.error?.length > 0 && auth.error !== this.error && this.displayError(auth.error);
   }
 
@@ -172,7 +171,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         }
       })
       .catch(error => {
-        // Manage multiple users, othherwise display received error
+        // Manage multiple users, otherwise display received error
         if (error.error === OAuthErrorType.MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
@@ -204,7 +203,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   loginWithCustomToken() {
     Trackers.trackDebugEvent('Auth', 'WAYF', 'CUSTOM_TOKEN');
     this.displayLoading();
-    // Call oauth2 token api with seleted custom token
+    // Call oauth2 token api with selected custom token
     this.dropdownValue &&
       OAuth2RessourceOwnerPasswordClient.connection
         ?.getNewTokenWithCustomToken(this.dropdownValue)
@@ -315,7 +314,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           <EmptyScreen svgImage="empty-content" text={I18n.t('login-wayf-empty-text')} title={I18n.t('login-wayf-empty-title')} />
         );
       case WAYFPageMode.ERROR:
-        // Display error messsage
+        // Display error message
         Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
         return (
           <View style={WAYFPage.STYLES.container}>
@@ -376,8 +375,8 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           </TouchableWithoutFeedback>
         );
       case WAYFPageMode.WEBVIEW:
-        // Dissplay WebView
-        Trackers.trackDebugEvent('Auth', 'WAYF', 'WEVIEW');
+        // Display WebView
+        Trackers.trackDebugEvent('Auth', 'WAYF', 'WEBVIEW');
         return (
           <WebView
             ref={(ref: WebView) => this.setWebView(ref)}
