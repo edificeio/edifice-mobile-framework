@@ -23,8 +23,6 @@ import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 
-import { EmptyScreen } from '~/framework/components/emptyScreen';
-
 enum WAYFPageMode {
   EMPTY,
   ERROR,

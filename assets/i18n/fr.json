@@ -428,14 +428,14 @@
   "forgot-submit": "Envoyer",
   "forgot-success": "Courriel envoyé.",
   "homework": {
+    "homeworkExplorerScreen": {
+      "homeworks": "Cahiers de textes"
+    },
     "homeworkTaskListScreen": {
       "displayPastDays": "Afficher les jours précédents",
       "noFutureHomework": "Pas d'autres activités",
       "noFutureHomeworkTryAgain": "Pas d'autres acitivités à l'horizon, revenez plus tard !",
       "noMorePastHomework": "Pas d'activités précédentes"
-    },
-    "homeworkExplorerScreen": {
-      "homeworks": "Cahiers de textes"
     }
   },
   "homework-createDiary": "Créer un cahier de textes",
