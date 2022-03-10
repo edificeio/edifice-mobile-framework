@@ -19,10 +19,10 @@ const imports = {
   'empty-trash': import(`../../../assets/images/empty-screen/empty-trash.svg`),
   'empty-viesco': import(`../../../assets/images/empty-screen/empty-viesco.svg`),
   'empty-workspace': import(`../../../assets/images/empty-screen/empty-workspace.svg`),
+  'onboarding-0': import(`../../../assets/images/onboarding/onboarding_0.svg`),
   'onboarding-1': import(`../../../assets/images/onboarding/onboarding_1.svg`),
   'onboarding-2': import(`../../../assets/images/onboarding/onboarding_2.svg`),
   'onboarding-3': import(`../../../assets/images/onboarding/onboarding_3.svg`),
-  'onboarding-4': import(`../../../assets/images/onboarding/onboarding_4.svg`),
 };
 
 export const NamedSVG = ({ name, ...rest }): JSX.Element | null => {
