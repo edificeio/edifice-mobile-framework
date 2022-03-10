@@ -184,7 +184,7 @@
     "errorLoadingResource": "This content is inaccessible.",
     "for": "For",
     "idf": {
-      "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|'<>_.\/^*(){}%µ!£- ."
+      "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|'<>_./^*(){}%µ!£- ."
     },
     "infoBubble-doNotShow": "Do not show this message",
     "infoBubble-understood": "Understood",
@@ -454,8 +454,8 @@
   "loading": "Loading",
   "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
   "login-back": "Back to login",
-  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
-  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
+  "login-wayf-empty-text": "We are unable to display the content. Please check your network connection or try again later.",
+  "login-wayf-empty-title": "Oops...\nThe content is gone",
   "login-wayf-error-retry": "Try again",
   "login-wayf-loading-text": "Loading...",
   "login-wayf-main-button": "Login",

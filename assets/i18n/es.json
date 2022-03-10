@@ -184,7 +184,7 @@
     "errorLoadingResource": "Este contenido es inaccesible.",
     "for": "Para",
     "idf": {
-      "passwordRules": "La nueva contraseña debe tener al menos 12 caracteres, incluyendo al menos 1 mayúscula, 1 minúscula y 1 número o carácter especial de los siguientes: $&+,~:;=?@#|'<>_.\/^*(){}%µ!£- ."
+      "passwordRules": "La nueva contraseña debe tener al menos 12 caracteres, incluyendo al menos 1 mayúscula, 1 minúscula y 1 número o carácter especial de los siguientes: $&+,~:;=?@#|'<>_./^*(){}%µ!£- ."
     },
     "infoBubble-doNotShow": "No volver a mostrar este mensaje",
     "infoBubble-understood": "He entendido",
@@ -454,8 +454,8 @@
   "loading": "Carga",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "login-back": "Regresar a la autenticación",
-  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
-  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
+  "login-wayf-empty-text": "No podemos mostrar el contenido. Por favor, compruebe su conexión de red o inténtelo de nuevo más tarde.",
+  "login-wayf-empty-title": "Oops...\nEl contenido ha desaparecido",
   "login-wayf-error-retry": "Volver a intentar",
   "login-wayf-loading-text": "Conexión en curso...",
   "login-wayf-main-button": "Iniciar sesión",
