@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import { NavigationInjectedProps } from 'react-navigation';
@@ -9,14 +9,14 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextSemiBold, H1 } from '~/framework/components/text';
+import { NamedSVG } from '~/framework/components/namedSVG';
+import { H1, TextSemiBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/LoginNavigator';
 import { FlatButton } from '~/ui';
 import { selectPlatform } from '~/user/actions/platform';
-import { NamedSVG } from '~/framework/components/namedSVG';
 
 // TYPES ==========================================================================================
 
@@ -84,7 +84,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                   height: '85%',
                   width: '80%',
                 }}>
-                <NamedSVG name={`onboarding-${index + 1}`} width={svgSize} height={svgSize} />
+                <NamedSVG name={`onboarding-${index}`} width={svgSize} height={svgSize} />
                 <TextSemiBold style={{ textAlign: 'center', fontSize: 18 }}>{onboardingText}</TextSemiBold>
               </View>
             ))}

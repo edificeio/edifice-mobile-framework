@@ -5,11 +5,18 @@ import { RefreshControl, SectionList, TouchableOpacity, View } from 'react-nativ
 import ViewOverflow from 'react-native-view-overflow';
 import { NavigationInjectedProps } from 'react-navigation';
 
-import HomeworkCard from './HomeworkCard';
-import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
-import HomeworkTimeline from './HomeworkTimeline';
-
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
+import { Icon } from '~/framework/components/icon';
+import Label from '~/framework/components/label';
+import { PageView } from '~/framework/components/page';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
+import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
@@ -17,18 +24,11 @@ import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { Loading } from '~/ui';
 import today from '~/utils/today';
-import { openUrl } from '~/framework/util/linking';
-import Label from '~/framework/components/label';
-import { UI_SIZES } from '~/framework/components/constants';
-import theme from '~/app/theme';
+
 import config from '../config';
-import { PageView } from '~/framework/components/page';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { computeRelativePath } from '~/framework/util/navigation';
-import { Text, TextSizeStyle } from '~/framework/components/text';
-import { Icon } from '~/framework/components/icon';
-import { HeaderTitleAndSubtitle } from '~/framework/components/header';
+import HomeworkCard from './HomeworkCard';
+import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
+import HomeworkTimeline from './HomeworkTimeline';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -131,8 +131,8 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     const remainingPastHomework = pastHomework.filter(item => item.title.isBefore(pastDateLimit, 'day'));
     const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
     const futureHomework = data.filter(item => item.title.isSameOrAfter(today(), 'day'));
-    const hasFutureHomework = futureHomework.length > 0;
     const displayedHomework = [...displayedPastHomework, ...futureHomework];
+    const isHomeworkDisplayed = displayedHomework.length > 0;
     const noRemainingPastHomework = remainingPastHomework.length === 0;
     const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), 'day');
     const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
@@ -209,7 +209,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             ) : null;
           }}
           ListFooterComponent={
-            hasFutureHomework ? (
+            isHomeworkDisplayed ? (
               <>
                 <HomeworkTimeline topPosition={26} leftPosition={UI_SIZES.spacing.smallPlus} />
                 <View
