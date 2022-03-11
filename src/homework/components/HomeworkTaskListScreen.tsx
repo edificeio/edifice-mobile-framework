@@ -15,6 +15,7 @@ import Label from '~/framework/components/label';
 import { PageView } from '~/framework/components/page';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { getDayOfTheWeek } from '~/framework/util/date';
 import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
@@ -151,15 +152,28 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           sections={displayedHomework}
           CellRendererComponent={ViewOverflow}
           stickySectionHeadersEnabled={false}
-          renderSectionHeader={({ section: { title } }) => (
-            <View
-              style={{
-                marginBottom: UI_SIZES.spacing.extraSmall,
-                marginTop: UI_SIZES.spacing.extraLarge,
-              }}>
-              <HomeworkDayCheckpoint date={title} />
-            </View>
-          )}
+          renderSectionHeader={({ section: { title } }) => {
+            const isPastDate = title.isBefore(today(), 'day');
+            const dayOfTheWeek = getDayOfTheWeek(title);
+            const dayColor = theme.days[dayOfTheWeek];
+            const timelineColor = isPastDate ? theme.greyPalette.cloudy : dayColor;
+            return (
+              <View
+                style={{
+                  marginBottom: UI_SIZES.spacing.extraSmall,
+                  marginTop: UI_SIZES.spacing.extraLarge,
+                }}>
+                <View style={{ zIndex: 1 }}>
+                  <HomeworkDayCheckpoint date={title} />
+                </View>
+                <HomeworkTimeline
+                  leftPosition={UI_SIZES.spacing.smallPlus}
+                  topPosition={UI_SIZES.spacing.extraSmall}
+                  color={timelineColor}
+                />
+              </View>
+            );
+          }}
           renderItem={({ item, index }) => (
             <HomeworkCard
               key={index}
