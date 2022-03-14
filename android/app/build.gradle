@@ -39,10 +39,10 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1070500
-        versionName "1.7.5"
+        versionCode 1080000
+        versionName "1.8.0"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"alpha.1\""
+        buildConfigField "String", "BundleVersionType", "\"\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
         ndk {
