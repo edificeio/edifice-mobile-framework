@@ -26,7 +26,7 @@
     "private-key": "cd android/app && rm -f release.keystore && keytool -genkey -v -keystore release.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000",
     "start": "watchman watch-del-all && react-native start --reset-cache",
     "test": "jest",
-    "tsc": "tsc -p tsconfig.json --watch"
+    "tsc": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@emotion/native": "11.0.0",
