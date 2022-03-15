@@ -1,7 +1,6 @@
 /**
  * OAuth2 client for Ressource Owner Password Grant type flow.
  */
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { encode as btoa } from 'base-64';
 import querystring from 'querystring';
@@ -36,6 +35,7 @@ export type OAuthCustomTokens = IOAuthCustomToken[];
 export enum OAuthErrorType {
   // Response errors
   BAD_CREDENTIALS = 'bad_credentials',
+  BAD_SAML = 'bad_saml',
   BLOCKED_USER = 'blocked_user',
   INVALID_CLIENT = 'invalid_client',
   INVALID_GRANT = 'invalid_grant',
