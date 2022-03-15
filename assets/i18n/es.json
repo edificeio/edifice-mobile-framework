@@ -62,6 +62,7 @@
   "auth-disconnectConfirm": "desconectarse?",
   "auth-error-bad_credentials": "El nombre de usuario o la contraseña son incorrectos.",
   "auth-error-bad_response": "Identificación imposible. Respuesta incorrecta del servidor ({{errorcode}}). Por favor intente nuevamente o contacte a soporte.",
+  "auth-error-bad_saml": "Su cuenta no existe en la red educativa. Póngase en contacto con su administrador.",
   "auth-error-blocked_type": "Restringimos temporalmente el acceso a ciertos perfiles de usuario. Por favor intente nuevamente más tarde.",
   "auth-error-blocked_user": "El administrador de su establecimiento ha bloqueado su acceso.",
   "auth-error-firebase_error": "Identificación imposible: error al inicializar notificaciones en su dispositivo.",
