@@ -62,6 +62,7 @@
   "auth-disconnectConfirm": "want to logout?",
   "auth-error-bad_credentials": "Username or password is incorrect.",
   "auth-error-bad_response": "Unable to log in. Incorrect server response ({{errorcode}}). Please try again or contact support.",
+  "auth-error-bad_saml": "Your account does not exist on the educational network. Please contact your administrator.",
   "auth-error-blocked_type": "We temporarily restrict access to the educational social network to certain user profiles. Please try again later.",
   "auth-error-blocked_user": "The administrator of your establishment has blocked your access to your educational network.",
   "auth-error-firebase_error": "Unable to log in: error initializing notifications on your device.",
