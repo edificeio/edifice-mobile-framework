@@ -1,5 +1,9 @@
-import { Reducer, AnyAction } from "redux";
+import { AnyAction, Reducer } from "redux";
+
+
+
 import createReducer, { IReducerActionsHandlerMap, createSessionReducer } from "./reducerFactory";
+
 
 // Action Types
 
@@ -21,11 +25,13 @@ export type AsyncActionCreators<DataType> = {
 };
 
 export const createAsyncActionTypes: (prefixUpperCase: string) => AsyncActionTypes =
-  (prefixUpperCase: string) =>
-    Object.fromEntries(Object.entries(asyncActionTypeSuffixes).map(entry => {
-      entry[1] = prefixUpperCase + entry[1];
-      return entry;
-    })) as AsyncActionTypes;
+  (prefixUpperCase: string) => {
+    const ret = {} as AsyncActionTypes;
+    for (const entryName in asyncActionTypeSuffixes) {
+      ret[entryName] = prefixUpperCase + asyncActionTypeSuffixes[entryName];
+    }
+    return ret;
+  }
 
 export const createAsyncActionCreators: <DataType>(actionTypes: AsyncActionTypes) => AsyncActionCreators<DataType> =
   <DataType>(actionTypes: AsyncActionTypes) => ({

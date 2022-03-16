@@ -28,7 +28,6 @@
  *     })}
  * />
  */
-
 import * as React from 'react';
 import { FlatList, FlatListProps, ListRenderItemInfo, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import Swipeable from 'react-native-swipeable';
@@ -174,17 +173,16 @@ export default React.forwardRef(
         contentContainerStyle={{ flexGrow: 1 }}
         renderItem={info => {
           const computedItemSwipeableProps = { ...listSwipeableProps, ...(itemSwipeableProps?.(info) ?? {}) };
+          let mergedCommonSwipeableProps = {};
+          for (const name in commonSwipeableProps) {
+            mergedCommonSwipeableProps[name] = () => {
+              commonSwipeableProps[name]();
+              computedItemSwipeableProps[name]?.();
+            };
+          }
           const finalItemSwipeableProps = {
             ...computedItemSwipeableProps,
-            ...Object.fromEntries(
-              Object.entries(commonSwipeableProps).map(([name, fct]) => [
-                name,
-                () => {
-                  fct();
-                  computedItemSwipeableProps[name]?.();
-                },
-              ]),
-            ),
+            ...mergedCommonSwipeableProps,
           };
           return (
             <SwipeableItem

@@ -6,34 +6,32 @@ import { View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
+import { Dispatch, bindActionCreators } from 'redux';
 
-import SignatureModal from './SignatureModal';
+
 
 import { getSessionInfo } from '~/App';
+import { HeaderAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';
 import { deleteMailsAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
-import { fetchMailContentAction, clearMailContentAction } from '~/modules/zimbra/actions/mailContent';
-import {
-  sendMailAction,
-  makeDraftMailAction,
-  updateDraftMailAction,
-  addAttachmentAction,
-  deleteAttachmentAction,
-  forwardMailAction,
-} from '~/modules/zimbra/actions/newMail';
+import { clearMailContentAction, fetchMailContentAction } from '~/modules/zimbra/actions/mailContent';
+import { addAttachmentAction, deleteAttachmentAction, forwardMailAction, makeDraftMailAction, sendMailAction, updateDraftMailAction } from '~/modules/zimbra/actions/newMail';
 import { getSignatureAction } from '~/modules/zimbra/actions/signature';
 import MailContentMenu from '~/modules/zimbra/components/MailContentMenu';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import NewMailComponent from '~/modules/zimbra/components/NewMail';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
-import { getMailContentState, IMail } from '~/modules/zimbra/state/mailContent';
-import { getSignatureState, ISignature } from '~/modules/zimbra/state/signature';
-import { HeaderAction } from '~/framework/components/header';
-import { PageView } from '~/framework/components/page';
+import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
+import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
+
+
+
+import SignatureModal from './SignatureModal';
+
 
 export enum DraftType {
   NEW,
@@ -314,14 +312,26 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         };
       }
       case DraftType.REPLY_ALL: {
+        const to = [getUser(this.props.mail.from)];
+        let index = 0;
+        for (const user of this.props.mail.to) {
+          if (user => user !== getSessionInfo().userId && this.props.mail.to.indexOf(user as never) === index) {
+            to.push(getUser(user));
+          }
+          ++index;
+        }
+        const cc = [] as {}[];
+        for (const id of this.props.mail.cc) {
+          if (id !== this.props.mail.from) {
+            cc.push(getUser(id));
+          }
+        }
         return {
           replyTo: this.props.mail.id,
           prevBody: getPrevBody(),
           mail: {
-            to: [this.props.mail.from, ...this.props.mail.to.filter(user => user !== getSessionInfo().userId)]
-              .filter((user, index, array) => array.indexOf(user) === index)
-              .map(getUser),
-            cc: this.props.mail.cc.filter(id => id !== this.props.mail.from).map(getUser),
+            to,
+            cc,
             subject: I18n.t('zimbra-reply-subject') + this.props.mail.subject,
           },
         };
@@ -368,19 +378,23 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       prevBody = '';
     }
 
-    return Object.fromEntries(
-      Object.entries(mail).map(([key, value]) => {
-        if (key === 'to' || key === 'cc' || key === 'bcc') return [key, value.map(user => user.id)];
-        else if (key === 'body') {
-          if (this.state.signature.text !== '') {
+    const ret = {};
+    for (const key in mail) {
+      const value = mail[key];
+      if (key === 'to' || key === 'cc' || key === 'bcc') {
+        ret[key] = value.map(user => user.id);
+      } else if (key === 'body') {
+        if (this.state.signature.text !== '') {
             const sign = '<div class="signature new-signature ng-scope">' + this.state.signature.text + '</div>\n\n';
-            return [key, value + sign + prevBody];
+            ret[key] = value + sign + prevBody;
           } else {
-            return [key, value + prevBody];
+            ret[key] = value + prevBody;
           }
-        } else return [key, value];
-      }),
-    );
+      } else {
+        ret[key] = value;
+      }
+    }
+    return ret;
   };
 
   getAttachmentData = async (file: LocalFile) => {

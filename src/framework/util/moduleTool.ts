@@ -2,7 +2,6 @@
  * ModuleTool
  * Everything for managing and declaring modules
  */
-
 import I18n from 'i18n-js';
 import * as React from 'react';
 import type { ColorValue } from 'react-native';
@@ -11,9 +10,14 @@ import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from
 import type { StackNavigationOptions, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import type { Reducer } from 'redux';
 
-import { toSnakeCase } from './string';
+
 
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
+
+
+
+import { toSnakeCase } from './string';
+
 
 // Module Config ==================================================================================
 
@@ -263,10 +267,17 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     return new ModuleArray<ModuleType>(...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app))));
   }
   getReducers() {
-    return Object.fromEntries(this.map(m => [m.config.reducerName, m.reducer]));
+    return this.reduce((acc, m) => {
+      acc[m.config.reducerName] = m.reducer;
+      return acc;
+    }, {} as {[key: string] : Reducer<unknown>});
   }
   getScopes() {
-    return this.map(m => m.config.entcoreScope).flat();
+    const scopes = [] as string[];
+    for (const m of this) {
+      scopes.push(...m.config.entcoreScope);
+    };
+    return scopes;
   }
   initModules() {
     this.forEach(m => m.init());
@@ -284,7 +295,11 @@ export class NavigableModuleArray<
     return new NavigableModuleArray<ModuleType>(...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app))));
   }
   getRoutes() {
-    return Object.fromEntries(this.map(m => [m.config.routeName, m.get().route]));
+    const routes = {} as {[k: string]: NavigationRouteConfig<any, any, unknown>};
+    for (const m of this) {
+      routes[m.config.routeName] = m.get().route;
+    }
+    return routes;
   }
 }
 

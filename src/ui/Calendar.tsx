@@ -348,7 +348,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     const { day } = this.state;
     const selectedDayHomeworks = [] as IHomework[];
 
-    this.props.daysHomeworks.map(hwk => {
+    this.props.daysHomeworks.forEach(hwk => {
       if (hwk.due_date.isSame(day, 'd')) {
         selectedDayHomeworks.push(hwk);
       }

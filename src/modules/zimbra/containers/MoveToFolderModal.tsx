@@ -2,9 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+
+
 import { moveMailsToFolderAction, moveMailsToInboxAction } from '~/modules/zimbra/actions/mail';
 import MoveToFolderModalComponent from '~/modules/zimbra/components/Modals/MoveToFolderModal';
-import { getInitMailListState, IFolder } from '~/modules/zimbra/state/initMails';
+import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails';
+
 
 type MoveToFolderModalProps = {
   folders: IFolder[];
@@ -40,7 +43,7 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
     await this.props.closeModal();
 
     const mailsIds = [] as any;
-    if (Array.isArray(mail)) mail.map(mailInfos => mailsIds.push(mailInfos.id));
+    if (Array.isArray(mail)) mail.forEach(mailInfos => mailsIds.push(mailInfos.id));
     else mailsIds.push(mail.id);
 
     if (!selectedFolder) return;

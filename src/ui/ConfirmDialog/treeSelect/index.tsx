@@ -1,6 +1,8 @@
 import I18n from 'i18n-js';
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+
 
 import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
@@ -8,6 +10,7 @@ import { Icon } from '~/ui/index';
 import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
 import { IItem } from '~/workspace/types';
 import { IFile } from '~/workspace/types/states/items';
+
 
 type IProps = {
   data: ITreeItem[];
@@ -53,7 +56,7 @@ export default function TreeSelect({
     if (openIds && openIds.length) {
       for (const id of openIds) {
         const routes = _find(data, id);
-        routes.map(parent => (nodesStatus[parent.id] = true));
+        routes.forEach(parent => (nodesStatus[parent.id] = true));
       }
     }
     if (defaultSelectedId && defaultSelectedId.length) {
@@ -61,7 +64,7 @@ export default function TreeSelect({
         let routes = _find(data, id);
 
         if (routes.length === 0) routes = _find(data, 'owner');
-        routes.map(parent => (nodesStatus[parent.id] = true));
+        routes.forEach(parent => (nodesStatus[parent.id] = true));
       }
     }
     return nodesStatus;
@@ -162,7 +165,7 @@ export default function TreeSelect({
     if (searchValue.length) {
       const filteredItems = data.reduce((acc, child) => [...acc, ..._getFilters(child, searchValue)], [] as ITreeItem[]);
 
-      filteredItems.map(item => (nodesStatus[item.id] = true));
+      filteredItems.forEach(item => (nodesStatus[item.id] = true));
     }
     return nodesStatus;
   };

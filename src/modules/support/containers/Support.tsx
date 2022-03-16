@@ -184,19 +184,19 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
 const mapStateToProps: (state: any) => any = state => {
   const categoryOther: any = { address: 'modules-names.other' };
   categoryOther.name = I18n.t(categoryOther.address);
-  const categoryList = state.user.info.appsInfo
-    .filter(function (app) {
-      return app.address && app.name && app.address.length > 0 && app.name.length > 0;
-    })
-    .map(function (app) {
+
+  const categoryList = [] as any[];
+  for (const app of state.user.info.appsInfo) {
+    if (app.address && app.name && app.address.length > 0 && app.name.length > 0) {
       const translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
       if (translation.substring(0, 9) !== '[missing ') {
-        app.name = translation;
-      } else {
-        if (/^[A-Z]/.test(app.displayName)) app.name = app.displayName;
+        categoryList.push({...app, name: translation});
+      } else if (/^[A-Z]/.test(app.displayName)) {
+        categoryList.push({...app, name: app.displayName});
       }
-      return app;
-    });
+    }
+  }
+
   categoryList.push(categoryOther);
   categoryList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
