@@ -129,7 +129,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Display error message
   displayError(error: string) {
     this.clearDatas(() => {
-      this.error = error;
+      this.error = error === OAuthErrorType.BAD_CREDENTIALS ? OAuthErrorType.BAD_SAML : error;
       this.setState({ mode: WAYFPageMode.ERROR });
     });
   }
