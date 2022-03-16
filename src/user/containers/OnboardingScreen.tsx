@@ -36,10 +36,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
     const isPlatformIos = Platform.OS === 'ios';
     const appName = I18n.t('user.onboardingScreen.appName');
     const isOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
-    const { width } = UI_SIZES.screen;
-    const svgSize = width * 0.8;
+    const { height, width } = UI_SIZES.screen;
     const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
-
     return (
       <SafeAreaView
         style={{
@@ -84,7 +82,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                   height: '85%',
                   width: '80%',
                 }}>
-                <NamedSVG name={`onboarding-${index}`} width={svgSize} height={svgSize} />
+                <NamedSVG name={`onboarding-${index}`} width={'80%'} height={'85%'} />
                 <TextSemiBold style={{ textAlign: 'center', fontSize: 18 }}>{onboardingText}</TextSemiBold>
               </View>
             ))}
