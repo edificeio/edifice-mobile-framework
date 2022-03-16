@@ -1,17 +1,23 @@
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
+import querystring from 'querystring';
 import * as React from 'react';
-import { View, ViewStyle, ImageProps, ImageURISource } from 'react-native';
+import { ImageProps, ImageSourcePropType, ImageURISource, View, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { withNavigation } from 'react-navigation';
+
+
+
+import { UI_SIZES } from '~/framework/components/constants';
+import { CommonStyles } from '~/styles/common/styles';
+
+
 
 import { Row } from '.';
 import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
 import { Italic } from './Typography';
 
-import { UI_SIZES } from '~/framework/components/constants';
-import { CommonStyles } from '~/styles/common/styles';
 
 const BubbleText = style.text({
   color: '#FFFFFF',
@@ -110,16 +116,20 @@ class Images extends React.Component<
       const breakpoints = [750, 1080, 1440];
       return breakpoints.find(b => pixelWidth < b) || breakpoints[breakpoints.length - 1];
     };
-    const getImageSource = (imageSrc, isFullWidth?: boolean) => {
-      const newUri = imageSrc && imageSrc.uri.split('?')[0] + `?thumbnail=${getThumbnailWidth(isFullWidth)}x0`;
-      return { ...imageSrc, uri: newUri };
+    const getImageSource = (imageSrc: ImageURISource, removeThumbnail?: boolean) => {
+      if (!imageSrc.uri) return imageSrc;
+      const uri = new URL(imageSrc.uri);
+      if (removeThumbnail) {
+        uri.searchParams.delete('thumbnail');
+      }
+      return { ...imageSrc, uri: uri.toString() };
     };
 
     if (images.length === 0) return <View />;
     if (images.length === 1) {
       return (
         <SoloImage style={{ height: heightRatio }} onPress={() => this.openImage(0)}>
-          <StretchImage source={getImageSource(images[0].src, true)} />
+          <StretchImage source={getImageSource(images[0].src)} />
         </SoloImage>
       );
     }
