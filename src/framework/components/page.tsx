@@ -16,6 +16,7 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
+  ScrollViewProps,
   View,
   ViewProps,
 } from 'react-native';
@@ -93,6 +94,8 @@ export const KeyboardPageView = (
   props: React.PropsWithChildren<
     PageViewProps & {
       scrollable?: boolean;
+      safeArea?: boolean;
+      scrollViewProps?: ScrollViewProps;
     }
   >,
 ) => {
@@ -103,6 +106,7 @@ export const KeyboardPageView = (
   // BEWARE of adding keyboardVerticalOffset in the future when we'll get back the real React Navigation headers.
   const { children, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
+  const AreaComponent = props.safeArea ?? true ? SafeAreaView : View
   return (
     <PageView {...pageProps}>
       <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} style={{ flex: 1 }}>
@@ -110,8 +114,9 @@ export const KeyboardPageView = (
           style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           alwaysBounceVertical={false}
-          keyboardShouldPersistTaps="never">
-          <SafeAreaView style={{ flexGrow: 1 }}>{children}</SafeAreaView>
+          keyboardShouldPersistTaps="never"
+          {...props.scrollViewProps}>
+          <AreaComponent style={{ flexGrow: 1 }}>{children}</AreaComponent>
         </InnerViewComponent>
       </KeyboardAvoidingView>
     </PageView>
