@@ -2,8 +2,11 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, SectionList, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import ViewOverflow from 'react-native-view-overflow';
 import { NavigationInjectedProps } from 'react-navigation';
+
+
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -32,7 +35,6 @@ import config from '../config';
 import HomeworkCard from './HomeworkCard';
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
 import HomeworkTimeline from './HomeworkTimeline';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 // Props definition -------------------------------------------------------------------------------
@@ -148,7 +150,9 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
 
-    (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
+    // Add footer only if there is at least one element
+    // We must keep the empty state displaying if the list is empty.
+    displayedHomework.length && (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
 
     return (
       <View style={{ flex: 1 }}>
