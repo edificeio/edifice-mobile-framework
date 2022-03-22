@@ -549,6 +549,16 @@
       "readBySeparator": ", ",
       "title": "Carnet de liaison"
     },
+    "schoolbookWordListScreen": {
+      "emptyScreen": {
+        "button": "Créer un mot",
+        "text": "Besoin de communiquer avec les parents d'élèves ? Envoyez des mots grâce au carnet de liaison numérique !",
+        "textNoCreationRights": "L'enseignant pourra communiquer des informations essentielles. Les parents doivent confirmer les mots.",
+        "title": "Il est temps de créer votre premier mot",
+        "titleNoCreationRights": "Il n'y a aucun mot dans votre carnet pour le moment..."
+      }
+    },
+    "appName": "Carnet de liaison",
     "tabName": "Carnet de liaison"
   },
   "schoolbook-acknowledge": "Confirmer la lecture",
