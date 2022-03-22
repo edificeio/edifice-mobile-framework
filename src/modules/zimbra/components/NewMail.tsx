@@ -10,7 +10,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import Notifier from '~/infra/notifier/container';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon, Loading } from '~/ui';
-import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -78,7 +77,6 @@ export default ({
 }: NewMailComponentProps) => {
   return (
     <PageContainer>
-      <ConnectionTrackingBar />
       <Notifier id="zimbra" />
       <KeyboardAvoidingView
         enabled
