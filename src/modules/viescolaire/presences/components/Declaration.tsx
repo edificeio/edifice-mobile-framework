@@ -9,7 +9,6 @@ import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
-import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import DateTimePicker from '~/ui/DateTimePicker';
 import { Text, TextBold } from '~/ui/Typography';
@@ -167,7 +166,6 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
     return (
       <SafeAreaView>
-        <ConnectionTrackingBar />
         <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="position" keyboardVerticalOffset={60}>
           <ScrollView bounces={false} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
             <View style={[styles.row, styles.switchContainer]}>
