@@ -1,11 +1,12 @@
 /**
  * Display a label in a chip-shape.
  */
-
 import styled from '@emotion/native';
 import * as React from 'react';
-import { ColorValue, TextProps, View, ViewProps, TextStyle } from 'react-native';
+import { ColorValue, TextProps, TextStyle, View, ViewProps } from 'react-native';
+
 import theme from '~/app/theme';
+
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
 import { TextBold, TextSizeStyle } from './text';
@@ -50,13 +51,9 @@ export default (props: ILabelProps) => {
   } = props;
   const LabelViewWithPadding = styled(LabelView)({
     paddingVertical:
-      labelSize === 'small' ? UI_SIZES.spacing.tiny : labelSize === 'large' ? UI_SIZES.spacing.medium : UI_SIZES.spacing.small,
+      labelSize === 'small' ? UI_SIZES.spacing.tiny : labelSize === 'large' ? UI_SIZES.spacing.smallPlus : UI_SIZES.spacing.small,
     paddingHorizontal:
-      labelSize === 'small'
-        ? UI_SIZES.spacing.smallPlus
-        : labelSize === 'large'
-        ? UI_SIZES.spacing.extraLarge
-        : UI_SIZES.spacing.medium,
+      labelSize === 'small' ? UI_SIZES.spacing.smallPlus : labelSize === 'large' ? UI_SIZES.spacing.large : UI_SIZES.spacing.medium,
     borderRadius: labelSize === 'large' ? UI_SIZES.radius.extraLarge : UI_SIZES.radius.large,
   });
   const LabelViewWithColor = styled(LabelViewWithPadding)({
@@ -81,10 +78,6 @@ export default (props: ILabelProps) => {
       ? {
           ...TextSizeStyle.Small,
         }
-      : labelSize === 'large'
-      ? {
-          ...TextSizeStyle.SlightBig,
-        }
       : {
           ...TextSizeStyle.Normal,
         }),
@@ -98,15 +91,9 @@ export default (props: ILabelProps) => {
               <Icon
                 name={icon}
                 color={labelStyle === 'plain' ? theme.color.text.inverse : color}
-                size={
-                  labelSize === 'small'
-                    ? TextSizeStyle.Small.fontSize
-                    : labelSize === 'large'
-                    ? TextSizeStyle.SlightBig.fontSize
-                    : TextSizeStyle.Normal.fontSize
-                }
+                size={labelSize === 'small' ? TextSizeStyle.Small.fontSize : TextSizeStyle.Normal.fontSize}
                 style={{
-                  marginRight: labelSize === 'large' ? UI_SIZES.spacing.large : undefined,
+                  marginRight: labelSize === 'large' ? UI_SIZES.spacing.smallPlus : undefined,
                   ...iconStyle,
                 }}
               />
