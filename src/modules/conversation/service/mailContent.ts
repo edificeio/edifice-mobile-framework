@@ -29,7 +29,7 @@ export type IMailContentBackend = {
 
 const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
   let result = {} as IMail;
-  if (!data) return result;
+  if (!data) throw new Error('(mailContentAdapter) data is not populated.');
   result = {
     id: data.id,
     date: moment(data.date),
