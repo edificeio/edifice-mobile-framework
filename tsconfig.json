@@ -69,6 +69,7 @@
     "paths": {
       "~/*": ["./src/*"],
       "ASSETS/*": ["./assets/*"]
-    }
-  }
+    },
+  },
+  "exclude": ["__tests__/**/*-test.ts","__overrides__/**/*","__stashSpec__/**/*"]
 }

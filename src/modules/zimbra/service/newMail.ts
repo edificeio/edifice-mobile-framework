@@ -3,6 +3,7 @@ import fileHandlerService from '~/framework/util/fileHandler/service';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
+
 export type IUser = {
   id: string;
   displayName: string;
@@ -44,10 +45,12 @@ export const newMailService = {
       'In-Reply-To': inReplyTo,
     };
 
-    const paramsUrl = Object.entries(params)
-      .filter(([key, value]) => !!value)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
+    const paramsUrlArray = [] as string[];
+    for (const key in params) {
+      const value = params[key];
+      if (!!value) { paramsUrlArray.push(`${key}=${value}`); }
+    }
+    const paramsUrl = paramsUrlArray.join('&');
 
     await fetchJSONWithCache(`/zimbra/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',
@@ -65,10 +68,14 @@ export const newMailService = {
       reply: isForward ? 'F' : null,
     };
 
-    const paramsUrl = Object.entries(params)
-      .filter(([key, value]) => !!value)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&');
+    const paramsUrlArray = [] as string[];
+    for (const key in params) {
+      const value = params[key];
+      if (!!value) {
+        paramsUrlArray.push(`${key}=${value}`);
+      }
+    }
+    const paramsUrl = paramsUrlArray.join('&');
 
     const response = await fetchJSONWithCache(`/zimbra/draft${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',

@@ -7,7 +7,6 @@
  * - Displays Connection tracker and notifier
  * - Handle keyboard
  */
-
 import styled from '@emotion/native';
 import * as React from 'react';
 import {
@@ -17,15 +16,16 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
+  ScrollViewProps,
   View,
   ViewProps,
 } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+
 import { FakeHeader, FakeHeaderProps, HeaderBackAction } from './header';
 
 export interface PageViewProps extends ViewProps {
@@ -47,7 +47,7 @@ export const PageView = (props: PageViewProps) => {
   const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, ...viewProps } = props;
 
   const goBack = () => {
-    return onBack && onBack() && navigation.dispatch(NavigationActions.back()) || undefined;
+    return (onBack && onBack() && navigation.dispatch(NavigationActions.back())) || undefined;
   };
 
   // Handle Back Android
@@ -92,9 +92,10 @@ export const PageView = (props: PageViewProps) => {
 
 export const KeyboardPageView = (
   props: React.PropsWithChildren<
-    ViewProps & {
-      navigation: NavigationInjectedProps['navigation'];
+    PageViewProps & {
       scrollable?: boolean;
+      safeArea?: boolean;
+      scrollViewProps?: ScrollViewProps;
     }
   >,
 ) => {
@@ -102,19 +103,20 @@ export const KeyboardPageView = (
     ios: 'padding',
     android: undefined,
   }) as KeyboardAvoidingViewProps['behavior'];
-  // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
-  // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
-  const keyboardAvoidingViewVerticalOffset = hasNotch() ? 100 : 76; // Those are "magic" values found by try&error. Seems to be fine on every phone.
+  // BEWARE of adding keyboardVerticalOffset in the future when we'll get back the real React Navigation headers.
   const { children, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
+  const AreaComponent = props.safeArea ?? true ? SafeAreaView : View
   return (
     <PageView {...pageProps}>
-      <KeyboardAvoidingView
-        behavior={keyboardAvoidingViewBehavior}
-        keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}
-        style={{ height: '100%' }}>
-        <InnerViewComponent contentContainerStyle={{ flexGrow: 1 }} alwaysBounceVertical={false} keyboardShouldPersistTaps="never">
-          <SafeAreaView style={{ flexGrow: 1 }}>{children}</SafeAreaView>
+      <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} style={{ flex: 1 }}>
+        <InnerViewComponent
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          alwaysBounceVertical={false}
+          keyboardShouldPersistTaps="never"
+          {...props.scrollViewProps}>
+          <AreaComponent style={{ flexGrow: 1 }}>{children}</AreaComponent>
         </InnerViewComponent>
       </KeyboardAvoidingView>
     </PageView>

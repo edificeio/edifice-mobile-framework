@@ -5,6 +5,8 @@ import * as React from 'react';
 import { Image, SafeAreaView, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
+
+
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { CommonStyles } from '~/styles/common/styles';
@@ -12,6 +14,7 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { H1, Light, LightP } from '~/ui/Typography';
 import { selectPlatform } from '~/user/actions/platform';
 import { IUserAuthState } from '~/user/reducers/auth';
+
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -52,6 +55,29 @@ const PlatformButton = style(TouchableOpacity)({
 
 export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageProps, object> {
   public render() {
+    const pfComponents = [] as React.ReactElement[];
+    for (const pf of appConf.platforms) {
+      if (!pf.hidden) {
+        pfComponents.push(
+          <View
+            key={pf.name}
+            style={{
+              flexBasis: '50%',
+              padding: 12,
+            }}>
+            <PlatformButton
+              onPress={() => this.handleSelectPlatform(pf.name)}
+              style={{
+                alignItems: 'center',
+              }}>
+              <Image resizeMode="contain" style={{ height: 40, width: '100%', marginBottom: 20 }} source={pf.logo} />
+              <Light>{pf.displayName}</Light>
+            </PlatformButton>
+          </View>,
+        );
+      }
+    }
+
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
         <ScrollView alwaysBounceVertical={false}>
@@ -67,25 +93,7 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
           </H1>
           <LightP style={{ textAlign: 'center', marginBottom: 12 }}>{I18n.t('select-platform')}</LightP>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 12 }}>
-            {appConf.platforms
-              .filter(pf => !pf.hidden)
-              .map(pf => (
-                <View
-                  key={pf.name}
-                  style={{
-                    flexBasis: '50%',
-                    padding: 12,
-                  }}>
-                  <PlatformButton
-                    onPress={() => this.handleSelectPlatform(pf.name)}
-                    style={{
-                      alignItems: 'center',
-                    }}>
-                    <Image resizeMode="contain" style={{ height: 40, width: '100%', marginBottom: 20 }} source={pf.logo} />
-                    <Light>{pf.displayName}</Light>
-                  </PlatformButton>
-                </View>
-              ))}
+            {pfComponents}
           </View>
         </ScrollView>
       </SafeAreaView>

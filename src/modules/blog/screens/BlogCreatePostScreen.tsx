@@ -3,14 +3,11 @@ import * as React from 'react';
 import {
   Alert,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   TextInput,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -20,15 +17,15 @@ import theme from '~/app/theme';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
-import { TextBold, TextSemiBold, TextLight, TextAction } from '~/framework/components/text';
+import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { TextAction, TextBold, TextLight, TextSemiBold } from '~/framework/components/text';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
-import { ImagePicked, imagePickedToLocalFile, ImagePicker } from '~/infra/imagePicker';
+import { ImagePicked, ImagePicker, imagePickedToLocalFile } from '~/infra/imagePicker';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog } from '~/modules/blog/reducer';
@@ -117,20 +114,19 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
   render() {
     return (
-      <PageView navigation={this.props.navigation} navBarWithBack={this.navBarInfo()} onBack={this.doHandleGoBack.bind(this)}>
-        <Notifier id="createPost" />{/* ToDo : don't use magic keywords like this. */}
-        <KeyboardAvoidingView // ToDo : use <KeyboardAvoidingScrollView instead ?
-          enabled
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
-          style={{ flex: 1 }}>
-          <ScrollView
-            alwaysBounceVertical={false}
-            contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </PageView>
+      <KeyboardPageView
+        navigation={this.props.navigation}
+        navBarWithBack={this.navBarInfo()}
+        onBack={this.doHandleGoBack.bind(this)}
+        scrollable={false}>
+        <Notifier id="createPost" />
+        {/* ToDo : don't use magic keywords like this. */}
+        <ScrollView
+          alwaysBounceVertical={false}
+          contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
+        </ScrollView>
+      </KeyboardPageView>
     );
   }
 

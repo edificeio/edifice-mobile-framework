@@ -365,6 +365,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    height: UI_SIZES.headerHeight,
+    height: UI_SIZES.elements.tabbarHeight,
   },
 });

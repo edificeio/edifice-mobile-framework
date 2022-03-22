@@ -88,7 +88,7 @@ export class HtmlConverter {
           const classes = tag.attributes["class"].split(" ");
           let willBeIgnored = false;
 
-          classes.map(className => {
+          classes.forEach(className => {
             if (this.opts.ignoreClasses.includes(className))
               willBeIgnored = true;
           });

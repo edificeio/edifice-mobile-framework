@@ -2,6 +2,8 @@ import I18n from 'i18n-js';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
+
+
 import { IDistantFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
@@ -11,6 +13,7 @@ import { downloadFiles, getExtension } from '~/infra/actions/downloadHelper';
 import { asyncActionTypes } from '~/infra/redux/async';
 import config from '~/workspace/config';
 import { IFile, IItems } from '~/workspace/types';
+
 
 export const actionTypesDownload = asyncActionTypes(config.createActionType('/workspace/download'));
 
@@ -40,14 +43,15 @@ export const newDownloadAction =
     return dispatch(
       asyncActionRawFactory(actionTypesDownload, { parentId }, async () => {
         // console.log("NEW DOWNLOAD FILE", selected.item);
-        return Object.values(selected).map(sel => {
+        const ret = [] as Promise<void>[];
+        for (const k in selected) {
+          const sel = selected[k];
           if (sel.url.startsWith('/zimbra')) {
             Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
           } else {
             Trackers.trackEvent('Workspace', 'DOWNLOAD', getExtension(sel.filename));
           }
-          // console.log("Will download", convertIFileToIDistantFile(sel));
-          return fileTransferService
+          ret.push(fileTransferService
             .downloadFile(
               getUserSession(getState()),
               convertIFileToIDistantFile(sel),
@@ -56,8 +60,9 @@ export const newDownloadAction =
                 onProgress: res => console.log('progress', res.bytesWritten / res.contentLength),
               },
             )
-            .then(callback);
-        });
+            .then(callback))
+        }
+        return ret;
       }),
     );
   };

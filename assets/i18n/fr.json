@@ -62,6 +62,7 @@
   "auth-disconnectConfirm": "vous déconnecter ?",
   "auth-error-bad_credentials": "L'identifiant ou le mot de passe est incorrect.",
   "auth-error-bad_response": "Impossible de s'identifier. Mauvaise réponse serveur ({{errorcode}}). Veuillez réessayer ou contacter le support.",
+  "auth-error-bad_saml": "Votre compte n’existe pas sur le réseau éducatif. Veuillez contacter votre administrateur.",
   "auth-error-blocked_type": "Nous restreignons temporairement l'accès au réseau social éducatif à certains profils d'utilisateurs. Merci de réessayer ultérieurement.",
   "auth-error-blocked_user": "L'administrateur de votre établissement a bloqué votre accès à votre réseau éducatif. Veuillez le contacter.",
   "auth-error-firebase_error": "Impossible de s'identifier : erreur lors de l'initialisation des notifications sur votre appareil.",
@@ -434,7 +435,7 @@
     "homeworkTaskListScreen": {
       "displayPastDays": "Afficher les jours précédents",
       "noFutureHomework": "Pas d'autres activités",
-      "noFutureHomeworkTryAgain": "Pas d'autres acitivités à l'horizon, revenez plus tard !",
+      "noFutureHomeworkTryAgain": "Pas d'autres activités à l'horizon, revenez plus tard !",
       "noMorePastHomework": "Pas d'activités précédentes"
     }
   },

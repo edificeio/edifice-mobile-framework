@@ -25,7 +25,7 @@
   "Password": "Contraseña",
   "PasswordChange": "Nueva contraseña",
   "PasswordChangeSuccess": "La contraseña se modificó correctamente.",
-  "PasswordChangeWarning": "For security reasons, you must renew your password.",
+  "PasswordChangeWarning": "Por motivos de seguridad, hay que renovar la contraseña.",
   "PasswordConfirm": "Confirmación de la nueva contraseña",
   "PasswordNew": "Nueva contraseña",
   "PasswordNewConfirm": "Confirmación de la nueva contraseña",
@@ -62,6 +62,7 @@
   "auth-disconnectConfirm": "desconectarse?",
   "auth-error-bad_credentials": "El nombre de usuario o la contraseña son incorrectos.",
   "auth-error-bad_response": "Identificación imposible. Respuesta incorrecta del servidor ({{errorcode}}). Por favor intente nuevamente o contacte a soporte.",
+  "auth-error-bad_saml": "Su cuenta no existe en la red educativa. Póngase en contacto con su administrador.",
   "auth-error-blocked_type": "Restringimos temporalmente el acceso a ciertos perfiles de usuario. Por favor intente nuevamente más tarde.",
   "auth-error-blocked_user": "El administrador de su establecimiento ha bloqueado su acceso.",
   "auth-error-firebase_error": "Identificación imposible: error al inicializar notificaciones en su dispositivo.",
@@ -83,12 +84,12 @@
   "blog": {
     "blogsEmptyScreen": {
       "button": "Crear un blog en la web",
-      "text": "Ponte el gorrito de reportero y crea tu primer blog.",
-      "textNoCreationRights": "Sugerir ideas para el blog de su escuela (vida de la clase, viajes escolares, presentaciones, ...)",
+      "text": "¡Póngase la gorra del pequeño reportero para crear el primer blog! ",
+      "textNoCreationRights": "Proponer ideas para el blog de la escuela (actividades de clase, salidas escolares, presentaciones, etc.)",
       "title": "No hay ningún blog a la vista"
     },
     "blogCreatePostScreen": {
-      "confirmationUnsavedPublication": "Si te vas, el billete que escribiste se perderá.",
+      "confirmationUnsavedPublication": "Si abandona la página, la entrada de blog que escribió se perderá.",
       "createAction": "Guardar",
       "createSuccess": "La entrada de blog se ha guardado correctamente.",
       "postContent": "Contenido de la entrada",
@@ -111,7 +112,7 @@
     },
     "blogPostListScreen": {
       "emptyScreen": {
-        "button": "Añadir una entrada en el blog",
+        "button": "Agregar una entrada de blog",
         "text": "Tome el bolígrafo y empiece a escribir !\nRecuerde agregar imágenes y videos para que resulte más agradable de leer.",
         "textNoCreationRights": "De momento no hay ninguna entrada de blog. Hay que tener un poco de paciencia...",
         "title": "Su primera entrada de blog",
@@ -171,12 +172,12 @@
     "discard": "Abandonar",
     "error": {
       "connection": {
-        "text": "Se ha producido un problema. No podemos mostrar la página. Por favor, compruebe su conexión de red o inténtelo de nuevo más tarde.",
-        "title": "Lo siento... \nLa luz se apagó."
+        "text": "Ha ocurrido un problema. No podemos mostrar la página. Compruebe la conexión de red o vuelva a intentarlo más tarde.",
+        "title": "Lo sentimos...\nLa luz se ha apagado"
       },
       "content": {
-        "text": "Parece que el contenido ha sido borrado o que ya no tienes acceso a él.",
-        "title": "Oops... \nEl contenido ha desaparecido"
+        "text": "Parece ser que el contenido se ha eliminado o ya no se puede acceder a él.",
+        "title": "Ups...\nEl contenido ha desaparecido"
       },
       "text": "Ha ocurrido un error. Vuelva a intentarlo más tarde.",
       "title": "Ups..."
@@ -252,20 +253,20 @@
     "draft": "Borrador",
     "emptyScreen": {
       "drafts": {
-        "text": "¿No tuvo tiempo de terminar su mensaje? No hay problema, puedes guardarlo como borrador.",
+        "text": "¿No tuvo tiempo de terminar los mensajes? Ningún problema, ya que se pueden guardar como borradores.",
         "title": "No hay borradores"
       },
       "mailbox": {
-        "text": "Con la mensajería, empieza a comunicarte con los miembros de tu red ahora.",
-        "title": "Ni un solo mensaje..."
+        "text": "Gracias a la aplicación Correo electrónico, ya puede empezar a comunicarse con los miembros de su red.",
+        "title": "No hay ningún mensaje a la vista..."
       },
       "sent": {
-        "text": "Con la mensajería, empieza a comunicarte con los miembros de tu red ahora.",
-        "title": "No se envía ningún mensaje"
+        "text": "Gracias a la aplicación Correo electrónico, ya puede empezar a comunicarse con los miembros de su red.",
+        "title": "No se ha enviado ningún mensaje"
       },
       "trash": {
-        "text": "Aquí puedes encontrar tus mensajes borrados. Actualmente, todo está limpio.",
-        "title": "La cesta está vacía"
+        "text": "Aquí encontrará los mensajes eliminados. Actualmente todo está limpio.",
+        "title": "La papelera esta vacía"
       }
     },
     "emptyTo": "(Sin destinatario)",
@@ -291,11 +292,11 @@
     "restore": "Restaurar",
     "restoreTo": "Restaurar a",
     "saveDraftMessage": "¿Desea guardar su mensaje como borrador para poder continuar más tarde?",
-    "saveAgainDraftMessage": "¿Quieres guardar los cambios realizados en tu borrador?",
+    "saveAgainDraftMessage": "¿Desea guardar las modificaciones hechas en el borrador?",
     "saveDraftTitle": "Borrador",
-    "saveModifications": "Guardar los cambios",
-    "cancelModifications": "Cancelar los cambios",
-    "deleteDraft": "Borrar el borrador",
+    "saveModifications": "Guardar cambios",
+    "cancelModifications": "Cancelar modificaciones",
+    "deleteDraft": "Eliminar borrador",
     "seeDetail": "Ver detalles",
     "selectDirectory": "Seleccionar carpeta",
     "sendAttachmentProgress": "Espere a que se agregue el archivo adjunto completo",
@@ -429,33 +430,33 @@
   "forgot-success": "Correo electrónico enviado",
   "homework": {
     "homeworkExplorerScreen": {
-      "homeworks": "Cuaderno semanal"
+      "homeworks": "Cuadernos semanales"
     },
     "homeworkTaskListScreen": {
-      "displayPastDays": "Ver días anteriores",
-      "noFutureHomework": "Ninguna otra actividad",
-      "noFutureHomeworkTryAgain": "No hay otras actividades en el horizonte, ¡vuelve más tarde!",
-      "noMorePastHomework": "Sin actividades previas"
+      "displayPastDays": "Mostrar los días anteriores",
+      "noFutureHomework": "No hay más deberes",
+      "noFutureHomeworkTryAgain": "No hay otros deberes a la vista. Volver a comprobarlo más tarde.",
+      "noMorePastHomework": "No hay deberes previos"
     }
   },
-  "homework-createDiary": "Crear un cuaderno semanal",
-  "homework-createActivity": "Añadir una actividad",
-  "homework-diaries-emptyScreenText": "Con la aplicación Cuaderno semanal, no hay excusa para los jóvenes descuidados. Anota todos tus deberes.",
-  "homework-diaries-emptyScreenTitle": "Todavía no hay un cuaderno semanal",
-  "homework-tasks-emptyScreenText": "Añade nuevas actividades a tu cuaderno semanal.",
-  "homework-tasks-emptyScreenText-NoCreationRights": "Aprovecha este momento de tranquilidad. ¿Son las vacaciones?",
-  "homework-tasks-emptyScreenText-NoTasks": "Añade una actividad a tu semana. Esto puede ser útil para enumerar sus tareas o simplemente para escribir notas.",
-  "homework-tasks-emptyScreenText-NoTasks-NoCreationRights": "Encontrarás la lista de actividades para los próximos días en tu cuaderno semanal.",
-  "homework-tasks-emptyScreenTitle": "Relájate, no hay actividades",
-  "homework-tasks-emptyScreenTitle-NoTasks": "Empieza a rellenar tu cuaderno semanal",
-  "homework-tasks-emptyScreenTitle-NoTasks-NoCreationRights": "Todavía no hay actividades",
+  "homework-createActivity": "Agregar deberes",
+  "homework-createDiary": "Crear cuaderno semanal",
+  "homework-diaries-emptyScreenText": "Gracias a la aplicación Cuaderno semanal, ya no hay excusas para los jóvenes despistados ya que todos los deberes se pueden anotar.",
+  "homework-diaries-emptyScreenTitle": "Todavía no hay ningún cuaderno semanal",
+  "homework-tasks-emptyScreenText": "Agregar nuevos deberes en el cuaderno semanal",
+  "homework-tasks-emptyScreenText-NoCreationRights": "¡Hay qué disfrutar de este momento de tranquilidad! ¿Han llegado las vacaciones?",
+  "homework-tasks-emptyScreenText-NoTasks": "Agregar deberes a la semana. Esto puede ser útil para enumerar las tareas o simplemente para escribir notas.",
+  "homework-tasks-emptyScreenText-NoTasks-NoCreationRights": "En el cuaderno semanal hay disponible la lista de los deberes para los próximos días.",
+  "homework-tasks-emptyScreenTitle": "¡Relax total: no hay deberes!",
+  "homework-tasks-emptyScreenTitle-NoTasks": "Empezar a rellebar el cuaderno semanal",
+  "homework-tasks-emptyScreenTitle-NoTasks-NoCreationRights": "Todavía no hay deberes",
   "imageNotAvailable": "Imagen no disponible",
   "linkTo": "Enlace",
   "loading": "Carga",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "login-back": "Regresar a la autenticación",
-  "login-wayf-empty-text": "No podemos mostrar el contenido. Por favor, compruebe su conexión de red o inténtelo de nuevo más tarde.",
-  "login-wayf-empty-title": "Oops...\nEl contenido ha desaparecido",
+  "login-wayf-empty-text": "No podemos mostrar el contenido. Compruebe la conexión de red o vuelva a intentarlo más tarde.",
+  "login-wayf-empty-title": "Ups...\nEl contenido ha desaparecido",
   "login-wayf-error-retry": "Volver a intentar",
   "login-wayf-loading-text": "Conexión en curso...",
   "login-wayf-main-button": "Iniciar sesión",
@@ -794,8 +795,8 @@
   "viesco-declareAbsence": "Declarar ausencia",
   "viesco-edt-week-of": "Semana del",
   "viesco-empty-card": "Nada que mostrar",
-  "viesco-empty-screen-text": "La vida escolar en la aplicación está reservada a las familias y a los profesores.",
-  "viesco-empty-screen-title": "Lo sentimos, no hay contenido para su perfil",
+  "viesco-empty-screen-text": "En la aplicación, la opción Jefatura de estudios está reservada a la familia y profesores.",
+  "viesco-empty-screen-title": "Lo sentimos, no hay ningún contenido para su perfil",
   "viesco-enter-text": "Ingresar texto",
   "viesco-eval-EmptyScreenText": "No hay nuevas evaluaciones...",
   "viesco-from": "Del",
@@ -847,24 +848,24 @@
   "workspace": "Espacio documental",
   "workspaceEmptyScreen": {
     "owner": {
-      "text": "Almacena aquí tus documentos personales: fotos, vídeos, audio, archivos PDF, ...",
-      "title": "No hay nada en su estantería personal"
+      "text": "Guarde aquí los documentos personales: fotos, videos, audio, archivos PDF, etc.",
+      "title": "No hay nada en la estantería personal"
     },
     "protected": {
-      "text": "Encuentra aquí todas las fotos, vídeos y documentos que has utilizado en tu red educativa.",
+      "text": "Aquí están disponibles todas las fotos, videos y documentos que se han utilizado en la red educativa.",
       "title": "No hay nada en la estantería"
     },
     "shared": {
-      "text": "Encuentre aquí todos los documentos que ha compartido con otros y también los que se han compartido con usted.",
-      "title": "No hay recursos compartidos"
+      "text": "Aquí están disponibles todos los documentos que ha compartido con otros y también los que se han compartido con usted.",
+      "title": "Ningún recurso compartido"
     },
     "subfolder": {
-      "text": "No hay documentos en este expediente.",
+      "text": "No hay ningún documento en esta carpeta.",
       "title": "Esta carpeta está vacía"
     },
     "trashed": {
-      "text": "Aquí puedes encontrar tus documentos borrados. En la actualidad, todo está limpio.",
-      "title": "La cesta está vacía"
+      "text": "Aquí encontrará los documentos eliminados. Actualmente todo está limpio.",
+      "title": "La papelera esta vacía"
     }
   },
   "workspace-quota-overflowText": "El espacio de almacenamiento insuficiente para completar esta operación.",
@@ -884,8 +885,8 @@
   "zimbra-directory-name": "Nombre de la carpeta",
   "zimbra-download-all": "Descargar archivos adjuntos",
   "zimbra-drafts": "Borradores",
-  "zimbra-empty-mailbox-text": "Con el Correo electrónico, empieza a comunicarte con los miembros de tu red ahora.",
-  "zimbra-empty-mailbox-title": "Ni un solo mensaje...",
+  "zimbra-empty-mailbox-text": "Gracias a la aplicación Correo electrónico, ya puede empezar a comunicarse con los miembros de su red.",
+  "zimbra-empty-mailbox-title": "No hay ningún mensaje a la vista...",
   "zimbra-external-mail-right-error": "No está autorizado a enviar correos electrónicos externos",
   "zimbra-forward": "Reenviar",
   "zimbra-forward-subject": "RV:",

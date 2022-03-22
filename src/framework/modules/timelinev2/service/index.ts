@@ -1,17 +1,19 @@
 /**
  * Timeline services
  */
-
 import deepmerge from 'deepmerge';
 import queryString from 'query-string';
 
+
+
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { IEntcoreNotificationType } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifTypes';
-import { IPushNotifsSettings_State_Data } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+import { IPushNotifsSettings, IPushNotifsSettings_State_Data } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '~/framework/util/notifications';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+
 
 // Notifications
 
@@ -108,17 +110,22 @@ export const pushNotifsService = {
     return prefs?.config ?? {};
   },
   list: async (session: IUserSession) => {
-    const notifsPrefs = Object.fromEntries(
-      Object.entries(await pushNotifsService._getConfig(session))
-        .filter(([k, v]) => v.hasOwnProperty('push-notif') && v['push-notif'] !== undefined)
-        .map(([k, v]) => [k, v['push-notif']!]),
-    );
-    return notifsPrefs;
+    const notifPrefs = {} as IPushNotifsSettings;
+    const data = await pushNotifsService._getConfig(session);
+    for (const k in data) {
+      if (data[k].hasOwnProperty('push-notif') && data[k]['push-notif'] !== undefined) {
+        notifPrefs[k] = data[k]['push-notif']!;
+      }
+    }
+    return notifPrefs;
   },
   set: async (session: IUserSession, changes: IPushNotifsSettings_State_Data) => {
     const api = '/userbook/preference/timeline';
     const method = 'PUT';
-    const notifPrefsUpdated = Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, { 'push-notif': v }]));
+    const notifPrefsUpdated = {} as {'push-notif': boolean};
+    for (const k in changes) {
+      notifPrefsUpdated[k] = { 'push-notif': changes[k] };
+    }
     // console.log('updates push-notif prefs', notifPrefsUpdated);
     const prefsOriginal = await pushNotifsService._getPrefs(session);
     const notifPrefsOriginal = prefsOriginal.config ?? {};

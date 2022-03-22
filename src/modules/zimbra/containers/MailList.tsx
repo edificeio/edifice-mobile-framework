@@ -7,31 +7,30 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { IInit } from './DrawerMenu';
 
+
+import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
-import {
-  deleteMailsAction,
-  moveMailsToFolderAction,
-  restoreMailsAction,
-  toggleReadAction,
-  trashMailsAction,
-} from '~/modules/zimbra/actions/mail';
+import { deleteMailsAction, moveMailsToFolderAction, restoreMailsAction, toggleReadAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
 import { fetchMailListAction, fetchMailListFromFolderAction } from '~/modules/zimbra/actions/mailList';
 import { fetchQuotaAction } from '~/modules/zimbra/actions/quota';
 import MailList from '~/modules/zimbra/components/MailList';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
-import { getInitMailListState, IFolder } from '~/modules/zimbra/state/initMails';
-import { getMailListState, IMail } from '~/modules/zimbra/state/mailList';
-import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
+import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails';
+import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
+import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text } from '~/ui/Typography';
-import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
+
+
+
+import { IInit } from './DrawerMenu';
+
 
 // ------------------------------------------------------------------------------------------------
 
@@ -179,7 +178,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   restoreSelectedMails = async () => {
     const listSelected = this.getListSelectedMails();
     const mailsIds = [] as string[];
-    listSelected.map(mail => mailsIds.push(mail.id));
+    listSelected.forEach(mail => mailsIds.push(mail.id));
 
     await this.props.restoreMails(mailsIds);
 
@@ -213,7 +212,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   deleteSelectedMails = async () => {
     const listSelected = this.getListSelectedMails();
     const mailsIds = [] as string[];
-    listSelected.map(mail => mailsIds.push(mail.id));
+    listSelected.forEach(mail => mailsIds.push(mail.id));
 
     const { navigation } = this.props;
     const isTrashed = navigation.getParam('isTrashed');
@@ -242,7 +241,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   markSelectedMailsAsUnread = async () => {
     const listSelected = this.getListSelectedMails();
     const mailsIds = [] as string[];
-    listSelected.map(mail => mailsIds.push(mail.id));
+    listSelected.forEach(mail => mailsIds.push(mail.id));
     const isRead = listSelected.findIndex(mail => mail.unread === true) >= 0;
     await this.props.toggleRead(mailsIds, isRead);
     this.onUnselectListMails();
@@ -257,7 +256,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   getListSelectedMails = () => {
     const listSelected = [] as IMail[];
-    this.state.mails.map(mail => (mail.isChecked ? listSelected.push(mail) : null));
+    this.state.mails.forEach(mail => (mail.isChecked ? listSelected.push(mail) : null));
     return listSelected;
   };
 
@@ -439,7 +438,7 @@ export default withViewTracking((props: MailListContainerProps) => {
   const currentFolder = props.navigation.getParam('key');
   if (currentFolder === undefined) return `zimbra/inbox`;
   let toTrack = '';
-  viewsToTrack.map(viewName => {
+  viewsToTrack.forEach(viewName => {
     if (viewName === currentFolder) toTrack = `zimbra/${currentFolder}`;
   });
   return toTrack;

@@ -1,2 +1,4 @@
 package.json
 *.json
+__overrides__
+__stashSpec__

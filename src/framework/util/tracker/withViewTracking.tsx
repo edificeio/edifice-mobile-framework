@@ -8,21 +8,22 @@
  * withViewTracking('view/subview')(Component); // Alternate form
  * withViewTracking(['view', 'subview'], myCustomTracker)(Component); // Pass a custom tracker that implement Tracker interface
  */
-
 // Typings from https://medium.com/@martin_hotell/react-refs-with-typescript-a32d56c4d315
-
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
-import { NavigationScreenProp, NavigationState } from 'react-navigation';
+import { NavigationInjectedProps, NavigationRouteConfig, NavigationRouteConfigMap, NavigationScreenProp, NavigationState } from 'react-navigation';
+
+
 
 import { Trackers } from '.';
 
-function getDisplayName(WrappedComponent: React.ComponentClass<any>) {
+
+function getDisplayName(WrappedComponent: React.ComponentType<any>) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
 export default function withViewTracking<
-  ComponentProps extends { navigation: NavigationScreenProp<NavigationState> },
+  ComponentProps extends NavigationInjectedProps,
   ComponentState,
 >(path: string[] | string | ((props: ComponentProps) => string[] | string), tracker = Trackers) {
   type PrivateProps = { forwardedRef: React.RefObject<React.Component<ComponentProps, ComponentState>> };
@@ -34,7 +35,7 @@ export default function withViewTracking<
     console.warn(`withViewTracking : must give view path as a string or a string[]. ${resolvedPath} is not valid.`);
     return [];
   };
-  return (WrappedComponent: React.ComponentClass<ComponentProps, ComponentState>) => {
+  return (WrappedComponent: React.ComponentType<ComponentProps>) => {
     class WithViewTracking extends React.Component<AllProps, ComponentState> {
       focusListener: any;
       constructor(props: AllProps) {
@@ -56,9 +57,9 @@ export default function withViewTracking<
         return <WrappedComponent {...restProps} />;
       }
     }
-    (WithViewTracking as React.ComponentClass<AllProps, ComponentState>).displayName = `WithViewTracking(${getDisplayName(
-      WrappedComponent,
-    )})`;
+    (
+      WithViewTracking as unknown as React.ComponentType<ComponentProps & NavigationInjectedProps>
+    ).displayName = `WithViewTracking(${getDisplayName(WrappedComponent)})`;
     const RefForwardingFactory = (props: AllProps, ref: React.Component<ComponentProps, ComponentState>) => (
       <WithViewTracking {...props} forwardedRef={ref} />
     );
@@ -71,16 +72,16 @@ export default function withViewTracking<
 }
 
 export const addViewTrackingToStackRoutes = (routeConfigMap: {
-  [routeName: string]: {
-    screen: React.ComponentClass<{ navigation: NavigationScreenProp<NavigationState> }, unknown>;
+  [routeName: string]: NavigationRouteConfig<any, any> & {
+    screen: React.ComponentType<NavigationInjectedProps>;
   };
-}) =>
-  Object.fromEntries(
-    Object.entries(routeConfigMap).map(([routeName, route]) => [
-      routeName,
-      {
-        ...route,
-        screen: withViewTracking(routeName)(route.screen),
-      },
-    ]),
-  );
+}) => {
+  const ret = {};
+  for (const routeName in routeConfigMap) {
+    ret[routeName] = {
+      ...routeConfigMap[routeName],
+      screen: withViewTracking(routeName)(routeConfigMap[routeName].screen),
+    };
+  }
+  return ret as NavigationRouteConfigMap<any, any>;
+};

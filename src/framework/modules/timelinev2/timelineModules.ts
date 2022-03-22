@@ -23,7 +23,7 @@ export const registerTimelineWorkflow = (def: ITimelineWorkflowDefinition) => {
   return def;
 };
 export const registerTimelineWorkflows = (def: ITimelineWorkflowDefinition[]) => {
-  return def.map(d => registerTimelineWorkflow(d));
+  return def.map(d => registerTimelineWorkflow(d)); // Map is used here to keep call chaining available.
 };
 export const getRegisteredTimelineWorkflow = () => registeredTimelineWorkflows;
 

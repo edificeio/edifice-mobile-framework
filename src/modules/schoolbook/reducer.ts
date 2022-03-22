@@ -69,7 +69,7 @@ export default createSessionReducer(initialState, {
 export const getUnacknowledgedChildrenIdsForParent = (parentId: string, wordReport: ISchoolbookWordReport) => {
   const acknowledgedChildren: string[] = [];
   for (const concernedChild of wordReport.report) {
-    concernedChild.acknowledgments?.map(ack => {
+    concernedChild.acknowledgments?.forEach(ack => {
       if (parentId === ack.owner) acknowledgedChildren.push(concernedChild.owner);
     });
   }
