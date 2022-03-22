@@ -56,14 +56,16 @@ export const searchVisibles = (
   // console.log("omitIds", omitIds)
   const filterFunc2 = (v: IVisibleGroup | IVisibleUser) => !omitIds.includes(v.id);
   const sortFunc = (a: { score: number }, b: { score: number }) => b.score - a.score;
-  const computed = [
-    ...visibles.groups.map(g => ({ ...g, score: computeScoreGroup(g) })),
-    ...visibles.users.map(u => ({ ...u, score: computeScoreUser(u) })),
-  ];
+  const computed = [] as ((IVisibleGroup | IVisibleUser) & { score: number })[];
+  for (const g of visibles.groups) {
+    computed.push({ ...g, score: computeScoreGroup(g) })
+  }
+  for (const u of visibles.users) {
+    computed.push({ ...u, score: computeScoreUser(u) })
+  }
   // console.log("computed", computed);
   const res = computed
-    .filter(filterFunc)
-    .filter(filterFunc2)
+    .filter(v => filterFunc(v) && filterFunc2(v))
     .sort(sortFunc)
     .slice(0, limit ?? 20) as Array<IVisibleGroup | IVisibleUser>;
   // console.log("res", res);

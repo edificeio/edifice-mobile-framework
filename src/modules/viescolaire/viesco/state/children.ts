@@ -2,6 +2,7 @@ import { getSessionInfo } from '~/App';
 import viescoConfig from '~/modules/viescolaire/moduleConfig';
 import userConfig from '~/user/config';
 
+
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IChild {
@@ -30,13 +31,15 @@ export const getSelectedChild = (globalState: any) => {
 
 export const getChildrenList = (globalState: any): IChildArray => {
   const children = userConfig.getLocalState(globalState).info.children;
-  return Object.entries(children).map(
-    ([childId, childValue]) =>
-      ({
-        id: childId,
-        ...(childValue as object),
-      } as IChild),
-  );
+  const ret = [] as IChildArray;
+  for (const childId in children) {
+    const childValue = children[childId];
+    ret.push({
+      id: childId,
+      ...(childValue as object),
+    } as IChild);
+  }
+  return ret;
 };
 
 export const getSelectedChildStructure = (globalState: any) => {

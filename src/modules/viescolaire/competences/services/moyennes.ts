@@ -1,8 +1,11 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
 import querystring from 'querystring';
 
+
+
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
+
 
 export type IMoyenneListBackend = {
   matiere: string;
@@ -23,7 +26,8 @@ export type IMoyenneListBackend = {
 const moyenneListAdapter: (data: IMoyenneListBackend) => IMoyenneList = data => {
   let result = [] as IMoyenneList;
   if (!data) return result;
-  Object.values(data).map(item => {
+  for (const key in data) {
+    const item = data[key];
     result.push({
       matiere: item.matiere,
       matiere_coeff: item.matiere_coeff,
@@ -32,7 +36,7 @@ const moyenneListAdapter: (data: IMoyenneListBackend) => IMoyenneList = data => 
       moyenne: item.moyenne,
       devoirs: item.devoirs,
     });
-  });
+  }
   return result;
 };
 

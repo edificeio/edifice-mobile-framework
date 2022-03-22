@@ -144,8 +144,8 @@ export class HtmlParserAbstract<RenderType> {
     if (this.opts.ignoreClass && tagAttrs['class']) {
       const classes = tagAttrs['class'].split(' ');
 
-      classes.map(className => {
-        if (this.opts.ignoreClass.includes(className)) willBeIgnored = true;
+      classes.forEach(className => {
+        if (this.opts.ignoreClass?.includes(className)) willBeIgnored = true;
       });
 
       if (willBeIgnored) {

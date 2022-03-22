@@ -318,7 +318,10 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     const settingsForType = getPushNotifsSettingsByType(this.props.timelineState)[type] || {};
     const defaultsForType = getDefaultPushNotifsSettingsByType(this.props.timelineState)[type] || {};
     const items = deepmerge<IPushNotifsSettings>(defaultsForType, settingsForType);
-    const itemsWithNewValue = Object.fromEntries(Object.keys(items).map(k => [k, value]));
+    const itemsWithNewValue = {} as {[k: string] : boolean};
+    for (const k in items) {
+      itemsWithNewValue[k] = value;
+    }
     this.setState({
       pendingPrefsChanges: {
         ...this.state.pendingPrefsChanges,

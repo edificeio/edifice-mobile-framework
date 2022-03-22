@@ -81,7 +81,7 @@ const getAttachmentTypeByExt = (filename: string) => {
     .toLowerCase();
 
   let icon: string = defaultAttachmentIcon; // default returned value if no one match
-  attachmentIconsByFileExt.map(type => {
+  attachmentIconsByFileExt.forEach(type => {
     if (type.exts.includes(ext)) icon = type.icon;
   });
 

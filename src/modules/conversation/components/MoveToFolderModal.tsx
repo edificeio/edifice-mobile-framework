@@ -3,11 +3,14 @@ import * as React from 'react';
 import { View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+
+
 import theme from '~/app/theme';
 import { TextBold, TextSemiBold } from '~/framework/components/text';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
+
 
 type MoveToFolderModalProps = {
   show: boolean;
@@ -40,9 +43,12 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     const foldersWithoutCurrent = folders && folders.filter(folder => folder.folderName !== currentFolder);
     const options: any = [];
     !isCurrentFolderInbox && options.push({ label: I18n.t('conversation.inbox'), value: 'inbox' });
-    foldersWithoutCurrent &&
-      foldersWithoutCurrent.length > 0 &&
-      foldersWithoutCurrent.map(folder => ({ label: folder.folderName, value: folder.id })).forEach(folder => options.push(folder));
+
+    if (foldersWithoutCurrent && foldersWithoutCurrent.length > 0) {
+      for (const folder of foldersWithoutCurrent) {
+        options.push({ label: folder.folderName, value: folder.id });
+      }
+    }
     const isMoveImpossible = options.length === 0;
 
     return (

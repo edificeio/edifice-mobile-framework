@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.7.3",
+  "version": "1.8.0",
   "private": true,
   "scripts": {
     "add-dev": "yarn add --dev --exact",
@@ -11,7 +11,6 @@
     "deploy-rc": "fastlane deploy alpha",
     "ios": "react-native run-ios",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
-    "lint-complete": "tsc --noEmit && eslint --ext .js,.jsx,.ts,.tsx ./",
     "override": "node cli/override.js -l",
     "override-local": "node cli/override.js --local -l",
     "override-silent": "node cli/override.js -v --no-i $CONFIG_TO --uri=$CONFIG_URI --branch=$CONFIG_BRANCH --username=$CONFIG_USER --password=$CONFIG_PWD",
@@ -27,7 +26,7 @@
     "private-key": "cd android/app && rm -f release.keystore && keytool -genkey -v -keystore release.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000",
     "start": "watchman watch-del-all && react-native start --reset-cache",
     "test": "jest",
-    "tsc": "tsc -p tsconfig.json --watch"
+    "tsc": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@emotion/native": "11.0.0",
@@ -42,8 +41,8 @@
     "@react-native-community/progress-view": "1.3.1",
     "@react-native-community/push-notification-ios": "1.10.1",
     "@react-native-cookies/cookies": "6.0.11",
-    "@react-native-firebase/app": "14.5.0",
-    "@react-native-firebase/messaging": "14.5.0",
+    "@react-native-firebase/app": "14.5.1",
+    "@react-native-firebase/messaging": "14.5.1",
     "@react-native-picker/picker": "2.2.1",
     "@skele/components": "1.0.0-alpha.40",
     "appcenter": "4.4.3",
@@ -102,6 +101,7 @@
     "react-native-swiper": "1.6.0",
     "react-native-text-size": "4.0.0-rc.1",
     "react-native-tiny-toast": "1.0.7",
+    "react-native-url-polyfill": "1.3.0",
     "react-native-vector-icons": "9.0.0",
     "react-native-video": "5.2.0",
     "react-native-video-player": "0.12.0",
@@ -123,9 +123,9 @@
     "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
-    "@babel/core": "7.17.5",
+    "@babel/core": "7.17.7",
     "@babel/plugin-proposal-decorators": "7.17.2",
-    "@babel/runtime": "7.17.2",
+    "@babel/runtime": "7.17.7",
     "@jumpn/react-native-jetifier": "0.1.4",
     "@react-native-community/eslint-config": "3.0.1",
     "@trivago/prettier-plugin-sort-imports": "3.2.0",
@@ -133,23 +133,26 @@
     "@types/jest": "27.4.1",
     "@types/mime": "2.0.3",
     "@types/react": "17.0.40",
-    "@types/react-native": "0.67.2",
+    "@types/react-native": "0.67.3",
     "@types/react-native-share": "3.3.3",
     "@types/react-test-renderer": "17.0.1",
     "@types/webpack-env": "1.16.3",
-    "@typescript-eslint/eslint-plugin": "5.14.0",
-    "@typescript-eslint/parser": "5.14.0",
+    "@typescript-eslint/eslint-plugin": "5.15.0",
+    "@typescript-eslint/parser": "5.15.0",
     "babel-jest": "27.5.1",
+    "babel-plugin-transform-remove-console": "6.9.4",
     "eslint": "8.11.0",
-    "eslint-config-airbnb-typescript": "16.1.1",
+    "eslint-config-airbnb-typescript": "16.1.2",
     "eslint-config-prettier": "8.5.0",
     "eslint-config-universe": "10.0.0",
+    "eslint-import-resolver-typescript": "2.5.0",
+    "eslint-plugin-flowtype": "8.0.3",
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-jsx-a11y": "6.5.1",
-    "eslint-plugin-react": "7.29.3",
+    "eslint-plugin-react": "7.29.4",
     "husky": "7.0.4",
     "jest": "27.5.1",
-    "metro-react-native-babel-preset": "0.69.0",
+    "metro-react-native-babel-preset": "0.69.1",
     "patch-package": "6.4.7",
     "prettier": "2.5.1",
     "pretty-quick": "3.1.3",
@@ -182,7 +185,7 @@
   },
   "todo-husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && npm run lint"
+      "pre-commit": "pretty-quick --staged && yarn run tsc && yarn run lint"
     }
   },
   "ode": {

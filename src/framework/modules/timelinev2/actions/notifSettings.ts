@@ -1,23 +1,22 @@
 import I18n from 'i18n-js';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loadNotificationsDefinitionsAction } from './notifDefinitions';
+
 
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import * as notifDefinitionsStateHandler from '~/framework/modules/timelinev2/reducer/notifDefinitions';
-import {
-  actions as notifFilterSettingsActions,
-  INotifFilterSettings,
-} from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
-import {
-  actions as pushNotifsSettingsActions,
-  IPushNotifsSettings,
-} from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+import { INotifFilterSettings, actions as notifFilterSettingsActions } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
+import { IPushNotifsSettings, actions as pushNotifsSettingsActions } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import { pushNotifsService } from '~/framework/modules/timelinev2/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { getUserSession } from '~/framework/util/session';
-import { getItemJson, setItemJson, removeItemJson } from '~/framework/util/storage';
+import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
+
+
+
+import { loadNotificationsDefinitionsAction } from './notifDefinitions';
+
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -43,7 +42,10 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
         settings = settingsToMigrate;
       } else settings = {};
     }
-    const defaults = Object.fromEntries(state.notifDefinitions.notifFilters.data.map(v => [v.type, v.type !== 'MESSAGERIE'])); // TODO: beautify
+    const defaults = {};
+    for (const v of state.notifDefinitions.notifFilters.data) {
+      defaults[v.type] = v.type !== 'MESSAGERIE'; // ToDo remove specific check here in favor in declarative in conversation module.
+    }
     settings = { ...defaults, ...settings };
 
     // 3 - Save loaded notif settings for persistency

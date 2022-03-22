@@ -4,7 +4,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { IFile } from '~/workspace/types';
 
 export const downloadFiles = (downloadable: IFile[], withManager = true) => {
-  downloadable.map(document => downloadFile(document, withManager));
+  downloadable.forEach(document => downloadFile(document, withManager));
 };
 
 export const downloadFile = (downloadable: IFile, withManager = true) => {

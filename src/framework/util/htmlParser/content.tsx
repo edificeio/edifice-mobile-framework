@@ -1,6 +1,8 @@
 import { decode } from 'html-entities';
 import * as React from 'react';
 
+
+
 import { IMedia } from '~/framework//util/notifications';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { signURISource, transformedSrc } from '~/infra/oauth';
@@ -9,6 +11,7 @@ import { AttachmentGroup } from '~/ui/AttachmentGroup';
 import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
 import Player from '~/ui/Player';
+
 
 /**
  * Extracts text from an input html string
@@ -56,35 +59,50 @@ export const extractMediaFromHtml = (html: string) => {
       attachments: foundAttachmentGroup[0].match(attachmentRegex),
     }));
 
-  const images = foundImages && foundImages.map(foundImage => ({ type: 'image', src: foundImage[2], index: foundImage.index }));
-  const audios = foundAudios && foundAudios.map(foundAudio => ({ type: 'audio', src: foundAudio[2], index: foundAudio.index }));
-  const videos = foundVideos && foundVideos.map(foundVideo => {
-    const videoAttrs = [...foundVideo[1].matchAll(tagAttributesPattern)];
-    return { type: 'video', index: foundVideo.index, ...Object.fromEntries(videoAttrs.map(attr => attr.slice(2))) };
-  });
-  const iframes =
-    foundIframes && foundIframes.map(foundIframe => ({ type: 'iframe', src: foundIframe[2], index: foundIframe.index }));
-  const unflattenedAttachments = [];
+  const unsortedMedia = [] as { index: number; type: string; src: string }[];
+
+  foundImages &&
+    foundImages.forEach(foundImage => {
+      unsortedMedia.push({ type: 'image', src: foundImage[2], index: foundImage.index || 0 });
+    });
+  foundAudios &&
+    foundAudios.forEach(foundAudio => {
+      unsortedMedia.push({ type: 'audio', src: foundAudio[2], index: foundAudio.index || 0 });
+    });
+  foundVideos &&
+    foundVideos.forEach(foundVideo => {
+      const videoAttrs = [...foundVideo[1].matchAll(tagAttributesPattern)];
+      unsortedMedia.push({
+        type: 'video',
+        src: foundVideo[2],
+        index: foundVideo.index || 0,
+        ...Object.fromEntries(videoAttrs.map(attr => attr.slice(2))),
+      });
+    });
+  foundIframes &&
+    foundIframes.forEach(foundIframe => {
+      unsortedMedia.push({ type: 'iframe', src: foundIframe[2], index: foundIframe.index || 0 });
+    });
+
+  const unflattenedAttachments = [] as { index: number; type: string; src: string; name: string }[];
   foundAttachmentsByGroup &&
     foundAttachmentsByGroup.forEach(attGroup => {
-      const formattedAtts = attGroup.attachments?.map(attHtml => {
+      for (const attHtml of attGroup.attachments || []) {
         const attUrl = attHtml.match(/href="(.*?)"/g);
         const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
-        return {
-          type: 'attachment',
-          src: attUrl && `${attUrl[0].replace('href="', '').replace('"', '')}`,
-          name: attDisplayName && attDisplayName[0].replace(/<\/div>/g, '').replace(/<\/a>/g, ''),
-          index: attGroup.index,
-        };
-      });
-      unflattenedAttachments.push(formattedAtts);
+        attUrl &&
+          attDisplayName &&
+          unflattenedAttachments.push({
+            type: 'attachment',
+            src: attUrl && `${attUrl[0].replace('href="', '').replace('"', '')}`,
+            name: attDisplayName && attDisplayName[0].replace(/<\/div>/g, '').replace(/<\/a>/g, ''),
+            index: attGroup.index || 0,
+          });
+      }
     });
-  const attachments = unflattenedAttachments.flat();
+  unsortedMedia.push(...unflattenedAttachments.flat());
 
-  const sortedMedia = images.concat(audios, videos, iframes, attachments).sort((a, b) => a.index - b.index);
-  const sortedMediaWithoutIndex = sortedMedia.map(({ index, ...mediaWithoutIndex }) => mediaWithoutIndex);
-
-  return sortedMediaWithoutIndex;
+  return unsortedMedia.sort((a, b) => a.index - b.index);
 };
 
 const renderAttachementsPreview = (medias: IMedia[]) => {

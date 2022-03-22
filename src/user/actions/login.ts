@@ -20,7 +20,6 @@ import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oaut
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/LoginNavigator';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
-import { clearTimeline } from '~/timeline/actions/clearTimeline';
 import { userService } from '~/user/service';
 
 // eslint-disable-next-line import/order
@@ -355,11 +354,6 @@ export function logout() {
     try {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
 
-      // === 0: Tracking reporting, only on manual logout
-      // ToDo
-
-      clearTimeline(dispatch)(); // ToDo: this is ugly. Timeline should be cleared when logout.
-
       // === 1: Nav back on the login stack
       const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
       reset(getLoginStackToDisplay(platformId));
@@ -368,7 +362,10 @@ export function logout() {
       await dispatch(endSessionAction());
       await clearRequestsCache();
       dispatch(createEndSessionAction());
+
+      // === 3: Tracking
       Trackers.trackEvent('Auth', 'LOGOUT');
+
     } catch (err) {
       console.warn(err);
       const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);

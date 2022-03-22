@@ -548,7 +548,8 @@
       "readByNumberRelatives": "Lu par {{nb}} parents",
       "readBySeparator": ", ",
       "title": "Carnet de liaison"
-    }
+    },
+    "tabName": "Carnet de liaison"
   },
   "schoolbook-acknowledge": "Confirmer la lecture",
   "schoolbook-already-confirmed": "Vous avez confirmé la lecture de ce mot",

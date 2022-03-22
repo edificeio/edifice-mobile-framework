@@ -1,14 +1,16 @@
 /**
  * Blog services
  */
-
 import moment from 'moment';
+
+
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 import { IBlog, IBlogFolder, IBlogList, IBlogPost, IBlogPostComments, IBlogPostList } from '~/modules/blog/reducer';
+
 
 export interface IEntcoreBlog {
   _id: string;
@@ -196,7 +198,11 @@ export const blogService = {
   list: async (session: IUserSession) => {
     const api = `/blog/list/all`;
     const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
-    return (entcoreBlogList.map(b => blogAdapter(b)) as IBlogList).filter(b => !b.trashed);
+    const blogList = [] as IBlogList;
+    for (const entcoreBlog of entcoreBlogList) {
+      if (!entcoreBlog.trashed) blogList.push(blogAdapter(entcoreBlog));
+    }
+    return blogList;
   },
   get: async (session: IUserSession, blogId: string) => {
     const api = `/blog/${blogId}`;

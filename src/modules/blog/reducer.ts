@@ -208,9 +208,11 @@ export const computeAllBlogsHierarchy = <FolderType extends IBlogFolder = IBlogF
   const idsOfAllBlogsThatAreInAFolder: string[] = [];
 
   const folderHierarchy = computeFoldersHierarchy(folders, f => {
-    const blogsOfFolder = f.resourceIds
-      .map(resourceId => blogs.find(blog => blog.id === resourceId))
-      .filter(blog => blog !== undefined) as IBlog[];
+    const blogsOfFolder = [] as IBlog[];
+    for (const resourceId of f.resourceIds) {
+      const blog = blogs.find(blog => blog.id === resourceId);
+      if (blog !== undefined) blogsOfFolder.push(blog);
+    }
     (f as IBlogFolderWithResources).resources = blogsOfFolder;
     idsOfAllBlogsThatAreInAFolder.push(...blogsOfFolder.map(b => b.id));
     return f as IBlogFolderWithResources & FolderType;
