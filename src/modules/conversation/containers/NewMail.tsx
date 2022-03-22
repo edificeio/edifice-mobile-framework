@@ -9,8 +9,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-
-
 import { getSessionInfo } from '~/App';
 import theme from '~/app/theme';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
@@ -24,13 +22,19 @@ import { pickFileError } from '~/infra/actions/pickFile';
 import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
-import { addAttachmentAction, deleteAttachmentAction, forwardMailAction, makeDraftMailAction, sendMailAction, updateDraftMailAction } from '~/modules/conversation/actions/newMail';
+import {
+  addAttachmentAction,
+  deleteAttachmentAction,
+  forwardMailAction,
+  makeDraftMailAction,
+  sendMailAction,
+  updateDraftMailAction,
+} from '~/modules/conversation/actions/newMail';
 import { fetchVisiblesAction } from '~/modules/conversation/actions/visibles';
 import NewMailComponent from '~/modules/conversation/components/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/modules/conversation/state/mailContent';
-
 
 export enum DraftType {
   NEW,
@@ -274,57 +278,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           text: isSavedDraft ? 'conversation.saveAgainDraftMessage' : 'conversation.saveDraftMessage',
         };
         const options = [
-          {
-            text: isSavedDraft ? I18n.t('conversation.saveModifications') : I18n.t('common.save'),
-            onPress: async () => {
-              try {
-                await this.saveDraft();
-                onGoBack && onGoBack();
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Succès',
-                );
-              } catch (err) {
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec',
-                );
-              }
-              navigation.goBack();
-            },
-            style: 'default',
-          },
-          {
-            text: isSavedDraft ? I18n.t('conversation.cancelModifications') : I18n.t('common.delete'),
-            onPress: async () => {
-              try {
-                if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
-                  await trashMessage([id]);
-                  await deleteMessage([id]);
-                }
-                onGoBack && onGoBack();
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  isSavedDraft
-                    ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
-                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
-                );
-              } catch (err) {
-                Trackers.trackEventOfModule(
-                  moduleConfig,
-                  'Ecrire un mail',
-                  isSavedDraft
-                    ? 'Rédaction mail - Sortir - Annuler les modifications - Échec'
-                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
-                );
-              }
-              navigation.goBack();
-            },
-            style: isSavedDraft ? 'default' : 'destructive',
-          },
           ...(isSavedDraft
             ? [
                 {
@@ -354,13 +307,64 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                 },
               ]
             : []),
+          {
+            text: isSavedDraft ? I18n.t('conversation.cancelModifications') : I18n.t('common.delete'),
+            onPress: async () => {
+              try {
+                if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
+                  await trashMessage([id]);
+                  await deleteMessage([id]);
+                }
+                onGoBack && onGoBack();
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  isSavedDraft
+                    ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
+                );
+              } catch (err) {
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  isSavedDraft
+                    ? 'Rédaction mail - Sortir - Annuler les modifications - Échec'
+                    : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
+                );
+              }
+              navigation.goBack();
+            },
+            style: isSavedDraft ? 'default' : 'destructive',
+          },
+          {
+            text: isSavedDraft ? I18n.t('conversation.saveModifications') : I18n.t('common.save'),
+            onPress: async () => {
+              try {
+                await this.saveDraft();
+                onGoBack && onGoBack();
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Succès',
+                );
+              } catch (err) {
+                Trackers.trackEventOfModule(
+                  moduleConfig,
+                  'Ecrire un mail',
+                  'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec',
+                );
+              }
+              navigation.goBack();
+            },
+            style: 'default',
+          },
         ] as AlertButton[];
         Alert.alert(
           I18n.t(textToDisplay.title),
           I18n.t(textToDisplay.text),
           Platform.select({
-            ios: options.reverse(),
-            android: options.reverse(), // F*CK YOU Android !
+            ios: [...options].reverse(),
+            android: options,
           }),
         );
       } else {

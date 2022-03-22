@@ -5,18 +5,19 @@ import * as React from 'react';
 import {
   Image,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   SafeAreaView,
+  ScrollView,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  ScrollView,
-  Linking,
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { KeyboardPageView } from '~/framework/components/page';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -26,11 +27,10 @@ import { FlatButton } from '~/ui';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
-import { checkVersionThenLogin, IVersionContext, updateVersionIfWanted } from '~/user/actions/version';
+import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~/user/actions/version';
 import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
-import { PageView } from '~/framework/components/page';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -111,24 +111,19 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
 
     return (
-      <PageView navigation={navigation} navBarWithBack={{ title: platformDisplayName }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-          <KeyboardAvoidingView
-            style={{ flex: 1, backgroundColor: '#ffffff' }}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <VersionModal
-              mandatory={versionMandatory}
-              version={version}
-              visibility={versionModal}
-              onCancel={() => versionContext && onSkipVersion(versionContext)}
-              onSubmit={() => versionContext && onUpdateVersion(versionContext)}
-            />
-            <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => this.unfocus()}>
-              {this.renderForm()}
-            </TouchableWithoutFeedback>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </PageView>
+      <KeyboardPageView
+        navigation={navigation}
+        navBarWithBack={{ title: platformDisplayName }}
+        style={{ backgroundColor: theme.color.background.card }}>
+        <VersionModal
+          mandatory={versionMandatory}
+          version={version}
+          visibility={versionModal}
+          onCancel={() => versionContext && onSkipVersion(versionContext)}
+          onSubmit={() => versionContext && onUpdateVersion(versionContext)}
+        />
+        {this.renderForm()}
+      </KeyboardPageView>
     );
   }
 
