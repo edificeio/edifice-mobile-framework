@@ -9,7 +9,6 @@ import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallL
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
-import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text, TextBold } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
@@ -163,7 +162,6 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
   public render() {
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
         {this.state.callData.course_id !== undefined ? this.renderCall() : null}
       </PageContainer>
     );
