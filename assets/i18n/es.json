@@ -705,6 +705,7 @@
       "support.bugtracker-issue-updated": "Actualización de una solicitud de soporte prioritaria",
       "support.ticket-created": "Creación de una solicitud de soporte",
       "support.ticket-updated": "Actualización de una solicitud de soporte",
+      "timeline.notifType.messagerie.return-message": "Message return",
       "timeline.notify-report": "Notificar notificación",
       "timeline.send-flash-message-mail": "Editar mensaje Flash",
       "timeline.send-flash-message-push": "Publicación de un nuevo mensaje Flash",

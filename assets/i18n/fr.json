@@ -705,6 +705,7 @@
       "support.bugtracker-issue-updated": "Mise à jour d'une demande escaladée",
       "support.ticket-created": "Création d'une demande de support",
       "support.ticket-updated": "Mise à jour d'une demande de support",
+      "timeline.notifType.messagerie.return-message": "Retour d'un message",
       "timeline.notify-report": "Signalement d'une notification",
       "timeline.send-flash-message-mail": "Publication d'un nouveau message flash",
       "timeline.send-flash-message-push": "Publication d'un nouveau message flash",
