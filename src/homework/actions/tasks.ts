@@ -50,6 +50,7 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
   const ret = {
     byId: {},
     ids: [],
+    diaryInfo: {}
   };
   if (!data.data) return { byId: {}, ids: [] };
   // Now it's time to iterate over the days.
@@ -82,6 +83,12 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
   }
   // Sorting days of tasks by ascending date
   ret.ids.sort(); // As the used ID from date is YYYY-MM-DD, we can sort it lexically.
+  ret.diaryInfo = {
+    title: data.title,
+    name: data.title, // What is name ??? Baby don't hurt me ! title duplicate ?
+    id: data._id,
+    thumbnail: data.thumbnail
+  }
   return ret;
 };
 

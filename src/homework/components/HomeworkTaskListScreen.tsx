@@ -123,9 +123,8 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   }
 
   private renderList() {
-    const { diaryListData, diaryId, tasksByDay, navigation, onRefresh, session } = this.props;
+    const { diaryId, tasksByDay, navigation, onRefresh, session } = this.props;
     const { refreshing, pastDateLimit } = this.state;
-    const hasNoDiaries = !diaryListData || (diaryListData && Object.keys(diaryListData).length === 0);
     let data: DataType[] = tasksByDay
       ? tasksByDay.map(day => ({
           type: 'day',
@@ -158,7 +157,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
       <View style={{ flex: 1 }}>
         {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.extraLarge} />}
         <SectionList
-          scrollEnabled={!hasNoDiaries}
           contentContainerStyle={{
             padding: hasHomework ? UI_SIZES.spacing.large : undefined,
             paddingTop: hasHomework ? undefined : 0,

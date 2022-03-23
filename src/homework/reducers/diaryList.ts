@@ -5,6 +5,7 @@
 import { AnyAction } from 'redux';
 
 import { actionTypes } from '~/homework/actions/diaryList';
+import { homeworkTasksReceived, actionTypes as taskListActionTypes } from '~/homework/actions/tasks';
 import { IArrayById } from '~/infra/collections';
 import asyncReducer from '~/infra/redux/async';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
@@ -29,6 +30,14 @@ const homeworkDiaryListReducer = (state: IHomeworkDiaryList = stateDefault, acti
     case actionTypes.received:
       return action.data;
     // Session flush forward-compatibility.
+    case taskListActionTypes.received:
+      const a = action as ReturnType<typeof homeworkTasksReceived>;
+      if (a.data.diaryInfo) {
+        return {
+          ...state,
+          [a.diaryId]: a.data.diaryInfo,
+        } as IHomeworkDiaryList;
+      } else return state;
     case createEndSessionActionType():
       return stateDefault;
     default:
