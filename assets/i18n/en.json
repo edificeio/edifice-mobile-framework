@@ -456,7 +456,7 @@
   "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
   "login-back": "Back to login",
   "login-wayf-empty-text": "An error has occurred. We cannot display the page. Please check your WiFi connection or try later.",
-  "login-wayf-empty-title": "Oops... \nThe content is gone",
+  "login-wayf-empty-title": "Whoops...\nThis content has disappeared",
   "login-wayf-error-retry": "Try again",
   "login-wayf-loading-text": "Loading...",
   "login-wayf-main-button": "Login",
