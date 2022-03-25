@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
-import HomeworkTaskListScreen from '~/homework/containers/HomeworkTaskListScreen';
-import HomeworkExplorerScreen from '~/homework/containers/HomeworkExplorerScreen';
 import { PageView } from '~/framework/components/page';
+import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
+import HomeworkExplorerScreen from '~/homework/containers/HomeworkExplorerScreen';
+import HomeworkTaskListScreen from '~/homework/containers/HomeworkTaskListScreen';
 import { Loading } from '~/ui';
 
 const mapStateToProps: (state: any) => any = state => {
@@ -36,12 +36,21 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   };
 };
 
-class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatch: any }, object> {
+export interface IHomeworkInitialScreenState {
+  isPristine: boolean;
+}
+
+class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatch: any }, IHomeworkInitialScreenState> {
+  state = {
+    isPristine: true,
+  };
+
   render() {
+    const { isPristine } = this.state;
     const { diaryList, didInvalidate, isFetching, navigation } = this.props;
     const hasOneDiary = diaryList?.length === 1;
 
-    return isFetching && didInvalidate ? (
+    return isPristine || (isFetching && didInvalidate) ? (
       <PageView navigation={navigation} navBarWithBack={{}}>
         <Loading />
       </PageView>
@@ -54,6 +63,7 @@ class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatc
 
   componentDidMount() {
     const { onFetchHomeworkDiaryList } = this.props;
+    this.setState({ isPristine: false });
     onFetchHomeworkDiaryList();
   }
 }

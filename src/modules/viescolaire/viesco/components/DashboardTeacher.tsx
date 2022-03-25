@@ -9,7 +9,6 @@ import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import StructurePicker from '~/modules/viescolaire/viesco/containers/StructurePicker';
 import { CommonStyles } from '~/styles/common/styles';
-import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 
 const style = StyleSheet.create({
@@ -87,7 +86,6 @@ const ImageButton = ({ imageSrc, color, text, onPress, disabled }: ImageButtonPr
 export default props => {
   return (
     <PageContainer>
-      <ConnectionTrackingBar />
       <ScrollView overScrollMode="never" bounces={false}>
         <View style={[style.coursesPart, { height: props.authorizedViescoApps.presences ? 400 : 'auto' }]}>
           <StructurePicker />
