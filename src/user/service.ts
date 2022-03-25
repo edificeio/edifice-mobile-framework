@@ -6,7 +6,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Connection } from '~/infra/Connection';
-import { signedFetch } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
@@ -200,6 +200,14 @@ class UserService {
       //console.log("[UserService] redirectToTheStore:redirected to the store ")
     } catch (e) {
       console.error('[UserService] redirectToTheStore:could not redirect to the store ', e);
+    }
+  }
+  async getUserChildren(userId: string) {
+    try {
+      const userChildren = await fetchJSONWithCache(`/directory/user/${userId}/children`);
+      return userChildren;
+    } catch (e) {
+      console.warn('[UserService] getUserChildren: could not get children data', e);
     }
   }
 }

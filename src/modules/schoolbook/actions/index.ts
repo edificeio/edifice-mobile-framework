@@ -1,12 +1,11 @@
 /**
  * Schoolbook actions
  */
-
 import { ThunkDispatch } from 'redux-thunk';
 
 import { getUserSession } from '~/framework/util/session';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
-import { getUnacknowledgedChildrenIdsForParent, ISchoolbookWordReport } from '~/modules/schoolbook/reducer';
+import { IWordReport, getUnacknowledgedStudentIdsForParent } from '~/modules/schoolbook/reducer';
 import { schoolbookService } from '~/modules/schoolbook/service';
 
 /**
@@ -50,12 +49,12 @@ export const acknowledgeSchoolbookWordActionForChildren =
  * Acknowledge children for a given schoolbook word.
  */
 export const acknowledgeSchoolbookWordAction =
-  (schoolbookWordData: ISchoolbookWordReport) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (schoolbookWordData: IWordReport) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       const session = getUserSession(getState());
 
       const unacknowledgedChildrenIds =
-        schoolbookWordData && getUnacknowledgedChildrenIdsForParent(session.user.id, schoolbookWordData);
+        schoolbookWordData && getUnacknowledgedStudentIdsForParent(session.user.id, schoolbookWordData);
       return await dispatch(
         acknowledgeSchoolbookWordActionForChildren(schoolbookWordData.word.id.toString(), unacknowledgedChildrenIds),
       );
