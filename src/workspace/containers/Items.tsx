@@ -3,6 +3,8 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 
+
+
 import { removeAccents } from '~/framework/util/string';
 import Notifier from '~/infra/notifier/container';
 import { layoutSize } from '~/styles/common/layoutSize';
@@ -19,6 +21,7 @@ import withNavigationWrapper from '~/workspace/utils/withNavigationWrapper';
 import withUploadErrorWrapper from '~/workspace/utils/withUploadErrorWrapper';
 import withUploadWrapper from '~/workspace/utils/withUploadWrapper';
 
+
 const styles = StyleSheet.create({
   separator: {
     borderBottomColor: CommonStyles.borderColorLighter,
@@ -30,7 +33,8 @@ const styles = StyleSheet.create({
 export class Items extends React.Component<IDispatchProps & IItemsProps & ISelectedProps, { isFocused: boolean }> {
   focusListener!: NavigationEventSubscription;
 
-  public UNSAFE_componentWillMount() {
+  constructor(props: IDispatchProps & IItemsProps & ISelectedProps) {
+    super(props);
     this.focusListener = this.props.navigation.addListener('willFocus', () => {
       this.makeRequest();
     });
