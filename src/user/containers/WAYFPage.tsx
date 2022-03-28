@@ -8,6 +8,8 @@ import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-we
 import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
+
+
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
@@ -22,6 +24,7 @@ import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
+
 
 enum WAYFPageMode {
   EMPTY,
@@ -93,11 +96,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
   }
 
-  componentWillUpdate(nextProps) {
-    const { auth } = nextProps;
-    // Detect && display potential login error sent after checkVersionThenLogin(false) call
-    auth?.error?.length > 0 && auth.error !== this.error && this.displayError(auth.error);
-  }
+  /**/ // Caution : before this was componentWillUpdate. May be risky.
+  /**/ componentDidUpdate(prevProps: IWAYFPageProps) {
+  /**/   const { auth } = this.props;
+  /**/   // Detect && display potential login error sent after checkVersionThenLogin(false) call
+  /**/   auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error && this.displayError(auth.error);
+  /**/ }
 
   // Clear datas (WebView cookies, etc.) and execute given callback when done
   clearDatas(callback: Function) {
