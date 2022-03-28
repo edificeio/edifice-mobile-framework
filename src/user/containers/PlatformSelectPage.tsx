@@ -2,11 +2,12 @@
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, SafeAreaView, ScrollView, View } from 'react-native';
+import { Image, Platform, StatusBar, View } from 'react-native';
 import { connect } from 'react-redux';
 
-
-
+import GridList from '~/framework/components/GridList';
+import { UI_SIZES } from '~/framework/components/constants';
+import { PageView } from '~/framework/components/page';
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { CommonStyles } from '~/styles/common/styles';
@@ -14,7 +15,8 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { H1, Light, LightP } from '~/ui/Typography';
 import { selectPlatform } from '~/user/actions/platform';
 import { IUserAuthState } from '~/user/reducers/auth';
-
+import { TouchableSelectorPictureCard } from '~/framework/components/card';
+import theme from '~/app/theme';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -79,24 +81,44 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
     }
 
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-        <ScrollView alwaysBounceVertical={false}>
-          <H1
-            style={{
-              color: CommonStyles.textColor,
-              fontSize: 20,
-              fontWeight: 'normal',
-              marginTop: 55,
-              textAlign: 'center',
-            }}>
-            {I18n.t('welcome')}
-          </H1>
-          <LightP style={{ textAlign: 'center', marginBottom: 12 }}>{I18n.t('select-platform')}</LightP>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 12 }}>
-            {pfComponents}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+      <>
+        <PageView navigation={this.props.navigation}>
+          {Platform.select({
+            ios: <StatusBar barStyle='dark-content'/>,
+            android: <StatusBar backgroundColor={theme.color.background.page} barStyle='dark-content'/>
+          })}
+          <GridList
+            data={appConf.platforms}
+            renderItem={({ item }) => (
+              <TouchableSelectorPictureCard
+                picture={{type: 'image', picture: {source: item.logo} }}
+                pictureStyle={{maxHeight: 42}}
+                text={item.displayName}
+                onPress={() => this.handleSelectPlatform(item.name)}
+              />
+            )}
+            keyExtractor={item => item.url}
+            ListHeaderComponent={
+              <>
+                <H1
+                  style={{
+                    color: CommonStyles.textColor,
+                    fontSize: 20,
+                    fontWeight: 'normal',
+                    marginTop: 55,
+                    textAlign: 'center',
+                  }}>
+                  {I18n.t('welcome')}
+                </H1>
+                <LightP style={{ textAlign: 'center', marginBottom: 12 }}>{I18n.t('select-platform')}</LightP>
+              </>
+            }
+            alwaysBounceVertical={false}
+            ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
+            gap={UI_SIZES.spacing.extraLarge} gapOutside={UI_SIZES.spacing.extraLarge}
+          />
+        </PageView>
+      </>
     );
   }
 

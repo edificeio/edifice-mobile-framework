@@ -17,6 +17,7 @@ import {
   SafeAreaView,
   ScrollView,
   ScrollViewProps,
+  StatusBar,
   View,
   ViewProps,
 } from 'react-native';
@@ -66,6 +67,7 @@ export const PageView = (props: PageViewProps) => {
 
   return (
     <PageView_Style {...viewProps}>
+      <StatusBar barStyle='light-content' backgroundColor={theme.color.secondary.regular} />
       {navBar ? <FakeHeader {...navBar} /> : null}
       {navBarWithBack ? (
         <FakeHeader
