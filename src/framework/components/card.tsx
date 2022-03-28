@@ -326,7 +326,7 @@ export type PictureCardProps = {
   text?: string | React.ReactElement;
   textStyle?: TextStyle;
   picture: PictureProps;
-  pictureStyle?: ImageStyle;
+  pictureStyle?: ViewStyle;
 } & ViewProps;
 
 function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
@@ -367,9 +367,9 @@ export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityP
 
 function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
   const { style, picture, pictureStyle, ...rest } = props;
-  picture['style'] = { maxHeight: 56, maxWidth: '100%', marginTop: UI_SIZES.spacing.large, ...pictureStyle };
+  picture['style'] = { maxWidth: '100%', marginTop: UI_SIZES.spacing.large, ...pictureStyle };
   picture['resizeMode'] = 'contain';
-  return <PictureCard style={[{ aspectRatio: 15 / 14 }, style]} picture={picture} {...rest} />;
+  return <PictureCard style={[{ aspectRatio: UI_SIZES.aspectRatios.card }, style]} picture={picture} {...rest} />;
 }
 export function SelectorPictureCard(props: PictureCardProps) {
   return <SelectorPictureCard_Base cardComponent={Card} {...props} />;
