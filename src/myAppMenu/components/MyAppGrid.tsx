@@ -1,11 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-// @ts-ignore’
-import { Platform, ScrollView, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
+import GridList from '~/framework/components/GridList';
+import { TouchableSelectorPictureCard } from '~/framework/components/card';
+import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -15,58 +17,69 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
 import { FlatButton } from '~/ui/FlatButton';
 
-import MyAppItem from './MyAppItem';
-
 class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
-  renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
+
+  private renderGrid(modules: IAppModule[], newModules?: AnyModule[]) {
     const allModules = [...modules, ...(newModules || [])]?.sort((a, b) =>
       I18n.t(a.config.displayName).localeCompare(I18n.t(b.config.displayName)),
     ) as (IAppModule | AnyModule)[];
-    return (
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {allModules?.map(item => (
-          <MyAppItem
-            key={item.config.name}
-            displayName={I18n.t(item.config.displayName)}
-            iconColor={item.config.iconColor}
-            iconName={item.config.iconName}
-            onPress={() => this.props.navigation.navigate(item.config.name)}
-          />
-        ))}
-      </View>
-    );
-  };
 
-  private renderGrid(modules: IAppModule[], newModules?: AnyModule[]) {
+    const renderGridItem = ({ item }: { item: IAppModule | AnyModule }) => (
+      <TouchableSelectorPictureCard
+        onPress={() => this.props.navigation.navigate(item.config.name)}
+        text={I18n.t(item.config.displayName)}
+        picture={{
+          type: 'icon',
+          picture: {
+            color: item.config.iconColor,
+            name: item.config.iconName,
+            size: 56,
+          },
+        }}
+      />
+    );
+
     return (
-      <ScrollView contentContainerStyle={{ justifyContent: 'space-between', flexGrow: 1 }}>
-        {this.renderModulesList(modules, newModules)}
-        <View style={{ justifyContent: 'center', height: 80 }}>
-          <View style={{ height: Platform.OS === 'android' ? 40 : undefined }}>
-            <FlatButton
-              title={I18n.t('myapp-accessWeb')}
-              loading={false}
-              customButtonStyle={{ backgroundColor: undefined, borderColor: theme.color.secondary.regular, borderWidth: 1.5 }}
-              customTextStyle={{ color: theme.color.secondary.regular }}
-              onPress={() => {
-                if (!DEPRECATED_getCurrentPlatform()) {
-                  console.warn('Must have a platform selected to redirect the user');
-                  return null;
-                }
-                const url = `${DEPRECATED_getCurrentPlatform()!.url}/welcome`;
-                openUrl(url);
-              }}
-            />
-            <InfoBubble
-              infoText={I18n.t('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}
-              infoTitle={I18n.t('myapp-infoBubbleTitle')}
-              infoImage={require('ASSETS/images/my-apps-infobubble.png')}
-              infoBubbleType="floating"
-              infoBubbleId="myAppsScreen.redirect"
-            />
-          </View>
-        </View>
-      </ScrollView>
+      <GridList
+        data={allModules}
+        renderItem={renderGridItem}
+        keyExtractor={item => item.config.name}
+        gap={UI_SIZES.spacing.extraLarge}
+        gapOutside={UI_SIZES.spacing.extraLarge}
+        ListFooterComponent={this.renderFooter()}
+        ListFooterComponentStyle={{ flexGrow: 1, justifyContent: 'flex-end', marginVertical: UI_SIZES.spacing.extraLarge }}
+        alwaysBounceVertical={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      />
+
+    );
+  }
+
+  private renderFooter() {
+    return (
+      <View style={{ height: Platform.OS === 'android' ? 40 : undefined }}>
+        <FlatButton
+          title={I18n.t('myapp-accessWeb')}
+          loading={false}
+          customButtonStyle={{ backgroundColor: undefined, borderColor: theme.color.secondary.regular, borderWidth: 1.5 }}
+          customTextStyle={{ color: theme.color.secondary.regular }}
+          onPress={() => {
+            if (!DEPRECATED_getCurrentPlatform()) {
+              console.warn('Must have a platform selected to redirect the user');
+              return null;
+            }
+            const url = `${DEPRECATED_getCurrentPlatform()!.url}/welcome`;
+            openUrl(url);
+          }}
+        />
+        <InfoBubble
+          infoText={I18n.t('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}
+          infoTitle={I18n.t('myapp-infoBubbleTitle')}
+          infoImage={require('ASSETS/images/my-apps-infobubble.png')}
+          infoBubbleType="floating"
+          infoBubbleId="myAppsScreen.redirect"
+        />
+      </View>
     );
   }
 

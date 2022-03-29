@@ -1,10 +1,13 @@
 import style from 'glamorous-native';
 import * as React from 'react';
-import { View, Animated } from 'react-native';
+import { Animated, View } from 'react-native';
+
+
 
 import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+
 
 const TapCircle = style(TouchableOpacity)(
   {
@@ -56,10 +59,10 @@ export class Toggle extends React.Component<
     };
   }
 
-  UNSAFE_componentWillReceiveProps(newProps, oldProps) {
-    if (newProps.checked !== oldProps.checked) {
+  componentDidUpdate(prevProps) {
+    if (this.props.checked !== prevProps.checked) {
       Animated.timing(this.state.positionAnim, {
-        toValue: newProps.checked ? 20 : 0,
+        toValue: this.props.checked ? 20 : 0,
         duration: 500,
       }).start();
     }

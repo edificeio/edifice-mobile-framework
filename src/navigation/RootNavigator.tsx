@@ -86,7 +86,11 @@ interface MainNavigatorHOCProps {
   dispatch: any;
 }
 
-class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
+class MainNavigatorHOC extends React.PureComponent<MainNavigatorHOCProps> {
+
+  // CAUTION : This prevents navigation to be rebuilt whenever the redux store is updated.
+  // DO NOT remove this. This is NOT for perforance purpose.
+  // ToDo : Get rid of this when update to React Navigation 6.
   public shouldComponentUpdate(nextProps: Partial<MainNavigatorHOCProps>) {
     return !compareArrays(this.props.apps, nextProps.apps!);
   }
@@ -99,19 +103,6 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
       <AppPushNotificationHandlerComponent>
         <MainNavigationContainer
           {...forwardProps}
-          onNavigationStateChange={(prevState: any, currentState: any, action: any) => {
-            // console.log("main nav state change :", prevState, currentState, action);
-            // Track if tab has changed
-            // console.log("On nav state changed : ", prevState, currentState, action)
-            if (action.type !== 'Navigation/NAVIGATE') return;
-            const prevIndex = prevState.index;
-            const currentIndex = currentState.index;
-            if (prevIndex === currentIndex) return;
-            const currentTabRouteName = currentState.routes[currentIndex].routeName;
-            if (currentTabRouteName) {
-              /* ToDo: Track event here */
-            }
-          }}
           ref={nav => {
             NavigationService.setTopLevelNavigator(nav);
           }}

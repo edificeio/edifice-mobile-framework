@@ -1,14 +1,19 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
-import CourseComponent from './CourseComponent';
+
 
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { Loading } from '~/ui';
 import { TextBold } from '~/ui/Typography';
+
+
+
+import CourseComponent from './CourseComponent';
+
 
 interface ICallListProps {
   courseList: ICourses[];
@@ -25,7 +30,7 @@ interface ICallListState {
 export default class CallList extends React.PureComponent<ICallListProps, ICallListState> {
   public carouselRef: any;
 
-  constructor(props) {
+  constructor(props: ICallListProps) {
     super(props);
 
     this.state = {
@@ -44,9 +49,9 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
     }, 210000);
   }
 
-  componentWillUpdate(nextProps) {
-    if (this.props.courseList !== nextProps.courseList)
-      this.setState({ currentIndex: this.getCurrentCourseIndex(nextProps.courseList) });
+  componentDidUpdate(prevProps: ICallListProps) {
+    if (prevProps.courseList !== this.props.courseList)
+      this.setState({ currentIndex: this.getCurrentCourseIndex(this.props.courseList) });
   }
 
   componentWillUnmount() {

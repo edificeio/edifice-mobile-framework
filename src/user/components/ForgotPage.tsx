@@ -2,16 +2,19 @@ import { Picker } from '@react-native-picker/picker';
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
-import { Text, H1, TextColorStyle } from '~/framework/components/text';
+
+
+import { PageView } from '~/framework/components/page';
+import { H1, Text, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton, Icon } from '~/ui';
 import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
-import { PageView } from '~/framework/components/page';
+
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -64,7 +67,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
   // Email ValidatorBuilder
   private emailValidator = new ValidatorBuilder().withRequired(true).withEmail().build<string>();
 
-  public UNSAFE_componentWillMount() {
+  constructor(props: IForgotPageProps) {
+    super(props);
     this.didFocusSubscription = this.props.navigation.addListener('didFocus', payload => {
       this.setState({
         login: '',
