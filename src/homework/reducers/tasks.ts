@@ -2,14 +2,17 @@
  * Homework tasks (by diaryId) state reducer
  * Holds a list of task by day, by diaryId in a double-array.
  */
-
 import moment from 'moment';
 import { Reducer } from 'redux';
+
+
 
 import { actionTypes } from '~/homework/actions/tasks';
 import { IOrderedArrayById } from '~/infra/collections';
 import asyncReducer, { IAction, IState } from '~/infra/redux/async';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
+import { IHomeworkDiary } from './diaryList';
+
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -31,7 +34,7 @@ export interface IHomeworkDay {
 }
 
 // All days of a homework.
-export type IHomeworkTasks = IOrderedArrayById<IHomeworkDay>;
+export type IHomeworkTasks = IOrderedArrayById<IHomeworkDay> & { diaryInfo?: IHomeworkDiary };
 
 // All diaries
 export interface IAllHomeworkTasksByHomeworkIds {

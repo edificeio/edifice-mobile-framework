@@ -4,23 +4,21 @@ import moment from 'moment';
 import * as React from 'react';
 import {
   Alert,
+  EmitterSubscription,
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
   RefreshControl,
-  View,
-  TouchableOpacity,
-  Keyboard,
-  EmitterSubscription,
   SafeAreaView,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-import { IDisplayedBlog } from './BlogExplorerScreen';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
@@ -28,6 +26,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
@@ -38,8 +37,9 @@ import { TextBold, TextColorStyle, TextLight, TextLightItalic, TextSemiBold, Tex
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
+import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import {
@@ -51,7 +51,7 @@ import {
 } from '~/modules/blog/actions';
 import { commentsString } from '~/modules/blog/components/BlogPostResourceCard';
 import moduleConfig from '~/modules/blog/moduleConfig';
-import { IBlogPostComment, IBlogPost, IBlog } from '~/modules/blog/reducer';
+import { IBlog, IBlogPost, IBlogPostComment } from '~/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
@@ -64,7 +64,8 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+
+import { IDisplayedBlog } from './BlogExplorerScreen';
 
 // TYPES ==========================================================================================
 
@@ -216,7 +217,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   navBarInfo() {
     const { navigation } = this.props;
-    const { blogPostData, errorState } = this.state;
+    const { blogPostData, errorState, loadingState } = this.state;
     const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
     const blogId = navigation.getParam('blog')?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -231,7 +232,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           I18n.t('timeline.blogPostDetailsScreen.title')
         ),
       right:
-        resourceUri && !errorState ? (
+        resourceUri &&
+        (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
+        !errorState ? (
           <TouchableOpacity onPress={this.showMenu}>
             <HeaderIcon name="more_vert" iconSize={24} />
           </TouchableOpacity>

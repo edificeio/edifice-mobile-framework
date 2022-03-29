@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ScrollView, SafeAreaView, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
-
-import { UserCard } from './UserCard';
+import { UI_SIZES } from '~/framework/components/constants';
 
 import { PageView } from '~/framework/components/page';
+
+import { UserCard } from './UserCard';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -26,19 +27,20 @@ export class RelativesPage extends React.PureComponent<IRelativesPageProps & Nav
         navBarWithBack={{
           title: I18n.t('directory-relativesTitle'),
         }}>
-        <ScrollView alwaysBounceVertical={false}>
-          <View style={{ marginTop: 40 }} />
-          <SafeAreaView>
-            {this.props.relatives &&
-              this.props.relatives.map(user => {
-                return (
-                  <View style={{ marginBottom: 15 }} key={user.id}>
-                    <UserCard id={user.id} displayName={user.displayName} type="Relative" />
-                  </View>
-                );
-              })}
-          </SafeAreaView>
-        </ScrollView>
+        {this.props.relatives ? (
+          <FlatList
+            alwaysBounceVertical={false}
+            data={this.props.relatives}
+            keyExtractor={item => item.id}
+            renderItem={({ item: user }) => (
+              <View style={{ marginBottom: 15 }} key={user.id}>
+                <UserCard id={user.id} displayName={user.displayName} type="Relative" />
+              </View>
+            )}
+            ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
+            contentContainerStyle={{ marginTop: 40 }}
+          />
+        ) : null}
       </PageView>
     );
   }

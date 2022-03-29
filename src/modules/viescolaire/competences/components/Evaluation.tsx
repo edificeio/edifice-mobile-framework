@@ -2,19 +2,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, Switch } from 'react-native';
+import { StyleSheet, Switch, View } from 'react-native';
 
-import { Loading } from '~/ui';
-import { PageContainer } from '~/ui/ContainerContent';
-import Dropdown from '~/ui/Dropdown';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
-import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
-import { getSortedEvaluationList, GradesDevoirs, GradesDevoirsMoyennes } from './Item';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
+import { Loading } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import Dropdown from '~/ui/Dropdown';
+
+import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from './Item';
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
@@ -78,27 +79,23 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     this.getSwitchDefaultPosition();
   }
 
-  // Update when changing child with relative account
-  componentWillUpdate(nextProps) {
-    const { childId } = this.props;
-    const { screenDisplay, selectedPeriod } = this.state;
-
-    if (childId !== nextProps.childId) {
-      if (screenDisplay === ScreenDisplay.PERIOD) {
-        this.props.getDevoirsMoyennes(nextProps.structureId, nextProps.childId, selectedPeriod.value!);
-        this.setCurrentPeriod();
-      } else {
-        this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
-      }
-      this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
-      this.props.getPeriods(nextProps.structureId, nextProps.childClasses);
-      this.props.getLevels(nextProps.structureId);
-    }
-  }
-
   componentDidUpdate(prevProps) {
-    const { devoirsList, devoirsMoyennesList, periods, groups } = this.props;
-    const { devoirs, screenDisplay } = this.state;
+    const { devoirsList, devoirsMoyennesList, periods, groups, childId, structureId, childClasses } = this.props;
+    const { devoirs, screenDisplay, selectedPeriod } = this.state;
+
+    /**/ // Before this was is `componentWillUpdate`. May be risky.
+    /**/ // Update when changing child with relative account
+    /**/ if (prevProps.childId !== childId) {
+    /**/   if (screenDisplay === ScreenDisplay.PERIOD) {
+    /**/   this.props.getDevoirsMoyennes(structureId, childId, selectedPeriod.value!);
+    /**/     this.setCurrentPeriod();
+    /**/   } else {
+    /**/     this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
+    /**/   }
+    /**/   this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
+    /**/   this.props.getPeriods(structureId, childClasses);
+    /**/   this.props.getLevels(structureId);
+    /**/ }
 
     if (periods !== prevProps.periods) this.setCurrentPeriod();
     if (

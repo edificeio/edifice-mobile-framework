@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ImageURISource, Linking, Image, Text, View, ScrollView, StatusBar, Animated } from 'react-native';
+import { ImageURISource, Linking, Image, Text, View, StatusBar, Animated } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { PinchGestureHandler, State, PanGestureHandler } from 'react-native-gesture-handler';
 import RNCarousel from 'react-native-snap-carousel';
@@ -271,10 +271,9 @@ class Carousel extends React.Component<
         <RNCarousel
           data={images}
           renderItem={({ item, index }: { item: { src: ImageURISource; alt: string; linkTo?: string }; index: number }) => (
-            <ScrollView
+            <View
               key={index}
-              scrollEnabled={false}
-              contentContainerStyle={{
+              style={{
                 height: '100%',
                 width: UI_SIZES.screen.width,
                 justifyContent: 'center',
@@ -357,7 +356,7 @@ class Carousel extends React.Component<
                   </TouchableOpacity>
                 </View>
               )}
-            </ScrollView>
+            </View>
           )}
           sliderWidth={viewport.width}
           itemWidth={viewport.width}

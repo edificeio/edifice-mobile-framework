@@ -14,6 +14,9 @@
 //   - ios/appe/Info.plist'
 //
 
+// As this iss a cli tool, we disable some rules
+/* eslint-disable no-console */
+
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 
