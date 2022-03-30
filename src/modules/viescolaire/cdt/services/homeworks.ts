@@ -57,6 +57,7 @@ const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data 
   data.forEach(item => {
     result[item.id] = {
       id: item.id,
+      is_published: item.is_published,
       due_date: moment(item.due_date),
       type: item.type,
       subject_id: item.subject_id,

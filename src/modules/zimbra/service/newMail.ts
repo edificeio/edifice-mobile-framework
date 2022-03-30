@@ -3,6 +3,12 @@ import fileHandlerService from '~/framework/util/fileHandler/service';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
+export type INewMailAttachments = {
+  contentType: string;
+  filename: string;
+  size: number;
+  id: string;
+};
 
 export type IUser = {
   id: string;
@@ -45,12 +51,10 @@ export const newMailService = {
       'In-Reply-To': inReplyTo,
     };
 
-    const paramsUrlArray = [] as string[];
-    for (const key in params) {
-      const value = params[key];
-      if (!!value) { paramsUrlArray.push(`${key}=${value}`); }
-    }
-    const paramsUrl = paramsUrlArray.join('&');
+    const paramsUrl = Object.entries(params)
+      .filter(([key, value]) => !!value)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
 
     await fetchJSONWithCache(`/zimbra/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',
@@ -68,14 +72,10 @@ export const newMailService = {
       reply: isForward ? 'F' : null,
     };
 
-    const paramsUrlArray = [] as string[];
-    for (const key in params) {
-      const value = params[key];
-      if (!!value) {
-        paramsUrlArray.push(`${key}=${value}`);
-      }
-    }
-    const paramsUrl = paramsUrlArray.join('&');
+    const paramsUrl = Object.entries(params)
+      .filter(([key, value]) => !!value)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
 
     const response = await fetchJSONWithCache(`/zimbra/draft${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',
@@ -89,26 +89,19 @@ export const newMailService = {
   addAttachment: async (session: IUserSession, draftId: string, file: LocalFile, handleProgession) => {
     const url = `/zimbra/message/${draftId}/attachment`;
     let dataJson;
-    // console.log("DATA TO BE UPLOADED", file);
     const ret = await fileHandlerService.uploadFile(
       session,
       file,
       {
         url,
         headers: {
-          'Content-Disposition': `attachment; filename="${encodeURIComponent(file.filename)}"`,
+          'Content-Disposition': `attachment; filename="${file.filename}"`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         binaryStreamOnly: true,
       },
       data => {
-        dataJson = JSON.parse(data).attachments as {
-          contentType: string;
-          filename: string;
-          id: string;
-          size: number;
-        }[];
-        // console.log("upload returned", dataJson)
+        dataJson = JSON.parse(data).attachments as INewMailAttachments[];
         return dataJson as any; // YES IT IZ A BAD PRAKTICE.
         // This API is fucked up : every attachment id changes when a new attachement is uplaoded.
         // We'll need to manuelly restore attachments data outside this function
@@ -117,7 +110,6 @@ export const newMailService = {
         onProgress: res => handleProgession((res.totalBytesSent / res.totalBytesExpectedToSend) * 100),
       },
     );
-    // console.log("service is to be returning", dataJson);
     return dataJson;
   },
   deleteAttachment: async (draftId: string, attachmentId: string) => {

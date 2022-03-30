@@ -1,40 +1,39 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
-import { NavigationInjectedProps, NavigationActions, NavigationStateRoute, StackActions } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { NavigationActions, NavigationInjectedProps, NavigationStateRoute, StackActions } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { TextItalic } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
-import { getUserSession, IUserSession, UserType } from '~/framework/util/session';
+import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { getSchoolbookWordDetailsAction, acknowledgeSchoolbookWordAction } from '~/modules/schoolbook/actions';
+import { acknowledgeSchoolbookWordAction, getSchoolbookWordDetailsAction } from '~/modules/schoolbook/actions';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
 import {
-  getAcknowledgeNamesForChild,
-  getAcknowledgeNumber,
+  IWordReport,
+  getAcknowledgementNamesForStudent,
   getIsWordAcknowledgedForParent,
-  getUnacknowledgedChildrenIdsForParent,
-  ISchoolbookWordReport,
+  getUnacknowledgedStudentIdsForParent,
 } from '~/modules/schoolbook/reducer';
 import { schoolbookUriCaptureFunction } from '~/modules/schoolbook/service';
 import { ButtonsOkCancel, FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
-import { openUrl } from '~/framework/util/linking';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 
 // TYPES ==========================================================================================
 
@@ -42,8 +41,8 @@ export interface ISchoolbookWordDetailsScreenDataProps {
   session: IUserSession;
 }
 export interface ISchoolbookWordDetailsScreenEventProps {
-  handleGetSchoolbookWordDetails(schoolbookWordId: string): Promise<ISchoolbookWordReport | undefined>;
-  handleAcknowledgeSchoolbookWord(schoolbookWordId: ISchoolbookWordReport): Promise<void>;
+  handleGetSchoolbookWordDetails(schoolbookWordId: string): Promise<IWordReport | undefined>;
+  handleAcknowledgeSchoolbookWord(schoolbookWordId: IWordReport): Promise<void>;
 }
 export interface ISchoolbookWordDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
@@ -68,7 +67,7 @@ export enum SchoolbookWordDetailsLoadingState {
 export interface ISchoolbookWordDetailsScreenState {
   loadingState: SchoolbookWordDetailsLoadingState;
   ackLoadingState: boolean;
-  schoolbookWordData: ISchoolbookWordReport | undefined;
+  schoolbookWordData: IWordReport | undefined;
   errorState: boolean;
 }
 
@@ -129,7 +128,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     return <EmptyContentScreen />;
   }
 
-  renderContent(schoolbookWordData: ISchoolbookWordReport) {
+  renderContent(schoolbookWordData: IWordReport) {
     const { session } = this.props;
     const { type } = session.user;
     const { loadingState } = this.state;
@@ -160,7 +159,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     );
   }
 
-  renderSchoolbookWordDetails(schoolbookWordData: ISchoolbookWordReport) {
+  renderSchoolbookWordDetails(schoolbookWordData: IWordReport) {
     const { navigation } = this.props;
     const notification = navigation.getParam('notification');
     const resourceUri = notification?.resource.uri;
@@ -200,7 +199,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     );
   }
 
-  renderAckButton(schoolbookWordData: ISchoolbookWordReport) {
+  renderAckButton(schoolbookWordData: IWordReport) {
     const { session } = this.props;
     const { id } = session.user;
     const { ackLoadingState } = this.state;
@@ -237,13 +236,13 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     );
   }
 
-  renderSchoolbookWordAckState(schoolbookWordData: ISchoolbookWordReport) {
+  renderSchoolbookWordAckState(schoolbookWordData: IWordReport) {
     const { session } = this.props;
     const { type, id } = session.user;
     let ackStateText: string | React.ReactElement | undefined;
     switch (type) {
       case UserType.STUDENT:
-        const ackNames = getAcknowledgeNamesForChild(id, schoolbookWordData);
+        const ackNames = getAcknowledgementNamesForStudent(id, schoolbookWordData);
         ackStateText =
           ackNames && ackNames.length ? (
             <>
@@ -255,12 +254,12 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
           );
         break;
       case UserType.RELATIVE:
-        const unAckChildren = getUnacknowledgedChildrenIdsForParent(id, schoolbookWordData);
+        const unAckChildren = getUnacknowledgedStudentIdsForParent(id, schoolbookWordData);
         ackStateText = unAckChildren.length ? undefined : I18n.t('schoolbook.schoolbookWordDetailsScreen.alreadyConfirmed');
         break;
       case UserType.PERSONNEL:
       case UserType.TEACHER:
-        const ackNumber = getAcknowledgeNumber(schoolbookWordData);
+        const ackNumber = schoolbookWordData.word?.ackNumber;
         ackStateText = I18n.t(`schoolbook.schoolbookWordDetailsScreen.readByNumberRelative${ackNumber === 1 ? '' : 's'}`, {
           nb: ackNumber,
         });
@@ -412,9 +411,9 @@ const mapDispatchToProps: (
   getState: () => IGlobalState,
 ) => ISchoolbookWordDetailsScreenEventProps = (dispatch, getState) => ({
   handleGetSchoolbookWordDetails: async (schoolbookWordId: string) => {
-    return (await dispatch(getSchoolbookWordDetailsAction(schoolbookWordId))) as unknown as ISchoolbookWordReport | undefined;
+    return (await dispatch(getSchoolbookWordDetailsAction(schoolbookWordId))) as unknown as IWordReport | undefined;
   }, // TS BUG: dispatch mishandled
-  handleAcknowledgeSchoolbookWord: async (schoolbookWord: ISchoolbookWordReport) => {
+  handleAcknowledgeSchoolbookWord: async (schoolbookWord: IWordReport) => {
     return (await dispatch(acknowledgeSchoolbookWordAction(schoolbookWord))) as unknown as void;
   },
 });

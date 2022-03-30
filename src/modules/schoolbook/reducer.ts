@@ -1,55 +1,78 @@
 /**
  * Schoolbook Reducer
  */
-
 import { Moment } from 'moment';
 
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
 // Types
 
-export interface ISchoolbookWordResponse {
+export interface ITeacherWord {
+  ackNumber: number;
+  category: string;
+  id: number;
+  respNumber: number;
+  sendingDate: Moment;
+  text: string;
+  title: string;
+  total: number;
+}
+
+export type ITeacherWordList = ITeacherWord[];
+
+export interface IStudentAndParentWord {
+  acknowledgments: IAcknowledgment[];
+  category: string;
+  id: number;
+  owner: string;
+  ownerName: string;
+  responses: IResponse[] | null;
+  sendingDate: Moment;
+  text: string;
+  title: string;
+}
+
+export type IStudentAndParentWordList = IStudentAndParentWord[];
+
+export interface IAcknowledgment {
   id: number;
   owner: string;
   parentName: string;
+}
+
+export interface IResponse {
   comment: string;
+  id: number;
   modified: Moment;
-}
-
-export interface ISchoolbookWordAcknowledgment {
-  id: number;
   owner: string;
-  parent_name: string;
+  parentName: string;
 }
 
-export interface ISchoolbookWordConcernedChild {
+export interface IConcernedStudent {
+  acknowledgments: IAcknowledgment[];
   owner: string;
-  owner_name: string;
-  responses: ISchoolbookWordResponse[] | null;
-  acknowledgments: ISchoolbookWordAcknowledgment[];
+  ownerName: string;
+  responses: IResponse[] | null;
 }
 
-export interface ISchoolbookWord {
-  id: number;
-  title: string;
-  text: string;
-  sending_date: Moment;
-  reply: boolean;
+export interface IWord {
   category: string;
-  owner_id: string;
-  owner_name: string;
-  shared: ({ userId?: string; groupId?: string } & any)[] | [];
+  id: number;
+  ownerId: string;
+  ownerName: string;
+  sendingDate: Moment;
+  text: string;
+  title: string;
 }
 
-export interface IReportedSchoolbookWord extends ISchoolbookWord {
+export interface IReportedWord extends IWord {
+  ackNumber: number;
   total: number;
-  resp_number: number;
-  ack_number: number;
 }
 
-export interface ISchoolbookWordReport {
-  word: IReportedSchoolbookWord;
-  report: ISchoolbookWordConcernedChild[];
+export interface IWordReport {
+  report: IConcernedStudent[];
+  word: IReportedWord;
 }
 
 // State
@@ -66,28 +89,53 @@ export default createSessionReducer(initialState, {
 
 // Getters
 
-export const getUnacknowledgedChildrenIdsForParent = (parentId: string, wordReport: ISchoolbookWordReport) => {
-  const acknowledgedChildren: string[] = [];
-  for (const concernedChild of wordReport.report) {
-    concernedChild.acknowledgments?.forEach(ack => {
-      if (parentId === ack.owner) acknowledgedChildren.push(concernedChild.owner);
+export const getStudentsForTeacher = (wordReport: IWordReport) => {
+  return wordReport.report?.map(student => ({
+    owner: student.owner,
+    ownerName: student.ownerName,
+  }));
+};
+
+export const getStudentsByAcknowledgementForTeacher = (wordReport: IWordReport) => {
+  const acknowledgedStudents = wordReport.report?.filter(student => student.acknowledgments?.length > 0);
+  const unacknowledgedStudents = wordReport.report?.filter(student => student.acknowledgments?.length === 0);
+  return {
+    acknowledged: acknowledgedStudents,
+    unacknowledged: unacknowledgedStudents,
+  };
+};
+
+export const getAcknowledgementNamesForStudent = (studentId: string, wordReport: IWordReport) => {
+  const concernedStudent = wordReport.report?.find(concernedStudent => concernedStudent.owner === studentId);
+  return concernedStudent?.acknowledgments.map(acknowledgment => acknowledgment.parentName);
+};
+
+export const getIsWordAcknowledgedForStudent = (acknowledgments: IAcknowledgment[]) => {
+  return acknowledgments?.length > 0;
+};
+
+export const getUnacknowledgedStudentIdsForParent = (parentId: string, wordReport: IWordReport) => {
+  const acknowledgedStudents: string[] = [];
+  for (const concernedStudent of wordReport.report) {
+    concernedStudent.acknowledgments?.forEach(acknowledgment => {
+      if (parentId === acknowledgment.owner) acknowledgedStudents.push(concernedStudent.owner);
     });
   }
-  const unacknowledgedChildren = wordReport.report.filter(concernedChild => !acknowledgedChildren.includes(concernedChild.owner));
-  const unacknowledgedChildrenIds = unacknowledgedChildren.map(unacknowledgedChild => unacknowledgedChild.owner);
-  return unacknowledgedChildrenIds;
+  const unacknowledgedStudents = wordReport.report?.filter(
+    concernedStudent => !acknowledgedStudents.includes(concernedStudent.owner),
+  );
+  const unacknowledgedStudentsIds = unacknowledgedStudents?.map(unacknowledgedStudent => unacknowledgedStudent.owner);
+  return unacknowledgedStudentsIds;
 };
 
-export const getIsWordAcknowledgedForParent = (parentId: string, wordReport: ISchoolbookWordReport) => {
-  return getUnacknowledgedChildrenIdsForParent(parentId, wordReport).length === 0;
+export const getIsWordAcknowledgedForParent = (parentId: string, acknowledgments: IAcknowledgment[]) => {
+  return acknowledgments?.find(acknowledgment => acknowledgment.owner === parentId);
 };
 
-export const getAcknowledgeNamesForChild = (childId: string, wordReport: ISchoolbookWordReport) => {
-  const concernedChild = wordReport.report.find(concernedChild => concernedChild.owner === childId);
-  if (!concernedChild) return undefined;
-  return concernedChild.acknowledgments ? concernedChild.acknowledgments.map(ack => ack.parent_name) : [];
+export const getResponsesForParent = (parentId: string, responses: IResponse[]) => {
+  return responses?.filter(response => response.owner === parentId);
 };
 
-export const getAcknowledgeNumber = (wordReport: ISchoolbookWordReport) => {
-  return wordReport.word.ack_number || 0;
+export const getResponseNumberForStudentAndParent = (studentAndParentWord: IStudentAndParentWord) => {
+  return studentAndParentWord.responses?.length;
 };

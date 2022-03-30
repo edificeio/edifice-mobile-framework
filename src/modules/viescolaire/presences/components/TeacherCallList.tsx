@@ -4,16 +4,11 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
-
-
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { Loading } from '~/ui';
 import { TextBold } from '~/ui/Typography';
 
-
-
 import CourseComponent from './CourseComponent';
-
 
 interface ICallListProps {
   courseList: ICourses[];
@@ -30,7 +25,7 @@ interface ICallListState {
 export default class CallList extends React.PureComponent<ICallListProps, ICallListState> {
   public carouselRef: any;
 
-  constructor(props: ICallListProps) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -49,9 +44,9 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
     }, 210000);
   }
 
-  componentDidUpdate(prevProps: ICallListProps) {
-    if (prevProps.courseList !== this.props.courseList)
-      this.setState({ currentIndex: this.getCurrentCourseIndex(this.props.courseList) });
+  componentWillUpdate(nextProps) {
+    if (this.props.courseList !== nextProps.courseList)
+      this.setState({ currentIndex: this.getCurrentCourseIndex(nextProps.courseList) });
   }
 
   componentWillUnmount() {
@@ -82,6 +77,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   };
 
   private Carousel = () => {
+    const { courseList, onCoursePress } = this.props;
     const getCourseCallItem = item => {
       const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
       const isCourseEditable = !moment(item.startDate).subtract(15, 'minutes').isAfter(moment());
@@ -95,8 +91,6 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
         />
       );
     };
-
-    const { courseList, onCoursePress } = this.props;
 
     return (
       <>
