@@ -830,6 +830,12 @@
   "viesco-no-register-today": "Il n'y a pas d'appels aujourd'hui",
   "viesco-notifications": "Notifications",
   "viesco-pickChild": "Choisissez un enfant",
+  "viesco-incidents-punishments-date": {
+    "for-the": "Pour le ",
+    "from": "Du ",
+    "created-on": "Créé le ",
+    "to": " au "
+  },
   "viesco-register": "Appel",
   "viesco-register-date": "Appels du",
   "viesco-report-card": "Relevé de notes",
