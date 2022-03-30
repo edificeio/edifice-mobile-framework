@@ -2,12 +2,12 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { Platform } from 'react-native';
 
-import { formatResults, uploadDocumentAction } from './helpers/documents';
-
 import { Trackers } from '~/framework/util/tracker';
 import { asyncActionTypes } from '~/infra/redux/async';
 import config from '~/workspace/config';
 import { ContentUri } from '~/workspace/types';
+
+import { formatResults, uploadDocumentAction } from './helpers/documents';
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
@@ -64,7 +64,6 @@ export function uploadAction(parentId: string, uriContent: ContentUri[] | Conten
       dispatch(uploadReceived(parentId, formatResults(data)));
       doTrack && Trackers.trackEvent('Workspace', 'UPLOAD');
     } catch (ex) {
-      console.log(ex);
       dispatch(uploadError(parentId, ex));
     }
   };

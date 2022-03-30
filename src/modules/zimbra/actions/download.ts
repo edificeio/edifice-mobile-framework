@@ -11,7 +11,7 @@ export function downloadAttachmentAction(att: IDistantFile) {
       const session = getUserSession(getState());
       (await fileHandlerService.downloadFile(session, att, {})).open();
     } catch (errmsg) {
-      console.warn('Error downloading attachment', errmsg);
+      // TODO: Manage error
     }
   };
 }

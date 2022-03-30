@@ -18,7 +18,6 @@ import { IAppModule } from '~/infra/moduleTool/types';
 import { FlatButton } from '~/ui/FlatButton';
 
 class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
-
   private renderGrid(modules: IAppModule[], newModules?: AnyModule[]) {
     const allModules = [...modules, ...(newModules || [])]?.sort((a, b) =>
       I18n.t(a.config.displayName).localeCompare(I18n.t(b.config.displayName)),
@@ -51,7 +50,6 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
         alwaysBounceVertical={false}
         contentContainerStyle={{ flexGrow: 1 }}
       />
-
     );
   }
 
@@ -65,7 +63,6 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
           customTextStyle={{ color: theme.color.secondary.regular }}
           onPress={() => {
             if (!DEPRECATED_getCurrentPlatform()) {
-              console.warn('Must have a platform selected to redirect the user');
               return null;
             }
             const url = `${DEPRECATED_getCurrentPlatform()!.url}/welcome`;

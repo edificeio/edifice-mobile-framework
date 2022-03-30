@@ -1,7 +1,7 @@
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import fileHandlerService, { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import fileHandlerService, { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 
 export type IUser = {
   id: string;
@@ -25,7 +25,6 @@ export type ISearchUsersGroups = {
 };
 
 const formatMailDatas = mailDatas => {
-  // console.log("[conversation] mailDatas", mailDatas);
   return {
     ...mailDatas,
     attachments: mailDatas.attachments?.map(att => ({
@@ -42,7 +41,6 @@ export const newMailService = {
     return await fetchJSONWithCache(`/conversation/visible?search=${search}`);
   },
   sendMail: async (mailDatas, draftId, inReplyTo) => {
-    // console.log("sendMail", mailDatas, draftId, inReplyTo);
     const params = {
       id: draftId,
       'In-Reply-To': inReplyTo,
@@ -52,8 +50,6 @@ export const newMailService = {
       .filter(([key, value]) => !!value)
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-
-    // console.log("paramsUrl", paramsUrl);
 
     await fetchJSONWithCache(`/conversation/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',
@@ -82,12 +78,10 @@ export const newMailService = {
     return response.id;
   },
   updateDraftMail: async (mailId, mailDatas) => {
-    // console.log("updateDraftMail", mailId, mailDatas);
     await fetchJSONWithCache(`/conversation/draft/${mailId}`, { method: 'PUT', body: JSON.stringify(formatMailDatas(mailDatas)) });
   },
   addAttachment: async (session: IUserSession, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
     const url = `/conversation/message/${draftId}/attachment`;
-    // console.log("DATA TO BE UPLOADED", file);
     return await fileHandlerService.uploadFile<SyncedFileWithId>(
       session,
       file,
@@ -98,7 +92,6 @@ export const newMailService = {
         },
       },
       data => {
-        // console.log("data got from backend after upload", data);
         const json = JSON.parse(data) as { id: string };
         return {
           url: `/conversation/message/${draftId}/attachment/${json.id}`,

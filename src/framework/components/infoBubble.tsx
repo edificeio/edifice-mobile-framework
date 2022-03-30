@@ -1,15 +1,15 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, Image, TouchableOpacity, ImageSourcePropType, ViewStyle } from 'react-native';
+import { Image, ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
+
+import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
+import { FlatButton } from '~/ui';
+import { IconButton } from '~/ui/IconButton';
 
 import { Card, InfoCard } from './card';
 import { UI_SIZES } from './constants';
 import { Text, TextBold } from './text';
 import { Toggle } from './toggle';
-
-import { getItemJson, setItemJson, removeItemJson } from '~/framework/util/storage';
-import { FlatButton } from '~/ui';
-import { IconButton } from '~/ui/IconButton';
 
 export interface IInfoBubbleProps {
   infoText: string;
@@ -128,7 +128,6 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
       this.setState({ isAcknowledged });
     } catch (e) {
       // ToDo: Error handling
-      console.warn('doVerifyIfAcknowledged failed', e);
     }
   }
 
@@ -142,7 +141,6 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
       isFloating ? this.setState({ isAcknowledged: true }) : isRegular ? this.setState({ acknowledgeToggle: acknowledge }) : null;
     } catch (e) {
       // ToDo: Error handling
-      console.warn('doAcknowledge failed', e);
     }
   }
 }

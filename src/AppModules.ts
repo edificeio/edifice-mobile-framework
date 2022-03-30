@@ -1,13 +1,12 @@
-import { IAppModule } from "./infra/moduleTool/types";
-
+import { IAppModule } from './infra/moduleTool/types';
 
 /**
  * Write here the app-e functional modules imports.
  * Order has importance, functional modules will be shown in the same order in the bottom bar.
  */
 
- const modules = [
-   // Now all modules are included here at runtime with regiterModule()
+const modules = [
+  // Now all modules are included here at runtime with regiterModule()
   /*{
     order: 0,
     config: require("./mailbox/config").default,
@@ -55,6 +54,5 @@ import { IAppModule } from "./infra/moduleTool/types";
 export default modules;
 
 export const registerModule = (module: IAppModule) => {
-  // console.log("register module", module);
   modules.push(module);
-}
+};

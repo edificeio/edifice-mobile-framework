@@ -4,16 +4,16 @@
 import deepmerge from 'deepmerge';
 import queryString from 'query-string';
 
-
-
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { IEntcoreNotificationType } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifTypes';
-import { IPushNotifsSettings, IPushNotifsSettings_State_Data } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+import {
+  IPushNotifsSettings,
+  IPushNotifsSettings_State_Data,
+} from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '~/framework/util/notifications';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
-
 
 // Notifications
 
@@ -102,7 +102,6 @@ export const pushNotifsService = {
     const api = '/userbook/preference/timeline';
     const response = (await fetchJSONWithCache(api)) as IEntcoreTimelinePreference;
     const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent;
-    // console.log("prefs loaded before parse", prefs);
     return prefs;
   },
   _getConfig: async (session: IUserSession) => {
@@ -122,19 +121,15 @@ export const pushNotifsService = {
   set: async (session: IUserSession, changes: IPushNotifsSettings_State_Data) => {
     const api = '/userbook/preference/timeline';
     const method = 'PUT';
-    const notifPrefsUpdated = {} as {'push-notif': boolean};
+    const notifPrefsUpdated = {} as { 'push-notif': boolean };
     for (const k in changes) {
       notifPrefsUpdated[k] = { 'push-notif': changes[k] };
     }
-    // console.log('updates push-notif prefs', notifPrefsUpdated);
     const prefsOriginal = await pushNotifsService._getPrefs(session);
     const notifPrefsOriginal = prefsOriginal.config ?? {};
-    // console.log('current push-notif prefs', notifPrefsOriginal);
     const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
     const prefsUpdated = { config: notifPrefs };
-    // console.log('new notif prefs', prefsUpdated);
     const payload = { ...prefsOriginal, ...prefsUpdated };
-    // console.log('payload', payload);
     const responseJson = await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
       method,
       body: JSON.stringify(payload),

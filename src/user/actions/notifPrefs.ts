@@ -14,7 +14,6 @@ export function DEPRECATED_loadNotificationPrefs() {
       config: {},
     };
     if (!rawUserTimelinePrefs.config) rawUserTimelinePrefs.config = {};
-    // console.log("rawUserTimelinePrefs", rawUserTimelinePrefs);
 
     // 2 : Build user preferences
 
@@ -24,7 +23,6 @@ export function DEPRECATED_loadNotificationPrefs() {
       }
       return acc;
     }, {});
-    // console.log("userNotifPrefsConfig", userNotifPrefsConfig);
 
     // 3 : Get default notif prefs
 
@@ -39,12 +37,10 @@ export function DEPRECATED_loadNotificationPrefs() {
           }
           return acc;
         }, {});
-    // console.log("defaultNotifsPrefsConfig", defaultNotifsPrefsConfig);
 
     // 4 : We merge the user values in the default ones.
 
     const mergedNotifPrefs = deepmerge(defaultNotifsPrefsConfig, userNotifPrefsConfig);
-    // console.log("mergedNotifPrefs", mergedNotifPrefs);
 
     // 5 : Dispatch load
 
@@ -125,24 +121,19 @@ export const includeNotifKeysByApp = [
 
 export const includeNotifKeys = [];
 includeNotifKeysByApp.forEach(app => app.notifKeys.forEach(key => includeNotifKeys.push(key)));
-// console.log("includeNotifKeys", includeNotifKeys);
 
 export function action_toggleNotifPrefsByApp(appName: string, value: boolean, notificationPrefs: object) {
   return async (dispatch: any, getState: any) => {
-    // console.log("toggle notif prefs for app", appName);
     const newNotificationPrefs = {
       ...notificationPrefs,
     };
 
     for (const pref of Object.values(newNotificationPrefs)) {
-      // console.log(pref);
       const prefAppName = pref['type'].toLowerCase();
       if (appName === prefAppName) {
         pref['push-notif'] = value;
       }
     }
-
-    // console.log("new prefs", newNotificationPrefs);
 
     dispatch({
       notificationPrefs: newNotificationPrefs,
@@ -158,7 +149,6 @@ export function action_toggleNotifPrefsByApp(appName: string, value: boolean, no
 // Deprecated. Use `action_toggleNotifPrefsByApp` instead to toggle all pref of an app
 export function setNotificationPref(notif: { key: string }, value: boolean, notificationPrefs: object) {
   return async (dispatch: any, getState: any) => {
-    // console.log("set notif pref", notif, value, notificationPrefs);
     const newNotificationPrefs = {
       ...notificationPrefs,
       [notif.key]: {
@@ -166,7 +156,6 @@ export function setNotificationPref(notif: { key: string }, value: boolean, noti
         'push-notif': value,
       },
     };
-    // console.log("newNotificationPrefs", newNotificationPrefs);
 
     dispatch({
       notificationPrefs: newNotificationPrefs,

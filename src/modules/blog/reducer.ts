@@ -1,14 +1,13 @@
 /**
  * Blog Reducer
  */
-
 import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
+import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';
 import { IUserSession } from '~/framework/util/session';
-import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 import moduleConfig from './moduleConfig';
 import { createBlogPostResourceRight } from './rights';
@@ -171,23 +170,17 @@ export const computeFoldersHierarchy = <FolderType extends IBlogFolder = IBlogFo
   callback?: (f: IBlogFolder) => FolderType,
 ) => {
   const ret = [] as (IBlogFolderWithChildren & FolderType)[];
-  //   console.log('computeFoldersHierarchy');
-  // console.log('==== FOLDERS ', folders);
   const cleanFolders = folders.map(f => {
     const { children, ...ff } = f as IBlogFolderWithChildren;
     return ff;
   });
-  // console.log("=== clean folders");
   for (const f of cleanFolders) {
-    // console.log("=== iterate folder", f.name);
     // If parent is defined but not found, consider it has no parent.
     const parentFolder = f.parentId ? (cleanFolders.find(ff => ff.id === f.parentId) as IBlogFolderWithChildren) : undefined;
     const ff = callback ? callback(f) : (f as FolderType);
     if (parentFolder) {
-      // console.log("  === parent is", parentFolder?.name);
       parentFolder.children = [...(parentFolder.children ?? []), ff] as (IBlogFolderWithChildren & FolderType)[];
     } else {
-      // console.log("  === no parent");
       ret.push(ff);
     }
   }
@@ -203,8 +196,6 @@ export const computeFoldersHierarchy = <FolderType extends IBlogFolder = IBlogFo
  * @returns
  */
 export const computeAllBlogsHierarchy = <FolderType extends IBlogFolder = IBlogFolder>(folders: FolderType[], blogs: IBlog[]) => {
-  //   console.log('computeAllBlogsHierarchy');
-
   const idsOfAllBlogsThatAreInAFolder: string[] = [];
 
   const folderHierarchy = computeFoldersHierarchy(folders, f => {
@@ -236,7 +227,6 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends IBlogFolder = IB
   folders: FolderType[],
   blogs: IBlog[],
 ) => {
-  //   console.log('computeAllBlogsFlatHierarchy');
   // Cleanup. Depth must be reset if there is already present.
   const cleanFolders = folders.map(f => {
     const { depth, ...ff } = f as { depth?: number } & IBlogFolderWithChildren;
@@ -250,7 +240,6 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends IBlogFolder = IB
     for (const f of allHierarchy.folders) {
       if (f.depth === undefined) {
         f.depth = depth;
-        // console.log("=== mark depth", depth, "to", f.name);
       }
     }
     if (allHierarchy.folders.length >= folders.length) break;
@@ -265,7 +254,6 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends IBlogFolder = IB
         ] as typeof allHierarchy.folders,
       [] as typeof allHierarchy.folders,
     );
-    // console.log("done", depth, foldersHierarchy.map(f => ({ name: f.name, depth: f.depth, children: f.children })), foldersHierarchy.length, folders.length);
     ++depth;
   } while (!done);
   return {

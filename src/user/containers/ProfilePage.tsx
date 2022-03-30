@@ -1,18 +1,21 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, ScrollView, KeyboardAvoidingView, Platform, KeyboardTypeOptions, Alert } from 'react-native';
+import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { getSessionInfo } from '~/App';
+import { HeaderAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
 import { signURISource } from '~/infra/oauth';
 import { CommonStyles } from '~/styles/common/styles';
-import { ContainerView, ContainerLabel, ContainerTextInput, ButtonLine } from '~/ui/ButtonLine';
+import { ButtonLine, ContainerLabel, ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Label } from '~/ui/Typography';
 import { changePasswordResetAction } from '~/user/actions/changePassword';
@@ -21,9 +24,6 @@ import { UserCard } from '~/user/components/UserCard';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
-import { PageView } from '~/framework/components/page';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { HeaderAction } from '~/framework/components/header';
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -200,7 +200,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     let box: JSX.Element | null = null;
 
     if (editable && !setter) {
-      console.warn(`rendering editable Profil page item "${title}", but no specified setter.`);
+      console.debug(`rendering editable Profil page item "${title}", but no specified setter.`);
     }
 
     if (isEditMode) {

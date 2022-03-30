@@ -3,19 +3,20 @@ import * as React from 'react';
 import { RefreshControl, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import Explorer from '~/framework/components/explorer';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
+import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Loading } from '~/ui';
+
 import config from '../config';
-import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { computeRelativePath } from '~/framework/util/navigation';
 
 export interface IHomeworkExplorerScreenDataProps {
   diaryList?: {
@@ -84,7 +85,6 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {
-            console.warn('Must have a platform selected to redirect the user');
             return null;
           }
           const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;

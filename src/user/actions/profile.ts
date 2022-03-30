@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import { Dispatch, AnyAction } from 'redux';
+import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -86,7 +86,6 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
       );
       Trackers.trackEvent('Profile', 'UPDATE');
     } catch (e) {
-      console.warn(e);
       dispatch(profileUpdateErrorAction(updatedProfileValues));
 
       if ((e as Error).message.match(/loginAlias/)) {

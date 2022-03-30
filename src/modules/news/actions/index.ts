@@ -1,7 +1,6 @@
 /**
  * News actions
  */
-
 import { ThunkDispatch } from 'redux-thunk';
 
 import { getUserSession } from '~/framework/util/session';
@@ -21,6 +20,5 @@ export const getNewsDetailsAction =
       return newsDetails;
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] getNewsDetailsAction failed`, e);
     }
   };

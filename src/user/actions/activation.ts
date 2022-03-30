@@ -5,9 +5,6 @@
 import I18n from 'i18n-js';
 import { Action } from 'redux';
 
-import { actionTypeLoginCancel } from './actionTypes/login';
-import { loginAction } from './login';
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { asyncActionTypes } from '~/infra/redux/async';
@@ -15,6 +12,9 @@ import { getLoginRouteName } from '~/navigation/LoginNavigator';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
 import { IActivationContext } from '~/utils/SubmitState';
+
+import { actionTypeLoginCancel } from './actionTypes/login';
+import { loginAction } from './login';
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -98,21 +98,17 @@ export function initActivationAccount(args: IActivationUserInfo, redirect: boole
       const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
       // === 2 - Navigate if needed
       if (redirect) {
-        console.log('[User][Activation] redirecting to Activation Page...');
         navigate('LoginActivation');
       }
       dispatch({ type: actionTypeLoginCancel });
       // === 3 - send result to store
       if (!res.ok) {
-        console.log('[User][Activation] fetched context failed...', res.status);
         dispatch(activationContextError());
         return;
       }
       const activationContext: IActivationContext = await res.json();
-      console.log('[User][Activation] fetched context :', activationContext);
       dispatch(activationContextReceived(activationContext));
     } catch (e) {
-      console.warn(e);
       dispatch(activationContextError());
     }
   };
@@ -124,9 +120,8 @@ export function activationAccount(model: IActivationModel) {
       // === 0 auto select the default theme
       const theme = DEPRECATED_getCurrentPlatform()!.webTheme;
       if (!theme) {
-        console.warn('[User][Activation] activationAccount -> theme was not found:', DEPRECATED_getCurrentPlatform()!.webTheme);
+        console.debug('[User][Activation] activationAccount -> theme was not found:', DEPRECATED_getCurrentPlatform()!.webTheme);
       }
-      // console.log("[User][Activation] setting default theme to", theme)
       // === 1 - prepare payload
       const payload: IActivationSubmitPayload = {
         acceptCGU: true,
@@ -144,7 +139,6 @@ export function activationAccount(model: IActivationModel) {
         formdata.append(key, payload[key]);
       }
       // === 2 - Send activation information
-      // console.log("[User][Activation] submitting activation", formdata)
       dispatch(activationSubmitRequested(model));
       const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/activation`, {
         body: formdata,
@@ -155,9 +149,7 @@ export function activationAccount(model: IActivationModel) {
         method: 'post',
       });
       // === 3 - Check whether the activation was successfull
-      // console.log("[User][Activation] finished getting body....", res.status, res)
       if (!res.ok) {
-        // console.log("[User][Activation] failed with error", res.status)
         dispatch(activationSubmitError(I18n.t('activation-errorSubmit')));
         return;
       }
@@ -166,7 +158,6 @@ export function activationAccount(model: IActivationModel) {
         // checking response header
         const resBody = await res.json();
         if (resBody.error) {
-          console.log('[User][Activation] failed with error', res.status, resBody);
           dispatch(activationSubmitError(resBody.error.message));
           Trackers.trackEvent('Auth', 'ACTIVATE ERROR', resBody.error.message);
           return;
@@ -174,7 +165,6 @@ export function activationAccount(model: IActivationModel) {
       }
 
       // === 4 - call thunk login using login/password
-      // console.log("[User][Activation] redirecting to login...", res.status, model)
       await dispatch(
         loginAction(true, {
           username: model.login,
@@ -183,11 +173,9 @@ export function activationAccount(model: IActivationModel) {
       );
       // === 5 - activation finished successfully
       dispatch(activationSubmitReceived());
-      // console.log("[User][Activate] finished!")
       // === 6 - Tracking
       Trackers.trackEvent('Auth', 'ACTIVATE');
     } catch (e) {
-      console.warn('[User][Activation] failed to submit activation ', e);
       dispatch(activationSubmitError(I18n.t('activation-errorSubmit')));
       Trackers.trackEvent('Auth', 'ACTIVATE ERROR');
     }

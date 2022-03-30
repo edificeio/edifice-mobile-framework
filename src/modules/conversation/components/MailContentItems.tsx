@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -13,7 +13,7 @@ import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandl
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
-import { getUserColor, getProfileColor } from '~/modules/conversation/utils/userColor';
+import { getProfileColor, getUserColor } from '~/modules/conversation/utils/userColor';
 import { Icon } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
@@ -178,7 +178,6 @@ export const RenderPJs = ({
 }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
-  // console.log("PJS", attachments);
   return (
     <View style={[styles.containerMail, { flexDirection: 'column', flex: 0 }]}>
       {displayedAttachments.map((item, index) => {
@@ -193,9 +192,7 @@ export const RenderPJs = ({
           <TouchableOpacity
             style={{ flex: 0 }}
             onPress={async () => {
-              // console.log("df", df, dispatch);
               const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
-              // console.log("sf", sf);
               await sf.open();
             }}>
             <View style={{ flexDirection: 'row', flex: 0, alignItems: 'center', borderRadius: 6 }}>

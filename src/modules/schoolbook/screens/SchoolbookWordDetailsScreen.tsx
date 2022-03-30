@@ -1,40 +1,40 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
-import { NavigationInjectedProps, NavigationActions, NavigationStateRoute, StackActions } from 'react-navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { NavigationActions, NavigationInjectedProps, NavigationStateRoute, StackActions } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { TextItalic } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
-import { getUserSession, IUserSession, UserType } from '~/framework/util/session';
+import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { getSchoolbookWordDetailsAction, acknowledgeSchoolbookWordAction } from '~/modules/schoolbook/actions';
+import { acknowledgeSchoolbookWordAction, getSchoolbookWordDetailsAction } from '~/modules/schoolbook/actions';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
 import {
+  ISchoolbookWordReport,
   getAcknowledgeNamesForChild,
   getAcknowledgeNumber,
   getIsWordAcknowledgedForParent,
   getUnacknowledgedChildrenIdsForParent,
-  ISchoolbookWordReport,
 } from '~/modules/schoolbook/reducer';
 import { schoolbookUriCaptureFunction } from '~/modules/schoolbook/service';
 import { ButtonsOkCancel, FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
-import { openUrl } from '~/framework/util/linking';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 
 // TYPES ==========================================================================================
 
@@ -186,7 +186,6 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
               onPress={() => {
                 //TODO: create generic function inside oauth (use in myapps, etc.)
                 if (!DEPRECATED_getCurrentPlatform()) {
-                  console.warn('Must have a platform selected to redirect the user');
                   return null;
                 }
                 const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
@@ -373,7 +372,6 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       // ToDo: Error handling
       this.setState({ errorState: true });
       this.props.navigation.setParams({ _error: true });
-      console.warn(`[${moduleConfig.name}] doGetSchoolbookWordDetails failed`, e);
     }
   }
 
@@ -390,7 +388,6 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       await this.doGetSchoolbookWordDetails();
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] doAcknowledgeChildren failed`, e);
     }
   }
 }

@@ -202,7 +202,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       throw new Error('EAUTH: Unable to sign request without active access token.');
     }
     if (this.token!.token_type.toLowerCase() === 'bearer') {
-      // console.log("token:", this.token.access_token);
       const req = new Request(requestInfo, {
         ...init,
         headers: {
@@ -256,7 +255,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       throw err;
     }
     // 5: Check if response is error
-    // console.log("[OAuth] data:", data);
     if (data?.error) {
       throw this.createAuthError(data);
     }
@@ -305,7 +303,6 @@ export class OAuth2RessourceOwnerPasswordClient {
     } catch (err) {
       const error = err as Error;
       // tslint:disable-next-line:no-console
-      console.warn('Get token failed: ', error);
       error.name = '[oAuth] getToken failed: ' + error.name;
       throw error;
     }
@@ -338,12 +335,10 @@ export class OAuth2RessourceOwnerPasswordClient {
   public async loadToken(): Promise<IOAuthToken | undefined> {
     try {
       const rawStoredToken = await AsyncStorage.getItem('token');
-      console.log('rawStoredToken =  ' + rawStoredToken);
       if (!rawStoredToken) {
         return undefined;
       }
       const storedToken = JSON.parse(rawStoredToken);
-      console.log('storedToken =  ' + storedToken);
       if (!storedToken) {
         const err = new Error('[oAuth] loadToken: Unable to parse stored token');
         throw err;
@@ -353,10 +348,8 @@ export class OAuth2RessourceOwnerPasswordClient {
         expires_at: new Date(storedToken.expires_at),
       };
       this.generateUniqueSesionIdentifier();
-      console.log('this.token =  ' + this.token);
       return this.token!;
     } catch (err) {
-      console.warn('[oAuth] loadToken: ', err);
       throw err;
     }
   }
@@ -369,7 +362,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       await AsyncStorage.setItem('token', JSON.stringify(this.token));
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn('[oAuth] saveToken: ', err);
       throw err;
     }
   }
@@ -418,7 +410,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       return this.token!;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn('[oAuth] refreshToken: ', err);
       throw err;
     }
   }
@@ -466,7 +457,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.token = null;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn('[oAuth] eraseToken: ', err);
       throw err;
     }
   }
@@ -610,13 +600,10 @@ export function DEPRECATED_signImagesUrls(images: { src: string; alt: string }[]
  */
 export function DEPRECATED_signImageURISource(url: string): ImageURISource {
   if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signUrl: no token');
-  // console.log(url);
   // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
   if (url.indexOf('://') !== -1 && url.indexOf(DEPRECATED_getCurrentPlatform()!.url) === -1) {
-    // console.log("external image, not sign");
     return { uri: url };
   }
-  // console.log("internal, signed");
   return {
     method: 'GET',
     uri: url,

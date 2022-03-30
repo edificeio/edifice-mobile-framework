@@ -1,4 +1,4 @@
-import { createAsyncActionTypes, AsyncState } from '~/framework/util/redux/async';
+import { AsyncState, createAsyncActionTypes } from '~/framework/util/redux/async';
 import { computeSearchQuery, computeSearchValue } from '~/framework/util/string';
 import conversationConfig from '~/modules/conversation/moduleConfig';
 
@@ -41,7 +41,6 @@ export const searchVisibles = (
   limit?: number,
   threshold?: number,
 ) => {
-  // console.log("visibles", visibles);
   const queryWords = computeSearchQuery(query);
   const computeScoreString = (s: string) =>
     queryWords.reduce((score, q) => {
@@ -53,21 +52,18 @@ export const searchVisibles = (
   const computeScoreGroup = (v: IVisibleGroup) => computeScoreString(v.groupDisplayName || v.name);
   const filterFunc = (v: { score: number }) => v.score >= (threshold ?? 1);
   const omitIds = omitResults ? omitResults.map(v => v.id) : [];
-  // console.log("omitIds", omitIds)
   const filterFunc2 = (v: IVisibleGroup | IVisibleUser) => !omitIds.includes(v.id);
   const sortFunc = (a: { score: number }, b: { score: number }) => b.score - a.score;
   const computed = [] as ((IVisibleGroup | IVisibleUser) & { score: number })[];
   for (const g of visibles.groups) {
-    computed.push({ ...g, score: computeScoreGroup(g) })
+    computed.push({ ...g, score: computeScoreGroup(g) });
   }
   for (const u of visibles.users) {
-    computed.push({ ...u, score: computeScoreUser(u) })
+    computed.push({ ...u, score: computeScoreUser(u) });
   }
-  // console.log("computed", computed);
   const res = computed
     .filter(v => filterFunc(v) && filterFunc2(v))
     .sort(sortFunc)
     .slice(0, limit ?? 20) as Array<IVisibleGroup | IVisibleUser>;
-  // console.log("res", res);
   return res;
 };

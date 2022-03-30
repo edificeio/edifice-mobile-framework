@@ -3,11 +3,8 @@ import ImagePicker from 'react-native-image-picker';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { signedFetch } from '~/infra/fetchWithCache';
 
-// console.log(ImagePicker);
-
 export const takePhoto = (): Promise<string> => {
   return new Promise((resolve, reject) => {
-    console.log('launch camera');
     ImagePicker.launchCamera(
       {
         quality: 0.7,
@@ -22,7 +19,6 @@ export const takePhoto = (): Promise<string> => {
 
 export const uploadImage = async (uri: string) => {
   const formData = new FormData();
-  console.log(uri);
   formData.append('photo', {
     uri,
     type: 'image/jpeg', // or photo.type

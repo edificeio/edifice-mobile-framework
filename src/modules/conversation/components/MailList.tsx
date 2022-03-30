@@ -1,14 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, RefreshControl, FlatList } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
-import { NavigationState, NavigationInjectedProps } from 'react-navigation';
+import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { Drawer } from '~/framework/components/drawer';
-import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Trackers } from '~/framework/util/tracker';
@@ -194,7 +194,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       this.refreshMailList();
       fetchInit();
     } catch (error) {
-      console.error(error);
+      // TODO: Manage error
     }
   };
 
@@ -217,7 +217,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         containerStyle: { width: '95%', backgroundColor: 'black' },
       });
     } catch (error) {
-      console.error(error);
+      // TODO: Manage error
     }
   };
 

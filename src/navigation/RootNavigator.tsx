@@ -1,21 +1,21 @@
 // NPM modules
 import * as React from 'react';
 import { View } from 'react-native';
-import { createAppContainer, createSwitchNavigator, NavigationRouteConfigMap } from 'react-navigation';
+import { NavigationRouteConfigMap, createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 
-import LoginNavigator from './LoginNavigator';
-import NavigationService from './NavigationService';
-import { createMainTabNavigator } from './helpers/mainTabNavigator';
-import { getRoutes, getModules } from './helpers/navBuilder';
-
-import { IEntcoreApp, tabModules, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { IEntcoreApp, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { IAppModule } from '~/infra/moduleTool/types';
 import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
 import Carousel from '~/ui/Carousel';
 import { IFrame } from '~/ui/IFrame';
+
+import LoginNavigator from './LoginNavigator';
+import NavigationService from './NavigationService';
+import { createMainTabNavigator } from './helpers/mainTabNavigator';
+import { getModules, getRoutes } from './helpers/navBuilder';
 
 /**
  * MAIN NAVIGATOR
@@ -29,7 +29,6 @@ import { IFrame } from '~/ui/IFrame';
  */
 function getMainRoutes(appsInfo: any[]) {
   const filter = (mod: IAppModule) => {
-    // console.log("mod", mod);
     return !!mod.config.hasRight && mod.config.hasRight(appsInfo) && !mod.config.group;
   };
   return {
@@ -87,7 +86,6 @@ interface MainNavigatorHOCProps {
 }
 
 class MainNavigatorHOC extends React.PureComponent<MainNavigatorHOCProps> {
-
   // CAUTION : This prevents navigation to be rebuilt whenever the redux store is updated.
   // DO NOT remove this. This is NOT for perforance purpose.
   // ToDo : Get rid of this when update to React Navigation 6.

@@ -2,24 +2,22 @@
  * CloudMessgaging
  * All tools to manage push-notifications opening
  */
-
-import React, { useState, useEffect, FunctionComponent } from 'react';
+import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-import SplashScreen from 'react-native-splash-screen';
 
-import { defaultNotificationActionStack, handleNotificationAction } from './routing';
-import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
-
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+
+import { IEntcoreTimelineNotification, notificationAdapter } from '.';
+import { defaultNotificationActionStack, handleNotificationAction } from './routing';
 
 export async function requestUserPermission() {
   const authorizationStatus = await messaging().requestPermission();
 
   if (authorizationStatus) {
-    // console.log('Permission status:', authorizationStatus);
   }
 }
 
@@ -34,7 +32,6 @@ const _AppPushNotificationHandlerComponent: FunctionComponent<{
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
 
     messaging().onNotificationOpenedApp(remoteMessage => {
-    //   console.log('Notification caused app to open from background state:', remoteMessage);
       setNotification(remoteMessage);
     });
 
@@ -43,14 +40,12 @@ const _AppPushNotificationHandlerComponent: FunctionComponent<{
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage) {
-        //   console.log('Notification caused app to open from quit state:', remoteMessage.notification);
           setNotification(remoteMessage);
         }
       });
   }, []);
 
   if (notification && props.isLoggedIn) {
-    // console.log('Handling notification:', notification);
     if (notification.data) {
       const notificationData = {
         ...notification.data,

@@ -1,13 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  Alert,
-  Keyboard,
-  ScrollView,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Alert, Keyboard, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -215,7 +208,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         <ImagePicker
           multiple
           callback={image => {
-            console.log('image', image);
             this.setState(prevState => ({ images: [...prevState.images, image] }));
           }}>
           <View
@@ -354,7 +346,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           type: 'error',
         }),
       );
-      console.warn(`[${moduleConfig.name}] doSendPost failed`, e);
     }
   }
 }

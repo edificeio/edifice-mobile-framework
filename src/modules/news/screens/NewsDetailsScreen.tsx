@@ -8,13 +8,16 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextSemiBold, TextLight } from '~/framework/components/text';
+import { TextLight, TextSemiBold } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
 import { getNewsDetailsAction } from '~/modules/news/actions';
@@ -26,9 +29,6 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { openUrl } from '~/framework/util/linking';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 
 // TYPES ==========================================================================================
 
@@ -146,7 +146,6 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
                 onPress={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
                   if (!DEPRECATED_getCurrentPlatform()) {
-                    console.warn('Must have a platform selected to redirect the user');
                     return null;
                   }
                   const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
@@ -251,7 +250,6 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
     } catch (e) {
       // ToDo: Error handling
       this.setState({ errorState: true });
-      console.warn(`[${moduleConfig.name}] doGetNewsDetails failed`, e);
     }
   }
 }
