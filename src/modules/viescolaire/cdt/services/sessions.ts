@@ -1,7 +1,5 @@
 import moment from 'moment';
 
-import { IHomeworkListBackend } from './homeworks';
-
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { ISessionList } from '~/modules/viescolaire/cdt/state/sessions';
 
@@ -89,6 +87,7 @@ const sessionListAdapter: (data: ISessionListBackend) => ISessionList = data => 
   if (!data) return result;
   result = data.map(item => ({
     id: item.id,
+    is_published: item.is_published,
     date: moment(item.date),
     subject_id: item.subject_id,
     subject: item.subject,

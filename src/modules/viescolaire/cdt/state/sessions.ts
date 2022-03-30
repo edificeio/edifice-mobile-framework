@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import { AsyncActionTypes, AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 import { ISessionHomeworksBackend } from '~/modules/viescolaire/cdt/services/sessions';
 import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
@@ -8,6 +8,7 @@ import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 export interface ISession {
   id: string;
+  is_published: boolean;
   date: moment.Moment;
   subject_id: string;
   subject: {
@@ -41,6 +42,7 @@ export type ISessionListState = AsyncState<ISessionList>;
 export const initialState: ISessionList = [
   {
     id: '',
+    is_published: false,
     date: moment(),
     subject_id: '',
     subject: {

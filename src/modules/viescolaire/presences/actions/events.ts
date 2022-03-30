@@ -2,7 +2,7 @@ import moment from 'moment';
 import { Dispatch } from 'redux';
 
 import { eventsService } from '~/modules/viescolaire/presences/services/events';
-import { teacherEventsActionsTypes, studentEventsActionsTypes } from '~/modules/viescolaire/presences/state/events';
+import { studentEventsActionsTypes, teacherEventsActionsTypes } from '~/modules/viescolaire/presences/state/events';
 
 export const callEventsActions = {
   post: data => ({ type: teacherEventsActionsTypes.post, data }),

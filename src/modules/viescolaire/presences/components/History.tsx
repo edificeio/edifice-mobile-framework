@@ -1,23 +1,23 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationScreenProp } from 'react-navigation';
-
-import {
-  UnregularizedCard,
-  RegularizedCard,
-  LatenessCard,
-  DepartureCard,
-  ForgotNotebookCard,
-  PunishmentCard,
-  IncidentCard,
-  NoReasonCard,
-} from './PresenceCard';
 
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { Loading } from '~/ui';
 import Dropdown from '~/ui/Dropdown';
+
+import {
+  DepartureCard,
+  ForgotNotebookCard,
+  IncidentCard,
+  LatenessCard,
+  NoReasonCard,
+  PunishmentCard,
+  RegularizedCard,
+  UnregularizedCard,
+} from './PresenceCard';
 
 type HistoryProps = {
   data: any;
@@ -38,18 +38,21 @@ class History extends React.PureComponent<HistoryProps> {
 
   public render() {
     const { events, onPeriodChange, selected, periods } = this.props;
+
     return (
       <View style={{ flex: 1 }}>
         {this.props.navigation.state.params.user_type === 'Relative' && <ChildPicker />}
         <ScrollView contentContainerStyle={style.container}>
-          <Dropdown
-            style={{ alignSelf: 'center', width: '50%' }}
-            data={periods}
-            value={selected}
-            onSelect={onPeriodChange}
-            keyExtractor={item => item.order}
-            renderItem={this.renderOption}
-          />
+          {periods !== undefined && periods.length > 1 && periods[0].code !== 'YEAR' && (
+            <Dropdown
+              style={{ alignSelf: 'center', width: '50%' }}
+              data={periods}
+              value={selected}
+              onSelect={onPeriodChange}
+              keyExtractor={item => item.order}
+              renderItem={this.renderOption}
+            />
+          )}
           {this.props.isFetchingData || this.props.isPristineData ? (
             <Loading />
           ) : (
@@ -58,10 +61,10 @@ class History extends React.PureComponent<HistoryProps> {
               <UnregularizedCard elements={events.unregularized} />
               <RegularizedCard elements={events.regularized} />
               <LatenessCard elements={events.lateness} />
-              <DepartureCard elements={events.departure} />
-              <ForgotNotebookCard elements={events.notebooks} />
               <IncidentCard elements={events.incidents} />
               <PunishmentCard elements={events.punishments} />
+              <ForgotNotebookCard elements={events.notebooks} />
+              <DepartureCard elements={events.departure} />
             </>
           )}
         </ScrollView>

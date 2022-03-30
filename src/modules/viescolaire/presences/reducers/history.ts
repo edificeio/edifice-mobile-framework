@@ -1,5 +1,5 @@
 import { createSessionReducer } from '~/infra/redux/reducerFactory';
-import { studentEventsActionsTypes, initialState } from '~/modules/viescolaire/presences/state/events';
+import { initialState, studentEventsActionsTypes } from '~/modules/viescolaire/presences/state/events';
 
 export default createSessionReducer(initialState, {
   [studentEventsActionsTypes.event]: (state = initialState, action) => {
@@ -8,6 +8,7 @@ export default createSessionReducer(initialState, {
     new_state.departure = action.data.departure;
     new_state.regularized = action.data.regularized;
     new_state.unregularized = action.data.unregularized;
+    new_state.no_reason = action.data.no_reason;
     new_state.isPristine = false;
     return new_state;
   },
