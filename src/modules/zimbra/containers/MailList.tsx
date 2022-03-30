@@ -7,8 +7,7 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { IInit } from './DrawerMenu';
-
+import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
@@ -24,14 +23,15 @@ import MailList from '~/modules/zimbra/components/MailList';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
-import { getInitMailListState, IFolder } from '~/modules/zimbra/state/initMails';
-import { getMailListState, IMail } from '~/modules/zimbra/state/mailList';
-import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
+import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails';
+import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
+import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text } from '~/ui/Typography';
-import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
+
+import { IInit } from './DrawerMenu';
 
 // ------------------------------------------------------------------------------------------------
 
@@ -293,7 +293,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             <Text style={{ color: 'white', fontSize: 16, fontWeight: '400' }}>{this.getListSelectedMails().length}</Text>
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity onPress={() => this.restoreSelectedMails()}>
-                <Icon name="delete-restore" size={24} color="white" style={{ marginRight: 10 }} />
+                <Icon name="delete-restore" size={24} color="white" style={{ marginRight: 20 }} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.deleteSelectedMails()}>
                 <Icon name="delete" size={24} color="white" style={{ marginRight: 10 }} />
@@ -321,14 +321,14 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity onPress={() => this.markSelectedMailsAsUnread()}>
                 {this.checkMailReadState() ? (
-                  <Icon name="email" size={24} color="white" style={{ marginRight: 10 }} />
+                  <Icon name="email" size={24} color="white" style={{ marginRight: 20 }} />
                 ) : (
-                  <Icon name="email-open" size={24} color="white" style={{ marginRight: 10 }} />
+                  <Icon name="email-open" size={24} color="white" style={{ marginRight: 20 }} />
                 )}
               </TouchableOpacity>
               {this.props.navigation.state.routeName !== 'sendMessages' && (
                 <TouchableOpacity onPress={() => this.showMoveModal()}>
-                  <Icon name="package-up" size={24} color="white" style={{ marginRight: 10 }} />
+                  <Icon name="package-up" size={24} color="white" style={{ marginRight: 20 }} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity onPress={() => this.deleteSelectedMails()}>

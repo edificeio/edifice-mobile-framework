@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { ImageBackground, View, Text, StyleSheet } from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
@@ -38,9 +38,9 @@ export default ({
     disabled={!isCourseEditable}
     onPress={onPress}
     style={[styles.itemContainer, { opacity: isCourseNow ? 1 : 0.4 }]}
-    color="#FFB600">
+    color={isCourseEditable ? '#FFB600' : 'dimgrey'}>
     <ImageBackground
-      source={require('ASSETS/viesco/presences.png')}
+      source={isCourseEditable ? require('ASSETS/viesco/presences.png') : require('ASSETS/viesco/presence_gris.png')}
       style={styles.imageBackgroundContainer}
       imageStyle={styles.imageBackground}
       resizeMode="contain">

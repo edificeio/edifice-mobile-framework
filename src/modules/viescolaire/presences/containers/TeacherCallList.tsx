@@ -11,10 +11,10 @@ import { fetchRegiterPreferencesAction } from '~/modules/viescolaire/presences/a
 import { fetchCoursesRegisterAction } from '~/modules/viescolaire/presences/actions/teacherCourseRegister';
 import { fetchCoursesAction } from '~/modules/viescolaire/presences/actions/teacherCourses';
 import TeacherCallListComponent from '~/modules/viescolaire/presences/components/TeacherCallList';
-import { getMultipleSlotsState, IMultipleSlotsState } from '~/modules/viescolaire/presences/state/multipleSlots';
-import { getRegisterPreferencesState, IRegisterPreferencesState } from '~/modules/viescolaire/presences/state/registerPreferences';
+import { IMultipleSlotsState, getMultipleSlotsState } from '~/modules/viescolaire/presences/state/multipleSlots';
+import { IRegisterPreferencesState, getRegisterPreferencesState } from '~/modules/viescolaire/presences/state/registerPreferences';
 import { getCoursesRegisterState } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
-import { getCoursesListState, ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { ICourses, getCoursesListState } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
 import { INavigationProps } from '~/types';
 

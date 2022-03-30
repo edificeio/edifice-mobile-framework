@@ -1,14 +1,14 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
-
-import CourseComponent from './CourseComponent';
 
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { Loading } from '~/ui';
 import { TextBold } from '~/ui/Typography';
+
+import CourseComponent from './CourseComponent';
 
 interface ICallListProps {
   courseList: ICourses[];
@@ -77,6 +77,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   };
 
   private Carousel = () => {
+    const { courseList, onCoursePress } = this.props;
     const getCourseCallItem = item => {
       const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
       const isCourseEditable = !moment(item.startDate).subtract(15, 'minutes').isAfter(moment());
@@ -90,8 +91,6 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
         />
       );
     };
-
-    const { courseList, onCoursePress } = this.props;
 
     return (
       <>

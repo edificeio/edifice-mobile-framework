@@ -14,7 +14,7 @@ import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events
 import { fetchUserChildrenAction } from '~/modules/viescolaire/presences/actions/userChildren';
 import HistoryComponent from '~/modules/viescolaire/presences/components/History';
 import { getHistoryEvents } from '~/modules/viescolaire/presences/state/events';
-import { getUserChildrenState, IPresencesUserChildrenState } from '~/modules/viescolaire/presences/state/userChildren';
+import { IPresencesUserChildrenState, getUserChildrenState } from '~/modules/viescolaire/presences/state/userChildren';
 import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/viesco/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
@@ -77,8 +77,8 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
     if (userType === 'Relative') {
       if (userId !== undefined) {
         this.props.getChildInfos(userId);
-      } else if (this.props.navigation.state.params.userId !== undefined) {
-        this.props.getChildInfos(this.props.navigation.state.params.userId);
+      } else if (this.props.navigation.state.params?.userId !== undefined) {
+        this.props.getChildInfos(this.props.navigation.state.params?.userId);
       }
     }
     if (periods.isPristine && groupId && groupId !== undefined) this.props.getPeriods(structureId, groupId);
@@ -96,7 +96,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
         if (userId !== undefined) {
           this.props.getChildInfos(userId);
         } else {
-          this.props.getChildInfos(this.props.navigation.state.params.userId);
+          this.props.getChildInfos(this.props.navigation.state.params?.userId);
         }
       } else if (this.state.groupId !== this.props.groupId && this.props.groupId !== undefined && this.state.groupId === '') {
         this.setState({ groupId: this.props.groupId });
@@ -112,7 +112,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
     }
 
     // on periods init
-    if (prevProps.periods.isPristine && !periods.isPristine) {
+    if (prevProps.periods.isFetching && !periods.isFetching) {
       this.setState({
         selected: -1,
         period: fullPeriods.find(o => o.order === -1),
@@ -121,7 +121,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
     }
 
     // on year init
-    if (prevProps.year.isPristine && !year.isPristine) {
+    if (prevProps.year.isFetching && !year.isFetching) {
       this.setState({
         selected: -1,
         period: fullPeriods.find(o => o.order === -1),
@@ -143,52 +143,62 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
       const start_period = start_date.clone().subtract(1, 'd');
       const end_period = end_date.clone().add(1, 'd');
       if (
-        prevState.period === undefined ||
-        (!this.props.events.isPristine && prevProps.events.isPristine) ||
+        (!this.props.events.isFetching && prevProps.events.isFetching) ||
         !start_date.isSame(prevState.period.start_date, 'd') ||
-        !end_date.isSame(prevState.period.end_date, 'd')
+        !end_date.isSame(prevState.period.end_date, 'd') ||
+        prevProps.events !== this.props.events
       ) {
-        const { events } = this.props;
-        const displayEvents = {
-          regularized: [],
-          unregularized: [],
-          lateness: [],
-          departure: [],
-          incidents: [],
-          punishments: [],
-          notebooks: [],
-        };
-        displayEvents.regularized = events?.regularized?.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-        );
-        displayEvents.unregularized = events?.unregularized?.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-        );
-        displayEvents.departure = events?.departure?.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-        );
-        displayEvents.lateness = events?.lateness?.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-        );
-        displayEvents.notebooks = events?.notebooks?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
-        displayEvents.incidents = events?.incidents?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
-        displayEvents.punishments = events?.punishments?.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-        );
-        this.setState({
-          events: displayEvents,
-        });
+        this.setEvents(start_period, end_period);
       }
     }
   }
 
+  setEvents = (start_period: moment.Moment, end_period: moment.Moment) => {
+    const { events } = this.props;
+    const displayEvents = {
+      regularized: [],
+      unregularized: [],
+      no_reason: [],
+      lateness: [],
+      departure: [],
+      incidents: [],
+      punishments: [],
+      notebooks: [],
+    };
+
+    displayEvents.regularized = events?.regularized?.filter(
+      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
+    );
+    displayEvents.unregularized = events?.unregularized?.filter(
+      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
+    );
+    displayEvents.no_reason = events?.no_reason?.filter(
+      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
+    );
+    displayEvents.departure = events?.departure?.filter(
+      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
+    );
+    displayEvents.lateness = events?.lateness?.filter(e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period));
+    displayEvents.notebooks = events?.notebooks?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
+    displayEvents.incidents = events?.incidents?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
+    displayEvents.punishments = events?.punishments?.filter(
+      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
+    );
+
+    this.setState({
+      events: displayEvents,
+    });
+  };
+
   onPeriodChange = newPeriod => {
+    const { childId, structureId } = this.props;
     const { periods } = this.state;
     const period = periods.find(o => o.order === newPeriod);
     this.setState({
       selected: newPeriod,
       period,
     });
+    this.props.getEvents(childId, structureId, period.start_date, period.end_date);
   };
 
   public render() {

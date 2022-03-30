@@ -3,6 +3,7 @@
 export type IHomework = {
   due_date: moment.Moment;
   id: string;
+  is_published: boolean;
   progress?: {
     created: string;
     homework_id: number;
