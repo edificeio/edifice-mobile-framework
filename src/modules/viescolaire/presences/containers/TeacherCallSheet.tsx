@@ -2,10 +2,10 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { PageView } from '~/framework/components/page';
 
+import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { postAbsentEvent, deleteEvent, validateRegisterAction } from '~/modules/viescolaire/presences/actions/events';
+import { deleteEvent, postAbsentEvent, validateRegisterAction } from '~/modules/viescolaire/presences/actions/events';
 import { fetchClassesCallAction } from '~/modules/viescolaire/presences/actions/teacherClassesCall';
 import TeacherCallSheet from '~/modules/viescolaire/presences/components/TeacherCallSheet';
 import { getClassesCallListState } from '~/modules/viescolaire/presences/state/teacherClassesCall';
@@ -13,7 +13,9 @@ import { getCoursesListState } from '~/modules/viescolaire/presences/state/teach
 
 class CallSheet extends React.PureComponent<any> {
   public render() {
-    const course = this.props.courses.find(course => course.id === this.props.navigation.state.params.courseInfos.id);
+    const courseInfos = this.props.navigation.state.params.courseInfos;
+    const course = this.props.courses.find(course => course.id === courseInfos.id && course.registerId === courseInfos.registerId);
+
     return (
       <PageView
         navigation={this.props.navigation}

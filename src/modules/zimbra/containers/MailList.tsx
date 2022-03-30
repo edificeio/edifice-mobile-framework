@@ -7,12 +7,16 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-
-
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
-import { deleteMailsAction, moveMailsToFolderAction, restoreMailsAction, toggleReadAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
+import {
+  deleteMailsAction,
+  moveMailsToFolderAction,
+  restoreMailsAction,
+  toggleReadAction,
+  trashMailsAction,
+} from '~/modules/zimbra/actions/mail';
 import { fetchMailListAction, fetchMailListFromFolderAction } from '~/modules/zimbra/actions/mailList';
 import { fetchQuotaAction } from '~/modules/zimbra/actions/quota';
 import MailList from '~/modules/zimbra/components/MailList';
@@ -27,10 +31,7 @@ import { Icon } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text } from '~/ui/Typography';
 
-
-
 import { IInit } from './DrawerMenu';
-
 
 // ------------------------------------------------------------------------------------------------
 
@@ -178,7 +179,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   restoreSelectedMails = async () => {
     const listSelected = this.getListSelectedMails();
     const mailsIds = [] as string[];
-    listSelected.forEach(mail => mailsIds.push(mail.id));
+    listSelected.map(mail => mailsIds.push(mail.id));
 
     await this.props.restoreMails(mailsIds);
 
@@ -212,7 +213,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   deleteSelectedMails = async () => {
     const listSelected = this.getListSelectedMails();
     const mailsIds = [] as string[];
-    listSelected.forEach(mail => mailsIds.push(mail.id));
+    listSelected.map(mail => mailsIds.push(mail.id));
 
     const { navigation } = this.props;
     const isTrashed = navigation.getParam('isTrashed');
@@ -241,7 +242,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   markSelectedMailsAsUnread = async () => {
     const listSelected = this.getListSelectedMails();
     const mailsIds = [] as string[];
-    listSelected.forEach(mail => mailsIds.push(mail.id));
+    listSelected.map(mail => mailsIds.push(mail.id));
     const isRead = listSelected.findIndex(mail => mail.unread === true) >= 0;
     await this.props.toggleRead(mailsIds, isRead);
     this.onUnselectListMails();
@@ -256,7 +257,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   getListSelectedMails = () => {
     const listSelected = [] as IMail[];
-    this.state.mails.forEach(mail => (mail.isChecked ? listSelected.push(mail) : null));
+    this.state.mails.map(mail => (mail.isChecked ? listSelected.push(mail) : null));
     return listSelected;
   };
 
@@ -292,7 +293,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             <Text style={{ color: 'white', fontSize: 16, fontWeight: '400' }}>{this.getListSelectedMails().length}</Text>
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity onPress={() => this.restoreSelectedMails()}>
-                <Icon name="delete-restore" size={24} color="white" style={{ marginRight: 10 }} />
+                <Icon name="delete-restore" size={24} color="white" style={{ marginRight: 20 }} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.deleteSelectedMails()}>
                 <Icon name="delete" size={24} color="white" style={{ marginRight: 10 }} />
@@ -320,14 +321,14 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
               <TouchableOpacity onPress={() => this.markSelectedMailsAsUnread()}>
                 {this.checkMailReadState() ? (
-                  <Icon name="email" size={24} color="white" style={{ marginRight: 10 }} />
+                  <Icon name="email" size={24} color="white" style={{ marginRight: 20 }} />
                 ) : (
-                  <Icon name="email-open" size={24} color="white" style={{ marginRight: 10 }} />
+                  <Icon name="email-open" size={24} color="white" style={{ marginRight: 20 }} />
                 )}
               </TouchableOpacity>
               {this.props.navigation.state.routeName !== 'sendMessages' && (
                 <TouchableOpacity onPress={() => this.showMoveModal()}>
-                  <Icon name="package-up" size={24} color="white" style={{ marginRight: 10 }} />
+                  <Icon name="package-up" size={24} color="white" style={{ marginRight: 20 }} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity onPress={() => this.deleteSelectedMails()}>
@@ -438,7 +439,7 @@ export default withViewTracking((props: MailListContainerProps) => {
   const currentFolder = props.navigation.getParam('key');
   if (currentFolder === undefined) return `zimbra/inbox`;
   let toTrack = '';
-  viewsToTrack.forEach(viewName => {
+  viewsToTrack.map(viewName => {
     if (viewName === currentFolder) toTrack = `zimbra/${currentFolder}`;
   });
   return toTrack;

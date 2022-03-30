@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
@@ -24,6 +24,14 @@ const style = StyleSheet.create({
     height: 1,
     flexGrow: 1,
   },
+  weekPickerView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderStyle: 'solid',
+    borderColor: 'rgba(0, 0, 0, 0)',
+    borderWidth: 1,
+  },
   courseView: {
     flexDirection: 'row',
     padding: 5,
@@ -33,21 +41,17 @@ const style = StyleSheet.create({
     backgroundColor: '#FFF',
   },
   subjectView: { maxWidth: '56%' },
+  infoView: {
+    paddingHorizontal: 5,
+  },
   buttonsView: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
-  weekPickerView: {
+  buttonsViewHalf: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 0)',
-    borderWidth: 1,
-  },
-  infoView: {
-    paddingHorizontal: 15,
   },
   homeworksToDoContainer: {
     backgroundColor: '#FFF1DB',
@@ -86,7 +90,7 @@ const adaptCourses = (courses: ICourse[], homeworks: IHomeworkList, sessions: IS
         if (s.course_id === c.id && s.startDate?.isSame(c.startDate) && s.endDate?.isSame(c.endDate)) {
           calendarList[index] = { ...c, session: s };
           isSessionPlaced = true;
-        } else if (!isSessionPlaced && index === courses.length - 1 && s !== undefined) {
+        } else if (!isSessionPlaced && index === courses.length - 1 && s !== undefined && s.is_published) {
           s['calendarType'] = 'session';
           calendarList.push(s);
         }
@@ -97,7 +101,7 @@ const adaptCourses = (courses: ICourse[], homeworks: IHomeworkList, sessions: IS
   homeworksArray
     .sort((a, b) => moment(a.due_date).diff(moment(b.due_date)))
     .map(hwk => {
-      if (!hwk.session_id) {
+      if (!hwk.session_id && hwk.is_published) {
         homeworksWithoutCourse.push(hwk);
       }
     });
@@ -128,70 +132,112 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     );
   };
 
-  renderCourse = course => {
+  checkHomeworksPublishedState = (homeworks: IHomework[]) => {
+    for (const hwk of homeworks) {
+      if (hwk.is_published) return true;
+    }
+    return false;
+  };
+
+  /* Display Homeworks attached to a session or a course with a session */
+  renderHomeworksIconButton = course => {
     const { navigation } = this.props;
+    const isHomeworksInSession = !!(
+      course.session !== undefined &&
+      course.session.homeworks !== undefined &&
+      course.session.homeworks.length > 0
+    );
+    const isHomeworksInCourse = !!(course.homeworks !== undefined && course.homeworks.length > 0);
+
+    return (
+      <>
+        {isHomeworksInSession ? (
+          <TouchableOpacity
+            onPress={
+              this.checkHomeworksPublishedState(course.session.homeworks)
+                ? () =>
+                    navigation.navigate(
+                      'HomeworkPage',
+                      homeworkListDetailsTeacherAdapter(course.session.homeworks, course.subject.name),
+                    )
+                : () => true
+            }>
+            <Icon
+              name="inbox"
+              size={24}
+              color={this.checkHomeworksPublishedState(course.session.homeworks) ? '#FF9700' : 'lightgrey'}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={
+              isHomeworksInCourse && this.checkHomeworksPublishedState(course.homeworks)
+                ? () =>
+                    navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(course.homeworks, course.subject.name))
+                : () => true
+            }>
+            <Icon
+              name="inbox"
+              size={24}
+              color={isHomeworksInCourse && this.checkHomeworksPublishedState(course.homeworks) ? '#FF9700' : 'lightgrey'}
+            />
+          </TouchableOpacity>
+        )}
+      </>
+    );
+  };
+
+  /* Display sessions : check if it is a course or a session */
+  renderSessionsIconButton = course => {
+    const { navigation } = this.props;
+    return (
+      <>
+        <TouchableOpacity
+          style={{ paddingRight: 20 }}
+          onPress={
+            (course.session && course.is_published) || course.calendarType === 'session'
+              ? () =>
+                  navigation.navigate(
+                    'SessionPage',
+                    course.session ? sessionListDetailsTeacherAdapter(course.session) : sessionListDetailsTeacherAdapter(course),
+                  )
+              : () => true
+          }>
+          <Icon
+            name="insert_drive_file1"
+            size={24}
+            color={(course.session && course.session.is_published) || course.calendarType === 'session' ? '#2BAB6F' : 'lightgrey'}
+          />
+        </TouchableOpacity>
+      </>
+    );
+  };
+
+  renderCourse = (course, isHalfCourse: boolean = false) => {
     const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
 
     return (
       <View style={style.courseView}>
         <View style={style.subjectView}>
-          <View style={style.infoView}>
-            <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
+          <View style={!isHalfCourse && style.infoView}>
+            <TextBold style={{ fontSize: 20 }} numberOfLines={1}>
+              {className}
+            </TextBold>
           </View>
-          <View style={style.infoView}>
+          <View style={!isHalfCourse && style.infoView}>
             <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
           </View>
         </View>
-        <View style={style.buttonsView}>
-          {/* Display sessions : check if it is a course or a session */}
-          <TouchableOpacity
-            style={{ paddingRight: 20 }}
-            onPress={
-              course.session || course.calendarType === 'session'
-                ? () =>
-                    navigation.navigate(
-                      'SessionPage',
-                      course.session ? sessionListDetailsTeacherAdapter(course.session) : sessionListDetailsTeacherAdapter(course),
-                    )
-                : () => true
-            }>
-            <Icon
-              name="insert_drive_file1"
-              size={24}
-              color={course.session || course.calendarType === 'session' ? '#2BAB6F' : 'lightgrey'}
-            />
-          </TouchableOpacity>
 
-          {/* Display Homeworks attached to a session or a course with a session */}
-          {course.session !== undefined && course.session.homeworks !== undefined && course.session.homeworks.length > 0 ? (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(
-                  'HomeworkPage',
-                  homeworkListDetailsTeacherAdapter(course.session.homeworks, course.subject.name),
-                )
-              }>
-              <Icon name="inbox" size={24} color="#FF9700" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={
-                course.homeworks && course.homeworks.length > 0
-                  ? () =>
-                      navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(course.homeworks, course.subject.name))
-                  : () => true
-              }>
-              <Icon
-                name="inbox"
-                size={24}
-                color={course.homeworks !== undefined && course.homeworks.length > 0 ? '#FF9700' : 'lightgrey'}
-              />
-            </TouchableOpacity>
-          )}
+        <View style={isHalfCourse ? style.buttonsViewHalf : style.buttonsView}>
+          {this.renderSessionsIconButton(course)}
+          {this.renderHomeworksIconButton(course)}
         </View>
       </View>
     );
   };
+
+  renderHalf = course => this.renderCourse(course, true);
 
   public render() {
     const { startDate, selectedDate, courses, slots, updateSelectedDate, homeworks, sessions } = this.props;
@@ -214,6 +260,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
                 startDate={startDate}
                 data={slotEvents.calendarList}
                 renderElement={this.renderCourse}
+                renderHalf={this.renderHalf}
                 daysHomeworks={slotEvents.homeworksWithoutCourse}
                 renderDaysHomeworks={this.renderDaysHomeworks}
                 numberOfDays={6}
