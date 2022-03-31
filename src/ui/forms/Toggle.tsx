@@ -2,12 +2,9 @@ import style from 'glamorous-native';
 import * as React from 'react';
 import { Animated, View } from 'react-native';
 
-
-
 import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-
 
 const TapCircle = style(TouchableOpacity)(
   {
@@ -64,6 +61,7 @@ export class Toggle extends React.Component<
       Animated.timing(this.state.positionAnim, {
         toValue: this.props.checked ? 20 : 0,
         duration: 500,
+        useNativeDriver: true,
       }).start();
     }
   }
