@@ -1,23 +1,23 @@
 import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, TextInput, View, ScrollView } from 'react-native';
+import { Alert, ScrollView, TextInput, View } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import { getSessionInfo } from '~/App';
-import { remlh, Text, TextSizeStyle } from '~/framework/components/text';
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { KeyboardPageView } from '~/framework/components/page';
+import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
-import { ValueChangeArgs, ValidatorBuilder, ValueGetter, ValueChange } from '~/utils/form';
-import { NavigationInjectedProps } from 'react-navigation';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { KeyboardPageView } from '~/framework/components/page';
+import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -190,7 +190,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
             backgroundColor: theme.color.background.card,
           }}>
           <View style={{ height: '100%' }}>
-            <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView
+              alwaysBounceVertical={false}
+              overScrollMode="never"
+              style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}>
               <FormPage>
                 <FormTouchable onPress={() => formModel.blur()}>
                   <FormWrapper>

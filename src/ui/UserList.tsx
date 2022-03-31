@@ -3,11 +3,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
 
+import { CommonStyles } from '~/styles/common/styles';
+
 import { Line } from './Grid';
 import { SingleAvatar } from './avatars/SingleAvatar';
 import { Checkbox } from './forms/Checkbox';
-
-import { CommonStyles } from '~/styles/common/styles';
 
 export type IUser = { id: string; name: string; displayName: string; isGroup: boolean; checked: boolean };
 const UserName = style.text({
@@ -40,6 +40,7 @@ export default function UserList(props: {
     <FlatList
       keyboardShouldPersistTaps="always"
       alwaysBounceVertical={false}
+      overScrollMode="never"
       style={{
         width: '100%',
         position: 'absolute',

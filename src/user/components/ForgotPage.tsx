@@ -4,8 +4,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
-
-
 import { PageView } from '~/framework/components/page';
 import { H1, Text, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
@@ -14,7 +12,6 @@ import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
-
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -123,7 +120,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
             <KeyboardAvoidingView
               style={{ flex: 1, backgroundColor: '#ffffff' }}
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-              <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+              <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>

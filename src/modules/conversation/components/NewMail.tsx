@@ -77,6 +77,7 @@ export default (props: NewMailComponentProps) => {
   return (
     <KeyboardAvoidingScrollView
       alwaysBounceVertical={false}
+      overScrollMode="never"
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       contentContainerStyle={{ flexGrow: 1 }}

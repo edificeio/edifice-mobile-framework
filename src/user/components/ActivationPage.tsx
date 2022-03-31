@@ -3,6 +3,18 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
+import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
+import { Checkbox } from '~/framework/components/checkbox';
+import { PageView } from '~/framework/components/page';
+import { PFLogo } from '~/framework/components/pfLogo';
+import { Text, TextAction } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Trackers } from '~/framework/util/tracker';
+import { FlatButton, Loading } from '~/ui';
+import { ErrorMessage } from '~/ui/Typography';
+import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
+import { ContextState, SubmitState } from '~/utils/SubmitState';
+
 import {
   ActivationFormModel,
   InputEmail,
@@ -12,18 +24,6 @@ import {
   InputPhone,
   ValueChangeArgs,
 } from './ActivationForm';
-
-import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
-import { Checkbox } from '~/framework/components/checkbox';
-import { PFLogo } from '~/framework/components/pfLogo';
-import { Text, TextAction } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { Trackers } from '~/framework/util/tracker';
-import { FlatButton, Loading } from '~/ui';
-import { ErrorMessage } from '~/ui/Typography';
-import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
-import { ContextState, SubmitState } from '~/utils/SubmitState';
-import { PageView } from '~/framework/components/page';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -131,7 +131,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#ffffff' }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
               <FormTouchable onPress={() => formModel.blur()}>
                 <FormWrapper>
                   <FormContainer>

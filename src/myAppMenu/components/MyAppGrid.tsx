@@ -48,6 +48,7 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
         ListFooterComponent={this.renderFooter()}
         ListFooterComponentStyle={{ flexGrow: 1, justifyContent: 'flex-end', marginVertical: UI_SIZES.spacing.extraLarge }}
         alwaysBounceVertical={false}
+        overScrollMode="never"
         contentContainerStyle={{ flexGrow: 1 }}
       />
     );

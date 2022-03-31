@@ -147,7 +147,11 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
 
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView keyboardShouldPersistTaps="handled" alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+          contentContainerStyle={{ flexGrow: 1 }}>
           {/* Temporary banner displayed for Somme Numérique */}
           {isSommeNumerique ? (
             <View

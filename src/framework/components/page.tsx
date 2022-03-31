@@ -67,7 +67,7 @@ export const PageView = (props: PageViewProps) => {
 
   return (
     <PageView_Style {...viewProps}>
-      <StatusBar barStyle='light-content' backgroundColor={theme.color.secondary.regular} />
+      <StatusBar barStyle="light-content" backgroundColor={theme.color.secondary.regular} />
       {navBar ? <FakeHeader {...navBar} /> : null}
       {navBarWithBack ? (
         <FakeHeader
@@ -108,7 +108,7 @@ export const KeyboardPageView = (
   // BEWARE of adding keyboardVerticalOffset in the future when we'll get back the real React Navigation headers.
   const { children, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
-  const AreaComponent = props.safeArea ?? true ? SafeAreaView : View
+  const AreaComponent = props.safeArea ?? true ? SafeAreaView : View;
   return (
     <PageView {...pageProps}>
       <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} style={{ flex: 1 }}>
@@ -116,6 +116,7 @@ export const KeyboardPageView = (
           style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           alwaysBounceVertical={false}
+          overScrollMode="never"
           keyboardShouldPersistTaps="never"
           {...props.scrollViewProps}>
           <AreaComponent style={{ flexGrow: 1 }}>{children}</AreaComponent>

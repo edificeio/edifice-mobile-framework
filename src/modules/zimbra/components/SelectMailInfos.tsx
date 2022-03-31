@@ -1,15 +1,15 @@
 import * as React from 'react';
 import {
-  TextInput,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
   FlatList,
-  View,
-  Text,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
@@ -163,6 +163,7 @@ export default class SelectMailInfos extends React.Component<
             keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined}>
             <ScrollView
               alwaysBounceVertical={false}
+              overScrollMode="never"
               style={[styles.scrollField, { backgroundColor: '#FFFFFF' }]}
               ref={r => (this.inputRef = (r as any)?.innerComponent)}>
               <View style={styles.fieldContainer}>
@@ -211,6 +212,7 @@ export default class SelectMailInfos extends React.Component<
               <ScrollView
                 keyboardShouldPersistTaps="always"
                 alwaysBounceVertical={false}
+                overScrollMode="never"
                 contentContainerStyle={{ flexGrow: 1 }}
                 style={{ marginLeft: 40 }}>
                 <UserList

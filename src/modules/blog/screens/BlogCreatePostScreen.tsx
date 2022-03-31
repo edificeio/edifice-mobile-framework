@@ -116,6 +116,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         {/* ToDo : don't use magic keywords like this. */}
         <ScrollView
           alwaysBounceVertical={false}
+          overScrollMode="never"
           contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
         </ScrollView>

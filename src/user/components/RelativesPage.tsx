@@ -2,8 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
-import { UI_SIZES } from '~/framework/components/constants';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 
 import { UserCard } from './UserCard';
@@ -30,6 +30,7 @@ export class RelativesPage extends React.PureComponent<IRelativesPageProps & Nav
         {this.props.relatives ? (
           <FlatList
             alwaysBounceVertical={false}
+            overScrollMode="never"
             data={this.props.relatives}
             keyExtractor={item => item.id}
             renderItem={({ item: user }) => (

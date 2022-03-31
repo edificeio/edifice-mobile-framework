@@ -2,20 +2,19 @@
  * Popup Menu
  * Show a drop-down menu from the header
  */
-
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ColorValue, ViewStyle, Platform } from 'react-native';
+import { ColorValue, Platform, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationNavigateActionPayload } from 'react-navigation';
 
-import { Icon } from './icon';
-import { Text } from './text';
-
 import theme from '~/app/theme';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+
 import { DEPRECATED_HeaderPrimaryAction } from './header';
+import { Icon } from './icon';
+import { Text } from './text';
 
 export interface IPopupMenuProps {
   iconName: string;
@@ -143,6 +142,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
           } as ViewStyle
         }
         alwaysBounceVertical={false}
+        overScrollMode="never"
       />
     );
   }

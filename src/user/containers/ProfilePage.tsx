@@ -78,7 +78,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           style={{ flex: 1, backgroundColor: '#ffffff' }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}>
-          <ScrollView alwaysBounceVertical={false}>
+          <ScrollView alwaysBounceVertical={false} overScrollMode="never">
             <SafeAreaView edges={['bottom', 'left', 'right']}>
               <UserCard
                 id={
