@@ -1,13 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  Alert,
-  Keyboard,
-  ScrollView,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Alert, Keyboard, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -274,11 +267,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           },
         ],
       );
-      return true;
-    } else {
-      navigation.dispatch(NavigationActions.back());
-      return false;
-    }
+    } else return true;
   }
 
   async doSend() {
