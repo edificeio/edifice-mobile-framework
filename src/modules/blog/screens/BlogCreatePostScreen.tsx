@@ -267,11 +267,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           },
         ],
       );
-      return true;
-    } else {
-      navigation.dispatch(NavigationActions.back());
-      return false;
-    }
+    } else return true;
   }
 
   async doSend() {
