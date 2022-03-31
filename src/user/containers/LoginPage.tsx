@@ -179,6 +179,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              spellCheck={false}
             />
             <TextInputLine
               isPasswordField

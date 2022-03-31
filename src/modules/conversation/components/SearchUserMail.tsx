@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TextInput, View, ViewStyle, TouchableOpacity, FlatList } from 'react-native';
+import { FlatList, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
@@ -71,6 +71,7 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
       }}
       autoFocus={autoFocus}
       autoCorrect={false}
+      spellCheck={false}
       autoCapitalize="none"
       style={textInputStyle}
       value={value}

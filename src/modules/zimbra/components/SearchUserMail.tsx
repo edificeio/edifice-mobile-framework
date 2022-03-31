@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TextInput, View, ViewStyle, Platform } from 'react-native';
-import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
+import { Platform, TextInput, View, ViewStyle } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 
 import { UI_SIZES } from '~/framework/components/constants';
@@ -87,6 +87,7 @@ const Input = ({ value, onChangeText, onSubmit, onBlur }) => {
   return (
     <TextInput
       autoCorrect={false}
+      spellCheck={false}
       autoCapitalize="none"
       style={textInputStyle}
       value={value}
