@@ -5,19 +5,18 @@ import { Alert, ScrollView, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { FlatButton } from '~/ui/FlatButton';
-import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
+import { IUserSession } from '~/framework/util/session';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -32,6 +31,7 @@ export interface IChangePasswordPageDataProps extends IChangePasswordModel {
   externalError: string;
   contextState: ContextState;
   submitState: SubmitState;
+  session: IUserSession;
 }
 export interface IChangePasswordPageEventProps {
   onSubmit(model: IChangePasswordModel, redirectCallback?: (dispatch) => void, forceChange?: boolean): Promise<void>;
@@ -142,7 +142,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
           text: I18n.t('tryagain'),
           onPress() {
             props.onRetryLoad({
-              login: getSessionInfo().login!,
+              login: props.session.user.login!,
             });
           },
           style: 'default',

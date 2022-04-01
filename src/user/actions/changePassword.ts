@@ -2,7 +2,6 @@ import I18n from 'i18n-js';
 import { Action, AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { getSessionInfo } from '~/App';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { notifierShowAction } from '~/infra/notifier/actions';
@@ -10,6 +9,7 @@ import { asyncActionTypes } from '~/infra/redux/async';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
 import { IActivationContext } from '~/utils/SubmitState';
+import { getUserSession } from '~/framework/util/session';
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -113,7 +113,7 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
         oldPassword: model.oldPassword,
         password: model.newPassword,
         confirmPassword: model.confirm,
-        login: getSessionInfo().login!,
+        login: getUserSession(getState()).user.login,
         callback: '',
         ...(forceChange ? { forceChange: 'force' } : {}),
       };
