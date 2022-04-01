@@ -76,6 +76,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
             }}>
             {(onboardingTexts as unknown as string[]).map((onboardingText, index) => (
               <View
+                key={index}
                 style={{
                   justifyContent: 'space-around',
                   alignItems: 'center',
