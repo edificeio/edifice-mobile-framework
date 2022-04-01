@@ -11,18 +11,22 @@
  *
  * If `children` prop is given, it will override all `left`, `right` and `title` props.
  */
-
 import styled from '@emotion/native';
 import * as React from 'react';
-import { Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
-import { NavigationScreenProp, NavigationParams, NavigationActions } from 'react-navigation';
+import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
+import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
+
+
+
+import theme from '~/app/theme';
+
+
 
 import { UI_SIZES } from './constants';
-import theme from '~/app/theme';
 import { Icon } from './icon';
-import { FontWeightIOS, rem, TextInverse } from './text';
-import { ButtonIcon } from './popupMenu';
-import { hasNotch } from 'react-native-device-info';
+import { FontWeightIOS, TextInverse, rem } from './text';
+
 
 /**
  * FakeHeader_Container
@@ -221,6 +225,42 @@ export const HeaderTitleAndSubtitle = (props: { title?: string; subtitle?: strin
     {props.title ? <HeaderTitle>{props.title}</HeaderTitle> : null}
   </>
 );
+
+export const ButtonIcon = ({ name, onPress, size, style, color }: ButtonIconProps) => {
+  if (color === undefined) color = 'white';
+  const Button = styled.TouchableOpacity({ ...buttonStyle, ...style });
+  return (
+    <Button onPress={onPress} style={{ ...buttonStyle, ...style }}>
+      <Icon color={color} size={size || 24} name={name} />
+    </Button>
+  );
+};
+
+export interface ButtonIconProps {
+  name: string;
+  size?: number;
+  style?: ViewStyle;
+  color?: ColorValue;
+  onPress: () => void | Promise<void>;
+}
+
+export const getButtonShadow = () => ({
+  elevation: 5,
+  shadowColor: theme.color.shadowColor,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.8,
+});
+
+export const buttonStyle: ViewStyle = {
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 50,
+  height: 50,
+  borderRadius: 50 / 2,
+  backgroundColor: theme.color.primary.regular,
+  ...(getButtonShadow() as ViewStyle),
+};
 
 export const DEPRECATED_HeaderPrimaryAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
   const { onPress, style, iconName, iconStyle, ...otherProps } = props as IHeaderActionGenericProps;
