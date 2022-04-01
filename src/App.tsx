@@ -19,7 +19,7 @@ import { initI18n } from './app/i18n';
 import AppModules from './app/modules';
 import theme from './app/theme';
 import { AllModulesBackup, OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
-import { getLoginStackToDisplay } from './navigation/LoginNavigator';
+import { getLoginStackToDisplay } from './navigation/helpers/loginRouteName';
 import { reset } from './navigation/helpers/navHelper';
 import { refreshToken } from './user/actions/login';
 import { loadCurrentPlatform, selectPlatform } from './user/actions/platform';

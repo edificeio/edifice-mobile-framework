@@ -4,27 +4,26 @@ import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
+
+
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import AppConf from '~/framework/util/appConf';
 import { Trackers } from '~/framework/util/tracker';
-import { clearRequestsCache, fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
-import { getLoginStackToDisplay } from '~/navigation/LoginNavigator';
+import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { userService } from '~/user/service';
 
-import {
-  actionTypeLoggedIn,
-  actionTypeLoggedInPartial,
-  actionTypeLoggedOut,
-  actionTypeLoginError,
-  actionTypeRequestLogin,
-} from './actionTypes/login';
+
+
+import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoggedOut, actionTypeLoginCancel, actionTypeLoginError, actionTypeRequestLogin } from './actionTypes/login';
 // eslint-disable-next-line import/order
-import { initActivationAccount as initActivationAccountAction } from './activation';
+import { initActivationAccount as initActivationAccountAction } from './initActivation';
 import { PLATFORM_STORAGE_KEY } from './platform';
+
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -240,6 +239,7 @@ export function loginAction(
             if (res.ok) {
               const body = await res.json();
               if (body.match) {
+                dispatch({ type: actionTypeLoginCancel });
                 dispatch(
                   initActivationAccountAction(
                     {

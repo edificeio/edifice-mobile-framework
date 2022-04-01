@@ -33,20 +33,6 @@ import { getLoginRouteName, loginRouteNames } from './helpers/loginRouteName';
  * The stack navigator has the benefit of allowing the user to go back easily with native gestures and screen animation.
  */
 
-export const getLoginStackToDisplay = (selectedPlatform: string | null, forceOnboarding: boolean = false) => {
-  const ret = [] as NavigationNavigateAction[];
-  const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
-  const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
-  const hasMultiplePlatforms = appConf.platforms.length > 1;
-  if (hasOnboardingTexts) ret.push(NavigationActions.navigate({ routeName: 'Onboarding' }));
-  if (hasMultiplePlatforms && (selectedPlatform || !ret.length))
-    ret.push(NavigationActions.navigate({ routeName: 'PlatformSelect' }));
-  if (!forceOnboarding && (selectedPlatform || !ret.length)) {
-    ret.push(NavigationActions.navigate({ routeName: getLoginRouteName() }));
-  }
-  return ret;
-};
-
 export default createStackNavigator(
   {
     Empty: { screen: () => <View /> },
