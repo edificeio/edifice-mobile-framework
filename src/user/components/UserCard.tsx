@@ -115,7 +115,7 @@ export const UserCard = ({
       }}
       onPress={onPress}>
       <View style={{ padding: 10, alignItems: 'center', justifyContent: 'center' }}>
-        <Avatar sourceOrId={id} size={Size.verylarge} decorate />
+        <Avatar sourceOrId={id} size={Size.verylarge} />
         {canEdit ? renderActions(hasAvatar, onChangeAvatar, onDeleteAvatar) : null}
         {updatingAvatar ? (
           <Loading customColor="white" customStyle={{ position: 'absolute', paddingTop: 6, paddingLeft: 3 }} />

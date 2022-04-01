@@ -3,15 +3,10 @@ import * as React from 'react';
 import { ImageURISource, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 
-
-
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
-
-
 import { Avatar, Size } from './Avatar';
-
 
 const SkippedContainer = styled.View({
   borderRadius: 15,
@@ -63,7 +58,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
   private renderItem({ item, index }) {
     return (
       <Slide>
-        <Avatar size={Size.verylarge} index={index} sourceOrId={item} decorate={index === this.state.slideIndex} />
+        <Avatar size={Size.verylarge} index={index} sourceOrId={item} />
       </Slide>
     );
   }

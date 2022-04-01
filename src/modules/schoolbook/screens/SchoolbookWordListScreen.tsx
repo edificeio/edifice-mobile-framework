@@ -324,3 +324,30 @@ export default connect(
   },
   dispatch => bindActionCreators({}, dispatch),
 )(SchoolbookWordListScreen);
+
+//   <SummaryCard
+//     // action={() => console.log('open schoolbook word')} //🟠 arrive on details page
+//     // id={8} //🟠 use as index and not prop
+//     userType={"Teacher"}
+//     acknowledgments={[]}
+//     parentId={'1234'}
+//     owner={'a5aa622a-591b-4c14-aca3-fc77bffd1098'}
+//     ownerName={'Gaspard'}
+//     ackNumber={0}
+//     category={'leisure'}
+//     respNumber={8}
+//     sendingDate={moment()}
+//     text={
+//       '<div>hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello</div>'
+//     }
+//     title={
+//       'Mot du carnet de liaison Mot du carnet de liaison Mot du carnet de liaison Mot du carnet de liaison Mot du carnet de liaison'
+//     }
+//     total={1}
+//     recipients={[
+//       { userId: 'a5aa622a-591b-4c14-aca3-fc77bffd1098', displayName: 'Joe Z' },
+//       { userId: 'b144e768-128f-443f-af46-b62c7c29ac3d', displayName: 'Wayne S' },
+//       { userId: 'a5aa622a-591b-4c14-aca3-fc77bffd1098', displayName: 'Herbie H' },
+//       { userId: 'b144e768-128f-443f-af46-b62c7c29ac3d', displayName: 'Bobbi H' },
+//     ]}
+//   />

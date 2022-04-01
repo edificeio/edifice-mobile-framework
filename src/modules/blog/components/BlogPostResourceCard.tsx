@@ -7,8 +7,9 @@ import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
-import { Text, TextSemiBold } from '~/framework/components/text';
+import { FontStyle, Text, TextSemiBold } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
+import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
 export const commentsString = (comments: number) =>
@@ -44,6 +45,8 @@ export const BlogPostResourceCard = ({
   const contentTextMaxLines = 5;
   const blogPostText = extractTextFromHtml(contentHtml);
   const blogPostMedia = extractMediaFromHtml(contentHtml);
+  const hasBlogPostText = blogPostText && !isStringEmpty(blogPostText);
+  const hasBlogPostMedia = blogPostMedia?.length;
 
   return (
     <ArticleContainer>
@@ -65,7 +68,7 @@ export const BlogPostResourceCard = ({
             {state === 'SUBMITTED' ? (
               <Label text={I18n.t('blog.post.needValidation')} color={theme.color.warning} labelStyle="outline" labelSize="small" />
             ) : null}
-            <ContentCardTitle>{title}</ContentCardTitle>
+            <ContentCardTitle style={{ ...FontStyle.Bold }}>{title}</ContentCardTitle>
           </>
         }
         footer={
@@ -80,7 +83,7 @@ export const BlogPostResourceCard = ({
             </View>
           ) : undefined
         }>
-        {blogPostText ? (
+        {hasBlogPostText ? (
           <View style={{ marginBottom: blogPostMedia?.length ? 10 : undefined }}>
             <Text
               style={{ color: theme.color.text.regular }}
@@ -95,7 +98,7 @@ export const BlogPostResourceCard = ({
             {isTextTruncatedWithBackspace ? <Text style={{ color: theme.color.text.regular }}>...</Text> : null}
           </View>
         ) : null}
-        {blogPostMedia ? renderMediaPreview(blogPostMedia) : null}
+        {hasBlogPostMedia ? renderMediaPreview(blogPostMedia) : null}
       </TouchableResourceCard>
     </ArticleContainer>
   );

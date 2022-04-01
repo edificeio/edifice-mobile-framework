@@ -34,6 +34,12 @@ const imports = {
   'onboarding-1': import(`../../../../assets/images/onboarding/onboarding_1.svg`),
   'onboarding-2': import(`../../../../assets/images/onboarding/onboarding_2.svg`),
   'onboarding-3': import(`../../../../assets/images/onboarding/onboarding_3.svg`),
+  'schoolbook-canteen': import(`../../../../assets/images/schoolbook/canteen.svg`),
+  'schoolbook-event': import(`../../../../assets/images/schoolbook/event.svg`),
+  'schoolbook-last-minute': import(`../../../../assets/images/schoolbook/last-minute.svg`),
+  'schoolbook-leisure': import(`../../../../assets/images/schoolbook/leisure.svg`),
+  'schoolbook-outing': import(`../../../../assets/images/schoolbook/outing.svg`),
+  'schoolbook-various': import(`../../../../assets/images/schoolbook/various.svg`),
 };
 
 export interface NamedSVGProps extends SvgProps {

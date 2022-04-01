@@ -105,6 +105,14 @@ export const getStudentsByAcknowledgementForTeacher = (wordReport: IWordReport) 
   };
 };
 
+export const getIsWordAcknowledgedForTeacher = (ackNumber: number, total: number) => {
+  return ackNumber === total;
+};
+
+export const getHasSingleRecipientForTeacher = (recipients: any) => {
+  return recipients?.length === 1;
+};
+
 export const getAcknowledgementNamesForStudent = (studentId: string, wordReport: IWordReport) => {
   const concernedStudent = wordReport.report?.find(concernedStudent => concernedStudent.owner === studentId);
   return concernedStudent?.acknowledgments.map(acknowledgment => acknowledgment.parentName);
@@ -129,13 +137,13 @@ export const getUnacknowledgedStudentIdsForParent = (parentId: string, wordRepor
 };
 
 export const getIsWordAcknowledgedForParent = (parentId: string, acknowledgments: IAcknowledgment[]) => {
-  return acknowledgments?.find(acknowledgment => acknowledgment.owner === parentId);
+  return acknowledgments?.some(acknowledgment => acknowledgment.owner === parentId);
 };
 
 export const getResponsesForParent = (parentId: string, responses: IResponse[]) => {
   return responses?.filter(response => response.owner === parentId);
 };
 
-export const getResponseNumberForStudentAndParent = (studentAndParentWord: IStudentAndParentWord) => {
-  return studentAndParentWord.responses?.length;
+export const getResponseNumberForStudentAndParent = (responses: IResponse[] | null) => {
+  return responses?.length;
 };

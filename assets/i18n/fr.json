@@ -187,6 +187,7 @@
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "for": "Pour",
+    "from": "De :",
     "idf": {
       "passwordRules": "Le nouveau mot de passe doit comporter 12 caractères minimum, incluant au minimum 1 majuscule, 1 minuscule et 1 chiffre ou 1 caractère spécial parmi les suivants : $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- ."
     },
@@ -202,6 +203,7 @@
     "save": "Enregistrer",
     "search": "Rechercher",
     "sommeNumeriqueAlert_temp": "La plateforme \"Somme Numérique\" ne sera plus disponible à partir de la rentrée 2021. Il faudra utiliser l'accès \"ENT Hauts-de-France\" dans la liste des réseaux sociaux éducatifs.",
+    "to": "À :",
     "url": {
       "cgu": "/assets/cgu/ODE_CGU.pdf",
       "cookies": "/assets/cgu/notice_cookies.pdf",
@@ -575,6 +577,19 @@
   "rename": "Renommer",
   "restore-successful": "Restoration terminée",
   "schoolbook": {
+    "acknowledge": "Confirmer la lecture",
+    "acknowledged": "Lu",
+    "acknowledgements": "Lus",
+    "categories": {
+      "canteen": "Cantine",
+      "event": "Événements",
+      "last-minute": "Dernière minute",
+      "leisure": "Loisirs",
+      "outing": "Sorties",
+      "various": "Divers"
+    },
+    "response": "Réponse",
+    "responses": "Réponses",
     "schoolbookWordDetailsScreen": {
       "acknowledge": "Confirmer la lecture",
       "alreadyConfirmed": "Vous avez confirmé la lecture de ce mot",
@@ -599,15 +614,6 @@
     "appName": "Carnet de liaison",
     "tabName": "Carnet de liaison"
   },
-  "schoolbook-acknowledge": "Confirmer la lecture",
-  "schoolbook-already-confirmed": "Vous avez confirmé la lecture de ce mot",
-  "schoolbook-appTitle": "Carnet de liaison",
-  "schoolbook-back-with-ack": "Confirmer la lecture",
-  "schoolbook-back-without-ack": "Quitter",
-  "schoolbook-back-without-ack-confirm": "Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
-  "schoolbook-must-read": "Un parent doit lire ce mot !",
-  "schoolbook-read-by": "Lu par",
-  "schoolbook-readByNbRelatives": "Lu par {{nb}} parent(s)",
   "seeDetails": "Voir détails",
   "seeLess": "Voir moins",
   "seeMore": "Voir plus",

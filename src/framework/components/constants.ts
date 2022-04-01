@@ -1,7 +1,6 @@
 import { Dimensions, Platform, StatusBar } from 'react-native';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
-
 const screenDimensions = Dimensions.get('window');
 
 export const UI_ANIMATIONS = {
@@ -23,11 +22,12 @@ export const UI_SIZES = {
   },
   dimensions: {
     height: {
-      medium: 104,
+      medium: 18,
     },
     width: {
       tiny: 1,
       small: 2,
+      medium: 18,
     },
   },
   elements: {

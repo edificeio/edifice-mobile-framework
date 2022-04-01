@@ -18,10 +18,11 @@ import { displayPastDate } from '~/framework/util/date';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
+import { Badge } from './badge';
 import { UI_SIZES } from './constants';
 import { Icon } from './picture';
-import { FontStyle, Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle, remlh } from './text';
 import { Picture, PictureProps } from './picture';
+import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle, remlh } from './text';
 
 const cardPaddingV = 12;
 const cardPaddingH = 16;
@@ -58,6 +59,8 @@ export interface ITouchableContentCardProps extends IContentCardProps, Touchable
 interface IContentCardProps_Base extends IContentCardProps, ITouchableContentCardProps {
   cardComponent?: React.ComponentType;
   withoutPadding?: boolean;
+  emphasizedHeader?: boolean;
+  customHeaderIndicatorStyle?: ViewStyle;
 }
 
 const FooterSeparator = styled.View({
@@ -77,15 +80,35 @@ const FooterFlexView = styled.View({
 });
 const ContentCard_base = (props: IContentCardProps_Base) => {
   const CC = props.cardComponent ?? CardWithoutPadding;
-  const { header, footer, children, headerIndicator, cardComponent, withoutPadding, ...viewProps } = props;
-  const HeaderFlexViewWithPadding = styled(HeaderFlexView)(cardPadding, withoutPadding && { paddingHorizontal: 0 });
+  const {
+    header,
+    footer,
+    children,
+    headerIndicator,
+    cardComponent,
+    withoutPadding,
+    emphasizedHeader,
+    customHeaderIndicatorStyle,
+    ...viewProps
+  } = props;
+  const HeaderFlexViewWithPadding = styled(HeaderFlexView)(
+    cardPadding,
+    withoutPadding && { paddingHorizontal: 0 },
+    emphasizedHeader && {
+      backgroundColor: theme.greyPalette.fog,
+      borderBottomColor: theme.greyPalette.pearl,
+      borderBottomWidth: UI_SIZES.dimensions.width.tiny,
+      borderTopRightRadius: 15,
+      borderTopLeftRadius: 15,
+    },
+  );
   const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
   const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
   return (
     <CC {...viewProps}>
       <HeaderFlexViewWithPadding>
         <View style={{ flex: 1 }}>{props.header ?? null}</View>
-        <View style={{ flex: 0 }}>{props.headerIndicator ?? null}</View>
+        <View style={[{ flex: 0 }, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
       </HeaderFlexViewWithPadding>
       {props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null}
       {props.footer ? (
@@ -120,7 +143,7 @@ export const ContentView = (props: IContentCardProps) => {
 /** Pre-configured title for ContentCard */
 export const ContentCardTitle = (props: TextProps) => {
   const { style, ...otherProps } = props;
-  const Comp = styled(TextBold)({ ...TextColorStyle.Action, ...TextSizeStyle.SlightBig });
+  const Comp = styled(Text)({ ...TextColorStyle.Action, ...TextSizeStyle.SlightBig });
   return <Comp numberOfLines={2} ellipsizeMode="tail" {...otherProps} style={style} />;
 };
 
@@ -141,7 +164,7 @@ export const ContentCardHeader = (props: IContentCardHeaderProps) => {
       {props.icon ? (
         <>
           <View style={{ flex: 0 }}>{props.icon}</View>
-          <View style={{ flex: 0, width: 12 }} />
+          <View style={{ flex: 0, width: 8 }} />
         </>
       ) : null}
       <View style={{ flex: 1 }}>
@@ -153,9 +176,9 @@ export const ContentCardHeader = (props: IContentCardHeaderProps) => {
           )
         ) : null}
         {props.date ? (
-          <Text style={{ color: theme.color.text.light, fontSize: 12 }}>
+          <TextItalic style={{ color: theme.greyPalette.graphite, ...TextSizeStyle.Small }}>
             {typeof props.date === 'string' ? props.date : displayPastDate(props.date)}
-          </Text>
+          </TextItalic>
         ) : null}
       </View>
     </View>
@@ -177,44 +200,7 @@ export const ContentCardIcon = (props: IContentCardIconProps) => {
   );
 };
 
-export interface IBadgeProps {
-  content: number | string;
-  color?: string | ColorValue;
-}
-const ViewBadge = styled.View(
-  {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    justifyContent: 'center',
-    height: 18,
-    width: 18,
-    borderRadius: 10,
-  },
-  (props: Pick<IBadgeProps, 'color'>) => ({
-    backgroundColor: props.color || theme.color.neutral.regular,
-  }),
-);
-const BadgeText = styled(TextSemiBold)({
-  color: theme.color.text.inverse,
-});
-/** Badge builder */
-export const Badge = ({ content, color }: IBadgeProps) => {
-  if (!content) {
-    return null;
-  }
-
-  return (
-    <ViewBadge color={color}>
-      {typeof content === 'number' ? (
-        <BadgeText>{content > 99 ? '99+' : content}</BadgeText>
-      ) : typeof content === 'string' ? (
-        <Icon size={10} color="#ffffff" name={content} />
-      ) : null}
-    </ViewBadge>
-  );
-};
-
-export interface IResourceCardProps extends ViewProps {
+export interface IResourceCardProps extends ViewProps, Omit<Partial<IContentCardProps>, 'header'> {
   icon?: IContentCardIconProps;
   header?: string | React.ReactElement;
   headerHtml?: string;
@@ -281,7 +267,9 @@ const ResourceCard_base = (props: IResourceCardProps_base) => {
 export const ResourceCard = (props: IResourceCardProps) => {
   return <ResourceCard_base {...props} CC={ContentCard} />;
 };
-export const TouchableResourceCard = (props: IResourceCardProps & TouchableOpacityProps) => {
+export const TouchableResourceCard = (
+  props: IResourceCardProps & TouchableOpacityProps & Omit<ITouchableContentCardProps, 'header'>,
+) => {
   return <ResourceCard_base {...props} CC={TouchableContentCard} />;
 };
 

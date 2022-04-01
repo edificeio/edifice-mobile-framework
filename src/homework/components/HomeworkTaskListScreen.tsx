@@ -181,7 +181,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             } else {
               const isPastDate = title.isBefore(today(), 'day');
               const dayOfTheWeek = getDayOfTheWeek(title);
-              const dayColor = theme.days[dayOfTheWeek];
+              const dayColor = theme.homeworkDays[dayOfTheWeek];
               const timelineColor = isPastDate ? theme.greyPalette.cloudy : dayColor;
               return (
                 <View
