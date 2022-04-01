@@ -7,6 +7,8 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/namedSVG';
@@ -14,9 +16,10 @@ import { H1, TextSemiBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { getLoginRouteName } from '~/navigation/LoginNavigator';
+import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { FlatButton } from '~/ui/FlatButton';
 import { selectPlatform } from '~/user/actions/platform';
+
 
 // TYPES ==========================================================================================
 

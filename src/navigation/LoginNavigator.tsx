@@ -4,9 +4,14 @@ import { View } from 'react-native';
 import { NavigationActions, NavigationNavigateAction } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
+
+
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import appConf from '~/framework/util/appConf';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { redirectAfterChangePassword } from '~/user/actions/login';
 import ActivationPage from '~/user/containers/ActivationPage';
+import ChangePasswordPage from '~/user/containers/ChangePasswordPage';
 import FederatedAccountPage from '~/user/containers/FederatedAccount';
 import ForgotPage from '~/user/containers/ForgotPage';
 import LoginPage from '~/user/containers/LoginPage';
@@ -14,9 +19,11 @@ import LoginWAYFPage from '~/user/containers/LoginWAYFPage';
 import OnboardingScreen from '~/user/containers/OnboardingScreen';
 import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
 import WAYFPage from '~/user/containers/WAYFPage';
-import ChangePasswordPage from '~/user/containers/ChangePasswordPage';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { redirectAfterChangePassword } from '~/user/actions/login';
+
+
+
+import { getLoginRouteName, loginRouteNames } from './helpers/loginRouteName';
+
 
 /**
  * # Login Navigator
@@ -40,18 +47,14 @@ export const getLoginStackToDisplay = (selectedPlatform: string | null, forceOnb
   return ret;
 };
 
-export const getLoginRouteName = () => {
-  return DEPRECATED_getCurrentPlatform()?.wayf ? 'LoginWAYF' : 'LoginHome';
-};
-
 export default createStackNavigator(
   {
     Empty: { screen: () => <View /> },
     FederatedAccount: { screen: FederatedAccountPage },
     Forgot: { screen: ForgotPage },
-    LoginHome: { screen: LoginPage },
+    [loginRouteNames.default]: { screen: LoginPage },
     LoginActivation: { screen: ActivationPage },
-    LoginWAYF: { screen: LoginWAYFPage },
+    [loginRouteNames.wayf]: { screen: LoginWAYFPage },
     Onboarding: { screen: OnboardingScreen },
     PlatformSelect: { screen: PlatformSelectPage },
     WAYF: { screen: WAYFPage },
@@ -60,7 +63,7 @@ export default createStackNavigator(
       params: {
         redirectCallback: redirectAfterChangePassword,
         forceChange: true,
-        isLoginNavigator: true
+        isLoginNavigator: true,
       },
     },
   },

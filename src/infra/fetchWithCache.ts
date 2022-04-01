@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getLoginRouteName } from '~/navigation/LoginNavigator';
+import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate } from '~/navigation/helpers/navHelper';
 
 import { Connection } from './Connection';

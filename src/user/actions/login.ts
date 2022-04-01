@@ -10,7 +10,8 @@ import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
-import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/LoginNavigator';
+import { getLoginStackToDisplay } from '~/navigation/LoginNavigator';
+import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { userService } from '~/user/service';
 
