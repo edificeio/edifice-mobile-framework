@@ -40,12 +40,6 @@ require('./workspace');
 //require("./support");
 require('./user');
 
-// Disable Yellow Box on release builds.
-if (__DEV__) {
-  // tslint:disable-next-line:no-console
-  console.disableYellowBox = true;
-}
-
 class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: boolean }> {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
