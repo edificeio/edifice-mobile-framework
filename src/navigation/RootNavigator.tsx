@@ -85,7 +85,7 @@ interface MainNavigatorHOCProps {
   dispatch: any;
 }
 
-class MainNavigatorHOC extends React.PureComponent<MainNavigatorHOCProps> {
+class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   // CAUTION : This prevents navigation to be rebuilt whenever the redux store is updated.
   // DO NOT remove this. This is NOT for perforance purpose.
   // ToDo : Get rid of this when update to React Navigation 6.
