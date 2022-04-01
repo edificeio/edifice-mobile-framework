@@ -3,16 +3,22 @@
  * All tools to manage push-notifications opening
  */
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+
+
+import { IGlobalState } from '~/AppStore';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 
+
+
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';
+
 
 export async function requestUserPermission() {
   const authorizationStatus = await messaging().requestPermission();
@@ -21,11 +27,11 @@ export async function requestUserPermission() {
   }
 }
 
-const _AppPushNotificationHandlerComponent: FunctionComponent<{
+function _AppPushNotificationHandlerComponent(props: PropsWithChildren<{
   isLoggedIn: boolean;
   apps: string[];
   dispatch: ThunkDispatch<any, any, any>;
-}> = props => {
+}>) {
   const [notification, setNotification] = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
 
   useEffect(() => {
@@ -65,14 +71,14 @@ const _AppPushNotificationHandlerComponent: FunctionComponent<{
   return <>{props.children}</>;
 };
 
-const mapStateToProps: (s: any) => any = s => {
+const mapStateToProps = (s: IGlobalState) => {
   return {
-    isLoggedIn: s?.user?.auth?.loggedIn,
-    apps: s?.user?.auth?.apps,
+    isLoggedIn: s?.user?.auth?.loggedIn as boolean,
+    apps: s?.user?.auth?.apps as string[],
   };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => ({
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>) => ({
   dispatch,
 });
 
