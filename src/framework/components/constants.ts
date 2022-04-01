@@ -1,5 +1,6 @@
-import { Dimensions, Platform } from 'react-native';
+import { Dimensions, Platform, StatusBar } from 'react-native';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
+
 
 const screenDimensions = Dimensions.get('window');
 
@@ -16,8 +17,8 @@ export const UI_ANIMATIONS = {
 
 export const UI_SIZES = {
   aspectRatios: {
+    card: 15 / 14,
     thumbnail: 7 / 5,
-    card: 15 / 14
   },
   dimensions: {
     height: {
@@ -31,13 +32,14 @@ export const UI_SIZES = {
   elements: {
     actionButtonSize: 20,
     navbarHeight: 56,
+    statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
   },
   radius: {
-    small: 4,
-    madium: 8,
+    medium: 8,
     large: 21,
     extraLarge: 24,
+    small: 4,
   },
   screen: {
     bottomInset: initialWindowMetrics?.insets?.bottom || 0,
