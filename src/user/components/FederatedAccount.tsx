@@ -6,7 +6,7 @@ import { SafeAreaView, ScrollView, View } from 'react-native';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 
 // TYPES ---------------------------------------------------------------------------
 

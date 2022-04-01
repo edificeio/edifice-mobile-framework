@@ -2,7 +2,7 @@ import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 
-import { Line } from '~/ui';
+import { Line } from '~/ui/Grid';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Label } from '~/ui/Typography';
 import { Toggle } from '~/ui/forms/Toggle';

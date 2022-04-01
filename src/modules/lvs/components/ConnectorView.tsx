@@ -2,7 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { FlatButton, Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
+import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage } from '~/ui/Typography';
 
 interface IConnectorViewDataProps {

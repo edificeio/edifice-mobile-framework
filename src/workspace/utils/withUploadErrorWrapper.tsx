@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { Text, TextBold } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 import { DialogButtonOk, DialogContainer, DialogTitle } from '~/ui/ConfirmDialog';
 import { actionTypesUpload } from '~/workspace/actions/upload';
 import { resetError } from '~/workspace/reducers/items';

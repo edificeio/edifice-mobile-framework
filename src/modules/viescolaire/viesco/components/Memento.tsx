@@ -1,12 +1,15 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+
 
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
 import { Text, TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
 
 export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
   return (

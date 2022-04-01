@@ -15,7 +15,7 @@ import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/LoginNavigator';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 import { selectPlatform } from '~/user/actions/platform';
 
 // TYPES ==========================================================================================

@@ -2,7 +2,7 @@ import style from 'glamorous-native';
 import * as React from 'react';
 import { View, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
 
-import { Row, RowProperties } from '.';
+import { Row, RowProperties } from './Grid';
 import { Weight } from './Typography';
 import { Icon } from './icons/Icon';
 

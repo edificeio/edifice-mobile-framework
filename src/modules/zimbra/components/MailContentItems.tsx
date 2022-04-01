@@ -6,19 +6,24 @@ import { Platform, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
+
+
 import { Text, TextBold } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { getFileIcon } from '~/modules/zimbra/utils/fileIcon';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
-import { Icon } from '~/ui';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { ButtonIcon } from '~/ui/ButtonIconText';
 import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Icon } from '~/ui/icons/Icon';
+
+
 
 import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from './MailItem';
+
 
 const User = ({ userId, userName }: { userId: string; userName: string }) => {
   const [dotColor, setDotColor] = React.useState('white');

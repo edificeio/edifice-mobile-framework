@@ -1,17 +1,22 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
+import { StyleSheet, View } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
-import DrawerOption from './DrawerOption';
+
 
 import CreateFolderModal from '~/modules/zimbra/containers/CreateFolderModal';
 import { IFolder, IQuota } from '~/modules/zimbra/state/initMails';
 import { IRootFolderList } from '~/modules/zimbra/state/rootFolders';
-import { Icon } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
+
+
+import DrawerOption from './DrawerOption';
+
 
 type DrawerMenuProps = {
   activeItemKey: string;

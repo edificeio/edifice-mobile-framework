@@ -11,7 +11,7 @@ import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/d
 import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import { PageContainer } from '~/ui/ContainerContent';
 import Dropdown from '~/ui/Dropdown';
 

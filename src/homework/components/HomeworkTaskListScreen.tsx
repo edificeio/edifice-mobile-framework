@@ -24,7 +24,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import today from '~/utils/today';
 
 import config from '../config';

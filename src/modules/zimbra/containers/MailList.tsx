@@ -7,16 +7,12 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+
+
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
-import {
-  deleteMailsAction,
-  moveMailsToFolderAction,
-  restoreMailsAction,
-  toggleReadAction,
-  trashMailsAction,
-} from '~/modules/zimbra/actions/mail';
+import { deleteMailsAction, moveMailsToFolderAction, restoreMailsAction, toggleReadAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
 import { fetchMailListAction, fetchMailListFromFolderAction } from '~/modules/zimbra/actions/mailList';
 import { fetchQuotaAction } from '~/modules/zimbra/actions/quota';
 import MailList from '~/modules/zimbra/components/MailList';
@@ -27,11 +23,14 @@ import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails'
 import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
+
 
 import { IInit } from './DrawerMenu';
+
 
 // ------------------------------------------------------------------------------------------------
 

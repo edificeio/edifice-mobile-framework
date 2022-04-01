@@ -1,24 +1,21 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { PageView } from '~/framework/components/page';
 
-import {
-  postLateEvent,
-  updateLateEvent,
-  postLeavingEvent,
-  updateLeavingEvent,
-  deleteEvent,
-} from '~/modules/viescolaire/presences/actions/events';
+
+
+import { PageView } from '~/framework/components/page';
+import { deleteEvent, postLateEvent, postLeavingEvent, updateLateEvent, updateLeavingEvent } from '~/modules/viescolaire/presences/actions/events';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { Icon } from '~/ui';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
-import { Text, TextBold, Label } from '~/ui/Typography';
+import { Label, Text, TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
 
 type DeclarationState = {
   date: Date;

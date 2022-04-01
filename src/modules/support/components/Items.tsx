@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-
 
 import { IApp, IEstablishment } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 import Dropdown from '~/ui/Dropdown';
 
 export const EstablishmentPicker = ({

@@ -2,10 +2,13 @@ import style from 'glamorous-native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+
+
 import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Icon } from '~/ui/icons/Icon';
+
 
 const TapCircle = style(TouchableOpacity)(
   {

@@ -2,8 +2,11 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { Icon } from '~/ui';
-import { TextBold, Text } from '~/ui/Typography';
+
+
+import { Text, TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
 
 type DrawerOptionProps = {
   label: string;

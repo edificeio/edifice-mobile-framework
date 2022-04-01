@@ -1,14 +1,17 @@
 import style from 'glamorous-native';
 import * as React from 'react';
-import { Platform, ViewStyle, SafeAreaView, StyleProp } from 'react-native';
+import { Platform, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { connect } from 'react-redux';
+
+
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Icon } from '~/ui/icons/Icon';
+
 
 /**
  * DEPRECATED

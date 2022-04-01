@@ -1,12 +1,15 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { useWindowDimensions, View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
+
+
 
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 import { Text, TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
 
 export const ModalPermanentDelete = ({
   deleteModal,

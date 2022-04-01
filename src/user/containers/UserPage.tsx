@@ -22,7 +22,7 @@ import { ImagePicked } from '~/infra/imagePicker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth';
-import { ButtonsOkCancel } from '~/ui';
+import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
 import { Label } from '~/ui/Typography';

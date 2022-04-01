@@ -3,17 +3,23 @@ import React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
+
+
 import { UI_SIZES } from '~/framework/components/constants';
 import Notifier from '~/infra/notifier/container';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon, Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Loading } from '~/ui/Loading';
 import { Text } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
+
 
 import Attachment from './Attachment';
 import SearchUserMail from './SearchUserMail';
+
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
 

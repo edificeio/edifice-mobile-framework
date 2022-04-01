@@ -1,7 +1,11 @@
 import * as React from 'react';
-import { TouchableOpacity, Platform } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+
+
+
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '.';
+import { Icon } from '~/ui/icons/Icon';
+
 
 interface MediaActionProps {
   iconName: string;

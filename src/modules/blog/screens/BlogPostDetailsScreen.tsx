@@ -59,8 +59,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
-import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';

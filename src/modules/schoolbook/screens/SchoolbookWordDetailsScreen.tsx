@@ -23,7 +23,6 @@ import { IUserSession, UserType, getUserSession } from '~/framework/util/session
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { acknowledgeSchoolbookWordAction, getSchoolbookWordDetailsAction } from '~/modules/schoolbook/actions';
-import moduleConfig from '~/modules/schoolbook/moduleConfig';
 import {
   ISchoolbookWordReport,
   getAcknowledgeNamesForChild,
@@ -32,7 +31,8 @@ import {
   getUnacknowledgedChildrenIdsForParent,
 } from '~/modules/schoolbook/reducer';
 import { schoolbookUriCaptureFunction } from '~/modules/schoolbook/service';
-import { ButtonsOkCancel, FlatButton } from '~/ui';
+import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
+import { FlatButton } from '~/ui/FlatButton';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
 

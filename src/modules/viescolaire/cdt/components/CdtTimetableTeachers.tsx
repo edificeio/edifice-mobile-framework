@@ -9,7 +9,8 @@ import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homewo
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
 import { homeworkListDetailsTeacherAdapter, sessionListDetailsTeacherAdapter } from '~/modules/viescolaire/utils/cdt';
 import { ICourse } from '~/modules/viescolaire/viesco/state/courses';
-import { Icon, Loading } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
+import { Loading } from '~/ui/Loading';
 import Calendar from '~/ui/Calendar';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';

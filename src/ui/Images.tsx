@@ -13,7 +13,7 @@ import { CommonStyles } from '~/styles/common/styles';
 
 
 
-import { Row } from '.';
+import { Row } from './Grid';
 import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
 import { Italic } from './Typography';

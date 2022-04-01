@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Image, ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 import { IconButton } from '~/ui/IconButton';
 
 import { Card, InfoCard } from './card';

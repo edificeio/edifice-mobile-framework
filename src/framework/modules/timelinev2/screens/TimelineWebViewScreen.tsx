@@ -12,7 +12,7 @@ import NotificationTopInfo from '~/framework/modules/timelinev2/components/Notif
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 
 // TYPES ==========================================================================================
 

@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, View, SafeAreaView, Platform } from 'reac
 
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
-import { ButtonIconText } from '~/ui';
+import { ButtonIconText } from '~/ui/ButtonIconText';
 import { IEventProps, EVENT_TYPE } from '~/workspace/types';
 import { IFile } from '~/workspace/types/states';
 import { renderImage } from '~/workspace/utils/image';

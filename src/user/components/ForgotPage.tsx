@@ -7,7 +7,8 @@ import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpac
 import { PageView } from '~/framework/components/page';
 import { H1, Text, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton, Icon } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
+import { Icon } from '~/ui/icons/Icon';
 import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';

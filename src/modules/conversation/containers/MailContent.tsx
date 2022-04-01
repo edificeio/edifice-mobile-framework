@@ -33,7 +33,7 @@ import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
 import { DraftType } from '~/modules/conversation/containers/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { getMailContentState } from '~/modules/conversation/state/mailContent';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 

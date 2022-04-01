@@ -1,16 +1,21 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
-import { RenderPJs, HeaderMail, FooterButton, HeaderMailDetails } from './MailContentItems';
+
 
 import { getSessionInfo } from '~/App';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { DraftType } from '~/modules/zimbra/containers/NewMail';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
-import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { Loading } from '~/ui/Loading';
+
+
+
+import { FooterButton, HeaderMail, HeaderMailDetails, RenderPJs } from './MailContentItems';
+
 
 type MailContentProps = {
   navigation: any;

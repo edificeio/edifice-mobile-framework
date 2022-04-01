@@ -14,7 +14,7 @@ import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
 import { getProfileColor, getUserColor } from '~/modules/conversation/utils/userColor';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 

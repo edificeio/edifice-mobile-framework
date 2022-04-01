@@ -14,7 +14,7 @@ import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { signURISource, transformedSrc } from '~/infra/oauth';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 
 import config from '../config';
 

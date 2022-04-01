@@ -21,7 +21,7 @@ import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ICountMailboxes } from '~/modules/conversation/state/count';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { IMail } from '~/modules/conversation/state/mailContent';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import { Weight } from '~/ui/Typography';
 
 interface IMailListDataProps {

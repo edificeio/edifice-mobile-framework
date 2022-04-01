@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationScreenProp } from 'react-navigation';
 
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import Dropdown from '~/ui/Dropdown';
 
 import {
