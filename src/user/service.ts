@@ -8,6 +8,18 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
+export interface IEntcoreParentChildrenByStructure {
+  children: {
+    classesNames: string[];
+    displayName: string;
+    externalId: string;
+    id: string;
+  }[];
+  structureName: string;
+}
+
+export type IEntcoreParentChildrenByStructureList = IEntcoreParentChildrenByStructure[];
+
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
   if (version1 === version2) {
@@ -190,8 +202,10 @@ class UserService {
   }
   async getUserChildren(userId: string) {
     try {
-      const userChildren = await fetchJSONWithCache(`/directory/user/${userId}/children`);
-      return userChildren;
+      const parentChildrenByStructureList = (await fetchJSONWithCache(
+        `/directory/user/${userId}/children`,
+      )) as IEntcoreParentChildrenByStructureList;
+      return parentChildrenByStructureList;
     } catch (e) {
       console.warn('[UserService] getUserChildren: could not get children data', e);
     }

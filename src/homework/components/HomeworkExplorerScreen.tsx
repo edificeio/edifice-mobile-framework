@@ -82,15 +82,8 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
         title={I18n.t(`homework-diaries-emptyScreenTitle`)}
         text={I18n.t('homework-diaries-emptyScreenText')}
         buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createDiary') : undefined}
-        buttonAction={() => {
-          //TODO: create generic function inside oauth (use in myapps, etc.)
-          if (!DEPRECATED_getCurrentPlatform()) {
-            return null;
-          }
-          const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;
-          openUrl(url);
-          Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
-        }}
+        buttonUrl="/homeworks"
+        buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
       />
     );
   }

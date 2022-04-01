@@ -22,11 +22,15 @@ export const UI_SIZES = {
   dimensions: {
     height: {
       medium: 18,
+      large: 22,
+      largePlus: 38,
     },
     width: {
       tiny: 1,
       small: 2,
       medium: 18,
+      large: 22,
+      largePlus: 38,
     },
   },
   elements: {
