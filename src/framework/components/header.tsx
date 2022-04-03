@@ -11,18 +11,18 @@
  *
  * If `children` prop is given, it will override all `left`, `right` and `title` props.
  */
-
 import styled from '@emotion/native';
 import * as React from 'react';
 import { Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
-import { NavigationScreenProp, NavigationParams, NavigationActions } from 'react-navigation';
+import { hasNotch } from 'react-native-device-info';
+import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
+
+import theme from '~/app/theme';
 
 import { UI_SIZES } from './constants';
-import theme from '~/app/theme';
 import { Icon } from './icon';
-import { FontWeightIOS, TextInverse, TextSizeStyle } from './text';
 import { ButtonIcon } from './popupMenu';
-import { hasNotch } from 'react-native-device-info';
+import { FontWeightIOS, TextInverse, TextSizeStyle } from './text';
 
 /**
  * FakeHeader_Container

@@ -4,12 +4,12 @@
  * Do not use default React Native <Text> component, please use this one instead.
  * Don't forget to use <NestedText> instead of <Text> for nested text styles.
  */
-
 import styled from '@emotion/native';
 import { Platform, Text as RNText, TextStyle } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 import theme from '~/app/theme';
+
 import { UI_SIZES } from './constants';
 
 /**
