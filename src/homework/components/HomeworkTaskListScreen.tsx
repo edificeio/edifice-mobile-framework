@@ -6,8 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ViewOverflow from 'react-native-view-overflow';
 import { NavigationInjectedProps } from 'react-navigation';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -29,13 +27,10 @@ import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { Loading } from '~/ui';
 import today from '~/utils/today';
 
-
-
 import config from '../config';
 import HomeworkCard from './HomeworkCard';
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
 import HomeworkTimeline from './HomeworkTimeline';
-
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -71,7 +66,11 @@ export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
   NavigationInjectedProps<{}> &
   IHomeworkTaskListScreenState;
 
-type DataType = { type: 'day'; title: moment.Moment; data: { type: 'day', id: string; title: string; content: string; date: moment.Moment }[] };
+type DataType = {
+  type: 'day';
+  title: moment.Moment;
+  data: { type: 'day'; id: string; title: string; content: string; date: moment.Moment }[];
+};
 type DataTypeOrFooter = DataType | { type: 'footer'; data: [{ type: 'footer' }]; title?: never };
 
 // Main component ---------------------------------------------------------------------------------
@@ -132,7 +131,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           data: day.tasks.map(task => ({
             ...task,
             date: day.date,
-            type: 'day'
+            type: 'day',
           })),
         }))
       : [];
@@ -256,7 +255,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               </TouchableOpacity>
             ) : null;
           }}
-          ListFooterComponent={<SafeAreaView edges={['bottom']}/>}
+          ListFooterComponent={<SafeAreaView edges={['bottom']} />}
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
               <EmptyScreen
@@ -303,7 +302,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           style={{
             flexDirection: 'row',
             borderWidth: UI_SIZES.dimensions.width.tiny,
-            borderRadius: UI_SIZES.radius.madium,
+            borderRadius: UI_SIZES.radius.medium,
             borderColor: theme.greyPalette.cloudy,
             paddingVertical: UI_SIZES.spacing.large,
             paddingRight: UI_SIZES.spacing.extraLarge,
