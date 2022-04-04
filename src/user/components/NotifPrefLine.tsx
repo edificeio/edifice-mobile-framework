@@ -1,13 +1,16 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 
-import { Line } from '~/ui/Grid';
+
+
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Line } from '~/ui/Grid';
 import { Label } from '~/ui/Typography';
 import { Toggle } from '~/ui/forms/Toggle';
 
-const Container = style(TouchableOpacity)({
+
+const Container = styled(TouchableOpacity)({
   alignItems: 'center',
   backgroundColor: 'white',
   borderBottomWidth: 1,

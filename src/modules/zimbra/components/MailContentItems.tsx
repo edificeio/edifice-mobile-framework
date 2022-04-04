@@ -1,4 +1,3 @@
-import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
@@ -156,7 +155,7 @@ export const HeaderMailDetails = ({
           <TextBold style={{ flex: 1 }}> {mailInfos.subject}</TextBold>
         </View>
       ) : (
-        <style.View />
+        <View />
       )}
     </View>
   );
@@ -173,7 +172,7 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
           <TextBold style={{ flex: 1 }}> {mailInfos.subject}</TextBold>
         </View>
       ) : (
-        <style.View />
+        <View />
       )}
     </View>
   );

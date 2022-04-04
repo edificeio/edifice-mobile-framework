@@ -1,7 +1,11 @@
-import style from "glamorous-native"
-import * as React from "react"
-import { Avatar, Size } from "./Avatar";
+import styled from '@emotion/native';
+import * as React from "react";
 import { ImageURISource } from "react-native";
+
+
+
+import { Avatar, Size } from "./Avatar";
+
 
 export interface IAvatarsProps {
 	users: string[] | Array<{
@@ -28,7 +32,7 @@ export class GridAvatars extends React.Component<IAvatarsProps> {
 	}
 }
 
-const Container = style.view({
+const Container = styled.View({
 	alignItems: "center",
 	flexDirection: "row",
 	flexWrap: "nowrap",

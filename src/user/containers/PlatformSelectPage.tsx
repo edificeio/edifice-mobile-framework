@@ -1,9 +1,11 @@
 // Libraries
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Image, Platform, StatusBar, View } from 'react-native';
 import { connect } from 'react-redux';
+
+
 
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
@@ -17,6 +19,7 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { H1, Light, LightP } from '~/ui/Typography';
 import { selectPlatform } from '~/user/actions/platform';
 import { IUserAuthState } from '~/user/reducers/auth';
+
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -41,7 +44,7 @@ export type IPlatformSelectPageProps = IPlatformSelectPageDataProps & IPlatformS
 
 // Main component ---------------------------------------------------------------------------------
 
-const PlatformButton = style(TouchableOpacity)({
+const PlatformButton = styled(TouchableOpacity)({
   elevation: 3,
   shadowColor: '#6B7C93',
   shadowOffset: { width: 0, height: 2 },

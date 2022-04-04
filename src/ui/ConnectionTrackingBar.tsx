@@ -1,18 +1,21 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ActivityIndicator, Animated } from 'react-native';
+import { ActivityIndicator, Animated, View } from 'react-native';
 import { connect } from 'react-redux';
+
+
 
 import { checkConnection, watchConnection } from '~/infra/actions/connectionTracker';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
+
+
 import { Icon } from './icons/Icon';
 
-const { View } = style;
 
-const TrackerText = style.text({
+const TrackerText = styled.Text({
   color: '#FFFFFF',
   flex: 1,
   textAlign: 'center',
@@ -20,7 +23,7 @@ const TrackerText = style.text({
   marginLeft: 40,
 });
 
-const TrackingContainer = style(TouchableOpacity)({
+const TrackingContainer = styled(TouchableOpacity)({
   flexDirection: 'row',
   flex: 1,
 });

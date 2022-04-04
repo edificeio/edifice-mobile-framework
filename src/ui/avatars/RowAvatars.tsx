@@ -1,14 +1,19 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
-import { View, ImageURISource } from 'react-native';
+import { ImageURISource, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 
-import { Avatar, Size } from './Avatar';
+
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
-const SkippedContainer = style.view({
+
+
+import { Avatar, Size } from './Avatar';
+
+
+const SkippedContainer = styled.View({
   borderRadius: 15,
   height: 29,
   width: 29,
@@ -18,7 +23,7 @@ const SkippedContainer = style.view({
   backgroundColor: '#FFFFFF',
 });
 
-const Skipped = style.text({
+const Skipped = styled.Text({
   color: CommonStyles.warning,
   textAlign: 'center',
   fontFamily: CommonStyles.primaryFontFamily,
@@ -116,7 +121,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
   }
 }
 
-const Container = style.view({
+const Container = styled.View({
   alignItems: 'center',
   flex: 1,
   flexDirection: 'row',
@@ -124,7 +129,7 @@ const Container = style.view({
   justifyContent: 'center',
 });
 
-const Slide = style.view({
+const Slide = styled.View({
   alignItems: 'center',
   height: 80,
   width: 100,

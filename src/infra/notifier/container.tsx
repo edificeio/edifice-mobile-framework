@@ -1,4 +1,4 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
 import { ActivityIndicator, Animated, Platform, Text, View } from 'react-native';
 import { AnimatedValue, LayoutEvent } from 'react-navigation';
@@ -10,7 +10,7 @@ import { Icon } from '~/ui/icons/Icon';
 
 import { NotifierState } from './state';
 
-const NotifierWrapper = style(TouchableOpacity)({
+const NotifierWrapper = styled(TouchableOpacity)({
   flex: 1,
   flexDirection: 'row',
 });

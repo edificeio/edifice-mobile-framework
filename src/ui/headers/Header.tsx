@@ -1,4 +1,4 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
 import { Platform, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
@@ -21,7 +21,7 @@ import { Icon } from '~/ui/icons/Icon';
 const isIphoneX = () => false; // ToDo use React Navigation iPhoneX Compatibility here
 export const iosStatusBarHeight = isIphoneX() ? 40 : 20;
 
-const HeaderStyle = style(SafeAreaView)({
+const HeaderStyle = styled(SafeAreaView)({
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'center',
@@ -89,19 +89,19 @@ export const HeaderIcon = ({
   </TouchableOpacity>
 );
 
-export const TouchableEndBarPanel = style(TouchableOpacity)({
+export const TouchableEndBarPanel = styled(TouchableOpacity)({
   ...sensitiveStylePanel,
   alignSelf: 'flex-end',
 });
 
-export const CenterPanel = style(TouchableOpacity)({
+export const CenterPanel = styled(TouchableOpacity)({
   alignItems: 'center',
   flex: 1,
   height: UI_SIZES.elements.navbarHeight,
   justifyContent: 'center',
 });
 
-export const AppTitle = style.text({
+export const AppTitle = styled.Text({
   color: 'white',
   fontFamily: CommonStyles.primaryFontFamily,
   fontWeight: '400',
@@ -112,7 +112,7 @@ export const AppTitle = style.text({
   lineHeight: UI_SIZES.elements.navbarHeight,
 });
 
-export const HeaderAction = style.text(
+export const HeaderAction = styled.Text(
   {
     color: 'white',
     fontFamily: CommonStyles.primaryFontFamily,
@@ -128,7 +128,7 @@ export const HeaderAction = style.text(
   }),
 );
 
-export const Title = style.text(
+export const Title = styled.Text<{smallSize?: boolean}>(
   {
     color: 'white',
     fontFamily: CommonStyles.primaryFontFamily,
@@ -141,7 +141,7 @@ export const Title = style.text(
   }),
 );
 
-export const SubTitle = style.text({
+export const SubTitle = styled.Text({
   color: 'white',
   fontFamily: CommonStyles.primaryFontFamily,
   fontWeight: '400',

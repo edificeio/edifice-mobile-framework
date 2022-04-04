@@ -1,4 +1,4 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -10,7 +10,7 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Icon } from '~/ui/icons/Icon';
 
 
-const TapCircle = style(TouchableOpacity)(
+const TapCircle = styled(TouchableOpacity)<{checked: boolean}>(
   {
     alignItems: 'center',
     borderRadius: 14,

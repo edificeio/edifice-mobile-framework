@@ -1,4 +1,4 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
 import { FlatList, Keyboard, StyleSheet, View } from 'react-native';
 
@@ -66,18 +66,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const Container = style.view(
+const Container = styled.View(
   {
-    display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-  },
-  (props: any) => ({
-    style: props.style ? props.style : null,
-  }),
+  }
 );
 
-const TouchableOpacity = style.touchableOpacity({
+const TouchableOpacity = styled.TouchableOpacity({
   alignItems: 'center',
   justifyContent: 'center',
   width: layoutSize.LAYOUT_50,

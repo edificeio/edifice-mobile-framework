@@ -1,13 +1,19 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { ColorValue } from 'react-native';
 
-import { Icon } from './icons/Icon';
+
 
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
-const Container = style(TouchableOpacity)({
+
+
+import { Icon } from './icons/Icon';
+
+
+const Container = styled(TouchableOpacity)({
   alignItems: 'center',
   flexDirection: 'row',
   backgroundColor: 'white',
@@ -19,25 +25,25 @@ const Container = style(TouchableOpacity)({
   paddingHorizontal: 15,
 });
 
-export const ContainerSpacer = style.view({
+export const ContainerSpacer = styled.View({
   marginTop: 20,
 });
 
-export const ContainerLabel = style.text({
+export const ContainerLabel = styled.Text({
   paddingHorizontal: 15,
   marginTop: 14,
   marginBottom: 6,
   color: CommonStyles.textColor,
 });
 
-export const NoTouchableContainer = style.view({
+export const NoTouchableContainer = styled.View({
   alignItems: 'center',
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignSelf: 'stretch',
 });
 
-export const ContainerView = style.view({
+export const ContainerView = styled.View({
   alignItems: 'center',
   flexDirection: 'row',
   backgroundColor: 'white',
@@ -49,7 +55,7 @@ export const ContainerView = style.view({
   paddingHorizontal: 15,
 });
 
-export const ContainerTextInput = style.textInput({
+export const ContainerTextInput = styled.TextInput({
   alignItems: 'center',
   flexDirection: 'row',
   backgroundColor: 'white',
@@ -61,7 +67,7 @@ export const ContainerTextInput = style.textInput({
   paddingHorizontal: 15,
 });
 
-const LinkStyle = style.text(
+const LinkStyle = styled.Text<{color: ColorValue}>(
   {
     fontSize: 14,
     flex: 1,
@@ -88,7 +94,7 @@ export const ButtonLine = ({
   return (
     <Comp {...(!disabled ? { onPress: () => onPress() } : {})}>
       {/* FIXME: a ButtonLine without onClick prop will raise an error. Fire an event up or use onPress={onPress}. */}
-      <LinkStyle color={color}>{I18n.t(title)}</LinkStyle>
+      <LinkStyle color={color!}>{I18n.t(title)}</LinkStyle>
       {/* FIXME: This UI button force to use translation. It shouldn't. */}
       {!hideIcon && <Icon name="arrow_down" color="#868CA0" style={{ transform: [{ rotate: '270deg' }] }} />}
     </Comp>

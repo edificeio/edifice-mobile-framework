@@ -1,11 +1,16 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
 
-import { Weight } from './Typography';
+
 
 import { CommonStyles } from '~/styles/common/styles';
+
+
+
+import { Weight } from './Typography';
+
 
 export interface SearchBarProps {
   onChange: (searchText) => void;
@@ -42,7 +47,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, object> {
   }
 }
 
-const TextInput = style.textInput(
+const TextInput = styled.TextInput(
   {
     alignSelf: 'center',
     color: 'white',

@@ -1,4 +1,4 @@
-import styled from 'glamorous-native';
+import styled from '@emotion/native';
 import NativeModal from 'react-native-modal';
 
 import { CommonStyles } from '~/styles/common/styles';
@@ -10,7 +10,7 @@ export const ModalBox = styled(NativeModal)({
   // backgroundColor: "red"
 });
 
-export const ModalContent = styled.view({
+export const ModalContent = styled.View({
   alignItems: 'center',
   alignSelf: 'center',
   backgroundColor: 'white',
@@ -26,7 +26,7 @@ export const ModalContent = styled.view({
   width: 270,
 });
 
-export const ModalContentBlock = styled.view({
+export const ModalContentBlock = styled.View({
   alignItems: 'stretch',
   flex: 0,
   flexGrow: 0,

@@ -1,22 +1,25 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ScrollView, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
+
+
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IUserSession } from '~/framework/util/session';
 import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
-import { IUserSession } from '~/framework/util/session';
+
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -314,12 +317,12 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
   );
 }
 
-const FormPage = style.view({
+const FormPage = styled.View({
   flex: 1,
 });
-const FormTouchable = style.touchableWithoutFeedback({ flex: 1 });
-const FormWrapper = style.view({ flex: 1 });
-const FormContainer = style.view({
+const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
+const FormWrapper = styled.View({ flex: 1 });
+const FormContainer = styled.View({
   alignItems: 'center',
   flex: 1,
   flexDirection: 'column',
@@ -327,7 +330,7 @@ const FormContainer = style.view({
   paddingTop: 30,
   paddingHorizontal: 30,
 });
-const ButtonWrapper = style.view(
+const ButtonWrapper = styled.View(
   {
     alignItems: 'center',
     flex: 0,
@@ -337,6 +340,6 @@ const ButtonWrapper = style.view(
     marginTop: error && !typing ? 10 : 10,
   }),
 );
-const MiniSpacer = style.view({
+const MiniSpacer = styled.View({
   marginTop: 10,
 });

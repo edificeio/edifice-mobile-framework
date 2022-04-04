@@ -1,11 +1,13 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
 import { ImageProps, ImageURISource } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { shallowEqual } from 'react-redux';
+
+
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Connection } from '~/infra/Connection';
+
 
 export enum Size {
   aligned,
@@ -18,21 +20,21 @@ const StyledImage = {
   borderWidth: 1,
 };
 
-const LargeImage = style(FastImage)({
+const LargeImage = styled(FastImage)({
   ...StyledImage,
   borderRadius: 24,
   height: 45,
   width: 45,
 });
 
-const MediumImage = style(FastImage)({
+const MediumImage = styled(FastImage)({
   ...StyledImage,
   borderRadius: 16,
   height: 35,
   width: 35,
 });
 
-const AlignedContainer = style.view(
+const AlignedContainer = styled.View(
   {
     borderRadius: 16,
     height: 29,
@@ -46,7 +48,7 @@ const AlignedContainer = style.view(
   }),
 );
 
-const VLContainer = style.view({
+const VLContainer = styled.View({
   alignSelf: 'center',
   borderRadius: 35,
   height: 71,
@@ -55,28 +57,28 @@ const VLContainer = style.view({
   backgroundColor: '#EEEEEE',
 });
 
-const LargeContainer = style.view({
+const LargeContainer = styled.View({
   borderRadius: 24,
   height: 45,
   width: 45,
   backgroundColor: '#EEEEEE',
 });
 
-const MediumContainer = style.view({
+const MediumContainer = styled.View({
   borderRadius: 16,
   height: 35,
   width: 35,
   backgroundColor: '#EEEEEE',
 });
 
-const AlignedImage = style(FastImage)({
+const AlignedImage = styled(FastImage)({
   ...StyledImage,
   borderRadius: 16,
   height: 29,
   width: 29,
 });
 
-const VeryLargeImage = style(FastImage)(
+const VeryLargeImage = styled(FastImage)<{decorate: boolean}>(
   {
     ...StyledImage,
     alignSelf: 'center',
@@ -90,7 +92,7 @@ const VeryLargeImage = style(FastImage)(
   }),
 );
 
-const SmallImage = style(FastImage)(
+const SmallImage = styled(FastImage)<{count: number}>(
   {
     borderColor: 'white',
     borderWidth: 1,
@@ -102,7 +104,7 @@ const SmallImage = style(FastImage)(
   }),
 );
 
-const SmallContainer = style.view(
+const SmallContainer = styled.View<{count: number, index: number}>(
   {
     position: 'absolute',
     backgroundColor: '#EEEEEE',
