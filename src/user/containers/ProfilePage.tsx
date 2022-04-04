@@ -7,10 +7,12 @@ import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { getSessionInfo } from '~/App';
+
+
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IUserSession, getUserSession, UserType } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
 import { signURISource } from '~/infra/oauth';
@@ -25,9 +27,11 @@ import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
 
+
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
   userinfo: IUserInfoState;
+  session: IUserSession;
 }
 
 export interface IProfilePageEventProps {
@@ -248,8 +252,8 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
 
 export class ProfilePageContainer extends React.PureComponent<IProfilePageProps & NavigationInjectedProps> {
   render() {
-    const { navigation } = this.props;
-    const canEdit = getSessionInfo().type !== 'Student';
+    const { navigation, session } = this.props;
+    const canEdit = session.user.type !== UserType.STUDENT;
     const isEditMode = navigation.getParam('edit', false);
     const navBarInfo = isEditMode
       ? {
@@ -310,6 +314,7 @@ const ProfilePageConnected = connect(
     const ret = {
       userauth: state.user.auth,
       userinfo: state.user.info,
+      session: getUserSession(state)
     };
     return ret;
   },
