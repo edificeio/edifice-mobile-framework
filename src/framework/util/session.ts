@@ -14,27 +14,12 @@ import { IEntcoreApp } from './moduleTool';
 
 
 export enum UserType {
-  STUDENT,
-  RELATIVE,
-  TEACHER,
-  PERSONNEL,
-  GUEST,
+  Student = 'Student',
+  Relative = 'Relative',
+  Teacher = 'Teacher',
+  Personnel = 'Personnel',
+  Guest = 'Guest',
 }
-
-export const getUserType = (type: string) => {
-  switch (type) {
-    case 'Student':
-      return UserType.STUDENT;
-    case 'Relative':
-      return UserType.RELATIVE;
-    case 'Teacher':
-      return UserType.TEACHER;
-    case 'Personnel':
-      return UserType.PERSONNEL;
-    case 'Guest':
-      return UserType.GUEST;
-  }
-};
 
 export interface IUserAuthorizedAction {
   name: string;
@@ -66,7 +51,7 @@ export const getUserSession = (state: any) =>
       login: (state.user.auth as IUserAuthState).login,
       id: (state.user.info as IUserInfoState).id,
       displayName: (state.user.info as IUserInfoState).displayName,
-      type: getUserType(state.user.info.type),
+      type: state.user.info.type as UserType,
       entcoreApps: (state.user.auth as IUserAuthState).appsInfo,
       authorizedActions: state.user.info.authorizedActions,
       groupsIds: state.user.info.groupsIds,

@@ -253,7 +253,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
 export class ProfilePageContainer extends React.PureComponent<IProfilePageProps & NavigationInjectedProps> {
   render() {
     const { navigation, session } = this.props;
-    const canEdit = session.user.type !== UserType.STUDENT;
+    const canEdit = session.user.type !== UserType.Student;
     const isEditMode = navigation.getParam('edit', false);
     const navBarInfo = isEditMode
       ? {

@@ -94,7 +94,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const { type } = session.user;
     const { schoolbookWordData, loadingState, errorState } = this.state;
     const confirmBackSchoolbook = navigation.getParam('confirmBackSchoolbook');
-    const isRelative = type === UserType.RELATIVE;
+    const isRelative = type === UserType.Relative;
     const navBarInfo = {
       title: schoolbookWordData?.word?.title ? (
         <HeaderTitleAndSubtitle
@@ -133,7 +133,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const { session } = this.props;
     const { type } = session.user;
     const { loadingState } = this.state;
-    const isRelative = type === UserType.RELATIVE;
+    const isRelative = type === UserType.Relative;
     return (
       <>
         <ScrollView
@@ -241,7 +241,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const { type, id } = session.user;
     let ackStateText: string | React.ReactElement | undefined;
     switch (type) {
-      case UserType.STUDENT:
+      case UserType.Student:
         const ackNames = getAcknowledgeNamesForChild(id, schoolbookWordData);
         ackStateText =
           ackNames && ackNames.length ? (
@@ -253,12 +253,12 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
             I18n.t('schoolbook.schoolbookWordDetailsScreen.mustRead')
           );
         break;
-      case UserType.RELATIVE:
+      case UserType.Relative:
         const unAckChildren = getUnacknowledgedChildrenIdsForParent(id, schoolbookWordData);
         ackStateText = unAckChildren.length ? undefined : I18n.t('schoolbook.schoolbookWordDetailsScreen.alreadyConfirmed');
         break;
-      case UserType.PERSONNEL:
-      case UserType.TEACHER:
+      case UserType.Personnel:
+      case UserType.Teacher:
         const ackNumber = getAcknowledgeNumber(schoolbookWordData);
         ackStateText = I18n.t(`schoolbook.schoolbookWordDetailsScreen.readByNumberRelative${ackNumber === 1 ? '' : 's'}`, {
           nb: ackNumber,
@@ -362,7 +362,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       this.setState({ schoolbookWordData });
 
       // Set nav state depending of schoolbook word data
-      if (type !== UserType.RELATIVE) {
+      if (type !== UserType.Relative) {
         !navigation.getParam('_forceBack') && navigation.setParams({ _forceBack: true });
       } else if (getIsWordAcknowledgedForParent(id, schoolbookWordData)) {
         !navigation.getParam('_isAck') && navigation.setParams({ _isAck: true });
