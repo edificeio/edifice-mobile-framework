@@ -9,13 +9,13 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import theme from '~/app/theme';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
+import { getUserSession, IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
@@ -62,6 +62,7 @@ interface ICreateMailEventProps {
 interface ICreateMailOtherProps {
   isFetching: boolean;
   mail: IMail;
+  session: IUserSession;
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & NavigationInjectedProps;
@@ -467,7 +468,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           to.push(getUser(this.props.mail.from));
           let i = 0;
           for (const user of this.props.mail.to) {
-            if (user !== getSessionInfo().userId && this.props.mail.to.indexOf(user) === i) {
+            if (user !== this.props.session.user.id && this.props.mail.to.indexOf(user) === i) {
               to.push(getUser(user));
             }
             ++i;
@@ -676,6 +677,7 @@ const mapStateToProps = (state: any) => {
   return {
     mail: data,
     isFetching,
+    session: getUserSession(state)
   };
 };
 
