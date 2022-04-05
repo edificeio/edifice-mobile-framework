@@ -6,6 +6,7 @@ import { BigCard } from './BigCard';
 import { SearchState } from './HomePage';
 import { SearchFilter } from './SearchFilter';
 import { AdvancedSearchParams, Field } from './AdvancedSearchModal';
+import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import { Text, TextBold } from '~/ui/Typography';
@@ -52,7 +53,9 @@ interface SearchContentProps {
   resources?: any[];
   searchState: SearchState;
 
+  addFavorite: (id: string, resource: Resource) => any;
   onCancelSearch: () => void;
+  removeFavorite: (id: string, source: Source) => any;
 }
 
 const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (props: AdvancedSearchFieldProps) => (
@@ -102,7 +105,7 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
     <FlatList
       data={props.resources}
       renderItem={({ item }) => {
-        return <BigCard resource={item} />
+        return <BigCard {...props} resource={item} />
       }}
       keyExtractor={(item) => item.id}
       ListHeaderComponent={<SearchFilter buttons={[]} containerStyle={{ marginHorizontal: 20, marginBottom: 15 }} />}

@@ -477,6 +477,48 @@
     }
   },
   "me-indicator": "(moi)",
+  "mediacentre": {
+    "add-favorite": "Ajouter aux favoris",
+    "advanced-search": "Recherche avancée",
+    "advancedSearch": {
+      "and": "ET",
+      "author": "Auteur :",
+      "level": "Niveau :",
+      "or": "OU",
+      "publisher": "Éditeur :",
+      "subject": "Discipline :",
+      "sources": "Sources :",
+      "title": "Titre :",
+      "search-author": "Rechercher un auteur",
+      "search-level": "Rechercher un niveau",
+      "search-publisher": "Rechercher un éditeur",
+      "search-subject": "Rechercher une discipline",
+      "search-title": "Rechercher un titre"
+    },
+    "cancel-search": "Annuler la recherche",
+    "copy-link": "Copier le lien",
+    "display-all": "Afficher tout",
+    "download-textbooks": "Votre manuel va s'afficher dans quelques instants...",
+    "empty-screen-textbooks": "Vous n'avez aucun manuel",
+    "favorites": "Mes favoris",
+    "filter-search": "Filtrer la recherche",
+    "find-ressources": "Rechercher une ressource",
+    "gar-ressources": "Mes ressources GAR",
+    "home": "Accueil",
+    "mediacentre": "Médiacentre",
+    "my-signets": "Mes signets",
+    "orientation-signets": "Orientation / Découverte des métiers",
+    "remove-favorite": "Supprimer des favoris",
+    "signets": "signets",
+    "socket": {
+      "closed": "Connexion médiacentre perdue. Nous tentons de vous reconnecter.",
+      "error": "Aucune ressource affectée, veuillez contacter votre gestionnaire",
+      "network-error": "Connexion serveur impossible. Veuillez contacter votre administrateur réseau",
+      "network-reconnect": "Tentative de reconnexion..."
+    },
+    "sources": "Sources :",
+    "textbooks": "Mes manuels"
+  },
   "mediaNotAvailable": "Lecteur non disponible",
   "mediacentre": {
     "advanced-search": "Recherche avancée",

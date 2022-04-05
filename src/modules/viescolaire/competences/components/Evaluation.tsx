@@ -11,7 +11,7 @@ import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/d
 import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
-import { Loading } from '~/ui/Loading';
+import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import Dropdown from '~/ui/Dropdown';
 
@@ -79,23 +79,27 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     this.getSwitchDefaultPosition();
   }
 
-  componentDidUpdate(prevProps) {
-    const { devoirsList, devoirsMoyennesList, periods, groups, childId, structureId, childClasses } = this.props;
-    const { devoirs, screenDisplay, selectedPeriod } = this.state;
+  // Update when changing child with relative account
+  componentWillUpdate(nextProps) {
+    const { childId } = this.props;
+    const { screenDisplay, selectedPeriod } = this.state;
 
-    /**/ // Before this was is `componentWillUpdate`. May be risky.
-    /**/ // Update when changing child with relative account
-    /**/ if (prevProps.childId !== childId) {
-    /**/   if (screenDisplay === ScreenDisplay.PERIOD) {
-    /**/   this.props.getDevoirsMoyennes(structureId, childId, selectedPeriod.value!);
-    /**/     this.setCurrentPeriod();
-    /**/   } else {
-    /**/     this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
-    /**/   }
-    /**/   this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
-    /**/   this.props.getPeriods(structureId, childClasses);
-    /**/   this.props.getLevels(structureId);
-    /**/ }
+    if (childId !== nextProps.childId) {
+      if (screenDisplay === ScreenDisplay.PERIOD) {
+        this.props.getDevoirsMoyennes(nextProps.structureId, nextProps.childId, selectedPeriod.value!);
+        this.setCurrentPeriod();
+      } else {
+        this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
+      }
+      this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
+      this.props.getPeriods(nextProps.structureId, nextProps.childClasses);
+      this.props.getLevels(nextProps.structureId);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { devoirsList, devoirsMoyennesList, periods, groups } = this.props;
+    const { devoirs, screenDisplay } = this.state;
 
     if (periods !== prevProps.periods) this.setCurrentPeriod();
     if (
@@ -183,8 +187,19 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   private renderHeaderDevoirsList = () => {
-    const { selectedPeriod, selectedDiscipline, screenDisplay, switchValue } = this.state;
+    const { selectedPeriod, selectedDiscipline, screenDisplay, switchValue, devoirs } = this.state;
+    // Don't display color Switch if devoirs doesn't have any notes
+    let isDevoirsNoted = false as boolean;
+    if (devoirs !== undefined) {
+      for (const elem of devoirs) {
+        if (elem.note !== '' && !isNaN(Number(elem.note))) {
+          isDevoirsNoted = true;
+          break;
+        }
+      }
+    }
     let value = (switchValue === SwitchState.DEFAULT) as boolean;
+
     return (
       <>
         {screenDisplay === ScreenDisplay.DISCIPLINE && <TextBold numberOfLines={1}>{selectedDiscipline}</TextBold>}
@@ -196,19 +211,21 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           ) : (
             <Text style={{ color: '#AFAFAF' }}>{selectedPeriod.type}</Text>
           )}
-          <View style={{ marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
-            <Text>{I18n.t('viesco-colors')}&ensp;</Text>
-            <Switch
-              trackColor={{ false: '#D1D1D1', true: '#A1DED5' }}
-              thumbColor={value ? '#EFEFEF' : '#46BFAF'}
-              ios_backgroundColor={value ? '#DDDDDD' : '#46BFAF'}
-              onValueChange={() => {
-                this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
-                this.setSwitchDefaultPosition(value);
-              }}
-              value={!value}
-            />
-          </View>
+          {isDevoirsNoted ? (
+            <View style={{ marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
+              <Text>{I18n.t('viesco-colors')}&ensp;</Text>
+              <Switch
+                trackColor={{ false: '#D1D1D1', true: '#A1DED5' }}
+                thumbColor={value ? '#EFEFEF' : '#46BFAF'}
+                ios_backgroundColor={value ? '#DDDDDD' : '#46BFAF'}
+                onValueChange={() => {
+                  this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
+                  this.setSwitchDefaultPosition(value);
+                }}
+                value={!value}
+              />
+            </View>
+          ) : null}
         </View>
       </>
     );

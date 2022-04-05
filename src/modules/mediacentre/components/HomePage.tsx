@@ -37,6 +37,9 @@ export enum SearchState {
 interface ResourcesGridProps {
   resources: Resource[];
   title: string;
+
+  addFavorite: (id: string, resource: Resource) => any;
+  removeFavorite: (id: string, source: Source) => any;
 }
 
 interface HomePageProps {
@@ -94,7 +97,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           </TouchableOpacity>
         </View>
         <View style={styles.gridCardsContainer}>
-          {props.resources.slice(0, 4).map(item => <SmallCard resource={item} key={item.id} />)}
+          {props.resources.slice(0, 4).map(item => <SmallCard {...props} resource={item} key={item.id} />)}
         </View>
       </View>
     ) : null
@@ -107,16 +110,17 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={() => setSearchModalVisible(true)} />
       </View>
       {searchState !== SearchState.NONE ? (
-        <SearchContent resources={searchedResources} searchState={searchState} params={searchParams} onCancelSearch={onCancelSearch} />
+        <SearchContent resources={searchedResources} searchState={searchState} params={searchParams}
+        onCancelSearch={onCancelSearch} addFavorite={props.addFavorite} removeFavorite={props.removeFavorite} />
       ) : (
         <ScrollView>
           {props.favorites.length > 0 &&
-            <FavoritesCarousel resources={props.favorites} onDisplayAll={() => showResources(props.favorites)} />
+            <FavoritesCarousel {...props} resources={props.favorites} onDisplayAll={() => showResources(props.favorites)} />
           }
-          <ResourcesGrid title={I18n.t('mediacentre.textbooks')} resources={props.textbooks} />
-          <ResourcesGrid title={I18n.t('mediacentre.gar-ressources')} resources={[]} />
-          <ResourcesGrid title={I18n.t('mediacentre.my-signets')} resources={props.signets.sharedSignets} />
-          <ResourcesGrid title={I18n.t('mediacentre.orientation-signets')} resources={props.signets.orientationSignets} />
+          <ResourcesGrid {...props} title={I18n.t('mediacentre.textbooks')} resources={props.textbooks} />
+          <ResourcesGrid {...props} title={I18n.t('mediacentre.gar-ressources')} resources={[]} />
+          <ResourcesGrid {...props} title={I18n.t('mediacentre.my-signets')} resources={props.signets.sharedSignets} />
+          <ResourcesGrid {...props} title={I18n.t('mediacentre.orientation-signets')} resources={props.signets.orientationSignets} />
         </ScrollView>
       )}
       <AdvancedSearchModal isVisible={searchModalVisible} onSearch={onAdvancedSearch} closeModal={() => setSearchModalVisible(false)} />
