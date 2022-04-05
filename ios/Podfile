@@ -11,7 +11,7 @@ target 'appe' do
   use_react_native!(:path => config["reactNativePath"],:hermes_enabled => true)
 
   # Flipper
-  flipperkit_version = '0.127.0'
+  flipperkit_version = '0.140.0'
   use_flipper!({ 'Flipper' => flipperkit_version })
   pod 'FlipperKit/FlipperKitLayoutPlugin', flipperkit_version, :configuration => 'Debug'
   pod 'FlipperKit/SKIOSNetworkPlugin', flipperkit_version, :configuration => 'Debug'
