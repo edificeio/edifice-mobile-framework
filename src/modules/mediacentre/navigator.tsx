@@ -1,13 +1,12 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import Support from './containers/Support';
+import Dashboard from './containers/Dashboard';
 
 export default () =>
   createStackNavigator(
     {
-      Support,
-    },
-    {
+      Mediacentre: Dashboard,
+    }, {
       headerMode: 'none',
-    },
+    }
   );
