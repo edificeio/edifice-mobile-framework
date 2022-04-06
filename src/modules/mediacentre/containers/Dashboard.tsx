@@ -16,17 +16,20 @@ import { PageView } from '~/framework/components/page';
 
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { getFavoritesState } from '~/modules/mediacentre/state/favorites';
+import { getGarResourcesState } from '~/modules/mediacentre/state/garResources';
 import { getSearchState } from '~/modules/mediacentre/state/search';
 import { getSignetsState, ISignets } from '~/modules/mediacentre/state/signets';
 import { getTextbooksState } from '~/modules/mediacentre/state/textbooks';
 import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
 import { fetchFavoritesAction, addFavoriteAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
+import { fetchGarResourcesAction } from '~/modules/mediacentre/actions/garResources';
 import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
 import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
 import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
 
 type IDashboardProps = {
   favorites: Resource[];
+  garResources: Resource[];
   navigation: { navigate };
   search: Resource[];
   signets: ISignets;
@@ -34,6 +37,7 @@ type IDashboardProps = {
 
   addFavorite: (id: string, resource: Resource) => any;
   fetchFavorites: () => any;
+  fetchGarResources: () => any;
   fetchSignets: () => any;
   fetchTextbooks: () => any;
   removeFavorite: (id: string, source: Source) => any;
@@ -58,6 +62,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardSt
 
   componentDidMount() {
     this.props.fetchFavorites();
+    this.props.fetchGarResources();
     this.props.fetchTextbooks();
     this.props.fetchSignets();
   }
@@ -83,12 +88,14 @@ export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardSt
 
 const mapStateToProps: (state: any) => any = state => {
   const favorites = getFavoritesState(state).data;
+  const garResources = getGarResourcesState(state).data;
   const search = getSearchState(state).data;
   const signets = getSignetsState(state).data;
   const textbooks = getTextbooksState(state).data;
 
   return {
     favorites,
+    garResources,
     search,
     signets,
     textbooks,
@@ -100,6 +107,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     {
       addFavorite: addFavoriteAction,
       fetchFavorites: fetchFavoritesAction,
+      fetchGarResources: fetchGarResourcesAction,
       fetchSignets: fetchSignetsAction,
       fetchTextbooks: fetchTextbooksAction,
       removeFavorite: removeFavoriteAction,

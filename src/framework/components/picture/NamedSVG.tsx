@@ -24,6 +24,7 @@ const imports = {
   'empty-hammock': import(`../../../../assets/images/empty-screen/empty-hammock.svg`),
   'empty-homework': import(`../../../../assets/images/empty-screen/empty-homework.svg`),
   'empty-light': import(`../../../../assets/images/empty-screen/empty-light.svg`),
+  'empty-mediacentre': import(`../../../../assets/images/empty-screen/empty-mediacentre.svg`),
   'empty-search': import(`../../../../assets/images/empty-screen/empty-search.svg`),
   'empty-timeline': import(`../../../../assets/images/empty-screen/empty-timeline.svg`),
   'empty-trash': import(`../../../../assets/images/empty-screen/empty-trash.svg`),

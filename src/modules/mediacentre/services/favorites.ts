@@ -5,15 +5,14 @@ import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 export const favoritesService = {
   get: async () => {
     const reponse = await fetchJSONWithCache(`/mediacentre/favorites`);
-    return resourcesAdapter(reponse.data);
+    let favorites = resourcesAdapter(reponse.data);
+    favorites.forEach(resource => resource.favorite = true);
+    return (favorites);
   },
   post: async (id: string, resource: Resource) => {
-    const body = {
-      resource,
-    } as any;
     await fetchJSONWithCache(`/mediacentre/favorites?id=${id}`, {
       method: 'post',
-      body: JSON.stringify(body),
+      body: JSON.stringify(resource),
     });
   },
   delete: async (id: string, source: Source) => {

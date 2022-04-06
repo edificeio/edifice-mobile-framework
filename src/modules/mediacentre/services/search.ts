@@ -7,6 +7,22 @@ const addFieldWhenFilled = (field: Field) => {
 }
 
 export const searchService = {
+  getGar: async () => {
+    const jsondata = {
+      event: 'search',
+      state: 'PLAIN_TEXT',
+      sources: [
+        'fr.openent.mediacentre.source.GAR',
+      ],
+      data: {
+        query: '.*',
+      },
+    };
+    const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
+      method: 'get',
+    });
+    return resourcesAdapter(reponse.data.resources);
+  },
   getSimple: async (query: string) => {
     const jsondata = {
       event: 'search',
