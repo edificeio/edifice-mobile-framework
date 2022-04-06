@@ -6,6 +6,7 @@ import { BigCard } from './BigCard';
 import { SearchState } from './HomePage';
 import { SearchFilter } from './SearchFilter';
 import { AdvancedSearchParams, Field } from './AdvancedSearchModal';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -109,6 +110,7 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
       }}
       keyExtractor={(item) => item.id}
       ListHeaderComponent={<SearchFilter buttons={[]} containerStyle={{ marginHorizontal: 20, marginBottom: 15 }} />}
+      ListEmptyComponent={<EmptyScreen svgImage='empty-mediacentre' title={I18n.t('mediacentre.empty-search')} />}
     />
   </View>
 );
