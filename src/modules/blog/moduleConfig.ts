@@ -5,8 +5,7 @@ import theme from "~/app/theme";
 export default createNavigableModuleConfig<"blog", IBlog_State>({
     name: "blog",
     displayName: "blog.tabName",
-    iconName: "bullhorn",
-    iconColor: theme.themeOpenEnt.indigo,
+    picture: {type: 'Icon', name: 'bullhorn', color: theme.themeOpenEnt.indigo},
     matchEntcoreApp: "/blog",
     entcoreScope: ['blog'],
     registerAs: 'myAppsModule'
