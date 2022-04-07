@@ -11,7 +11,7 @@ import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { NamedSVG } from '~/framework/components/namedSVG';
+import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
 import config from '../config';
 

@@ -3,13 +3,11 @@ import * as React from 'react';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Picture, PictureProps } from '~/framework/components/picture';
 import { CommonStyles } from '~/styles/common/styles';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
-
 
 export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
   createBottomTabNavigator(routeConfigs, {
@@ -38,10 +36,25 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
     },
   });
 
-export const createMainTabNavOption = (title: string, iconName: string) => ({
-  tabBarIcon: ({ focused }) => <IconOnOff size={24} name={iconName} focused={focused} style={{ marginTop: -6 }} />,
-  tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
-});
+export const createMainTabNavOption = (title: string, icon: string | PictureProps) => {
+  if (typeof icon === 'string') {
+    return {
+      tabBarIcon: ({ focused }) => <IconOnOff size={24} name={icon} focused={focused} style={{ marginTop: -6 }} />,
+      tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
+    };
+  } else {
+    if (icon.type === 'NamedSvg') {
+      icon.height = icon.width = 24;
+      icon.style = { marginTop: -6 };
+    } else {
+      icon.style = { width: 24, height: 24, marginTop: -6 };
+    }
+    return {
+      tabBarIcon: ({ focused }) => <Picture {...icon} />,
+      tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
+    };
+  }
+};
 
 const MainTabNavigationLabel = styled.Text(
   {

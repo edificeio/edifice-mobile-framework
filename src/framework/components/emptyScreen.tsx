@@ -14,7 +14,7 @@ import theme from '~/app/theme';
 import { FlatButton } from '~/ui/FlatButton';
 import { UI_SIZES } from './constants';
 
-import { NamedSVG } from '~/framework/components/namedSVG';
+import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
 export const EmptyScreen = ({
   svgImage,

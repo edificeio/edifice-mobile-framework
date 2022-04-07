@@ -11,7 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/namedSVG';
+import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { H1, TextSemiBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
