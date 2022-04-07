@@ -1,14 +1,20 @@
-import * as React from 'react';
-import { Image, StyleSheet, View, TouchableOpacity, Linking } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
+import * as React from 'react';
+import { Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { getImageUri } from './FavoritesCarousel';
+
+
 import { TouchCard } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
 import { getAuthHeader } from '~/infra/oauth';
-import { Icon } from '~/ui';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { SourceImage } from '~/modules/mediacentre/components/BigCard';
+import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { Icon } from '~/ui';
+
+
+
+import { getImageUri } from './FavoritesCarousel';
+
 
 const styles = StyleSheet.create({
   mainContainer: {

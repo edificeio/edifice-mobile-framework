@@ -5,7 +5,7 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
 import { Text } from '~/framework/components/text';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 
 const searchStyle = StyleSheet.create({
   buttonText: {
