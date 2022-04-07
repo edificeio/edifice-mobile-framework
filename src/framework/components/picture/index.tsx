@@ -22,12 +22,8 @@ interface IPicture_Image extends ImageProps {
 interface IPicture_NamedSvg extends NamedSVGProps {
   type: 'NamedSvg';
 }
-interface IPicture_Custom {
-  type: 'Custom';
-  component: React.ReactElement;
-}
 
-type PictureProps = IPicture_Icon | IPicture_Image | IPicture_NamedSvg | IPicture_Custom;
+export type PictureProps = IPicture_Icon | IPicture_Image | IPicture_NamedSvg;
 
 export function Picture(props: PictureProps) {
   const { type, ...rest } = props;
@@ -35,9 +31,8 @@ export function Picture(props: PictureProps) {
     case 'Icon': return <Icon {...(rest as IconProps)} />;
     case 'Image': return <Image {...(rest as ImageProps)} />;
     case 'NamedSvg': return <NamedSVG {...(rest as NamedSVGProps)} />;
-    case 'Custom': return props.component;
   }
 }
 
-export * from './icon';
-export * from './namedSVG';
+export * from './Icon';
+export * from './NamedSVG';

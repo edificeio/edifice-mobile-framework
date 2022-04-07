@@ -4,9 +4,7 @@ import * as React from 'react';
 import {
   ColorValue,
   Image,
-  ImageProps,
   ImageSourcePropType,
-  ImageStyle,
   TextProps,
   TextStyle,
   TouchableOpacityProps,
@@ -21,9 +19,9 @@ import { HtmlContentView } from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { UI_SIZES } from './constants';
-import { Icon, IconProps } from './icon';
-import { NamedSVG } from './picture/NamedSVG';
+import { Icon } from './picture';
 import { FontStyle, Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle, remlh } from './text';
+import { Picture, PictureProps } from './picture';
 
 const cardPaddingV = 12;
 const cardPaddingH = 16;
@@ -290,37 +288,6 @@ export const TouchableResourceCard = (props: IResourceCardProps & TouchableOpaci
 export const ResourceView = (props: IResourceCardProps) => {
   return <ResourceCard_base {...props} CC={ContentView} withoutPadding />;
 };
-
-interface PictureProps_Icon {
-  type: 'icon';
-  picture: IconProps;
-}
-interface PictureProps_Image {
-  type: 'image';
-  picture: ImageProps;
-}
-interface PictureProps_Svg {
-  type: 'svg';
-  picture: string;
-}
-interface PictureProps_Custom {
-  type: 'custom';
-  picture: React.ReactElement;
-}
-type PictureProps = PictureProps_Icon | PictureProps_Image | PictureProps_Svg | PictureProps_Custom;
-
-export function Picture(props: PictureProps) {
-  const { type, picture, ...rest } = props;
-  return type === 'icon' ? (
-    <Icon {...picture} {...rest} />
-  ) : type === 'image' ? (
-    <Image {...picture} {...rest} />
-  ) : type === 'svg' ? (
-    <NamedSVG name={picture} {...rest} />
-  ) : type === 'custom' ? (
-    picture
-  ) : null;
-}
 
 export type PictureCardProps = {
   text?: string | React.ReactElement;

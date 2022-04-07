@@ -27,14 +27,16 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
       <TouchableSelectorPictureCard
         onPress={() => this.props.navigation.navigate(item.config.name)}
         text={I18n.t(item.config.displayName)}
-        picture={{
-          type: 'icon',
-          picture: {
-            color: item.config.iconColor,
-            name: item.config.iconName,
-            size: 56,
-          },
-        }}
+        picture={
+          item.config['picture']
+            ? { ...item.config['picture'], height: 56, width: '100%' }
+            : {
+                type: 'Icon',
+                color: item.config.iconColor,
+                name: item.config.iconName,
+                size: 56,
+              }
+        }
       />
     );
 

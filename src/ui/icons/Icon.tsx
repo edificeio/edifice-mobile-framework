@@ -4,6 +4,9 @@ import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 
 const icoMoonConfig = require('ASSETS/selection.json');
 
+/**
+ * @deprecated Use ~/framework/picture/Icon instead
+ */
 export const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 export const checkHasIcon = (name: string) => Icon.hasIcon(name);

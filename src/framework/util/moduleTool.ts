@@ -13,6 +13,7 @@ import type { Reducer } from 'redux';
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 
 import { toSnakeCase } from './string';
+import { PictureProps } from '../components/picture';
 
 // Module Config ==================================================================================
 
@@ -161,6 +162,7 @@ export type AnyModule = Module<string, IModuleConfig<string, any>, any, any>;
 interface INavigableModuleConfigBase {
   iconName: string; // Name of the icon in Icomoon font. Equals to `name` if not specified.
   iconColor?: ColorValue; // Color of the icon. Default color if not specified.
+  picture?: PictureProps; // Use arbitrary picture instead of old-school icon.
   routeName: string;
 }
 export interface INavigableModuleConfig<Name extends string, State>
@@ -217,7 +219,7 @@ export class NavigableModule<
   createModuleRoute() {
     return {
       screen: this.root!,
-      navigationOptions: createMainTabNavOption(I18n.t(this.config.displayName), this.config.iconName),
+      navigationOptions: createMainTabNavOption(I18n.t(this.config.displayName), this.config.picture || this.config.iconName),
     };
   }
 }

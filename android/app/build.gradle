@@ -20,9 +20,6 @@ def enableProguardInReleaseBuilds = true
 def enableSeparateBuildPerCPUArchitecture = false
 def jscFlavor = 'org.webkit:android-jsc:+'
 def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitectures")
-
-// Run packager
-
 def runTasks = gradle.startParameter.taskNames
 
 if ('assembleDebug' in runTasks) {
@@ -53,7 +50,7 @@ android {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
+            universalApk false
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
@@ -80,14 +77,11 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // https://developer.android.com/studio/build/configure-apk-splits.html
             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
+            if (abi != null) {
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
@@ -105,11 +99,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    // React-native
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    // Hermes
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermes-engine/android/"
       debugImplementation files(hermesPath + "hermes-debug.aar")
@@ -117,7 +109,6 @@ dependencies {
     } else {
       implementation jscFlavor
     }
-    // Flipper
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
@@ -132,16 +123,12 @@ dependencies {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
-    // Native
     implementation "com.google.android.gms:play-services-base:18.0.1"
     implementation "com.fasterxml.jackson.core:jackson-core:2.11.1"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
-    // Not auto-linked packages
     implementation project(':react-native-action-sheet')
 }
 
-// Run this once to be able to run the application with BUCK
-// puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.implementation
     into 'libs'
