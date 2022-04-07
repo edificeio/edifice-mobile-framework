@@ -1,18 +1,23 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
+import { ColorValue } from 'react-native';
+
+
+
+import { CommonStyles } from '~/styles/common/styles';
+
+
 
 import { Weight } from './Typography';
 import { Icon } from './icons/Icon';
 
-import { CommonStyles } from '~/styles/common/styles';
-import { ColorValue } from 'react-native';
 
 export interface BadgeProps {
   content: number | string;
   color?: string | ColorValue;
 }
 
-const ViewBadge = style.view(
+const ViewBadge = styled.View(
   {
     alignItems: 'center',
     alignSelf: 'flex-start',
@@ -28,12 +33,12 @@ const ViewBadge = style.view(
   }),
 );
 
-const ViewEmpty = style.view({
+const ViewEmpty = styled.View({
   height: 16,
   marginBottom: 7,
 });
 
-const Text = style.text({
+const Text = styled.Text({
   color: 'white',
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 10,

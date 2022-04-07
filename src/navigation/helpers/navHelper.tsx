@@ -13,7 +13,6 @@ export const navigate = (route, params = {}) => {
   return rootNavigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params }));
 };
 export const resetNavigation = (actions: NavigationNavigateAction[], index?: number) => {
-  console.log('rootNavigatorRef', rootNavigatorRef);
   return rootNavigatorRef.dispatch(
     StackActions.reset({
       index: index ?? 0,

@@ -1,21 +1,20 @@
 /**
  * File Manager
  */
-
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Platform } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from 'react-native-document-picker';
 import FileViewer from 'react-native-file-viewer';
-import { copyFile, DownloadDirectoryPath, exists, UploadFileItem } from 'react-native-fs';
+import { DownloadDirectoryPath, UploadFileItem, copyFile, exists } from 'react-native-fs';
 import {
   Asset,
   CameraOptions,
   ImageLibraryOptions,
   ImagePickerResponse,
+  MediaType,
   launchCamera,
   launchImageLibrary,
-  MediaType,
 } from 'react-native-image-picker';
 
 import { assertPermissions } from '~/framework/util/permissions';
@@ -213,7 +212,6 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     })
       .then(() => {})
       .catch(error => {
-        console.warn('Error opening file', error);
         throw error;
       });
   }
@@ -225,17 +223,14 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     await assertPermissions('documents.write');
     const destFolder = DownloadDirectoryPath;
     let destPath = `${destFolder}/${this.filename}`;
-    // console.log("destPath", destPath, await exists(destPath));
     if (await exists(destPath)) {
       const splitFilename = this.filename.split('.');
       const ext = splitFilename.pop();
       destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
     }
-    // console.log("final destPath", destPath);
     copyFile(this.filepath, destPath)
       .then(() => {})
       .catch(error => {
-        console.warn('Error copying file', error);
         throw error;
       });
   }

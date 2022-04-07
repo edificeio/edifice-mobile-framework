@@ -1,15 +1,13 @@
 /**
  * API Consumer for Backend Workspace application
  */
-
 import queryString from 'query-string';
 
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '~/framework/util/fileHandler/service';
 import { IUserSession } from '~/framework/util/session';
 import { signedFetchJson2 } from '~/infra/fetchWithCache';
-
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 const implicitWorkspaceUploadParams = {
   owner: {}, // Exists BackEnd side but not useed yet!
@@ -88,7 +86,6 @@ const workspaceService = {
       query: { ...queryParams, ...getImplicitWorkspaceUploadParams(params), ...getThumbnailWorkspaceUploadParams() },
     });
     const adapter = (data: any) => {
-      // console.log("data", data);
       const datajson = JSON.parse(data) as IWorkspaceUploadResultBackend;
       const id = datajson['_id'];
       return {

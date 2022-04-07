@@ -29,13 +29,17 @@ export type IForgottenNotebook = {
 
 export type IIncident = {
   date: moment.Moment;
+  protagonist: { label: string };
   label: string;
 };
 
 export type IPunishment = {
+  created_at: moment.Moment;
   start_date: moment.Moment;
   end_date: moment.Moment;
+  delay_at: moment.Moment;
   label: string;
+  punishment_category_id: number;
 };
 
 export type ICallEventsList = ICallEvent[];

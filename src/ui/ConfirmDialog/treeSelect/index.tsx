@@ -6,7 +6,7 @@ import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'r
 
 import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui/index';
+import { Icon } from '~/ui/icons/Icon';
 import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
 import { IItem } from '~/workspace/types';
 import { IFile } from '~/workspace/types/states/items';
@@ -284,6 +284,7 @@ export default function TreeSelect({
           autoCapitalize="none"
           underlineColorAndroid="transparent"
           autoCorrect={false}
+          spellCheck={false}
           blurOnSubmit
           clearButtonMode="while-editing"
           onChangeText={text => _onSearch(text)}

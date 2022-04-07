@@ -7,10 +7,9 @@
  * @param html string Input data
  * @param ignoreLineBreaks boolean (default false)
  */
+import saxophone from 'saxophone';
 
-import { HtmlConverter } from ".";
-
-import saxophone from "saxophone";
+import { HtmlConverter } from '.';
 
 export class HtmlConverterText extends HtmlConverter {
   /**
@@ -30,10 +29,9 @@ export class HtmlConverterText extends HtmlConverter {
         tagName = commonParsingEventHandlers.onclosetag(tagName);
         switch (tagName) {
           // after these html tags we have to jump to a new line
-          case "div":
-          case "p":
-          case "iframe":
-            // console.log("NEW LINE");
+          case 'div':
+          case 'p':
+          case 'iframe':
             this.newLine = true;
         }
         return tagName;
@@ -44,30 +42,27 @@ export class HtmlConverterText extends HtmlConverter {
         tag = commonParsingEventHandlers.onopentag(tag);
         switch (tag.name) {
           // after these html tags we have to jump to a new line
-          case "p":
-          case "img":
-          case "hr":
-            // console.log("NEW LINE");
+          case 'p':
+          case 'img':
+          case 'hr':
             this.newLine = true;
             break;
-          case "br":
-            this._render += this.ignoreLineBreaks ? " " : "\n";
+          case 'br':
+            this._render += this.ignoreLineBreaks ? ' ' : '\n';
         }
         return tag;
       },
       ontext: (text: string) => {
-        // console.log("TEXT", text);
         text = commonParsingEventHandlers.ontext(text);
-        if (!text) return "";
+        if (!text) return '';
         if (this.newLine) {
-          // console.warn("this is a new line");
-          this._render += this.ignoreLineBreaks ? " " : "\n";
+          this._render += this.ignoreLineBreaks ? ' ' : '\n';
           this.newLine = false;
         }
-        text = text.replace(/<\/[a-z]+>/gi, "")
+        text = text.replace(/<\/[a-z]+>/gi, '');
         this._render += text;
         return text;
-      }
+      },
     };
   }
 
@@ -78,14 +73,13 @@ export class HtmlConverterText extends HtmlConverter {
   }
 
   protected processHtml() {
-    this._render = "";
+    this._render = '';
     this.parse();
-    // console.warn(this._render);
   }
 
   public static SHORT_TEXT_MAX_SIZE: number = 64;
   public static SHORT_TEXT_MAX_LINES: number = 2;
-  public static NEW_LINE_CHARACTER: string = "\n";
+  public static NEW_LINE_CHARACTER: string = '\n';
   /**
    * Returns the beginning of text. Text is cut at the `maxLines`th line break and at the `maxSize` character position.
    * This does not cut the text within a word.
@@ -99,7 +93,7 @@ export class HtmlConverterText extends HtmlConverter {
   public getExcerpt(
     maxSize = HtmlConverterText.SHORT_TEXT_MAX_SIZE,
     maxLines = HtmlConverterText.SHORT_TEXT_MAX_LINES,
-    newLineChar = HtmlConverterText.NEW_LINE_CHARACTER
+    newLineChar = HtmlConverterText.NEW_LINE_CHARACTER,
   ): { content: string; cropped: boolean } {
     const text = this._render;
     const firstLines = text.split(newLineChar, maxLines);
@@ -109,23 +103,17 @@ export class HtmlConverterText extends HtmlConverter {
       mx -= nbCharsByLine - (firstLines[i - 1].length % nbCharsByLine) - 1;
     }
     maxSize = mx;
-    let trimmedFirstLines = (firstLines.join("\n") + " ").substr(0, maxSize);
+    let trimmedFirstLines = (firstLines.join('\n') + ' ').substr(0, maxSize);
     trimmedFirstLines = trimmedFirstLines.substr(
       0,
-      Math.min(
-        trimmedFirstLines.length,
-        Math.max(
-          trimmedFirstLines.lastIndexOf(" "),
-          trimmedFirstLines.lastIndexOf(newLineChar)
-        )
-      )
+      Math.min(trimmedFirstLines.length, Math.max(trimmedFirstLines.lastIndexOf(' '), trimmedFirstLines.lastIndexOf(newLineChar))),
     );
     trimmedFirstLines = trimmedFirstLines.trim();
     const cropped = trimmedFirstLines.length !== text.length;
-    if (cropped) trimmedFirstLines += "...";
+    if (cropped) trimmedFirstLines += '...';
     return {
       content: trimmedFirstLines,
-      cropped
+      cropped,
     };
   }
   public get excerpt() {
@@ -133,5 +121,4 @@ export class HtmlConverterText extends HtmlConverter {
   }
 }
 
-export default (html: string, ignoreLineBreaks?: boolean) =>
-  new HtmlConverterText(html, ignoreLineBreaks);
+export default (html: string, ignoreLineBreaks?: boolean) => new HtmlConverterText(html, ignoreLineBreaks);

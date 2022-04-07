@@ -1,20 +1,12 @@
 // Libraries
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  Image,
-  KeyboardAvoidingView,
-  Linking,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Image, KeyboardAvoidingView, Linking, Platform, SafeAreaView, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
+
+
 
 import theme from '~/app/theme';
 import { KeyboardPageView } from '~/framework/components/page';
@@ -23,7 +15,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
 import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
@@ -31,6 +23,7 @@ import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~
 import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
+
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -76,7 +69,7 @@ const initialState: ILoginPageState = {
 
 // Main component ---------------------------------------------------------------------------------
 
-const FormContainer = style.view({
+const FormContainer = styled.View({
   alignItems: 'center',
   flex: 1,
   flexDirection: 'column',
@@ -147,7 +140,11 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
 
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView keyboardShouldPersistTaps="handled" alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+          contentContainerStyle={{ flexGrow: 1 }}>
           {/* Temporary banner displayed for Somme Numérique */}
           {isSommeNumerique ? (
             <View
@@ -179,6 +176,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              spellCheck={false}
             />
             <TextInputLine
               isPasswordField

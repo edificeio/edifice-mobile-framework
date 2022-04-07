@@ -1,6 +1,9 @@
-import glamorous from 'glamorous-native';
+import styled from '@emotion/native';
+
+
 
 import { CommonStyles } from '~/styles/common/styles';
+
 
 /**
  * Font weights defined in this font family
@@ -37,74 +40,74 @@ export const rem = (ratio: number) => fontSize * ratio;
 /**
  * Overloaded Text element. Use it everywhere instead of ReactNative.Text.
  */
-export const Text = glamorous.text({
+export const Text = styled.Text({
   color: TextColor.Normal,
   fontFamily,
   fontSize,
 });
 
-export const TextItalic = glamorous(Text)({
+export const TextItalic = styled(Text)({
   fontStyle: 'italic',
 });
 
-export const TextLight = glamorous(Text)({
+export const TextLight = styled(Text)({
   fontWeight: Weight.Light,
 });
 
-export const TextLightItalic = glamorous(TextLight)({
+export const TextLightItalic = styled(TextLight)({
   fontStyle: 'italic',
 });
 
-export const TextSemiBold = glamorous(Text)({
+export const TextSemiBold = styled(Text)({
   fontWeight: Weight.SemiBold,
 });
 
-export const TextSemiBoldItalic = glamorous(TextSemiBold)({
+export const TextSemiBoldItalic = styled(TextSemiBold)({
   fontStyle: 'italic',
 });
 
-export const TextBold = glamorous(Text)({
+export const TextBold = styled(Text)({
   fontWeight: Weight.Bold,
 });
 
-export const TextBoldItalic = glamorous(TextBold)({
+export const TextBoldItalic = styled(TextBold)({
   fontStyle: 'italic',
 });
 
-export const TextBright = glamorous(TextLight)({
+export const TextBright = styled(TextLight)({
   color: TextColor.Light,
 });
 
 //////// LEGACY CODE BELOW
 
-export const Bold = glamorous.text({
+export const Bold = styled.Text({
   // color: CommonStyles.textColor, // Bold text is always black
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
   fontWeight: '600',
 });
 
-export const Italic = glamorous.text({
+export const Italic = styled.Text({
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
   fontStyle: 'italic',
 });
 
-export const Light = glamorous.text({
+export const Light = styled.Text({
   color: CommonStyles.textColor, // Light text is always black
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 12,
   fontWeight: '400',
 });
 
-export const Heavy = glamorous.text({
+export const Heavy = styled.Text({
   color: CommonStyles.textColor, // Heavy text is always black
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
   fontWeight: '600',
 });
 
-export const Paragraph = glamorous.text(
+export const Paragraph = styled.Text(
   {
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,
@@ -115,13 +118,13 @@ export const Paragraph = glamorous.text(
   }),
 );
 
-export const LightP = glamorous.text({
+export const LightP = styled.Text({
   color: CommonStyles.lightTextColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
 });
 
-export const Label = glamorous.text({
+export const Label = styled.Text({
   color: CommonStyles.lightTextColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
@@ -129,7 +132,7 @@ export const Label = glamorous.text({
   textAlignVertical: 'center',
 });
 
-export const Quote = glamorous.text({
+export const Quote = styled.Text({
   color: CommonStyles.lightTextColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 12,
@@ -139,20 +142,20 @@ export const Quote = glamorous.text({
   textAlign: 'center',
 });
 
-export const A = glamorous.text({
+export const A = styled.Text({
   color: CommonStyles.actionColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
 });
 
-export const Link = glamorous.text({
+export const Link = styled.Text({
   // Neutral link does not show a particular color
   // color: CommonStyles.actionColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
 });
 
-export const H4 = glamorous.text({
+export const H4 = styled.Text({
   color: CommonStyles.textColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
@@ -161,7 +164,7 @@ export const H4 = glamorous.text({
   paddingHorizontal: 20,
 });
 
-export const H1 = glamorous.text({
+export const H1 = styled.Text({
   color: CommonStyles.primary,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 18,
@@ -170,7 +173,7 @@ export const H1 = glamorous.text({
   marginTop: 20,
 });
 
-export const ErrorMessage = glamorous.text({
+export const ErrorMessage = styled.Text({
   alignSelf: 'center',
   color: CommonStyles.errorColor,
   flexGrow: 0,
@@ -181,7 +184,7 @@ export const ErrorMessage = glamorous.text({
   textAlign: 'center',
 });
 
-export const InfoMessage = glamorous.text({
+export const InfoMessage = styled.Text({
   alignSelf: 'center',
   color: CommonStyles.textColor,
   flexGrow: 0,

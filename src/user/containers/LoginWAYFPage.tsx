@@ -8,7 +8,7 @@ import { Text } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 import { PageView } from '~/framework/components/page';
 
 export interface ILoginWAYFPageProps {

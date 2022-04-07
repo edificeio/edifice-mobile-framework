@@ -1,12 +1,12 @@
 /**
  * Blog explorer
  */
-
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { RefreshControl, View, ScrollView } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
+import { StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -24,16 +24,15 @@ import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IUserSession, getUserSession } from '~/framework/util/session';
+import { signURISource, transformedSrc } from '~/infra/oauth';
 import { fetchBlogsAndFoldersAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
-import { IBlog, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources, IBlogFlatTree } from '~/modules/blog/reducer';
+import { IBlog, IBlogFlatTree, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources } from '~/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/modules/blog/rights';
-import { signURISource, transformedSrc } from '~/infra/oauth';
-import { openUrl } from '~/framework/util/linking';
-import { StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 
 // TYPES ==========================================================================================
 
@@ -151,7 +150,6 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {
-            console.warn('Must have a platform selected to redirect the user');
             return null;
           }
           const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog#/edit/new`;

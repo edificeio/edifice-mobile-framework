@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 import { Text } from '~/ui/Typography';
 
 type ActionsMenuProps = {

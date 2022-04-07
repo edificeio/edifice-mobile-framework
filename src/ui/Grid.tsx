@@ -1,10 +1,12 @@
 /* @flow */
-
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
 import { FlexAlignType, View } from 'react-native';
 
+
+
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+
 
 export interface ColProperties {
   alignItems?: FlexAlignType;
@@ -84,7 +86,7 @@ export interface NewProps {
   flexWrap: 'wrap' | 'nowrap';
 }
 
-export const Line = style.view({
+export const Line = styled.View({
   flexDirection: 'row',
   width: '100%',
 });

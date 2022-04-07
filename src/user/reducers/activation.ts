@@ -1,15 +1,16 @@
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 import {
-  actionTypeActivationContext,
   IActivationContextFetchedAction,
-  IActivationUserInfo,
   IActivationContextRequestedAction,
   IActivationModel,
-  actionTypeActivationSubmit,
-  IActivationSubmitRequestedAction,
   IActivationSubmitErrorAction,
+  IActivationSubmitRequestedAction,
+  IActivationUserInfo,
+  actionTypeActivationSubmit,
 } from '~/user/actions/activation';
-import { SubmitState, ContextState, IActivationContext } from '~/utils/SubmitState';
+import { ContextState, IActivationContext, SubmitState } from '~/utils/SubmitState';
+
+import { actionTypeActivationContext } from '../actions/initActivation';
 
 export interface IActivationState {
   isActivating: boolean;

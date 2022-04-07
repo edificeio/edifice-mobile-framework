@@ -1,12 +1,15 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
-import { NavigationState, NavigationScreenProp } from 'react-navigation';
+import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+
+
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
-import { IconOnOff } from '~/ui';
+import { IconOnOff } from '~/ui/icons/IconOnOff';
+
 
 export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
   createBottomTabNavigator(routeConfigs, {
@@ -40,7 +43,7 @@ export const createMainTabNavOption = (title: string, iconName: string) => ({
   tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
 });
 
-const MainTabNavigationLabel = style.text(
+const MainTabNavigationLabel = styled.Text(
   {
     alignSelf: 'center',
     fontFamily: CommonStyles.primaryFontFamily,

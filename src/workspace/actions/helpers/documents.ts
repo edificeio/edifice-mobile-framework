@@ -2,7 +2,6 @@
  * workspace list actions
  * Build actions to be dispatched to the hworkspace list reducer.
  */
-
 import I18n from 'i18n-js';
 import moment from 'moment';
 import Toast from 'react-native-tiny-toast';
@@ -13,7 +12,7 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import { getUserSession } from '~/framework/util/session';
 import { progressAction, progressEndAction, progressInitAction } from '~/infra/actions/progress';
 import config from '~/workspace/config';
-import { IFile, ContentUri, IFolder, IItems, IItem } from '~/workspace/types';
+import { ContentUri, IFile, IFolder, IItem, IItems } from '~/workspace/types';
 import { filters } from '~/workspace/types/filters/helpers/filters';
 
 export type IDocumentArray = any[];
@@ -187,19 +186,14 @@ export const uploadDocumentAction =
 // export const uploadDocument = (dispatch: any, content: ContentUri[], parentId?: string) => {
 //   const signedHeaders = getAuthHeader();
 //   const headers = { ...signedHeaders, "Content-Type": "multipart/form-data" };
-//   console.log("cgi headers", headers);
 
 //   const parentIdParam = !!parentId && !Object.keys(FilterId).includes(parentId) ? `parentId=${parentId}&` : "";
 //   const protectedParam = parentId === FilterId.protected ? "protected=true&application=media-library&" : "";
 
 //   const url = `${Conf.currentPlatform.url}/workspace/document?${parentIdParam}${protectedParam}quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
 
-//   console.log("upload document", content, url);
-
 //   dispatch(progressInitAction());
 
-//   // console.log(content.map((item, index) => ({ name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(decodeURIComponent(item.uri)) })));
-//   console.log("cgi content", content);
 //   const response = content.map((item, index) =>
 //     RNFB.fetch("POST", url, headers, [
 //       {
@@ -209,11 +203,9 @@ export const uploadDocumentAction =
 //       },
 //     ])
 //       .uploadProgress({ interval: 100 }, (written, total) => {
-//         // console.log("progress");
 //         dispatch(progressAction((written / total) * 100));
 //       })
 //       .then(response => {
-//         // console.log("upload done");
 //         dispatch(progressAction(100));
 //         dispatch(progressEndAction());
 
@@ -224,7 +216,7 @@ export const uploadDocumentAction =
 //         }
 //       })
 //       .catch(e => {
-//         console.warn("error uploading: ", e);
+
 //         if (e === `{"error":"file.too.large"}`) {
 //           Toast.show(I18n.t("workspace-quota-overflowText"), {
 //             position: Toast.position.BOTTOM,

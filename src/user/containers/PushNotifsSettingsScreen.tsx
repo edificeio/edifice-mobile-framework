@@ -1,7 +1,6 @@
 /**
  * Index page for push-notifs settings.
  */
-
 import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -14,6 +13,9 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -22,18 +24,15 @@ import { Text, TextAction, TextSizeStyle } from '~/framework/components/text';
 import { loadPushNotifsSettingsAction, updatePushNotifsSettingsAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import {
-  getDefaultPushNotifsSettingsByType,
-  getPushNotifsSettingsByType,
   IPushNotifsSettingsByType,
   ITimeline_State,
+  getDefaultPushNotifsSettingsByType,
+  getPushNotifsSettingsByType,
 } from '~/framework/modules/timelinev2/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import Notifier from '~/framework/util/notifier';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 
 // TYPES ==========================================================================================
 
@@ -132,15 +131,9 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
   }
 
   renderMainList() {
-    // console.log("=== renderMainList")
     const settings = getPushNotifsSettingsByType(this.props.timelineState);
-    // console.log("settings", settings);
     const defaults = getDefaultPushNotifsSettingsByType(this.props.timelineState);
-    // console.log("defaults", defaults);
     let items = deepmerge<IPushNotifsSettingsByType>(defaults, settings);
-    // console.log("items", items);
-    // console.log("entcoreApps", this.props.session.user.entcoreApps);
-    // console.log("timeline filters", this.props.timelineState.notifDefinitions.notifFilters);
     items = Object.fromEntries(
       Object.entries(items).filter(item => {
         const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
@@ -158,6 +151,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         renderItem={({ item }: { item: [string, IPushNotifsSettings] }) => this.renderMainItem(item)}
         ListEmptyComponent={<EmptyConnectionScreen />}
         alwaysBounceVertical={false}
+        overScrollMode="never"
         ListFooterComponent={<View style={{ height: UI_SIZES.screen.bottomInset }} />}
       />
     );
@@ -206,21 +200,16 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
   }
 
   renderSubList() {
-    console.log('=== renderSubList');
     const type = this.props.navigation.getParam('type')!;
     const settingsForType = getPushNotifsSettingsByType(this.props.timelineState)[type] || {};
-    console.log('settingsForType', settingsForType);
     const defaultsForType = getDefaultPushNotifsSettingsByType(this.props.timelineState)[type] || {};
-    console.log('defaultsForType', defaultsForType);
     let items = deepmerge<IPushNotifsSettings>(defaultsForType, settingsForType);
     const prefKeysArray = Object.keys(items);
     const pendingForType = Object.fromEntries(
       Object.entries(this.state.pendingPrefsChanges).filter(([k, v]) => prefKeysArray.includes(k)),
     );
-    console.log('pendingForType', pendingForType);
     items = deepmerge<IPushNotifsSettings>(items, pendingForType);
     const areAllChecked = Object.values(items).every(v => v);
-    console.log('areAllChecked', areAllChecked);
     const subListData =
       Object.entries(items) && Object.entries(items).length > 0
         ? Object.entries(items).sort((a, b) =>
@@ -235,6 +224,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         renderItem={({ item }: { item: [string, boolean] }) => this.renderSubItem(item)}
         ListEmptyComponent={<EmptyConnectionScreen />}
         alwaysBounceVertical={false}
+        overScrollMode="never"
         ListFooterComponent={<View style={{ height: UI_SIZES.screen.bottomInset }} />}
         ListHeaderComponent={
           hasEmptySubListData ? null : (
@@ -305,7 +295,6 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
   }
 
   async doTogglePushNotifSetting(item: [string, boolean]) {
-    console.log('=== doTogglePushNotifSetting');
     this.setState({
       pendingPrefsChanges: {
         ...this.state.pendingPrefsChanges,
@@ -318,7 +307,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     const settingsForType = getPushNotifsSettingsByType(this.props.timelineState)[type] || {};
     const defaultsForType = getDefaultPushNotifsSettingsByType(this.props.timelineState)[type] || {};
     const items = deepmerge<IPushNotifsSettings>(defaultsForType, settingsForType);
-    const itemsWithNewValue = {} as {[k: string] : boolean};
+    const itemsWithNewValue = {} as { [k: string]: boolean };
     for (const k in items) {
       itemsWithNewValue[k] = value;
     }

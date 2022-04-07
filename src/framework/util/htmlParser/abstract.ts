@@ -13,7 +13,6 @@
  * - `parseEntities` A boolean that indicates if html entities hav to be parsed in text nodes or not. Default `true`.
  * - `fixVoidTags` A boolean that indicated if void tags in the html input string must be fixed. Default `true`
  */
-
 import { decode } from 'html-entities';
 import Saxophone from 'saxophone';
 
@@ -86,25 +85,19 @@ export class HtmlParserAbstract<RenderType> {
       if (this.saxEventHandlersAbstract.hasOwnProperty(eventName))
         this.saxophone.on(eventName, this.saxEventHandlersAbstract[eventName]);
     }
-    // console.log("parser constructed", this.opts);
   }
 
   public parse(html: string): RenderType {
     try {
-      // console.log("html before fix:", html);
       html = this.beforeParseAbstract(html);
       this.html = html;
-      // console.log("html before parse:", this.html);
       if (!this.html) return null;
       this.saxophone.parse(this.html);
       // Now this.render is available.
-      // console.log("render after parse:", this.render);
       this.render = this.didParseAbstract(this.render);
-      // console.log("output after didParse:", this.render);
       return this.render;
     } catch (e) {
       // tslint:disable-next-line:no-console
-      console.warn('Critical html parsing error', e);
       throw e;
     }
   }
@@ -135,9 +128,6 @@ export class HtmlParserAbstract<RenderType> {
     const tagName = tag.name.toLowerCase();
     const tagAttrs: { [attr: string]: string } = parseAttrs(tag.attrs);
 
-    // console.log(`open <${tagName}> at deepness ${this.currentDeepnessLevel}`);
-    // console.log(this.currentIgnoredDeepnessLevel);
-
     // 1 - Compute if the tag needs to be ignored
 
     let willBeIgnored = false;
@@ -149,7 +139,6 @@ export class HtmlParserAbstract<RenderType> {
       });
 
       if (willBeIgnored) {
-        // console.log(`this <${tagName}> will be ignored until closing`);
         this.currentIgnoredDeepnessLevel = this.currentDeepnessLevel;
       }
     }
@@ -173,8 +162,6 @@ export class HtmlParserAbstract<RenderType> {
     // 1 - Compute new deepness level (even if tag is being ignored, we need to read all its children to know when tag is closed).
     if (!htmlVoidElements.includes(tagName)) --this.currentDeepnessLevel;
 
-    // console.log(`close <${tagName}> at deepness ${this.currentDeepnessLevel}`);
-
     if (!this.isIgnoring && this.onTagClose) {
       this.currentIgnoredDeepnessLevel = undefined; // If closing tag is not ignored anymore, we have to erase ignored deepness information.
       this.onTagClose({ name: tagName });
@@ -189,12 +176,8 @@ export class HtmlParserAbstract<RenderType> {
   protected onTextAbstract(text: { contents: string }) {
     if (this.isIgnoring) return;
     if (!text.contents) return;
-    // console.log(`encountered text : "${text.contents}" at deepness ${this.currentDeepnessLevel}`);
     // if (!text.contents.match(/\S/)) return; // Filter whitespace-only text.
-    if (this.opts.parseEntities)
-      // console.log("decoded html entities pre", text.contents);
-      text.contents = decode(text.contents);
-    // console.log(`decoded html entities : "${text.contents}"`);
+    if (this.opts.parseEntities) text.contents = decode(text.contents);
     if (this.onText) this.onText(text);
   }
 
@@ -210,7 +193,6 @@ export class HtmlParserAbstract<RenderType> {
 
   protected onErrorAbstract(error: string) {
     // tslint:disable-next-line:no-console
-    console.warn('HtmlParser Saxerror : ', error);
     if (this.onError) this.onError(error);
   }
 

@@ -1,4 +1,3 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
 import mailConfig from '~/modules/zimbra/moduleConfig';
 

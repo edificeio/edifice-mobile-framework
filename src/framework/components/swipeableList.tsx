@@ -193,7 +193,6 @@ export default React.forwardRef(
                     swip: ref,
                     view,
                   };
-                  // console.log("init", index, ref);
                 },
                 on: (index, ref) => {
                   recenter((index2, ref2) => index !== index2);
@@ -201,14 +200,12 @@ export default React.forwardRef(
                   Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
                     (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({ style: getTouchableViewStyle(false) });
                   });
-                  // console.log("on", index, ref);
                 },
                 off: (index, ref) => {
                   if (!ref) {
                     recenter();
                   } else {
                     delete activeSwipablesRefs[index];
-                    // console.log("off", index, ref);
                     Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
                       (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({
                         style: getTouchableViewStyle(true),

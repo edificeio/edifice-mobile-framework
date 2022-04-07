@@ -1,16 +1,23 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 
-import { Weight } from './Typography';
+
 
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
-export const ArticleContainer = style.view({
+
+
+import { Weight } from './Typography';
+
+
+export const ArticleContainer = styled.View({
   padding: 5
 });
 
-export const ListItem = style(TouchableOpacity)(
+export const ListItem = styled(TouchableOpacity)<{
+  borderBottomWidth: number; full: boolean; nb: number;
+}>(
   {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: layoutSize.LAYOUT_10,
@@ -26,7 +33,7 @@ export const ListItem = style(TouchableOpacity)(
   }),
 );
 
-export const Header = style.view({
+export const Header = styled.View({
   alignItems: 'stretch',
   flexDirection: 'row',
   justifyContent: 'flex-start',
@@ -35,13 +42,13 @@ export const Header = style.view({
   width: '100%',
 });
 
-export const LeftPanel = style.view({
+export const LeftPanel = styled.View({
   justifyContent: 'center',
   minHeight: layoutSize.LAYOUT_50,
   width: layoutSize.LAYOUT_50,
 });
 
-export const LeftIconPanel = style.view({
+export const LeftIconPanel = styled.View({
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: layoutSize.LAYOUT_54,
@@ -50,7 +57,7 @@ export const LeftIconPanel = style.view({
   marginRight: layoutSize.LAYOUT_10,
 });
 
-export const LeftSmallIconPanel = style.view({
+export const LeftSmallIconPanel = styled.View({
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: layoutSize.LAYOUT_34,
@@ -59,7 +66,7 @@ export const LeftSmallIconPanel = style.view({
   marginRight: layoutSize.LAYOUT_5,
 });
 
-export const CenterPanel = style.view({
+export const CenterPanel = styled.View({
   alignItems: 'flex-start',
   flex: 1,
   justifyContent: 'center',
@@ -67,14 +74,14 @@ export const CenterPanel = style.view({
   padding: 2,
 });
 
-export const RightPanel = style.view({
+export const RightPanel = styled.View({
   alignItems: 'center',
   height: layoutSize.LAYOUT_50,
   justifyContent: 'flex-end',
   width: layoutSize.LAYOUT_50,
 });
 
-export const Content = style.text(
+export const Content = styled.Text<{nb: number}>(
   {
     color: CommonStyles.iconColorOff,
     fontFamily: CommonStyles.primaryFontFamily,
@@ -88,7 +95,7 @@ export const Content = style.text(
   }),
 );
 
-export const PageContainer = style.view({
+export const PageContainer = styled.View({
   backgroundColor: CommonStyles.lightGrey,
   flex: 1,
 });

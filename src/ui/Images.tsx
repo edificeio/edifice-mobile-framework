@@ -1,6 +1,5 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
-import querystring from 'querystring';
 import * as React from 'react';
 import { ImageProps, ImageSourcePropType, ImageURISource, View, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -13,31 +12,31 @@ import { CommonStyles } from '~/styles/common/styles';
 
 
 
-import { Row } from '.';
 import TouchableOpacity from './CustomTouchableOpacity';
+import { Row } from './Grid';
 import ImageOptional from './ImageOptional';
 import { Italic } from './Typography';
 
 
-const BubbleText = style.text({
+const BubbleText = styled.Text({
   color: '#FFFFFF',
   marginHorizontal: -10,
   textAlign: 'center',
 });
 
-const ContainerImage = style.view({});
+const ContainerImage = styled.View({});
 
-const SoloImage = style(TouchableOpacity)({
+const SoloImage = styled(TouchableOpacity)({
   backgroundColor: '#eeeeee',
   width: '100%',
 });
 
-const QuarterImage = style(TouchableOpacity)({
+const QuarterImage = styled(TouchableOpacity)({
   backgroundColor: '#eeeeee',
   width: '100%',
 });
 
-const Overlay = style(TouchableOpacity)({
+const Overlay = styled(TouchableOpacity)({
   backgroundColor: 'rgba(0,0,0,0.5)',
   bottom: 0,
   position: 'absolute',
@@ -45,12 +44,12 @@ const Overlay = style(TouchableOpacity)({
   width: '100%',
 });
 
-const Column = style.view({
+const Column = styled.View({
   justifyContent: 'space-between',
   width: '50%',
 });
 
-const BubbleView = style.view({
+const BubbleView = styled.View({
   backgroundColor: 'rgba(0,0,0,0.5)',
   borderRadius: 15,
   height: 30,

@@ -3,9 +3,9 @@ import moment from 'moment';
 import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
 import {
   ICallEvent,
+  IForgottenNotebooksList,
   IHistoryEvent,
   IHistoryEventsList,
-  IForgottenNotebooksList,
   IIncidentsList,
   IPunishmentsList,
 } from '~/modules/viescolaire/presences/state/events';
@@ -50,17 +50,23 @@ export type IIncidentBackend = {
   all: {
     INCIDENT: {
       date: string;
+      protagonist: {
+        label: string;
+      };
       type: {
         label: string;
       };
     }[];
     PUNISHMENT: {
+      created_at: string;
       fields: {
         start_at: string;
         end_at: string;
+        delay_at: string;
       };
       type: {
         label: string;
+        punishment_category_id: number;
       };
     }[];
   };
@@ -114,11 +120,14 @@ const forgottenNotebooksAdapter: (data: IForgottenNotebooksBackend) => IForgotte
 
 const incidentsAdapter: (data: IIncidentBackend) => { incidents: IIncidentsList; punishments: IPunishmentsList } = data => {
   return {
-    incidents: data.all.INCIDENT.map(i => ({ date: moment(i.date), label: i.type.label })),
+    incidents: data.all.INCIDENT.map(i => ({ date: moment(i.date), protagonist: i.protagonist, label: i.type.label })),
     punishments: data.all.PUNISHMENT.map(p => ({
+      created_at: moment(p.created_at),
       start_date: moment(p.fields.start_at),
       end_date: moment(p.fields.end_at),
+      delay_at: moment(p.fields.delay_at),
       label: p.type.label,
+      punishment_category_id: p.type.punishment_category_id,
     })),
   };
 };

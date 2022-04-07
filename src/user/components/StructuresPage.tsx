@@ -2,8 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { SectionList, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
-import { UI_SIZES } from '~/framework/components/constants';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NestedText, Text, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
@@ -67,9 +67,9 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps & N
             ListHeaderComponent={<H4>{I18n.t('structuresTitle')}</H4>}
             stickySectionHeadersEnabled={false}
             alwaysBounceVertical={false}
+            overScrollMode="never"
           />
         ) : null}
-
       </PageView>
     );
   }

@@ -2,9 +2,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, RefreshControl, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus, NavigationState } from 'react-navigation';
+import { NavigationFocusInjectedProps, NavigationInjectedProps, NavigationState, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+
+
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
@@ -16,11 +18,7 @@ import { PageView } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
 import { Text } from '~/framework/components/text';
-import {
-  dismissFlashMessageAction,
-  loadNotificationsPageAction,
-  startLoadNotificationsAction,
-} from '~/framework/modules/timelinev2/actions';
+import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import { TimelineFlashMessage } from '~/framework/modules/timelinev2/components/TimelineFlashMessage';
 import { TimelineNotification } from '~/framework/modules/timelinev2/components/TimelineNotification';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
@@ -30,18 +28,10 @@ import { INotifications_State } from '~/framework/modules/timelinev2/reducer/not
 import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
 import { notificationsService } from '~/framework/modules/timelinev2/service';
 import { getTimelineWorkflows } from '~/framework/modules/timelinev2/timelineModules';
-import {
-  ITimelineNotification,
-  IResourceUriNotification,
-  isResourceUriNotification,
-  IAbstractNotification,
-} from '~/framework/util/notifications';
-import {
-  defaultNotificationActionStack,
-  handleNotificationAction,
-  NotifHandlerThunkAction,
-} from '~/framework/util/notifications/routing';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IAbstractNotification, IResourceUriNotification, ITimelineNotification, isResourceUriNotification } from '~/framework/util/notifications';
+import { NotifHandlerThunkAction, defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
+import { IUserSession, getUserSession } from '~/framework/util/session';
+
 
 // TYPES ==========================================================================================
 
@@ -144,8 +134,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
     const isEmpty = items && items.length === 0;
 
-    const renderSwipeButton = (action, actionIcon, actionText, color) => [
-      <View style={{ height: '100%', justifyContent: 'center' }}>
+    const renderSwipeButton = (action, actionIcon, actionText, color, key) => [
+      <View style={{ height: '100%', justifyContent: 'center' }} key={`${key}${actionIcon}${actionText}`}>
         <TouchableOpacity onPress={action}>
           <View
             style={{
@@ -167,7 +157,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         ref={this.listRef}
         // data
         data={items}
-        keyExtractor={n => n?.data?.id?.toString()}
+        keyExtractor={n => n.data.id.toString()}
         contentContainerStyle={isEmpty ? { flex: 1 } : null}
         renderItem={({ item }) =>
           item.type === ITimelineItemType.NOTIFICATION
@@ -203,6 +193,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                         'warning',
                         I18n.t('timeline.reportAction.button'),
                         theme.color.warning,
+                        item.data.id
                       )
                     : item.type === ITimelineItemType.FLASHMSG
                     ? renderSwipeButton(
@@ -213,6 +204,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                         'close',
                         I18n.t('common.close'),
                         theme.color.failure,
+                        item.data.id
                       )
                     : undefined,
                 ]
@@ -351,8 +343,12 @@ const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: IN
   const msgs = flashMessages && flashMessages.data ? flashMessages.data : [];
   const notifs = notifications && notifications.data ? notifications.data : [];
   const ret = [] as ITimelineItem[];
-  for (const fm of msgs) { ret.push({ type: ITimelineItemType.FLASHMSG, data: fm }) }
-  for (const n of notifs) { ret.push({ type: ITimelineItemType.NOTIFICATION, data: n }) }
+  for (const fm of msgs) {
+    ret.push({ type: ITimelineItemType.FLASHMSG, data: fm });
+  }
+  for (const n of notifs) {
+    ret.push({ type: ITimelineItemType.NOTIFICATION, data: n });
+  }
   return ret;
 };
 

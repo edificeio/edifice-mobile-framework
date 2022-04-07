@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
+import { navigate } from '~/navigation/helpers/navHelper';
+
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
-
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getLoginRouteName } from '~/navigation/LoginNavigator';
-import { navigate } from '~/navigation/helpers/navHelper';
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().
@@ -17,7 +17,6 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
     if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
     if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
       // tslint:disable-next-line:no-console
-      // console.log("Token expired. Refreshing...");
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
@@ -25,13 +24,10 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       }
     }
     // tslint:disable-next-line:no-console
-    // console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");
     const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
-    // console.log("signed fetch:", url, params);
     return fetch(req);
   } catch (err) {
     // tslint:disable-next-line:no-console
-    console.warn('Failed fetch with token: ', err);
     throw err;
   }
 }
@@ -45,12 +41,10 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
 export async function signedFetchJson(url: string | Request, init?: RequestInit): Promise<unknown> {
   try {
     const response = await signedFetch(url, init);
-    // console.log(response);
     // TODO check if response is OK
     return response.json();
   } catch (err) {
     // tslint:disable-next-line:no-console
-    // console.warn("failed fetch json with token: ", err);
     throw err;
   }
 }
@@ -85,9 +79,7 @@ export async function fetchWithCache(
     if (!platform) throw new Error('must specify a platform');
     // TODO bugfix : cache key must depends on userID and platformID.
     const cacheKey = CACHE_KEY_PREFIX + path;
-    // console.log("cacheKey", cacheKey);
     const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
-    // console.log("dataFromCache", dataFromCache);
     if (Connection.isOnline && (forceSync || !dataFromCache)) {
       let response =
         path.indexOf(DEPRECATED_getCurrentPlatform()!.url) === -1
@@ -95,11 +87,8 @@ export async function fetchWithCache(
           : await signedFetch(`${path}`, init);
       const r2 = response.clone();
       const resJson = response;
-      // console.log("resJson", resJson, await resJson.json());
       const resText = response.clone();
-      // console.log("resText", resText, await resText.text());
       response = r2;
-      // console.log("fetchWithCache path & response", path, response);
 
       // TODO: check if response is OK
       const cacheResponse = {
@@ -110,24 +99,18 @@ export async function fetchWithCache(
           statusText: response.statusText,
         },
       };
-      // console.log("cacheResponse", cacheResponse);
       await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
-      // console.log("async storage set item");
       const ret = await getBody(response);
-      // console.log("ret", ret);
       return ret;
     }
 
     if (dataFromCache) {
-      // console.log("has dataFromCache", dataFromCache);
       const cacheResponse = JSON.parse(dataFromCache);
-      // console.log("cacheResponse", cacheResponse);
       return getCacheResult(cacheResponse);
     }
 
     return null;
   } catch (e) {
-    console.error(e);
     throw e;
   }
 }
@@ -162,6 +145,5 @@ export async function fetchJSONWithCache(
  */
 export async function clearRequestsCache() {
   const keys = (await AsyncStorage.getAllKeys()).filter(str => str.startsWith(CACHE_KEY_PREFIX));
-  // console.log("keys to clear:", keys);
   await AsyncStorage.multiRemove(keys);
 }

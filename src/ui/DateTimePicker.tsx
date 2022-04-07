@@ -4,7 +4,8 @@ import moment from 'moment';
 import React, { useState } from 'react';
 import { View, Platform, ViewStyle } from 'react-native';
 
-import { Icon, ButtonsOkCancel } from '.';
+import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
+import { Icon } from '~/ui/icons/Icon';
 import TouchableOpacity from './CustomTouchableOpacity';
 import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from './Modal';
 

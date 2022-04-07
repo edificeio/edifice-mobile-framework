@@ -1,21 +1,25 @@
 import messaging from '@react-native-firebase/messaging';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import 'react-native-gesture-handler';
-import 'ts-polyfill/lib/es2019-object';
 import { AppState, AppStateStatus, StatusBar, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
+import 'ts-polyfill/lib/es2019-object';
+
+import AppConf from '~/framework/util/appConf';
+import { Trackers } from '~/framework/util/tracker';
 
 import AppScreen from './AppScreen';
 import { createMainStore } from './AppStore';
 import { initI18n } from './app/i18n';
 import AppModules from './app/modules';
-import { OAuth2RessourceOwnerPasswordClient, AllModulesBackup } from './infra/oauth';
-import { getLoginStackToDisplay } from './navigation/LoginNavigator';
+import theme from './app/theme';
+import { AllModulesBackup, OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
+import { getLoginStackToDisplay } from './navigation/helpers/loginRouteName';
 import { reset } from './navigation/helpers/navHelper';
 import { refreshToken } from './user/actions/login';
 import { loadCurrentPlatform, selectPlatform } from './user/actions/platform';
@@ -23,10 +27,6 @@ import { checkVersionThenLogin } from './user/actions/version';
 import { IUserAuthState } from './user/reducers/auth';
 import { isInActivatingMode } from './user/selectors';
 import { IUserInfoState } from './user/state/info';
-
-import AppConf from '~/framework/util/appConf';
-import { Trackers } from '~/framework/util/tracker';
-import theme from './app/theme';
 
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
 require('./myAppMenu');
@@ -39,12 +39,6 @@ require('./workspace');
 //require("./viescolaire");
 //require("./support");
 require('./user');
-
-// Disable Yellow Box on release builds.
-if (__DEV__) {
-  // tslint:disable-next-line:no-console
-  console.disableYellowBox = true;
-}
 
 class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: boolean }> {
   private notificationOpenedListener?: () => void;
@@ -89,7 +83,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
         try {
           platformId = await this.props.store.dispatch(loadCurrentPlatform());
         } catch (e) {
-          console.warn(e);
+          // TODO: Manage error
         }
       } else {
         platformId = AppConf.platforms[0].name;
@@ -99,7 +93,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
       try {
         platformId = await this.props.store.dispatch(loadCurrentPlatform());
       } catch (e) {
-        console.warn(e);
+        // TODO: Manage error
       }
     }
     const connectionToken = await OAuth2RessourceOwnerPasswordClient.connection?.loadToken();
@@ -144,10 +138,9 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
 
   private handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
-      console.log('[App State] now in active mode');
       Trackers.trackDebugEvent('Application', 'DISPLAY');
     } else if (nextAppState === 'background') {
-      console.log('[App State] now in background mode');
+      console.debug('[App State] now in background mode');
     }
   };
 
@@ -165,9 +158,7 @@ function connectWithStore(store: any, WrappedComponent: any, ...args: [any?, any
 
 const theStore: any = { store: undefined };
 const getStore = () => {
-  // console.log("get the store", theStore.store);
   if (theStore.store == undefined) theStore.store = createMainStore();
-  // console.log("the store is", theStore.store);
   return theStore.store;
 };
 

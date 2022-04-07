@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
-import { Icon } from '.';
+
 
 import theme from '~/app/theme';
+import { Icon } from '~/ui/icons/Icon';
+
 
 export const IconButton = (props: {
   iconName: string;

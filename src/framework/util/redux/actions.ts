@@ -8,7 +8,7 @@ export const tryAction =
   <Args extends any[], R, E>(
     action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
     trackInfo?: DoTrackArg | ((...args: Args) => DoTrackArg),
-    throwback?: boolean
+    throwback?: boolean,
   ) =>
   (...args: Args) =>
   async (dispatch: ThunkDispatch<IGlobalState, E, AnyAction>) => {
@@ -20,7 +20,6 @@ export const tryAction =
     } catch (e) {
       doTrack && Trackers.trackEventOfModule(doTrack[0], doTrack[1], doTrack[2] + ' - Échec', doTrack[3]);
       // ToDo : General error reporting here
-      console.warn(e);
       if (throwback) throw e;
     }
   };

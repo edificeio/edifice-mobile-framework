@@ -1,9 +1,11 @@
 import I18n from 'i18n-js';
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { Text, NestedText, TextBold, NestedTextBold } from '~/framework/components/text';
+import { NestedText, NestedTextBold, Text, TextBold } from '~/framework/components/text';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+
+import { IPunishment } from '../state/events';
 
 const colors = {
   no_reason: '#E61610',
@@ -177,8 +179,8 @@ export const ForgotNotebookCard = ({ elements }) => {
 export const IncidentCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
-      <NestedTextBold> {event.date.format('DD/MM/YY H:mm')} : </NestedTextBold>
-      <NestedText>{event.label}</NestedText>
+      <NestedText> {event.label}</NestedText> - <NestedTextBold>{event.date.format('DD/MM/YY H:mm')}</NestedTextBold> -{' '}
+      {event.protagonist.label}
     </Text>
   );
   return (
@@ -187,12 +189,50 @@ export const IncidentCard = ({ elements }) => {
 };
 
 export const PunishmentCard = ({ elements }) => {
-  const renderItem = event => (
+  const getPunishmentDate = (punishment: IPunishment) => {
+    let createdDate: string = punishment?.created_at.format('DD/MM/YY');
+    switch (punishment.punishment_category_id) {
+      case 1: //DUTY
+        let dutyDate: string = createdDate;
+        if (punishment.delay_at) {
+          dutyDate = punishment.delay_at.format('DD/MM/YY');
+        }
+        return I18n.t('viesco-incidents-punishments-date.for-the') + dutyDate;
+      case 2: //DETENTION
+        let startDetentionDate: string = createdDate;
+        if (punishment.start_date) {
+          startDetentionDate = punishment.start_date.format('DD/MM/YY');
+        }
+        return I18n.t('viesco-incidents-punishments-date.for-the') + startDetentionDate;
+      case 3: //BLAME
+        return I18n.t('viesco-incidents-punishments-date.created-on') + createdDate;
+      case 4: // EXCLUSION
+        if (punishment.start_date && punishment.end_date) {
+          let startExcludeDate: string = punishment.start_date.format('DD/MM/YY');
+          let endExcludeDate: string = punishment.end_date.format('DD/MM/YY');
+          if (startExcludeDate && endExcludeDate) {
+            return startExcludeDate === endExcludeDate
+              ? startExcludeDate
+              : I18n.t('viesco-incidents-punishments-date.from') +
+                  startExcludeDate +
+                  I18n.t('viesco-incidents-punishments-date.to') +
+                  endExcludeDate;
+          } else {
+            return ' ';
+          }
+        }
+      default:
+        return createdDate;
+    }
+  };
+
+  const renderItem = (event: IPunishment) => (
     <Text>
-      <NestedTextBold> {event.start_date.format('DD/MM/YY')} - </NestedTextBold>
-      {event.start_date.format('H:mm')} - {event.end_date.format('H:mm')} - {event.label}
+      <NestedTextBold> {event.label} - </NestedTextBold>
+      {getPunishmentDate(event)}
     </Text>
   );
+
   return (
     <PresenceCard
       color={colors.punishment}

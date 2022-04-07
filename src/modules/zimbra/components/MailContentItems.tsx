@@ -1,12 +1,11 @@
-import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { findReceivers2, findReceiversAvatars, Author, findSenderAvatar } from './MailItem';
+
 
 import { Text, TextBold } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -14,11 +13,16 @@ import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { getFileIcon } from '~/modules/zimbra/utils/fileIcon';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
-import { Icon } from '~/ui';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { ButtonIcon } from '~/ui/ButtonIconText';
-import { Header, CenterPanel, LeftPanel } from '~/ui/ContainerContent';
+import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Icon } from '~/ui/icons/Icon';
+
+
+
+import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from './MailItem';
+
 
 const User = ({ userId, userName }: { userId: string; userName: string }) => {
   const [dotColor, setDotColor] = React.useState('white');
@@ -151,7 +155,7 @@ export const HeaderMailDetails = ({
           <TextBold style={{ flex: 1 }}> {mailInfos.subject}</TextBold>
         </View>
       ) : (
-        <style.View />
+        <View />
       )}
     </View>
   );
@@ -168,7 +172,7 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
           <TextBold style={{ flex: 1 }}> {mailInfos.subject}</TextBold>
         </View>
       ) : (
-        <style.View />
+        <View />
       )}
     </View>
   );
@@ -221,7 +225,6 @@ export const RenderPJs = ({
           <TouchableOpacity
             onPress={() => {
               Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-              // console.log(df);
               onDownload(df);
             }}>
             <View style={[styles.gridViewStyle, { justifyContent: 'space-between' }]}>
@@ -241,7 +244,6 @@ export const RenderPJs = ({
                         await sf.mirrorToDownloadFolder();
                         Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
                       } catch (e) {
-                        console.log(e);
                         Toast.show(I18n.t('download-error-generic'));
                       }
                     }}

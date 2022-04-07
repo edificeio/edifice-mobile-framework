@@ -8,8 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import theme from '~/app/theme';
 import ActionsMenu from '~/framework/components/actionsMenu';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -20,17 +18,24 @@ import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { deleteMailsAction, moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsToFolderAction, restoreMailsToInboxAction, toggleReadAction, trashMailsAction } from '~/modules/conversation/actions/mail';
+import {
+  deleteMailsAction,
+  moveMailsToFolderAction,
+  moveMailsToInboxAction,
+  restoreMailsToFolderAction,
+  restoreMailsToInboxAction,
+  toggleReadAction,
+  trashMailsAction,
+} from '~/modules/conversation/actions/mail';
 import { fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
 import { FooterButton, HeaderMail, RenderPJs } from '~/modules/conversation/components/MailContentItems';
 import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
 import { DraftType } from '~/modules/conversation/containers/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { getMailContentState } from '~/modules/conversation/state/mailContent';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-
 
 class MailContentContainer extends React.PureComponent<
   NavigationInjectedProps<NavigationParams> & {
@@ -133,7 +138,7 @@ class MailContentContainer extends React.PureComponent<
         containerStyle: { width: '95%', backgroundColor: 'black' },
       });
     } catch (error) {
-      console.error(error);
+      // TODO: Manage error
     }
   };
 
@@ -158,12 +163,14 @@ class MailContentContainer extends React.PureComponent<
     isCurrentFolderTrash && menuData.splice(0, 1);
     isCurrentFolderSentOrDrafts && menuData.splice(0, 2);
 
-    // console.log("Container MailContent mail prop", mail, navigation.state.params);
     const ViewportAwareSubject = Viewport.Aware(View);
 
     const navBarInfo = {
       title: this.state.showHeaderSubject ? mail.subject : undefined,
-      right: this.props.isFetching || error || htmlError ? undefined : <HeaderAction onPress={this.showMenu} iconName="more_vert" iconSize={24} />,
+      right:
+        this.props.isFetching || error || htmlError ? undefined : (
+          <HeaderAction onPress={this.showMenu} iconName="more_vert" iconSize={24} />
+        ),
     };
 
     return (
@@ -264,7 +271,6 @@ class MailContentContainer extends React.PureComponent<
   }
 
   private updateVisible(isVisible: boolean) {
-    // console.log("updateVisible", isVisible);
     if (this.state.showHeaderSubject && isVisible) this.setState({ showHeaderSubject: false });
     else if (!this.state.showHeaderSubject && !isVisible) this.setState({ showHeaderSubject: true });
   }

@@ -6,7 +6,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { DEPRECATED_signImageURISource } from '~/infra/oauth';
 import { DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 import ImageOptional from '~/ui/ImageOptional';
 import { IFile } from '~/workspace/types';
 import { FilterId } from '~/workspace/types/filters';

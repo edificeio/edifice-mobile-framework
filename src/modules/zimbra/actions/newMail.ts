@@ -12,7 +12,7 @@ export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
     try {
       await newMailService.sendMail(mailDatas, draftId, InReplyTo);
     } catch (errmsg) {
-      console.error('ERROR new mail: ', errmsg);
+      //TODO: Manage error
     }
   };
 }
@@ -22,7 +22,7 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
     try {
       await newMailService.forwardMail(draftId, forwardFrom);
     } catch (errmsg) {
-      console.error('ERROR forward mail: ', errmsg);
+      //TODO: Manage error
     }
   };
 }
@@ -48,13 +48,10 @@ export function addAttachmentAction(mailId: string, attachment: any) {
       dispatch(progressInitAction());
       const handleProgress = progress => dispatch(progressAction(progress));
       const session = getUserSession(getState());
-      // console.log("will upload attachment with service", attachment);
       const newAttachments = await newMailService.addAttachment(session, mailId, attachment, handleProgress);
-      // console.log("addAttachmentAction services returned", newAttachments);
       dispatch(progressEndAction());
       return newAttachments;
     } catch (errmsg) {
-      // console.log("ERROR uploading attachment", errmsg);
       dispatch(progressEndAction());
       throw errmsg;
     }

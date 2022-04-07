@@ -2,8 +2,7 @@
  * Support Reducer
  */
 
-/* eslint-disable flowtype/no-types-missing-file-annotation */
-import { ISupportListState } from "./state/support";
+import { ISupportListState } from './state/support';
 
 // State
 

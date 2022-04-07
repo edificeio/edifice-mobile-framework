@@ -1,23 +1,17 @@
-import { applyMiddleware, combineReducers, createStore, compose } from 'redux';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 
 import moduleDefinitions from './AppModules';
-import { getReducersFromModuleDefinitions } from './infra/moduleTool';
 import AppModules from './app/modules';
-
+import { getReducersFromModuleDefinitions } from './infra/moduleTool';
 import notifiers from './infra/notifier/reducer';
 import connectionTracker from './infra/reducers/connectionTracker';
-import ui from './infra/reducers/ui';
 import progress from './infra/reducers/progress';
+import ui from './infra/reducers/ui';
 
 declare var window: any;
 
-// console.log("MODULE DEFS ", moduleDefinitions);
-// console.log("REDUCERS", getReducersFromModuleDefinitions(moduleDefinitions));
-
 export function createMainStore() {
-  console.log('create store');
-
   const reducers = {
     connectionTracker,
     notifiers,

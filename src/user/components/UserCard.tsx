@@ -1,7 +1,9 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, TouchableOpacity as RNTouchableOpacity } from 'react-native';
+import { TouchableOpacity as RNTouchableOpacity, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+
 
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
@@ -11,11 +13,12 @@ import { Loading } from '~/ui/Loading';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { Icon } from '~/ui/icons/Icon';
 
+
 export interface IUserCardProps {
   touchable?: boolean;
   id: string;
   displayName: string;
-  type: ('Student' | 'Relative' | 'Teacher' | 'Personnel')[] | 'Student' | 'Relative' | 'Teacher' | 'Personnel';
+  type: ('Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest')[] | 'Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest';
   canEdit: boolean;
   hasAvatar: boolean;
   updatingAvatar: boolean;
@@ -38,7 +41,7 @@ export const UserCard = ({
 }: IUserCardProps) => {
   const WrapperComponent = touchable ? RNTouchableOpacity : View;
 
-  const renderUserType = (type: 'Student' | 'Relative' | 'Teacher' | 'Personnel') => (
+  const renderUserType = (type: 'Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest') => (
     <View
       style={{
         flexDirection: 'row',

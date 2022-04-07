@@ -1,22 +1,23 @@
 import I18n from 'i18n-js';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import * as notifDefinitionsStateHandler from '~/framework/modules/timelinev2/reducer/notifDefinitions';
-import { INotifFilterSettings, actions as notifFilterSettingsActions } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
-import { IPushNotifsSettings, actions as pushNotifsSettingsActions } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+import {
+  INotifFilterSettings,
+  actions as notifFilterSettingsActions,
+} from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
+import {
+  IPushNotifsSettings,
+  actions as pushNotifsSettingsActions,
+} from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import { pushNotifsService } from '~/framework/modules/timelinev2/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { getUserSession } from '~/framework/util/session';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 
-
-
 import { loadNotificationsDefinitionsAction } from './notifDefinitions';
-
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -53,7 +54,6 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     dispatch(notifFilterSettingsActions.receipt(settings));
   } catch (e) {
     // ToDo: Error handling
-    console.warn(`[${moduleConfig.name}] loadNotificationsSettingsAction failed`, e);
     dispatch(notifFilterSettingsActions.error(e));
   }
 };
@@ -69,7 +69,6 @@ export const setFiltersAction =
       dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] setFilterAction failed`, e);
       dispatch(notifFilterSettingsActions.setError(selectedFilters));
     }
   };
@@ -90,7 +89,6 @@ export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch
     dispatch(pushNotifsSettingsActions.receipt(pushNotifsSettings));
   } catch (e) {
     // ToDo: Error handling
-    console.warn(`[${moduleConfig.name}] loadPushNotifsSettingsAction failed`, e);
     dispatch(pushNotifsSettingsActions.error(e));
   }
 };
@@ -98,14 +96,12 @@ export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch
 export const updatePushNotifsSettingsAction =
   (changes: IPushNotifsSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      console.log('updatePushNotifsSettingsAction');
       dispatch(pushNotifsSettingsActions.setRequest(changes));
       const session = getUserSession(getState());
       await pushNotifsService.set(session, changes);
       dispatch(pushNotifsSettingsActions.setReceipt(changes));
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] updatePushNotifsSettingsAction failed`, e);
       dispatch(pushNotifsSettingsActions.setError(e));
       dispatch(
         notifierShowAction({

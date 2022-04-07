@@ -1,10 +1,15 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 
-import TouchableOpacity from './CustomTouchableOpacity';
+
 
 import { CommonStyles } from '~/styles/common/styles';
 
-export const TouchCard = style(TouchableOpacity)({
+
+
+import TouchableOpacity from './CustomTouchableOpacity';
+
+
+export const TouchCard = styled(TouchableOpacity)({
   backgroundColor: '#FFFFFF',
   paddingHorizontal: 16,
   paddingVertical: 12,
@@ -18,7 +23,7 @@ export const TouchCard = style(TouchableOpacity)({
   flexDirection: 'column',
 });
 
-export const Card = style.view({
+export const Card = styled.View({
   backgroundColor: '#FFFFFF',
   paddingHorizontal: 16,
   paddingVertical: 12,

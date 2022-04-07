@@ -2,7 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { Loading, FlatButton } from '~/ui';
+import { Loading } from '~/ui/Loading';
+import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage } from '~/ui/Typography';
 
 interface IConnectorViewDataProps {
@@ -37,7 +38,6 @@ class ConnectorView extends React.PureComponent<IConnectorViewProps> {
     const { isLoading, error } = this.props;
 
     if (error) {
-      console.log(error);
       return this.renderError();
     } else if (isLoading) {
       return this.renderLoading();

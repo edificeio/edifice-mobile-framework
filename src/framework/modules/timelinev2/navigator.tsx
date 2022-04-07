@@ -22,7 +22,6 @@ const namespaceTimelineSubModules = (rmap: RouteMap) => {
 };
 
 export default () => {
-  console.log('[Timeline] subModules routes', namespaceTimelineSubModules(timelineSubModules.get()));
   return createStackNavigator(
     {
       ...addViewTrackingToStackRoutes({

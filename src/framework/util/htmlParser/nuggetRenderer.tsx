@@ -2,22 +2,21 @@
  * These tools are used in htmlParser/rn for the second step of parsing.
  * The aim is to render a React Native Element from INugget array.
  */
-
 import * as React from 'react';
 import { Image, ImageURISource, Linking, TextStyle, View, ViewStyle } from 'react-native';
 
 import {
   NestedText,
+  NestedTextAction,
   NestedTextBold,
   NestedTextItalic,
-  NestedTextAction,
   Text,
+  TextAction,
   TextBold,
   TextColorStyle,
   TextItalic,
-  TextAction,
 } from '~/framework/components/text';
-import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource, signURISource, transformedSrc } from '~/infra/oauth';
+import { DEPRECATED_signImageURISource, DEPRECATED_signImagesUrls, signURISource, transformedSrc } from '~/infra/oauth';
 import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
 import Player from '~/ui/Player';
@@ -112,7 +111,6 @@ export function renderNuggets(
     [HtmlParserNuggetTypes.Video]: ViewStyle;
   },
 ): JSX.Element {
-  // console.log("globalStyles", globalStyles);
   return (
     <View>
       {nuggets.map((nugget, index) => {
@@ -177,7 +175,6 @@ function renderParseText(
     [HtmlParserJsxTextVariant.Link]: { ...TextColorStyle.Action },
     ...textStyles,
   };
-  // console.log("textStyles", textStyles);
   // 0 - If the text is acually an inline image, render it elsewhere.
   if ((nugget as IInlineImageNugget).type === HtmlParserNuggetTypes.InlineImage) {
     return renderParseInlineImage(nugget as IInlineImageNugget, key, style);
@@ -236,7 +233,6 @@ function renderParseText(
       );
     case HtmlParserJsxTextVariant.Link:
       const LinkTextComp = (nugget as ILinkTextNugget).url ? (nested ? NestedTextAction : TextAction) : nested ? NestedText : Text;
-      // console.log("rendering", nugget);
       return (
         <LinkTextComp
           key={key}
@@ -244,7 +240,6 @@ function renderParseText(
           {...((nugget as ILinkTextNugget).url
             ? {
                 onPress: () => {
-                  // console.log("touched", (nugget as ILinkTextNugget).url);
                   (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
                 },
               }

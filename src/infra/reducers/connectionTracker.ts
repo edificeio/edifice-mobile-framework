@@ -7,49 +7,44 @@ export interface ConnectionTrackerState {
 const initialState = {
   connected: false,
   loading: false,
-  visible: false
+  visible: false,
 };
 
-export default (
-  state: ConnectionTrackerState = initialState,
-  action
-): ConnectionTrackerState => {
-  if (action.type === "SHOW_CONNECTION_TRACKER") {
+export default (state: ConnectionTrackerState = initialState, action): ConnectionTrackerState => {
+  if (action.type === 'SHOW_CONNECTION_TRACKER') {
     return {
       ...state,
-      visible: true
+      visible: true,
     };
   }
 
-  if (action.type === "HIDE_CONNECTION_TRACKER") {
+  if (action.type === 'HIDE_CONNECTION_TRACKER') {
     return {
       ...state,
-      visible: false
+      visible: false,
     };
   }
 
-  if (action.type === "LOADING_CONNECTION_TRACKER") {
+  if (action.type === 'LOADING_CONNECTION_TRACKER') {
     return {
       ...state,
-      loading: true
+      loading: true,
     };
   }
 
-  if (action.type === "CONNECTED_CONNECTION_TRACKER") {
-    console.log("netinfo connected");
+  if (action.type === 'CONNECTED_CONNECTION_TRACKER') {
     return {
       ...state,
       connected: true,
-      loading: false
+      loading: false,
     };
   }
 
-  if (action.type === "DISCONNECTED_CONNECTION_TRACKER") {
-    console.log("netinfo disconnected");
+  if (action.type === 'DISCONNECTED_CONNECTION_TRACKER') {
     return {
       ...state,
       connected: false,
-      loading: false
+      loading: false,
     };
   }
 

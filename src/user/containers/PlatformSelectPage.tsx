@@ -1,11 +1,15 @@
 // Libraries
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Image, Platform, StatusBar, View } from 'react-native';
 import { connect } from 'react-redux';
 
+
+
+import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
+import { TouchableSelectorPictureCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import appConf from '~/framework/util/appConf';
@@ -15,8 +19,7 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { H1, Light, LightP } from '~/ui/Typography';
 import { selectPlatform } from '~/user/actions/platform';
 import { IUserAuthState } from '~/user/reducers/auth';
-import { TouchableSelectorPictureCard } from '~/framework/components/card';
-import theme from '~/app/theme';
+
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -41,7 +44,7 @@ export type IPlatformSelectPageProps = IPlatformSelectPageDataProps & IPlatformS
 
 // Main component ---------------------------------------------------------------------------------
 
-const PlatformButton = style(TouchableOpacity)({
+const PlatformButton = styled(TouchableOpacity)({
   elevation: 3,
   shadowColor: '#6B7C93',
   shadowOffset: { width: 0, height: 2 },
@@ -84,15 +87,15 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
       <>
         <PageView navigation={this.props.navigation}>
           {Platform.select({
-            ios: <StatusBar barStyle='dark-content'/>,
-            android: <StatusBar backgroundColor={theme.color.background.page} barStyle='dark-content'/>
+            ios: <StatusBar barStyle="dark-content" />,
+            android: <StatusBar backgroundColor={theme.color.background.page} barStyle="dark-content" />,
           })}
           <GridList
             data={appConf.platforms}
             renderItem={({ item }) => (
               <TouchableSelectorPictureCard
-                picture={{type: 'image', picture: {source: item.logo} }}
-                pictureStyle={{maxHeight: 42}}
+                picture={{ type: 'image', picture: { source: item.logo } }}
+                pictureStyle={{ maxHeight: 42 }}
                 text={item.displayName}
                 onPress={() => this.handleSelectPlatform(item.name)}
               />
@@ -114,8 +117,10 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
               </>
             }
             alwaysBounceVertical={false}
+            overScrollMode="never"
             ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
-            gap={UI_SIZES.spacing.extraLarge} gapOutside={UI_SIZES.spacing.extraLarge}
+            gap={UI_SIZES.spacing.extraLarge}
+            gapOutside={UI_SIZES.spacing.extraLarge}
           />
         </PageView>
       </>

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 
 const attachmentStyle = {
   flexDirection: 'row',

@@ -1,6 +1,6 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
-import support from "./support";
+import support from './support';
 
 const rootReducer = combineReducers({
   support,

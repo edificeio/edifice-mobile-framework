@@ -2,20 +2,19 @@
  * Popup Menu
  * Show a drop-down menu from the header
  */
-
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ColorValue, ViewStyle, Platform } from 'react-native';
+import { ColorValue, Platform, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationNavigateActionPayload } from 'react-navigation';
 
-import { Icon } from './icon';
-import { Text } from './text';
-
 import theme from '~/app/theme';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+
 import { DEPRECATED_HeaderPrimaryAction } from './header';
+import { Icon } from './icon';
+import { Text } from './text';
 
 export interface IPopupMenuProps {
   iconName: string;
@@ -28,22 +27,6 @@ interface IPopupMenuState {
   active: boolean;
 }
 
-export interface ButtonIconProps {
-  name: string;
-  size?: number;
-  style?: ViewStyle;
-  color?: ColorValue;
-  onPress: () => void | Promise<void>;
-}
-
-export const getButtonShadow = () => ({
-  elevation: 5,
-  shadowColor: theme.color.shadowColor,
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.8,
-});
-
 export const getMenuShadow = () => ({
   elevation: 5,
   shadowColor: theme.color.shadowColor,
@@ -51,26 +34,6 @@ export const getMenuShadow = () => ({
   shadowOpacity: 0.25,
   shadowRadius: 3.8,
 });
-
-export const buttonStyle: ViewStyle = {
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: 50,
-  height: 50,
-  borderRadius: 50 / 2,
-  backgroundColor: theme.color.primary.regular,
-  ...(getButtonShadow() as ViewStyle),
-};
-
-export const ButtonIcon = ({ name, onPress, size, style, color }: ButtonIconProps) => {
-  if (color === undefined) color = 'white';
-  const Button = styled.TouchableOpacity({ ...buttonStyle, ...style });
-  return (
-    <Button onPress={onPress} style={{ ...buttonStyle, ...style }}>
-      <Icon color={color} size={size || 24} name={name} />
-    </Button>
-  );
-};
 
 export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPopupMenuState> {
   constructor(props: IPopupMenuProps) {
@@ -143,6 +106,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
           } as ViewStyle
         }
         alwaysBounceVertical={false}
+        overScrollMode="never"
       />
     );
   }

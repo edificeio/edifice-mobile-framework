@@ -59,8 +59,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
-import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
@@ -166,7 +165,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         onPress: () => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {
-            console.warn('Must have a platform selected to redirect the user');
             return null;
           }
           const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
@@ -581,7 +579,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     } catch (e) {
       // ToDo: Error handling
       this.setState({ errorState: true });
-      console.warn(`[${moduleConfig.name}] doGetBlogPostDetails failed`, e);
     }
   }
 
@@ -596,7 +593,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     } catch (e) {
       // ToDo: Error handling
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
-      console.warn(`[${moduleConfig.name}] doCreateBlogPostComment failed`, e);
     }
   }
 
@@ -612,7 +608,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     } catch (e) {
       // ToDo: Error handling
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
-      console.warn(`[${moduleConfig.name}] doDeleteBlogPostComment failed`, e);
     }
   }
 
@@ -625,7 +620,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       this.setState({ blogInfos });
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] doGetBlogInfos failed`, e);
     }
   }
 

@@ -1,20 +1,26 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
-import { IHomeworkByDateList } from './DashboardRelative';
 
+
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
-import { isHomeworkDone, homeworkListDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
-import { Icon, Loading } from '~/ui';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/cdt';
+import { Loading } from '~/ui/Loading';
+import { Icon } from '~/ui/icons/Icon';
+
+
+
+import { IHomeworkByDateList } from './DashboardRelative';
+
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },

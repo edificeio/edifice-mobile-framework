@@ -1,17 +1,15 @@
 import Filesize from 'filesize';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ActivityIndicator, Text, View, ViewStyle, Platform, Pressable } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, Text, View, ViewStyle } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IconButton } from './IconButton';
-
-import theme from '~/app/theme';
 import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -20,6 +18,8 @@ import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { CommonStyles } from '~/styles/common/styles';
+
+import { IconButton } from './IconButton';
 
 export interface IRemoteAttachment {
   charset?: string;
@@ -100,7 +100,6 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
   return dispatch => {
     if (file) {
       try {
-        // console.log('DOWNLOAD FILE', file);
         file.mirrorToDownloadFolder();
         Toast.hide(lastToast);
         lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }));
@@ -155,11 +154,12 @@ class Attachment extends React.PureComponent<
       canDownload &&
         (await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
           requestAnimationFrame(() => {
-            // console.log("lf", lf);
             this.props.onDownloadFile && this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'));
           });
-        }).catch(err => console.log(err)));
-      // canDownload && this.startDownload(attachment as IRemoteAttachment).catch(err => console.log(err));
+        }).catch(err => {
+          // TODO: Manage error
+        }));
+      // canDownload && this.startDownload(attachment as IRemoteAttachment).catch(err => {// TODO: Manage error});
     }
   }
 
@@ -241,10 +241,11 @@ class Attachment extends React.PureComponent<
                   onPress={async () => {
                     await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
                       requestAnimationFrame(() => {
-                        // console.log("lf", lf);
                         onDownloadFile && onDownloadFile(notifierId, lf);
                       });
-                    }).catch(err => console.log(err));
+                    }).catch(err => {
+                      // TODO: Manage error
+                    });
                   }}
                   style={{ paddingLeft: 12 }}>
                   <IconButton iconName="download" iconColor="#000000" buttonStyle={{ backgroundColor: CommonStyles.lightGrey }} />
@@ -289,7 +290,9 @@ class Attachment extends React.PureComponent<
         ? mainNavNavigate('carouselModal', { images: carouselImage })
         : onOpenFile(notifierId, file);
     } else {
-      this.startDownload(attachment as IRemoteAttachment).catch(err => console.log(err));
+      this.startDownload(attachment as IRemoteAttachment).catch(err => {
+        /*TODO: Manage error*/
+      });
     }
   }
 
@@ -331,7 +334,6 @@ class Attachment extends React.PureComponent<
           callback && callback(lf);
         })
         .catch(e => {
-          console.log(e);
           this.props.onError && this.props.onError();
           this.setState({
             downloadState: DownloadState.Error,

@@ -1,10 +1,13 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
+
+
 
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Weight } from '~/ui/Typography';
 
-export const ListItem = style.view(
+
+export const ListItem = styled.View(
   {
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 10,
@@ -19,13 +22,13 @@ export const ListItem = style.view(
   }),
 );
 
-export const LeftPanel = style(TouchableOpacity)({
+export const LeftPanel = styled(TouchableOpacity)({
   justifyContent: 'center',
   width: 50,
   height: 66,
 });
 
-export const CenterPanel = style(TouchableOpacity)({
+export const CenterPanel = styled(TouchableOpacity)({
   alignItems: 'flex-start',
   flex: 1,
   justifyContent: 'center',
@@ -33,7 +36,7 @@ export const CenterPanel = style(TouchableOpacity)({
   padding: 2,
 });
 
-export const RightPanel = style(TouchableOpacity)({
+export const RightPanel = styled(TouchableOpacity)({
   alignItems: 'center',
   justifyContent: 'center',
   width: 50,
@@ -46,12 +49,12 @@ export const contentStyle = {
   fontWeight: Weight.Light,
 };
 
-export const Content = style.text(contentStyle, ({ nb = 0 }) => ({
+export const Content = styled.Text(contentStyle, ({ nb = 0 }) => ({
   color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,
   fontWeight: nb > 0 ? Weight.Normal : Weight.Light,
 }));
 
-export const PageContainer = style.view({
+export const PageContainer = styled.View({
   backgroundColor: CommonStyles.lightGrey,
   flex: 1,
 });

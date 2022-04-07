@@ -24,7 +24,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import today from '~/utils/today';
 
 import config from '../config';
@@ -280,7 +280,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                 buttonAction={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
                   if (!DEPRECATED_getCurrentPlatform()) {
-                    console.warn('Must have a platform selected to redirect the user');
                     return null;
                   }
                   const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;

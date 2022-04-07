@@ -11,28 +11,30 @@
 // Typings from https://medium.com/@martin_hotell/react-refs-with-typescript-a32d56c4d315
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
-import { NavigationInjectedProps, NavigationRouteConfig, NavigationRouteConfigMap, NavigationScreenProp, NavigationState } from 'react-navigation';
-
-
+import {
+  NavigationInjectedProps,
+  NavigationRouteConfig,
+  NavigationRouteConfigMap,
+  NavigationScreenProp,
+  NavigationState,
+} from 'react-navigation';
 
 import { Trackers } from '.';
-
 
 function getDisplayName(WrappedComponent: React.ComponentType<any>) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
-export default function withViewTracking<
-  ComponentProps extends NavigationInjectedProps,
-  ComponentState,
->(path: string[] | string | ((props: ComponentProps) => string[] | string), tracker = Trackers) {
+export default function withViewTracking<ComponentProps extends NavigationInjectedProps, ComponentState>(
+  path: string[] | string | ((props: ComponentProps) => string[] | string),
+  tracker = Trackers,
+) {
   type PrivateProps = { forwardedRef: React.RefObject<React.Component<ComponentProps, ComponentState>> };
   type AllProps = PrivateProps & ComponentProps;
 
   const getPathAsArray = (resolvedPath: string[] | string) => {
     if (typeof resolvedPath === 'string') return resolvedPath.split('/');
     if (Array.isArray(resolvedPath)) return resolvedPath;
-    console.warn(`withViewTracking : must give view path as a string or a string[]. ${resolvedPath} is not valid.`);
     return [];
   };
   return (WrappedComponent: React.ComponentType<ComponentProps>) => {

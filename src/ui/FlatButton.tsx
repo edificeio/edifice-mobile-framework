@@ -1,14 +1,19 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
-import { View, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
+import { ActivityIndicator, TextStyle, View, ViewStyle } from 'react-native';
 
-import { Row, RowProperties } from '.';
-import { Weight } from './Typography';
-import { Icon } from './icons/Icon';
+
 
 import theme from '~/app/theme';
 import styles from '~/styles';
 import { CommonStyles } from '~/styles/common/styles';
+
+
+
+import { Row, RowProperties } from './Grid';
+import { Weight } from './Typography';
+import { Icon } from './icons/Icon';
+
 
 export interface ValidTextIconProps {
   disabled?: boolean;
@@ -66,7 +71,7 @@ const ValidStyle = (props: RowProperties) => (
   <Row alignItems="center" justifyContent="center" height={38} marginTop={0} {...props} />
 );
 
-const ButtonStyleComponent = style.touchableOpacity(
+const ButtonStyleComponent = styled.TouchableOpacity(
   {
     borderRadius: 38 * 0.5,
     paddingHorizontal: 36,
@@ -79,7 +84,7 @@ const ButtonStyleComponent = style.touchableOpacity(
   }),
 );
 
-const TextStyleComponent = style.text(
+const TextStyleComponent = styled.Text<{disabled: boolean}>(
   {
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 14,

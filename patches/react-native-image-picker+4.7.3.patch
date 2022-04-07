@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModule.java b/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModule.java
-index 0f037be..60a74c9 100644
+index c04484f..3304da4 100644
 --- a/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModule.java
 +++ b/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModule.java
 @@ -173,7 +173,8 @@ public class ImagePickerModule extends ReactContextBaseJavaModule implements Act

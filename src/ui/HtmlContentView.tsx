@@ -5,19 +5,23 @@
  * a function that return the html string from the data got by url with `source`.
  * Has a `opts` prop that are the HtmlConverter's options.
  */
-
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewProps } from 'react-native';
 
-import { Loading } from '.';
-import { IRemoteAttachment } from './Attachment';
-import { AttachmentGroup } from './AttachmentGroup';
-import { Italic } from './Typography';
+
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { Loading } from '~/ui/Loading';
+
+
+
+import { IRemoteAttachment } from './Attachment';
+import { AttachmentGroup } from './AttachmentGroup';
+import { Italic } from './Typography';
+
 
 export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;

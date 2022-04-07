@@ -5,7 +5,8 @@ import { TextInput } from 'react-native';
 import theme from '~/app/theme';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IActivationModel } from '~/user/actions/activation';
-import { ValueChangeArgs, ValidatorBuilder, ValueChange, ValueGetter } from '~/utils/form';
+import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
+
 export { ValueChangeArgs };
 //
 // Form model: describe fields and validations for each field
@@ -125,6 +126,7 @@ export function InputEmail(props: { email: string; form: ActivationFormModel; on
       hasError={props.form.showEmailError(props.email)}
       keyboardType="email-address"
       autoCorrect={false}
+      spellCheck={false}
       autoComplete="off"
     />
   );

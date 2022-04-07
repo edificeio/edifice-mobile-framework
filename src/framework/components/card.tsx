@@ -22,7 +22,7 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { UI_SIZES } from './constants';
 import { Icon, IconProps } from './icon';
-import { NamedSVG } from './namedSVG';
+import { NamedSVG } from './picture/NamedSVG';
 import { FontStyle, Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle, remlh } from './text';
 
 const cardPaddingV = 12;

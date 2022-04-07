@@ -1,12 +1,15 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
+
+
 
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
+
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -30,7 +33,10 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <FormWrapper>
-              <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
+              <ScrollView
+                alwaysBounceVertical={false}
+                overScrollMode="never"
+                contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
                 <FormContainer>
                   <LogoWrapper>
                     <PFLogo />
@@ -60,18 +66,18 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
   }
 }
 
-const FormPage = style.view({
+const FormPage = styled.View({
   backgroundColor: '#ffffff',
   flex: 1,
 });
-const FormWrapper = style.view({ flex: 1 });
-const FormContainer = style.view({
+const FormWrapper = styled.View({ flex: 1 });
+const FormContainer = styled.View({
   height: '100%',
   margin: 0,
   padding: 40,
   paddingVertical: 20,
 });
-const LogoWrapper = style.view({
+const LogoWrapper = styled.View({
   flexGrow: 2,
   alignItems: 'center',
   justifyContent: 'center',

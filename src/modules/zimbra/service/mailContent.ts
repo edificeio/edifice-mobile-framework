@@ -1,4 +1,3 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import moment from 'moment';
 
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -51,11 +50,11 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
 };
 
 export type IUserInfosBackend = {
-  result: Array<{
+  result: {
     id: string;
     displayNames: string;
     type: string[];
-  }>;
+  }[];
 };
 
 const userInfosAdapter: (data: IUserInfosBackend) => IUserInfosBackend = data => {

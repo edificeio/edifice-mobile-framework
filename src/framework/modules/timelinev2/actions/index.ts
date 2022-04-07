@@ -1,11 +1,7 @@
 /**
  * Timeline v2 actions
  */
-
 import { ThunkDispatch } from 'redux-thunk';
-
-import { loadNotificationsDefinitionsAction } from './notifDefinitions';
-import { loadNotificationFiltersSettingsAction } from './notifSettings';
 
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
@@ -15,6 +11,9 @@ import * as notifSettingsStateHandler from '~/framework/modules/timelinev2/reduc
 import { actions as notificationsActions } from '~/framework/modules/timelinev2/reducer/notifications';
 import { flashMessagesService, notificationsService } from '~/framework/modules/timelinev2/service';
 import { getUserSession } from '~/framework/util/session';
+
+import { loadNotificationsDefinitionsAction } from './notifDefinitions';
+import { loadNotificationFiltersSettingsAction } from './notifSettings';
 
 const _prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   // const session = getUserSession(getState());
@@ -61,7 +60,6 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
     dispatch(flashMessagesActions.receipt(flashMessages));
   } catch (e) {
     // ToDo: Error handling
-    console.warn(`[${moduleConfig.name}] loadNotificationsAction failed`, e);
   }
 };
 
@@ -91,7 +89,6 @@ export const loadNotificationsPageAction =
       return !state.notifications.endReached;
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] loadNotificationsPageAction failed`, e);
       dispatch(notificationsActions.error(e));
     }
   };
@@ -110,7 +107,6 @@ export const dismissFlashMessageAction =
       dispatch(flashMessagesActions.dismissReceipt(flashMessageId));
     } catch (e) {
       // ToDo: Error handling (notifier: "votre action n'a pas été correctement exécutée (problème de connexion)")
-      console.warn(`[${moduleConfig.name}] dismissFlashMessageAction failed`, e);
       dispatch(flashMessagesActions.dismissError(flashMessageId));
     }
   };
