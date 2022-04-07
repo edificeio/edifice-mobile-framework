@@ -1,6 +1,6 @@
-import { IMediacentre_State } from './reducer';
-
 import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
+
+import { IMediacentre_State } from './reducer';
 
 export default createNavigableModuleConfig<'Mediacentre', IMediacentre_State>({
   name: 'Mediacentre',
@@ -9,7 +9,7 @@ export default createNavigableModuleConfig<'Mediacentre', IMediacentre_State>({
   entcoreScope: ['mediacentre'],
   picture: {
     type: 'Image',
-    source: require('ASSETS/icons/logo-mediacentre.png'),
+    source: require('ASSETS/images/logo-mediacentre.png'),
   },
   registerAs: 'myAppsModule',
 });
