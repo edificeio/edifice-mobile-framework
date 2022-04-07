@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "add-dev": "yarn add --dev --exact",
-    "add-dep": "yarn add --exact",
+    "add-dep": "yarn add --save --exact",
     "android": "react-native run-android",
     "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js reset-cache",
-    "clean-win": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js reset-cache",
     "deploy-alpha": "fastlane deploy alpha",
     "deploy-rc": "fastlane deploy alpha",
+    "install-and-pod": "yarn install && cd ios && pod install && cd ..",
     "ios": "react-native run-ios",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
     "override": "node cli/override.js -l",
@@ -124,9 +124,9 @@
     "whatwg-fetch": "3.6.2"
   },
   "devDependencies": {
-    "@babel/core": "7.17.8",
-    "@babel/plugin-proposal-decorators": "7.17.8",
-    "@babel/runtime": "7.17.8",
+    "@babel/core": "^7.14.0",
+    "@babel/plugin-proposal-decorators": "^7.14.0",
+    "@babel/runtime": "^7.14.0",
     "@jumpn/react-native-jetifier": "0.1.4",
     "@react-native-community/eslint-config": "3.0.1",
     "@trivago/prettier-plugin-sort-imports": "3.2.0",
