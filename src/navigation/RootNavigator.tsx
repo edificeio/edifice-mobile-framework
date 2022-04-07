@@ -45,7 +45,6 @@ function getMainRoutes(appsInfo: any[]) {
 
 /** Returns every route that are to be displayed in tab navigation.*/
 function getTabRoutes(appsInfo: IEntcoreApp[], widgetsInfo: IEntcoreWidget[]): NavigationRouteConfigMap<any, any> {
-  console.log('tabModules', tabModules.get());
   return new NavigableModuleArray(...tabModules.get().filterAvailables(appsInfo, widgetsInfo)).getRoutes();
 }
 

@@ -5,8 +5,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { Icon } from '~/framework/components/picture/Icon';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomework, IHomeworkList, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
