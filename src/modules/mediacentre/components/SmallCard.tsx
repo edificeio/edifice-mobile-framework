@@ -84,9 +84,11 @@ export const IconButton: React.FunctionComponent<IconButtonProps> = (props: Icon
 export const FavoriteIcon: React.FunctionComponent<FavoriteIconProps> = (props: FavoriteIconProps) => {
   const removeFavorite = () => {
     props.removeFavorite(props.resource.id, props.resource.source);
+    props.resource.favorite = false;
   };
   const addFavorite = () => {
     props.addFavorite(props.resource.id, props.resource);
+    props.resource.favorite = true;
   };
   return (props.resource.favorite ?
     <IconButton icon='star' size={20} color='#FEC63D' onPress={removeFavorite} />

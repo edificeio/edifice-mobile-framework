@@ -50,7 +50,7 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = (props: Search
     <View style={searchStyle.searchBar}>
       <TextInput
         style={searchStyle.searchInput}
-        placeholder={I18n.t('mediacentre.find-ressources')}
+        placeholder={I18n.t('mediacentre.find-resources')}
         placeholderTextColor='grey'
         numberOfLines={1}
         defaultValue={value}

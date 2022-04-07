@@ -7,6 +7,9 @@ export default createNavigableModuleConfig<'Mediacentre', IMediacentre_State>({
   displayName: 'mediacentre.mediacentre',
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('MEDIACENTRE'),
   entcoreScope: ['mediacentre'],
-  iconName: 'help-circled',
+  picture: {
+    type: 'Image',
+    source: require('ASSETS/icons/logo-mediacentre.png'),
+  },
   registerAs: 'myAppsModule',
 });
