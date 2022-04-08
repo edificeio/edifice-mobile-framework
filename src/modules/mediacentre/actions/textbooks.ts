@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { textbooksService } from '~/modules/mediacentre/services/textbooks';
-import { actionTypes, ITextbooks } from '~/modules/mediacentre/state/textbooks';
+import { ITextbooks, actionTypes } from '~/modules/mediacentre/state/textbooks';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

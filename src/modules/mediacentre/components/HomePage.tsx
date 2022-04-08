@@ -1,24 +1,30 @@
 import I18n from 'i18n-js';
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { IconButtonText, SearchBar } from './SearchItems';
-import { SmallCard } from './SmallCard';
-import { SearchContent } from './SearchContent';
-import { FavoritesCarousel } from './FavoritesCarousel';
-import { AdvancedSearchParams, AdvancedSearchModal, defaultParams } from './AdvancedSearchModal';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { ISignets } from '~/modules/mediacentre/state/signets';
+import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+
+import { AdvancedSearchModal, AdvancedSearchParams, defaultParams } from './AdvancedSearchModal';
+import { FavoritesCarousel } from './FavoritesCarousel';
+import { SearchContent } from './SearchContent';
+import { IconButtonText, SearchBar } from './SearchItems';
+import { SmallCard } from './SmallCard';
 
 const styles = StyleSheet.create({
-  categoryHeaderContainer: {
+  gridHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 10,
   },
-  displayText: {
+  gridTitleText: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 10,
+  },
+  gridDisplayAllText: {
     color: '#F53B56',
     textDecorationLine: 'underline',
   },
@@ -27,12 +33,19 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     margin: 5,
   },
-})
+  mainContainer: {
+    flex: 1,
+  },
+  advancedSearchButtonContainer: {
+    marginLeft: 20,
+    paddingVertical: 10,
+  },
+});
 
 export enum SearchState {
   NONE = 0,
   SIMPLE = 1,
-  ADVANCED = 2
+  ADVANCED = 2,
 }
 
 interface ResourcesGridProps {
@@ -66,7 +79,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
     { title: 'mediacentre.textbooks', resources: props.textbooks },
     { title: 'mediacentre.gar-resources', resources: props.garResources },
     { title: 'mediacentre.my-signets', resources: props.signets.sharedSignets },
-    { title: 'mediacentre.orientation-signets', resources: props.signets.orientationSignets }
+    { title: 'mediacentre.orientation-signets', resources: props.signets.orientationSignets },
   ].filter(section => section.resources.length > 0);
 
   useEffect(() => {
@@ -103,47 +116,57 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
     setSearchParams(params);
   }
 
-  const ResourcesGrid: React.FunctionComponent<ResourcesGridProps> = (props: ResourcesGridProps) => {
+  const ResourcesGrid: React.FunctionComponent<ResourcesGridProps> = (gridProps: ResourcesGridProps) => {
     const showResources = () => {
-      setSearchedResources(props.resources);
+      setSearchedResources(gridProps.resources);
       setSearchState(SearchState.SIMPLE);
     };
     return (
       <View>
-        <View style={styles.categoryHeaderContainer}>
-          <TextBold style={{ flexShrink: 1 }}>{props.title.toLocaleUpperCase()}</TextBold>
+        <View style={styles.gridHeaderContainer}>
+          <TextBold style={styles.gridTitleText}>{gridProps.title.toLocaleUpperCase()}</TextBold>
           <TouchableOpacity onPress={showResources}>
-            <Text style={styles.displayText}>{I18n.t('mediacentre.display-all')}</Text>
+            <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.gridCardsContainer}>
-          {props.resources.slice(0, 4).map(item => <SmallCard {...props} resource={item} key={item.id} />)}
+          {gridProps.resources.slice(0, 4).map(item => (
+            <SmallCard {...gridProps} resource={item} key={item.id} />
+          ))}
         </View>
       </View>
     );
-  }
+  };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.mainContainer}>
       <SearchBar onSubmitEditing={onSearch} />
-      <View style={{ marginLeft: 20, paddingVertical: 10 }}>
-        <IconButtonText icon='search' text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
+      <View style={styles.advancedSearchButtonContainer}>
+        <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
       </View>
       {searchState !== SearchState.NONE ? (
-        <SearchContent resources={searchedResources} searchState={searchState} params={searchParams}
-        onCancelSearch={onCancelSearch} addFavorite={props.addFavorite} removeFavorite={props.removeFavorite} />
+        <SearchContent
+          resources={searchedResources}
+          searchState={searchState}
+          params={searchParams}
+          onCancelSearch={onCancelSearch}
+          addFavorite={props.addFavorite}
+          removeFavorite={props.removeFavorite}
+        />
       ) : (
         <FlatList
           data={sections}
           renderItem={({ item }) => <ResourcesGrid {...props} title={I18n.t(item.title)} resources={item.resources} />}
           keyExtractor={item => item.title}
-          ListHeaderComponent={props.favorites.length > 0 ?
-            <FavoritesCarousel {...props} resources={props.favorites} onDisplayAll={showFavorites} />
-          : null}
-          ListEmptyComponent={<EmptyScreen svgImage='empty-mediacentre' title={I18n.t('mediacentre.empty-screen')} />}
+          ListHeaderComponent={
+            props.favorites.length > 0 ? (
+              <FavoritesCarousel {...props} resources={props.favorites} onDisplayAll={showFavorites} />
+            ) : null
+          }
+          ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />}
         />
       )}
       <AdvancedSearchModal isVisible={searchModalVisible} onSearch={onAdvancedSearch} closeModal={hideSearchModal} />
     </View>
   );
-}
+};

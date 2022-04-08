@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { favoritesService } from '~/modules/mediacentre/services/favorites';
-import { actionTypes, IFavorites } from '~/modules/mediacentre/state/favorites';
+import { IFavorites, actionTypes } from '~/modules/mediacentre/state/favorites';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
 // ACTION LIST ------------------------------------------------------------------------------------

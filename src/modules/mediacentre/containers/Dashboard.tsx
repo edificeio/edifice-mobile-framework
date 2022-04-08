@@ -1,31 +1,27 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
+import { withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import HomePageContainer from './HomePage';
-//import SignetsPageContainer from './SignetsPage';
-
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
-import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
-import { PageContainer } from '~/ui/ContainerContent';
 import { PageView } from '~/framework/components/page';
-
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
+import { fetchGarResourcesAction } from '~/modules/mediacentre/actions/garResources';
+import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
+import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
+import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
+import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { getFavoritesState } from '~/modules/mediacentre/state/favorites';
 import { getGarResourcesState } from '~/modules/mediacentre/state/garResources';
 import { getSearchState } from '~/modules/mediacentre/state/search';
-import { getSignetsState, ISignets } from '~/modules/mediacentre/state/signets';
+import { ISignets, getSignetsState } from '~/modules/mediacentre/state/signets';
 import { getTextbooksState } from '~/modules/mediacentre/state/textbooks';
-import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
-import { fetchFavoritesAction, addFavoriteAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
-import { fetchGarResourcesAction } from '~/modules/mediacentre/actions/garResources';
-import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
-import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
-import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
+
+import HomePageContainer from './HomePage';
 
 type IDashboardProps = {
   favorites: Resource[];
@@ -45,21 +41,7 @@ type IDashboardProps = {
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
 
-type IDashboardState = {
-  ws: WebSocket | null;
-  isWsConnected: boolean;
-};
-
-export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardState> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ws: null,
-      isWsConnected: false,
-    };
-  }
-
+export class Dashboard extends React.PureComponent<IDashboardProps> {
   componentDidMount() {
     this.props.fetchFavorites();
     this.props.fetchGarResources();
@@ -77,10 +59,10 @@ export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardSt
             backgroundColor: '#F53B56',
           },
         }}>
-          <PageContainer>
-            <ConnectionTrackingBar />
-            <HomePageContainer {...this.props} {...this.state} />
-          </PageContainer>
+        <PageContainer>
+          <ConnectionTrackingBar />
+          <HomePageContainer {...this.props} {...this.state} />
+        </PageContainer>
       </PageView>
     );
   }

@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { searchService } from '~/modules/mediacentre/services/search';
-import { actionTypes, IGarResources } from '~/modules/mediacentre/state/garResources';
+import { IGarResources, actionTypes } from '~/modules/mediacentre/state/garResources';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

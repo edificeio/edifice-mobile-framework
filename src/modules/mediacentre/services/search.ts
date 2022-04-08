@@ -1,19 +1,17 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 import { AdvancedSearchParams, Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
 const addFieldWhenFilled = (field: Field) => {
-  return ({ 'value': field.value, 'operands': field.operand ? '$and' : '$or' });
-}
+  return { value: field.value, operands: field.operand ? '$and' : '$or' };
+};
 
 export const searchService = {
   getGar: async () => {
     const jsondata = {
       event: 'search',
       state: 'PLAIN_TEXT',
-      sources: [
-        'fr.openent.mediacentre.source.GAR',
-      ],
+      sources: ['fr.openent.mediacentre.source.GAR'],
       data: {
         query: '.*',
       },
@@ -43,21 +41,21 @@ export const searchService = {
   },
   getAdvanced: async (params: AdvancedSearchParams) => {
     const fields = [params.title, params.authors, params.editors, params.disciplines, params.levels];
-    let jsondata = {
-      'event': 'search',
-      'state': 'ADVANCED',
-      'sources': [
+    const jsondata = {
+      event: 'search',
+      state: 'ADVANCED',
+      sources: [
         params.sources.GAR && 'fr.openent.mediacentre.source.GAR',
         params.sources.Moodle && 'fr.openent.mediacentre.source.Moodle',
         params.sources.Signets && 'fr.openent.mediacentre.source.Signet',
       ],
-      'data': {}
+      data: {},
     };
-    fields.forEach(field => {
+    for (const field of fields) {
       if (field.value !== '') {
         jsondata.data[field.name] = addFieldWhenFilled(field);
       }
-    });
+    }
     const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });

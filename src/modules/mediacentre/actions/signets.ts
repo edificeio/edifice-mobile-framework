@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { signetsService } from '~/modules/mediacentre/services/signets';
-import { actionTypes, ISignets } from '~/modules/mediacentre/state/signets';
+import { ISignets, actionTypes } from '~/modules/mediacentre/state/signets';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

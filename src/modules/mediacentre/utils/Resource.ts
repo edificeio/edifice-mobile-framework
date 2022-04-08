@@ -1,7 +1,7 @@
 export enum Source {
   GAR = 'fr.openent.mediacentre.source.GAR',
   Moodle = 'fr.openent.mediacentre.source.Moodle',
-  Signet = 'fr.openent.mediacentre.source.Signet'
+  Signet = 'fr.openent.mediacentre.source.Signet',
 }
 
 export interface Resource {

@@ -1,6 +1,6 @@
-import { IMediacentre_State } from './reducer';
-
 import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
+
+import { IMediacentre_State } from './reducer';
 
 export default createNavigableModuleConfig<'Mediacentre', IMediacentre_State>({
   name: 'Mediacentre',

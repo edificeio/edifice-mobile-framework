@@ -24,7 +24,7 @@ export type IResourceBackend = {
 }[];
 
 export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => {
-  let resources = [] as Resource[];
+  const resources = [] as Resource[];
   if (!data) return resources;
   for (const resource of data) {
     const res = {
@@ -46,7 +46,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
       owner_name: resource.owner_name,
     } as Resource;
     resources.push(res);
-  } 
+  }
   return resources;
 };
 

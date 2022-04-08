@@ -7,12 +7,8 @@ import theme from '~/app/theme';
 import { Text } from '~/framework/components/text';
 import { Icon } from '~/ui/icons/Icon';
 
-const searchStyle = StyleSheet.create({
-  buttonText: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  searchBar: {
+const styles = StyleSheet.create({
+  searchBarContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -25,6 +21,13 @@ const searchStyle = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 50,
     borderColor: '#F53B56',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 5,
   },
 });
 
@@ -44,17 +47,16 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = (props: Search
   const [value, setValue] = useState<string>('');
   const onSearch = () => {
     props.onSubmitEditing(value);
-  }
-
+  };
   return (
-    <View style={searchStyle.searchBar}>
+    <View style={styles.searchBarContainer}>
       <TextInput
-        style={searchStyle.searchInput}
+        style={styles.searchInput}
         placeholder={I18n.t('mediacentre.find-resources')}
-        placeholderTextColor='grey'
+        placeholderTextColor="grey"
         numberOfLines={1}
         defaultValue={value}
-        returnKeyType='search'
+        returnKeyType="search"
         onChangeText={text => setValue(text)}
         onSubmitEditing={onSearch}
       />
@@ -63,8 +65,8 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = (props: Search
 };
 
 export const IconButtonText: React.FunctionComponent<IconButtonTextProps> = (props: IconButtonTextProps) => (
-  <TouchableOpacity style={searchStyle.buttonText} onPress={props.onPress}>
-    <Icon style={{ marginRight: 5 }} size={16} color={props.color ? props.color : theme.themeOpenEnt.cyan} name={props.icon} />
+  <TouchableOpacity style={styles.buttonContainer} onPress={props.onPress}>
+    <Icon style={styles.buttonIcon} size={16} color={props.color ? props.color : theme.themeOpenEnt.cyan} name={props.icon} />
     <Text style={{ color: theme.themeOpenEnt.cyan }}>{props.text}</Text>
   </TouchableOpacity>
 );

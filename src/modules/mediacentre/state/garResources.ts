@@ -1,6 +1,6 @@
-import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
-import { Resource } from '~/modules/mediacentre/utils/Resource';
+import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 import mediacentreConfig from '~/modules/mediacentre/moduleConfig';
+import { Resource } from '~/modules/mediacentre/utils/Resource';
 
 // THE MODEL --------------------------------------------------------------------------------------
 

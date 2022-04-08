@@ -2,13 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { HomePage } from '../components/HomePage';
-import { Resource, Source } from '../utils/Resource';
-import { ISignets } from '~/modules/mediacentre/state/signets';
 import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { HomePage } from '~/modules/mediacentre/components/HomePage';
+import { ISignets } from '~/modules/mediacentre/state/signets';
+import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
 type IHomePageContainerProps = {
   favorites: Resource[];
+  garResources: Resource[];
   navigation: any;
   search: Resource[];
   signets: ISignets;
@@ -20,14 +21,7 @@ type IHomePageContainerProps = {
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
 
-type HomePageContainerState = {
-};
-
-class HomePageContainer extends React.PureComponent<IHomePageContainerProps, HomePageContainerState> {
-  constructor(props) {
-    super(props);
-  }
-
+class HomePageContainer extends React.PureComponent<IHomePageContainerProps> {
   public render() {
     return <HomePage {...this.props} />;
   }
