@@ -56,7 +56,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
 
   renderLegalItem(legalItem: string) {
     return (
-      <TouchableOpacity onPress={() => this.handleOpenLegalItem(legalItem)}>
+      <TouchableOpacity onPress={() => this.handleOpenLegalItem(legalItem)} key={legalItem}>
         <ListItem
           leftElement={<Text>{I18n.t(`user.legalNoticeScreen.${legalItem}`)}</Text>}
           rightElement={
