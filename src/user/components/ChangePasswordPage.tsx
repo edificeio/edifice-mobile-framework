@@ -14,6 +14,7 @@ import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { FlatButton } from '~/ui/FlatButton';
+import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
@@ -27,6 +28,7 @@ type IFields = 'oldPassword' | 'newPassword' | 'confirm';
 
 export interface IChangePasswordPageState extends IChangePasswordModel {
   typing: boolean;
+  showExternalError: boolean;
 }
 
 export interface IChangePasswordPageDataProps extends IChangePasswordModel {
@@ -60,7 +62,7 @@ class ChangePasswordFormModel {
       newPassword: ValueGetter<string>;
     },
   ) {}
-  oldPassword = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();
+  oldPassword = new ValidatorBuilder().withRequired(true).build<string>();
   newPassword = new ValidatorBuilder()
     .withRequired(true)
     .withRegex(this.args.passwordRegex)
@@ -81,8 +83,8 @@ class ChangePasswordFormModel {
   errors(model: IChangePasswordModel) {
     const errors: string[] = [];
     this.check(errors, this.oldPassword.isValid(model.oldPassword));
-    this.check(errors, this.newPassword.isValid(model.newPassword));
-    this.check(errors, this.confirm.isValid(model.confirm));
+    this.check(errors, this.newPassword.isValid(model.newPassword), 'changePassword-errorRegex');
+    this.check(errors, this.confirm.isValid(model.confirm), 'changePassword-errorConfirm');
     return errors;
   }
   firstErrorKey(model: IChangePasswordModel) {
@@ -116,6 +118,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     newPassword: this.props.newPassword || '',
     confirm: this.props.confirm || '',
     typing: false,
+    showExternalError: true,
   };
 
   private handleSubmit() {
@@ -124,7 +127,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
       this.props.navigation.getParam('redirectCallback'),
       this.props.navigation.getParam('forceChange'),
     );
-    this.setState({ typing: false });
+    this.setState({ typing: false, showExternalError: true });
   }
 
   private onChange = (key: IFields) => {
@@ -132,12 +135,20 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
       const newState: Partial<IChangePasswordPageState> = {
         [key]: valueChange.value,
         typing: true,
+        showExternalError: false,
       };
       this.setState(newState as any);
     };
   };
 
   public componentDidMount() {
+    const props = this.props;
+    props.onRetryLoad({
+      login: props.session.user.login!,
+    });
+  }
+
+  componentDidUpdate() {
     const props = this.props;
     if (this.props.contextState == ContextState.Failed) {
       Alert.alert(I18n.t('ErrorNetwork'), I18n.t('activation-errorLoading'), [
@@ -163,12 +174,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
 
   public render() {
     const { externalError, contextState, submitState } = this.props;
-    const { oldPassword, newPassword, confirm, typing } = this.state;
+    const { oldPassword, newPassword, confirm, typing, showExternalError } = this.state;
 
-    // This is a hack, again... now context is loaded on submit.
-    // if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
-    //   return <Loading />;
-    // }
+    if (contextState === ContextState.Loading || contextState === ContextState.Failed) {
+      return <Loading />;
+    }
 
     const formModel = new ChangePasswordFormModel({
       ...this.props,
@@ -177,9 +187,10 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     });
     const isNotValid = !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
-    const errorText = errorKey ? I18n.t(errorKey) : externalError;
+    const errorText = errorKey ? I18n.t(errorKey) : showExternalError && externalError;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
+    const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
 
     const isIDF = DEPRECATED_getCurrentPlatform()!.displayName === 'MonLycée.net'; // WTF ??!! 🤪🤪🤪
 
@@ -249,7 +260,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                       </View>
                       <View style={{ flexShrink: 0 }}>
                         <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
-                          {hasErrorKey && !typing ? errorText : ' \n '}
+                          {showError &&
+                          hasErrorKey &&
+                          (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
+                            ? errorText
+                            : ' \n '}
                         </ErrorMessage>
                       </View>
                       <View style={{ flexShrink: 0 }}>

@@ -107,7 +107,7 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
     try {
       // === 0 load context
-      await dispatch(initChangePasswordAction({ login: getState().user.auth.login }));
+      // await dispatch(initChangePasswordAction({ login: getState().user.auth.login }));
       // === 1 - prepare payload
       const payload: IChangePasswordSubmitPayload = {
         oldPassword: model.oldPassword,
