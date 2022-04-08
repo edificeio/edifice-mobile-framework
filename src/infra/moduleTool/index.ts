@@ -68,7 +68,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     return {
       screen: comp,
 
-      navigationOptions: () => (this.group ? { header: null } : createMainTabNavOption(I18n.t(this.displayName), this.iconName)),
+      navigationOptions: () => (this.group ? { headerShown: false } : createMainTabNavOption(I18n.t(this.displayName), this.iconName)),
     };
   }
 
