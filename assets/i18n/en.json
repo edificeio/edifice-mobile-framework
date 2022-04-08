@@ -143,6 +143,7 @@
   "change-password-errorLoading": "We were not able to upload the data needed to change your password. Please try again later.",
   "changePassword-errorFields": "The form contains errors",
   "changePassword-errorRegex": "The new password does not meet the security criteria.",
+  "changePassword-errorConfirm": "The passwords must be the same.",
   "changePassword-errorSubmit": "Error while resetting password",
   "common": {
     "all": "All",

@@ -143,6 +143,7 @@
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorFields": "Le formulaire contient des erreurs",
   "changePassword-errorRegex": "Le nouveau mot de passe ne correspond pas aux critères de sécurité.",
+  "changePassword-errorConfirm": "Les mots de passe doivent être identiques.",
   "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
   "common": {
     "all": "Tous",
