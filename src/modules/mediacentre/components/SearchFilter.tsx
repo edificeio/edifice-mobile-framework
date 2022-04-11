@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { Resource } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
 import { Text } from '~/ui/Typography';
 import { Checkbox } from '~/ui/forms/Checkbox';
@@ -45,31 +46,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const DATA = [
-  {
-    title: 'Type de ressource',
-    items: [
-      { name: 'Pizza', checked: true },
-      { name: 'Burger', checked: false },
-      { name: 'Risotto', checked: true },
-    ],
-  },
-  {
-    title: 'Tout type de source',
-    items: [
-      { name: 'French Fries', checked: true },
-      { name: 'Onion Rings', checked: true },
-    ],
-  },
-  {
-    title: 'Niveau',
-    items: [
-      { name: 'Water', checked: true },
-      { name: 'Coke', checked: true },
-    ],
-  },
-];
-
 interface FilterSectionProps {
   items: any[];
   title: string;
@@ -83,46 +59,86 @@ interface FilterItemProps {
 }
 
 interface SearchFilterProps {
-  buttons: string[];
   containerStyle?: ViewStyle;
+  resources: Resource[];
+
+  onChange: (resources: Resource[]) => void;
 }
 
-const FilterItem: React.FunctionComponent<FilterItemProps> = (props: FilterItemProps) => (
-  <View style={styles.itemContainer}>
-    <Checkbox checked={props.checked} onCheck={() => props.setChecked(true)} onUncheck={() => props.setChecked(false)} />
-    <TouchableOpacity onPress={() => props.setChecked(!props.checked)} style={styles.itemTextContainer}>
-      <Text>{props.name}</Text>
-    </TouchableOpacity>
-  </View>
-);
+const getFilters = (resources: Resource[]) => {
+  const types: string[] = [];
+  const sources: string[] = [];
+  const levels: string[] = [];
+  for (const resource of resources) {
+    for (const type of resource.types) {
+      if (types.findIndex(value => value === type) === -1) {
+        types.push(type);
+      }
+    }
+    if (sources.findIndex(source => resource.source === source) === -1) {
+      sources.push(resource.source);
+    }
+    for (const level of resource.levels) {
+      if (levels.findIndex(value => value === level) === -1) {
+        levels.push(level);
+      }
+    }
+  }
+  return [
+    { title: 'Type de ressource', items: types },
+    { title: 'Type de source', items: sources },
+    { title: 'Niveau', items: levels },
+  ];
+};
+
+const FilterItem: React.FunctionComponent<FilterItemProps> = (props: FilterItemProps) => {
+  const setChecked = () => {
+    props.setChecked(!props.checked);
+  };
+  return (
+    <View style={styles.itemContainer}>
+      <Checkbox checked={props.checked} onCheck={setChecked} onUncheck={setChecked} />
+      <TouchableOpacity onPress={setChecked} style={styles.itemTextContainer}>
+        <Text>{props.name}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const FilterSection: React.FunctionComponent<FilterSectionProps> = (props: FilterSectionProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const iconName = expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+  const expandSection = () => {
+    setExpanded(!expanded);
+  };
   return (
     <View>
-      <TouchableOpacity style={styles.sectionContainer} onPress={() => setExpanded(!expanded)}>
+      <TouchableOpacity style={styles.sectionContainer} onPress={expandSection}>
         <View style={styles.sectionHeaderContainer}>
           <Text>{props.title}</Text>
           <Icon name={iconName} size={30} />
         </View>
         <View style={styles.sectionUnderlineView} />
       </TouchableOpacity>
-      {expanded ? props.items.map(item => <FilterItem name={item.name} checked={item.checked} setChecked={() => true} />) : null}
+      {expanded ? props.items.map(item => <FilterItem name={item} checked={false} setChecked={() => true} />) : null}
     </View>
   );
 };
 
 export const SearchFilter: React.FunctionComponent<SearchFilterProps> = (props: SearchFilterProps) => {
+  const [filters] = useState(getFilters(props.resources));
   const [expanded, setExpanded] = useState<boolean>(false);
+  const expand = () => {
+    setExpanded(!expanded);
+  };
   return (
     <View style={[styles.mainContainer, props.containerStyle]}>
-      <TouchableOpacity style={styles.titleContainer} onPress={() => setExpanded(!expanded)}>
+      <TouchableOpacity style={styles.titleContainer} onPress={expand}>
         <Text>{I18n.t('mediacentre.filter-search').toUpperCase()}</Text>
       </TouchableOpacity>
       {expanded ? (
         <FlatList
-          data={DATA}
+          data={filters}
           keyExtractor={(item, index) => item.title + index}
           renderItem={({ item }) => <FilterSection title={item.title} items={item.items} />}
         />

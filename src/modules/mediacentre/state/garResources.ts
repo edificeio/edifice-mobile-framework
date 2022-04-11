@@ -12,7 +12,8 @@ export type IGarResourcesState = AsyncState<IGarResources>;
 
 export const initialState: IGarResources = [];
 
-export const getGarResourcesState = (globalState: any) => mediacentreConfig.getState(globalState).garResources as IGarResourcesState;
+export const getGarResourcesState = (globalState: any) =>
+  mediacentreConfig.getState(globalState).garResources as IGarResourcesState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

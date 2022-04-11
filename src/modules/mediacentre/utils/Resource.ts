@@ -9,6 +9,7 @@ export interface Resource {
   title: string;
   plain_text: string;
   image: string;
+  types: string[];
   source: Source;
   link: string;
   authors: string[];

@@ -8,6 +8,7 @@ export type IResourceBackend = {
   title: string;
   plain_text: string;
   image: string;
+  document_types?: string[];
   source?: Source;
   link?: string;
   url?: string;
@@ -32,6 +33,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
       title: resource.title,
       plain_text: resource.plain_text,
       image: resource.image,
+      types: resource.document_types || ['livre numérique'],
       source: resource.source || Source.Signet,
       link: resource.link || resource.url,
       authors: resource.authors,

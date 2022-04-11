@@ -20,9 +20,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   gridTitleText: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 10,
+    flexShrink: 1,
   },
   gridDisplayAllText: {
     color: '#F53B56',

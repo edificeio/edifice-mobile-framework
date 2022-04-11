@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import * as React from 'react';
+import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, View } from 'react-native';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -65,7 +65,7 @@ interface SearchParamsProps {
 
 interface SearchContentProps {
   params: AdvancedSearchParams;
-  resources?: any[];
+  resources: Resource[];
   searchState: SearchState;
 
   addFavorite: (id: string, resource: Resource) => any;
@@ -109,17 +109,25 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
   </View>
 );
 
-export const SearchContent: React.FunctionComponent<SearchContentProps> = (props: SearchContentProps) => (
-  <View style={styles.mainContainer}>
-    <SearchParams {...props} />
-    <FlatList
-      data={props.resources}
-      renderItem={({ item }) => {
-        return <BigCard {...props} resource={item} />;
-      }}
-      keyExtractor={item => item.id}
-      ListHeaderComponent={<SearchFilter buttons={[]} containerStyle={styles.filterContainer} />}
-      ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
-    />
-  </View>
-);
+export const SearchContent: React.FunctionComponent<SearchContentProps> = (props: SearchContentProps) => {
+  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
+  const updateFilteredResources = (resources: Resource[]) => {
+    setFilteredResources(resources);
+  };
+  return (
+    <View style={styles.mainContainer}>
+      <SearchParams {...props} />
+      <FlatList
+        data={filteredResources.length ? filteredResources : props.resources}
+        renderItem={({ item }) => {
+          return <BigCard {...props} resource={item} />;
+        }}
+        keyExtractor={item => item.id}
+        ListHeaderComponent={
+          <SearchFilter resources={props.resources} onChange={updateFilteredResources} containerStyle={styles.filterContainer} />
+        }
+        ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
+      />
+    </View>
+  );
+};
