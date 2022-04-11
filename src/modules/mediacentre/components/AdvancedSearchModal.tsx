@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   sourceCheckBoxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 5,
   },
   sourceImage: {
     width: 30,
@@ -92,19 +92,21 @@ export interface AdvancedSearchParams {
   sources: {
     GAR: boolean;
     Moodle: boolean;
+    PMB: boolean;
     Signets: boolean;
   };
 }
 
 export const defaultParams: AdvancedSearchParams = {
   title: { name: 'title', value: '', operand: Operand.OR },
-  authors: { name: 'authors', value: '', operand: Operand.OR },
+  authors: { name: 'author', value: '', operand: Operand.OR },
   editors: { name: 'editors', value: '', operand: Operand.OR },
   disciplines: { name: 'disciplines', value: '', operand: Operand.OR },
   levels: { name: 'levels', value: '', operand: Operand.OR },
   sources: {
     GAR: true,
     Moodle: true,
+    PMB: true,
     Signets: true,
   },
 };
@@ -179,6 +181,7 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
             <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
             <SourceCheckbox source={require('ASSETS/images/logo-gar.png')} checked={params.sources.GAR} onCheck={() => setParams({ ...params, sources: { ...params.sources, GAR: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, GAR: false }})} />
             <SourceCheckbox source={require('ASSETS/images/logo-moodle.png')} checked={params.sources.Moodle} onCheck={() => setParams({ ...params, sources: { ...params.sources, Moodle: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, Moodle: false }})} />
+            <SourceCheckbox source={require('ASSETS/images/logo-pmb.png')} checked={params.sources.PMB} onCheck={() => setParams({ ...params, sources: { ...params.sources, PMB: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, PMB: false }})} />
             <SourceCheckbox iconName='bookmark_outline' checked={params.sources.Signets} onCheck={() => setParams({ ...params, sources: { ...params.sources, Signets: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, Signets: false }})} />
           </View>
           <View style={styles.dialogButtonsContainer}>

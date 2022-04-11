@@ -48,6 +48,7 @@ export const searchService = {
       sources: [
         params.sources.GAR && 'fr.openent.mediacentre.source.GAR',
         params.sources.Moodle && 'fr.openent.mediacentre.source.Moodle',
+        params.sources.PMB && 'fr.openent.mediacentre.source.PMB',
         params.sources.Signets && 'fr.openent.mediacentre.source.Signet',
       ],
       data: {},

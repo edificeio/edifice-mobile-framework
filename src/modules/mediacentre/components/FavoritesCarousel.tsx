@@ -11,6 +11,9 @@ import { FavoriteIcon, IconButton } from '~/modules/mediacentre/components/Small
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    marginBottom: 15,
+  },
   categoryHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -123,7 +126,7 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
     setIndex(index + 1);
   };
   return (
-    <View>
+    <View style={styles.mainContainer}>
       <View style={styles.categoryHeaderContainer}>
         <TextBold>{I18n.t('mediacentre.favorites').toUpperCase()}</TextBold>
         <TouchableOpacity onPress={props.onDisplayAll}>

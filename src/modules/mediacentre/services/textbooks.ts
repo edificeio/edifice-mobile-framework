@@ -21,7 +21,7 @@ export type IResourceBackend = {
   structure_name?: string;
   structure_uai?: string;
   orientation?: boolean;
-  owner_name?: string;
+  owner_id?: string;
 }[];
 
 export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => {
@@ -45,7 +45,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
       structure_name: resource.structure_name,
       structure_uai: resource.structure_uai,
       orientation: resource.orientation,
-      owner_name: resource.owner_name,
+      owner_id: resource.owner_id,
     } as Resource;
     resources.push(res);
   }

@@ -14,6 +14,9 @@ import { IconButtonText, SearchBar } from './SearchItems';
 import { SmallCard } from './SmallCard';
 
 const styles = StyleSheet.create({
+  gridMainContainer: {
+    marginBottom: 15,
+  },
   gridHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -120,7 +123,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
       setSearchState(SearchState.SIMPLE);
     };
     return (
-      <View>
+      <View style={styles.gridMainContainer}>
         <View style={styles.gridHeaderContainer}>
           <TextBold style={styles.gridTitleText}>{gridProps.title.toLocaleUpperCase()}</TextBold>
           <TouchableOpacity onPress={showResources}>

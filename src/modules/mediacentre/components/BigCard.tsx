@@ -93,7 +93,21 @@ const FavoriteAction: React.FunctionComponent<FavoriteActionProps> = (props: Fav
 };
 
 export const SourceImage: React.FunctionComponent<SourceImageProps> = (props: SourceImageProps) => {
-  const image = props.source === Source.GAR ? require('ASSETS/images/logo-gar.png') : require('ASSETS/images/logo-moodle.png');
+  let image;
+  switch (props.source) {
+    case Source.GAR:
+      image = require('ASSETS/images/logo-gar.png');
+      break;
+    case Source.Moodle:
+      image = require('ASSETS/images/logo-moodle.png');
+      break;
+    case Source.PMB:
+      image = require('ASSETS/images/logo-pmb.png');
+      break;
+    default:
+      image = require('ASSETS/images/logo-gar.png');
+      break;
+  }
   return (
     <Image source={image} style={[styles.sourceImageContainer, { height: props.size, width: props.size }]} resizeMode="contain" />
   );

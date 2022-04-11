@@ -91,6 +91,9 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
         {props.searchState === SearchState.SIMPLE || props.params.sources.Moodle ? (
           <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} />
         ) : null}
+        {props.searchState === SearchState.SIMPLE || props.params.sources.PMB ? (
+          <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} />
+        ) : null}
         {props.searchState === SearchState.SIMPLE || props.params.sources.Signets ? (
           <Icon name="bookmark_outline" size={24} />
         ) : null}

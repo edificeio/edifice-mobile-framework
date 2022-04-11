@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchExternalsAction } from '~/modules/mediacentre/actions/externals';
 import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
@@ -30,11 +31,12 @@ type IDashboardProps = {
   search: Resource[];
   signets: ISignets;
   textbooks: Resource[];
+  userId: string;
 
   addFavorite: (id: string, resource: Resource) => any;
   fetchExternals: () => any;
   fetchFavorites: () => any;
-  fetchSignets: () => any;
+  fetchSignets: (userId: string) => any;
   fetchTextbooks: () => any;
   removeFavorite: (id: string, source: Source) => any;
   searchResources: (query: string) => any;
@@ -46,7 +48,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
     this.props.fetchExternals();
     this.props.fetchFavorites();
     this.props.fetchTextbooks();
-    this.props.fetchSignets();
+    this.props.fetchSignets(this.props.userId);
   }
 
   public render() {
@@ -74,6 +76,7 @@ const mapStateToProps: (state: any) => any = state => {
   const search = getSearchState(state).data;
   const signets = getSignetsState(state).data;
   const textbooks = getTextbooksState(state).data;
+  const userId = getUserSession(state).user.id;
 
   return {
     externals,
@@ -81,6 +84,7 @@ const mapStateToProps: (state: any) => any = state => {
     search,
     signets,
     textbooks,
+    userId,
   };
 };
 
