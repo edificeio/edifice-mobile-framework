@@ -8,8 +8,8 @@ import { ISignets } from '~/modules/mediacentre/state/signets';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
 type IHomePageContainerProps = {
+  externals: Resource[];
   favorites: Resource[];
-  garResources: Resource[];
   navigation: any;
   search: Resource[];
   signets: ISignets;

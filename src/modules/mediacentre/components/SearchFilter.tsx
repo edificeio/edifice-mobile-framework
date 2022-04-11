@@ -71,23 +71,23 @@ const getFilters = (resources: Resource[]) => {
   const levels: string[] = [];
   for (const resource of resources) {
     for (const type of resource.types) {
-      if (types.findIndex(value => value === type) === -1) {
+      if (!types.includes(type)) {
         types.push(type);
       }
     }
-    if (sources.findIndex(source => resource.source === source) === -1) {
+    if (!sources.includes(resource.source)) {
       sources.push(resource.source);
     }
     for (const level of resource.levels) {
-      if (levels.findIndex(value => value === level) === -1) {
+      if (!levels.includes(level)) {
         levels.push(level);
       }
     }
   }
   return [
-    { title: 'Type de ressource', items: types },
-    { title: 'Type de source', items: sources },
-    { title: 'Niveau', items: levels },
+    { title: 'resource-type', items: types },
+    { title: 'source', items: sources },
+    { title: 'level', items: levels },
   ];
 };
 
@@ -115,7 +115,7 @@ const FilterSection: React.FunctionComponent<FilterSectionProps> = (props: Filte
     <View>
       <TouchableOpacity style={styles.sectionContainer} onPress={expandSection}>
         <View style={styles.sectionHeaderContainer}>
-          <Text>{props.title}</Text>
+          <Text>{I18n.t(`mediacentre.${props.title}`)}</Text>
           <Icon name={iconName} size={30} />
         </View>
         <View style={styles.sectionUnderlineView} />

@@ -3,15 +3,15 @@ import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
 export const signetsService = {
   get: async () => {
-    const resources = await fetchJSONWithCache(`/mediacentre/mysignets`, {
+    const resources = await fetchJSONWithCache(`/mediacentre/signets`, {
       method: 'get',
     });
-    return resourcesAdapter(resources);
+    return resourcesAdapter(resources.data.signets.resources).filter(resource => resource.types.includes('Signet'));
   },
   getOrientation: async () => {
-    const resources = await fetchJSONWithCache(`/mediacentre/mysignets`, {
+    const resources = await fetchJSONWithCache(`/mediacentre/signets`, {
       method: 'get',
     });
-    return resourcesAdapter(resources).filter(resource => resource.orientation === true);
+    return resourcesAdapter(resources.data.signets.resources).filter(resource => resource.types.includes('Orientation'));
   },
 };

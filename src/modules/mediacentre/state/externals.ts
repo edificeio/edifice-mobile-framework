@@ -4,17 +4,16 @@ import { Resource } from '~/modules/mediacentre/utils/Resource';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
-export type IGarResources = Resource[];
+export type IExternals = Resource[];
 
 // THE STATE --------------------------------------------------------------------------------------
 
-export type IGarResourcesState = AsyncState<IGarResources>;
+export type IExternalsState = AsyncState<IExternals>;
 
-export const initialState: IGarResources = [];
+export const initialState: IExternals = [];
 
-export const getGarResourcesState = (globalState: any) =>
-  mediacentreConfig.getState(globalState).garResources as IGarResourcesState;
+export const getExternalsState = (globalState: any) => mediacentreConfig.getState(globalState).externals as IExternalsState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(mediacentreConfig.namespaceActionType('MEDIACENTRE_GAR_RESOURCES'));
+export const actionTypes = createAsyncActionTypes(mediacentreConfig.namespaceActionType('MEDIACENTRE_EXTERNALS'));

@@ -115,7 +115,7 @@ export const SmallCard: React.FunctionComponent<SmallCardProps> = (props: SmallC
           <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }} style={styles.imageContainer} />
           <View style={styles.secondaryContainer}>
             <Text numberOfLines={2} style={styles.descriptionText}>
-              {props.resource.source === Source.Signet ? props.resource.owner_name : props.resource.editors}
+              {props.resource.source === Source.Signet ? props.resource.authors : props.resource.editors}
             </Text>
             <View style={styles.actionsContainer}>
               <FavoriteIcon {...props} />

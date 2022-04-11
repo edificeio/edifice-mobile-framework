@@ -6,14 +6,14 @@ import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchExternalsAction } from '~/modules/mediacentre/actions/externals';
 import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
-import { fetchGarResourcesAction } from '~/modules/mediacentre/actions/garResources';
 import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
 import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
 import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
 import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { getExternalsState } from '~/modules/mediacentre/state/externals';
 import { getFavoritesState } from '~/modules/mediacentre/state/favorites';
-import { getGarResourcesState } from '~/modules/mediacentre/state/garResources';
 import { getSearchState } from '~/modules/mediacentre/state/search';
 import { ISignets, getSignetsState } from '~/modules/mediacentre/state/signets';
 import { getTextbooksState } from '~/modules/mediacentre/state/textbooks';
@@ -24,16 +24,16 @@ import { PageContainer } from '~/ui/ContainerContent';
 import HomePageContainer from './HomePage';
 
 type IDashboardProps = {
+  externals: Resource[];
   favorites: Resource[];
-  garResources: Resource[];
   navigation: { navigate };
   search: Resource[];
   signets: ISignets;
   textbooks: Resource[];
 
   addFavorite: (id: string, resource: Resource) => any;
+  fetchExternals: () => any;
   fetchFavorites: () => any;
-  fetchGarResources: () => any;
   fetchSignets: () => any;
   fetchTextbooks: () => any;
   removeFavorite: (id: string, source: Source) => any;
@@ -43,8 +43,8 @@ type IDashboardProps = {
 
 export class Dashboard extends React.PureComponent<IDashboardProps> {
   componentDidMount() {
+    this.props.fetchExternals();
     this.props.fetchFavorites();
-    this.props.fetchGarResources();
     this.props.fetchTextbooks();
     this.props.fetchSignets();
   }
@@ -69,15 +69,15 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
 }
 
 const mapStateToProps: (state: any) => any = state => {
+  const externals = getExternalsState(state).data;
   const favorites = getFavoritesState(state).data;
-  const garResources = getGarResourcesState(state).data;
   const search = getSearchState(state).data;
   const signets = getSignetsState(state).data;
   const textbooks = getTextbooksState(state).data;
 
   return {
+    externals,
     favorites,
-    garResources,
     search,
     signets,
     textbooks,
@@ -89,7 +89,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     {
       addFavorite: addFavoriteAction,
       fetchFavorites: fetchFavoritesAction,
-      fetchGarResources: fetchGarResourcesAction,
+      fetchExternals: fetchExternalsAction,
       fetchSignets: fetchSignetsAction,
       fetchTextbooks: fetchTextbooksAction,
       removeFavorite: removeFavoriteAction,

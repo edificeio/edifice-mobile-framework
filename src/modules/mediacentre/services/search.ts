@@ -7,11 +7,11 @@ const addFieldWhenFilled = (field: Field) => {
 };
 
 export const searchService = {
-  getGar: async () => {
+  getExternals: async () => {
     const jsondata = {
       event: 'search',
       state: 'PLAIN_TEXT',
-      sources: ['fr.openent.mediacentre.source.GAR'],
+      sources: ['fr.openent.mediacentre.source.GAR', 'fr.openent.mediacentre.source.Moodle', 'fr.openent.mediacentre.source.PMB'],
       data: {
         query: '.*',
       },
@@ -28,6 +28,7 @@ export const searchService = {
       sources: [
         'fr.openent.mediacentre.source.GAR',
         'fr.openent.mediacentre.source.Moodle',
+        'fr.openent.mediacentre.source.PMB',
         'fr.openent.mediacentre.source.Signet',
       ],
       data: {

@@ -55,8 +55,8 @@ interface ResourcesGridProps {
 }
 
 interface HomePageProps {
+  externals: Resource[];
   favorites: Resource[];
-  garResources: Resource[];
   navigation: any;
   search: Resource[];
   signets: ISignets;
@@ -74,8 +74,8 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<AdvancedSearchParams>(defaultParams);
   const sections = [
-    { title: 'mediacentre.textbooks', resources: props.textbooks },
-    { title: 'mediacentre.gar-resources', resources: props.garResources },
+    { title: 'mediacentre.external-resources', resources: props.externals },
+    { title: 'mediacentre.my-textbooks', resources: props.textbooks },
     { title: 'mediacentre.my-signets', resources: props.signets.sharedSignets },
     { title: 'mediacentre.orientation-signets', resources: props.signets.orientationSignets },
   ].filter(section => section.resources.length > 0);
