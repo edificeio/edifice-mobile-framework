@@ -1,14 +1,15 @@
 /**
  * Grid list for full-screen selectors.
  * Just a FlatList with some default values applied...
- * use `gap` and `gapOutside` props to manage spaces around the items.
+ * use `gap` and `gapOutside` props to manage spaces around the items. Give number or [horizontal, vertical].
  */
 import * as React from 'react';
 import { FlatList, FlatListProps, ListRenderItemInfo, View } from 'react-native';
 
+
 export interface GridListProps<ItemT> extends FlatListProps<ItemT> {
-  gap?: number; // distance BETWEEN each item
-  gapOutside?: number; // distance around the list in every direction
+  gap?: number | [number, number]; // distance BETWEEN each item
+  gapOutside?: number | [number, number]; // distance around the list in every direction
 }
 
 const gridListItemWrapperStyleBase = {
@@ -19,17 +20,21 @@ const gridListItemWrapperStyleBase = {
 export default function GridList<ItemT>(props: GridListProps<ItemT>) {
   let { renderItem, numColumns, columnWrapperStyle, gap, gapOutside, ...otherProps } = props;
   const realNumColumns = numColumns ?? 2;
-  const realGap = gap ?? 0;
-  const realGapOutside = gapOutside ?? 0;
+  const realGap = gap ?? 0, realGapHV = typeof realGap === 'number' ? [realGap, realGap] : realGap;
+  const realGapOutside = gapOutside ?? 0,
+    realGapOutsideHV = typeof realGapOutside === 'number' ? [realGapOutside, realGapOutside] : realGapOutside;
   const gridListItemWrapperStyleCustom = {
     flexBasis: `${100 / realNumColumns}%`,
-    paddingHorizontal: realGap / 2,
+    paddingHorizontal: realGapHV[0] / 2,
   };
-  const getHorizontalGapStyle = (info: ListRenderItemInfo<ItemT>) => ({
-    paddingTop: info.index < realNumColumns ? realGapOutside : realGap,
-    paddingBottom:
-      Math.floor(info.index / realNumColumns) >= Math.floor((props.data?.length ?? 0) / realNumColumns) ? realGapOutside : 0,
-  });
+  const getHorizontalGapStyle = React.useCallback(
+    (info: ListRenderItemInfo<ItemT>) => ({
+      paddingTop: info.index < realNumColumns ? realGapOutsideHV[1] : realGapHV[1],
+      paddingBottom:
+        Math.floor(info.index / realNumColumns) >= Math.floor((props.data?.length ?? 0) / realNumColumns) ? realGapOutsideHV[1] : 0,
+    }),
+    [gap, gapOutside, props.data],
+  );
   return (
     <FlatList
       renderItem={info => (
@@ -42,7 +47,7 @@ export default function GridList<ItemT>(props: GridListProps<ItemT>) {
         {
           alignItems: 'flex-start',
           justifyContent: 'flex-start',
-          marginHorizontal: realGapOutside - realGap / 2,
+          marginHorizontal: realGapOutsideHV[0] - realGapHV[0] / 2,
         },
         columnWrapperStyle,
       ]}
