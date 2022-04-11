@@ -24,6 +24,15 @@ export type IResourceBackend = {
   owner_id?: string;
 }[];
 
+export function compareResources(a: Resource, b: Resource) {
+  if (a.title < b.title) {
+    return -1;
+  } else if (a.title > b.title) {
+    return 1;
+  }
+  return 0;
+}
+
 export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => {
   const resources = [] as Resource[];
   if (!data) return resources;
@@ -49,7 +58,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
     } as Resource;
     resources.push(res);
   }
-  return resources;
+  return resources.sort(compareResources);
 };
 
 export const textbooksService = {

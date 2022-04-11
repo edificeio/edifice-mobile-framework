@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
-import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
@@ -72,6 +72,7 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePageProps) => {
+  const searchBarInput = useRef<TextInput>(null);
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
@@ -93,6 +94,9 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }
 
   function onCancelSearch() {
+    if (searchBarInput.current) {
+      searchBarInput.current.clear();
+    }
     setSearchedResources([]);
     setSearchState(SearchState.NONE);
   }
@@ -141,7 +145,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   return (
     <View style={styles.mainContainer}>
-      <SearchBar onSubmitEditing={onSearch} />
+      <SearchBar onSubmitEditing={onSearch} inputRef={searchBarInput} />
       <View style={styles.advancedSearchButtonContainer}>
         <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
       </View>

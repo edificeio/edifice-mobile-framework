@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Text } from '~/framework/components/text';
@@ -32,6 +31,8 @@ const styles = StyleSheet.create({
 });
 
 interface SearchBarProps {
+  inputRef: React.RefObject<TextInput>;
+
   onSubmitEditing: (query: string) => void;
 }
 
@@ -59,6 +60,7 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = (props: Search
         returnKeyType="search"
         onChangeText={text => setValue(text)}
         onSubmitEditing={onSearch}
+        ref={props.inputRef}
       />
     </View>
   );

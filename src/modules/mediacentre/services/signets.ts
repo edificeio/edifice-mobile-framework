@@ -1,5 +1,5 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
+import { compareResources, resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
 export const signetsService = {
   get: async (userId: string) => {
@@ -11,7 +11,8 @@ export const signetsService = {
     });
     return resourcesAdapter(signetsResponse.data.signets.resources)
       .filter(resource => resource.types.includes('Signet'))
-      .concat(resourcesAdapter(mysignetsResponse).filter(resource => resource.owner_id !== userId));
+      .concat(resourcesAdapter(mysignetsResponse).filter(resource => resource.owner_id !== userId))
+      .sort(compareResources);
   },
   getOrientation: async () => {
     const resources = await fetchJSONWithCache(`/mediacentre/signets`, {
