@@ -9,32 +9,28 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+
+
 import theme from '~/app/theme';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
 import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
-import {
-  addAttachmentAction,
-  deleteAttachmentAction,
-  forwardMailAction,
-  makeDraftMailAction,
-  sendMailAction,
-  updateDraftMailAction,
-} from '~/modules/conversation/actions/newMail';
+import { addAttachmentAction, deleteAttachmentAction, forwardMailAction, makeDraftMailAction, sendMailAction, updateDraftMailAction } from '~/modules/conversation/actions/newMail';
 import { fetchVisiblesAction } from '~/modules/conversation/actions/visibles';
 import NewMailComponent from '~/modules/conversation/components/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/modules/conversation/state/mailContent';
+
 
 export enum DraftType {
   NEW,
@@ -117,11 +113,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
     if (prevProps.mail !== this.props.mail) {
-      const { mail, ...rest } = this.getPrefilledMail();
+      const prefilledMailRet = this.getPrefilledMail();
+      if (!prefilledMailRet) return;
+      const { mail, ...rest } = prefilledMailRet;
+      if (!mail) return;
       this.setState(prevState => ({
         ...prevState,
         ...rest,
-        mail: { ...prevState.mail, ...mail },
+        mail: { ...prevState.mail, ...mail as IMail },
         isPrefilling: false,
       }));
     } else if (
@@ -376,8 +375,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   getPrefilledMail = () => {
+    if (!this.props.mail || (this.props.mail as unknown as []).length === 0) return undefined;
     const draftType = this.props.navigation.getParam('type', DraftType.NEW);
-    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)[1];
+    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)?.[1];
     const getUser = id => ({ id, displayName: getDisplayName(id) });
 
     const deleteHtmlContent = function (text) {

@@ -300,22 +300,24 @@ class Carousel extends React.Component<
                         enabled={canPanHorizontal || canPanVertical}
                         ref={imagePan}
                         simultaneousHandlers={imagePinch}>
-                        <PinchGestureHandler
-                          onGestureEvent={this.onZoomEvent}
-                          onHandlerStateChange={this.onZoomStateChange}
-                          ref={imagePinch}
-                          simultaneousHandlers={imagePan}>
-                          <Animated.View>
-                            <AnimatedFastImage
-                              source={item.src}
-                              style={{
-                                height: imageHeight,
-                                width: imageWidth,
-                              }}
-                              resizeMode="contain"
-                            />
-                          </Animated.View>
-                        </PinchGestureHandler>
+                        <Animated.View>
+                          <PinchGestureHandler
+                            onGestureEvent={this.onZoomEvent}
+                            onHandlerStateChange={this.onZoomStateChange}
+                            ref={imagePinch}
+                            simultaneousHandlers={imagePan}>
+                            <Animated.View>
+                              <AnimatedFastImage
+                                source={item.src}
+                                style={{
+                                  height: imageHeight,
+                                  width: imageWidth,
+                                }}
+                                resizeMode="contain"
+                              />
+                            </Animated.View>
+                          </PinchGestureHandler>
+                        </Animated.View>
                       </PanGestureHandler>
                     </Animated.View>
                   )}

@@ -82,7 +82,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     pastDateLimit: today(),
   };
 
-  getDerivedStateFromProps(nextProps: any, prevState: any) {
+  static getDerivedStateFromProps(nextProps: any, prevState: any) {
     if (nextProps.isFetching !== prevState.fetching) {
       return { fetching: nextProps.isFetching };
     } else return null;
