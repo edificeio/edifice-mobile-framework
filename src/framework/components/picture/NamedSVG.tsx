@@ -9,7 +9,6 @@
 import React, { useEffect, useRef } from 'react';
 import { SvgProps } from 'react-native-svg';
 
-
 const imports = {
   'days-monday': import(`../../../../assets/images/days/monday.svg`),
   'days-tuesday': import(`../../../../assets/images/days/tuesday.svg`),
@@ -25,6 +24,7 @@ const imports = {
   'empty-homework': import(`../../../../assets/images/empty-screen/empty-homework.svg`),
   'empty-light': import(`../../../../assets/images/empty-screen/empty-light.svg`),
   'empty-mediacentre': import(`../../../../assets/images/empty-screen/empty-mediacentre.svg`),
+  'empty-schoolbook': import(`../../../../assets/images/empty-screen/empty-schoolbook.svg`),
   'empty-search': import(`../../../../assets/images/empty-screen/empty-search.svg`),
   'empty-timeline': import(`../../../../assets/images/empty-screen/empty-timeline.svg`),
   'empty-trash': import(`../../../../assets/images/empty-screen/empty-trash.svg`),

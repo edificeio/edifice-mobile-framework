@@ -11,6 +11,7 @@ import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import Label from '~/framework/components/label';
 import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
+import { UserType } from '~/framework/util/session';
 import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
@@ -26,7 +27,7 @@ import {
 } from '../reducer';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.t('schoolbook.acknowledgements').toLowerCase()}`;
+  `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${total === 1 ? '' : 's'}`).toLowerCase()}`;
 const acknowledgedString = (isWordAcknowledged: boolean) =>
   I18n.t(`schoolbook.${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
 const responsesString = (responses: number) =>
@@ -38,7 +39,7 @@ const recipientsString = (recipients: any) => `${recipients?.map(recipient => ` 
 export interface ISummaryCardProps {
   action: () => void;
   userType: string;
-  parentId: string;
+  userId: string;
   acknowledgments: IAcknowledgment[];
   owner: string;
   ownerName: string;
@@ -56,7 +57,7 @@ export interface ISummaryCardProps {
 export const SummaryCard = ({
   action,
   userType,
-  parentId,
+  userId,
   acknowledgments,
   owner,
   ownerName,
@@ -77,12 +78,12 @@ export const SummaryCard = ({
   const schoolbookWordMedia = extractMediaFromHtml(text);
   const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
   const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
-  const isTeacher = userType === 'Teacher';
-  const isStudent = userType === 'Student';
-  const isParent = userType === 'Parent';
+  const isTeacher = userType === UserType.Teacher;
+  const isStudent = userType === UserType.Student;
+  const isParent = userType === UserType.Relative;
   const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(ackNumber, total);
   const isWordAcknowledgedForStudent = getIsWordAcknowledgedForStudent(acknowledgments);
-  const isWordAcknowledgedForParent = getIsWordAcknowledgedForParent(parentId, acknowledgments);
+  const isWordAcknowledgedForParent = getIsWordAcknowledgedForParent(userId, acknowledgments);
   const isWordAcknowledged =
     (isTeacher && isWordAcknowledgedForTeacher) ||
     (isStudent && isWordAcknowledgedForStudent) ||

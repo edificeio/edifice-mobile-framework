@@ -155,17 +155,17 @@ export const schoolbookUriCaptureFunction: IResourceUriCaptureFunction<{ wordId:
 
 export const schoolbookService = {
   list: {
-    teacher: async (session: IUserSession, filter: string, page: number) => {
+    teacher: async (session: IUserSession, page: number) => {
       const api = `/schoolbook/list`;
-      const body = JSON.stringify({ filter, page });
-      const entcoreTeacherWordList = signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      const body = JSON.stringify({ filter: 'Any', page });
+      const entcoreTeacherWordList = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'POST',
         body,
-      }) as unknown as IEntcoreTeacherWordList;
+      })) as unknown as IEntcoreTeacherWordList;
       return teacherWordListAdapter(entcoreTeacherWordList) as ITeacherWordList;
     },
-    studentAndParent: async (session: IUserSession, pageNumber: string, studentId: string) => {
-      const api = `/schoolbook/list/${pageNumber}/${studentId}`;
+    studentAndParent: async (session: IUserSession, page: number, studentId: string) => {
+      const api = `/schoolbook/list/${page}/${studentId}`;
       const entcoreStudentAndParentWordList = (await fetchJSONWithCache(api)) as IEntcoreStudentAndParentWordList;
       return studentAndParentWordListAdapter(entcoreStudentAndParentWordList) as IStudentAndParentWordList;
     },
