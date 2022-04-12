@@ -43,7 +43,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === UserType.Teacher; //⚪️ keep 3 'isUser'?
+  const isTeacher = userType === UserType.Teacher;
   const isStudent = userType === UserType.Student;
   const isParent = userType === UserType.Relative;
   const hasSchoolbookWordCreationRights = true; //⚪️ handle (example: selectedBlog && getBlogPostRight(selectedBlog, session)?.actionRight;)
@@ -124,11 +124,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   // If `flushAfter` is also provided along `fromPage`, all content after the loaded page will be erased.
   const fetchPage = async (fromPage?: number, flushAfter?: boolean) => {
     try {
+      const studentId = isStudent ? userId : 'selectedChildId'; //⚪️variable for parent
       const pageToFetch = fromPage ?? nextPageToFetch_state; // If page is not defined, automatically fetch the next page
       if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
       const newSchoolbookWords = isTeacher
         ? await schoolbookService.list.teacher(session, pageToFetch)
-        : await schoolbookService.list.studentAndParent(session, pageToFetch, 'studentId'); //⚪️variable studentId
+        : await schoolbookService.list.studentAndParent(session, pageToFetch, studentId);
       let pagingSize = pagingSize_state;
       if (pagingSize === undefined) {
         setPagingSize(newSchoolbookWords.length);
