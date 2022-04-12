@@ -41,7 +41,6 @@ export const searchService = {
     return resourcesAdapter(reponse.data.resources);
   },
   getAdvanced: async (params: AdvancedSearchParams) => {
-    const fields = [params.title, params.authors, params.editors, params.disciplines, params.levels];
     const jsondata = {
       event: 'search',
       state: 'ADVANCED',
@@ -53,7 +52,7 @@ export const searchService = {
       ],
       data: {},
     };
-    for (const field of fields) {
+    for (const field of params.fields) {
       if (field.value !== '') {
         jsondata.data[field.name] = addFieldWhenFilled(field);
       }

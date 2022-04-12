@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
   sourceCheckBoxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 5,
   },
   sourceImage: {
     width: 30,
@@ -40,7 +39,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: '#FFFFFF',
-    flex: 0,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -61,6 +59,7 @@ const styles = StyleSheet.create({
   },
   sourcesContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
   },
   dialogButtonsContainer: {
@@ -84,11 +83,7 @@ export interface Field {
 }
 
 export interface AdvancedSearchParams {
-  title: Field;
-  authors: Field;
-  editors: Field;
-  disciplines: Field;
-  levels: Field;
+  fields: Field[];
   sources: {
     GAR: boolean;
     Moodle: boolean;
@@ -98,11 +93,13 @@ export interface AdvancedSearchParams {
 }
 
 export const defaultParams: AdvancedSearchParams = {
-  title: { name: 'title', value: '', operand: Operand.OR },
-  authors: { name: 'author', value: '', operand: Operand.OR },
-  editors: { name: 'editors', value: '', operand: Operand.OR },
-  disciplines: { name: 'disciplines', value: '', operand: Operand.OR },
-  levels: { name: 'levels', value: '', operand: Operand.OR },
+  fields: [
+    { name: 'title', value: '', operand: Operand.OR },
+    { name: 'author', value: '', operand: Operand.OR },
+    { name: 'editor', value: '', operand: Operand.OR },
+    { name: 'discipline', value: '', operand: Operand.OR },
+    { name: 'level', value: '', operand: Operand.OR },
+  ],
   sources: {
     GAR: true,
     Moodle: true,
@@ -111,12 +108,25 @@ export const defaultParams: AdvancedSearchParams = {
   },
 };
 
-type CriteriaInputProps = {
-  defaultValue: string;
-  name: string;
-  placeholder: string;
+const defaultFields: Field[] = [
+  { name: 'title', value: '', operand: Operand.OR },
+  { name: 'authors', value: '', operand: Operand.OR },
+  { name: 'editors', value: '', operand: Operand.OR },
+  { name: 'disciplines', value: '', operand: Operand.OR },
+  { name: 'levels', value: '', operand: Operand.OR },
+];
 
-  onChangeText: (text: string) => void;
+const defaultSources = {
+  GAR: true,
+  Moodle: true,
+  PMB: true,
+  Signets: true,
+};
+
+type CriteriaInputProps = {
+  field: Field;
+
+  onChange: (field: Field) => void;
 };
 
 type SourceCheckboxProps = {
@@ -124,8 +134,7 @@ type SourceCheckboxProps = {
   iconName?: string;
   source?: ImageSourcePropType;
 
-  onCheck: () => void;
-  onUncheck: () => void;
+  onChange: (value: boolean) => void;
 };
 
 type AdvancedSearchModalProps = {
@@ -135,61 +144,109 @@ type AdvancedSearchModalProps = {
   onSearch: (params: AdvancedSearchParams) => void;
 };
 
-const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: CriteriaInputProps) => (
-  <View style={styles.criteriaContainer}>
-    <Text style={styles.criteriaText}>{props.name}</Text>
-    <TextInput
-      defaultValue={props.defaultValue}
-      placeholder={props.placeholder}
-      onChangeText={props.onChangeText}
-      style={styles.criteriaInput}
-    />
-  </View>
-);
-
-const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: SourceCheckboxProps) => (
-  <View style={styles.sourceCheckBoxContainer}>
-    {props.source ? <Image source={props.source} style={styles.sourceImage} /> : <Icon name={props.iconName} size={30} />}
-    <Checkbox checked={props.checked} onCheck={props.onCheck} onUncheck={props.onUncheck} />
-  </View>
-);
-
-export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = (props: AdvancedSearchModalProps) => {
-  const [params, setParams] = useState<AdvancedSearchParams>(defaultParams);
+const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: CriteriaInputProps) => {
   const buttons = [I18n.t('mediacentre.advancedSearch.or'), I18n.t('mediacentre.advancedSearch.and')];
-  const onSearch = () => {
-    props.onSearch(params);
+  const onChangeOperand = (value: number) => {
+    props.field.operand = value;
+    props.onChange(props.field);
+  };
+  const onChangeText = (text: string) => {
+    props.field.value = text;
+    props.onChange(props.field);
   };
   return (
-    <View style={styles.modalContainer}>
-      <Modal visible={props.isVisible}>
-        <View style={styles.headerContainer}>
-          <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
-          <Icon name="close" color="white" size={24} onPress={props.closeModal} />
-        </View>
-        <ModalContentBlock style={styles.contentContainer}>
-          <CriteriaInput name={I18n.t('mediacentre.advancedSearch.title')} defaultValue={params.title.value} placeholder={I18n.t('mediacentre.advancedSearch.search-title')} onChangeText={(text) => setParams({ ...params, title: { ...params.title, value: text }})} />
-          <ButtonGroup buttons={buttons} selectedButton={params.authors.operand} color={CommonStyles.actionColor} onPress={(index) => setParams({ ...params, authors: { ...params.authors, operand: index }})} />
-          <CriteriaInput name={I18n.t('mediacentre.advancedSearch.author')} defaultValue={params.authors.value} placeholder={I18n.t('mediacentre.advancedSearch.search-author')} onChangeText={(text) => setParams({ ...params, authors: { ...params.authors, value: text }})} />
-          <ButtonGroup buttons={buttons} selectedButton={params.editors.operand} color={CommonStyles.actionColor} onPress={(index) => setParams({ ...params, editors: { ...params.editors, operand: index }})} />
-          <CriteriaInput name={I18n.t('mediacentre.advancedSearch.publisher')} defaultValue={params.editors.value} placeholder={I18n.t('mediacentre.advancedSearch.search-publisher')} onChangeText={(text) => setParams({ ...params, editors: { ...params.editors, value: text }})} />
-          <ButtonGroup buttons={buttons} selectedButton={params.disciplines.operand} color={CommonStyles.actionColor} onPress={(index) => setParams({ ...params, disciplines: { ...params.disciplines, operand: index }})} />
-          <CriteriaInput name={I18n.t('mediacentre.advancedSearch.subject')} defaultValue={params.disciplines.value} placeholder={I18n.t('mediacentre.advancedSearch.search-subject')} onChangeText={(text) => setParams({ ...params, disciplines: { ...params.disciplines, value: text }})} />
-          <ButtonGroup buttons={buttons} selectedButton={params.levels.operand} color={CommonStyles.actionColor} onPress={(index) => setParams({ ...params, levels: { ...params.levels, operand: index }})} />
-          <CriteriaInput name={I18n.t('mediacentre.advancedSearch.level')} defaultValue={params.levels.value} placeholder={I18n.t('mediacentre.advancedSearch.search-level')} onChangeText={(text) => setParams({ ...params, levels: { ...params.levels, value: text }})} />
-          <View style={styles.sourcesContainer}>
-            <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
-            <SourceCheckbox source={require('ASSETS/images/logo-gar.png')} checked={params.sources.GAR} onCheck={() => setParams({ ...params, sources: { ...params.sources, GAR: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, GAR: false }})} />
-            <SourceCheckbox source={require('ASSETS/images/logo-moodle.png')} checked={params.sources.Moodle} onCheck={() => setParams({ ...params, sources: { ...params.sources, Moodle: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, Moodle: false }})} />
-            <SourceCheckbox source={require('ASSETS/images/logo-pmb.png')} checked={params.sources.PMB} onCheck={() => setParams({ ...params, sources: { ...params.sources, PMB: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, PMB: false }})} />
-            <SourceCheckbox iconName='bookmark_outline' checked={params.sources.Signets} onCheck={() => setParams({ ...params, sources: { ...params.sources, Signets: true }})} onUncheck={() => setParams({ ...params, sources: { ...params.sources, Signets: false }})} />
-          </View>
-          <View style={styles.dialogButtonsContainer}>
-            <DialogButtonCancel onPress={props.closeModal} />
-            <DialogButtonOk style={styles.searchButton} label={I18n.t('common.search')} onPress={onSearch} />
-          </View>
-        </ModalContentBlock>
-      </Modal>
+    <View>
+      {props.field.name !== 'title' ? (
+        <ButtonGroup
+          buttons={buttons}
+          selectedButton={props.field.operand}
+          color={CommonStyles.actionColor}
+          onPress={onChangeOperand}
+        />
+      ) : null}
+      <View style={styles.criteriaContainer}>
+        <Text style={styles.criteriaText}>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Text>
+        <TextInput
+          defaultValue={props.field.value}
+          placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
+          onChangeText={onChangeText}
+          style={styles.criteriaInput}
+        />
+      </View>
     </View>
+  );
+};
+
+const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: SourceCheckboxProps) => {
+  const onCheck = () => {
+    props.onChange(true);
+  };
+  const onUncheck = () => {
+    props.onChange(false);
+  };
+  return (
+    <View style={styles.sourceCheckBoxContainer}>
+      {props.source ? <Image source={props.source} style={styles.sourceImage} /> : <Icon name={props.iconName} size={30} />}
+      <Checkbox checked={props.checked} onCheck={onCheck} onUncheck={onUncheck} />
+    </View>
+  );
+};
+
+export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = (props: AdvancedSearchModalProps) => {
+  const [fields, setFields] = useState<Field[]>(defaultFields);
+  const [sources, setSources] = useState(defaultSources);
+  const areFieldsEmpty = !fields.some(field => field.value !== '');
+  const updateField = (index: number, field: Field) => {
+    const newFields = [...fields];
+    newFields[index] = field;
+    setFields(newFields);
+  };
+  const onSearch = () => {
+    props.onSearch({ fields, sources });
+  };
+  return (
+    <Modal visible={props.isVisible}>
+      <View style={styles.headerContainer}>
+        <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
+        <Icon name="close" color="white" size={24} onPress={props.closeModal} />
+      </View>
+      <ModalContentBlock style={styles.contentContainer}>
+        {fields.map((field, index) => (
+          <CriteriaInput field={field} onChange={newField => updateField(index, newField)} />
+        ))}
+        <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
+        <View style={styles.sourcesContainer}>
+          <SourceCheckbox
+            source={require('ASSETS/images/logo-gar.png')}
+            checked={sources.GAR}
+            onChange={value => setSources({ ...sources, GAR: value })}
+          />
+          <SourceCheckbox
+            source={require('ASSETS/images/logo-moodle.png')}
+            checked={sources.Moodle}
+            onChange={value => setSources({ ...sources, Moodle: value })}
+          />
+          <SourceCheckbox
+            source={require('ASSETS/images/logo-pmb.png')}
+            checked={sources.PMB}
+            onChange={value => setSources({ ...sources, PMB: value })}
+          />
+          <SourceCheckbox
+            iconName="bookmark_outline"
+            checked={sources.Signets}
+            onChange={value => setSources({ ...sources, Signets: value })}
+          />
+        </View>
+        <View style={styles.dialogButtonsContainer}>
+          <DialogButtonCancel onPress={props.closeModal} />
+          <DialogButtonOk
+            onPress={onSearch}
+            disabled={areFieldsEmpty}
+            label={I18n.t('common.search')}
+            style={styles.searchButton}
+          />
+        </View>
+      </ModalContentBlock>
+    </Modal>
   );
 };

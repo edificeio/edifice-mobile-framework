@@ -72,7 +72,7 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePageProps) => {
-  const searchBarInput = useRef<TextInput>(null);
+  const searchBarRef = useRef<TextInput>(null);
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
@@ -94,8 +94,8 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }
 
   function onCancelSearch() {
-    if (searchBarInput.current) {
-      searchBarInput.current.clear();
+    if (searchBarRef.current) {
+      searchBarRef.current.clear();
     }
     setSearchedResources([]);
     setSearchState(SearchState.NONE);
@@ -145,7 +145,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   return (
     <View style={styles.mainContainer}>
-      <SearchBar onSubmitEditing={onSearch} inputRef={searchBarInput} />
+      <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
       <View style={styles.advancedSearchButtonContainer}>
         <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
       </View>

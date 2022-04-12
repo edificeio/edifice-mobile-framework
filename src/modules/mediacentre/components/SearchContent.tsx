@@ -102,11 +102,9 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>
-        <AdvancedSearchField field={props.params.title} />
-        <AdvancedSearchField field={props.params.authors} />
-        <AdvancedSearchField field={props.params.editors} />
-        <AdvancedSearchField field={props.params.disciplines} />
-        <AdvancedSearchField field={props.params.levels} />
+        {props.params.fields.map(field => (
+          <AdvancedSearchField field={field} />
+        ))}
       </View>
     ) : null}
   </View>
@@ -127,7 +125,9 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
         }}
         keyExtractor={item => item.id}
         ListHeaderComponent={
-          <SearchFilter resources={props.resources} onChange={updateFilteredResources} containerStyle={styles.filterContainer} />
+          props.resources.length ? (
+            <SearchFilter resources={props.resources} onChange={updateFilteredResources} containerStyle={styles.filterContainer} />
+          ) : null
         }
         ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
       />
