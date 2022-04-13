@@ -123,7 +123,7 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
         renderItem={({ item }) => {
           return <BigCard {...props} resource={item} />;
         }}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.uid || item.id}
         ListHeaderComponent={
           props.resources.length ? (
             <SearchFilter resources={props.resources} onChange={updateFilteredResources} containerStyle={styles.filterContainer} />

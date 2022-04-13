@@ -7,6 +7,7 @@ export enum Source {
 
 export interface Resource {
   id: string;
+  uid?: string;
   title: string;
   plain_text: string;
   image: string;
@@ -19,8 +20,6 @@ export interface Resource {
   levels: string[];
   user: string;
   favorite?: boolean;
-  structure_name?: string;
   structure_uai?: string;
-  orientation?: boolean;
   owner_id?: string;
 }

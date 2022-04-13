@@ -138,7 +138,7 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
           {index > 0 ? <IconButton icon="chevron-left" size={24} color="black" onPress={decreaseIndex} /> : null}
         </View>
         {props.resources.slice(index, index + 2).map((item, idx) => {
-          return <Card {...props} resource={item} color={cardColors[index + idx]} key={item.id} />;
+          return <Card {...props} resource={item} color={cardColors[index + idx]} key={item.uid || item.id} />;
         })}
         <View style={styles.chevronButtonContainer}>
           {index + 2 < props.resources.length ? (

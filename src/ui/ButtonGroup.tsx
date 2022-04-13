@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View, ViewStyle,  } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { TextBold } from './Typography';
 
@@ -32,11 +32,11 @@ export const ButtonGroup = (props: {
       {props.buttons.map((button, index) => (
         <TouchableOpacity
           onPress={() => props.onPress(index)}
-          style={[style.buttonContainer, (index === props.selectedButton) && { backgroundColor: props.color }]}
-        >
-          <TextBold style={[style.buttonText, (index !== props.selectedButton) && { color: props.color }]}>{button}</TextBold>
+          style={[style.buttonContainer, index === props.selectedButton && { backgroundColor: props.color }]}
+          key={index}>
+          <TextBold style={[style.buttonText, index !== props.selectedButton && { color: props.color }]}>{button}</TextBold>
         </TouchableOpacity>
       ))}
     </View>
-  )
+  );
 };

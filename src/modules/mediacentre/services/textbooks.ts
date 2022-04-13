@@ -5,6 +5,7 @@ import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
 export type IResourceBackend = {
   id: string;
+  _id?: string;
   title: string;
   plain_text: string;
   image: string;
@@ -18,10 +19,9 @@ export type IResourceBackend = {
   levels: string[];
   user: string;
   favorite?: boolean;
-  structure_name?: string;
   structure_uai?: string;
-  orientation?: boolean;
   owner_id?: string;
+  owner_name?: string;
 }[];
 
 export function compareResources(a: Resource, b: Resource) {
@@ -38,22 +38,21 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
   if (!data) return resources;
   for (const resource of data) {
     const res = {
-      id: resource.structure_uai ? resource.id + resource.structure_uai : resource.id,
+      id: resource.id,
+      uid: resource.structure_uai ? resource.id + resource.structure_uai : resource._id,
       title: resource.title,
       plain_text: resource.plain_text,
       image: resource.image,
       types: resource.document_types || ['livre numérique'],
       source: resource.source || Source.Signet,
       link: resource.link || resource.url,
-      authors: resource.authors,
+      authors: resource.owner_name || resource.authors,
       editors: resource.editors,
       disciplines: resource.disciplines,
       levels: resource.levels,
       user: resource.user,
       favorite: resource.favorite,
-      structure_name: resource.structure_name,
       structure_uai: resource.structure_uai,
-      orientation: resource.orientation,
       owner_id: resource.owner_id,
     } as Resource;
     resources.push(res);

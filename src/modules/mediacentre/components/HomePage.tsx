@@ -136,7 +136,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         </View>
         <View style={styles.gridCardsContainer}>
           {gridProps.resources.slice(0, 4).map(item => (
-            <SmallCard {...gridProps} resource={item} key={item.id} />
+            <SmallCard {...gridProps} resource={item} key={item.uid || item.id} />
           ))}
         </View>
       </View>

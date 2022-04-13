@@ -212,7 +212,7 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
       </View>
       <ModalContentBlock style={styles.contentContainer}>
         {fields.map((field, index) => (
-          <CriteriaInput field={field} onChange={newField => updateField(index, newField)} />
+          <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
         ))}
         <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
         <View style={styles.sourcesContainer}>
