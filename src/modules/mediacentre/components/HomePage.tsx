@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
 import { ISignets } from '~/modules/mediacentre/state/signets';
@@ -28,11 +29,6 @@ const styles = StyleSheet.create({
   gridDisplayAllText: {
     color: '#F53B56',
     textDecorationLine: 'underline',
-  },
-  gridCardsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    margin: 5,
   },
   mainContainer: {
     flex: 1,
@@ -134,11 +130,12 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
             <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.gridCardsContainer}>
-          {gridProps.resources.slice(0, 4).map(item => (
-            <SmallCard {...gridProps} resource={item} key={item.uid || item.id} />
-          ))}
-        </View>
+        <GridList
+          data={gridProps.resources.slice(0, 4)}
+          renderItem={({ item }) => <SmallCard {...gridProps} resource={item} key={item.uid || item.id} />}
+          gap={10}
+          gapOutside={10}
+        />
       </View>
     );
   };

@@ -12,17 +12,6 @@ import { Icon } from '~/ui';
 import { getImageUri } from './FavoritesCarousel';
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    width: '50%',
-  },
-  contentContainer: {
-    flexDirection: 'column',
-    margin: 5,
-  },
-  imageContainer: {
-    height: 70,
-    width: 50,
-  },
   upperContentContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -36,6 +25,10 @@ const styles = StyleSheet.create({
   },
   lowerContentContainer: {
     flexDirection: 'row',
+  },
+  imageContainer: {
+    height: 70,
+    width: 50,
   },
   secondaryContainer: {
     flex: 1,
@@ -103,27 +96,25 @@ export const SmallCard: React.FunctionComponent<SmallCardProps> = (props: SmallC
     Clipboard.setString(props.resource.link);
   };
   return (
-    <View style={styles.mainContainer}>
-      <TouchCard onPress={openURL} style={styles.contentContainer}>
-        <View style={styles.upperContentContainer}>
-          <TextBold numberOfLines={1} style={styles.titleText}>
-            {props.resource.title}
-          </TextBold>
-          {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={18} /> : null}
-        </View>
-        <View style={styles.lowerContentContainer}>
-          <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }} style={styles.imageContainer} />
-          <View style={styles.secondaryContainer}>
-            <Text numberOfLines={2} style={styles.descriptionText}>
-              {props.resource.source === Source.Signet ? props.resource.authors : props.resource.editors}
-            </Text>
-            <View style={styles.actionsContainer}>
-              <FavoriteIcon {...props} />
-              <IconButton icon="link" size={20} color="#F53B56" onPress={copyToClipboard} />
-            </View>
+    <TouchCard onPress={openURL}>
+      <View style={styles.upperContentContainer}>
+        <TextBold numberOfLines={1} style={styles.titleText}>
+          {props.resource.title}
+        </TextBold>
+        {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={18} /> : null}
+      </View>
+      <View style={styles.lowerContentContainer}>
+        <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }} style={styles.imageContainer} />
+        <View style={styles.secondaryContainer}>
+          <Text numberOfLines={2} style={styles.descriptionText}>
+            {props.resource.source === Source.Signet ? props.resource.authors : props.resource.editors}
+          </Text>
+          <View style={styles.actionsContainer}>
+            <FavoriteIcon {...props} />
+            <IconButton icon="link" size={20} color="#F53B56" onPress={copyToClipboard} />
           </View>
         </View>
-      </TouchCard>
-    </View>
+      </View>
+    </TouchCard>
   );
 };
