@@ -59,10 +59,6 @@ fastlane
 **/appcenter-config.json
 **/AppCenter-Config.plist
 
-# Obsolete ode-plugin files.
-/assets/icons
-/ode-framework-conf.ts
-
 # Asset bundles automatically generated
 ios/assets
 ios/appe/main.jsbundle

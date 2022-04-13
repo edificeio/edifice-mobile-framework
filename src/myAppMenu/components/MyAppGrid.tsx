@@ -29,12 +29,12 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
         text={I18n.t(item.config.displayName)}
         picture={
           item.config['picture']
-            ? { ...item.config['picture'], height: 56, width: '100%', size: 56 }
+            ? { ...item.config['picture'], height: 64, width: '100%', size: 64 }
             : {
                 type: 'Icon',
                 color: item.config.iconColor,
                 name: item.config.iconName,
-                size: 56,
+                size: 64,
               }
         }
       />
