@@ -17,16 +17,11 @@ import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, Vie
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
 
-
-
 import theme from '~/app/theme';
-
-
 
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
-import { FontWeightIOS, TextInverse, rem } from './text';
-
+import { FontWeightIOS, TextInverse, TextSizeStyle } from './text';
 
 /**
  * FakeHeader_Container
@@ -207,14 +202,14 @@ export const HeaderTitle_Style = styled(TextInverse)({
   textAlign: 'center',
   textAlignVertical: 'center',
   fontWeight: FontWeightIOS.Bold,
-  fontSize: rem(16 / 14),
+  fontSize: TextSizeStyle.SlightBig.fontSize,
 });
 export const HeaderTitle = (props: TextProps) => {
   return <HeaderTitle_Style numberOfLines={1} {...props} />;
 };
 export const HeaderSubtitle_Style = styled(HeaderTitle_Style)({
   fontWeight: FontWeightIOS.Normal,
-  fontSize: rem(14 / 14),
+  fontSize: TextSizeStyle.Normal.fontSize,
 });
 export const HeaderSubtitle = (props: TextProps) => {
   return <HeaderSubtitle_Style numberOfLines={1} {...props} />;
