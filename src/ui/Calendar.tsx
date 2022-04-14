@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { TouchableOpacity, ScrollView, State, PanGestureHandler } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View } from 'react-native';
+import { PanGestureHandler, ScrollView, State, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { IHomework } from '~/modules/viescolaire/types/homework';
@@ -326,12 +326,20 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
   renderScrollViewWithSlots = (): JSX.Element => {
     const { slots, renderElement, renderHalf, slotHeight, hideSlots } = this.props;
     const { organizedColumns } = this.state;
+    let lastSlot = undefined as any | undefined;
+    for (let i = 0; i < slots!.length; ++i) {
+      if (lastSlot === undefined || slots![i].endHour.isAfter(lastSlot.endHour)) {
+        lastSlot = slots![i];
+      }
+    }
+
     return (
-      <ScrollView contentContainerStyle={{ height: slots!.length * slotHeight! }} showsHorizontalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={{ height: (slots!.length + 2) * slotHeight! }} showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {slots!.map((slot, i) => (
             <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('LT')}</Text>
           ))}
+          <Text style={[styles.slotDisplay, { top: slotHeight! * slots!.length }]}>{moment(lastSlot.endHour).format('LT')}</Text>
           {slots!.map((slot, i) => (
             <EmptySlot height={slotHeight! - 5} top={slotHeight! * i} />
           ))}

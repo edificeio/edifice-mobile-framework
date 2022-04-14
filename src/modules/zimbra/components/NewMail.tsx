@@ -1,19 +1,25 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { ScrollView, View, StyleSheet, TextInput, ViewStyle, KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
-import Attachment from './Attachment';
-import SearchUserMail from './SearchUserMail';
+
 
 import { UI_SIZES } from '~/framework/components/constants';
 import Notifier from '~/infra/notifier/container';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon, Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Loading } from '~/ui/Loading';
 import { Text } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
+
+
+import Attachment from './Attachment';
+import SearchUserMail from './SearchUserMail';
+
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
 
@@ -246,13 +252,10 @@ const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails
 
 const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
   const removeAttachment = id => {
-    // console.log("delete", id, attachments);
     const newAttachments = attachments.filter(item => item.id !== id);
     onDelete(id);
     onChange(newAttachments);
   };
-
-  // console.log("render attachments", attachments);
 
   return attachments.length === 0 ? (
     <View />

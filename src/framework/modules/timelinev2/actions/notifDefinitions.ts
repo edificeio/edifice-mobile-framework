@@ -32,7 +32,6 @@ export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatc
     // 2. Validate data
     dispatch(notifFiltersAsyncActions.receipt(detailedFilters));
   } catch (e) {
-    console.warn(`[${moduleConfig.name}] loadNotificationsDefinitionsAction failed`, e);
     dispatch(notifFiltersAsyncActions.error(e));
   }
 };

@@ -4,14 +4,14 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { NamedSVG } from '~/framework/components/namedSVG';
+import { NamedSVG } from '~/framework/components/picture';
 import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
 import config from '../config';
 
@@ -40,7 +40,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const { navigation } = this.props;
     const { date, title, content } = navigation.getParam('task');
     const dayOfTheWeek = getDayOfTheWeek(date);
-    const dayColor = theme.days[dayOfTheWeek];
+    const dayColor = theme.homeworkDays[dayOfTheWeek];
     const opacity = 80;
     const bannerColor = `${dayColor}${opacity}`;
     return (

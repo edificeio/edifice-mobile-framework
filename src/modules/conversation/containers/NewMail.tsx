@@ -9,32 +9,28 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
+
+
 import theme from '~/app/theme';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
 import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
-import {
-  addAttachmentAction,
-  deleteAttachmentAction,
-  forwardMailAction,
-  makeDraftMailAction,
-  sendMailAction,
-  updateDraftMailAction,
-} from '~/modules/conversation/actions/newMail';
+import { addAttachmentAction, deleteAttachmentAction, forwardMailAction, makeDraftMailAction, sendMailAction, updateDraftMailAction } from '~/modules/conversation/actions/newMail';
 import { fetchVisiblesAction } from '~/modules/conversation/actions/visibles';
 import NewMailComponent from '~/modules/conversation/components/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/modules/conversation/state/mailContent';
+
 
 export enum DraftType {
   NEW,
@@ -62,6 +58,7 @@ interface ICreateMailEventProps {
 interface ICreateMailOtherProps {
   isFetching: boolean;
   mail: IMail;
+  session: IUserSession;
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & NavigationInjectedProps;
@@ -115,14 +112,15 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
-    // console.log("new state", this.state);
     if (prevProps.mail !== this.props.mail) {
-      // console.log("[conversation] mail changed");
-      const { mail, ...rest } = this.getPrefilledMail();
+      const prefilledMailRet = this.getPrefilledMail();
+      if (!prefilledMailRet) return;
+      const { mail, ...rest } = prefilledMailRet;
+      if (!mail) return;
       this.setState(prevState => ({
         ...prevState,
         ...rest,
-        mail: { ...prevState.mail, ...mail },
+        mail: { ...prevState.mail, ...mail as IMail },
         isPrefilling: false,
       }));
     } else if (
@@ -140,7 +138,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       let checkBody = removeWrapper(this.props.mail.body);
       checkBody = checkBody.split('<hr class="ng-scope">')[0];
       checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
-      // console.log("[conversation] checkBody", checkBody);
       if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
         this.setState({ webDraftWarning: true });
         Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
@@ -174,7 +171,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     //     });
     // },
     addGivenAttachment: async (file: Asset | DocumentPicked, sourceType: string) => {
-      // console.log("sourceType", sourceType);
       const actionName =
         'Rédaction mail - Insérer - Pièce jointe - ' +
         ({
@@ -211,7 +207,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
       try {
         const { navigation, sendMail } = this.props;
-        // console.log("WILL SEND MAIL", this.state);
         const { mail, id, replyTo } = this.state;
         const draftType = navigation.getParam('type');
 
@@ -227,7 +222,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
         navigation.goBack();
       } catch (e) {
-        console.log(e);
+        // TODO: Manage error
       }
     },
     getDeleteDraft: async () => {
@@ -245,7 +240,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             containerStyle: { width: '95%', backgroundColor: 'black' },
           });
         } catch (error) {
-          console.error(error);
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
         }
       }
@@ -381,8 +375,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   getPrefilledMail = () => {
+    if (!this.props.mail || (this.props.mail as unknown as []).length === 0) return undefined;
     const draftType = this.props.navigation.getParam('type', DraftType.NEW);
-    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)[1];
+    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)?.[1];
     const getUser = id => ({ id, displayName: getDisplayName(id) });
 
     const deleteHtmlContent = function (text) {
@@ -473,7 +468,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           to.push(getUser(this.props.mail.from));
           let i = 0;
           for (const user of this.props.mail.to) {
-            if (user !== getSessionInfo().userId && this.props.mail.to.indexOf(user) === i) {
+            if (user !== this.props.session.user.id && this.props.mail.to.indexOf(user) === i) {
               to.push(getUser(user));
             }
             ++i;
@@ -570,19 +565,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   getAttachmentData = async (file: LocalFile) => {
-    // console.log("picked file", file);
     this.setState({ tempAttachment: file });
 
     try {
       await this.saveDraft();
-      // console.log("state", this.state);
       const newAttachment = await this.props.addAttachment(this.state.id!, file);
       this.setState(prevState => ({
         mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
       }));
     } catch (e) {
-      console.warn(e);
       Keyboard.dismiss();
       Toast.show(I18n.t('conversation.attachmentError'), {
         position: Toast.position.BOTTOM,
@@ -596,7 +588,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     try {
       this.props.forwardMail(this.state.id, this.state.replyTo);
     } catch (e) {
-      console.log(e);
+      // TODO: Manage error
     }
   };
 
@@ -613,7 +605,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState({ id: idDraft });
       if (isForward) this.forwardDraft();
     } else {
-      // console.log("[conversation] save draft", this.getMailData());
       this.props.updateDraft(this.state.id, this.getMailData());
     }
   };
@@ -686,6 +677,7 @@ const mapStateToProps = (state: any) => {
   return {
     mail: data,
     isFetching,
+    session: getUserSession(state)
   };
 };
 

@@ -1,11 +1,8 @@
 import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
-import { View, StyleSheet, TextInput, ViewStyle, SafeAreaView, Platform, Keyboard } from 'react-native';
+import { Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
-
-import Attachment from './Attachment';
-import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -13,12 +10,16 @@ import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers, IUser } from '~/modules/conversation/service/newMail';
-import { IVisibleGroup, IVisiblesState, IVisibleUser, searchVisibles } from '~/modules/conversation/state/visibles';
+import { IVisibleGroup, IVisibleUser, IVisiblesState, searchVisibles } from '~/modules/conversation/state/visibles';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon, Loading } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
+import { Loading } from '~/ui/Loading';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Text } from '~/ui/Typography';
+
+import Attachment from './Attachment';
+import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -77,6 +78,7 @@ export default (props: NewMailComponentProps) => {
   return (
     <KeyboardAvoidingScrollView
       alwaysBounceVertical={false}
+      overScrollMode="never"
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       contentContainerStyle={{ flexGrow: 1 }}
@@ -226,7 +228,6 @@ const MailContactField = connect(state => ({
 
     // Update search results whenever visibles are loaded
     React.useEffect(() => {
-      // console.log("useEffet", previousVisibles.current?.lastSuccess?.toString(), visibles.lastSuccess?.toString());
       previousVisibles.current = visibles;
       if (
         previousVisibles.current.lastSuccess &&
@@ -241,7 +242,6 @@ const MailContactField = connect(state => ({
     // React.useEffect(() => {
     //   if (search.length >= 3) {
     //     updateFoundUsersOrGroups([]);
-    //     console.log("openOpenSearch", true);
     //     onOpenSearch?.(true);
     //     window.clearTimeout(searchTimeout.current);
     //     searchTimeout.current = window.setTimeout(() => {
@@ -256,7 +256,6 @@ const MailContactField = connect(state => ({
     //   return () => {
     //     updateFoundUsersOrGroups([]);
     //     onOpenSearch?.(false);
-    //     console.log("openOpenSearch", false);
     //     window.clearTimeout(searchTimeout.current);
     //   };
     // }, [search]);
@@ -275,7 +274,6 @@ const MailContactField = connect(state => ({
       updateSearch(s);
       if (s.length >= 3) {
         updateFoundUsersOrGroups([]);
-        // console.log("openOpenSearch", true);
         onOpenSearch?.(true);
         searchTimeout.current && window.clearTimeout(searchTimeout.current);
         searchTimeout.current = window.setTimeout(() => {
@@ -291,7 +289,6 @@ const MailContactField = connect(state => ({
       } else {
         updateFoundUsersOrGroups([]);
         onOpenSearch?.(false);
-        // console.log("openOpenSearch", false);
         window.clearTimeout(searchTimeout.current);
       }
     };
@@ -493,7 +490,6 @@ const Body = ({ style, value, onChange, autofocus }) => {
   const nl2br = (text: string) => {
     return text?.replace(/\n/gm, '<br>');
   };
-  // console.log("value", nl2br(value));
   const valueFormated = HtmlToText(nl2br(value), false).render;
   const [currentValue, updateCurrentValue] = React.useState(valueFormated);
   const [keyboardStatus, setKeyboardStatus] = React.useState(0); // State used just to force-update the component whenever it changes

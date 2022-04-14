@@ -11,7 +11,7 @@ import { Text, TextBold, TextSemiBold, TextColorStyle, TextSizeStyle } from '~/f
 import { displayPastDate } from '~/framework/util/date';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 

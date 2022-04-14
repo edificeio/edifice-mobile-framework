@@ -1,29 +1,27 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
-import {
-  ActivationFormModel,
-  InputEmail,
-  InputLogin,
-  InputPassword,
-  InputPasswordConfirm,
-  InputPhone,
-  ValueChangeArgs,
-} from './ActivationForm';
+
 
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
+import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text, TextAction } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
-import { FlatButton, Loading } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
+import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
-import { PageView } from '~/framework/components/page';
+
+
+
+import { ActivationFormModel, InputEmail, InputLogin, InputPassword, InputPasswordConfirm, InputPhone, ValueChangeArgs } from './ActivationForm';
+
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -131,7 +129,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: '#ffffff' }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
               <FormTouchable onPress={() => formModel.blur()}>
                 <FormWrapper>
                   <FormContainer>
@@ -187,13 +185,13 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   }
 }
 
-const FormPage = style.view({
+const FormPage = styled.View({
   backgroundColor: '#ffffff',
   flex: 1,
 });
-const FormTouchable = style.touchableWithoutFeedback({ flex: 1 });
-const FormWrapper = style.view({ flex: 1 });
-const FormContainer = style.view({
+const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
+const FormWrapper = styled.View({ flex: 1 });
+const FormContainer = styled.View({
   alignItems: 'center',
   flex: 1,
   flexDirection: 'column',
@@ -201,12 +199,12 @@ const FormContainer = style.view({
   padding: 40,
   paddingTop: 60,
 });
-const LogoWrapper = style.view({
+const LogoWrapper = styled.View({
   flexGrow: 2,
   alignItems: 'center',
   justifyContent: 'center',
 });
-const ButtonWrapper = style.view(
+const ButtonWrapper = styled.View<{error: any; typing: boolean}>(
   {
     alignItems: 'center',
     flexGrow: 2,

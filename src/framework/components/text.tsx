@@ -6,17 +6,16 @@
  */
 import styled from '@emotion/native';
 import { Platform, Text as RNText, TextStyle } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 import theme from '~/app/theme';
-
-import { UI_SIZES } from './constants';
 
 /**
  * Base font properties
  */
 const fontFamilyIOS = 'Open Sans';
 const fontFamilyPrefixAndroid = 'opensans_';
+const baseFontSize = 14;
+const baseLineHeight = 20;
 
 /**
  * Font variations
@@ -65,20 +64,17 @@ export const TextColorStyle = {
   Normal: { color: theme.color.text.regular },
 } as { [key in TextColorStyleKey]: TextStyle };
 
-// export const rem = (value: number) => baseFontSize * value;
-export const rem = (value: number) => RFValue(value, UI_SIZES.standardScreen.height);
-export const remlh = (value: number) => rem(value + 6);
+export const rem = (value: number) => baseFontSize * value;
+export const remlh = (value: number) => baseLineHeight * value;
 export const remStyle = (value: number) => ({ fontSize: rem(value), lineHeight: remlh(value) });
-
 type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'Big' | 'Huge';
-
 export const TextSizeStyle = {
-  Tiny: remStyle(10),
-  Small: remStyle(12),
-  Normal: remStyle(14),
-  SlightBig: remStyle(16),
-  Big: remStyle(20),
-  Huge: remStyle(28),
+  Tiny: remStyle(10 / 14),
+  Small: remStyle(12 / 14),
+  Normal: remStyle(1),
+  SlightBig: remStyle(16 / 14),
+  Big: remStyle(20 / 14),
+  Huge: remStyle(2),
 } as { [key in TextSizeStyleKey]: TextStyle };
 
 /**

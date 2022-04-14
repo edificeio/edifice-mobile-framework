@@ -21,7 +21,6 @@ export const getSchoolbookWordDetailsAction =
       return schoolbookWordDetails;
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] getSchoolbookWordDetailsAction failed`, e);
     }
   };
 
@@ -41,7 +40,6 @@ export const acknowledgeSchoolbookWordActionForChildren =
       await Promise.all(acknowledgements);
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] acknowledgeSchoolbookWordActionForChildren failed`, e);
     }
   };
 
@@ -60,6 +58,5 @@ export const acknowledgeSchoolbookWordAction =
       );
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] acknowledgeSchoolbookWordAction failed`, e);
     }
   };

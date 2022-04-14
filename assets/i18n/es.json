@@ -143,6 +143,7 @@
   "change-password-errorLoading": "No pudimos cargar los datos necesarios para cambiar su contraseña. Por favor intente nuevamente más tarde.",
   "changePassword-errorFields": "El formulario contiene errores",
   "changePassword-errorRegex": "La nueva contraseña no cumple los criterios de seguridad.",
+  "changePassword-errorConfirm": "Las contraseñas deben ser idénticas.",
   "changePassword-errorSubmit": "Error al restablecer la contraseña.",
   "common": {
     "all": "Todo",

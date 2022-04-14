@@ -7,7 +7,6 @@
  * - separate fileTransferService and workspaceService
  * - make standard thunks for upload/download + thunk builder
  */
-
 import mime from 'mime';
 import RNFS, {
   DownloadBeginCallbackResult,
@@ -16,12 +15,12 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
-import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { assertPermissions } from '~/framework/util/permissions';
 import { IUserSession } from '~/framework/util/session';
 import { getAuthHeader } from '~/infra/oauth';
+
+import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };
@@ -85,7 +84,6 @@ const fileTransferService = {
           }
         })
         .catch(e => {
-          console.warn('Upload error', e);
           throw e;
         }),
     };
@@ -105,7 +103,6 @@ const fileTransferService = {
       const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
       return job.promise;
     } catch (e) {
-      console.warn('Upload error', e);
       throw e;
     }
   },
@@ -203,7 +200,6 @@ const fileTransferService = {
           if (localFile.filename.indexOf('.') === -1) {
             // const ext = localFile.filetype.split('/').pop()!;
             const ext = mime.getExtension(localFile.filetype);
-            // console.log("EXT", ext, localFile.filetype);
             const toMove = localFile.filepath;
             if (ext) {
               localFile.setExtension(ext);
@@ -214,7 +210,6 @@ const fileTransferService = {
           return new sfclass(localFile, file);
         })
         .catch(e => {
-          console.warn('Download error', e);
           throw e;
         }),
     };
@@ -233,7 +228,6 @@ const fileTransferService = {
       const job = await fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
       return job.promise;
     } catch (e) {
-      console.warn('Download error', e);
       throw e;
     }
   },

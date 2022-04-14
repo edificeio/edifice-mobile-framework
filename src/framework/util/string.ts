@@ -1,6 +1,12 @@
 import unorm from 'unorm';
 
 /**
+ * Check if string is empty (only contains spaces).
+ * @param str
+ */
+export const isStringEmpty = (str: string) => str.trim().length === 0;
+
+/**
  * Uppercase the first letter of a string.
  * @param str
  */

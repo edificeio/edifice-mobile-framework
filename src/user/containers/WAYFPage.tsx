@@ -5,10 +5,8 @@ import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableWithoutFeed
 import DeviceInfo from 'react-native-device-info';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
-import { ShouldStartLoadRequest, WebViewErrorEvent, WebViewHttpErrorEvent } from 'react-native-webview/lib/WebViewTypes';
+import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
-
-
 
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -19,19 +17,19 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IOAuthToken, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, OAuthErrorType } from '~/infra/oauth';
-import { FlatButton, Loading } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
+import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 
-
 enum WAYFPageMode {
-  EMPTY,
-  ERROR,
-  LOADING,
-  SELECT,
-  WEBVIEW,
+  EMPTY = 0,
+  ERROR = 1,
+  LOADING = 2,
+  SELECT = 3,
+  WEBVIEW = 4,
 }
 
 export interface IWAYFPageProps {
@@ -54,11 +52,13 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   static get POST_HTML_CONTENT() {
     return 'ReactNativeWebView.postMessage(document.documentElement.innerHTML); true;';
   }
+
   // Styles sheet
   static get STYLES() {
     return StyleSheet.create({
       container: { alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 },
       help: { marginTop: 32, textAlign: 'center' },
+      safeView: { flex: 1, backgroundColor: theme.color.background.card },
       select: { borderColor: theme.color.secondary.regular, borderWidth: 1 },
       selectBackDrop: { flex: 1 },
       selectContainer: { borderColor: theme.color.secondary.regular, borderWidth: 1, maxHeight: 120 },
@@ -68,25 +68,163 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       webview: { flex: 1 },
     });
   }
+
   // User selection dropdown items
   private dropdownItems: any = [];
+
   //  User selection dropdown selected value
   dropdownValue: string | null = null;
+
   // Error if any
   private error: string = '';
+
+  // Flag first webview page loading completion
+  private isFirstLoadFinished = false;
+
   // Platform url
   private pfUrl: string = '';
+
   // SAMLResponse if any
   private samlResponse: string | null = null;
+
   // WAYF url
   private wayfUrl: string = '';
+
   // WebView reference management
   private webview?: WebView;
+
   private setWebView(ref: WebView) {
     this.webview = ref;
   }
+
   // Is WebView back history empty?
   private webviewCanGoBack = false;
+
+  // Navbar back handlers
+  private backActions = [
+    // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
+    () => {
+      this.props.navigation.navigate('LoginWAYF');
+    },
+    // WAYFPageMode.ERROR: Go to top of wayf navigation stack
+    () => {
+      this.props.navigation.navigate('LoginWAYF');
+    },
+    // WAYFPageMode.LOADING: Nothing to do
+    () => {},
+    // case WAYFPageMode.SELECT: Go back to WebView mode
+    () => {
+      this.displayWebview();
+    },
+    // case WAYFPageMode.WEBVIEW: Go back through WebView history if possible otherwise go back through navigation stack
+    () => {
+      if (this.webviewCanGoBack) this.webview?.goBack();
+      else this.clearDatas(() => this.props.navigation.goBack());
+    },
+  ];
+
+  // Content components
+  private contentComponents = [
+    // WAYFPageMode.EMPTY: Display empty screen
+    () => {
+      Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
+      return (
+        <EmptyScreen svgImage="empty-content" text={I18n.t('login-wayf-empty-text')} title={I18n.t('login-wayf-empty-title')} />
+      );
+    },
+    // WAYFPageMode.ERROR: Display error message
+    () => {
+      Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
+      return (
+        <View style={WAYFPage.STYLES.container}>
+          <PFLogo />
+          <ErrorMessage>
+            {I18n.t('auth-error-' + this.error, {
+              version: DeviceInfo.getVersion(),
+              errorcode: this.error,
+              currentplatform: DEPRECATED_getCurrentPlatform()!.url,
+            })}
+          </ErrorMessage>
+          <FlatButton title={I18n.t('login-wayf-error-retry')} onPress={() => this.displayWebview()} />
+        </View>
+      );
+    },
+    // WAYFPageMode.LOADING: Display loading indicator
+    () => {
+      Trackers.trackDebugEvent('Auth', 'WAYF', 'LOADING');
+      return (
+        <View style={WAYFPage.STYLES.container}>
+          <PFLogo />
+          <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</Text>
+          <ActivityIndicator size="large" color={theme.color.secondary.regular} />
+        </View>
+      );
+    },
+    // case WAYFPageMode.SELECT: Display user selection
+    (dropdownOpened: boolean) => {
+      Trackers.trackDebugEvent('Auth', 'WAYF', 'SELECT');
+      return (
+        <TouchableWithoutFeedback
+          style={WAYFPage.STYLES.selectBackDrop}
+          onPress={() => {
+            this.setState({ dropdownOpened: false });
+          }}>
+          <View style={WAYFPage.STYLES.container}>
+            <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-select-text')}</Text>
+            <DropDownPicker
+              dropDownContainerStyle={WAYFPage.STYLES.selectContainer}
+              items={this.dropdownItems}
+              open={this.state.dropdownOpened}
+              placeholder={I18n.t('login-wayf-select-placeholder')}
+              placeholderStyle={WAYFPage.STYLES.selectPlaceholder}
+              setOpen={() =>
+                this.setState({
+                  dropdownOpened: !dropdownOpened,
+                })
+              }
+              setValue={callback => (this.dropdownValue = callback())}
+              showTickIcon={false}
+              style={WAYFPage.STYLES.select}
+              textStyle={WAYFPage.STYLES.selectText}
+              value={this.dropdownValue}
+            />
+            <View>
+              <FlatButton
+                title={I18n.t('login-wayf-select-button')}
+                disabled={this.dropdownValue === null}
+                onPress={() => this.loginWithCustomToken()}
+              />
+              {/*<Text style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Text>*/}
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      );
+    },
+    // case WAYFPageMode.WEBVIEW: Display WebView
+    () => {
+      Trackers.trackDebugEvent('Auth', 'WAYF', 'WEBVIEW');
+      return (
+        <WebView
+          ref={(ref: WebView) => this.setWebView(ref)}
+          injectedJavaScript={WAYFPage.POST_HTML_CONTENT}
+          javaScriptEnabled
+          onError={this.onError.bind(this)}
+          onHttpError={this.onHttpError.bind(this)}
+          onLoad={this.onLoad.bind(this)}
+          onMessage={this.onMessage.bind(this)}
+          onNavigationStateChange={this.onNavigationStateChange.bind(this)}
+          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
+          renderLoading={() => <Loading />}
+          scalesPageToFit
+          showsHorizontalScrollIndicator={false}
+          source={{ uri: this.wayfUrl }}
+          setSupportMultipleWindows={false}
+          startInLoadingState
+          style={WAYFPage.STYLES.webview}
+        />
+      );
+    },
+  ];
 
   constructor(props: IWAYFPageProps) {
     super(props);
@@ -96,12 +234,11 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
   }
 
-  /**/ // Caution : before this was componentWillUpdate. May be risky.
-  /**/ componentDidUpdate(prevProps: IWAYFPageProps) {
-  /**/   const { auth } = this.props;
-  /**/   // Detect && display potential login error sent after checkVersionThenLogin(false) call
-  /**/   auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error && this.displayError(auth.error);
-  /**/ }
+  componentDidUpdate(prevProps: IWAYFPageProps) {
+    const { auth } = this.props;
+    // Detect && display potential login error sent after checkVersionThenLogin(false) call
+    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) this.displayError(auth.error);
+  }
 
   // Clear datas (WebView cookies, etc.) and execute given callback when done
   clearDatas(callback: Function) {
@@ -166,12 +303,13 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         if ((data as IOAuthToken).access_token) {
           this.login();
         } else {
-          throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
+          const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
             OAuthErrorType.BAD_RESPONSE,
             'no access_token returned',
             '',
             { data },
-          );
+          ) as Error;
+          throw error;
         }
       })
       .catch(error => {
@@ -208,7 +346,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     Trackers.trackDebugEvent('Auth', 'WAYF', 'CUSTOM_TOKEN');
     this.displayLoading();
     // Call oauth2 token api with selected custom token
-    this.dropdownValue &&
+    if (this.dropdownValue)
       OAuth2RessourceOwnerPasswordClient.connection
         ?.getNewTokenWithCustomToken(this.dropdownValue)
         .then(data => {
@@ -216,12 +354,13 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           if ((data as IOAuthToken).access_token) {
             this.login();
           } else {
-            throw OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
+            const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
               OAuthErrorType.BAD_RESPONSE,
               'no access_token returned',
               '',
               { data },
-            );
+            ) as Error;
+            throw error;
           }
         })
         .catch(error => {
@@ -231,39 +370,26 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Navbar back handler
   onBack(mode: WAYFPageMode) {
-    const { navigation } = this.props;
-    switch (mode) {
-      case WAYFPageMode.EMPTY:
-      case WAYFPageMode.ERROR:
-        // Go to top of wayf navigation stack
-        navigation.navigate('LoginWAYF');
-        break;
-      case WAYFPageMode.SELECT:
-        // Go back to WebView mode
-        this.displayWebview();
-        break;
-      case WAYFPageMode.WEBVIEW:
-        // Go back through WebView history if possible otherwise go back through navigation stack
-        (this.webviewCanGoBack && this.webview?.goBack()) ||
-          (!this.webviewCanGoBack && this.clearDatas(() => this.props.navigation.goBack()));
-        break;
-    }
+    this.backActions[mode]();
   }
 
   // Called each time a navigation error occurs in WebView
   // See WebView onError property
-  onError(event: WebViewErrorEvent) {
-    const { nativeEvent } = event;
+  onError() {
     // Display empty screen
     this.displayEmpty();
   }
 
   // Called each time an http error occurs in WebView
   // See WebView onError property
-  onHttpError(event: WebViewHttpErrorEvent) {
-    const { nativeEvent } = event;
+  onHttpError() {
     // Display empty screen
     this.displayEmpty();
+  }
+
+  onLoad() {
+    // Flag first webview page loading completion
+    this.isFirstLoadFinished = true;
   }
 
   // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)
@@ -297,7 +423,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     //   - No SAMLResponse has been detected
     //   - WAYF redirects to web standard login page
     const url = request.url;
-    if (this.pfUrl && url.startsWith(this.pfUrl)) {
+    if (this.isFirstLoadFinished && this.pfUrl && url.startsWith(this.pfUrl)) {
       if (this.samlResponse) {
         this.getOAuthToken();
       } else {
@@ -306,101 +432,6 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       return false;
     }
     return true;
-  }
-
-  // Render content depending on current display mode
-  renderContent(mode: WAYFPageMode, dropdownOpened: boolean) {
-    switch (mode) {
-      case WAYFPageMode.EMPTY:
-        // Display empty screen
-        Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
-        return (
-          <EmptyScreen svgImage="empty-content" text={I18n.t('login-wayf-empty-text')} title={I18n.t('login-wayf-empty-title')} />
-        );
-      case WAYFPageMode.ERROR:
-        // Display error message
-        Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
-        return (
-          <View style={WAYFPage.STYLES.container}>
-            <PFLogo />
-            <ErrorMessage>
-              {I18n.t('auth-error-' + this.error, {
-                version: DeviceInfo.getVersion(),
-                errorcode: this.error,
-                currentplatform: DEPRECATED_getCurrentPlatform()!.url,
-              })}
-            </ErrorMessage>
-            <FlatButton title={I18n.t('login-wayf-error-retry')} onPress={() => this.displayWebview()} />
-          </View>
-        );
-      case WAYFPageMode.LOADING:
-        // Display loading indicator
-        Trackers.trackDebugEvent('Auth', 'WAYF', 'LOADING');
-        return (
-          <View style={WAYFPage.STYLES.container}>
-            <PFLogo />
-            <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</Text>
-            <ActivityIndicator size="large" color={theme.color.secondary.regular} />
-          </View>
-        );
-      case WAYFPageMode.SELECT:
-        // Display user selection
-        Trackers.trackDebugEvent('Auth', 'WAYF', 'SELECT');
-        return (
-          <TouchableWithoutFeedback
-            style={WAYFPage.STYLES.selectBackDrop}
-            onPress={() => {
-              this.setState({ dropdownOpened: false });
-            }}>
-            <View style={WAYFPage.STYLES.container}>
-              <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-select-text')}</Text>
-              <DropDownPicker
-                dropDownContainerStyle={WAYFPage.STYLES.selectContainer}
-                items={this.dropdownItems}
-                open={dropdownOpened}
-                placeholder={I18n.t('login-wayf-select-placeholder')}
-                placeholderStyle={WAYFPage.STYLES.selectPlaceholder}
-                setOpen={() => this.setState({ dropdownOpened: !dropdownOpened })}
-                setValue={callback => (this.dropdownValue = callback())}
-                showTickIcon={false}
-                style={WAYFPage.STYLES.select}
-                textStyle={WAYFPage.STYLES.selectText}
-                value={this.dropdownValue}
-              />
-              <View>
-                <FlatButton
-                  title={I18n.t('login-wayf-select-button')}
-                  disabled={this.dropdownValue === null}
-                  onPress={() => this.loginWithCustomToken()}
-                />
-                {/*<Text style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Text>*/}
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        );
-      case WAYFPageMode.WEBVIEW:
-        // Display WebView
-        Trackers.trackDebugEvent('Auth', 'WAYF', 'WEBVIEW');
-        return (
-          <WebView
-            ref={(ref: WebView) => this.setWebView(ref)}
-            injectedJavaScript={WAYFPage.POST_HTML_CONTENT}
-            javaScriptEnabled
-            onError={event => this.onError(event)}
-            onHttpError={event => this.onHttpError(event)}
-            onMessage={(event: WebViewMessageEvent) => this.onMessage(event)}
-            onNavigationStateChange={(navigationState: WebViewNavigation) => this.onNavigationStateChange(navigationState)}
-            onShouldStartLoadWithRequest={(request: ShouldStartLoadRequest) => this.onShouldStartLoadWithRequest(request)}
-            renderLoading={() => <Loading />}
-            scalesPageToFit
-            showsHorizontalScrollIndicator={false}
-            source={{ uri: this.wayfUrl }}
-            setSupportMultipleWindows={false}
-            startInLoadingState
-            style={WAYFPage.STYLES.webview}
-          />
-        );
-    }
   }
 
   // Render header title depending on current display mode
@@ -418,10 +449,8 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         navigation={this.props.navigation}
         {...(mode === WAYFPageMode.LOADING
           ? { navBar: navBarInfo }
-          : { navBarWithBack: navBarInfo, onBack: () => this.onBack(mode) })}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: theme.color.background.card }}>
-          {this.renderContent(mode, dropdownOpened)}
-        </SafeAreaView>
+          : { navBarWithBack: navBarInfo, onBack: () => this.backActions[mode]() })}>
+        <SafeAreaView style={WAYFPage.STYLES.safeView}>{this.contentComponents[mode](dropdownOpened)}</SafeAreaView>
       </PageView>
     );
   }

@@ -2,17 +2,17 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { useState } from 'react';
-import { View, StyleSheet, FlexAlignType } from 'react-native';
+import { FlexAlignType, StyleSheet, View } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
-import { CommonStyles } from '~/styles/common/styles';
-import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
-import { ModalContent, ModalContentBlock, ModalBox } from '~/ui/Modal';
-import { TextBold, Text } from '~/framework/components/text';
-import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { Text, TextBold } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
+import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { CommonStyles } from '~/styles/common/styles';
+import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
+import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
 const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
   let cycleLevels = levels.filter(obj => {
@@ -115,11 +115,17 @@ const ColoredSquare = ({
 }) => (
   <View style={[styleConstant.coloredSquare, { backgroundColor: backgroundColor ? backgroundColor : CommonStyles.primary }]}>
     <Text style={{ alignSelf: 'center', color: 'white', marginVertical: 8 }}>
-      <TextBold style={{ fontSize: 20, color: 'white' }}>{+parseFloat(Number(note).toFixed(2))}</TextBold>
-      {!hideScore && `/ ${diviseur}`}
+      {!isNaN(Number(note)) ? (
+        <>
+          <TextBold style={{ fontSize: 20, color: 'white' }}>{+parseFloat(Number(note).toFixed(2))}</TextBold>
+          {!hideScore ? `/ ${diviseur}` : null}
+        </>
+      ) : (
+        <TextBold style={{ fontSize: 20, color: 'white' }}>{note}</TextBold>
+      )}
     </Text>
-    {coeff && <Text style={styleConstant.coloredSquareText}>coeff : {coeff}</Text>}
-    {moy && <Text style={styleConstant.coloredSquareText}>moy : {moy}</Text>}
+    {coeff ? <Text style={styleConstant.coloredSquareText}>coeff : {coeff}</Text> : null}
+    {moy ? <Text style={styleConstant.coloredSquareText}>moy : {moy}</Text> : null}
   </View>
 );
 
@@ -148,11 +154,11 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
           {devoir.competences.length ? (
             <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} levels={levels} />
           ) : (
-            devoir.note === 'NN' && (
+            isNaN(Number(devoir.note)) && (
               <TextBold style={{ flexGrow: 1, textAlign: 'right', fontSize: 18, paddingTop: 8 }}>{devoir.note}</TextBold>
             )
           )}
-          {devoir.note && devoir.note !== 'NN' && (
+          {devoir.note && !isNaN(Number(devoir.note)) && (
             <>
               <TextBold style={{ flexGrow: 1, textAlign: 'right', fontSize: 18, paddingTop: 8 }}>
                 {devoir.note.replace(/\./g, ',')}
@@ -208,7 +214,7 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
       <View style={styleConstant.devoirsList} key={index}>
         <GradesDevoirsResume devoir={devoir} />
         <View style={styleConstant.competencesList}>
-          {devoir.note !== undefined && devoir.note !== 'NN' ? (
+          {devoir.note !== undefined && !isNaN(Number(devoir.note)) ? (
             <>
               {devoir.competences !== undefined && (
                 <CompetenceRound stateFullRound="center" competences={devoir.competences} size={60} levels={levels} />

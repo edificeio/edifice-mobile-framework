@@ -1,20 +1,24 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, RefreshControl, FlatList } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
+
+
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
 import { IInit } from '~/modules/zimbra/containers/DrawerMenu';
 import { DraftType } from '~/modules/zimbra/containers/NewMail';
 import { IMail } from '~/modules/zimbra/state/mailContent';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon, Loading } from '~/ui';
-import { Header, LeftPanel, CenterPanel, PageContainer } from '~/ui/ContainerContent';
+import { CenterPanel, Header, LeftPanel, PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Loading } from '~/ui/Loading';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { Icon } from '~/ui/icons/Icon';
+
 
 type MailListProps = {
   notifications: any;

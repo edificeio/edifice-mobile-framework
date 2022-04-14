@@ -1,5 +1,6 @@
 import { Reducer } from "redux";
 import { NavigationScreenConfig, NavigationScreenOptions, NavigationComponent } from "react-navigation";
+import { PictureProps } from "~/framework/components/picture";
 
 export interface IFunctionalConfig {
     name: string;
@@ -13,6 +14,7 @@ export interface IFunctionalConfig {
     appInfo: backendUserApp;
     notifHandlerFactory?: () => Promise<NotificationHandlerFactory>;
     hasRight?: (apps: any[]) => boolean;
+    picture?: PictureProps;
 }
 
 export interface IAppModule {

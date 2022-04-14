@@ -1,7 +1,6 @@
 /**
  * Blog actions
  */
-
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
@@ -9,7 +8,7 @@ import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import moduleConfig from '~/modules/blog/moduleConfig';
-import { actionTypes, getPublishableBlogs, IBlog, IBlogFolder, IBlogPost } from '~/modules/blog/reducer';
+import { IBlog, IBlogFolder, IBlogPost, actionTypes, getPublishableBlogs } from '~/modules/blog/reducer';
 import {
   createBlogPostResourceRight,
   getBlogPostRight,
@@ -23,7 +22,8 @@ import { blogService } from '~/modules/blog/service';
  * Info: no reducer is used in this action.
  */
 export const getBlogPostDetailsAction =
-  (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blogPostId: { blogId: string; postId: string }, blogPostState?: string) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       const session = getUserSession(getState());
 
@@ -39,26 +39,27 @@ export const getBlogPostDetailsAction =
       return blogPostWithComments;
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] getBlogPostDetailsAction failed`, e);
     }
   };
 
 /**
  * Fetch the posts of a given blog.
  */
- export const blogPostsActionsCreators = createAsyncActionCreators(actionTypes.blogPosts);
- export const fetchBlogPostsAction = (blogId: string): ThunkAction<Promise<IBlogPost[]>, any, any, any> => async (dispatch, getState) => {
-   try {
-     const session = getUserSession(getState());
-     dispatch(blogPostsActionsCreators.request());
-     const blogPosts = await blogService.posts.get(session, blogId);
-     dispatch(blogPostsActionsCreators.receipt(blogPosts));
-     return blogPosts;
-   } catch (e) {
-     dispatch(blogPostsActionsCreators.error(e as Error));
-     throw e;
-   }
- };
+export const blogPostsActionsCreators = createAsyncActionCreators(actionTypes.blogPosts);
+export const fetchBlogPostsAction =
+  (blogId: string): ThunkAction<Promise<IBlogPost[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = getUserSession(getState());
+      dispatch(blogPostsActionsCreators.request());
+      const blogPosts = await blogService.posts.get(session, blogId);
+      dispatch(blogPostsActionsCreators.receipt(blogPosts));
+      return blogPosts;
+    } catch (e) {
+      dispatch(blogPostsActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Fetch the user's publishable blog list.
@@ -73,7 +74,6 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
     return publishableBlogs;
   } catch (e) {
     // ToDo: Error handling
-    console.warn(`[${moduleConfig.name}] getBlogListAction failed`, e);
   }
 };
 
@@ -125,7 +125,6 @@ export const sendBlogPostAction =
       shareAction && (await shareAction());
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] sendBlogPostAction failed`, e);
     }
   };
 
@@ -158,7 +157,6 @@ export const createBlogPostAction =
       return postId;
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] createBlogPostAction failed`, e);
     }
   };
 
@@ -174,7 +172,6 @@ export const submitBlogPostAction =
       return blogService.post.submit(session, blogId, postId);
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] submitBlogPostAction failed`, e);
     }
   };
 
@@ -190,7 +187,6 @@ export const publishBlogPostAction =
       return blogService.post.publish(session, blogId, postId);
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] publishBlogPostAction failed`, e);
     }
   };
 
@@ -198,29 +194,29 @@ export const publishBlogPostAction =
  * Publish a comment for a given blog post.
  * Info: no reducer is used in this action.
  */
- export const publishBlogPostCommentAction =
- (blogPostId: { blogId: string; postId: string }, comment: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-   try {
-     const session = getUserSession(getState());
-     return blogService.comments.publish(session, blogPostId, comment);
-   } catch (e) {
-     // ToDo: Error handling
-     console.warn(`[${moduleConfig.name}] publishBlogPostCommentAction failed`, e);
-   }
- };
+export const publishBlogPostCommentAction =
+  (blogPostId: { blogId: string; postId: string }, comment: string) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    try {
+      const session = getUserSession(getState());
+      return blogService.comments.publish(session, blogPostId, comment);
+    } catch (e) {
+      // ToDo: Error handling
+    }
+  };
 
 /**
  * Update a comment for a given blog post.
  * Info: no reducer is used in this action.
  */
-  export const updateBlogPostCommentAction =
-  (blogPostCommentId: { blogId: string; postId: string, commentId: string }, comment: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+export const updateBlogPostCommentAction =
+  (blogPostCommentId: { blogId: string; postId: string; commentId: string }, comment: string) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       const session = getUserSession(getState());
       return blogService.comments.update(session, blogPostCommentId, comment);
     } catch (e) {
       // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] updateBlogPostCommentAction failed`, e);
     }
   };
 
@@ -228,16 +224,16 @@ export const publishBlogPostAction =
  * Delete a comment for a given blog post.
  * Info: no reducer is used in this action.
  */
- export const deleteBlogPostCommentAction =
- (blogPostCommentId: { blogId: string; postId: string, commentId: string }) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-   try {
-     const session = getUserSession(getState());
-     return blogService.comments.delete(session, blogPostCommentId);
-   } catch (e) {
-     // ToDo: Error handling
-     console.warn(`[${moduleConfig.name}] deleteBlogPostCommentAction failed`, e);
-   }
- }; 
+export const deleteBlogPostCommentAction =
+  (blogPostCommentId: { blogId: string; postId: string; commentId: string }) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    try {
+      const session = getUserSession(getState());
+      return blogService.comments.delete(session, blogPostCommentId);
+    } catch (e) {
+      // ToDo: Error handling
+    }
+  };
 
 /**
  * These are actions to fetch and populate Blog main reducer.
@@ -245,16 +241,12 @@ export const publishBlogPostAction =
 export const blogFoldersActionsCreators = createAsyncActionCreators(actionTypes.folders);
 export const fetchBlogFoldersAction = (): ThunkAction<Promise<IBlogFolder[]>, any, any, any> => async (dispatch, getState) => {
   try {
-    // console.log("start fetchBlogFoldersAction");
     const session = getUserSession(getState());
-    // console.log("request fetchBlogFoldersAction");
     dispatch(blogFoldersActionsCreators.request());
     const res = await blogService.folders.list(session);
-    // console.log("recieve fetchBlogFoldersAction");
     dispatch(blogFoldersActionsCreators.receipt(res));
     return res;
   } catch (e) {
-    // console.log("error fetchBlogFoldersAction");
     dispatch(blogFoldersActionsCreators.error(e as Error));
     throw e;
   }
@@ -262,23 +254,18 @@ export const fetchBlogFoldersAction = (): ThunkAction<Promise<IBlogFolder[]>, an
 export const blogActionsCreators = createAsyncActionCreators(actionTypes.blogs);
 export const fetchBlogsAction = (): ThunkAction<Promise<IBlog[]>, any, any, any> => async (dispatch, getState) => {
   try {
-    // console.log("start fetchBlogsAction");
     const session = getUserSession(getState());
-    // console.log("request fetchBlogsAction");
     dispatch(blogActionsCreators.request());
     const res = await blogService.list(session);
-    // console.log("recieve fetchBlogsAction");
     dispatch(blogActionsCreators.receipt(res));
     return res;
   } catch (e) {
-    // console.log("error fetchBlogsAction");
     dispatch(blogActionsCreators.error(e as Error));
     throw e;
   }
 };
 export const fetchBlogsAndFoldersAction =
   (): ThunkAction<Promise<[IBlog[], IBlogFolder[]]>, any, any, any> => async (dispatch, getState) => {
-    // console.log("fetchBlogsAndFoldersAction");
     const data = await Promise.all([dispatch(fetchBlogsAction()), dispatch(fetchBlogFoldersAction())]);
     // ToDo : call line below when tha case of trashed blogs will be handled
     await dispatch({ type: actionTypes.tree.compute, blogs: data[0], folders: data[1] });

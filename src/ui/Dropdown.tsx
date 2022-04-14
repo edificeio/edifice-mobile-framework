@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { View, ViewStyle, Platform } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-import { Icon, ButtonsOkCancel } from '.';
+import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
+import { Icon } from '~/ui/icons/Icon';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
 
 import { TextBold } from '~/framework/components/text';

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 
 import {
   changePasswordAction,
@@ -29,6 +30,7 @@ const mapStateToProps: (state: any) => IChangePasswordPageDataProps = state => {
     externalError: activationState.submitError || '',
     passwordRegex: activationState.context.passwordRegex,
     submitState: activationState.submitState,
+    session: getUserSession(state),
     ...state[userConfig.reducerName].changePassword.submitted,
   };
 };

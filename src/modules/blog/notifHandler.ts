@@ -1,16 +1,15 @@
 /**
  * Blog notif handler
  */
+import { computeRelativePath } from '~/framework/util/navigation';
+import { IResourceUriNotification, ITimelineNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
+import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
+import { getUserSession } from '~/framework/util/session';
+import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
 import moduleConfig from './moduleConfig';
-
-import { computeRelativePath } from '~/framework/util/navigation';
-import { getAsResourceUriNotification, IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
-import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
-import { mainNavNavigate } from '~/navigation/helpers/navHelper';
-import { blogService, blogUriCaptureFunction } from './service';
-import { getUserSession } from '~/framework/util/session';
 import { IBlogPost } from './reducer';
+import { blogService, blogUriCaptureFunction } from './service';
 
 export interface IBlogNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -50,7 +49,6 @@ const handleBlogNotificationAction: NotifHandlerThunkAction =
         trackInfo: { action: 'Blog', name: `${notification.type}.${notification['event-type']}` },
       };
     } catch (e) {
-      console.warn(e);
       return { managed: 0 };
     }
   };

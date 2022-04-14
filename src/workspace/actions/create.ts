@@ -1,8 +1,5 @@
 // ACTION LIST ------------------------------------------------------------------------------------
-
 import { ThunkDispatch } from 'redux-thunk';
-
-import { formatResults, IBackendFolder } from './helpers/documents';
 
 import { IGlobalState } from '~/AppStore';
 import workspaceService from '~/framework/modules/workspace/service';
@@ -11,6 +8,8 @@ import { asyncActionTypes } from '~/infra/redux/async';
 import { listAction } from '~/workspace/actions/list';
 import config from '~/workspace/config';
 import { FilterId } from '~/workspace/types';
+
+import { IBackendFolder, formatResults } from './helpers/documents';
 
 const WORKSPACE_FOLDER = '/workspace/folder';
 
@@ -35,7 +34,6 @@ export function createFolderAction(name: string, parentId?: string) {
       dispatch(listAction(parentId ? { parentId } : { filter: FilterId.owner, parentId: FilterId.owner }));
       return ret;
     } catch (e) {
-      console.warn(e);
       return dispatch({ type: actionTypesCreateFolder.fetchError, e, payload });
     }
   };

@@ -1,13 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
 import { DEPRECATED_setCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import appConf from '~/framework/util/appConf';
 import { Trackers } from '~/framework/util/tracker';
-import { createAppScopesLegacy, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, createAppScopesLegacy } from '~/infra/oauth';
+// eslint-disable-next-line import/order
+import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
-// eslint-disable-next-line import/order
-import { getLoginRouteName } from '~/navigation/LoginNavigator';
+
 
 export const PLATFORM_STORAGE_KEY = 'currentPlatform';
 

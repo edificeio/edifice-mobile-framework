@@ -1,6 +1,9 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { View } from 'react-native';
+
+
 
 import { getSessionInfo } from '~/App';
 import { FontStyle } from '~/framework/components/text';
@@ -8,6 +11,7 @@ import { CommonStyles } from '~/styles/common/styles';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
+
 
 //TODO extract mail-specific field in order to make this component dumb
 
@@ -31,7 +35,7 @@ export default ({ id, subject, date, displayNames, unread, onPress, to, from, cc
             {subject}
           </Content>
         ) : (
-          <style.View />
+          <View />
         )}
       </CenterPanel>
       <RightPanel>
@@ -41,7 +45,7 @@ export default ({ id, subject, date, displayNames, unread, onPress, to, from, cc
   );
 };
 
-export const Author = style.text(
+export const Author = styled.Text<{nb: number}>(
   {
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,

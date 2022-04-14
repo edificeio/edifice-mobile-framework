@@ -17,7 +17,7 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
     try {
       await newMailService.forwardMail(draftId, forwardFrom);
     } catch (errmsg) {
-      console.error('ERROR forward mail: ', errmsg);
+      // TODO: Manage error
     }
   };
 }
@@ -39,10 +39,8 @@ export function addAttachmentAction(mailId: string, attachment: LocalFile, callb
     try {
       const session = getUserSession(getState());
       const newAttachment = await newMailService.addAttachment(session, mailId, attachment, callbacks);
-      // console.log("service returned", newAttachment);
       return newAttachment;
     } catch (errmsg) {
-      console.warn('ERROR uploading attachment', errmsg);
       throw errmsg;
     }
   };

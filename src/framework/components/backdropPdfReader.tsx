@@ -2,11 +2,11 @@ import * as React from 'react';
 import { ColorValue } from 'react-native';
 import Pdf from 'react-native-pdf';
 
-import { BackdropModal } from './backdropModal';
-import { EmptyContentScreen } from './emptyContentScreen';
-
 import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
+
+import { BackdropModal } from './backdropModal';
+import { EmptyContentScreen } from './emptyContentScreen';
 
 export interface IBackdropPdfReaderProps {
   handleClose: () => void;
@@ -50,7 +50,6 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
               onError={err => {
                 // Note: when the backdrop is dimissed, the "uri" prop becomes undefined and onError activates;
                 // therefore, we only use setState if the modal is displayed (the "visible" prop is true).
-                console.log('error (backdropPdfReader):', err);
                 visible && this.setState({ error: true });
               }}
             />

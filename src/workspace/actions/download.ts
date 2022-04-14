@@ -2,8 +2,6 @@ import I18n from 'i18n-js';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import { IDistantFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
@@ -13,7 +11,6 @@ import { downloadFiles, getExtension } from '~/infra/actions/downloadHelper';
 import { asyncActionTypes } from '~/infra/redux/async';
 import config from '~/workspace/config';
 import { IFile, IItems } from '~/workspace/types';
-
 
 export const actionTypesDownload = asyncActionTypes(config.createActionType('/workspace/download'));
 
@@ -39,10 +36,8 @@ export const newDownloadThenOpenAction = (parentId: string, selected: IItems<IFi
 export const newDownloadAction =
   (parentId: string, selected: IItems<IFile>, callback: (f: SyncedFile) => void) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    // console.log("WILL DISPATCH NEW DOWNLOAD FILE");
     return dispatch(
       asyncActionRawFactory(actionTypesDownload, { parentId }, async () => {
-        // console.log("NEW DOWNLOAD FILE", selected.item);
         const ret = [] as Promise<void>[];
         for (const k in selected) {
           const sel = selected[k];
@@ -51,16 +46,18 @@ export const newDownloadAction =
           } else {
             Trackers.trackEvent('Workspace', 'DOWNLOAD', getExtension(sel.filename));
           }
-          ret.push(fileTransferService
-            .downloadFile(
-              getUserSession(getState()),
-              convertIFileToIDistantFile(sel),
-              {},
-              {
-                onProgress: res => console.log('progress', res.bytesWritten / res.contentLength),
-              },
-            )
-            .then(callback))
+          ret.push(
+            fileTransferService
+              .downloadFile(
+                getUserSession(getState()),
+                convertIFileToIDistantFile(sel),
+                {},
+                {
+                  onProgress: res => console.debug('progress', res.bytesWritten / res.contentLength),
+                },
+              )
+              .then(callback),
+          );
         }
         return ret;
       }),
@@ -70,11 +67,9 @@ export const newDownloadAction =
 export const downloadAndSaveAction =
   (downloadable: IItems<IFile>) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      // console.log("downloadAndSaveAction", downloadable);
       dispatch(
         newDownloadAction('', downloadable, async file => {
           await file.mirrorToDownloadFolder();
-          // console.log('downloadable', downloadable, file);
           Toast.showSuccess(I18n.t('download-success-name', { name: file.filename }));
         }),
       );

@@ -1,22 +1,25 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
-import { createDrawerNavigator, NavigationDrawerScreenProps } from 'react-navigation-drawer';
+import { NavigationDrawerScreenProps, createDrawerNavigator } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
+
+
+
+import { DEPRECATED_HeaderPrimaryAction, HeaderAction, HeaderTitle } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
+import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
+import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Icon } from '~/ui/icons/Icon';
+
+
 
 import DrawerMenuContainer from './DrawerMenu';
 import MailList from './MailList';
 import { DraftType } from './NewMail';
 
-import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
-import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
-import { Icon } from '~/ui';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { DEPRECATED_HeaderPrimaryAction, HeaderAction, HeaderTitle } from '~/framework/components/header';
-import { ButtonIcon } from '~/framework/components/popupMenu';
-import { hasNotch } from 'react-native-device-info';
-import { PageView } from '~/framework/components/page';
 
 type DrawerNavigatorWrapperProps = {
   storage: IQuota;

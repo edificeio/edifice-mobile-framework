@@ -1,0 +1,16 @@
+diff --git a/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java b/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java
+index 93f7881..faf1731 100644
+--- a/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java
++++ b/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java
+@@ -43,6 +43,11 @@ public class RNFileViewerModule extends ReactContextBaseJavaModule {
+ 
+   @ReactMethod
+   public void open(String path, Integer currentId, ReadableMap options) {
++
++    if (getCurrentActivity() == null) {
++      sendEvent(OPEN_EVENT, currentId, "No Current Activity");
++    }
++
+     Uri contentUri = null;
+     Boolean showOpenWithDialog = options.hasKey(SHOW_OPEN_WITH_DIALOG) ? options.getBoolean(SHOW_OPEN_WITH_DIALOG) : false;
+     Boolean showStoreSuggestions = options.hasKey(SHOW_STORE_SUGGESTIONS) ? options.getBoolean(SHOW_STORE_SUGGESTIONS) : false;

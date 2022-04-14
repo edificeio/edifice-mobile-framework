@@ -1,17 +1,20 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
-import { TextInput, ScrollView } from 'react-native-gesture-handler';
+import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+
+
 
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import DateTimePicker from '~/ui/DateTimePicker';
 import { Text, TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
 
 type DeclarationProps = {
   startDate: moment.Moment;

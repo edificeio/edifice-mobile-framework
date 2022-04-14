@@ -1,19 +1,19 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ImageURISource, Linking, Image, Text, View, StatusBar, Animated } from 'react-native';
+import { Animated, Image, ImageURISource, Linking, StatusBar, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { PinchGestureHandler, State, PanGestureHandler } from 'react-native-gesture-handler';
+import { PanGestureHandler, PinchGestureHandler, State } from 'react-native-gesture-handler';
 import RNCarousel from 'react-native-snap-carousel';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
+
+import { UI_SIZES } from '~/framework/components/constants';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { CommonStyles } from '~/styles/common/styles';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
 import { MediaAction } from './MediaAction';
 import { A, Italic } from './Typography';
-
-import { UI_SIZES } from '~/framework/components/constants';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { CommonStyles } from '~/styles/common/styles';
 
 const UnavailableImage = () => (
   <View
@@ -96,7 +96,7 @@ class Carousel extends React.Component<
     return gestures;
   };
 
-  public onPanGestureEvent = () => Animated.event([{ nativeEvent: this.allowedPanGestures() }]);
+  public onPanGestureEvent = () => Animated.event([{ nativeEvent: this.allowedPanGestures() }], { useNativeDriver: true });
 
   public onPanStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -137,7 +137,7 @@ class Carousel extends React.Component<
   sideHiddenWidth = 0;
   sideHiddenHeight = 0;
 
-  public onZoomEvent = Animated.event([{ nativeEvent: { scale: this.pinchScale } }]);
+  public onZoomEvent = Animated.event([{ nativeEvent: { scale: this.pinchScale } }], { useNativeDriver: true });
 
   public onZoomStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -300,22 +300,24 @@ class Carousel extends React.Component<
                         enabled={canPanHorizontal || canPanVertical}
                         ref={imagePan}
                         simultaneousHandlers={imagePinch}>
-                        <PinchGestureHandler
-                          onGestureEvent={this.onZoomEvent}
-                          onHandlerStateChange={this.onZoomStateChange}
-                          ref={imagePinch}
-                          simultaneousHandlers={imagePan}>
-                          <Animated.View>
-                            <AnimatedFastImage
-                              source={item.src}
-                              style={{
-                                height: imageHeight,
-                                width: imageWidth,
-                              }}
-                              resizeMode="contain"
-                            />
-                          </Animated.View>
-                        </PinchGestureHandler>
+                        <Animated.View>
+                          <PinchGestureHandler
+                            onGestureEvent={this.onZoomEvent}
+                            onHandlerStateChange={this.onZoomStateChange}
+                            ref={imagePinch}
+                            simultaneousHandlers={imagePan}>
+                            <Animated.View>
+                              <AnimatedFastImage
+                                source={item.src}
+                                style={{
+                                  height: imageHeight,
+                                  width: imageWidth,
+                                }}
+                                resizeMode="contain"
+                              />
+                            </Animated.View>
+                          </PinchGestureHandler>
+                        </Animated.View>
                       </PanGestureHandler>
                     </Animated.View>
                   )}

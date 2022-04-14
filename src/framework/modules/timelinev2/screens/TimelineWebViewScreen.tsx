@@ -5,14 +5,14 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
-import { FlatButton } from '~/ui';
 import { openUrl } from '~/framework/util/linking';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
+import { FlatButton } from '~/ui/FlatButton';
 
 // TYPES ==========================================================================================
 
@@ -69,7 +69,6 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
             onPress={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
               if (!DEPRECATED_getCurrentPlatform()) {
-                console.warn('Must have a platform selected to redirect the user');
                 return null;
               }
               const url = `${DEPRECATED_getCurrentPlatform()!.url}${notification?.resource.uri}`;

@@ -1,6 +1,6 @@
 import { createSessionAsyncReducer } from '~/infra/redux/async2';
 import { teacherEventsActionsTypes } from '~/modules/viescolaire/presences/state/events';
-import { initialState, actionTypes } from '~/modules/viescolaire/presences/state/teacherClassesCall';
+import { actionTypes, initialState } from '~/modules/viescolaire/presences/state/teacherClassesCall';
 
 export default createSessionAsyncReducer(initialState, actionTypes, {
   [teacherEventsActionsTypes.post]: (state = [], action) => {
@@ -28,7 +28,6 @@ export default createSessionAsyncReducer(initialState, actionTypes, {
     return new_state;
   },
   [teacherEventsActionsTypes.error]: (state, action) => {
-    console.error('EVENT ACTION ERROR : ', action.error);
     return state;
   },
 });

@@ -7,14 +7,14 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IUserInfoState } from '../state/info';
 
-import { getSessionInfo } from '~/App';
+
 import { IGlobalState } from '~/AppStore';
+import { PageView } from '~/framework/components/page';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
-import { getUserSession } from '~/framework/util/session';
+import { getUserSession, IUserSession, UserType } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
@@ -22,14 +22,18 @@ import { ImagePicked } from '~/infra/imagePicker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth';
-import { ButtonsOkCancel } from '~/ui';
 import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
+import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
 import { Label } from '~/ui/Typography';
 import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
-import { PageView } from '~/framework/components/page';
+
+
+
+import { IUserInfoState } from '../state/info';
+
 
 const uploadAvatarError = () => {
   return dispatch => {
@@ -54,6 +58,7 @@ export class UserPage extends React.PureComponent<
     onPickFileError: (notifierId: string) => void;
     onUploadAvatarError: () => void;
     userinfo: IUserInfoState;
+    session: IUserSession;
     navigation: any;
   },
   {
@@ -181,7 +186,7 @@ export class UserPage extends React.PureComponent<
 
   public render() {
     //avoid setstate on modalbox when unmounted
-    const { userinfo } = this.props;
+    const { userinfo, session } = this.props;
     const { showDisconnect, showVersionType, versionOverride, versionType, updatingAvatar } = this.state;
     const signedURISource = userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`);
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
@@ -213,20 +218,20 @@ export class UserPage extends React.PureComponent<
             onChangeAvatar={this.onChangeAvatar.bind(this)}
             onDeleteAvatar={this.onDeleteAvatar.bind(this)}
             id={sourceWithParam}
-            displayName={getSessionInfo().displayName!}
-            type={getSessionInfo().type!}
+            displayName={session.user.displayName}
+            type={session.user.type as keyof typeof UserType}
             touchable
             onPress={() => this.props.navigation.navigate('MyProfile')}
           />
           <ContainerSpacer />
           <ButtonLine title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
           <ContainerSpacer />
-          {getSessionInfo().type === 'Student' ? (
+          {session.user.type === 'Student' ? (
             <>
               <ButtonLine title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />
               <ContainerSpacer />
             </>
-          ) : getSessionInfo().type === 'Relative' ? (
+          ) : session.user.type === 'Relative' ? (
             <>
               <ButtonLine title="directory-childrenTitle" onPress={() => this.props.navigation.navigate('Children')} />
               <ContainerSpacer />
@@ -268,6 +273,7 @@ const UserPageConnected = connect(
   (state: any) => {
     const ret = {
       userinfo: state.user.info,
+      session: getUserSession(state)
     };
     return ret;
   },

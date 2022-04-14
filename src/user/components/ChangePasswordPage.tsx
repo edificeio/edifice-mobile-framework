@@ -1,23 +1,26 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, TextInput, View, ScrollView } from 'react-native';
+import { Alert, ScrollView, TextInput, View } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
-import { getSessionInfo } from '~/App';
-import { remlh, Text, TextSizeStyle } from '~/framework/components/text';
+
+
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { KeyboardPageView } from '~/framework/components/page';
+import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IUserSession } from '~/framework/util/session';
 import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
-import { ValueChangeArgs, ValidatorBuilder, ValueGetter, ValueChange } from '~/utils/form';
-import { NavigationInjectedProps } from 'react-navigation';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { KeyboardPageView } from '~/framework/components/page';
+import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
+
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -25,6 +28,7 @@ type IFields = 'oldPassword' | 'newPassword' | 'confirm';
 
 export interface IChangePasswordPageState extends IChangePasswordModel {
   typing: boolean;
+  showExternalError: boolean;
 }
 
 export interface IChangePasswordPageDataProps extends IChangePasswordModel {
@@ -32,6 +36,7 @@ export interface IChangePasswordPageDataProps extends IChangePasswordModel {
   externalError: string;
   contextState: ContextState;
   submitState: SubmitState;
+  session: IUserSession;
 }
 export interface IChangePasswordPageEventProps {
   onSubmit(model: IChangePasswordModel, redirectCallback?: (dispatch) => void, forceChange?: boolean): Promise<void>;
@@ -57,7 +62,7 @@ class ChangePasswordFormModel {
       newPassword: ValueGetter<string>;
     },
   ) {}
-  oldPassword = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();
+  oldPassword = new ValidatorBuilder().withRequired(true).build<string>();
   newPassword = new ValidatorBuilder()
     .withRequired(true)
     .withRegex(this.args.passwordRegex)
@@ -78,8 +83,8 @@ class ChangePasswordFormModel {
   errors(model: IChangePasswordModel) {
     const errors: string[] = [];
     this.check(errors, this.oldPassword.isValid(model.oldPassword));
-    this.check(errors, this.newPassword.isValid(model.newPassword));
-    this.check(errors, this.confirm.isValid(model.confirm));
+    this.check(errors, this.newPassword.isValid(model.newPassword), 'changePassword-errorRegex');
+    this.check(errors, this.confirm.isValid(model.confirm), 'changePassword-errorConfirm');
     return errors;
   }
   firstErrorKey(model: IChangePasswordModel) {
@@ -113,6 +118,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     newPassword: this.props.newPassword || '',
     confirm: this.props.confirm || '',
     typing: false,
+    showExternalError: true,
   };
 
   private handleSubmit() {
@@ -121,7 +127,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
       this.props.navigation.getParam('redirectCallback'),
       this.props.navigation.getParam('forceChange'),
     );
-    this.setState({ typing: false });
+    this.setState({ typing: false, showExternalError: true });
   }
 
   private onChange = (key: IFields) => {
@@ -129,6 +135,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
       const newState: Partial<IChangePasswordPageState> = {
         [key]: valueChange.value,
         typing: true,
+        showExternalError: false,
       };
       this.setState(newState as any);
     };
@@ -136,13 +143,20 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
 
   public componentDidMount() {
     const props = this.props;
+    props.onRetryLoad({
+      login: props.session.user.login!,
+    });
+  }
+
+  componentDidUpdate() {
+    const props = this.props;
     if (this.props.contextState == ContextState.Failed) {
       Alert.alert(I18n.t('ErrorNetwork'), I18n.t('activation-errorLoading'), [
         {
           text: I18n.t('tryagain'),
           onPress() {
             props.onRetryLoad({
-              login: getSessionInfo().login!,
+              login: props.session.user.login!,
             });
           },
           style: 'default',
@@ -160,12 +174,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
 
   public render() {
     const { externalError, contextState, submitState } = this.props;
-    const { oldPassword, newPassword, confirm, typing } = this.state;
+    const { oldPassword, newPassword, confirm, typing, showExternalError } = this.state;
 
-    // This is a hack, again... now context is loaded on submit.
-    // if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
-    //   return <Loading />;
-    // }
+    if (contextState === ContextState.Loading || contextState === ContextState.Failed) {
+      return <Loading />;
+    }
 
     const formModel = new ChangePasswordFormModel({
       ...this.props,
@@ -174,9 +187,10 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     });
     const isNotValid = !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
-    const errorText = errorKey ? I18n.t(errorKey) : externalError;
+    const errorText = errorKey ? I18n.t(errorKey) : showExternalError && externalError;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
+    const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
 
     const isIDF = DEPRECATED_getCurrentPlatform()!.displayName === 'MonLycée.net'; // WTF ??!! 🤪🤪🤪
 
@@ -190,7 +204,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
             backgroundColor: theme.color.background.card,
           }}>
           <View style={{ height: '100%' }}>
-            <ScrollView alwaysBounceVertical={false} style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView
+              alwaysBounceVertical={false}
+              overScrollMode="never"
+              style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1 }}>
               <FormPage>
                 <FormTouchable onPress={() => formModel.blur()}>
                   <FormWrapper>
@@ -242,7 +260,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                       </View>
                       <View style={{ flexShrink: 0 }}>
                         <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
-                          {hasErrorKey && !typing ? errorText : ' \n '}
+                          {showError &&
+                          hasErrorKey &&
+                          (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
+                            ? errorText
+                            : ' \n '}
                         </ErrorMessage>
                       </View>
                       <View style={{ flexShrink: 0 }}>
@@ -310,12 +332,12 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
   );
 }
 
-const FormPage = style.view({
+const FormPage = styled.View({
   flex: 1,
 });
-const FormTouchable = style.touchableWithoutFeedback({ flex: 1 });
-const FormWrapper = style.view({ flex: 1 });
-const FormContainer = style.view({
+const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
+const FormWrapper = styled.View({ flex: 1 });
+const FormContainer = styled.View({
   alignItems: 'center',
   flex: 1,
   flexDirection: 'column',
@@ -323,7 +345,7 @@ const FormContainer = style.view({
   paddingTop: 30,
   paddingHorizontal: 30,
 });
-const ButtonWrapper = style.view(
+const ButtonWrapper = styled.View(
   {
     alignItems: 'center',
     flex: 0,
@@ -333,6 +355,6 @@ const ButtonWrapper = style.view(
     marginTop: error && !typing ? 10 : 10,
   }),
 );
-const MiniSpacer = style.view({
+const MiniSpacer = styled.View({
   marginTop: 10,
 });

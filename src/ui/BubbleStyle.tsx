@@ -1,9 +1,14 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import { ViewStyle } from 'react-native';
+
+
 
 import { CommonStyles } from '~/styles/common/styles';
 
-export const BubbleStyle = style.view(
+
+export const BubbleStyle = styled.View<{
+  my: boolean
+}>(
   {
     alignSelf: 'stretch',
     elevation: 2,
@@ -19,11 +24,13 @@ export const BubbleStyle = style.view(
   },
   ({ my, style }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : 'white',
-    ...style,
+    ...style as ViewStyle,
   }),
 );
 
-export const BubbleScrollStyle = style.scrollView(
+export const BubbleScrollStyle = styled.ScrollView<{
+  my: boolean
+}>(
   {
     alignSelf: 'stretch',
     elevation: 2,
@@ -39,6 +46,6 @@ export const BubbleScrollStyle = style.scrollView(
   },
   ({ my, style }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : 'white',
-    ...style,
+    ...style as ViewStyle,
   }),
 );

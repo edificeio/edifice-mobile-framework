@@ -5,7 +5,7 @@ import { PageView } from '~/framework/components/page';
 import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
 import HomeworkExplorerScreen from '~/homework/containers/HomeworkExplorerScreen';
 import HomeworkTaskListScreen from '~/homework/containers/HomeworkTaskListScreen';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 
 const mapStateToProps: (state: any) => any = state => {
   // Extract data from state

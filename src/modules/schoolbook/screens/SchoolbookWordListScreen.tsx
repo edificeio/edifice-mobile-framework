@@ -2,54 +2,51 @@
  * Schoolbook word list
  */
 import I18n from 'i18n-js';
-import moment from 'moment';
 import React from 'react';
-import { FlatList, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
+import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { IUserSession, getUserSession } from '~/framework/util/session';
-import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResourceCard';
-import moduleConfig from '~/modules/blog/moduleConfig';
-import { IBlogPost, IBlogPostList } from '~/modules/blog/reducer';
-import { getBlogPostRight } from '~/modules/blog/rights';
-import { blogService } from '~/modules/blog/service';
+import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
+import { SummaryCard } from '~/modules/schoolbook/components/SummaryCard';
+import moduleConfig from '~/modules/schoolbook/moduleConfig';
+import { userService } from '~/user/service';
 
+import { IStudentAndParentWord, IStudentAndParentWordList, ITeacherWord, ITeacherWordList } from '../reducer';
 import { schoolbookService } from '../service';
-import { IDisplayedBlog } from './BlogExplorerScreen';
 
 // TYPES ==========================================================================================
 
-export interface IBlogPostListScreen_DataProps {
+export interface ISchoolbookWordListScreen_DataProps {
   initialLoadingState: AsyncPagedLoadingState;
   session: IUserSession;
 }
-export interface IBlogPostListScreen_EventProps {
-  doFetch: (selectedBlogId: string) => Promise<IBlogPost[] | undefined>;
+export interface ISchoolbookWordListScreen_EventProps {
+  doFetch: () => Promise<ITeacherWordList | IStudentAndParentWordList | undefined>;
 }
-export interface IBlogPostListScreen_NavigationParams {
-  selectedBlog: IDisplayedBlog;
-}
-export type IBlogPostListScreen_Props = IBlogPostListScreen_DataProps &
-  IBlogPostListScreen_EventProps &
-  NavigationInjectedProps<IBlogPostListScreen_NavigationParams>;
+export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProps &
+  ISchoolbookWordListScreen_EventProps &
+  NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
 
-const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
-  const selectedBlog = props.navigation.getParam('selectedBlog');
-  const selectedBlogId = selectedBlog && selectedBlog.id;
-  const hasSchoolbookWordCreationRights = selectedBlog && getBlogPostRight(selectedBlog, props.session)?.actionRight;
+const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
+  const session = props.session;
+  const userId = session?.user?.id;
+  const userType = session?.user?.type;
+  const isTeacher = userType === UserType.Teacher;
+  const isStudent = userType === UserType.Student;
+  const isParent = userType === UserType.Relative;
+  const hasSchoolbookWordCreationRights = true; //⚪️ handle (example: selectedBlog && getBlogPostRight(selectedBlog, session)?.actionRight;)
   let focusEventListener: NavigationEventSubscription;
 
   // LOADER =====================================================================================
@@ -63,69 +60,60 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
 
   React.useEffect(() => {
     focusEventListener = props.navigation.addListener('didFocus', () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init(selectedBlogId);
-      else refreshSilent(selectedBlogId);
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return () => {
       focusEventListener.remove();
     };
   }, []);
 
-  const init = (selectedBlogId: string) => {
-    if (selectedBlogId) {
-      setLoadingState(AsyncPagedLoadingState.INIT);
-      fetchFromStart(selectedBlogId)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-    }
+  const init = () => {
+    setLoadingState(AsyncPagedLoadingState.INIT);
+    fetchFromStart()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const reload = (selectedBlogId: string) => {
-    if (selectedBlogId) {
-      setLoadingState(AsyncPagedLoadingState.RETRY);
-      fetchFromStart(selectedBlogId)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-    }
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    fetchFromStart()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const refresh = (selectedBlogId: string) => {
-    if (selectedBlogId) {
-      setLoadingState(AsyncPagedLoadingState.REFRESH);
-      fetchFromStart(selectedBlogId)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-    }
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    fetchFromStart()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
-  const refreshSilent = (selectedBlogId: string) => {
-    if (selectedBlogId) {
-      setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-      fetchFromStart(selectedBlogId)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-    }
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchFromStart()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
-  const fetchNextPage = (selectedBlogId: string) => {
-    if (selectedBlogId) {
-      setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
-      fetchPage(selectedBlogId)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
-    }
+  const fetchNextPage = () => {
+    setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
+    fetchPage()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
   };
 
   // EVENTS =====================================================================================
 
-  const [schoolbookWords, setSchoolbookWords] = React.useState([] as IBlogPostList);
+  const [schoolbookWords, setSchoolbookWords] = React.useState([] as ITeacherWordList | IStudentAndParentWordList);
+  const [parentChildren, setParentChildren] = React.useState([] as any); //⚪️type
   const [nextPageToFetch_state, setNextPageToFetch] = React.useState(0);
   const [pagingSize_state, setPagingSize] = React.useState<number | undefined>(undefined);
 
-  // Fetch all schoolbook words in a row
-  const fetchSchoolbookWords = async (blogId: string) => {
+  // Fetch all children for a parent
+  const fetchParentChildren = async () => {
+    //⚪️use
     try {
-      const session = props.session;
-      const newSchoolbookWords = await schoolbookService.list.teacher(session, 'Any', 0);
-      setSchoolbookWords(newSchoolbookWords);
+      const parentChildren = await userService.getUserChildren(userId);
+      setParentChildren(parentChildren);
     } catch (e) {
       throw e;
     }
@@ -134,27 +122,30 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
   // Fetch a page of schoolbook words.
   // Auto-increment nextPageNumber unless `fromPage` is provided.
   // If `flushAfter` is also provided along `fromPage`, all content after the loaded page will be erased.
-  const fetchPage = async (blogId: string, fromPage?: number, flushAfter?: boolean) => {
+  const fetchPage = async (fromPage?: number, flushAfter?: boolean) => {
     try {
+      const studentId = isStudent ? userId : 'selectedChildId'; //⚪️variable for parent
       const pageToFetch = fromPage ?? nextPageToFetch_state; // If page is not defined, automatically fetch the next page
       if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
-      const session = props.session;
-      const newBlogPosts = await blogService.posts.page(session, blogId, pageToFetch, ['PUBLISHED', 'SUBMITTED']);
+      const newSchoolbookWords = isTeacher
+        ? await schoolbookService.list.teacher(session, pageToFetch)
+        : await schoolbookService.list.studentAndParent(session, pageToFetch, studentId);
       let pagingSize = pagingSize_state;
       if (pagingSize === undefined) {
-        setPagingSize(newBlogPosts.length);
-        pagingSize = newBlogPosts.length;
+        setPagingSize(newSchoolbookWords.length);
+        pagingSize = newSchoolbookWords.length;
       }
       if (pagingSize) {
-        newBlogPosts.length &&
-          setBlogPosts([
-            ...blogPosts.slice(0, pagingSize * pageToFetch),
-            ...newBlogPosts,
-            ...(flushAfter ? [] : blogPosts.slice(pagingSize * (pageToFetch + 1))),
+        //⚪️type
+        newSchoolbookWords.length &&
+          setSchoolbookWords([
+            ...schoolbookWords.slice(0, pagingSize * pageToFetch),
+            ...newSchoolbookWords,
+            ...(flushAfter ? [] : schoolbookWords.slice(pagingSize * (pageToFetch + 1))),
           ]);
 
         if (fromPage === undefined) {
-          setNextPageToFetch(newBlogPosts.length === 0 || newBlogPosts.length < pagingSize ? -1 : pageToFetch + 1);
+          setNextPageToFetch(newSchoolbookWords.length === 0 || newSchoolbookWords.length < pagingSize ? -1 : pageToFetch + 1);
         } else if (flushAfter) {
           setNextPageToFetch(fromPage + 1);
         }
@@ -164,20 +155,15 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
       throw e;
     }
   };
-  const fetchFromStart = async (blogId: string) => {
-    await fetchPage(blogId, 0, true);
+  const fetchFromStart = async () => {
+    await fetchPage(0, true);
   };
 
-  const onGoToWordCreationScreen = () =>
-    props.navigation.navigate(`${moduleConfig.routeName}/create`, {
-      blog: selectedBlog,
-      referrer: `${moduleConfig.routeName}/posts`,
-    });
+  const onGoToWordCreationWebpage = () => console.log('⚪️ go to web');
 
-  const onOpenSchoolbookWord = (item: IBlogPost) => {
+  const onOpenSchoolbookWord = (item: ITeacherWord | IStudentAndParentWord) => {
     props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), {
-      schoolbookWord: item,
-      // blog: selectedBlog,
+      schoolbookWord: item, //⚪️keep?
     });
   };
 
@@ -185,22 +171,6 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
 
   const navBarInfo = {
     title: I18n.t('schoolbook.appName'),
-    //🟠 add "+" button?
-  };
-
-  // CREATE BUTTON ================================================================================
-
-  const renderCreateButton = () => {
-    const hasError =
-      !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
-    return hasSchoolbookWordCreationRights && !hasError ? (
-      <DEPRECATED_HeaderPrimaryAction
-        iconName="new_post"
-        onPress={() => {
-          onGoToWordCreationScreen();
-        }}
-      />
-    ) : null;
   };
 
   // EMPTY SCREEN =================================================================================
@@ -218,7 +188,7 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
         {...(hasSchoolbookWordCreationRights
           ? {
               buttonText: I18n.t('schoolbook.schoolbookWordListScreen.emptyScreen.button'),
-              buttonAction: onGoToWordCreationScreen,
+              buttonAction: onGoToWordCreationWebpage,
             }
           : {})}
       />
@@ -230,52 +200,54 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
   const renderError = () => {
     return (
       <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} /*onRefresh={() => reload(selectedBlogId)}*/ />
-        }>
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
   };
 
-  // BLOG POST LIST ====================================================================================
+  // SCHOOLBOOK WORD LIST ====================================================================================
 
   const renderSchoolbookWordList = () => {
     return (
       <FlatList
-        data={blogPosts}
+        data={schoolbookWords}
         renderItem={({ item }) => {
           return (
-            // <BlogPostResourceCard
-            //   action={() => onOpenSchoolbookWord(item)}
-            //   authorId={item.author.userId}
-            //   authorName={item.author.username}
-            //   comments={item.comments?.length as number}
-            //   contentHtml={item.content}
-            //   date={moment(item.created)}
-            //   title={item.title}
-            //   state={item.state as 'PUBLISHED' | 'SUBMITTED'}
-            // />
-            <Text>{'test'}</Text>
+            // ⚪️ types + transfer item directly(?)
+            <SummaryCard
+              action={() => onOpenSchoolbookWord(item)}
+              userType={userType}
+              userId={userId}
+              acknowledgments={item.acknowledgments}
+              owner={item.owner}
+              ownerName={item.ownerName}
+              responses={item.responses}
+              ackNumber={item.ackNumber}
+              category={item.category}
+              recipients={
+                //⚪️ wait backend change (replace with "item.recipients")
+                userType === UserType.Teacher
+                  ? [
+                      { userId: 'b144e768-128f-443f-af46-b62c7c29ac3d', displayName: 'Joe Z' },
+                      { userId: 'b144e768-128f-443f-af46-b62c7c29ac3d', displayName: 'Herbie H' },
+                    ]
+                  : undefined
+              }
+              respNumber={item.respNumber}
+              sendingDate={item.sendingDate}
+              text={item.text}
+              title={item.title}
+              total={item.total}
+            />
           );
         }}
-        keyExtractor={item => item._id}
+        keyExtractor={item => item.id.toString()}
         ListEmptyComponent={renderEmpty()}
-        // ListHeaderComponent={hasSchoolbookWordCreationRights ? <View style={{ height: 12 }} /> : null}
-        ListFooterComponent={
-          <>
-            {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
-            <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
-          </>
-        }
-        // refreshControl={
-        //   <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />
-        // }
+        ListFooterComponent={loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />}
         contentContainerStyle={{ flexGrow: 1 }}
-        scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-        // onEndReached={() => {
-        //   fetchNextPage(selectedBlogId);
-        // }}
+        onEndReached={() => fetchNextPage()}
         onEndReachedThreshold={0.5}
       />
     );
@@ -284,9 +256,6 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
   // RENDER =======================================================================================
 
   const renderPage = () => {
-    // if (!selectedBlog) {
-    //   return renderError();
-    // }
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
       case AsyncPagedLoadingState.REFRESH:
@@ -305,11 +274,9 @@ const SchoolbookWordListScreen = (props: IBlogPostListScreen_Props) => {
   };
 
   return (
-    <>
-      <PageView navigation={props.navigation} navBarWithBack={navBarInfo} /*navBarNode={renderCreateButton()}*/>
-        {renderPage()}
-      </PageView>
-    </>
+    <PageView navigation={props.navigation} navBarWithBack={navBarInfo}>
+      {renderPage()}
+    </PageView>
   );
 };
 

@@ -20,7 +20,6 @@ export function addAttachmentAction(file: any, session: IUserSession) {
       dispatch(progressEndAction());
       return newAttachments;
     } catch (errmsg) {
-      console.error('ERROR uploading attachment', errmsg);
       dispatch(progressEndAction());
       throw errmsg;
     }

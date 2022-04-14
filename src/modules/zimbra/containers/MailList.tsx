@@ -27,9 +27,9 @@ import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails'
 import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
 
 import { IInit } from './DrawerMenu';
 

@@ -22,15 +22,18 @@
  * - `linkTextStyle` (TextStyle) additional style applied to text links.
  * - `boldTextStyle` (TextStyle) additional style applied to bold text.
  */
-
 import { TextStyle } from 'react-native';
 
+import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { signURISource } from '~/infra/oauth';
+
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
+import { extractVideoResolution } from './content';
 import {
   HtmlParserJsxTextVariant,
   HtmlParserNuggetTypes,
   IAudioNugget,
-  IVideoNugget,
   IColorTextNugget,
   IIframeNugget,
   IImageComponentAttributes,
@@ -39,13 +42,9 @@ import {
   ILinkTextNugget,
   INugget,
   ITextNugget,
+  IVideoNugget,
   renderNuggets,
 } from './nuggetRenderer';
-
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { extractVideoResolution } from './content';
-import { signURISource } from '~/infra/oauth';
-import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   textFormatting?: boolean;
@@ -277,7 +276,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
 
     text = text.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, ' '); // replace new lines by spaces (like in html)
 
-    // console.log(`parse text "${text}"`, this.hasToInsertSpace);
     if (text.startsWith('.') || text.startsWith(',')) this.hasToInsertSpace = false; //// YEAH MADAFAKA this is the most ugly code i've never wrote !
     const leftTrimmedText = text.trimLeft();
     text =
@@ -290,18 +288,15 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     this.hasToInsertSpace = false;
     //// Because I am. 😱
 
-    // console.log(`rn after lefttrim "${text}"`, this.hasToInsertSpace);
     if (/\S/.test(text)) {
       this.firstWord = false;
     }
 
     const rightTrimmedText = text.trimRight();
     if (text !== rightTrimmedText) {
-      // console.log("trimmed right");
       text = rightTrimmedText;
       !this.firstWord && (this.hasToInsertSpace = true);
     }
-    // console.log(`rn after righttrim "${text}"`, this.hasToInsertSpace);
 
     if (this.hasToInsertBullet) {
       text = this.hasToInsertBullet + text;
@@ -313,7 +308,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       this.lineBreaksToInsert = 0;
     }
     if (this.lineBreaksToInsert) {
-      // console.log(`encourtered line break`);
       if (!this.opts.ignoreLineBreaks && !this.firstWord) {
         // Insert the new line only if we have some text nuggets before the current text nugget.
         text = '\n'.repeat(this.lineBreaksToInsert) + text;
@@ -323,7 +317,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     }
 
     if (text.length) {
-      // console.log(`interted text : "${text}"`, this.hasToInsertSpace);
       this.insertNewTextNugget(text);
       if (/\S/.test(text)) {
         this.currentImageNugget = undefined; // Text breaks image groups (spaces don't count)
@@ -340,7 +333,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     let nbComputedNuggets = 0;
     const tagStyles = tag.attrs.style ? tag.attrs.style.split(';') : [];
     for (let tagStyle of tagStyles) {
-      // console.log(`tagstyle: "${tagStyle}"`);
       tagStyle = tagStyle.trim();
       if (this.opts.textFormatting) {
         if (tagStyle.match(/font-style ?: ?italic/)) {
@@ -359,23 +351,16 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       if (this.opts.textColor) {
         const colormatches = tagStyle.match(/^color ?: ?([^;]+)/);
         if (colormatches) {
-          // console.log("colormatches", colormatches);
           this.parseOpenColorTag(tag, colormatches[1]);
           ++nbComputedNuggets;
         }
 
         const bgmatches = tagStyle.match(/^background-color ?: ?([^;]+)/);
         if (bgmatches) {
-          // console.log("mbgatches", bgmatches);
           this.parseOpenBgColorTag(tag, bgmatches[1]);
           ++nbComputedNuggets;
         }
       }
-      /*console.log(
-      "encourtered OPEN span that generate",
-      nbComputedNuggets,
-      "nuggets"
-    );*/
     }
     this.computedTextNuggetsBySpans.push(nbComputedNuggets);
   }
@@ -389,11 +374,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       for (let i = 0; i < nbComputedNuggets; ++i) {
         this.closeCurrentTextNugget();
       }
-      /*console.log(
-      "encourtered CLOSE span that generated",
-      nbComputedNuggets,
-      "nuggets"
-    );*/
     }
   }
 
@@ -403,7 +383,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseOpenBoldTag(tag: ISaxTagOpen): void {
     if (!this.opts.textFormatting) return;
-    // console.log("encourtered OPEN bold");
     this.insertNewTextNugget({
       children: [],
       parent: null,
@@ -417,7 +396,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseCloseBoldTag(): void {
     if (!this.opts.textFormatting) return;
-    // console.log("encourtered CLOSE bold");
     this.closeCurrentTextNugget();
   }
 
@@ -427,7 +405,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseOpenItalicTag(tag: ISaxTagOpen): void {
     if (!this.opts.textFormatting) return;
-    // console.log("encourtered OPEN italic");
     this.insertNewTextNugget({
       children: [],
       parent: null,
@@ -441,7 +418,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseCloseItalicTag(): void {
     if (!this.opts.textFormatting) return;
-    // console.log("encourtered CLOSE italic");
     this.closeCurrentTextNugget();
   }
 
@@ -451,7 +427,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseOpenUnderlineTag(tag: ISaxTagOpen): void {
     if (!this.opts.textFormatting) return;
-    // console.log("encourtered OPEN underline");
     this.insertNewTextNugget({
       children: [],
       parent: null,
@@ -465,7 +440,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseCloseUnderlineTag(): void {
     if (!this.opts.textFormatting) return;
-    // console.log("encourtered CLOSE underline");
     this.closeCurrentTextNugget();
   }
 
@@ -475,7 +449,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseOpenLinkTag(tag: ISaxTagOpen): void {
     // if (!this.opts.hyperlinks) return;
-    // console.log("encourtered OPEN link");
     let cleanUrl = tag.attrs.href;
     if (cleanUrl && cleanUrl.startsWith('/')) {
       // Absolute url. We must add the platform domain name manually.
@@ -500,7 +473,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseOpenBgColorTag(tag: ISaxTagOpen, color: string): void {
     if (!this.opts.textColor) return;
-    // console.log("encourtered OPEN bgcolor", color);
     const nugget: IColorTextNugget = {
       children: [],
       color,
@@ -517,7 +489,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseOpenColorTag(tag: ISaxTagOpen, color: string): void {
     if (!this.opts.textColor) return;
-    // console.log("encourtered OPEN color", color);
     const nugget: IColorTextNugget = {
       children: [],
       color,
@@ -533,7 +504,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseCloseLinkTag(): void {
     // if (!this.opts.hyperlinks) return;
-    // console.log("encourtered CLOSE link");
     this.closeCurrentTextNugget();
     this.currentLink = null;
   }
@@ -546,7 +516,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected parseImgTag(tag: ISaxTagOpen): void {
     if (!this.opts.images) return;
-    // console.log(`encourtered image : "${tag.attributes}"`);
 
     this.currentDivIsEmpty = false;
 
@@ -554,7 +523,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     const isEmoji = tag.attrs.class && tag.attrs.class.match(/smiley/);
 
     if (isEmoji) {
-      // console.log("it's a smiley !!");
       // A - 1 - Build image object representation
       const emoji: IInlineImageNugget = {
         alt: tag.attrs.alt,
@@ -600,7 +568,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
   protected parseIframeTag(tag: ISaxTagOpen): void {
     if (!this.opts.iframes) return;
 
-    // console.log(`encourtered iframe : "${tag.attributes}"`);
     // 1 - Build iframe ojbect representation
     let src = tag.attrs.src;
     src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
@@ -678,8 +645,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    * @param nugget
    */
   protected insertNewTextNugget(nugget: ITextNugget | string) {
-    // console.log("insert text nugget :", nugget, "into", this.currentTextNugget);
-
     if (this.currentTextNugget) {
       // If we're already in a text nugget, append the given one as a child.
       this.currentTextNugget.children.push(nugget);
@@ -712,13 +677,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    * @param nugget
    */
   protected insertInlineImageNugget(nugget: IInlineImageNugget) {
-    /*console.log(
-      "insert inline image nugget :",
-      nugget,
-      "into",
-      this.currentTextNugget
-    );*/
-
     if (this.hasToInsertSpace) {
       this.insertNewTextNugget(' ');
       this.hasToInsertSpace = false;
@@ -744,7 +702,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    * Closes the current TextNugget (at the deepest level). If it has no content, it will be removed.
    */
   protected closeCurrentTextNugget() {
-    // console.log("closing text nugget", this.currentTextNugget);
     if (this.currentTextNugget) {
       if (this.currentTextNugget.children.length === 0) {
         // If we have no children, remove it.
@@ -760,7 +717,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     if (this.currentTextNugget === null) {
       // After closing a text nugget, if we are back on the top-level, next word is the first word of his hierarchy
       this.firstWord = true;
-      // console.log("first word TRUE");
     }
   }
 
@@ -770,24 +726,17 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    * @param nugget
    */
   protected insertTopLevelNugget(nugget: INugget) {
-    // console.log("insert top level nugget");
     let textNuggetsHierarchy: ITextNugget = null;
     let deepestTextNugget: ITextNugget = null;
     // Clear space and line breaks flags
     this.hasToInsertSpace = false;
     this.lineBreaksToInsert = 0;
     this.firstWord = true;
-    // console.log("first work TRUE");
 
     if (this.currentTextNugget) {
       // Recreate the text nugget hierarchy from deep level to top level
-      /*console.log(
-        "cloning from deepest current texte nugget",
-        this.currentTextNugget
-      );*/
       for (let cloningNugget = this.currentTextNugget; cloningNugget !== null; cloningNugget = cloningNugget.parent) {
         // We create each time a new textNugget including the previous one as the only child
-        // console.log("clonining", cloningNugget);
         textNuggetsHierarchy = {
           children: textNuggetsHierarchy !== null ? [textNuggetsHierarchy] : [],
           parent: null,
@@ -800,7 +749,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
         } else {
           // Or we save the deepest text nugget to restore it after
           deepestTextNugget = textNuggetsHierarchy;
-          // console.log("deepest cloned", deepestTextNugget);
         }
       }
     }
@@ -810,7 +758,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     if (textNuggetsHierarchy) {
       (this.render as INugget[]).push(textNuggetsHierarchy);
       this.currentTextNugget = deepestTextNugget;
-      // console.log("current restorad nugget", this.currentTextNugget);
     }
   }
 }

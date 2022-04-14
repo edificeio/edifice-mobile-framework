@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import { nbItems } from './index';
 
 import { EVENT_TYPE, IEvent } from '~/types/ievents';
-import { ProgressBar } from '~/ui';
+import ProgressBar from '~/ui/ProgressBar';
 import { ConfirmDialog } from '~/ui/ConfirmDialog';
-import { FloatingAction } from '~/ui/FloatingButton';
+import FloatingAction from '~/ui/FloatingButton/FloatingAction';
 import { ToolbarAction } from '~/ui/Toolbar';
 import { IMenuItem, initialMenuItem } from '~/ui/types';
 import { newDownloadThenOpenAction } from '~/workspace/actions/download';

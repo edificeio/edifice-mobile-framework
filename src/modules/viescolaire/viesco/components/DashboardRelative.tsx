@@ -14,7 +14,8 @@ import { isHomeworkDone, homeworkListDetailsAdapter } from '~/modules/viescolair
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/Dashboard';
 import { INavigationProps } from '~/types';
-import { Icon, Loading } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
+import { Loading } from '~/ui/Loading';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 

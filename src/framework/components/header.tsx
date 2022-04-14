@@ -13,16 +13,20 @@
  */
 import styled from '@emotion/native';
 import * as React from 'react';
-import { Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
+import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
 
+
+
 import theme from '~/app/theme';
+
+
 
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
-import { ButtonIcon } from './popupMenu';
-import { FontWeightIOS, TextInverse, TextSizeStyle } from './text';
+import { FontWeightIOS, TextInverse, rem } from './text';
+
 
 /**
  * FakeHeader_Container
@@ -203,14 +207,14 @@ export const HeaderTitle_Style = styled(TextInverse)({
   textAlign: 'center',
   textAlignVertical: 'center',
   fontWeight: FontWeightIOS.Bold,
-  fontSize: TextSizeStyle.SlightBig.fontSize,
+  fontSize: rem(16 / 14),
 });
 export const HeaderTitle = (props: TextProps) => {
   return <HeaderTitle_Style numberOfLines={1} {...props} />;
 };
 export const HeaderSubtitle_Style = styled(HeaderTitle_Style)({
   fontWeight: FontWeightIOS.Normal,
-  fontSize: TextSizeStyle.Normal.fontSize,
+  fontSize: rem(14 / 14),
 });
 export const HeaderSubtitle = (props: TextProps) => {
   return <HeaderSubtitle_Style numberOfLines={1} {...props} />;
@@ -221,6 +225,42 @@ export const HeaderTitleAndSubtitle = (props: { title?: string; subtitle?: strin
     {props.title ? <HeaderTitle>{props.title}</HeaderTitle> : null}
   </>
 );
+
+export const ButtonIcon = ({ name, onPress, size, style, color }: ButtonIconProps) => {
+  if (color === undefined) color = 'white';
+  const Button = styled.TouchableOpacity({ ...buttonStyle, ...style });
+  return (
+    <Button onPress={onPress} style={{ ...buttonStyle, ...style }}>
+      <Icon color={color} size={size || 24} name={name} />
+    </Button>
+  );
+};
+
+export interface ButtonIconProps {
+  name: string;
+  size?: number;
+  style?: ViewStyle;
+  color?: ColorValue;
+  onPress: () => void | Promise<void>;
+}
+
+export const getButtonShadow = () => ({
+  elevation: 5,
+  shadowColor: theme.color.shadowColor,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.8,
+});
+
+export const buttonStyle: ViewStyle = {
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 50,
+  height: 50,
+  borderRadius: 50 / 2,
+  backgroundColor: theme.color.primary.regular,
+  ...(getButtonShadow() as ViewStyle),
+};
 
 export const DEPRECATED_HeaderPrimaryAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
   const { onPress, style, iconName, iconStyle, ...otherProps } = props as IHeaderActionGenericProps;

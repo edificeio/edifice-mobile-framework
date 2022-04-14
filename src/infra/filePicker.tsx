@@ -13,7 +13,7 @@ import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-pi
 
 import { LocalFile } from '~/framework/util/fileHandler';
 import { assertPermissions } from '~/framework/util/permissions';
-import { ButtonTextIcon } from '~/ui';
+import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
 export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '..';
+import { Icon } from '~/ui/icons/Icon';
 
 import { Text } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';

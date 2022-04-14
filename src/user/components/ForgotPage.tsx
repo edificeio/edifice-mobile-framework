@@ -1,5 +1,5 @@
+import styled from '@emotion/native';
 import { Picker } from '@react-native-picker/picker';
-import style from 'glamorous-native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
@@ -9,9 +9,10 @@ import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpac
 import { PageView } from '~/framework/components/page';
 import { H1, Text, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton, Icon } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
+import { Icon } from '~/ui/icons/Icon';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
 
@@ -123,7 +124,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
             <KeyboardAvoidingView
               style={{ flex: 1, backgroundColor: '#ffffff' }}
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-              <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+              <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
@@ -253,12 +254,12 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
   }
 }
 
-const FormPage = style.view({
+const FormPage = styled.View({
   backgroundColor: '#ffffff',
   flex: 1,
 });
-const FormWrapper = style.view({ flex: 1 });
-const FormContainer = style.view({
+const FormWrapper = styled.View({ flex: 1 });
+const FormContainer = styled.View({
   alignItems: 'center',
   flex: 1,
   flexDirection: 'column',
@@ -266,7 +267,7 @@ const FormContainer = style.view({
   padding: 40,
   paddingTop: 60,
 });
-const LogoWrapper = style.view({
+const LogoWrapper = styled.View({
   flexGrow: 2,
   alignItems: 'center',
   justifyContent: 'center',

@@ -2,18 +2,15 @@
  * Notification routing
  * Router operations on opeening a notification
  */
-
+import { NavigationState } from 'react-navigation';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-
-// LEGACY ZONE ====================================================================================
-
-import { getAsResourceUriNotification, IAbstractNotification, ITimelineNotification } from '.';
 
 import legacyModuleDefinitions from '~/AppModules';
 import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
-import { NavigationState } from 'react-navigation';
+
+import { IAbstractNotification, ITimelineNotification, getAsResourceUriNotification } from '.';
 
 // Module Map
 
@@ -101,7 +98,6 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   webRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     const notifWithUri = getAsResourceUriNotification(n);
     if (!notifWithUri) {
-      console.log(`[cloudMessaging] notification ${n.type}.${n['event-type']} has no resource uri.`);
       return { managed: 0 };
     }
     if ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) {
@@ -148,8 +144,6 @@ export const handleNotificationAction =
   ) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     let manageCount = 0;
-    // console.log("notification", notification);
-    // console.log("navState", navState);
     for (const action of actionStack) {
       if (manageCount) return;
       const ret = (await dispatch(action(notification, trackCategory, navState))) as unknown as INotifHandlerReturnType;
@@ -182,7 +176,7 @@ export const legacyHandleNotificationAction =
           manageCount++;
         }
       } catch (e) {
-        console.warn('[pushNotification] Failed to dispatch handler: ', e);
+        //TODO: Manage error
       }
     };
     // timeline is not a functional module

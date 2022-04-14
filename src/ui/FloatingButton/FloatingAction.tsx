@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { FlatList, Keyboard, Platform, StyleSheet, View } from "react-native";
+import React from "react";
+import { FlatList, Keyboard, StyleSheet, View } from "react-native";
 import FloatingActionItem from "./FloatingActionItem";
 import { layoutSize } from "~/styles/common/layoutSize";
 import { CommonStyles } from "~/styles/common/styles";
@@ -10,7 +10,7 @@ import { getMenuShadow } from '~/ui/ButtonIconText';
 import { UI_SIZES } from "~/framework/components/constants";
 import { DEPRECATED_HeaderPrimaryAction } from "~/framework/components/header";
 
-class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
+export default class FloatingAction extends React.Component<IFloatingProps & ISelected, IState> {
   state = {
     active: false,
   };
@@ -145,5 +145,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
-export default FloatingAction;

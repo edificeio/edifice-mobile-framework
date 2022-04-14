@@ -10,7 +10,6 @@ export const downloadFiles = (downloadable: IFile[], withManager = true) => {
 export const downloadFile = (downloadable: IFile, withManager = true) => {
   if (downloadable?.url?.startsWith('/zimbra')) {
     Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-    console.log('downloadable', downloadable);
     if (Platform.OS === 'ios') {
       startDownload(downloadable, withManager, false).then(res => openDownloadedFile(res.path()));
     } else {
@@ -68,7 +67,7 @@ export const openDownloadedFile = (filepath: string): void => {
   if (Platform.OS === 'ios') RNFetchBlob.ios.openDocument(filepath);
   else if (Platform.OS === 'android') {
     RNFetchBlob.android.actionViewIntent(filepath, Mime.getType(filepath) || 'text/html');
-  } else console.warn('Cannot handle file for devices other than ios/android.');
+  }
   */
 };
 
@@ -79,7 +78,7 @@ export const getDirName = async (): Promise<string> => {
   } else if (Platform.OS === 'ios') {
     return RNFetchBlob.fs.dirs.DocumentDir;
   }
-  console.warn('Cannot handle file for devices other than ios/android.');*/
+  ;*/
   return '';
 };
 

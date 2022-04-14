@@ -1,4 +1,4 @@
-import styled from "glamorous-native";
+import styled from '@emotion/native';
 import * as React from "react";
 import { ButtonTextIcon } from "./ButtonTextIcon";
 import I18n from "i18n-js";
@@ -14,7 +14,7 @@ export interface ButtonsOkCancelProps {
   cancelText?: string;
 }
 
-const ButtonStyled = styled.view({
+const ButtonStyled = styled.View({
   flex: 0,
   flexGrow: 0,
   flexDirection: "row",

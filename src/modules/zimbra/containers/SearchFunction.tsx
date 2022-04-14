@@ -4,12 +4,17 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+
+
+import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
+import { Input } from '~/modules/zimbra/components/SearchFunction';
+import { Icon } from '~/ui/icons/Icon';
+
+
+
 import MailListContainer from './MailList';
 
-import { Input } from '~/modules/zimbra/components/SearchFunction';
-import { Icon } from '~/ui';
-import { PageView } from '~/framework/components/page';
-import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
 
 type SearchProps = {} & NavigationInjectedProps;
 

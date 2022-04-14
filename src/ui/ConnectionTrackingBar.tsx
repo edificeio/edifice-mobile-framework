@@ -1,17 +1,21 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Animated, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Animated, View } from 'react-native';
 import { connect } from 'react-redux';
+
+
+
+import { checkConnection, watchConnection } from '~/infra/actions/connectionTracker';
+import { CommonStyles } from '~/styles/common/styles';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+
+
 
 import { Icon } from './icons/Icon';
 
-import { watchConnection, checkConnection } from '~/infra/actions/connectionTracker';
-import { CommonStyles } from '~/styles/common/styles';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-const { View } = style;
 
-const TrackerText = style.text({
+const TrackerText = styled.Text({
   color: '#FFFFFF',
   flex: 1,
   textAlign: 'center',
@@ -19,7 +23,7 @@ const TrackerText = style.text({
   marginLeft: 40,
 });
 
-const TrackingContainer = style(TouchableOpacity)({
+const TrackingContainer = styled(TouchableOpacity)({
   flexDirection: 'row',
   flex: 1,
 });
@@ -60,11 +64,13 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         Animated.timing(this.state.fadeAnim, {
           toValue: 1,
           duration: 500,
+          useNativeDriver: true,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
           toValue: 40,
           duration: 500,
+          useNativeDriver: true,
         }).start();
       }
 
@@ -73,11 +79,13 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         Animated.timing(this.state.fadeAnim, {
           toValue: 0,
           duration: 500,
+          useNativeDriver: true,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
           toValue: 0,
           duration: 500,
+          useNativeDriver: true,
         }).start();
       }
     }, 200);

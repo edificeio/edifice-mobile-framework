@@ -143,6 +143,7 @@
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorFields": "Le formulaire contient des erreurs",
   "changePassword-errorRegex": "Le nouveau mot de passe ne correspond pas aux critères de sécurité.",
+  "changePassword-errorConfirm": "Les mots de passe doivent être identiques.",
   "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
   "common": {
     "all": "Tous",
@@ -186,6 +187,7 @@
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "for": "Pour",
+    "from": "De :",
     "idf": {
       "passwordRules": "Le nouveau mot de passe doit comporter 12 caractères minimum, incluant au minimum 1 majuscule, 1 minuscule et 1 chiffre ou 1 caractère spécial parmi les suivants : $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- ."
     },
@@ -199,7 +201,9 @@
     "quit": "Quitter",
     "readMore": "lire plus",
     "save": "Enregistrer",
+    "search": "Rechercher",
     "sommeNumeriqueAlert_temp": "La plateforme \"Somme Numérique\" ne sera plus disponible à partir de la rentrée 2021. Il faudra utiliser l'accès \"ENT Hauts-de-France\" dans la liste des réseaux sociaux éducatifs.",
+    "to": "À :",
     "url": {
       "cgu": "/assets/cgu/ODE_CGU.pdf",
       "cookies": "/assets/cgu/notice_cookies.pdf",
@@ -476,6 +480,42 @@
     }
   },
   "me-indicator": "(moi)",
+  "mediacentre": {
+    "add-favorite": "Ajouter aux favoris",
+    "advanced-search": "Recherche avancée",
+    "advancedSearch": {
+      "and": "ET",
+      "author": "Auteur :",
+      "level": "Niveau :",
+      "or": "OU",
+      "publisher": "Éditeur :",
+      "subject": "Discipline :",
+      "sources": "Sources :",
+      "title": "Titre :",
+      "search-author": "Rechercher un auteur",
+      "search-level": "Rechercher un niveau",
+      "search-publisher": "Rechercher un éditeur",
+      "search-subject": "Rechercher une discipline",
+      "search-title": "Rechercher un titre"
+    },
+    "cancel-search": "Annuler la recherche",
+    "copy-link": "Copier le lien",
+    "display-all": "Afficher tout",
+    "download-textbooks": "Votre manuel va s'afficher dans quelques instants...",
+    "empty-screen": "Vous n'avez pas de ressources pour l'instant",
+    "empty-search": "Nous sommes désolés. Il n'y a aucun résultat pour cette recherche",
+    "favorites": "Mes favoris",
+    "filter-search": "Filtrer la recherche",
+    "find-resources": "Rechercher une ressource",
+    "gar-resources": "Mes ressources GAR",
+    "home": "Accueil",
+    "mediacentre": "Médiacentre",
+    "my-signets": "Mes signets",
+    "orientation-signets": "Orientation / Découverte des métiers",
+    "remove-favorite": "Supprimer des favoris",
+    "signets": "signets",
+    "textbooks": "Mes manuels"
+  },
   "mediaNotAvailable": "Lecteur non disponible",
   "modify": "Modifier",
   "modules-names": {
@@ -537,6 +577,20 @@
   "rename": "Renommer",
   "restore-successful": "Restoration terminée",
   "schoolbook": {
+    "acknowledge": "Confirmer la lecture",
+    "acknowledged": "Lu",
+    "acknowledgement": "Lu",
+    "acknowledgements": "Lus",
+    "categories": {
+      "canteen": "Cantine",
+      "event": "Événements",
+      "last-minute": "Dernière minute",
+      "leisure": "Loisirs",
+      "outing": "Sorties",
+      "various": "Divers"
+    },
+    "response": "Réponse",
+    "responses": "Réponses",
     "schoolbookWordDetailsScreen": {
       "acknowledge": "Confirmer la lecture",
       "alreadyConfirmed": "Vous avez confirmé la lecture de ce mot",
@@ -561,15 +615,6 @@
     "appName": "Carnet de liaison",
     "tabName": "Carnet de liaison"
   },
-  "schoolbook-acknowledge": "Confirmer la lecture",
-  "schoolbook-already-confirmed": "Vous avez confirmé la lecture de ce mot",
-  "schoolbook-appTitle": "Carnet de liaison",
-  "schoolbook-back-with-ack": "Confirmer la lecture",
-  "schoolbook-back-without-ack": "Quitter",
-  "schoolbook-back-without-ack-confirm": "Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
-  "schoolbook-must-read": "Un parent doit lire ce mot !",
-  "schoolbook-read-by": "Lu par",
-  "schoolbook-readByNbRelatives": "Lu par {{nb}} parent(s)",
   "seeDetails": "Voir détails",
   "seeLess": "Voir moins",
   "seeMore": "Voir plus",
@@ -841,6 +886,12 @@
   "viesco-no-register-today": "Il n'y a pas d'appels aujourd'hui",
   "viesco-notifications": "Notifications",
   "viesco-pickChild": "Choisissez un enfant",
+  "viesco-incidents-punishments-date": {
+    "for-the": "Pour le ",
+    "from": "Du ",
+    "created-on": "Créé le ",
+    "to": " au "
+  },
   "viesco-register": "Appel",
   "viesco-register-date": "Appels du",
   "viesco-report-card": "Relevé de notes",

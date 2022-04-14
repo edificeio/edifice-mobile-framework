@@ -1,11 +1,16 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
-import { TouchableOpacityProps } from 'react-native';
+import { TextStyle, TouchableOpacityProps } from 'react-native';
+
+
+
+import theme from '~/app/theme';
+
+
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Icon } from './icons/Icon';
 
-import theme from '~/app/theme';
 
 export interface ButtonTextIconProps {
   onPress: () => any;
@@ -15,9 +20,10 @@ export interface ButtonTextIconProps {
   title: string;
   whiteSpace?: string;
   style?: TouchableOpacityProps;
+  textStyle?: TextStyle;
 }
 
-const ButtonText = style.text({
+const ButtonText = styled.Text({
   backgroundColor: 'transparent',
   color: theme.color.secondary.regular,
   fontWeight: '400',
@@ -26,7 +32,7 @@ const ButtonText = style.text({
   textAlignVertical: 'center',
 });
 
-const ButtonContainer = style(TouchableOpacity)({
+const ButtonContainer = styled(TouchableOpacity)({
   alignItems: 'center',
   flex: 0,
   flexGrow: 0,

@@ -1,16 +1,16 @@
-import style from 'glamorous-native';
+import styled from '@emotion/native';
 import * as React from 'react';
-import { Animated, ActivityIndicator, View, Text, Platform, LayoutEvent } from 'react-native';
+import { ActivityIndicator, Animated, LayoutEvent, Platform, Text, View } from 'react-native';
 import { AnimatedValue } from 'react-navigation';
 import { connect } from 'react-redux';
-
-import { NotifierState } from './reducer';
 
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Icon } from '~/ui/icons/Icon';
 
-const NotifierWrapper = style(TouchableOpacity)({
+import { NotifierState } from './reducer';
+
+const NotifierWrapper = styled(TouchableOpacity)({
   flex: 1,
   flexDirection: 'row',
 });
@@ -48,13 +48,13 @@ class Notifier extends React.Component<
           Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 500,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }).start();
 
           Animated.timing(slideAnim, {
             toValue: notifierHeight,
             duration: 500,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }).start();
         }
 
@@ -63,13 +63,13 @@ class Notifier extends React.Component<
           Animated.timing(fadeAnim, {
             toValue: 0,
             duration: 500,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }).start();
 
           Animated.timing(slideAnim, {
             toValue: 0,
             duration: 500,
-            useNativeDriver: false,
+            useNativeDriver: true,
           }).start();
         }
       }, 200);

@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
 import { LocalFile } from '~/framework/util/fileHandler';
-import { ButtonTextIcon } from '~/ui';
+import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
 export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
@@ -56,14 +56,14 @@ export class ImagePicker extends React.PureComponent<
         try {
           LocalFile.pick({ source: 'camera' }, cameraOptions, undefined).then(realCallback);
         } catch (error) {
-          console.error(error);
+          //TODO: Manage error
         }
       },
       gallery: async () => {
         try {
           LocalFile.pick({ source: 'galery', multiple }, undefined, galeryOptions).then(realCallback);
         } catch (error) {
-          console.error(error);
+          //TODO: Manage error
         }
       },
       cancel: () => {
@@ -76,7 +76,7 @@ export class ImagePicker extends React.PureComponent<
         <ModalBox backdropOpacity={0.5} isVisible={this.state.showModal}>
           <ModalContent>
             {menuActions.map(a => (
-              <ModalContentBlock style={{ marginBottom: 20 }}>
+              <ModalContentBlock style={{ marginBottom: 20 }} key={a.id}>
                 <ButtonTextIcon
                   style={{ width: 250 }}
                   textStyle={{ fontSize: 18, padding: 15, marginTop: -10 }}

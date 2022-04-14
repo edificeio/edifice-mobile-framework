@@ -1,10 +1,8 @@
 # OSX
-#
 .DS_Store
 **/.DS_Store
 
 # Xcode
-#
 build/
 ios/Pods/
 *.pbxuser
@@ -27,7 +25,6 @@ DerivedData
 .vscode/
 
 # Android/IntelliJ
-#
 build/
 .idea
 .gradle
@@ -39,7 +36,6 @@ android/app/release
 android/app/src/main/assets/index.android.bundle
 
 # node.js / npm / yarn
-#
 node_modules/
 npm-debug.log
 yarn-error.log
@@ -51,18 +47,10 @@ buck-out/
 !debug.keystore
 
 # Fastlane
-#
-# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
-# screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/
-
 */fastlane/report.xml
 */fastlane/Preview.html
 */fastlane/screenshots
-
 fastlane
-Gemfile
 
 # CREDENTIALS for AppCenter & Google Firebase.
 # These files are also ignored with override mechanics. These lines are additinal protection to prevent committing hem.
@@ -70,10 +58,6 @@ Gemfile
 **/GoogleService-Info.plist
 **/appcenter-config.json
 **/AppCenter-Config.plist
-
-# Obsolete ode-plugin files.
-/assets/icons
-/ode-framework-conf.ts
 
 # Asset bundles automatically generated
 ios/assets
@@ -93,3 +77,5 @@ yarn.lock
 __overrides__
 __stashSpec__
 
+# Ruby
+vendor

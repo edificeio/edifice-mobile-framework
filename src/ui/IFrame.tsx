@@ -1,14 +1,19 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { View, Platform, StatusBar, ViewStyle, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Platform, SafeAreaView, StatusBar, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import { Loading } from '.';
+
+
+import { UI_SIZES } from '~/framework/components/constants';
+import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import { Loading } from '~/ui/Loading';
+
+
+
 import { MediaAction } from './MediaAction';
 import { Italic } from './Typography';
 import { SafeWebView } from './Webview';
 
-import { mainNavNavigate } from '~/navigation/helpers/navHelper';
-import { UI_SIZES } from '~/framework/components/constants';
 
 export class IFrame extends React.Component<
   {

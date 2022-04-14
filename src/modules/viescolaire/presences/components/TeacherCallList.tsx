@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import { TextBold } from '~/ui/Typography';
 
 import CourseComponent from './CourseComponent';

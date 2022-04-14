@@ -8,8 +8,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 
-
-
 import { getSessionInfo } from '~/App';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
@@ -19,7 +17,14 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';
 import { deleteMailsAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/zimbra/actions/mailContent';
-import { addAttachmentAction, deleteAttachmentAction, forwardMailAction, makeDraftMailAction, sendMailAction, updateDraftMailAction } from '~/modules/zimbra/actions/newMail';
+import {
+  addAttachmentAction,
+  deleteAttachmentAction,
+  forwardMailAction,
+  makeDraftMailAction,
+  sendMailAction,
+  updateDraftMailAction,
+} from '~/modules/zimbra/actions/newMail';
 import { getSignatureAction } from '~/modules/zimbra/actions/signature';
 import MailContentMenu from '~/modules/zimbra/components/MailContentMenu';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
@@ -28,10 +33,7 @@ import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
 
-
-
 import SignatureModal from './SignatureModal';
-
 
 export enum DraftType {
   NEW,
@@ -151,10 +153,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   navigationHeaderFunction = {
     getAskForAttachment: (dispatch: Dispatch) => {
-      console.log('will pick file');
       pickFile()
         .then(contentUri => {
-          console.log('picked', contentUri);
           this.getAttachmentData(contentUri);
         })
         .catch(err => {
@@ -195,7 +195,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
         this.props.navigation.goBack();
       } catch (e) {
-        console.log(e);
+        // TODO: Manage error
       }
     },
     getDeleteDraft: () => {
@@ -385,11 +385,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         ret[key] = value.map(user => user.id);
       } else if (key === 'body') {
         if (this.state.signature.text !== '') {
-            const sign = '<div class="signature new-signature ng-scope">' + this.state.signature.text + '</div>\n\n';
-            ret[key] = value + sign + prevBody;
-          } else {
-            ret[key] = value + prevBody;
-          }
+          const sign = '<div class="signature new-signature ng-scope">' + this.state.signature.text + '</div>\n\n';
+          ret[key] = value + sign + prevBody;
+        } else {
+          ret[key] = value + prevBody;
+        }
       } else {
         ret[key] = value;
       }
@@ -401,11 +401,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     this.setState({ tempAttachment: file });
 
     try {
-      console.log('added new attachment', file);
       const newAttachments = (await this.props.addAttachment(this.state.id!, file)) as [];
-      console.log('getAttachmentData -> newAttachments', newAttachments);
       const formattedNewAttachments = newAttachments.map((att: any) => {
-        console.log('format attachment', att);
         return {
           filename: att.filename,
           filetype: att.contentType,
@@ -448,7 +445,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     try {
       this.props.forwardMail(this.state.id, this.state.replyTo);
     } catch (e) {
-      console.log(e);
+      // TODO: Manage error
     }
   };
 
@@ -544,7 +541,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
           }
           onAttachmentChange={attachments => {
-            console.log('onAttachmentChange', attachments);
             return this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }));
           }}
           onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}

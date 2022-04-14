@@ -24,7 +24,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
-import { Loading } from '~/ui';
+import { Loading } from '~/ui/Loading';
 import today from '~/utils/today';
 
 import config from '../config';
@@ -82,7 +82,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     pastDateLimit: today(),
   };
 
-  getDerivedStateFromProps(nextProps: any, prevState: any) {
+  static getDerivedStateFromProps(nextProps: any, prevState: any) {
     if (nextProps.isFetching !== prevState.fetching) {
       return { fetching: nextProps.isFetching };
     } else return null;
@@ -181,7 +181,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             } else {
               const isPastDate = title.isBefore(today(), 'day');
               const dayOfTheWeek = getDayOfTheWeek(title);
-              const dayColor = theme.days[dayOfTheWeek];
+              const dayColor = theme.homeworkDays[dayOfTheWeek];
               const timelineColor = isPastDate ? theme.greyPalette.cloudy : dayColor;
               return (
                 <View
@@ -280,7 +280,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                 buttonAction={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
                   if (!DEPRECATED_getCurrentPlatform()) {
-                    console.warn('Must have a platform selected to redirect the user');
                     return null;
                   }
                   const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;

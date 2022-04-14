@@ -6,7 +6,7 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, TextBold } from '~/framework/components/text';
 import { homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { Icon } from '~/ui';
+import { Icon } from '~/ui/icons/Icon';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 

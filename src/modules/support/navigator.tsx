@@ -1,6 +1,6 @@
-import { createStackNavigator } from "react-navigation-stack";
+import { createStackNavigator } from 'react-navigation-stack';
 
-import Support from "./containers/Support";
+import Support from './containers/Support';
 
 export default () =>
   createStackNavigator(
@@ -8,6 +8,6 @@ export default () =>
       Support,
     },
     {
-      headerMode: "none",
-    }
+      headerMode: 'none',
+    },
   );

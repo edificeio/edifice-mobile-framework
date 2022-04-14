@@ -1,7 +1,6 @@
 /**
  * Theme declaration and overloading system.
  */
-
 import deepmerge from 'deepmerge';
 import { ColorValue } from 'react-native';
 
@@ -48,14 +47,6 @@ export interface ITheme {
     failure: ColorValue;
     warning: ColorValue;
   };
-  days: {
-    monday: ColorValue;
-    tuesday: ColorValue;
-    wednesday: ColorValue;
-    thursday: ColorValue;
-    friday: ColorValue;
-    saturday: ColorValue;
-  };
   flashMessages: {
     'grey-dark': ColorValue;
     red: ColorValue;
@@ -72,6 +63,26 @@ export interface ITheme {
     pearl: ColorValue;
     fog: ColorValue;
     white: ColorValue;
+  };
+  homeworkDays: {
+    monday: ColorValue;
+    tuesday: ColorValue;
+    wednesday: ColorValue;
+    thursday: ColorValue;
+    friday: ColorValue;
+    saturday: ColorValue;
+  };
+  schoolbook: {
+    acknowledge: ColorValue;
+    acknowledged: ColorValue;
+    categories: {
+      canteen: ColorValue;
+      event: ColorValue;
+      'last-minute': ColorValue;
+      leisure: ColorValue;
+      outing: ColorValue;
+      various: ColorValue;
+    };
   };
   themeOpenEnt: {
     cyan: ColorValue;
@@ -127,14 +138,6 @@ export const defaultTheme: ITheme = {
     failure: '#e13a3a',
     warning: '#f59700',
   },
-  days: {
-    monday: '#6fbe2e',
-    tuesday: '#a348c0',
-    wednesday: '#46afe6',
-    thursday: '#ff3a55',
-    friday: '#ff8d2e',
-    saturday: '#eac403',
-  },
   flashMessages: {
     'grey-dark': '#5b6472',
     red: '#c74848',
@@ -151,6 +154,26 @@ export const defaultTheme: ITheme = {
     pearl: '#f2f2f2',
     fog: '#fafafa',
     white: '#ffffff',
+  },
+  homeworkDays: {
+    monday: '#6fbe2e',
+    tuesday: '#a348c0',
+    wednesday: '#46afe6',
+    thursday: '#ff3a55',
+    friday: '#ff8d2e',
+    saturday: '#eac403',
+  },
+  schoolbook: {
+    acknowledge: '#ff8d2e',
+    acknowledged: '#6fbe2e',
+    categories: {
+      canteen: '#2a9cc8',
+      event: '#763294',
+      'last-minute': '#e13a3a',
+      leisure: '#ecbe30',
+      outing: '#46bfaf',
+      various: '#1a22a2',
+    },
   },
   themeOpenEnt: {
     cyan: '#4bafd5',
