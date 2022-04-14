@@ -6,6 +6,7 @@ import { NotificationHandlerFactory } from '~/infra/pushNotification';
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 import { CommonStyles } from '~/styles/common/styles';
 import { backendUserApp } from '~/user/reducers/auth';
+import { PictureProps } from '~/framework/components/picture';
 
 /**
  * All specs to define functional module
@@ -41,6 +42,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public appInfo: backendUserApp;
   public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
   public hasRight: (apps: any[]) => boolean;
+  public picture?: PictureProps;
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
@@ -54,6 +56,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.notifHandlerFactory = opts.notifHandlerFactory;
     this.hasRight = opts.hasRight || (apps => apps.some(app => app.name === this.apiName));
     this.blacklistFolders = opts.blacklistFolders; // Some hack here. This type of config will be gone soon
+    this.picture = opts.picture;
   }
 
   public getLocalState(globalState: any) {
@@ -68,7 +71,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     return {
       screen: comp,
 
-      navigationOptions: () => (this.group ? { headerShown: false } : createMainTabNavOption(I18n.t(this.displayName), this.iconName)),
+      navigationOptions: () => (this.group ? { headerShown: false } : createMainTabNavOption(I18n.t(this.displayName), this.picture ?? this.iconName)),
     };
   }
 

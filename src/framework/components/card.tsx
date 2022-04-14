@@ -292,12 +292,11 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
       <Picture {...picture} />
       {text ? (
         typeof text === 'string' ? (
-          <View style={{ justifyContent: 'center', alignItems: 'center', height: remlh(3) }}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: UI_SIZES.spacing.smallPlus, height: remlh(2) }}>
             <Text
               numberOfLines={2}
               style={[
                 {
-                  marginTop: UI_SIZES.spacing.tiny,
                   textAlign: 'center',
                   ...FontStyle.SemiBold,
                 },
@@ -322,9 +321,15 @@ export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityP
 
 function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
   const { style, picture, pictureStyle, ...rest } = props;
-  picture['style'] = { maxWidth: '100%', marginTop: UI_SIZES.spacing.large, ...pictureStyle };
+  picture['style'] = { maxWidth: '100%', ...pictureStyle };
   picture['resizeMode'] = 'contain';
-  return <PictureCard style={[{ aspectRatio: UI_SIZES.aspectRatios.card }, style]} picture={picture} {...rest} />;
+  return (
+    <PictureCard
+      style={[{ paddingVertical: UI_SIZES.spacing.large, paddingHorizontal: UI_SIZES.spacing.large }, style]}
+      picture={picture}
+      {...rest}
+    />
+  );
 }
 export function SelectorPictureCard(props: PictureCardProps) {
   return <SelectorPictureCard_Base cardComponent={Card} {...props} />;

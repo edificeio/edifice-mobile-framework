@@ -8,7 +8,7 @@
     "android": "react-native run-android",
     "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js reset-cache",
     "deploy-alpha": "fastlane deploy alpha",
-    "deploy-rc": "fastlane deploy alpha",
+    "deploy-rc": "fastlane deploy rc",
     "install-and-pod": "yarn install && cd ios && pod install && cd ..",
     "ios": "react-native run-ios",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",

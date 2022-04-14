@@ -1,11 +1,11 @@
 import FunctionalModuleConfig from '~/infra/moduleTool';
 
+
 export default new FunctionalModuleConfig({
   name: 'workspace',
   apiName: 'Espace documentaire',
   displayName: 'workspace',
-  iconName: 'workspace_folder',
-  iconColor: '#e21d3a',
+  picture: { type: 'NamedSvg', name: 'files' },
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors

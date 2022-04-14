@@ -6,8 +6,7 @@ export default new FunctionalModuleConfig({
   name: 'homework',
   apiName: 'Cahier de texte',
   displayName: 'Homework',
-  iconName: 'book-alt',
-  iconColor: '#46bfaf',
+  picture: {type: 'NamedSvg', name: 'homework2D'},
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors

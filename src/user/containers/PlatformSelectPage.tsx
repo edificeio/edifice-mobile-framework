@@ -95,7 +95,7 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
             renderItem={({ item }) => (
               <TouchableSelectorPictureCard
                 picture={{ type: 'Image', source: item.logo }}
-                pictureStyle={{ maxHeight: 42 }}
+                pictureStyle={{ height: 64 }}
                 text={item.displayName}
                 onPress={() => this.handleSelectPlatform(item.name)}
               />

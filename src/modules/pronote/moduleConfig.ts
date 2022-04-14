@@ -1,6 +1,9 @@
+import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
+
+
+
 import { IConnectorState } from './reducers/connector';
 
-import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default createNavigableModuleConfig<'pronote', IConnectorState>({
   name: 'pronote',
@@ -9,5 +12,6 @@ export default createNavigableModuleConfig<'pronote', IConnectorState>({
   entcoreScope: ['pronote'],
   iconName: 'pronote',
   iconColor: '#763294',
+  picture: { type: 'Image', source: require('ASSETS/images/logo-pronote.png') },
   registerAs: 'myAppsModule',
 });
