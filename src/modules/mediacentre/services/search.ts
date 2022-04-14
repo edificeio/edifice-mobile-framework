@@ -2,6 +2,14 @@ import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { AdvancedSearchParams, Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
+const concatResources = (response: any) => {
+  let resources: any[] = [];
+  for (const res of response) {
+    resources = resources.concat(res.data.resources);
+  }
+  return resources;
+};
+
 const addFieldWhenFilled = (field: Field) => {
   return { value: field.value, operands: field.operand ? '$and' : '$or' };
 };
@@ -19,7 +27,7 @@ export const searchService = {
     const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(reponse.data.resources);
+    return resourcesAdapter(concatResources(reponse));
   },
   getSimple: async (query: string) => {
     const jsondata = {
@@ -38,7 +46,7 @@ export const searchService = {
     const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(reponse.data.resources);
+    return resourcesAdapter(concatResources(reponse));
   },
   getAdvanced: async (params: AdvancedSearchParams) => {
     const jsondata = {
@@ -60,6 +68,6 @@ export const searchService = {
     const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(reponse.data.resources);
+    return resourcesAdapter(concatResources(reponse));
   },
 };
