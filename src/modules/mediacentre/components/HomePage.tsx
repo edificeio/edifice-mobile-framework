@@ -16,7 +16,7 @@ import { SmallCard } from './SmallCard';
 
 const styles = StyleSheet.create({
   gridMainContainer: {
-    marginBottom: 15,
+    marginBottom: 25,
   },
   gridHeaderContainer: {
     flexDirection: 'row',
@@ -132,7 +132,8 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         </View>
         <GridList
           data={gridProps.resources.slice(0, 4)}
-          renderItem={({ item }) => <SmallCard {...gridProps} resource={item} key={item.uid || item.id} />}
+          renderItem={({ item }) => <SmallCard {...gridProps} resource={item} />}
+          keyExtractor={item => item.uid || item.id}
           gap={10}
           gapOutside={10}
         />

@@ -24,10 +24,10 @@ export const searchService = {
         query: '.*',
       },
     };
-    const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
+    const response = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(concatResources(reponse));
+    return resourcesAdapter(concatResources(response));
   },
   getSimple: async (query: string) => {
     const jsondata = {
@@ -43,10 +43,10 @@ export const searchService = {
         query,
       },
     };
-    const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
+    const response = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(concatResources(reponse));
+    return resourcesAdapter(concatResources(response));
   },
   getAdvanced: async (params: AdvancedSearchParams) => {
     const jsondata = {
@@ -65,9 +65,9 @@ export const searchService = {
         jsondata.data[field.name] = addFieldWhenFilled(field);
       }
     }
-    const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
+    const response = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(concatResources(reponse));
+    return resourcesAdapter(concatResources(response));
   },
 };

@@ -52,6 +52,12 @@ const styles = StyleSheet.create({
   },
 });
 
+interface SearchFilters {
+  level: string[];
+  'resource-type': string[];
+  source: string[];
+}
+
 interface AdvancedSearchFieldProps {
   field: Field;
 }
@@ -72,6 +78,23 @@ interface SearchContentProps {
   onCancelSearch: () => void;
   removeFavorite: (id: string, source: Source) => any;
 }
+
+const resourceMatchesFilters = (resource: Resource, filters: SearchFilters) => {
+  for (const type of filters['resource-type']) {
+    if (resource.types.includes(type)) {
+      return true;
+    }
+  }
+  if (filters.source.includes(resource.source.substring(30))) {
+    return true;
+  }
+  for (const level of filters.level) {
+    if (resource.levels.includes(level)) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (props: AdvancedSearchFieldProps) =>
   props.field.value !== '' ? (
@@ -112,8 +135,25 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
 
 export const SearchContent: React.FunctionComponent<SearchContentProps> = (props: SearchContentProps) => {
   const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
-  const updateFilteredResources = (resources: Resource[]) => {
-    setFilteredResources(resources);
+  const [activeFilters, setActiveFilters] = useState<SearchFilters>({ 'resource-type': [], source: [], level: [] });
+  const filterResources = () => {
+    const filtered: Resource[] = [];
+    for (const resource of props.resources) {
+      if (resourceMatchesFilters(resource, activeFilters)) {
+        filtered.push(resource);
+      }
+    }
+    setFilteredResources(filtered);
+  };
+  const onChange = (title: string, item: string, active: boolean) => {
+    const index = activeFilters[title].indexOf(item);
+    if (active) {
+      activeFilters[title].push(item);
+    } else if (index !== -1) {
+      activeFilters[title].splice(index, 1);
+    }
+    setActiveFilters(activeFilters);
+    filterResources();
   };
   return (
     <View style={styles.mainContainer}>
@@ -121,12 +161,12 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
       <FlatList
         data={filteredResources.length ? filteredResources : props.resources}
         renderItem={({ item }) => {
-          return <BigCard {...props} resource={item} />;
+          return <BigCard {...props} resource={item} key={item.uid || item.id} />;
         }}
         keyExtractor={item => item.uid || item.id}
         ListHeaderComponent={
           props.resources.length ? (
-            <SearchFilter resources={props.resources} onChange={updateFilteredResources} containerStyle={styles.filterContainer} />
+            <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
           ) : null
         }
         ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}

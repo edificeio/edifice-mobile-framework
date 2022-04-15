@@ -9,7 +9,7 @@ export const signetsService = {
     const mysignetsResponse = await fetchJSONWithCache(`/mediacentre/mysignets`, {
       method: 'get',
     });
-    return resourcesAdapter(signetsResponse.data.resources)
+    return resourcesAdapter(signetsResponse.data.signets.resources)
       .filter(resource => resource.types.includes('Signet'))
       .concat(resourcesAdapter(mysignetsResponse).filter(resource => resource.owner_id !== userId))
       .sort(compareResources);
@@ -18,6 +18,6 @@ export const signetsService = {
     const resources = await fetchJSONWithCache(`/mediacentre/signets`, {
       method: 'get',
     });
-    return resourcesAdapter(resources.data.resources).filter(resource => resource.types.includes('Orientation'));
+    return resourcesAdapter(resources.data.signets.resources).filter(resource => resource.types.includes('Orientation'));
   },
 };

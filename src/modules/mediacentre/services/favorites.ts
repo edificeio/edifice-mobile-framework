@@ -4,8 +4,8 @@ import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
 export const favoritesService = {
   get: async () => {
-    const reponse = await fetchJSONWithCache(`/mediacentre/favorites`);
-    const favorites = resourcesAdapter(reponse.data);
+    const response = await fetchJSONWithCache(`/mediacentre/favorites`);
+    const favorites = resourcesAdapter(response.data);
     for (const resource of favorites) {
       resource.favorite = true;
     }

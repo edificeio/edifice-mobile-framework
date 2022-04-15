@@ -46,41 +46,44 @@ const styles = StyleSheet.create({
   },
 });
 
+interface FilterItemProps {
+  item: { value: string; active: boolean };
+  sectionTitle: string;
+
+  onChange: (title: string, item: string, active: boolean) => void;
+}
+
 interface FilterSectionProps {
   items: any[];
   title: string;
-}
 
-interface FilterItemProps {
-  checked: boolean;
-  name: string;
-
-  setChecked: (value: boolean) => void;
+  onChange: (title: string, item: string, active: boolean) => void;
 }
 
 interface SearchFilterProps {
   containerStyle?: ViewStyle;
   resources: Resource[];
 
-  onChange: (resources: Resource[]) => void;
+  onChange: (title: string, item: string, active: boolean) => void;
 }
 
 const getFilters = (resources: Resource[]) => {
-  const types: string[] = [];
-  const sources: string[] = [];
-  const levels: string[] = [];
+  const types: { value: string; active: boolean }[] = [];
+  const sources: { value: string; active: boolean }[] = [];
+  const levels: { value: string; active: boolean }[] = [];
   for (const resource of resources) {
+    const source = resource.source.substring(30);
     for (const type of resource.types) {
-      if (!types.includes(type)) {
-        types.push(type);
+      if (!types.some(({ value }) => value === type)) {
+        types.push({ value: type, active: false });
       }
     }
-    if (!sources.includes(resource.source)) {
-      sources.push(resource.source);
+    if (!sources.some(({ value }) => value === source)) {
+      sources.push({ value: source, active: false });
     }
     for (const level of resource.levels) {
-      if (!levels.includes(level)) {
-        levels.push(level);
+      if (!levels.some(({ value }) => value === level)) {
+        levels.push({ value: level, active: false });
       }
     }
   }
@@ -92,14 +95,14 @@ const getFilters = (resources: Resource[]) => {
 };
 
 const FilterItem: React.FunctionComponent<FilterItemProps> = (props: FilterItemProps) => {
-  const setChecked = () => {
-    props.setChecked(!props.checked);
+  const check = () => {
+    props.onChange(props.sectionTitle, props.item.value, !props.item.active);
   };
   return (
     <View style={styles.itemContainer}>
-      <Checkbox checked={props.checked} onCheck={setChecked} onUncheck={setChecked} />
-      <TouchableOpacity onPress={setChecked} style={styles.itemTextContainer}>
-        <Text>{props.name}</Text>
+      <Checkbox checked={props.item.active} onCheck={check} onUncheck={check} />
+      <TouchableOpacity onPress={check} style={styles.itemTextContainer}>
+        <Text>{props.item.value}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -120,16 +123,25 @@ const FilterSection: React.FunctionComponent<FilterSectionProps> = (props: Filte
         </View>
         <View style={styles.sectionUnderlineView} />
       </TouchableOpacity>
-      {expanded ? props.items.map(item => <FilterItem name={item} checked={false} setChecked={() => true} />) : null}
+      {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} />) : null}
     </View>
   );
 };
 
 export const SearchFilter: React.FunctionComponent<SearchFilterProps> = (props: SearchFilterProps) => {
-  const [filters] = useState(getFilters(props.resources));
+  const [filters, setFilters] = useState(getFilters(props.resources));
   const [expanded, setExpanded] = useState<boolean>(false);
   const expand = () => {
     setExpanded(!expanded);
+  };
+  const onChange = (title: string, item: string, active: boolean) => {
+    props.onChange(title, item, active);
+    const filter = filters.find(x => x.title === title);
+    if (filter) {
+      const index = filters.indexOf(filter);
+      filters[index].items = filters[index].items.map(i => (i.value === item ? { value: item, active } : i));
+      setFilters(filters);
+    }
   };
   return (
     <View style={[styles.mainContainer, props.containerStyle]}>
@@ -140,7 +152,7 @@ export const SearchFilter: React.FunctionComponent<SearchFilterProps> = (props: 
         <FlatList
           data={filters}
           keyExtractor={(item, index) => item.title + index}
-          renderItem={({ item }) => <FilterSection title={item.title} items={item.items} />}
+          renderItem={({ item }) => <FilterSection title={item.title} items={item.items} onChange={onChange} />}
         />
       ) : null}
     </View>
