@@ -1,16 +1,19 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import React, { useState } from 'react';
-import { Image, StyleSheet, View, TouchableOpacity, Linking } from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { TouchCard } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getAuthHeader } from '~/infra/oauth';
+import { FavoriteIcon, IconButton } from '~/modules/mediacentre/components/SmallCard';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
-import { IconButton, FavoriteIcon } from '~/modules/mediacentre/components/SmallCard';
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    marginBottom: 15,
+  },
   categoryHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -26,7 +29,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
-  mainContainer: {
+  chevronButtonContainer: {
+    width: 24,
+  },
+  cardContainer: {
     width: '35%',
     overflow: 'hidden',
   },
@@ -68,21 +74,21 @@ interface FavoritesCarouselProps {
 
 const getCardColors = (length: number): string[] => {
   const colors = ['#4bafd5', '#46bfaf', '#ecbe30', '#e13a3a', '#b930a2', '#763294', '#1a22a2'];
-  let cardColors: string[] = [];
+  const cardColors: string[] = [];
 
   for (let index = 0; index < length; index += 1) {
     cardColors.push(colors[Math.floor(Math.random() * colors.length)]);
   }
   return cardColors;
-}
+};
 
 export const getImageUri = (value: string): string => {
   if (value.startsWith('/')) {
     const url = DEPRECATED_getCurrentPlatform()!.url;
-    return (url + value);
+    return url + value;
   }
-  return (value);
-}
+  return value;
+};
 
 const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
   const openURL = () => {
@@ -92,19 +98,23 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     Clipboard.setString(props.resource.link);
   };
   return (
-    <TouchCard onPress={openURL} style={styles.mainContainer}>
+    <TouchCard onPress={openURL} style={styles.cardContainer}>
       <View style={[styles.coloredContainer, { backgroundColor: props.color }]} />
       <View style={styles.contentContainer}>
         <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
-        <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }} style={styles.imageContainer} resizeMode='contain' />
+        <Image
+          source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
+          style={styles.imageContainer}
+          resizeMode="contain"
+        />
         <View style={styles.actionsContainer}>
           <FavoriteIcon {...props} />
-          <IconButton icon='link' size={20} color='#F53B56' onPress={copyToClipboard} />
+          <IconButton icon="link" size={20} color="#F53B56" onPress={copyToClipboard} />
         </View>
       </View>
     </TouchCard>
   );
-}
+};
 
 export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> = (props: FavoritesCarouselProps) => {
   const [index, setIndex] = useState<number>(0);
@@ -116,7 +126,7 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
     setIndex(index + 1);
   };
   return (
-    <View>
+    <View style={styles.mainContainer}>
       <View style={styles.categoryHeaderContainer}>
         <TextBold>{I18n.t('mediacentre.favorites').toUpperCase()}</TextBold>
         <TouchableOpacity onPress={props.onDisplayAll}>
@@ -124,20 +134,18 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
         </TouchableOpacity>
       </View>
       <View style={styles.carouselContainer}>
-        <View style={{ width: 24 }}>
-          {index > 0 ?
-            <IconButton icon='chevron-left' size={24} color='black' onPress={decreaseIndex} />
-          : null}
+        <View style={styles.chevronButtonContainer}>
+          {index > 0 ? <IconButton icon="chevron-left" size={24} color="black" onPress={decreaseIndex} /> : null}
         </View>
         {props.resources.slice(index, index + 2).map((item, idx) => {
-          return <Card {...props} resource={item} color={cardColors[index + idx]} key={item.id} />
+          return <Card {...props} resource={item} color={cardColors[index + idx]} key={item.uid || item.id} />;
         })}
-        <View style={{ width: 24 }}>
-          {index + 2 < props.resources.length ?
-            <IconButton icon='chevron-right' size={24} color='black' onPress={increaseIndex} />
-          : null}
+        <View style={styles.chevronButtonContainer}>
+          {index + 2 < props.resources.length ? (
+            <IconButton icon="chevron-right" size={24} color="black" onPress={increaseIndex} />
+          ) : null}
         </View>
       </View>
     </View>
   );
-}
+};

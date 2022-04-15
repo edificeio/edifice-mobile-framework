@@ -1,18 +1,12 @@
-/**
- * Médiacentre Reducer
- */
-
+import { IExternalsState } from './state/externals';
 import { IFavoritesState } from './state/favorites';
-import { IGarResourcesState } from './state/garResources';
 import { ISearchState } from './state/search';
 import { ISignetsState } from './state/signets';
 import { ITextbooksState } from './state/textbooks';
 
-// State
-
 export interface IMediacentre_State {
+  externals: IExternalsState;
   favorites: IFavoritesState;
-  garResources: IGarResourcesState;
   search: ISearchState;
   signets: ISignetsState;
   textbooks: ITextbooksState;

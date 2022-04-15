@@ -6,7 +6,8 @@ export default () =>
   createStackNavigator(
     {
       Mediacentre: Dashboard,
-    }, {
+    },
+    {
       headerMode: 'none',
-    }
+    },
   );
