@@ -12,7 +12,7 @@ export function fetchVisiblesAction() {
   return async (dispatch: Dispatch, getState: () => IGlobalState) => {
     try {
       dispatch(dataActions.request());
-      const session = getUserSession(getState());
+      const session = getUserSession();
       const data = await visiblesService.get(session);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {

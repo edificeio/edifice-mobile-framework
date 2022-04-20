@@ -8,7 +8,7 @@ import { getUserSession } from '~/framework/util/session';
 export function downloadAttachmentAction(att: IDistantFile) {
   return async (dispatch: Dispatch, getState: () => IGlobalState) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       (await fileHandlerService.downloadFile(session, att, {})).open();
     } catch (errmsg) {
       // TODO: Manage error

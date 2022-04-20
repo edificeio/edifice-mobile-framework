@@ -49,7 +49,7 @@ export const newDownloadAction =
           ret.push(
             fileTransferService
               .downloadFile(
-                getUserSession(getState()),
+                getUserSession(),
                 convertIFileToIDistantFile(sel),
                 {},
                 {

@@ -68,7 +68,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
 
 const mapStateToProps: (s: IGlobalState) => { session: IUserSession } = s => {
   return {
-    session: getUserSession(s),
+    session: getUserSession(),
   };
 };
 

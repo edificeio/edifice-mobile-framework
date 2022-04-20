@@ -677,7 +677,7 @@ const mapStateToProps = (state: any) => {
   return {
     mail: data,
     isFetching,
-    session: getUserSession(state)
+    session: getUserSession()
   };
 };
 

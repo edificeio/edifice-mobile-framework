@@ -79,7 +79,7 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
 
 const mapStateToProps: (state: any) => any = state => {
   const userType = getSessionInfo().type;
-  const userId = getUserSession(state).user.id;
+  const userId = getUserSession().user.id;
   const childId = userType === 'Student' ? userId : getSelectedChild(state)?.id;
   const structureId =
     userType === 'Student'

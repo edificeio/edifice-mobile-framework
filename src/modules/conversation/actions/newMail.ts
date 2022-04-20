@@ -37,7 +37,7 @@ export function updateDraftMailAction(mailId: string, mailDatas) {
 export function addAttachmentAction(mailId: string, attachment: LocalFile, callbacks?: IUploadCallbaks) {
   return async (dispatch: Dispatch, getState: () => IGlobalState) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       const newAttachment = await newMailService.addAttachment(session, mailId, attachment, callbacks);
       return newAttachment;
     } catch (errmsg) {

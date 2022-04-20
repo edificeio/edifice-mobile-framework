@@ -28,7 +28,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
   const resetAlertDisplay = () => setTimeout(() => (alertDisplayed = false), 1000);
 
   const inputRef: { current: TextInput | undefined } = React.useRef();
-  const session = useSelector(state => getUserSession(state));
+  const session = useSelector(state => getUserSession());
   const [comment, setComment] = React.useState<string>('');
   const [publishButtonWidth, setPublishButtonWidth] = React.useState<number | undefined>();
   const [commentId, setCommentId] = React.useState<string | undefined>();

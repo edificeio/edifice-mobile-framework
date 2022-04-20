@@ -30,7 +30,7 @@ const mapStateToProps: (state: any) => IChangePasswordPageDataProps = state => {
     externalError: activationState.submitError || '',
     passwordRegex: activationState.context.passwordRegex,
     submitState: activationState.submitState,
-    session: getUserSession(state),
+    session: getUserSession(),
     ...state[userConfig.reducerName].changePassword.submitted,
   };
 };
