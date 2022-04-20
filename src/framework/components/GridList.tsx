@@ -6,7 +6,6 @@
 import * as React from 'react';
 import { FlatList, FlatListProps, ListRenderItemInfo, View } from 'react-native';
 
-
 export interface GridListProps<ItemT> extends FlatListProps<ItemT> {
   gap?: number | [number, number]; // distance BETWEEN each item
   gapOutside?: number | [number, number]; // distance around the list in every direction
@@ -20,7 +19,8 @@ const gridListItemWrapperStyleBase = {
 export default function GridList<ItemT>(props: GridListProps<ItemT>) {
   let { renderItem, numColumns, columnWrapperStyle, gap, gapOutside, ...otherProps } = props;
   const realNumColumns = numColumns ?? 2;
-  const realGap = gap ?? 0, realGapHV = typeof realGap === 'number' ? [realGap, realGap] : realGap;
+  const realGap = gap ?? 0,
+    realGapHV = typeof realGap === 'number' ? [realGap, realGap] : realGap;
   const realGapOutside = gapOutside ?? 0,
     realGapOutsideHV = typeof realGapOutside === 'number' ? [realGapOutside, realGapOutside] : realGapOutside;
   const gridListItemWrapperStyleCustom = {
@@ -31,7 +31,7 @@ export default function GridList<ItemT>(props: GridListProps<ItemT>) {
     (info: ListRenderItemInfo<ItemT>) => ({
       paddingTop: info.index < realNumColumns ? realGapOutsideHV[1] : realGapHV[1],
       paddingBottom:
-        Math.floor(info.index / realNumColumns) >= Math.floor((props.data?.length ?? 0) / realNumColumns) ? realGapOutsideHV[1] : 0,
+        Math.floor(info.index / realNumColumns) + 1 >= Math.ceil((props.data?.length ?? 0) / realNumColumns) ? realGapOutsideHV[1] : 0,
     }),
     [gap, gapOutside, props.data],
   );

@@ -48,13 +48,13 @@ class Notifier extends React.Component<
           Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 500,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }).start();
 
           Animated.timing(slideAnim, {
             toValue: notifierHeight,
             duration: 500,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }).start();
         }
 
@@ -63,13 +63,13 @@ class Notifier extends React.Component<
           Animated.timing(fadeAnim, {
             toValue: 0,
             duration: 500,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }).start();
 
           Animated.timing(slideAnim, {
             toValue: 0,
             duration: 500,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }).start();
         }
       }, 200);
