@@ -3,12 +3,12 @@ import * as React from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { LoadingIndicator } from './loading';
-import { TextAction } from './text';
-
 import theme from '~/app/theme';
 import { getUserSession } from '~/framework/util/session';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
+
+import { LoadingIndicator } from './loading';
+import { TextAction } from './text';
 
 // TYPES ==========================================================================================
 
@@ -88,7 +88,6 @@ const CommentField = (props: ICommentField_Props, ref) => {
   return (
     <View
       style={{
-        backgroundColor: theme.color.background.card,
         flexDirection: 'row',
         alignItems: 'flex-end',
         padding: 12,
@@ -111,7 +110,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
         }}>
         <TextInput
           ref={inputRef}
-          style={{ flex: 1, marginRight: 12, paddingTop: 0 }}
+          style={{ flex: 1, marginRight: 12, paddingTop: 0, paddingBottom: 0 }}
           placeholder={I18n.t('common.comment.addComment')}
           onChangeText={text => setComment(text)}
           value={comment}
@@ -119,7 +118,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
           multiline
         />
         <View
-          style={{ height: 20, width: publishButtonWidth }}
+          style={{ height: 28, width: publishButtonWidth, justifyContent: 'center' }}
           onLayout={e => {
             const publishButtonWidth = e.nativeEvent.layout.width;
             setPublishButtonWidth(publishButtonWidth);
