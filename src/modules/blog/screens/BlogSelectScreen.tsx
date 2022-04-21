@@ -215,7 +215,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = s => ({ session: getUserSession(s) });
+const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = s => ({ session: getUserSession() });
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogSelectScreenEventProps = (
   dispatch,

@@ -355,7 +355,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
 const mapStateToProps: (s: IGlobalState) => IBlogCreatePostScreenDataProps = s => {
   return {
-    session: getUserSession(s),
+    session: getUserSession(),
   };
 };
 

@@ -16,7 +16,7 @@ import { loadNotificationsDefinitionsAction } from './notifDefinitions';
 import { loadNotificationFiltersSettingsAction } from './notifSettings';
 
 const _prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-  // const session = getUserSession(getState());
+  // const session = getUserSession();
   let state = moduleConfig.getState(getState()) as ITimeline_State;
   // 1 - Load notification definitions if necessary
   if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
@@ -37,7 +37,7 @@ const _prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, an
  */
 export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    const session = getUserSession(getState());
+    const session = getUserSession();
     const state = (await dispatch(_prepareNotificationsAction())) as unknown as ITimeline_State; // TS BUG: await is needed here
     if (state.notifications.isFetching) return;
 
@@ -72,7 +72,7 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
 export const loadNotificationsPageAction =
   (page?: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       let state = (await dispatch(_prepareNotificationsAction())) as unknown as ITimeline_State; // TS BUG: await is needed here
       page = page || state.notifications.nextPage;
       if (state.notifications.isFetching) return;
@@ -99,7 +99,7 @@ export const loadNotificationsPageAction =
 export const dismissFlashMessageAction =
   (flashMessageId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       // Dismiss flash message
       dispatch(flashMessagesActions.dismissRequest(flashMessageId));

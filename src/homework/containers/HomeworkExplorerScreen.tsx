@@ -15,7 +15,7 @@ import config from '../config';
 
 const mapStateToProps: (state: any) => IHomeworkExplorerScreenDataProps = state => {
   // Extract data from state
-  const session = getUserSession(state);
+  const session = getUserSession();
   const localState = state.homework;
   const homeworkDiaryList = localState.diaryList;
   if (!homeworkDiaryList.data)

@@ -38,7 +38,7 @@ const handleBlogNotificationAction: NotifHandlerThunkAction =
       if (!blogNotif) return { managed: 0 };
       const blogId = blogUriCaptureFunction(blogNotif.resource.uri).blogId;
       if (!blogId) return { managed: 0 };
-      const session = getUserSession(getState());
+      const session = getUserSession();
       const blogInfo = await blogService.get(session, blogId);
       if (!blogInfo) return { managed: 0 };
       mainNavNavigate(computeRelativePath(`${moduleConfig.routeName}/posts`, navState), {

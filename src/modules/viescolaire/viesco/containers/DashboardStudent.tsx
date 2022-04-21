@@ -63,7 +63,7 @@ const mapStateToProps: (state: any) => any = state => {
 const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
-  const childId = getUserSession(state).user.id;
+  const childId = getUserSession().user.id;
   const evaluations = getDevoirListState(state);
   const levels = getLevelsListState(state).data;
 

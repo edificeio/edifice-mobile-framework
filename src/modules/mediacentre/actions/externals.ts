@@ -1,20 +1,20 @@
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { textbooksService } from '~/modules/mediacentre/services/textbooks';
-import { ITextbooks, actionTypes } from '~/modules/mediacentre/state/textbooks';
+import { searchService } from '~/modules/mediacentre/services/search';
+import { IExternals, actionTypes } from '~/modules/mediacentre/state/externals';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-const dataActions = createAsyncActionCreators<ITextbooks>(actionTypes);
+const dataActions = createAsyncActionCreators<IExternals>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchTextbooksAction() {
+export function fetchExternalsAction() {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await textbooksService.get();
+      const data = await searchService.getExternals();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

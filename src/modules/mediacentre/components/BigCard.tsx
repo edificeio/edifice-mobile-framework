@@ -1,14 +1,15 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, StyleSheet, View, TouchableOpacity, Linking } from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { TouchableResourceCard } from '~/framework/components/card';
+import { Text } from '~/framework/components/text';
+import { getAuthHeader } from '~/infra/oauth';
+import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { Icon } from '~/ui';
 
 import { getImageUri } from './FavoritesCarousel';
-import { Text } from '~/framework/components/text';
-import { TouchableResourceCard } from '~/framework/components/card';
-import { getAuthHeader } from '~/infra/oauth';
-import { Icon } from '~/ui';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -38,6 +39,9 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 12,
   },
+  sourceImageContainer: {
+    alignSelf: 'flex-end',
+  },
 });
 
 interface ActionButtonProps {
@@ -54,7 +58,6 @@ interface FavoriteActionProps {
   addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
-
 
 interface SourceImageProps {
   size: number;
@@ -82,17 +85,33 @@ const FavoriteAction: React.FunctionComponent<FavoriteActionProps> = (props: Fav
   const addFavorite = () => {
     props.addFavorite(props.resource.id, props.resource);
   };
-  return (props.resource.favorite ?
-    <ActionButton icon='star' color='#FEC63D' text={I18n.t('mediacentre.remove-favorite')} onPress={removeFavorite} />
-    :
-    <ActionButton icon='star' color='#D6D6D6' text={I18n.t('mediacentre.add-favorite')} onPress={addFavorite} />
+  return props.resource.favorite ? (
+    <ActionButton icon="star" color="#FEC63D" text={I18n.t('mediacentre.remove-favorite')} onPress={removeFavorite} />
+  ) : (
+    <ActionButton icon="star" color="#D6D6D6" text={I18n.t('mediacentre.add-favorite')} onPress={addFavorite} />
   );
-}
+};
 
 export const SourceImage: React.FunctionComponent<SourceImageProps> = (props: SourceImageProps) => {
-  const image = (props.source === Source.GAR) ? require('ASSETS/images/logo-gar.png') : require('ASSETS/images/logo-moodle.png');
-  return (<Image source={image} style={{ height: props.size, width: props.size, alignSelf: 'flex-end' }} resizeMode='contain' />);
-}
+  let image;
+  switch (props.source) {
+    case Source.GAR:
+      image = require('ASSETS/images/logo-gar.png');
+      break;
+    case Source.Moodle:
+      image = require('ASSETS/images/logo-moodle.png');
+      break;
+    case Source.PMB:
+      image = require('ASSETS/images/logo-pmb.png');
+      break;
+    default:
+      image = require('ASSETS/images/logo-gar.png');
+      break;
+  }
+  return (
+    <Image source={image} style={[styles.sourceImageContainer, { height: props.size, width: props.size }]} resizeMode="contain" />
+  );
+};
 
 export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardProps) => {
   const openURL = () => {
@@ -104,13 +123,17 @@ export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardPro
   return (
     <TouchableResourceCard title={props.resource.title} onPress={openURL} style={styles.mainContainer}>
       <View style={styles.contentContainer}>
-        <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }} style={styles.cardImage} resizeMode='contain' />
+        <Image
+          source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
+          style={styles.cardImage}
+          resizeMode="contain"
+        />
         <View style={styles.actionsContainer}>
           <FavoriteAction {...props} />
-          <ActionButton icon='link' color='#F53B56' text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
+          <ActionButton icon="link" color="#F53B56" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
         </View>
         {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={25} /> : null}
       </View>
     </TouchableResourceCard>
   );
-}
+};

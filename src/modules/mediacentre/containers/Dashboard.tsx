@@ -1,70 +1,54 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
+import { withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import HomePageContainer from './HomePage';
-//import SignetsPageContainer from './SignetsPage';
-
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { fetchExternalsAction } from '~/modules/mediacentre/actions/externals';
+import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
+import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
+import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
+import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
+import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { getExternalsState } from '~/modules/mediacentre/state/externals';
+import { getFavoritesState } from '~/modules/mediacentre/state/favorites';
+import { getSearchState } from '~/modules/mediacentre/state/search';
+import { ISignets, getSignetsState } from '~/modules/mediacentre/state/signets';
+import { getTextbooksState } from '~/modules/mediacentre/state/textbooks';
+import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
-import { PageView } from '~/framework/components/page';
 
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
-import { getFavoritesState } from '~/modules/mediacentre/state/favorites';
-import { getGarResourcesState } from '~/modules/mediacentre/state/garResources';
-import { getSearchState } from '~/modules/mediacentre/state/search';
-import { getSignetsState, ISignets } from '~/modules/mediacentre/state/signets';
-import { getTextbooksState } from '~/modules/mediacentre/state/textbooks';
-import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
-import { fetchFavoritesAction, addFavoriteAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
-import { fetchGarResourcesAction } from '~/modules/mediacentre/actions/garResources';
-import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
-import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
-import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import HomePageContainer from './HomePage';
 
 type IDashboardProps = {
+  externals: Resource[];
   favorites: Resource[];
-  garResources: Resource[];
   navigation: { navigate };
   search: Resource[];
   signets: ISignets;
   textbooks: Resource[];
+  userId: string;
 
   addFavorite: (id: string, resource: Resource) => any;
+  fetchExternals: () => any;
   fetchFavorites: () => any;
-  fetchGarResources: () => any;
-  fetchSignets: () => any;
+  fetchSignets: (userId: string) => any;
   fetchTextbooks: () => any;
   removeFavorite: (id: string, source: Source) => any;
   searchResources: (query: string) => any;
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
 
-type IDashboardState = {
-  ws: WebSocket | null;
-  isWsConnected: boolean;
-};
-
-export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardState> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ws: null,
-      isWsConnected: false,
-    };
-  }
-
+export class Dashboard extends React.PureComponent<IDashboardProps> {
   componentDidMount() {
+    this.props.fetchExternals();
     this.props.fetchFavorites();
-    this.props.fetchGarResources();
     this.props.fetchTextbooks();
-    this.props.fetchSignets();
+    this.props.fetchSignets(this.props.userId);
   }
 
   public render() {
@@ -77,28 +61,30 @@ export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardSt
             backgroundColor: '#F53B56',
           },
         }}>
-          <PageContainer>
-            <ConnectionTrackingBar />
-            <HomePageContainer {...this.props} {...this.state} />
-          </PageContainer>
+        <PageContainer>
+          <ConnectionTrackingBar />
+          <HomePageContainer {...this.props} {...this.state} />
+        </PageContainer>
       </PageView>
     );
   }
 }
 
 const mapStateToProps: (state: any) => any = state => {
+  const externals = getExternalsState(state).data;
   const favorites = getFavoritesState(state).data;
-  const garResources = getGarResourcesState(state).data;
   const search = getSearchState(state).data;
   const signets = getSignetsState(state).data;
   const textbooks = getTextbooksState(state).data;
+  const userId = getUserSession(state).user.id;
 
   return {
+    externals,
     favorites,
-    garResources,
     search,
     signets,
     textbooks,
+    userId,
   };
 };
 
@@ -107,7 +93,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     {
       addFavorite: addFavoriteAction,
       fetchFavorites: fetchFavoritesAction,
-      fetchGarResources: fetchGarResourcesAction,
+      fetchExternals: fetchExternalsAction,
       fetchSignets: fetchSignetsAction,
       fetchTextbooks: fetchTextbooksAction,
       removeFavorite: removeFavoriteAction,

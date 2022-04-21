@@ -83,7 +83,7 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps> {
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  const userId = getUserSession(state).user.id;
+  const userId = getUserSession().user.id;
   const childId = getSelectedChild(state).id;
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);

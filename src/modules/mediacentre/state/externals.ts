@@ -4,22 +4,16 @@ import { Resource } from '~/modules/mediacentre/utils/Resource';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
-export interface ISignets {
-  orientationSignets: Resource[];
-  sharedSignets: Resource[];
-}
+export type IExternals = Resource[];
 
 // THE STATE --------------------------------------------------------------------------------------
 
-export type ISignetsState = AsyncState<ISignets>;
+export type IExternalsState = AsyncState<IExternals>;
 
-export const initialState: ISignets = {
-  orientationSignets: [],
-  sharedSignets: [],
-};
+export const initialState: IExternals = [];
 
-export const getSignetsState = (globalState: any) => mediacentreConfig.getState(globalState).signets as ISignetsState;
+export const getExternalsState = (globalState: any) => mediacentreConfig.getState(globalState).externals as IExternalsState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(mediacentreConfig.namespaceActionType('MEDIACENTRE_SIGNETS'));
+export const actionTypes = createAsyncActionTypes(mediacentreConfig.namespaceActionType('MEDIACENTRE_EXTERNALS'));

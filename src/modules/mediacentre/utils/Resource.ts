@@ -1,14 +1,17 @@
 export enum Source {
   GAR = 'fr.openent.mediacentre.source.GAR',
   Moodle = 'fr.openent.mediacentre.source.Moodle',
-  Signet = 'fr.openent.mediacentre.source.Signet'
+  PMB = 'fr.openent.mediacentre.source.PMB',
+  Signet = 'fr.openent.mediacentre.source.Signet',
 }
 
 export interface Resource {
   id: string;
+  uid?: string;
   title: string;
   plain_text: string;
   image: string;
+  types: string[];
   source: Source;
   link: string;
   authors: string[];
@@ -17,8 +20,6 @@ export interface Resource {
   levels: string[];
   user: string;
   favorite?: boolean;
-  structure_name?: string;
   structure_uai?: string;
-  orientation?: boolean;
-  owner_name?: string;
+  owner_id?: string;
 }

@@ -196,14 +196,6 @@ class UserService {
       console.warn('[UserService] getUserChildren: could not get children data', e);
     }
   }
-  async getUserChildren(userId: string) {
-    try {
-      const userChildren = await fetchJSONWithCache(`/directory/user/${userId}/children`);
-      return userChildren;
-    } catch (e) {
-      console.warn('[UserService] getUserChildren: could not get children data', e);
-    }
-  }
 }
 
 export const userService = new UserService();

@@ -1,3 +1,4 @@
+import { computeUserSession } from '~/framework/util/session';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 import {
   actionTypeLoggedIn,
@@ -10,11 +11,11 @@ import {
 import { actionTypeSetNotifPrefs } from '~/user/actions/notifPrefs';
 import { actionTypePlatformSelect } from '~/user/actions/platform';
 import {
+  INewVersionAction,
+  IVersionContext,
   actionTypeNewVersion,
   actionTypeRequestVersion,
   actionTypeSkipVersion,
-  INewVersionAction,
-  IVersionContext,
 } from '~/user/actions/version';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
@@ -68,29 +69,33 @@ export const stateDefault: IUserAuthState = {
 const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthState => {
   switch (action.type) {
     case actionTypeSkipVersion: {
-      return {
+      const ret = {
         ...state,
         skipVersion: true,
       };
+      return ret;
     }
     case actionTypeNewVersion: {
       const aVersion: INewVersionAction = action;
-      return {
+      const ret = {
         ...state,
         loggingIn: false,
         versionContext: { ...aVersion },
       };
+      return ret;
     }
     case actionTypeRequestLogin:
-    case actionTypeRequestVersion:
-      return {
+    case actionTypeRequestVersion: {
+      const ret = {
         ...state,
         error: '',
         errtype: '',
         loggingIn: true,
       };
-    case actionTypeLoggedIn:
-      return {
+      return ret;
+    }
+    case actionTypeLoggedIn: {
+      const ret = {
         ...state,
         apps: action.userbook.apps,
         appsInfo: action.userbook.appsInfo,
@@ -102,8 +107,11 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         synced: true,
         userId: action.userbook.id,
       };
-    case actionTypeLoggedInPartial:
-      return {
+      computeUserSession(ret, undefined);
+      return ret;
+    }
+    case actionTypeLoggedInPartial: {
+      const ret = {
         ...state,
         login: action.userbook.login,
         userId: action.userbook.id,
@@ -114,27 +122,36 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         loggedIn: false,
         loggingIn: false,
       };
-    case actionTypeLoginError:
-      return {
+      computeUserSession(ret, undefined);
+      return ret;
+    }
+    case actionTypeLoginError: {
+      const ret = {
         ...stateDefault,
         error: action.errmsg,
         errtype: action.errtype,
         loggingIn: false,
         platformId: state.platformId,
       };
+      computeUserSession(ret, undefined);
+      return ret;
+    }
     case actionTypeLoginCancel:
       return {
         ...state,
         loggingIn: false,
       };
-    case actionTypeLoggedOut:
+    case actionTypeLoggedOut: {
       const { error } = state;
-      return {
+      const ret = {
         ...stateDefault,
         error,
         errtype: '',
         platformId: state.platformId,
       };
+      computeUserSession(ret, undefined);
+      return ret;
+    }
     case actionTypeSetNotifPrefs:
       return {
         ...state,

@@ -310,7 +310,7 @@ class Attachment extends React.PureComponent<
       downloadState: DownloadState.Downloading,
     });
     const downloadAction = (att: IDistantFile) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       fileTransferService
         .downloadFile(
           session,

@@ -4,16 +4,11 @@ import * as React from 'react';
 import { ActivityIndicator, Animated, View } from 'react-native';
 import { connect } from 'react-redux';
 
-
-
 import { checkConnection, watchConnection } from '~/infra/actions/connectionTracker';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
-
-
 import { Icon } from './icons/Icon';
-
 
 const TrackerText = styled.Text({
   color: '#FFFFFF',
@@ -64,13 +59,13 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         Animated.timing(this.state.fadeAnim, {
           toValue: 1,
           duration: 500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
           toValue: 40,
           duration: 500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }).start();
       }
 
@@ -79,13 +74,13 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         Animated.timing(this.state.fadeAnim, {
           toValue: 0,
           duration: 500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
           toValue: 0,
           duration: 500,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }).start();
       }
     }, 200);

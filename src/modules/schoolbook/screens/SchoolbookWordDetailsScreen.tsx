@@ -400,7 +400,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
 
 const mapStateToProps: (s: IGlobalState) => ISchoolbookWordDetailsScreenDataProps = s => {
   return {
-    session: getUserSession(s),
+    session: getUserSession(),
   };
 };
 

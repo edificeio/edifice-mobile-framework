@@ -314,7 +314,7 @@ const ProfilePageConnected = connect(
     const ret = {
       userauth: state.user.auth,
       userinfo: state.user.info,
-      session: getUserSession(state)
+      session: getUserSession()
     };
     return ret;
   },
