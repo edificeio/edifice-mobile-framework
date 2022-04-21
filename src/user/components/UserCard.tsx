@@ -1,9 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TouchableOpacity as RNTouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
-
 
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
@@ -12,7 +10,6 @@ import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { Icon } from '~/ui/icons/Icon';
-
 
 export interface IUserCardProps {
   touchable?: boolean;
@@ -39,7 +36,7 @@ export const UserCard = ({
   onDeleteAvatar,
   onPress = () => {},
 }: IUserCardProps) => {
-  const WrapperComponent = touchable ? RNTouchableOpacity : View;
+  const WrapperComponent = touchable ? TouchableOpacity : View;
 
   const renderUserType = (type: 'Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest') => (
     <View
