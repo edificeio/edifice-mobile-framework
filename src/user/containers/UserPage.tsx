@@ -266,14 +266,14 @@ export class UserPage extends React.PureComponent<
 }
 
 const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch, getState: () => IGlobalState) => {
-  return await workspaceService.uploadFile(getUserSession(getState()), avatar, {});
+  return await workspaceService.uploadFile(getUserSession(), avatar, {});
 };
 
 const UserPageConnected = connect(
   (state: any) => {
     const ret = {
       userinfo: state.user.info,
-      session: getUserSession(state)
+      session: getUserSession()
     };
     return ret;
   },

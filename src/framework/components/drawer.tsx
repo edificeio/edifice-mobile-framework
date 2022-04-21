@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     width: '100%',
+    elevation: 1
   },
   dropDownContainer: {
     borderRadius: LIST_RADIUS,

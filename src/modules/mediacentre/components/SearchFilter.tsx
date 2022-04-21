@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, View, ViewStyle,  } from 'react-native';
 import I18n from 'i18n-js';
+import React, { useState } from 'react';
+import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { Resource } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
-import { Checkbox } from '~/ui/forms/Checkbox';
 import { Text } from '~/ui/Typography';
+import { Checkbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -22,98 +23,138 @@ const styles = StyleSheet.create({
   titleContainer: {
     alignItems: 'center',
   },
-  sectionContainer: {
-    paddingVertical: 5,
-  },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 5,
   },
+  itemTextContainer: {
+    flex: 1,
+    marginLeft: 5,
+  },
+  sectionContainer: {
+    paddingVertical: 5,
+  },
+  sectionHeaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sectionUnderlineView: {
+    height: 1,
+    backgroundColor: '#e2e2e299',
+  },
 });
 
-const DATA = [
-  {
-    title: "Type de ressource",
-    items: [
-      { name: "Pizza", checked: true },
-      { name: "Burger", checked: false },
-      { name: "Risotto", checked: true }
-    ]
-  },
-  {
-    title: "Tout type de source",
-    items: [
-      { name: "French Fries", checked: true },
-      { name: "Onion Rings", checked: true }
-    ]
-  },
-  {
-    title: "Niveau",
-    items: [
-      { name: "Water", checked: true },
-      { name: "Coke", checked: true }
-    ]
-  }
-];
+interface FilterItemProps {
+  item: { value: string; active: boolean };
+  sectionTitle: string;
+
+  onChange: (title: string, item: string, active: boolean) => void;
+}
 
 interface FilterSectionProps {
   items: any[];
   title: string;
-}
 
-interface FilterItemProps {
-  checked: boolean;
-  name: string;
-
-  setChecked: (value: boolean) => void;
+  onChange: (title: string, item: string, active: boolean) => void;
 }
 
 interface SearchFilterProps {
-  buttons: string[];
   containerStyle?: ViewStyle;
+  resources: Resource[];
+
+  onChange: (title: string, item: string, active: boolean) => void;
 }
+
+const getFilters = (resources: Resource[]) => {
+  const types: { value: string; active: boolean }[] = [];
+  const sources: { value: string; active: boolean }[] = [];
+  const levels: { value: string; active: boolean }[] = [];
+  for (const resource of resources) {
+    const source = resource.source.substring(30);
+    for (const type of resource.types) {
+      if (!types.some(({ value }) => value === type)) {
+        types.push({ value: type, active: false });
+      }
+    }
+    if (!sources.some(({ value }) => value === source)) {
+      sources.push({ value: source, active: false });
+    }
+    for (const level of resource.levels) {
+      if (!levels.some(({ value }) => value === level)) {
+        levels.push({ value: level, active: false });
+      }
+    }
+  }
+  return [
+    { title: 'resource-type', items: types },
+    { title: 'source', items: sources },
+    { title: 'level', items: levels },
+  ];
+};
+
+const FilterItem: React.FunctionComponent<FilterItemProps> = (props: FilterItemProps) => {
+  const check = () => {
+    props.onChange(props.sectionTitle, props.item.value, !props.item.active);
+  };
+  return (
+    <View style={styles.itemContainer}>
+      <Checkbox checked={props.item.active} onCheck={check} onUncheck={check} />
+      <TouchableOpacity onPress={check} style={styles.itemTextContainer}>
+        <Text>{props.item.value}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const FilterSection: React.FunctionComponent<FilterSectionProps> = (props: FilterSectionProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const iconName = expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+  const expandSection = () => {
+    setExpanded(!expanded);
+  };
   return (
     <View>
-      <TouchableOpacity style={styles.sectionContainer} onPress={() => setExpanded(!expanded)}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text>{props.title}</Text>
+      <TouchableOpacity style={styles.sectionContainer} onPress={expandSection}>
+        <View style={styles.sectionHeaderContainer}>
+          <Text>{I18n.t(`mediacentre.${props.title}`)}</Text>
           <Icon name={iconName} size={30} />
         </View>
-        <View style={{ height: 1, backgroundColor: '#e2e2e299' }} />
+        <View style={styles.sectionUnderlineView} />
       </TouchableOpacity>
-      {expanded ? props.items.map((item) => <FilterItem name={item.name} checked={item.checked} setChecked={() => true} />) : null}
+      {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} />) : null}
     </View>
-  )
-}
-
-const FilterItem: React.FunctionComponent<FilterItemProps> = (props: FilterItemProps) => (
-  <View style={styles.itemContainer}>
-    <Checkbox checked={props.checked} onCheck={() => props.setChecked(true)} onUncheck={() => props.setChecked(false)} />
-    <TouchableOpacity onPress={() => props.setChecked(!props.checked)} style={{ flex: 1, marginLeft: 5 }}>
-      <Text>{props.name}</Text>
-    </TouchableOpacity>
-  </View>
-);
+  );
+};
 
 export const SearchFilter: React.FunctionComponent<SearchFilterProps> = (props: SearchFilterProps) => {
+  const [filters, setFilters] = useState(getFilters(props.resources));
   const [expanded, setExpanded] = useState<boolean>(false);
+  const expand = () => {
+    setExpanded(!expanded);
+  };
+  const onChange = (title: string, item: string, active: boolean) => {
+    props.onChange(title, item, active);
+    const filter = filters.find(x => x.title === title);
+    if (filter) {
+      const index = filters.indexOf(filter);
+      filters[index].items = filters[index].items.map(i => (i.value === item ? { value: item, active } : i));
+      setFilters(filters);
+    }
+  };
   return (
     <View style={[styles.mainContainer, props.containerStyle]}>
-      <TouchableOpacity style={styles.titleContainer} onPress={() => setExpanded(!expanded)}>
+      <TouchableOpacity style={styles.titleContainer} onPress={expand}>
         <Text>{I18n.t('mediacentre.filter-search').toUpperCase()}</Text>
       </TouchableOpacity>
-      {expanded ?
+      {expanded ? (
         <FlatList
-          data={DATA}
+          data={filters}
           keyExtractor={(item, index) => item.title + index}
-          renderItem={({ item }) => <FilterSection title={item.title} items={item.items} />}
+          renderItem={({ item }) => <FilterSection title={item.title} items={item.items} onChange={onChange} />}
         />
-      : null}
+      ) : null}
     </View>
-  )
+  );
 };

@@ -14,7 +14,7 @@ import { schoolbookService } from '~/modules/schoolbook/service';
 export const getSchoolbookWordDetailsAction =
   (schoolbookWordId: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       // Get schoolbook word
       const schoolbookWordDetails = await schoolbookService.word.get(session, schoolbookWordId);
@@ -31,7 +31,7 @@ export const acknowledgeSchoolbookWordActionForChildren =
   (schoolbookWordId: string, unacknowledgedChildrenIds: string[]) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       // Acknowledge word for each child
       const acknowledgements = unacknowledgedChildrenIds.map(unacknowledgedChildId =>
@@ -49,7 +49,7 @@ export const acknowledgeSchoolbookWordActionForChildren =
 export const acknowledgeSchoolbookWordAction =
   (schoolbookWordData: IWordReport) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       const unacknowledgedChildrenIds =
         schoolbookWordData && getUnacknowledgedStudentIdsForParent(session.user.id, schoolbookWordData);

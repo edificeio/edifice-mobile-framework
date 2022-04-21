@@ -27,19 +27,20 @@ import {
   toggleReadAction,
   trashMailsAction,
 } from '~/modules/conversation/actions/mail';
-import { fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
+import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
 import { FooterButton, HeaderMail, RenderPJs } from '~/modules/conversation/components/MailContentItems';
 import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
 import { DraftType } from '~/modules/conversation/containers/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { getMailContentState } from '~/modules/conversation/state/mailContent';
-import { Loading } from '~/ui/Loading';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Loading } from '~/ui/Loading';
 
 class MailContentContainer extends React.PureComponent<
   NavigationInjectedProps<NavigationParams> & {
     fetchMailContentAction: (mailId: string) => void;
+    clearContent: () => void;
     toggleRead: (mailIds: string[], read: boolean) => void;
     trashMails: (mailIds: string[]) => void;
     deleteMails: (mailIds: string[]) => void;
@@ -68,11 +69,13 @@ class MailContentContainer extends React.PureComponent<
     };
   }
   public componentDidMount() {
+    this.props.clearContent();
     this.props.fetchMailContentAction(this.props.navigation.state.params?.mailId);
   }
 
   public componentDidUpdate() {
     if (this.props.navigation.state.params?.mailId !== this.state.mailId) {
+      this.props.clearContent();
       this.props.fetchMailContentAction(this.props.navigation.state.params?.mailId);
       this.setState({ mailId: this.props.navigation.state.params?.mailId });
     }
@@ -319,6 +322,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     ...bindActionCreators(
       {
         fetchMailContentAction,
+        clearContent: clearMailContentAction,
         toggleRead: tryAction(toggleReadAction, (mailIds, read) => [
           moduleConfig,
           'Marquer lu/non-lu',

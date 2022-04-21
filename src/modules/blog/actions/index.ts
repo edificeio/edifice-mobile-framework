@@ -25,7 +25,7 @@ export const getBlogPostDetailsAction =
   (blogPostId: { blogId: string; postId: string }, blogPostState?: string) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       // Get blog post and comments
       const [blogPost, blogPostComments] = await Promise.all([
@@ -50,7 +50,7 @@ export const fetchBlogPostsAction =
   (blogId: string): ThunkAction<Promise<IBlogPost[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       dispatch(blogPostsActionsCreators.request());
       const blogPosts = await blogService.posts.get(session, blogId);
       dispatch(blogPostsActionsCreators.receipt(blogPosts));
@@ -67,7 +67,7 @@ export const fetchBlogPostsAction =
  */
 export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    const session = getUserSession(getState());
+    const session = getUserSession();
 
     const allBlogs = await blogService.list(session);
     const publishableBlogs = getPublishableBlogs(session, allBlogs);
@@ -78,7 +78,7 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
 };
 
 export const getBlogsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-  const session = getUserSession(getState());
+  const session = getUserSession();
   const ret = await Promise.all([blogService.list(session), blogService.folders.list(session)]);
   return { blogs: ret[0], folders: ret[1] };
 };
@@ -100,7 +100,7 @@ export const sendBlogPostAction =
   (blog: IBlog, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       const blogId = blog.id;
       const blogPostRight = getBlogPostRight(blog, session);
       if (!blogPostRight) {
@@ -136,7 +136,7 @@ export const createBlogPostAction =
   (blogId: string, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       let postContentHtml = `<p class="ng-scope" style="">${postContent}</p>`;
       if (uploadedPostImages) {
@@ -167,7 +167,7 @@ export const createBlogPostAction =
 export const submitBlogPostAction =
   (blogId: string, postId: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       return blogService.post.submit(session, blogId, postId);
     } catch (e) {
@@ -182,7 +182,7 @@ export const submitBlogPostAction =
 export const publishBlogPostAction =
   (blogId: string, postId: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       return blogService.post.publish(session, blogId, postId);
     } catch (e) {
@@ -198,7 +198,7 @@ export const publishBlogPostCommentAction =
   (blogPostId: { blogId: string; postId: string }, comment: string) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       return blogService.comments.publish(session, blogPostId, comment);
     } catch (e) {
       // ToDo: Error handling
@@ -213,7 +213,7 @@ export const updateBlogPostCommentAction =
   (blogPostCommentId: { blogId: string; postId: string; commentId: string }, comment: string) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       return blogService.comments.update(session, blogPostCommentId, comment);
     } catch (e) {
       // ToDo: Error handling
@@ -228,7 +228,7 @@ export const deleteBlogPostCommentAction =
   (blogPostCommentId: { blogId: string; postId: string; commentId: string }) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
       return blogService.comments.delete(session, blogPostCommentId);
     } catch (e) {
       // ToDo: Error handling
@@ -241,7 +241,7 @@ export const deleteBlogPostCommentAction =
 export const blogFoldersActionsCreators = createAsyncActionCreators(actionTypes.folders);
 export const fetchBlogFoldersAction = (): ThunkAction<Promise<IBlogFolder[]>, any, any, any> => async (dispatch, getState) => {
   try {
-    const session = getUserSession(getState());
+    const session = getUserSession();
     dispatch(blogFoldersActionsCreators.request());
     const res = await blogService.folders.list(session);
     dispatch(blogFoldersActionsCreators.receipt(res));
@@ -254,7 +254,7 @@ export const fetchBlogFoldersAction = (): ThunkAction<Promise<IBlogFolder[]>, an
 export const blogActionsCreators = createAsyncActionCreators(actionTypes.blogs);
 export const fetchBlogsAction = (): ThunkAction<Promise<IBlog[]>, any, any, any> => async (dispatch, getState) => {
   try {
-    const session = getUserSession(getState());
+    const session = getUserSession();
     dispatch(blogActionsCreators.request());
     const res = await blogService.list(session);
     dispatch(blogActionsCreators.receipt(res));

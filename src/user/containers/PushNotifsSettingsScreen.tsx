@@ -336,7 +336,7 @@ const translateMainItem = (item: [string, IPushNotifsSettings]) => {
 
 const mapStateToProps: (s: IGlobalState) => IPushNotifsSettingsScreenDataProps = s => {
   const timelineState = timelineModuleConfig.getState(s) as ITimeline_State;
-  const session = getUserSession(s);
+  const session = getUserSession();
   return {
     timelineState,
     session,

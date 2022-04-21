@@ -359,7 +359,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   return {
     flashMessages: ts.flashMessages,
     notifications: ts.notifications,
-    session: getUserSession(s),
+    session: getUserSession(),
   };
 };
 

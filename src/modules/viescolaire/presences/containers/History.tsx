@@ -6,6 +6,8 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+
+
 import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
@@ -18,6 +20,7 @@ import { IPresencesUserChildrenState, getUserChildrenState } from '~/modules/vie
 import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/viesco/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
+
 
 interface HistoryProps extends NavigationInjectedProps {
   data: any;
@@ -228,8 +231,8 @@ const mapStateToProps = (state: any) => {
   const periods = getPeriodsListState(state);
   const year = getYearState(state);
   const userType = getSessionInfo().type;
-  const userId = getUserSession(state).user.id;
-  const childId = userType === 'Student' ? getUserSession(state).user.id : getSelectedChild(state).id;
+  const userId = getUserSession().user.id;
+  const childId = userType === 'Student' ? getUserSession().user.id : getSelectedChild(state).id;
   const groupId =
     userType === 'Student'
       ? getSessionInfo().classes[0]

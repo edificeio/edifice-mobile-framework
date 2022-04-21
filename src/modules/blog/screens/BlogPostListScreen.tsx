@@ -317,7 +317,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 export default connect(
   (gs: IGlobalState) => {
     return {
-      session: getUserSession(gs),
+      session: getUserSession(),
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
     };
   },

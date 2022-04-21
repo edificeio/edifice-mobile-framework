@@ -113,7 +113,7 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
         oldPassword: model.oldPassword,
         password: model.newPassword,
         confirmPassword: model.confirm,
-        login: getUserSession(getState()).user.login,
+        login: getUserSession().user.login,
         callback: '',
         ...(forceChange ? { forceChange: 'force' } : {}),
       };

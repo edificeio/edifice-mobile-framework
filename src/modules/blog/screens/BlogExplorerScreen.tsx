@@ -261,7 +261,7 @@ export default connect(
   (gs: IGlobalState) => {
     const bs = moduleConfig.getState(gs);
     return {
-      session: getUserSession(gs),
+      session: getUserSession(),
       tree: bs.tree,
       initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
       error: bs.blogs.error ?? bs.folders.error,

@@ -6,12 +6,9 @@ import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 
-
-
 import { DEPRECATED_getCurrentPlatform } from './_legacy_appConf';
 import { Platform } from './appConf';
 import { IEntcoreApp } from './moduleTool';
-
 
 export enum UserType {
   Student = 'Student',
@@ -43,17 +40,20 @@ export interface IUserSession {
   user: IUserDefinition;
 }
 
-export const getUserSession = (state: any) =>
-  ({
+let sessionCache: IUserSession;
+export const getUserSession = () => sessionCache;
+export const computeUserSession = (authState?: IUserAuthState, infoState?: IUserInfoState) => {
+  sessionCache = {
     platform: DEPRECATED_getCurrentPlatform()!,
     oauth: OAuth2RessourceOwnerPasswordClient.connection,
     user: {
-      login: (state.user.auth as IUserAuthState).login,
-      id: (state.user.info as IUserInfoState).id,
-      displayName: (state.user.info as IUserInfoState).displayName,
-      type: state.user.info.type as UserType,
-      entcoreApps: (state.user.auth as IUserAuthState).appsInfo,
-      authorizedActions: state.user.info.authorizedActions,
-      groupsIds: state.user.info.groupsIds,
+      login: authState ? authState.login : sessionCache?.user?.login,
+      id: authState ? authState.userId : sessionCache?.user?.id,
+      displayName: infoState ? infoState.displayName : sessionCache?.user?.displayName,
+      type: infoState ? infoState.type : sessionCache?.user?.type,
+      entcoreApps: authState ? authState.appsInfo : sessionCache?.user?.entcoreApps,
+      authorizedActions: infoState ? infoState.authorizedActions : sessionCache?.user?.authorizedActions,
+      groupsIds: infoState ? infoState.groupsIds : sessionCache?.user?.groupsIds,
     },
-  } as IUserSession);
+  } as IUserSession;
+};

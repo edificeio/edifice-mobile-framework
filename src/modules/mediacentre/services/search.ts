@@ -1,27 +1,33 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 import { AdvancedSearchParams, Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
+
+const concatResources = (response: any) => {
+  let resources: any[] = [];
+  for (const res of response) {
+    resources = resources.concat(res.data.resources);
+  }
+  return resources;
+};
 
 const addFieldWhenFilled = (field: Field) => {
-  return ({ 'value': field.value, 'operands': field.operand ? '$and' : '$or' });
-}
+  return { value: field.value, operands: field.operand ? '$and' : '$or' };
+};
 
 export const searchService = {
-  getGar: async () => {
+  getExternals: async () => {
     const jsondata = {
       event: 'search',
       state: 'PLAIN_TEXT',
-      sources: [
-        'fr.openent.mediacentre.source.GAR',
-      ],
+      sources: ['fr.openent.mediacentre.source.GAR', 'fr.openent.mediacentre.source.Moodle', 'fr.openent.mediacentre.source.PMB'],
       data: {
         query: '.*',
       },
     };
-    const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
+    const response = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(reponse.data.resources);
+    return resourcesAdapter(concatResources(response));
   },
   getSimple: async (query: string) => {
     const jsondata = {
@@ -30,37 +36,38 @@ export const searchService = {
       sources: [
         'fr.openent.mediacentre.source.GAR',
         'fr.openent.mediacentre.source.Moodle',
+        'fr.openent.mediacentre.source.PMB',
         'fr.openent.mediacentre.source.Signet',
       ],
       data: {
         query,
       },
     };
-    const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
+    const response = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(reponse.data.resources);
+    return resourcesAdapter(concatResources(response));
   },
   getAdvanced: async (params: AdvancedSearchParams) => {
-    const fields = [params.title, params.authors, params.editors, params.disciplines, params.levels];
-    let jsondata = {
-      'event': 'search',
-      'state': 'ADVANCED',
-      'sources': [
+    const jsondata = {
+      event: 'search',
+      state: 'ADVANCED',
+      sources: [
         params.sources.GAR && 'fr.openent.mediacentre.source.GAR',
         params.sources.Moodle && 'fr.openent.mediacentre.source.Moodle',
+        params.sources.PMB && 'fr.openent.mediacentre.source.PMB',
         params.sources.Signets && 'fr.openent.mediacentre.source.Signet',
       ],
-      'data': {}
+      data: {},
     };
-    fields.forEach(field => {
+    for (const field of params.fields) {
       if (field.value !== '') {
         jsondata.data[field.name] = addFieldWhenFilled(field);
       }
-    });
-    const reponse = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
+    }
+    const response = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
       method: 'get',
     });
-    return resourcesAdapter(reponse.data.resources);
+    return resourcesAdapter(concatResources(response));
   },
 };

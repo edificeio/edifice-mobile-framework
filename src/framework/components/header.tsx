@@ -273,6 +273,7 @@ export const DEPRECATED_HeaderPrimaryAction = (props: IHeaderActionGenericProps 
       style={{
         position: 'absolute',
         zIndex: 100,
+        elevation: 6,
         right: 20,
         top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
         ...iconStyle,

@@ -27,7 +27,7 @@ export function createFolderAction(name: string, parentId?: string) {
     const payload = parentId === FilterId.owner ? { name, parentId } : { name, parentId, parentFolderId: parentId };
     try {
       dispatch({ type: actionTypesCreateFolder.requested, payload });
-      const session = getUserSession(getState());
+      const session = getUserSession();
       const res = workspaceService.createFolder(session, name, parentId);
       const resAdapted = formatResults(res as unknown as IBackendFolder, parentId);
       const ret = dispatch({ type: actionTypesCreateFolder.received, resAdapted, receivedAt: Date.now(), payload });

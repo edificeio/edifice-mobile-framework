@@ -155,7 +155,7 @@ export const uploadDocumentAction =
           ),
       );
       const jobs = workspaceService.startUploadFiles(
-        getUserSession(getState()),
+        getUserSession(),
         lcs,
         { parent: parentId as IWorkspaceUploadParams['parent'] },
         {

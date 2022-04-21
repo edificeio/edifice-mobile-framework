@@ -12,7 +12,7 @@ import { getUserSession } from '~/framework/util/session';
 
 export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatch, getState: () => any) => {
   try {
-    const session = getUserSession(getState());
+    const session = getUserSession();
     // 1. Fetch notif filters from backend
     dispatch(notifFiltersAsyncActions.request());
     const filters = await notifFiltersService.list(session);

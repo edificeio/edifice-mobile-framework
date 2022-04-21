@@ -13,7 +13,7 @@ import { newsService } from '~/modules/news/service';
 export const getNewsDetailsAction =
   (newsId: { threadId: string; infoId: string }) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession(getState());
+      const session = getUserSession();
 
       // Get news details
       const newsDetails = await newsService.get(session, newsId);

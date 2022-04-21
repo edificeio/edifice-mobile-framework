@@ -47,7 +47,7 @@ export function addAttachmentAction(mailId: string, attachment: any) {
     try {
       dispatch(progressInitAction());
       const handleProgress = progress => dispatch(progressAction(progress));
-      const session = getUserSession(getState());
+      const session = getUserSession();
       const newAttachments = await newMailService.addAttachment(session, mailId, attachment, handleProgress);
       dispatch(progressEndAction());
       return newAttachments;

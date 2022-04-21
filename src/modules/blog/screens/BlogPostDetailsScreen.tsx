@@ -654,7 +654,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 // MAPPING ========================================================================================
 
 const mapStateToProps: (s: IGlobalState) => IBlogPostDetailsScreenDataProps = s => ({
-  session: getUserSession(s),
+  session: getUserSession(),
 });
 
 const mapDispatchToProps: (

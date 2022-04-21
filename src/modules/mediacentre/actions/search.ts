@@ -1,9 +1,9 @@
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { searchService } from '~/modules/mediacentre/services/search';
-import { actionTypes, ISearch } from '~/modules/mediacentre/state/search';
 import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { searchService } from '~/modules/mediacentre/services/search';
+import { ISearch, actionTypes } from '~/modules/mediacentre/state/search';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

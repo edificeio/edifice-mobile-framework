@@ -5,6 +5,6 @@ import { getUserSession } from '~/framework/util/session';
 
 export const createFolderAction =
   (name: string, parentFolderId?: string) => (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession(getState());
+    const session = getUserSession();
     return workspaceService.createFolder(session, name, parentFolderId);
   };

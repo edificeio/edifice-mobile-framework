@@ -46,7 +46,7 @@ export function declareAbsenceWithFileAction(startDate: moment.Moment, endDate: 
         getSelectedChildStructure(state)!.id,
         comment,
         file,
-        getUserSession(state),
+        getUserSession(),
       );
       dispatch(declarationActions.posted());
       Trackers.trackEvent('viesco', 'DECLARE ABSENCE');
