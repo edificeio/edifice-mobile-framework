@@ -39,7 +39,7 @@ android {
         versionCode 1070502
         versionName "1.7.5"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.1\""
+        buildConfigField "String", "BundleVersionType", "\"rc.2\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
         ndk {

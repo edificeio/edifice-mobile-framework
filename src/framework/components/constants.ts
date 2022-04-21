@@ -16,8 +16,8 @@ export const UI_ANIMATIONS = {
 
 export const UI_SIZES = {
   aspectRatios: {
+    card: 15 / 14,
     thumbnail: 7 / 5,
-    card: 15 / 14
   },
   dimensions: {
     height: {
