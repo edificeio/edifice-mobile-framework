@@ -1,14 +1,13 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { GestureResponderEvent, Platform, TouchableOpacityProps } from 'react-native';
+import { GestureResponderEvent, Platform, TouchableOpacityProps, TouchableOpacity } from 'react-native';
 import DocumentPicker, {
   DocumentPickerOptions,
   DocumentPickerResponse,
   DocumentType,
   PlatformTypes,
 } from 'react-native-document-picker';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
 import { LocalFile } from '~/framework/util/fileHandler';
