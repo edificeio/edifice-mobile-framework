@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -88,6 +88,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
   return (
     <View
       style={{
+        backgroundColor: theme.color.background.card,
         flexDirection: 'row',
         alignItems: 'flex-end',
         padding: 12,
@@ -100,6 +101,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
           flex: 1,
           height: '100%',
           padding: 12,
+          paddingVertical: Platform.OS === 'android' ? 8 : undefined,
           marginLeft: 12,
           maxHeight: 120,
           borderRadius: 20,
@@ -118,7 +120,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
           multiline
         />
         <View
-          style={{ height: 28, width: publishButtonWidth, justifyContent: 'center' }}
+          style={{ width: publishButtonWidth, justifyContent: 'center' }}
           onLayout={e => {
             const publishButtonWidth = e.nativeEvent.layout.width;
             setPublishButtonWidth(publishButtonWidth);
