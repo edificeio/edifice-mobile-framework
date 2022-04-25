@@ -1,5 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
+import Toast from 'react-native-tiny-toast';
 import { withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -33,12 +34,12 @@ type IDashboardProps = {
   textbooks: Resource[];
   userId: string;
 
-  addFavorite: (id: string, resource: Resource) => any;
+  postAddFavorite: (id: string, resource: Resource) => any;
   fetchExternals: () => any;
   fetchFavorites: () => any;
   fetchSignets: (userId: string) => any;
   fetchTextbooks: () => any;
-  removeFavorite: (id: string, source: Source) => any;
+  postRemoveFavorite: (id: string, source: Source) => any;
   searchResources: (query: string) => any;
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
@@ -50,6 +51,34 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
     this.props.fetchTextbooks();
     this.props.fetchSignets(this.props.userId);
   }
+
+  addFavorite = (resourceId: string, resource: Resource) => {
+    try {
+      this.props.postAddFavorite(resourceId, resource);
+      Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: '95%', backgroundColor: 'black' },
+      });
+      this.props.fetchFavorites();
+    } catch (err) {
+      Toast.show(I18n.t('common.error.text'));
+    }
+  };
+
+  removeFavorite = (resourceId: string, resource: Source) => {
+    try {
+      this.props.postRemoveFavorite(resourceId, resource);
+      Toast.showSuccess(I18n.t('mediacentre.favorite-removed'), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: '95%', backgroundColor: 'black' },
+      });
+      this.props.fetchFavorites();
+    } catch (err) {
+      Toast.show(I18n.t('common.error.text'));
+    }
+  };
 
   public render() {
     return (
@@ -63,7 +92,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
         }}>
         <PageContainer>
           <ConnectionTrackingBar />
-          <HomePageContainer {...this.props} {...this.state} />
+          <HomePageContainer {...this.props} {...this.state} addFavorite={this.addFavorite} removeFavorite={this.removeFavorite} />
         </PageContainer>
       </PageView>
     );
@@ -91,12 +120,12 @@ const mapStateToProps: (state: any) => any = state => {
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
     {
-      addFavorite: addFavoriteAction,
+      postAddFavorite: addFavoriteAction,
       fetchFavorites: fetchFavoritesAction,
       fetchExternals: fetchExternalsAction,
       fetchSignets: fetchSignetsAction,
       fetchTextbooks: fetchTextbooksAction,
-      removeFavorite: removeFavoriteAction,
+      postRemoveFavorite: removeFavoriteAction,
       searchResources: searchResourcesAction,
       searchResourcesAdvanced: searchResourcesAdvancedAction,
     },
