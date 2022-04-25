@@ -6,9 +6,9 @@ import { View } from 'react-native';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/icon';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import Label from '~/framework/components/label';
+import { Picture } from '~/framework/components/picture';
 import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { UserType } from '~/framework/util/session';
@@ -167,11 +167,13 @@ export const SummaryCard = ({
               alignItems: 'center',
               marginTop: UI_SIZES.spacing.medium,
             }}>
-            <Icon
+            <Picture
+              type="NamedSvg"
+              name="pictos-answer"
+              width={UI_SIZES.dimensions.width.medium}
+              height={UI_SIZES.dimensions.height.medium}
+              fill={theme.color.secondary.regular}
               style={{ marginRight: UI_SIZES.spacing.smallPlus }}
-              size={18}
-              name="chat3"
-              color={theme.color.secondary.regular}
             />
             <TextSemiBold style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
               {responsesString(responsesNumber)}

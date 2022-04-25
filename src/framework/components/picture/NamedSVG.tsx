@@ -64,6 +64,7 @@ const imports = {
   'onboarding-1': import(`../../../../assets/images/onboarding/onboarding_1.svg`),
   'onboarding-2': import(`../../../../assets/images/onboarding/onboarding_2.svg`),
   'onboarding-3': import(`../../../../assets/images/onboarding/onboarding_3.svg`),
+  'pictos-answer': import(`../../../../assets/images/pictos/answer.svg`),
   'pictos-external-link': import(`../../../../assets/images/pictos/external-link.svg`),
   'schoolbook-canteen': import(`../../../../assets/images/schoolbook/canteen.svg`),
   'schoolbook-event': import(`../../../../assets/images/schoolbook/event.svg`),
