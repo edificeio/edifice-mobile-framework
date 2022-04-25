@@ -2,11 +2,19 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, KeyboardAvoidingView, Linking, Platform, SafeAreaView, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Linking,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
-
-
 
 import theme from '~/app/theme';
 import { KeyboardPageView } from '~/framework/components/page';
@@ -23,7 +31,6 @@ import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~
 import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
-
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -187,7 +194,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               hasError={(error && !typing && !errtype) as boolean}
             />
             <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: 20 }}>
-              <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t('RememberMe')}</Text>
+              <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t('AutoLogin')}</Text>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}

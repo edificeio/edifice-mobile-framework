@@ -1,6 +1,7 @@
 {
   "Activate": "Activer votre compte",
   "Actualites": "Actualités",
+  "AutoLogin": "Me reconnecter automatiquement",
   "Birthdate": "Date de naissance",
   "Cancel": "Annuler",
   "CellPhone": "Téléphone mobile",
@@ -41,7 +42,6 @@
   "ProfileDeleteAvatarError": "Erreur lors de la suppression de l'avatar.",
   "ProfileInvalidInformation": "Certains champs sont invalides. Veuillez vérifier vos informations et corriger les erreurs avant de les enregistrer.",
   "Pronote": "Pronote",
-  "RememberMe": "Se souvenir de moi",
   "Save": "Enregistrer",
   "School": "Etablissement",
   "Search": "Rechercher ...",
