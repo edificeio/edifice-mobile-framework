@@ -34,7 +34,10 @@ const responsesString = (responses: number) =>
   responses === 1
     ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
     : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
-const recipientsString = (recipients: any) => `${recipients?.map(recipient => ` ${recipient.displayName}`)}`;
+const recipientsString = (recipients: any) =>
+  getHasSingleRecipientForTeacher(recipients)
+    ? recipients[0].displayName
+    : `${recipients.length} ${I18n.t('schoolbook.students').toLowerCase()}`;
 
 export interface ISummaryCardProps {
   action: () => void;
@@ -120,9 +123,9 @@ export const SummaryCard = ({
             }
             text={
               <Text style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
-                {I18n.t(`common.${isTeacher ? 'to' : 'from'}`)}
+                {`${I18n.t(`common.${isTeacher ? 'to' : 'from'}`)} `}
                 <TextSemiBold style={{ ...TextSizeStyle.Small }}>
-                  {isTeacher ? recipientsString(recipients) : ` ${ownerName}`}
+                  {isTeacher ? recipientsString(recipients) : ownerName}
                 </TextSemiBold>
               </Text>
             }
