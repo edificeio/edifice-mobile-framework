@@ -73,6 +73,15 @@ export interface ITheme {
     friday: ColorValue;
     saturday: ColorValue;
   };
+  palePalette: {
+    secondary: ColorValue;
+    purple: ColorValue;
+    red: ColorValue;
+    turquoise: ColorValue;
+    green: ColorValue;
+    yellow: ColorValue;
+    orange: ColorValue;
+  };
   schoolbook: {
     acknowledge: ColorValue;
     acknowledged: ColorValue;
@@ -164,6 +173,15 @@ export const defaultTheme: ITheme = {
     thursday: '#ff3a55',
     friday: '#ff8d2e',
     saturday: '#eac403',
+  },
+  palePalette: {
+    secondary: '#e4f4ff',
+    purple: '#faebff',
+    red: '#ffe8ea',
+    turquoise: '#e4f4ff',
+    green: '#e7f6e0',
+    yellow: '#e7f6e0',
+    orange: '#ffefe3',
   },
   schoolbook: {
     acknowledge: '#ff8d2e',

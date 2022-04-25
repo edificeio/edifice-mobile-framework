@@ -40,7 +40,6 @@ export const BlogPostResourceCard = ({
   title,
   state,
 }: IBlogPostResourceCardProps) => {
-  const [isTextTruncatedWithBackspace, setIsTextTruncatedWithBackspace] = React.useState(false);
   const authorTextMaxLines = 1;
   const contentTextMaxLines = 5;
   const blogPostText = extractTextFromHtml(contentHtml);
@@ -84,19 +83,11 @@ export const BlogPostResourceCard = ({
           ) : undefined
         }>
         {hasBlogPostText ? (
-          <View style={{ marginBottom: blogPostMedia?.length ? 10 : undefined }}>
-            <Text
-              style={{ color: theme.color.text.regular }}
-              numberOfLines={contentTextMaxLines}
-              onTextLayout={({ nativeEvent: { lines } }) => {
-                const isTextTruncatedWithBackspace =
-                  lines.length === contentTextMaxLines && lines[contentTextMaxLines - 1].text.endsWith('\n');
-                setIsTextTruncatedWithBackspace(isTextTruncatedWithBackspace);
-              }}>
-              {blogPostText}
-            </Text>
-            {isTextTruncatedWithBackspace ? <Text style={{ color: theme.color.text.regular }}>...</Text> : null}
-          </View>
+          <Text
+            style={{ color: theme.color.text.regular, marginBottom: blogPostMedia?.length ? 10 : undefined }}
+            numberOfLines={contentTextMaxLines}>
+            {blogPostText}
+          </Text>
         ) : null}
         {hasBlogPostMedia ? renderMediaPreview(blogPostMedia) : null}
       </TouchableResourceCard>

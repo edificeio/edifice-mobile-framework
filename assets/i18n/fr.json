@@ -156,7 +156,8 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "comment": {
-      "addComment": "Ajoutez un commentaire...",
+      "addComment": "Ajouter un commentaire...",
+      "addReply": "Ajouter une réponse...",
       "comment": "Commentaire",
       "comments": "Commentaires",
       "confirmationDelete": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer le commentaire ?",
@@ -586,6 +587,8 @@
     "acknowledged": "Lu",
     "acknowledgement": "Lu",
     "acknowledgements": "Lus",
+    "acknowledgementNeededStudent": "Un responsable doit confirmer la lecture.",
+    "acknowledgementNeededRelative": "Vous devez confirmer la lecture du mot.",
     "categories": {
       "canteen": "Cantine",
       "event": "Événements",
@@ -597,16 +600,14 @@
     "response": "Réponse",
     "responses": "Réponses",
     "schoolbookWordDetailsScreen": {
-      "acknowledge": "Confirmer la lecture",
-      "alreadyConfirmed": "Vous avez confirmé la lecture de ce mot",
-      "backWithoutAck": "Quitter",
-      "backWithoutAckConfirm": "Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
-      "mustRead": "Un parent doit lire ce mot !",
-      "readBy": "Lu par",
-      "readByNumberRelative": "Lu par {{nb}} parent",
-      "readByNumberRelatives": "Lu par {{nb}} parents",
-      "readBySeparator": ", ",
-      "title": "Carnet de liaison"
+      "deleteAlert": {
+        "text": "Êtes-vous sûr de vouloir supprimer ce mot ? Les parents et les élèves n'y auront plus accès.",
+        "title": "Supprimer le mot"
+      },
+      "recipientsModal": {
+        "text": "Le mot est envoyé aux élèves suivants et à leurs responsables.",
+        "title": "Liste des destinataires"
+      }
     },
     "schoolbookWordListScreen": {
       "emptyScreen": {
@@ -618,6 +619,7 @@
       }
     },
     "students": "Élèves",
+    "wordFollowUp": "Suivi du mot",
     "appName": "Carnet de liaison",
     "tabName": "Carnet de liaison"
   },

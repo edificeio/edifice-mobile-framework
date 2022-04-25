@@ -40,9 +40,9 @@ const recipientsString = (recipients: IRecipient[]) =>
     ? recipients[0].displayName
     : `${recipients.length} ${I18n.t('schoolbook.students').toLowerCase()}`;
 
-export interface ISummaryCardProps {
+export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
-  userType: string;
+  userType: UserType;
   userId: string;
   acknowledgments: IAcknowledgment[];
   owner: string;
@@ -58,7 +58,7 @@ export interface ISummaryCardProps {
   total: number;
 }
 
-export const SummaryCard = ({
+export const SchoolbookWordSummaryCard = ({
   action,
   userType,
   userId,
@@ -74,25 +74,24 @@ export const SummaryCard = ({
   text,
   title,
   total,
-}: ISummaryCardProps) => {
-  const [isTextTruncatedWithBackspace, setIsTextTruncatedWithBackspace] = React.useState(false);
+}: ISchoolbookWordSummaryCardProps) => {
   const usersTextMaxLines = 1;
   const contentTextMaxLines = 2;
   const schoolbookWordText = extractTextFromHtml(text);
   const schoolbookWordMedia = extractMediaFromHtml(text);
   const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
   const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
+  const isParent = userType === UserType.Relative;
   const isTeacher = userType === UserType.Teacher;
   const isStudent = userType === UserType.Student;
-  const isParent = userType === UserType.Relative;
+  const isWordAcknowledgedForParent = getIsWordAcknowledgedForParent(userId, acknowledgments);
   const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(ackNumber, total);
   const isWordAcknowledgedForStudent = getIsWordAcknowledgedForStudent(acknowledgments);
-  const isWordAcknowledgedForParent = getIsWordAcknowledgedForParent(userId, acknowledgments);
   const isWordAcknowledged =
     (isTeacher && isWordAcknowledgedForTeacher) ||
     (isStudent && isWordAcknowledgedForStudent) ||
     (isParent && isWordAcknowledgedForParent);
-  const hasSingleRecipient = getHasSingleRecipientForTeacher(recipients);
+  const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(recipients);
   const responsesNumber = isTeacher ? respNumber : getResponseNumberForStudentAndParent(responses);
 
   return (
@@ -100,6 +99,7 @@ export const SummaryCard = ({
       <TouchableResourceCard
         onPress={action}
         emphasizedHeader
+        customHeaderStyle={{ borderTopLeftRadius: 15, borderTopRightRadius: 15, paddingVertical: UI_SIZES.spacing.smallPlus }}
         customHeaderIndicatorStyle={{ justifyContent: 'center' }}
         headerIndicator={
           <Label
@@ -114,7 +114,11 @@ export const SummaryCard = ({
               <SingleAvatar
                 size={24}
                 userId={
-                  isTeacher ? (hasSingleRecipient ? recipients[0]?.userId : require('ASSETS/images/group-avatar.png')) : owner
+                  isTeacher
+                    ? hasSingleRecipientForTeacher
+                      ? recipients[0]?.userId
+                      : require('ASSETS/images/group-avatar.png')
+                    : owner
                 }
               />
             }
@@ -141,18 +145,9 @@ export const SummaryCard = ({
         ) : null}
         {title ? <ContentCardTitle style={{ marginTop: UI_SIZES.spacing.smallPlus }}>{title}</ContentCardTitle> : null}
         {hasSchoolbookWordText ? (
-          <View style={{ marginTop: UI_SIZES.spacing.extraSmall }}>
-            <Text
-              numberOfLines={contentTextMaxLines}
-              onTextLayout={({ nativeEvent: { lines } }) => {
-                const isTextTruncatedWithBackspace =
-                  lines.length === contentTextMaxLines && lines[contentTextMaxLines - 1].text.endsWith('\n');
-                setIsTextTruncatedWithBackspace(isTextTruncatedWithBackspace);
-              }}>
-              {schoolbookWordText}
-            </Text>
-            {isTextTruncatedWithBackspace ? <Text>...</Text> : null}
-          </View>
+          <Text style={{ marginTop: UI_SIZES.spacing.extraSmall }} numberOfLines={contentTextMaxLines}>
+            {schoolbookWordText}
+          </Text>
         ) : null}
         {hasSchoolbookWordMedia ? (
           <View style={{ marginTop: UI_SIZES.spacing.extraSmall }}>{renderMediaPreview(schoolbookWordMedia)}</View>

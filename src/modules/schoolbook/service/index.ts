@@ -151,6 +151,7 @@ export const wordReportAdapter = (wordReport: IEntcoreWordReport) => {
       id: word?.id,
       ownerId: word?.owner_id,
       ownerName: word?.owner_name,
+      reply: word?.reply,
       sendingDate: moment(word?.sending_date),
       text: word?.text,
       title: word?.title,
@@ -160,12 +161,12 @@ export const wordReportAdapter = (wordReport: IEntcoreWordReport) => {
   return ret as IWordReport;
 };
 
-export const schoolbookUriCaptureFunction: IResourceUriCaptureFunction<{ wordId: string }> = url => {
+export const schoolbookUriCaptureFunction: IResourceUriCaptureFunction<{ schoolbookWordId: string }> = url => {
   const wordIdRegex = /^\/schoolbook.+\/word\/(\d+)/;
   const reportIdRegex = /^\/schoolbook.+\/report\/(\d+)/;
   const wordIdMatch = url.match(wordIdRegex);
   return {
-    wordId: (wordIdMatch && wordIdMatch[1]) || url.match(reportIdRegex)?.[1],
+    schoolbookWordId: (wordIdMatch && wordIdMatch[1]) || url.match(reportIdRegex)?.[1],
   };
 };
 

@@ -9,31 +9,35 @@ import { Text, TextSizeStyle } from './text';
 
 export interface BadgeAvatarProps {
   text: string;
-  textStyle: StyleProp<TextStyle>;
   userId:
     | string
     | {
         id: string;
         isGroup: boolean;
       };
+  viewStyle?: ViewStyle;
+  textStyle: StyleProp<TextStyle>;
   badgeContent?: number | string;
   badgeColor?: string | ColorValue;
   badgePosition?: BadgePosition;
   customAvatarStyle?: ViewStyle;
   status?: Status;
+  size?: number;
   isHorizontal?: boolean;
 }
 
 export const TextAvatar = ({
   text,
-  textStyle,
-  isHorizontal,
   userId,
+  viewStyle,
+  textStyle,
   badgeContent,
   badgeColor,
   badgePosition,
   customAvatarStyle,
   status,
+  size,
+  isHorizontal,
 }: BadgeAvatarProps) => {
   return (
     <View
@@ -43,6 +47,7 @@ export const TextAvatar = ({
           flexDirection: isHorizontal ? 'row' : 'column',
           width: isHorizontal ? undefined : 48,
         },
+        viewStyle,
       ]}>
       <BadgeAvatar
         userId={userId}
@@ -51,14 +56,16 @@ export const TextAvatar = ({
         badgePosition={badgePosition}
         customStyle={customAvatarStyle}
         status={status}
+        size={size}
       />
       <Text
         numberOfLines={1}
         style={[
           {
             ...TextSizeStyle.Small,
-            marginLeft: isHorizontal ? UI_SIZES.spacing.extraSmall : undefined,
+            marginLeft: isHorizontal ? UI_SIZES.spacing.smallPlus : undefined,
             marginTop: isHorizontal ? undefined : UI_SIZES.spacing.tiny,
+            flex: isHorizontal ? 1 : undefined,
           },
           textStyle,
         ]}>

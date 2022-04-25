@@ -64,6 +64,7 @@ export interface ITouchableContentCardProps extends IContentCardProps, Touchable
 interface IContentCardPropsBase extends IContentCardProps, ITouchableContentCardProps {
   cardComponent?: React.ComponentType;
   withoutPadding?: boolean;
+  customHeaderStyle?: ViewStyle;
   emphasizedHeader?: boolean;
   customHeaderIndicatorStyle?: ViewStyle;
 }
@@ -92,6 +93,7 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
     headerIndicator,
     cardComponent,
     withoutPadding,
+    customHeaderStyle,
     emphasizedHeader,
     customHeaderIndicatorStyle,
     ...viewProps
@@ -99,12 +101,11 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
   const HeaderFlexViewWithPadding = styled(HeaderFlexView)(
     cardPadding,
     withoutPadding && { paddingHorizontal: 0 },
+    customHeaderStyle,
     emphasizedHeader && {
       backgroundColor: theme.greyPalette.fog,
       borderBottomColor: theme.greyPalette.pearl,
       borderBottomWidth: UI_SIZES.dimensions.width.tiny,
-      borderTopRightRadius: 15,
-      borderTopLeftRadius: 15,
     },
   );
   const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
@@ -279,7 +280,7 @@ export const TouchableResourceCard = (
 };
 
 export const ResourceView = (props: IResourceCardProps) => {
-  return <ResourceCard_base {...props} CC={ContentView} withoutPadding />;
+  return <ResourceCard_base {...props} CC={ContentView} />;
 };
 
 export type PictureCardProps = {

@@ -4,7 +4,7 @@
  * Display a row of avatars and names that can handle touches.
  */
 import * as React from 'react';
-import { ListRenderItemInfo, StyleSheet, TouchableOpacity } from 'react-native';
+import { ListRenderItemInfo, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -18,68 +18,72 @@ export interface IUserListItem {
   name: string;
 }
 
-export interface UserListProps extends Omit<FlatListProps<IUserListItem>, 'renderItem' | 'keyExtractor'> {
-  selectedId?: IUserListItem['id'];
-  onSelect?: (user: IUserListItem['id']) => void;
-  renderBadge?: (user: IUserListItem, selectedId?: string) => Pick<BadgeAvatarProps, 'badgeContent' | 'badgeColor'>;
+export interface UserListProps<ItemType extends IUserListItem>
+  extends Omit<FlatListProps<ItemType>, 'renderItem' | 'keyExtractor'> {
+  selectedId?: ItemType['id'];
+  onSelect?: (user: ItemType['id']) => void;
+  renderBadge?: (user: ItemType, selectedId?: string) => Pick<BadgeAvatarProps, 'badgeContent' | 'badgeColor'>;
+  avatarSize?: number;
 }
 
-export default function UserList(props: UserListProps) {
-  const { selectedId, onSelect, renderBadge, data, horizontal, ...otherProps } = props;
-  const renderItem: FlatListProps<IUserListItem>['renderItem'] = React.useCallback(
-    info => UserList.renderItem({ info, onSelect, renderBadge, selectedId, horizontal }),
-    [onSelect, renderBadge, selectedId, horizontal],
+export default function UserList<ItemType extends IUserListItem>(props: UserListProps<ItemType>) {
+  const { selectedId, onSelect, renderBadge, avatarSize, data, horizontal, ...otherProps } = props;
+  const renderItem: FlatListProps<ItemType>['renderItem'] = React.useCallback(
+    info => UserList.renderItem({ info, onSelect, renderBadge, avatarSize, selectedId, horizontal, data }),
+    [onSelect, renderBadge, avatarSize, selectedId, horizontal, data],
   );
   return (
     <FlatList
+      bottomInset={false}
+      alwaysBounceHorizontal={false}
       data={data}
       keyExtractor={UserList.keyExtractor}
       renderItem={renderItem}
       horizontal={horizontal}
       contentContainerStyle={
-        horizontal ? UserList.styles.contentContainerStyleHorizontal : UserList.styles.contentContainerStyleVertical
+        horizontal
+          ? {
+              paddingVertical: UI_SIZES.spacing.large,
+              paddingHorizontal: UI_SIZES.spacing.large,
+            }
+          : undefined
       }
-      alwaysBounceHorizontal={false}
       {...otherProps}
     />
   );
 }
-UserList.keyExtractor = (item: IUserListItem) => item.id;
-UserList.renderItem = ({
+UserList.keyExtractor = <ItemType extends IUserListItem>(item: ItemType) => item.id;
+UserList.renderItem = <ItemType extends IUserListItem>({
   info,
   onSelect,
   renderBadge,
+  avatarSize,
   selectedId,
   horizontal,
-}: { info: ListRenderItemInfo<IUserListItem> } & Pick<UserListProps, 'onSelect' | 'renderBadge' | 'selectedId' | 'horizontal'>) => {
-  console.log('render avatar', info.item.id, info.item.name);
+  data,
+}: { info: ListRenderItemInfo<ItemType> } & Pick<
+  UserListProps<ItemType>,
+  'onSelect' | 'renderBadge' | 'avatarSize' | 'selectedId' | 'horizontal' | 'data'
+>) => {
+  const isLastItem = data && info.index === data.length - 1;
   return (
     <TouchableOpacity
-      style={horizontal ? UserList.styles.itemVertical : UserList.styles.itemHorizontal}
-      onPress={() => onSelect?.(info.item.id)}>
+      style={
+        horizontal
+          ? { marginRight: isLastItem ? undefined : UI_SIZES.spacing.extraLarge }
+          : { marginBottom: isLastItem ? undefined : UI_SIZES.spacing.large }
+      }
+      onPress={() => onSelect?.(info.item.id)}
+      disabled={!onSelect}>
       <TextAvatar
         text={info.item.name}
-        textStyle={info.item.id === selectedId ? undefined : UserList.styles.itemText}
+        textStyle={!selectedId || info.item.id === selectedId ? undefined : { color: theme.greyPalette.graphite }}
         userId={info.item.avatarId ?? info.item.id}
         {...(renderBadge ? renderBadge(info.item, selectedId) : undefined)}
-        status={info.item.id === selectedId ? Status.selected : Status.disabled}
+        status={!selectedId ? undefined : info.item.id === selectedId ? Status.selected : Status.disabled}
         isHorizontal={!horizontal}
+        size={avatarSize}
       />
     </TouchableOpacity>
   );
 };
-UserList.styles = StyleSheet.create({
-  contentContainerStyleVertical: {
-    paddingHorizontal: UI_SIZES.spacing.large,
-    paddingVertical: UI_SIZES.spacing.extraLarge,
-    marginBottom: -UI_SIZES.spacing.large, // Compoensate last item margin
-  },
-  contentContainerStyleHorizontal: {
-    paddingVertical: UI_SIZES.spacing.extraLarge,
-    paddingHorizontal: UI_SIZES.spacing.large,
-    marginRight: -UI_SIZES.spacing.extraLarge, // Compoensate last item margin
-  },
-  itemVertical: { marginRight: UI_SIZES.spacing.extraLarge },
-  itemHorizontal: { marginBottom: UI_SIZES.spacing.large },
-  itemText: { color: theme.greyPalette.graphite },
-});

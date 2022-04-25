@@ -4,25 +4,23 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import UserList from '~/framework/components/UserList';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextAvatar } from '~/framework/components/textAvatar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
-import { SummaryCard } from '~/modules/schoolbook/components/SummaryCard';
+import { SchoolbookWordSummaryCard } from '~/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
-import { Status } from '~/ui/avatars/Avatar';
 import { userService } from '~/user/service';
 
 import { IStudentAndParentWord, IStudentAndParentWordList, ITeacherWord, ITeacherWordList } from '../reducer';
@@ -58,13 +56,15 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
   React.useEffect(() => {
-    focusEventListener = props.navigation.addListener('didFocus', () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
-    });
-    return () => {
-      focusEventListener.remove();
-    };
+    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    else refreshSilent();
+    // focusEventListener = props.navigation.addListener('didFocus', () => {
+    //   if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    //   else refreshSilent();
+    // });
+    // return () => {
+    //   focusEventListener.remove();
+    // };
   }, []);
 
   const init = () => {
@@ -87,12 +87,14 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
+
   const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
     fetchFromStart()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
+
   const fetchNextPage = () => {
     setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
     fetchPage()
@@ -105,8 +107,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   const [schoolbookWords, setSchoolbookWords] = React.useState(
     isParent ? ({} as { [key: string]: IStudentAndParentWordList }) : ([] as ITeacherWordList | IStudentAndParentWordList),
   );
-  const [children, setChildren] = React.useState([] as { id: string; firstName: string; unacknowledgedWordsCount: number }[]);
-  const [childrenContainerWidth, setChildrenContainerWidth] = React.useState(0);
+  const [children, setChildren] = React.useState([] as { id: string; name: string; unacknowledgedWordsCount: number }[]);
   const [selectedChildId, setSelectedChildId] = React.useState('');
   const [nextPageToFetch_state, setNextPageToFetch] = React.useState<number | { [key: string]: number }>(0);
   const [pagingSize_state, setPagingSize] = React.useState<number | undefined>(undefined);
@@ -119,7 +120,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
         childrenByStructure &&
         childrenByStructure[0]?.children?.map(child => ({
           id: child.id,
-          firstName: child.displayName?.split(' ')[1],
+          name: child.displayName?.split(' ')[1],
         }));
       const wordsCountPromises = children?.map(child => schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id));
       const childrenUnacknowledgedWordsCount = wordsCountPromises && (await Promise.all(wordsCountPromises));
@@ -212,7 +213,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   };
 
   const getChildIdWithNewestWord = (
-    children: { id: string; firstName: string; unacknowledgedWordsCount: number }[],
+    children: { id: string; name: string; unacknowledgedWordsCount: number }[],
     childrenWordLists: IStudentAndParentWordList[],
   ) => {
     const newestWordDates = childrenWordLists?.map((childWordList, index) => ({
@@ -226,11 +227,11 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     return childIdWithNewestWord;
   };
 
-  const onOpenSchoolbookWord = (item: ITeacherWord | IStudentAndParentWord) => {
+  const openSchoolbookWord = (schoolbookWordId: string) =>
     props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), {
-      schoolbookWord: item,
+      schoolbookWordId,
+      studentId: selectedChildId,
     });
-  };
 
   // HEADER =====================================================================================
 
@@ -274,39 +275,14 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   // CHILDREN LIST ================================================================================
 
   const renderChildrenList = () => {
-    const doChildrenSurpassScreen = childrenContainerWidth > UI_SIZES.screen.width;
     return (
-      <View>
-        <FlatList
-          horizontal
-          scrollEnabled={doChildrenSurpassScreen}
-          onContentSizeChange={contentWidth => setChildrenContainerWidth(contentWidth)}
-          contentContainerStyle={{
-            paddingHorizontal: UI_SIZES.spacing.extraLarge,
-            paddingVertical: UI_SIZES.spacing.large,
-          }}
-          data={children}
-          keyExtractor={item => item.id}
-          renderItem={({ item, index }) => {
-            const isLastChild = index === children.length - 1;
-            const isChildSelected = item.id === selectedChildId;
-            return (
-              <TouchableOpacity
-                style={{ marginRight: isLastChild ? undefined : UI_SIZES.spacing.extraLarge }}
-                onPress={() => setSelectedChildId(item.id)}>
-                <TextAvatar
-                  text={item.firstName}
-                  textStyle={{ color: isChildSelected ? undefined : theme.greyPalette.graphite }}
-                  userId={item.id}
-                  badgeContent={item.unacknowledgedWordsCount}
-                  badgeColor={theme.color.notificationBadge}
-                  status={isChildSelected ? Status.selected : Status.disabled}
-                />
-              </TouchableOpacity>
-            );
-          }}
-        />
-      </View>
+      <UserList
+        data={children}
+        renderBadge={user => ({ badgeContent: user.unacknowledgedWordsCount, badgeColor: theme.color.notificationBadge })}
+        onSelect={id => setSelectedChildId(id)}
+        selectedId={selectedChildId}
+        horizontal
+      />
     );
   };
 
@@ -321,7 +297,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
         data={listData}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }: { item: IStudentAndParentWord | ITeacherWord }) => (
-          <SummaryCard action={() => onOpenSchoolbookWord(item.id.toString())} userType={userType} userId={userId} {...item} />
+          <SchoolbookWordSummaryCard
+            action={() => openSchoolbookWord(item.id.toString())}
+            userType={userType}
+            userId={userId}
+            {...item}
+          />
         )}
         ListEmptyComponent={renderEmpty()}
         ListHeaderComponent={hasSeveralChildren ? renderChildrenList() : null}
