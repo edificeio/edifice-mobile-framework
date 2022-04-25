@@ -11,7 +11,7 @@ export const signetsService = {
     });
     return resourcesAdapter(signetsResponse.data.signets.resources)
       .filter(resource => resource.types.includes('Signet'))
-      .concat(resourcesAdapter(mysignetsResponse).filter(resource => resource.owner_id !== userId))
+      .concat(resourcesAdapter(mysignetsResponse).filter(resource => userId && resource.owner_id !== userId))
       .sort(compareResources);
   },
   getOrientation: async () => {
