@@ -48,7 +48,7 @@ export const ActionButton = ({ text, url, action }: ActionButtonProps) => {
         <Picture
           type="NamedSvg"
           name="pictos-external-link"
-          width={UI_SIZES.dimensions.height.large}
+          width={UI_SIZES.dimensions.width.large}
           height={UI_SIZES.dimensions.height.large}
           fill={theme.color.text.inverse}
         />
