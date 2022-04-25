@@ -69,6 +69,7 @@ interface HomePageProps {
 
 export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePageProps) => {
   const searchBarRef = useRef<TextInput>(null);
+  const searchModalRef = useRef(null);
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
@@ -92,6 +93,9 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   function onCancelSearch() {
     if (searchBarRef.current) {
       searchBarRef.current.clear();
+    }
+    if (searchModalRef.current) {
+      searchModalRef.current.resetParams();
     }
     setSearchedResources([]);
     setSearchState(SearchState.NONE);
@@ -169,7 +173,12 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />}
         />
       )}
-      <AdvancedSearchModal isVisible={searchModalVisible} onSearch={onAdvancedSearch} closeModal={hideSearchModal} />
+      <AdvancedSearchModal
+        isVisible={searchModalVisible}
+        onSearch={onAdvancedSearch}
+        closeModal={hideSearchModal}
+        ref={searchModalRef}
+      />
     </View>
   );
 };

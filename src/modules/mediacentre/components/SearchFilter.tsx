@@ -123,7 +123,7 @@ const FilterSection: React.FunctionComponent<FilterSectionProps> = (props: Filte
         </View>
         <View style={styles.sectionUnderlineView} />
       </TouchableOpacity>
-      {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} />) : null}
+      {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} key={item.value} />) : null}
     </View>
   );
 };

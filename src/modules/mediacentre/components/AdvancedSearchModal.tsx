@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { Image, ImageSourcePropType, Modal, StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
@@ -192,61 +192,72 @@ const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: Sou
   );
 };
 
-export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = (props: AdvancedSearchModalProps) => {
-  const [fields, setFields] = useState<Field[]>(defaultFields);
-  const [sources, setSources] = useState(defaultSources);
-  const areFieldsEmpty = !fields.some(field => field.value !== '');
-  const updateField = (index: number, field: Field) => {
-    const newFields = [...fields];
-    newFields[index] = field;
-    setFields(newFields);
-  };
-  const onSearch = () => {
-    props.onSearch({ fields, sources });
-  };
-  return (
-    <Modal visible={props.isVisible}>
-      <View style={styles.headerContainer}>
-        <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
-        <Icon name="close" color="white" size={24} onPress={props.closeModal} />
-      </View>
-      <ModalContentBlock style={styles.contentContainer}>
-        {fields.map((field, index) => (
-          <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
-        ))}
-        <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
-        <View style={styles.sourcesContainer}>
-          <SourceCheckbox
-            source={require('ASSETS/images/logo-gar.png')}
-            checked={sources.GAR}
-            onChange={value => setSources({ ...sources, GAR: value })}
-          />
-          <SourceCheckbox
-            source={require('ASSETS/images/logo-moodle.png')}
-            checked={sources.Moodle}
-            onChange={value => setSources({ ...sources, Moodle: value })}
-          />
-          <SourceCheckbox
-            source={require('ASSETS/images/logo-pmb.png')}
-            checked={sources.PMB}
-            onChange={value => setSources({ ...sources, PMB: value })}
-          />
-          <SourceCheckbox
-            iconName="bookmark_outline"
-            checked={sources.Signets}
-            onChange={value => setSources({ ...sources, Signets: value })}
-          />
+export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = forwardRef(
+  (props: AdvancedSearchModalProps, ref) => {
+    const [fields, setFields] = useState<Field[]>(defaultFields);
+    const [sources, setSources] = useState(defaultSources);
+    const areFieldsEmpty = !fields.some(field => field.value !== '');
+    const updateField = (index: number, field: Field) => {
+      const newFields = [...fields];
+      newFields[index] = field;
+      setFields(newFields);
+    };
+    const onSearch = () => {
+      props.onSearch({ fields, sources });
+    };
+    const resetParams = () => {
+      for (const field of fields) {
+        field.value = '';
+        field.operand = Operand.OR;
+      }
+      setFields(fields);
+      setSources(defaultSources);
+    };
+    useImperativeHandle(ref, () => ({ resetParams }));
+    return (
+      <Modal visible={props.isVisible}>
+        <View style={styles.headerContainer}>
+          <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
+          <Icon name="close" color="white" size={24} onPress={props.closeModal} />
         </View>
-        <View style={styles.dialogButtonsContainer}>
-          <DialogButtonCancel onPress={props.closeModal} />
-          <DialogButtonOk
-            onPress={onSearch}
-            disabled={areFieldsEmpty}
-            label={I18n.t('common.search')}
-            style={styles.searchButton}
-          />
-        </View>
-      </ModalContentBlock>
-    </Modal>
-  );
-};
+        <ModalContentBlock style={styles.contentContainer}>
+          {fields.map((field, index) => (
+            <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
+          ))}
+          <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
+          <View style={styles.sourcesContainer}>
+            <SourceCheckbox
+              source={require('ASSETS/images/logo-gar.png')}
+              checked={sources.GAR}
+              onChange={value => setSources({ ...sources, GAR: value })}
+            />
+            <SourceCheckbox
+              source={require('ASSETS/images/logo-moodle.png')}
+              checked={sources.Moodle}
+              onChange={value => setSources({ ...sources, Moodle: value })}
+            />
+            <SourceCheckbox
+              source={require('ASSETS/images/logo-pmb.png')}
+              checked={sources.PMB}
+              onChange={value => setSources({ ...sources, PMB: value })}
+            />
+            <SourceCheckbox
+              iconName="bookmark_outline"
+              checked={sources.Signets}
+              onChange={value => setSources({ ...sources, Signets: value })}
+            />
+          </View>
+          <View style={styles.dialogButtonsContainer}>
+            <DialogButtonCancel onPress={props.closeModal} />
+            <DialogButtonOk
+              onPress={onSearch}
+              disabled={areFieldsEmpty}
+              label={I18n.t('common.search')}
+              style={styles.searchButton}
+            />
+          </View>
+        </ModalContentBlock>
+      </Modal>
+    );
+  },
+);
