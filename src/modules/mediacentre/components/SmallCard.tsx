@@ -1,9 +1,12 @@
 import Clipboard from '@react-native-clipboard/clipboard';
+import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 
 import { TouchCard } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
+import { openUrl } from '~/framework/util/linking';
 import { getAuthHeader } from '~/infra/oauth';
 import { SourceImage } from '~/modules/mediacentre/components/BigCard';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
@@ -90,10 +93,11 @@ export const FavoriteIcon: React.FunctionComponent<FavoriteIconProps> = (props: 
 
 export const SmallCard: React.FunctionComponent<SmallCardProps> = (props: SmallCardProps) => {
   const openURL = () => {
-    Linking.openURL(props.resource.link);
+    openUrl(props.resource.link);
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);
+    Toast.show(I18n.t('mediacentre.link-copied'));
   };
   return (
     <TouchCard onPress={openURL}>
