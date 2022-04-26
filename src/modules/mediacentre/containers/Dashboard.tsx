@@ -52,9 +52,9 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
     this.props.fetchSignets(this.props.userId);
   }
 
-  addFavorite = (resourceId: string, resource: Resource) => {
+  addFavorite = async (resourceId: string, resource: Resource) => {
     try {
-      this.props.postAddFavorite(resourceId, resource);
+      await this.props.postAddFavorite(resourceId, resource);
       Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
         position: Toast.position.BOTTOM,
         mask: false,
@@ -66,9 +66,9 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
     }
   };
 
-  removeFavorite = (resourceId: string, resource: Source) => {
+  removeFavorite = async (resourceId: string, resource: Source) => {
     try {
-      this.props.postRemoveFavorite(resourceId, resource);
+      await this.props.postRemoveFavorite(resourceId, resource);
       Toast.showSuccess(I18n.t('mediacentre.favorite-removed'), {
         position: Toast.position.BOTTOM,
         mask: false,
@@ -99,13 +99,26 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
   }
 }
 
+const setFavorites = (resources: Resource[], favorites: string[]) => {
+  for (const resource of resources) {
+    resource.favorite = favorites.includes(String(resource.id));
+  }
+};
+
 const mapStateToProps: (state: any) => any = state => {
   const externals = getExternalsState(state).data;
   const favorites = getFavoritesState(state).data;
   const search = getSearchState(state).data;
   const signets = getSignetsState(state).data;
   const textbooks = getTextbooksState(state).data;
-  const userId = getUserSession(state).user.id;
+  const userId = getUserSession().user.id;
+
+  const favIds = favorites.map(favorite => String(favorite.id));
+  setFavorites(externals, favIds);
+  setFavorites(search, favIds);
+  setFavorites(signets.orientationSignets, favIds);
+  setFavorites(signets.sharedSignets, favIds);
+  setFavorites(textbooks, favIds);
 
   return {
     externals,

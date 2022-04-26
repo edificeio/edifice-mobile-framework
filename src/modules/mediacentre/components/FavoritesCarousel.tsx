@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
@@ -128,6 +128,9 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
   const increaseIndex = () => {
     setIndex(index + 1);
   };
+  useEffect(() => {
+    setIndex(0);
+  }, [props.resources.length]);
   return (
     <View style={styles.mainContainer}>
       <View style={styles.categoryHeaderContainer}>
