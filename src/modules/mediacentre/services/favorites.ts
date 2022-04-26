@@ -12,9 +12,13 @@ export const favoritesService = {
     return favorites;
   },
   post: async (id: string, resource: Resource) => {
+    const res: any = resource;
+    if (resource.source === Source.Signet) {
+      res.id = Number(resource.id);
+    }
     await fetchJSONWithCache(`/mediacentre/favorites?id=${id}`, {
       method: 'post',
-      body: JSON.stringify(resource),
+      body: JSON.stringify(res),
     });
   },
   delete: async (id: string, source: Source) => {
