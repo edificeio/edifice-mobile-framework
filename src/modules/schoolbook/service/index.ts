@@ -47,11 +47,17 @@ export interface IEntcoreConcernedStudent {
   responses: IEntcoreResponse[] | null;
 }
 
+export interface IEntcoreRecipient {
+  display_name: string;
+  user_id: string;
+}
+
 export interface IEntcoreWord {
   category: string;
   id: number;
   owner_id: string;
   owner_name: string;
+  recipients?: IEntcoreRecipient[];
   reply: boolean;
   sending_date: string;
   shared: ({ userId?: string; groupId?: string } & any)[] | [];
@@ -75,6 +81,7 @@ export const teacherWordListAdapter = (teacherWordList: IEntcoreTeacherWordList)
     ackNumber: teacherWord.ack_number,
     category: teacherWord.category,
     id: teacherWord.id,
+    recipients: teacherWord.recipients?.map(recipient => ({ displayName: recipient.display_name, userId: recipient.user_id })),
     respNumber: teacherWord.resp_number,
     sendingDate: moment(teacherWord.sending_date),
     text: teacherWord.text,

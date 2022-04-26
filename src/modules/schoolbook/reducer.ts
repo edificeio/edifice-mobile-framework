@@ -7,10 +7,16 @@ import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 
 // Types
 
+export interface IRecipient {
+  displayName: string;
+  userId: string;
+}
+
 export interface ITeacherWord {
   ackNumber: number;
   category: string;
   id: number;
+  recipients: IRecipient[];
   respNumber: number;
   sendingDate: Moment;
   text: string;
@@ -109,7 +115,7 @@ export const getIsWordAcknowledgedForTeacher = (ackNumber: number, total: number
   return ackNumber === total;
 };
 
-export const getHasSingleRecipientForTeacher = (recipients: any) => {
+export const getHasSingleRecipientForTeacher = (recipients: IRecipient[]) => {
   return recipients?.length === 1;
 };
 

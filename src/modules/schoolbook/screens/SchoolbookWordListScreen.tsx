@@ -272,20 +272,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
         data={schoolbookWords}
         renderItem={({ item }) => {
           return (
-            <SummaryCard
-              action={() => onOpenSchoolbookWord(item)}
-              userType={userType}
-              userId={userId}
-              {...item}
-              recipients={
-                userType === UserType.Teacher
-                  ? [
-                      { userId: 'b144e768-128f-443f-af46-b62c7c29ac3d', displayName: 'Aa Bb' },
-                      { userId: 'b144e768-128f-443f-af46-b62c7c29ac3d', displayName: 'Cc Dd' },
-                    ]
-                  : undefined
-              }
-            />
+            <SummaryCard action={() => onOpenSchoolbookWord(item.id.toString())} userType={userType} userId={userId} {...item} />
           );
         }}
         keyExtractor={item => item.id.toString()}

@@ -18,6 +18,7 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import {
   IAcknowledgment,
+  IRecipient,
   IResponse,
   getHasSingleRecipientForTeacher,
   getIsWordAcknowledgedForParent,
@@ -34,7 +35,7 @@ const responsesString = (responses: number) =>
   responses === 1
     ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
     : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
-const recipientsString = (recipients: any) =>
+const recipientsString = (recipients: IRecipient[]) =>
   getHasSingleRecipientForTeacher(recipients)
     ? recipients[0].displayName
     : `${recipients.length} ${I18n.t('schoolbook.students').toLowerCase()}`;
@@ -49,7 +50,7 @@ export interface ISummaryCardProps {
   responses: IResponse[] | null;
   ackNumber: number;
   category: string;
-  recipients: any;
+  recipients: IRecipient[];
   respNumber: number;
   sendingDate: Moment;
   text: string;
@@ -113,11 +114,7 @@ export const SummaryCard = ({
               <SingleAvatar
                 size={24}
                 userId={
-                  isTeacher
-                    ? hasSingleRecipient
-                      ? recipients[0]?.userId || require('ASSETS/images/no-avatar.png')
-                      : require('ASSETS/images/group-avatar.png')
-                    : owner || require('ASSETS/images/no-avatar.png')
+                  isTeacher ? (hasSingleRecipient ? recipients[0]?.userId : require('ASSETS/images/group-avatar.png')) : owner
                 }
               />
             }
