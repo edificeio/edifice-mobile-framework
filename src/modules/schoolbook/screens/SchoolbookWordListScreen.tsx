@@ -2,13 +2,13 @@
  * Schoolbook word list
  */
 import I18n from 'i18n-js';
+import moment from 'moment';
 import React from 'react';
 import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -35,12 +35,7 @@ export interface ISchoolbookWordListScreen_DataProps {
   initialLoadingState: AsyncPagedLoadingState;
   session: IUserSession;
 }
-export interface ISchoolbookWordListScreen_EventProps {
-  doFetch: () => Promise<ITeacherWordList | IStudentAndParentWordList | undefined>;
-}
-export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProps &
-  ISchoolbookWordListScreen_EventProps &
-  NavigationInjectedProps;
+export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProps & NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
 
@@ -49,7 +44,6 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   const userId = session?.user?.id;
   const userType = session?.user?.type;
   const isTeacher = userType === UserType.Teacher;
-  const isStudent = userType === UserType.Student;
   const isParent = userType === UserType.Relative;
   const hasSchoolbookWordCreationRights = getSchoolbookWorkflowInformation(session).create;
   let focusEventListener: NavigationEventSubscription;
@@ -108,43 +102,49 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 
   // EVENTS =====================================================================================
 
-  const [schoolbookWords, setSchoolbookWords] = React.useState([] as ITeacherWordList | IStudentAndParentWordList);
-  const [children, setChildren] = React.useState([] as { id: string; firstName: string }[]);
-  const [selectedChildId, setSelectedChildId] = React.useState('');
-  const [nextPageToFetch_state, setNextPageToFetch] = React.useState(0);
-  const [pagingSize_state, setPagingSize] = React.useState<number | undefined>(undefined);
+  const [schoolbookWords, setSchoolbookWords] = React.useState(
+    isParent ? ({} as { [key: string]: IStudentAndParentWordList }) : ([] as ITeacherWordList | IStudentAndParentWordList),
+  );
+  const [children, setChildren] = React.useState([] as { id: string; firstName: string; unacknowledgedWordsCount: number }[]);
   const [childrenContainerWidth, setChildrenContainerWidth] = React.useState(0);
+  const [selectedChildId, setSelectedChildId] = React.useState('');
+  const [nextPageToFetch_state, setNextPageToFetch] = React.useState<number | { [key: string]: number }>(0);
+  const [pagingSize_state, setPagingSize] = React.useState<number | undefined>(undefined);
 
-  // Fetch all children for a parent.
+  // Fetch children information for parent.
   const fetchParentChildren = async () => {
     try {
-      const parentChildren = await userService.getUserChildren(userId);
+      const childrenByStructure = await userService.getUserChildren(userId);
       const children =
-        parentChildren &&
-        parentChildren[0]?.children?.map(child => ({
+        childrenByStructure &&
+        childrenByStructure[0]?.children?.map(child => ({
           id: child.id,
           firstName: child.displayName?.split(' ')[1],
         }));
-      const selectedChildId = children && children.length > 1 ? children[0].id : children && children[0].id;
-      children && setChildren(children);
-      selectedChildId && setSelectedChildId(selectedChildId);
-      return selectedChildId;
+      const wordsCountPromises = children?.map(child => schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id));
+      const childrenUnacknowledgedWordsCount = wordsCountPromises && (await Promise.all(wordsCountPromises));
+      const childrenWithUnacknowledgedWordsCount = children?.map((child, index) => ({
+        ...child,
+        unacknowledgedWordsCount: (childrenUnacknowledgedWordsCount && childrenUnacknowledgedWordsCount[index]) || 0,
+      }));
+      childrenWithUnacknowledgedWordsCount && setChildren(childrenWithUnacknowledgedWordsCount);
+      return childrenWithUnacknowledgedWordsCount;
     } catch (e) {
       throw e;
     }
   };
 
   // Fetch a page of schoolbook words.
-  // Auto-increment nextPageNumber unless `fromPage` is provided.
-  // If `flushAfter` is also provided along `fromPage`, all content after the loaded page will be erased.
-  const fetchPage = async (fromPage?: number, flushAfter?: boolean, selectedChildId?: string) => {
+  // Auto-increment nextPageNumber unless `fromStart` is provided.
+  // If `flushAfter` is also provided along `fromStart`, all content after the loaded page will be erased.
+  const fetchPage = async (fromStart?: boolean, flushAfter?: boolean, childId?: string) => {
     try {
-      const pageToFetch = fromPage ?? nextPageToFetch_state; // If page is not defined, automatically fetch the next page
-      if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
-      const studentId = isStudent ? userId : selectedChildId;
+      const studentId = isParent ? childId || selectedChildId : userId;
+      const pageToFetch = fromStart ? 0 : isParent ? nextPageToFetch_state[studentId] : nextPageToFetch_state; // If page is not defined, automatically fetch the next page
       const newSchoolbookWords = isTeacher
         ? await schoolbookService.list.teacher(session, pageToFetch)
         : await schoolbookService.list.studentAndParent(session, pageToFetch, studentId);
+
       let pagingSize = pagingSize_state;
       if (pagingSize === undefined) {
         setPagingSize(newSchoolbookWords.length);
@@ -152,27 +152,78 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
       }
       if (pagingSize) {
         newSchoolbookWords.length &&
-          setSchoolbookWords([
-            ...schoolbookWords.slice(0, pagingSize * pageToFetch),
-            ...newSchoolbookWords,
-            ...(flushAfter ? [] : schoolbookWords.slice(pagingSize * (pageToFetch + 1))),
-          ]);
+          setSchoolbookWords(prevState => {
+            return isParent
+              ? {
+                  ...prevState,
+                  [studentId]: [
+                    ...(prevState[studentId]?.slice(0, pagingSize * pageToFetch) || []),
+                    ...newSchoolbookWords,
+                    ...(flushAfter ? [] : prevState[studentId].slice(pagingSize * (pageToFetch + 1))),
+                  ],
+                }
+              : [
+                  ...schoolbookWords?.slice(0, pagingSize * pageToFetch),
+                  ...newSchoolbookWords,
+                  ...(flushAfter ? [] : schoolbookWords?.slice(pagingSize * (pageToFetch + 1))),
+                ];
+          });
 
-        if (fromPage === undefined) {
-          setNextPageToFetch(newSchoolbookWords.length === 0 || newSchoolbookWords.length < pagingSize ? -1 : pageToFetch + 1);
-        } else if (flushAfter) {
-          setNextPageToFetch(fromPage + 1);
-        }
-        // Only increment pagecount when fromPage is not specified
+        const nextPageToFetch = !fromStart
+          ? newSchoolbookWords.length === 0 || newSchoolbookWords.length < pagingSize
+            ? -1
+            : pageToFetch + 1
+          : flushAfter
+          ? 1
+          : undefined;
+        nextPageToFetch &&
+          setNextPageToFetch(prevState => {
+            return isParent
+              ? {
+                  ...prevState,
+                  [studentId]: nextPageToFetch,
+                }
+              : nextPageToFetch;
+          });
+        // Only increment pagecount when fromStart is not specified
+        return newSchoolbookWords;
       }
     } catch (e) {
       throw e;
     }
   };
-  const fetchFromStart = async (childId?: string) => {
-    const selectedChildId =
-      childId || (isParent && loadingRef.current === AsyncPagedLoadingState.PRISTINE && (await fetchParentChildren()));
-    await fetchPage(0, true, selectedChildId);
+
+  const fetchFromStart = async () => {
+    if (isParent) {
+      const fetchedChildren = await fetchParentChildren();
+      if (fetchedChildren?.length === 1) {
+        const singleChildId = fetchedChildren[0]?.id;
+        await fetchPage(true, true, singleChildId);
+        setSelectedChildId(singleChildId);
+      } else {
+        const childrenWordListPromises = fetchedChildren?.map(fetchedChild => fetchPage(true, true, fetchedChild.id));
+        const childrenWordLists =
+          childrenWordListPromises && ((await Promise.all(childrenWordListPromises)) as IStudentAndParentWordList[]);
+        const childIdWithNewestWord =
+          fetchedChildren && childrenWordLists && getChildIdWithNewestWord(fetchedChildren, childrenWordLists);
+        childIdWithNewestWord && setSelectedChildId(childIdWithNewestWord);
+      }
+    } else await fetchPage(true, true);
+  };
+
+  const getChildIdWithNewestWord = (
+    children: { id: string; firstName: string; unacknowledgedWordsCount: number }[],
+    childrenWordLists: IStudentAndParentWordList[],
+  ) => {
+    const newestWordDates = childrenWordLists?.map((childWordList, index) => ({
+      index,
+      sendingDate: childWordList && childWordList[0]?.sendingDate,
+    }));
+    const sortedNewestWordDates = newestWordDates?.sort((a, b) => moment(a.sendingDate).diff(b.sendingDate));
+    const newestWordDate = sortedNewestWordDates && sortedNewestWordDates[sortedNewestWordDates?.length - 1];
+    const childWithNewestWord = children && newestWordDate && children[newestWordDate.index];
+    const childIdWithNewestWord = childWithNewestWord?.id;
+    return childIdWithNewestWord;
   };
 
   const onOpenSchoolbookWord = (item: ITeacherWord | IStudentAndParentWord) => {
@@ -235,30 +286,25 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
             paddingVertical: UI_SIZES.spacing.large,
           }}
           data={children}
+          keyExtractor={item => item.id}
           renderItem={({ item, index }) => {
             const isLastChild = index === children.length - 1;
             const isChildSelected = item.id === selectedChildId;
             return (
               <TouchableOpacity
-                style={{
-                  marginRight: isLastChild ? undefined : UI_SIZES.spacing.extraLarge,
-                }}
-                onPress={() => {
-                  setSelectedChildId(item.id);
-                  fetchFromStart(item.id);
-                }}>
+                style={{ marginRight: isLastChild ? undefined : UI_SIZES.spacing.extraLarge }}
+                onPress={() => setSelectedChildId(item.id)}>
                 <TextAvatar
                   text={item.firstName}
                   textStyle={{ color: isChildSelected ? undefined : theme.greyPalette.graphite }}
                   userId={item.id}
-                  badgeContent={0}
+                  badgeContent={item.unacknowledgedWordsCount}
                   badgeColor={theme.color.notificationBadge}
                   status={isChildSelected ? Status.selected : Status.disabled}
                 />
               </TouchableOpacity>
             );
           }}
-          keyExtractor={item => item.id}
         />
       </View>
     );
@@ -267,33 +313,24 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   // SCHOOLBOOK WORD LIST =========================================================================
 
   const renderSchoolbookWordList = () => {
+    const listData = isParent ? schoolbookWords[selectedChildId] : schoolbookWords;
+    const hasSeveralChildren = children?.length > 1;
+    const isAllDataLoaded = isParent ? nextPageToFetch_state[selectedChildId] < 0 : nextPageToFetch_state < 0;
     return (
       <FlatList
-        data={schoolbookWords}
-        renderItem={({ item }) => {
-          return (
-            <SummaryCard action={() => onOpenSchoolbookWord(item.id.toString())} userType={userType} userId={userId} {...item} />
-          );
-        }}
+        data={listData}
         keyExtractor={item => item.id.toString()}
+        renderItem={({ item }: { item: IStudentAndParentWord | ITeacherWord }) => (
+          <SummaryCard action={() => onOpenSchoolbookWord(item.id.toString())} userType={userType} userId={userId} {...item} />
+        )}
         ListEmptyComponent={renderEmpty()}
+        ListHeaderComponent={hasSeveralChildren ? renderChildrenList() : null}
         ListFooterComponent={loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />}
         contentContainerStyle={{ flexGrow: 1 }}
-        onEndReached={() => fetchNextPage()}
+        onEndReached={() => (isAllDataLoaded ? null : fetchNextPage())}
         onEndReachedThreshold={0.5}
       />
-    );
-  };
-
-  // CONTENT ======================================================================================
-
-  const renderContent = () => {
-    return (
-      <>
-        {children?.length > 1 ? renderChildrenList() : null}
-        {renderSchoolbookWordList()}
-      </>
     );
   };
 
@@ -307,7 +344,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
       case AsyncPagedLoadingState.REFRESH_SILENT:
       case AsyncPagedLoadingState.FETCH_NEXT:
       case AsyncPagedLoadingState.FETCH_NEXT_FAILED:
-        return renderContent();
+        return renderSchoolbookWordList();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
         return <LoadingIndicator />;
@@ -327,11 +364,9 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 // MAPPING ========================================================================================
 
 export default connect(
-  (gs: IGlobalState) => {
-    return {
-      session: getUserSession(gs),
-      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
-    };
-  },
+  () => ({
+    session: getUserSession(),
+    initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+  }),
   dispatch => bindActionCreators({}, dispatch),
 )(SchoolbookWordListScreen);

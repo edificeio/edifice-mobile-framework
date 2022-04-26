@@ -26,6 +26,10 @@ export interface IEntcoreStudentAndParentWord {
 
 export type IEntcoreStudentAndParentWordList = IEntcoreStudentAndParentWord[];
 
+export interface IEntcoreParentUnacknowledgedWordsCount {
+  unread_words: number;
+}
+
 export interface IEntcoreAcknowledgment {
   id: number;
   owner: string;
@@ -116,6 +120,11 @@ export const studentAndParentWordListAdapter = (studentAndParentWordList: IEntco
   return ret as IStudentAndParentWordList;
 };
 
+export const parentUnacknowledgedWordsCountAdapter = (parentUnacknowledgedWordsCount: IEntcoreParentUnacknowledgedWordsCount) => {
+  const ret = parentUnacknowledgedWordsCount.unread_words;
+  return ret as number;
+};
+
 export const wordReportAdapter = (wordReport: IEntcoreWordReport) => {
   const report = wordReport.report;
   const word = wordReport.word;
@@ -175,6 +184,11 @@ export const schoolbookService = {
       const api = `/schoolbook/list/${page}/${studentId}`;
       const entcoreStudentAndParentWordList = (await fetchJSONWithCache(api)) as IEntcoreStudentAndParentWordList;
       return studentAndParentWordListAdapter(entcoreStudentAndParentWordList) as IStudentAndParentWordList;
+    },
+    parentUnacknowledgedWordsCount: async (session: IUserSession, studentId: string) => {
+      const api = `/schoolbook/count/${studentId}`;
+      const entcoreParentUnacknowledgedWordsCount = (await fetchJSONWithCache(api)) as IEntcoreParentUnacknowledgedWordsCount;
+      return parentUnacknowledgedWordsCountAdapter(entcoreParentUnacknowledgedWordsCount) as number;
     },
   },
   word: {
