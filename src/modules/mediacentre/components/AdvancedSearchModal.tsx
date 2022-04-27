@@ -1,13 +1,11 @@
 import I18n from 'i18n-js';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { Image, ImageSourcePropType, Modal, StyleSheet, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { Image, ImageSourcePropType, Modal, StyleSheet, TextInput, View } from 'react-native';
 
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
-import { ModalContentBlock } from '~/ui/Modal';
 import { Text, TextBold } from '~/ui/Typography';
 import { Checkbox } from '~/ui/forms/Checkbox';
 
@@ -22,8 +20,8 @@ const styles = StyleSheet.create({
   },
   criteriaInput: {
     width: '75%',
+    height: 45,
     paddingHorizontal: 10,
-    paddingVertical: 5,
     borderWidth: 2,
     borderRadius: 5,
     borderColor: CommonStyles.actionColor,
@@ -36,9 +34,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginRight: 5,
-  },
-  modalContainer: {
-    backgroundColor: '#FFFFFF',
   },
   headerContainer: {
     flexDirection: 'row',
@@ -54,7 +49,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    marginVertical: 20,
+    margin: 20,
     justifyContent: 'space-between',
   },
   sourcesContainer: {
@@ -215,12 +210,12 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
     };
     useImperativeHandle(ref, () => ({ resetParams }));
     return (
-      <Modal visible={props.isVisible}>
+      <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
         <View style={styles.headerContainer}>
           <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
           <Icon name="close" color="white" size={24} onPress={props.closeModal} />
         </View>
-        <ModalContentBlock style={styles.contentContainer}>
+        <View style={styles.contentContainer}>
           {fields.map((field, index) => (
             <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
           ))}
@@ -256,7 +251,7 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
               style={styles.searchButton}
             />
           </View>
-        </ModalContentBlock>
+        </View>
       </Modal>
     );
   },
