@@ -7,11 +7,9 @@ import {
   EmitterSubscription,
   FlatList,
   Keyboard,
-  KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   Platform,
   RefreshControl,
-  SafeAreaView,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -32,7 +30,7 @@ import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
+import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { TextBold, TextColorStyle, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -176,7 +174,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
     return (
       <>
-        <PageView
+        <KeyboardPageView
           navigation={navigation}
           navBarWithBack={this.navBarInfo()}
           onBack={() => {
@@ -188,26 +186,18 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             } else {
               return true;
             }
+          }}
+          style={{
+            backgroundColor: errorState ? undefined : theme.color.background.card,
           }}>
-          <SafeAreaView
-            style={{
-              flex: 1,
-              backgroundColor: errorState ? undefined : theme.color.background.card,
-            }}>
-            <KeyboardAvoidingView
-              style={{ flex: 1 }}
-              behavior={keyboardAvoidingViewBehavior}
-              keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}>
-              {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
-                <LoadingIndicator />
-              ) : errorState ? (
-                this.renderError()
-              ) : (
-                this.renderContent()
-              )}
-            </KeyboardAvoidingView>
-          </SafeAreaView>
-        </PageView>
+          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
+            <LoadingIndicator />
+          ) : errorState ? (
+            this.renderError()
+          ) : (
+            this.renderContent()
+          )}
+        </KeyboardPageView>
         <ActionsMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );

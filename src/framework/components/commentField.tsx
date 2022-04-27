@@ -100,7 +100,8 @@ const CommentField = (props: ICommentField_Props, ref) => {
         style={{
           flex: 1,
           height: '100%',
-          padding: 12,
+          paddingLeft: 8,
+          paddingRight: 12,
           paddingVertical: Platform.OS === 'android' ? 8 : undefined,
           marginLeft: 12,
           maxHeight: 120,
@@ -108,7 +109,7 @@ const CommentField = (props: ICommentField_Props, ref) => {
           borderWidth: 0.5,
           borderColor: theme.color.inputBorder,
           flexDirection: 'row',
-          alignItems: 'flex-end',
+          alignItems: 'center',
         }}>
         <TextInput
           ref={inputRef}

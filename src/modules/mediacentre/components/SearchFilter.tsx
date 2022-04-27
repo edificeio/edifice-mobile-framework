@@ -67,6 +67,10 @@ interface SearchFilterProps {
   onChange: (title: string, item: string, active: boolean) => void;
 }
 
+const compareFilters = (a: { value: string; active: boolean }, b: { value: string; active: boolean }) => {
+  return a.value.toLowerCase() > b.value.toLowerCase() ? 1 : -1;
+};
+
 const getFilters = (resources: Resource[]) => {
   const types: { value: string; active: boolean }[] = [];
   const sources: { value: string; active: boolean }[] = [];
@@ -88,9 +92,9 @@ const getFilters = (resources: Resource[]) => {
     }
   }
   return [
-    { title: 'resource-type', items: types },
-    { title: 'source', items: sources },
-    { title: 'level', items: levels },
+    { title: 'resource-type', items: types.sort(compareFilters) },
+    { title: 'source', items: sources.sort(compareFilters) },
+    { title: 'level', items: levels.sort(compareFilters) },
   ];
 };
 
