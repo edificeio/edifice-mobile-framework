@@ -176,7 +176,11 @@ const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: Sou
   };
   return (
     <View style={styles.sourceCheckBoxContainer}>
-      {props.source ? <Image source={props.source} style={styles.sourceImage} /> : <Icon name={props.iconName} size={30} />}
+      {props.source ? (
+        <Image source={props.source} style={styles.sourceImage} />
+      ) : (
+        props.iconName && <Icon name={props.iconName} size={30} />
+      )}
       <Checkbox checked={props.checked} onCheck={onCheck} onUncheck={onUncheck} />
     </View>
   );

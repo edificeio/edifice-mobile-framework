@@ -40,7 +40,9 @@ export function transformArray(array: string[]) {
 
 export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => {
   const resources = [] as Resource[];
-  if (!data) return resources;
+  if (!data || !Array.isArray(data)) {
+    return [];
+  }
   for (const resource of data) {
     const res = {
       id: resource.id,
