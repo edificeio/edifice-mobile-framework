@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cancelButton: {
-    backgroundColor: '#F53B56',
+    backgroundColor: theme.color.secondary.regular,
   },
   fieldsContainer: {
     flexDirection: 'row',

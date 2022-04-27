@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
+import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   titleText: {
-    color: '#F53B56',
+    color: theme.color.secondary.regular,
     flexShrink: 1,
     marginRight: 5,
   },
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
 });
 
 interface IconButtonProps {
-  color: string;
+  color?: string;
   icon: string;
   size: number;
 
@@ -71,7 +72,7 @@ interface SmallCardProps {
 
 export const IconButton: React.FunctionComponent<IconButtonProps> = (props: IconButtonProps) => (
   <TouchableOpacity onPress={props.onPress}>
-    <Icon size={props.size} color={props.color} name={props.icon} />
+    <Icon size={props.size} color={props.color || theme.color.secondary.regular} name={props.icon} />
   </TouchableOpacity>
 );
 
@@ -113,7 +114,7 @@ export const SmallCard: React.FunctionComponent<SmallCardProps> = (props: SmallC
           </Text>
           <View style={styles.actionsContainer}>
             <FavoriteIcon {...props} />
-            <IconButton icon="link" size={20} color="#F53B56" onPress={copyToClipboard} />
+            <IconButton icon="link" size={20} onPress={copyToClipboard} />
           </View>
         </View>
       </View>

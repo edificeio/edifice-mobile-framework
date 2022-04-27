@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
+import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   displayText: {
-    color: '#F53B56',
+    color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
   carouselContainer: {
@@ -112,7 +113,7 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
         />
         <View style={styles.actionsContainer}>
           <FavoriteIcon {...props} />
-          <IconButton icon="link" size={20} color="#F53B56" onPress={copyToClipboard} />
+          <IconButton icon="link" size={20} onPress={copyToClipboard} />
         </View>
       </View>
     </TouchCard>

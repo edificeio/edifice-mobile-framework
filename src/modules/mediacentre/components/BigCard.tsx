@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 });
 
 interface ActionButtonProps {
-  color: string;
+  color?: string;
   icon: string;
   text: string;
 
@@ -133,7 +133,7 @@ export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardPro
         />
         <View style={styles.actionsContainer}>
           <FavoriteAction {...props} />
-          <ActionButton icon="link" color="#F53B56" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
+          <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
         </View>
         {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={25} /> : null}
       </View>

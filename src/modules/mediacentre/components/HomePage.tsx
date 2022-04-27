@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   gridDisplayAllText: {
-    color: '#F53B56',
+    color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
   mainContainer: {

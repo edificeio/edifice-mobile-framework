@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { Image, ImageSourcePropType, Modal, StyleSheet, TextInput, View } from 'react-native';
 
-import { CommonStyles } from '~/styles/common/styles';
+import theme from '~/app/theme';
 import { Icon } from '~/ui';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 2,
     borderRadius: 5,
-    borderColor: CommonStyles.actionColor,
+    borderColor: theme.color.secondary.regular,
   },
   sourceCheckBoxContainer: {
     flexDirection: 'row',
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     height: 50,
-    backgroundColor: '#F53B56',
+    backgroundColor: theme.color.secondary.regular,
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   searchButton: {
-    backgroundColor: '#F53B56',
+    backgroundColor: theme.color.secondary.regular,
   },
 });
 
@@ -152,12 +152,7 @@ const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: Crite
   return (
     <View>
       {props.field.name !== 'title' ? (
-        <ButtonGroup
-          buttons={buttons}
-          selectedButton={props.field.operand}
-          color={CommonStyles.actionColor}
-          onPress={onChangeOperand}
-        />
+        <ButtonGroup buttons={buttons} selectedButton={props.field.operand} onPress={onChangeOperand} />
       ) : null}
       <View style={styles.criteriaContainer}>
         <Text style={styles.criteriaText}>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Text>
