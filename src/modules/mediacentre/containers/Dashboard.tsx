@@ -80,11 +80,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
 
   public render() {
     return (
-      <PageView
-        navigation={this.props.navigation}
-        navBarWithBack={{
-          title: I18n.t('mediacentre.mediacentre'),
-        }}>
+      <PageView navigation={this.props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.mediacentre') }}>
         <PageContainer>
           <ConnectionTrackingBar />
           <HomePageContainer {...this.props} {...this.state} addFavorite={this.addFavorite} removeFavorite={this.removeFavorite} />

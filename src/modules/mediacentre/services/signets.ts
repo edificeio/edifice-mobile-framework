@@ -18,6 +18,12 @@ export const signetsService = {
     const resources = await fetchJSONWithCache(`/mediacentre/signets`, {
       method: 'get',
     });
-    return resourcesAdapter(resources.data.signets.resources).filter(resource => resource.types.includes('Orientation'));
+    const mysignets = await fetchJSONWithCache(`/mediacentre/mysignets`, {
+      method: 'get',
+    });
+    return resourcesAdapter(resources.data.signets.resources)
+      .filter(resource => resource.types.includes('Orientation'))
+      .concat(resourcesAdapter(mysignets).filter(resource => !!resource.orientation))
+      .sort(compareResources);
   },
 };
