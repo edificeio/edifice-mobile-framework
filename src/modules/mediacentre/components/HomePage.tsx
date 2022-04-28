@@ -57,6 +57,7 @@ interface ResourcesGridProps {
 interface HomePageProps {
   externals: Resource[];
   favorites: Resource[];
+  includePMB: boolean;
   navigation: any;
   search: Resource[];
   signets: ISignets;
@@ -85,6 +86,10 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   useEffect(() => {
     setSearchedResources(props.search);
   }, [props.search]);
+
+  useEffect(() => {
+    setSearchParams({ ...searchParams, sources: { ...searchParams.sources, PMB: props.includePMB } });
+  }, [props.includePMB]);
 
   function onSearch(query: string) {
     props.searchResources(query);
@@ -154,12 +159,11 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
       </View>
       {searchState !== SearchState.NONE ? (
         <SearchContent
+          {...props}
           resources={searchedResources}
           searchState={searchState}
           params={searchParams}
           onCancelSearch={onCancelSearch}
-          addFavorite={props.addFavorite}
-          removeFavorite={props.removeFavorite}
         />
       ) : (
         <FlatList
@@ -178,6 +182,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         isVisible={searchModalVisible}
         onSearch={onAdvancedSearch}
         closeModal={hideSearchModal}
+        includePMB={props.includePMB}
         ref={searchModalRef}
       />
     </View>

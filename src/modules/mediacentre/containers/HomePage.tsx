@@ -21,9 +21,26 @@ type IHomePageContainerProps = {
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
 
-class HomePageContainer extends React.PureComponent<IHomePageContainerProps> {
+type IHomePageContainerState = {
+  includePMB: boolean;
+};
+
+class HomePageContainer extends React.PureComponent<IHomePageContainerProps, IHomePageContainerState> {
+  constructor(props: IHomePageContainerProps) {
+    super(props);
+    this.state = {
+      includePMB: false,
+    };
+  }
+
+  componentDidUpdate() {
+    if (!this.state.includePMB) {
+      this.setState({ includePMB: this.props.externals.some(resource => resource.source === Source.PMB) });
+    }
+  }
+
   public render() {
-    return <HomePage {...this.props} />;
+    return <HomePage {...this.props} includePMB={this.state.includePMB} />;
   }
 }
 

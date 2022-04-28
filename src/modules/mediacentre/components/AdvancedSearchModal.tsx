@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { Image, ImageSourcePropType, Modal, StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
@@ -98,7 +98,7 @@ export const defaultParams: AdvancedSearchParams = {
   sources: {
     GAR: true,
     Moodle: true,
-    PMB: true,
+    PMB: false,
     Signets: true,
   },
 };
@@ -114,7 +114,7 @@ const defaultFields: Field[] = [
 const defaultSources = {
   GAR: true,
   Moodle: true,
-  PMB: true,
+  PMB: false,
   Signets: true,
 };
 
@@ -133,6 +133,7 @@ type SourceCheckboxProps = {
 };
 
 type AdvancedSearchModalProps = {
+  includePMB: boolean;
   isVisible: boolean;
 
   closeModal: () => void;
@@ -207,7 +208,14 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
       setFields(fields);
       setSources(defaultSources);
     };
+
+    useEffect(() => {
+      if (props.includePMB) {
+        setSources({ ...sources, PMB: true });
+      }
+    }, [props.includePMB]);
     useImperativeHandle(ref, () => ({ resetParams }));
+
     return (
       <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
         <View style={styles.headerContainer}>
@@ -230,11 +238,13 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
               checked={sources.Moodle}
               onChange={value => setSources({ ...sources, Moodle: value })}
             />
-            <SourceCheckbox
-              source={require('ASSETS/images/logo-pmb.png')}
-              checked={sources.PMB}
-              onChange={value => setSources({ ...sources, PMB: value })}
-            />
+            {props.includePMB ? (
+              <SourceCheckbox
+                source={require('ASSETS/images/logo-pmb.png')}
+                checked={sources.PMB}
+                onChange={value => setSources({ ...sources, PMB: value })}
+              />
+            ) : null}
             <SourceCheckbox
               iconName="bookmark_outline"
               checked={sources.Signets}

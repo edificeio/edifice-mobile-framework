@@ -64,6 +64,7 @@ interface AdvancedSearchFieldProps {
 }
 
 interface SearchParamsProps {
+  includePMB: boolean;
   params: AdvancedSearchParams;
   searchState: SearchState;
 
@@ -71,6 +72,7 @@ interface SearchParamsProps {
 }
 
 interface SearchContentProps {
+  includePMB: boolean;
   params: AdvancedSearchParams;
   resources: Resource[];
   searchState: SearchState;
@@ -115,7 +117,7 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
         {props.searchState === SearchState.SIMPLE || props.params.sources.Moodle ? (
           <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} />
         ) : null}
-        {props.searchState === SearchState.SIMPLE || props.params.sources.PMB ? (
+        {(props.searchState === SearchState.SIMPLE && props.includePMB) || props.params.sources.PMB ? (
           <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} />
         ) : null}
         {props.searchState === SearchState.SIMPLE || props.params.sources.Signets ? (
@@ -126,8 +128,8 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>
-        {props.params.fields.map(field => (
-          <AdvancedSearchField field={field} />
+        {props.params.fields.map((field, index) => (
+          <AdvancedSearchField field={field} key={index} />
         ))}
       </View>
     ) : null}
