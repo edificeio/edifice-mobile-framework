@@ -88,6 +88,7 @@ const FavoriteAction: React.FunctionComponent<FavoriteActionProps> = (props: Fav
   };
   const addFavorite = () => {
     props.addFavorite(props.resource.id, props.resource);
+    props.resource.favorite = true;
   };
   return props.resource.favorite ? (
     <ActionButton icon="star" color="#FEC63D" text={I18n.t('mediacentre.remove-favorite')} onPress={removeFavorite} />

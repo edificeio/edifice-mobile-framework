@@ -34,9 +34,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
-  advancedSearchButtonContainer: {
-    marginLeft: 20,
-    paddingVertical: 10,
+  searchContainer: {
+    marginHorizontal: 20,
+    marginTop: 10,
   },
 });
 
@@ -114,6 +114,9 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   function showSearchModal() {
     setSearchModalVisible(true);
+    if (searchBarRef.current) {
+      searchBarRef.current.blur();
+    }
   }
 
   function hideSearchModal() {
@@ -153,8 +156,8 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   return (
     <View style={styles.mainContainer}>
-      <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
-      <View style={styles.advancedSearchButtonContainer}>
+      <View style={styles.searchContainer}>
+        <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
         <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
       </View>
       {searchState !== SearchState.NONE ? (

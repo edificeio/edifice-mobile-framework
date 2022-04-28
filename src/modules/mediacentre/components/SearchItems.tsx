@@ -12,11 +12,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   searchInput: {
-    marginHorizontal: 20,
-    marginTop: 10,
+    flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    flex: 1,
     borderWidth: 2,
     borderRadius: 50,
     borderColor: theme.color.secondary.regular,
@@ -24,6 +22,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 10,
   },
   buttonIcon: {
     marginRight: 5,

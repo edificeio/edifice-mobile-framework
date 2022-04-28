@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { Image, ImageSourcePropType, Modal, StyleSheet, TextInput, View } from 'react-native';
+import { Image, ImageSourcePropType, Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/ui';
@@ -49,13 +49,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    margin: 20,
     justifyContent: 'space-between',
+    padding: 20,
   },
   sourcesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
+    marginVertical: 10,
   },
   dialogButtonsContainer: {
     flexDirection: 'row',
@@ -220,9 +221,11 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
       <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
         <View style={styles.headerContainer}>
           <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
-          <Icon name="close" color="white" size={24} onPress={props.closeModal} />
+          <TouchableOpacity onPress={props.closeModal}>
+            <Icon name="close" color="white" size={24} />
+          </TouchableOpacity>
         </View>
-        <View style={styles.contentContainer}>
+        <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
           {fields.map((field, index) => (
             <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
           ))}
@@ -260,7 +263,7 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
               style={styles.searchButton}
             />
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     );
   },
