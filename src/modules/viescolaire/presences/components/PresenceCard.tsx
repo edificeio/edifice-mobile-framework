@@ -7,7 +7,7 @@ import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item'
 
 import { IPunishment } from '../state/events';
 
-const colors = {
+export const colors = {
   no_reason: '#E61610',
   unregularized: '#FA8A85',
   regularized: '#72bb53',

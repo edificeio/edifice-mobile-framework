@@ -4,22 +4,23 @@ import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { IAuthorizedViescoApps } from './Dashboard';
-
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchChildHomeworkAction } from '~/modules/viescolaire/cdt/actions/homeworks';
-import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { IHomeworkListState, getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
-import { getLevelsListState, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
-import { getDevoirListState, IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
+import { ILevelsList, getLevelsListState } from '~/modules/viescolaire/competences/state/competencesLevels';
+import { IDevoirsMatieresState, getDevoirListState } from '~/modules/viescolaire/competences/state/devoirs';
 import { fetchChildrenGroupsAction } from '~/modules/viescolaire/viesco/actions/childrenGroups';
 import { fetchPersonnelListAction } from '~/modules/viescolaire/viesco/actions/personnel';
 import { fetchSubjectListAction } from '~/modules/viescolaire/viesco/actions/subjects';
 import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardRelative';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
+
+import NotificationRelativesModal from '../../presences/containers/NotificationRelativesModal';
+import { IAuthorizedViescoApps } from './Dashboard';
 
 type IDashboardContainerProps = {
   authorizedViescoApps: IAuthorizedViescoApps;
@@ -40,9 +41,22 @@ type IDashboardContainerProps = {
   isFocused: boolean;
 };
 
-class Dashboard extends React.PureComponent<IDashboardContainerProps> {
+type IDashboardContainerState = {
+  notificationModal: boolean;
+};
+
+class Dashboard extends React.PureComponent<IDashboardContainerProps, IDashboardContainerState> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      notificationModal: true,
+    };
+  }
+
   public componentDidMount() {
     const { childId, structureId } = this.props;
+
     this.props.getSubjects(this.props.structureId);
     this.props.getTeachers(this.props.structureId);
     this.props.getHomeworks(
@@ -58,6 +72,7 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps> {
 
   public componentDidUpdate(prevProps) {
     const { childId, structureId, isFocused } = this.props;
+
     if (prevProps.childId !== childId) {
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
@@ -75,8 +90,17 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps> {
     }
   }
 
+  onCloseNotificationModal = () => this.setState({ notificationModal: false });
+
   public render() {
-    return <DashboardComponent {...this.props} />;
+    return (
+      <>
+        <DashboardComponent {...this.props} />
+        {this.props.authorizedViescoApps.presences ? (
+          <NotificationRelativesModal showModal={this.state.notificationModal} onClose={this.onCloseNotificationModal} />
+        ) : null}
+      </>
+    );
   }
 }
 

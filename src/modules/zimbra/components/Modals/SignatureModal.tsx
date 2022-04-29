@@ -1,25 +1,25 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
 import { Text } from '~/ui/Typography';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
-import { UI_SIZES } from '~/framework/components/constants';
 
 type SignatureModalProps = {
+  isGlobalSignature: boolean;
   show: boolean;
   signature: string;
-  isGlobalSignature: boolean;
+  signatureMail: string;
   setSignature: (signature: string) => any;
   setGlobalSignature: (isGlobal: boolean) => any;
   toggleGlobal: () => any;
   closeModal: () => any;
   confirm: () => any;
-  signatureMail: string;
 };
 
 export default class SignatureModal extends React.Component<SignatureModalProps> {
