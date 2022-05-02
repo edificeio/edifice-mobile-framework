@@ -9,12 +9,12 @@ import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homewo
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
 import { homeworkListDetailsTeacherAdapter, sessionListDetailsTeacherAdapter } from '~/modules/viescolaire/utils/cdt';
 import { ICourse } from '~/modules/viescolaire/viesco/state/courses';
-import { Icon } from '~/ui/icons/Icon';
-import { Loading } from '~/ui/Loading';
 import Calendar from '~/ui/Calendar';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
+import { Loading } from '~/ui/Loading';
 import { TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
   refreshContainer: {
@@ -115,19 +115,16 @@ type TimetableComponentProps = TimetableProps & TimetableState & { updateSelecte
 export default class TeacherCdtTimetable extends React.PureComponent<TimetableComponentProps> {
   // Display homeworks to do for the day
   renderDaysHomeworks = (homeworks: IHomework[]) => {
+    const isEmpty = !homeworks.length;
     return (
       <View style={style.homeworksToDoContainer}>
         <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
           {I18n.t('viesco-homework')} {homeworks.length > 1 && '(' + homeworks.length + ')'}
         </Text>
         <TouchableOpacity
-          disabled={!(homeworks.length > 0)}
-          onPress={
-            homeworks.length > 0
-              ? () => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))
-              : () => true
-          }>
-          <Icon name="inbox" size={24} color={homeworks.length > 0 ? '#FF9700' : 'lightgrey'} />
+          onPress={() => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))}
+          disabled={isEmpty}>
+          <Icon name="inbox" size={24} color={isEmpty ? 'lightgrey' : '#FF9700'} />
         </TouchableOpacity>
       </View>
     );
@@ -142,75 +139,37 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
 
   /* Display Homeworks attached to a session or a course with a session */
   renderHomeworksIconButton = course => {
-    const { navigation } = this.props;
-    const isHomeworksInSession = !!(
-      course.session !== undefined &&
-      course.session.homeworks !== undefined &&
-      course.session.homeworks.length > 0
-    );
-    const isHomeworksInCourse = !!(course.homeworks !== undefined && course.homeworks.length > 0);
-
+    const isHomeworksInSession =
+      course.session !== undefined && course.session.homeworks !== undefined && course.session.homeworks.length > 0;
+    const isHomeworksInCourse = course.homeworks !== undefined && course.homeworks.length > 0;
+    const isHomeWorkPublished = isHomeworksInSession
+      ? this.checkHomeworksPublishedState(course.session.homeworks)
+      : isHomeworksInCourse && this.checkHomeworksPublishedState(course.homeworks);
+    const navigateToHomeworks = () => {
+      this.props.navigation.navigate(
+        'HomeworkPage',
+        homeworkListDetailsTeacherAdapter(isHomeworksInSession ? course.session.homeworks : course.homeworks, course.subject.name),
+      );
+    };
     return (
-      <>
-        {isHomeworksInSession ? (
-          <TouchableOpacity
-            onPress={
-              this.checkHomeworksPublishedState(course.session.homeworks)
-                ? () =>
-                    navigation.navigate(
-                      'HomeworkPage',
-                      homeworkListDetailsTeacherAdapter(course.session.homeworks, course.subject.name),
-                    )
-                : () => true
-            }>
-            <Icon
-              name="inbox"
-              size={24}
-              color={this.checkHomeworksPublishedState(course.session.homeworks) ? '#FF9700' : 'lightgrey'}
-            />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={
-              isHomeworksInCourse && this.checkHomeworksPublishedState(course.homeworks)
-                ? () =>
-                    navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(course.homeworks, course.subject.name))
-                : () => true
-            }>
-            <Icon
-              name="inbox"
-              size={24}
-              color={isHomeworksInCourse && this.checkHomeworksPublishedState(course.homeworks) ? '#FF9700' : 'lightgrey'}
-            />
-          </TouchableOpacity>
-        )}
-      </>
+      <TouchableOpacity onPress={navigateToHomeworks} disabled={!isHomeWorkPublished}>
+        <Icon name="inbox" size={24} color={isHomeWorkPublished ? '#FF9700' : 'lightgrey'} />
+      </TouchableOpacity>
     );
   };
 
   /* Display sessions : check if it is a course or a session */
   renderSessionsIconButton = course => {
     const { navigation } = this.props;
+    const isSessionPublished =
+      ((course.session && course.session.is_published) || course.calendarType === 'session') && !course.session.is_empty;
     return (
-      <>
-        <TouchableOpacity
-          style={{ paddingRight: 20 }}
-          onPress={
-            (course.session && course.is_published) || course.calendarType === 'session'
-              ? () =>
-                  navigation.navigate(
-                    'SessionPage',
-                    course.session ? sessionListDetailsTeacherAdapter(course.session) : sessionListDetailsTeacherAdapter(course),
-                  )
-              : () => true
-          }>
-          <Icon
-            name="insert_drive_file1"
-            size={24}
-            color={(course.session && course.session.is_published) || course.calendarType === 'session' ? '#2BAB6F' : 'lightgrey'}
-          />
-        </TouchableOpacity>
-      </>
+      <TouchableOpacity
+        style={{ paddingRight: 20 }}
+        onPress={() => navigation.navigate('SessionPage', sessionListDetailsTeacherAdapter(course.session || course))}
+        disabled={!isSessionPublished}>
+        <Icon name="insert_drive_file1" size={24} color={isSessionPublished ? '#2BAB6F' : 'lightgrey'} />
+      </TouchableOpacity>
     );
   };
 
