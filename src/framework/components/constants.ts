@@ -24,11 +24,15 @@ export const UI_SIZES = {
   dimensions: {
     height: {
       medium: 18,
+      large: 22,
+      largePlus: 38,
     },
     width: {
       tiny: 1,
       small: 2,
       medium: 18,
+      large: 22,
+      largePlus: 38,
     },
   },
   elements: {
@@ -38,10 +42,10 @@ export const UI_SIZES = {
     tabbarHeight: 56,
   },
   radius: {
-    small: 4,
     medium: 8,
     large: 21,
     extraLarge: 24,
+    small: 4,
   },
   screen: {
     bottomInset: initialWindowMetrics?.insets?.bottom || 0,

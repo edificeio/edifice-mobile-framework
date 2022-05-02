@@ -8,6 +8,7 @@ import customTheme from '~/app/override/theme';
 
 export interface ITheme {
   color: {
+    notificationBadge: ColorValue;
     listItemBorder: ColorValue;
     inputBorder: ColorValue;
     shadowColor: ColorValue;
@@ -99,6 +100,7 @@ export interface ITheme {
 
 export const defaultTheme: ITheme = {
   color: {
+    notificationBadge: '#ff3a55',
     listItemBorder: '#dddddd',
     inputBorder: '#dddddd',
     shadowColor: '#000000',

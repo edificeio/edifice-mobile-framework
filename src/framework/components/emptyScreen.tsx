@@ -4,15 +4,16 @@
  * A friendly empty screen for when there is no data to show.
  * Shows a large image (svg) with a title, an optional paragraph and an optional action button.
  */
-
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
+import { NamedSVG } from '~/framework/components/picture/NamedSVG';
+
+import { ActionButton } from './ActionButton';
+import { UI_SIZES } from './constants';
 import { PageView_Style } from './page';
 import { Text, TextSemiBold } from './text';
-import theme from '~/app/theme';
-import { FlatButton } from '~/ui/FlatButton';
-import { UI_SIZES } from './constants';
 
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
@@ -21,6 +22,7 @@ export const EmptyScreen = ({
   title,
   text,
   buttonText,
+  buttonUrl,
   buttonAction,
   customStyle,
 }: {
@@ -28,12 +30,13 @@ export const EmptyScreen = ({
   title: string;
   text?: string;
   buttonText?: string;
+  buttonUrl?: string;
   buttonAction?: () => void;
   customStyle?: ViewStyle;
 }) => {
   const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.extraLarge;
   const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
-  const hasButton = buttonText && buttonAction;
+  const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageView_Style
       style={[
@@ -70,7 +73,7 @@ export const EmptyScreen = ({
       ) : null}
       {hasButton ? (
         <View style={{ marginTop: UI_SIZES.spacing.extraLargePlus }}>
-          <FlatButton title={buttonText} onPress={buttonAction} />
+          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} />
         </View>
       ) : null}
     </PageView_Style>

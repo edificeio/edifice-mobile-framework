@@ -26,6 +26,10 @@ export interface IEntcoreStudentAndParentWord {
 
 export type IEntcoreStudentAndParentWordList = IEntcoreStudentAndParentWord[];
 
+export interface IEntcoreParentUnacknowledgedWordsCount {
+  unread_words: number;
+}
+
 export interface IEntcoreAcknowledgment {
   id: number;
   owner: string;
@@ -47,11 +51,17 @@ export interface IEntcoreConcernedStudent {
   responses: IEntcoreResponse[] | null;
 }
 
+export interface IEntcoreRecipient {
+  display_name: string;
+  user_id: string;
+}
+
 export interface IEntcoreWord {
   category: string;
   id: number;
   owner_id: string;
   owner_name: string;
+  recipients?: IEntcoreRecipient[];
   reply: boolean;
   sending_date: string;
   shared: ({ userId?: string; groupId?: string } & any)[] | [];
@@ -75,6 +85,7 @@ export const teacherWordListAdapter = (teacherWordList: IEntcoreTeacherWordList)
     ackNumber: teacherWord.ack_number,
     category: teacherWord.category,
     id: teacherWord.id,
+    recipients: teacherWord.recipients?.map(recipient => ({ displayName: recipient.display_name, userId: recipient.user_id })),
     respNumber: teacherWord.resp_number,
     sendingDate: moment(teacherWord.sending_date),
     text: teacherWord.text,
@@ -107,6 +118,11 @@ export const studentAndParentWordListAdapter = (studentAndParentWordList: IEntco
     title: studentAndParentWord.title,
   }));
   return ret as IStudentAndParentWordList;
+};
+
+export const parentUnacknowledgedWordsCountAdapter = (parentUnacknowledgedWordsCount: IEntcoreParentUnacknowledgedWordsCount) => {
+  const ret = parentUnacknowledgedWordsCount.unread_words;
+  return ret as number;
 };
 
 export const wordReportAdapter = (wordReport: IEntcoreWordReport) => {
@@ -168,6 +184,11 @@ export const schoolbookService = {
       const api = `/schoolbook/list/${page}/${studentId}`;
       const entcoreStudentAndParentWordList = (await fetchJSONWithCache(api)) as IEntcoreStudentAndParentWordList;
       return studentAndParentWordListAdapter(entcoreStudentAndParentWordList) as IStudentAndParentWordList;
+    },
+    parentUnacknowledgedWordsCount: async (session: IUserSession, studentId: string) => {
+      const api = `/schoolbook/count/${studentId}`;
+      const entcoreParentUnacknowledgedWordsCount = (await fetchJSONWithCache(api)) as IEntcoreParentUnacknowledgedWordsCount;
+      return parentUnacknowledgedWordsCountAdapter(entcoreParentUnacknowledgedWordsCount) as number;
     },
   },
   word: {

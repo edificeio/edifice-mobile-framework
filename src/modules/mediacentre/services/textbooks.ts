@@ -33,6 +33,11 @@ export function compareResources(a: Resource, b: Resource) {
   return 0;
 }
 
+export function transformArray(array: string[]) {
+  array = array.map(value => (Array.isArray(value) && value.length > 1 ? value[1] : value));
+  return array;
+}
+
 export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => {
   const resources = [] as Resource[];
   if (!data) return resources;
@@ -49,7 +54,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
       authors: resource.owner_name || resource.authors,
       editors: resource.editors,
       disciplines: resource.disciplines,
-      levels: resource.levels,
+      levels: transformArray(resource.levels),
       user: resource.user,
       favorite: resource.favorite,
       structure_uai: resource.structure_uai,

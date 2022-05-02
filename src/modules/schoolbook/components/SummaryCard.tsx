@@ -6,9 +6,9 @@ import { View } from 'react-native';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/icon';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import Label from '~/framework/components/label';
+import { Picture } from '~/framework/components/picture';
 import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { UserType } from '~/framework/util/session';
@@ -18,6 +18,7 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import {
   IAcknowledgment,
+  IRecipient,
   IResponse,
   getHasSingleRecipientForTeacher,
   getIsWordAcknowledgedForParent,
@@ -34,7 +35,10 @@ const responsesString = (responses: number) =>
   responses === 1
     ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
     : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
-const recipientsString = (recipients: any) => `${recipients?.map(recipient => ` ${recipient.displayName}`)}`;
+const recipientsString = (recipients: IRecipient[]) =>
+  getHasSingleRecipientForTeacher(recipients)
+    ? recipients[0].displayName
+    : `${recipients.length} ${I18n.t('schoolbook.students').toLowerCase()}`;
 
 export interface ISummaryCardProps {
   action: () => void;
@@ -46,7 +50,7 @@ export interface ISummaryCardProps {
   responses: IResponse[] | null;
   ackNumber: number;
   category: string;
-  recipients: any;
+  recipients: IRecipient[];
   respNumber: number;
   sendingDate: Moment;
   text: string;
@@ -110,19 +114,15 @@ export const SummaryCard = ({
               <SingleAvatar
                 size={24}
                 userId={
-                  isTeacher
-                    ? hasSingleRecipient
-                      ? recipients[0]?.userId || require('ASSETS/images/no-avatar.png')
-                      : require('ASSETS/images/group-avatar.png')
-                    : owner || require('ASSETS/images/no-avatar.png')
+                  isTeacher ? (hasSingleRecipient ? recipients[0]?.userId : require('ASSETS/images/group-avatar.png')) : owner
                 }
               />
             }
             text={
               <Text style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
-                {I18n.t(`common.${isTeacher ? 'to' : 'from'}`)}
+                {`${I18n.t(`common.${isTeacher ? 'to' : 'from'}`)} `}
                 <TextSemiBold style={{ ...TextSizeStyle.Small }}>
-                  {isTeacher ? recipientsString(recipients) : ` ${ownerName}`}
+                  {isTeacher ? recipientsString(recipients) : ownerName}
                 </TextSemiBold>
               </Text>
             }
@@ -164,11 +164,13 @@ export const SummaryCard = ({
               alignItems: 'center',
               marginTop: UI_SIZES.spacing.medium,
             }}>
-            <Icon
+            <Picture
+              type="NamedSvg"
+              name="pictos-answer"
+              width={UI_SIZES.dimensions.width.medium}
+              height={UI_SIZES.dimensions.height.medium}
+              fill={theme.color.secondary.regular}
               style={{ marginRight: UI_SIZES.spacing.smallPlus }}
-              size={18}
-              name="chat3"
-              color={theme.color.secondary.regular}
             />
             <TextSemiBold style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
               {responsesString(responsesNumber)}

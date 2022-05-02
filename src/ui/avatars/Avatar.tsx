@@ -41,7 +41,7 @@ const LargeImage = props => {
     return (
       <View>
         <LargeImageBase {...props} />
-        <SelectedView style={largeImageStyle} />
+        <SelectedView style={[largeImageStyle, props.style]} />
       </View>
     );
   } else if (isDisabled) {
@@ -98,7 +98,7 @@ const AlignedImage = props => {
     return (
       <View>
         <AlignedImageBase {...props} />
-        <SelectedView style={alignedImageStyle} />
+        <SelectedView style={[alignedImageStyle, props.style]} />
       </View>
     );
   } else if (isDisabled) {
@@ -127,7 +127,7 @@ const VeryLargeImage = props => {
     return (
       <View>
         <VeryLargeImageBase {...props} />
-        <SelectedView style={veryLargeImageStyle} />
+        <SelectedView style={[veryLargeImageStyle, props.style]} />
       </View>
     );
   } else if (isDisabled) {
@@ -157,7 +157,7 @@ const SmallImage = props => {
     return (
       <View>
         <SmallImageBase {...props} />
-        <SelectedView style={smallImageStyle} />
+        <SelectedView style={[smallImageStyle, props.style]} />
       </View>
     );
   } else if (isDisabled) {
@@ -239,8 +239,8 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
     const noAvatarImage = this.props.fallback || require('ASSETS/images/no-avatar.png');
     if (this.props.size === Size.large || this.count === 1) {
       return (
-        <LargeContainer style={{ width, height: width }}>
-          <LargeImage status={this.props.status} style={{ width, height: width }} source={noAvatarImage} />
+        <LargeContainer style={{ width, height: width, borderRadius: width / 2 }}>
+          <LargeImage status={this.props.status} style={{ width, height: width, borderRadius: width / 2 }} source={noAvatarImage} />
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
@@ -267,10 +267,10 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
   renderIsGroup(width) {
     if (this.props.size === Size.large || this.count === 1) {
       return (
-        <LargeContainer style={{ width, height: width }}>
+        <LargeContainer style={{ width, height: width, borderRadius: width / 2 }}>
           <LargeImage
             status={this.props.status}
-            style={{ width, height: width }}
+            style={{ width, height: width, borderRadius: width / 2 }}
             source={require('ASSETS/images/group-avatar.png')}
           />
         </LargeContainer>
@@ -343,8 +343,13 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
     if (this.props.size === Size.large || this.count === 1) {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
-        <LargeContainer style={{ width, height: width }}>
-          <LargeImage {...sharedProps} status={this.props.status} source={source} style={{ width, height: width }} />
+        <LargeContainer style={{ width, height: width, borderRadius: width / 2 }}>
+          <LargeImage
+            {...sharedProps}
+            status={this.props.status}
+            source={source}
+            style={{ width, height: width, borderRadius: width / 2 }}
+          />
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {

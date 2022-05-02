@@ -277,15 +277,8 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                   }`,
                 )}
                 buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createActivity') : undefined}
-                buttonAction={() => {
-                  //TODO: create generic function inside oauth (use in myapps, etc.)
-                  if (!DEPRECATED_getCurrentPlatform()) {
-                    return null;
-                  }
-                  const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;
-                  openUrl(url);
-                  Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
-                }}
+                buttonUrl="/homeworks"
+                buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
               />
             ) : null
           }

@@ -48,7 +48,7 @@ export const computeUserSession = (authState?: IUserAuthState, infoState?: IUser
     oauth: OAuth2RessourceOwnerPasswordClient.connection,
     user: {
       login: authState ? authState.login : sessionCache?.user?.login,
-      id: authState ? authState.userId : sessionCache?.user?.id,
+      id: infoState ? infoState.id : sessionCache?.user?.id,
       displayName: infoState ? infoState.displayName : sessionCache?.user?.displayName,
       type: infoState ? infoState.type : sessionCache?.user?.type,
       entcoreApps: authState ? authState.appsInfo : sessionCache?.user?.entcoreApps,

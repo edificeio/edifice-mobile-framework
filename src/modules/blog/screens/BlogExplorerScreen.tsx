@@ -147,14 +147,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         title={I18n.t('blog.blogsEmptyScreen.title')}
         text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
         buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}
-        buttonAction={() => {
-          //TODO: create generic function inside oauth (use in myapps, etc.)
-          if (!DEPRECATED_getCurrentPlatform()) {
-            return null;
-          }
-          const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog#/edit/new`;
-          openUrl(url);
-        }}
+        buttonUrl="/blog#/edit/new"
       />
     );
   };

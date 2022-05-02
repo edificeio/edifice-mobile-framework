@@ -1,11 +1,13 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
-import { Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 
 import { TouchCard } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { getAuthHeader } from '~/infra/oauth';
 import { FavoriteIcon, IconButton } from '~/modules/mediacentre/components/SmallCard';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
@@ -92,10 +94,11 @@ export const getImageUri = (value: string): string => {
 
 const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
   const openURL = () => {
-    Linking.openURL(props.resource.link);
+    openUrl(props.resource.link);
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);
+    Toast.show(I18n.t('mediacentre.link-copied'));
   };
   return (
     <TouchCard onPress={openURL} style={styles.cardContainer}>
@@ -125,6 +128,9 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
   const increaseIndex = () => {
     setIndex(index + 1);
   };
+  useEffect(() => {
+    setIndex(0);
+  }, [props.resources.length]);
   return (
     <View style={styles.mainContainer}>
       <View style={styles.categoryHeaderContainer}>

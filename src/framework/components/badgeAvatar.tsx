@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { ColorValue, View, ViewStyle } from 'react-native';
 
 import { Status } from '~/ui/avatars/Avatar';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
@@ -19,7 +19,7 @@ export interface BadgeAvatarProps {
         isGroup: boolean;
       };
   badgeContent: number | string;
-  badgeColor?: string;
+  badgeColor?: string | ColorValue;
   badgePosition?: BadgePosition;
   customStyle?: ViewStyle;
   status?: Status;
