@@ -200,16 +200,24 @@ export const PunishmentCard = ({ elements }) => {
         return I18n.t('viesco-incidents-punishments-date.for-the') + dutyDate;
       case 2: //DETENTION
         let startDetentionDate: string = createdDate;
+        let endDetentionDate: string | undefined = undefined;
         if (punishment.start_date) {
-          startDetentionDate = punishment.start_date.format('DD/MM/YY');
+          startDetentionDate = punishment.start_date.format('DD/MM/YY - H:mm');
         }
-        return I18n.t('viesco-incidents-punishments-date.for-the') + startDetentionDate;
+        if (punishment.end_date) {
+          endDetentionDate = punishment.end_date.format('H:mm');
+        }
+        return (
+          I18n.t('viesco-incidents-punishments-date.for-the') +
+          startDetentionDate +
+          (endDetentionDate !== undefined ? ' - ' + endDetentionDate : null)
+        );
       case 3: //BLAME
         return I18n.t('viesco-incidents-punishments-date.created-on') + createdDate;
       case 4: // EXCLUSION
         if (punishment.start_date && punishment.end_date) {
-          let startExcludeDate: string = punishment.start_date.format('DD/MM/YY');
-          let endExcludeDate: string = punishment.end_date.format('DD/MM/YY');
+          const startExcludeDate: string = punishment.start_date.format('DD/MM/YY');
+          const endExcludeDate: string = punishment.end_date.format('DD/MM/YY');
           if (startExcludeDate && endExcludeDate) {
             return startExcludeDate === endExcludeDate
               ? startExcludeDate
@@ -221,6 +229,7 @@ export const PunishmentCard = ({ elements }) => {
             return ' ';
           }
         }
+        break;
       default:
         return createdDate;
     }
