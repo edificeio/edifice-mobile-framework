@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '35%',
     overflow: 'hidden',
+    zIndex: 1,
   },
   coloredContainer: {
     width: 10,
@@ -122,7 +123,7 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
 
 export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> = (props: FavoritesCarouselProps) => {
   const [index, setIndex] = useState<number>(0);
-  const [cardColors] = useState<string[]>(getCardColors(props.resources.length));
+  const [cardColors, setCardColors] = useState<string[]>(getCardColors(props.resources.length));
   const decreaseIndex = () => {
     setIndex(index - 1);
   };
@@ -131,6 +132,11 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
   };
   useEffect(() => {
     setIndex(0);
+    if (props.resources.length > cardColors.length) {
+      const difference = props.resources.length - cardColors.length;
+      const colors = cardColors.concat(getCardColors(difference));
+      setCardColors(colors);
+    }
   }, [props.resources.length]);
   return (
     <View style={styles.mainContainer}>
