@@ -236,7 +236,11 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
 
     return (
       <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
-        <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="padding" style={styles.safeAreaContainer}>
+        <KeyboardAvoidingView
+          enabled={Platform.OS === 'ios'}
+          behavior="padding"
+          keyboardVerticalOffset={60}
+          style={styles.safeAreaContainer}>
           <View style={styles.headerContainer}>
             <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
             <TouchableOpacity onPress={props.closeModal}>

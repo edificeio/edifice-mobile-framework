@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '35%',
     overflow: 'hidden',
-    zIndex: 1,
   },
   coloredContainer: {
     width: 10,
