@@ -1,6 +1,7 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { AdvancedSearchParams, Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
+import { Source } from '../utils/Resource';
 
 const concatResources = (response: any) => {
   let resources: any[] = [];
@@ -21,11 +22,11 @@ const addSource = (sources: string[], value: boolean, name: string) => {
 };
 
 export const searchService = {
-  getExternals: async () => {
+  getExternals: async (sources: string[]) => {
     const jsondata = {
       event: 'search',
       state: 'PLAIN_TEXT',
-      sources: ['fr.openent.mediacentre.source.GAR', 'fr.openent.mediacentre.source.Moodle', 'fr.openent.mediacentre.source.PMB'],
+      sources: sources.filter(source => source !== Source.Signet),
       data: {
         query: '.*',
       },
@@ -35,16 +36,11 @@ export const searchService = {
     });
     return resourcesAdapter(concatResources(response));
   },
-  getSimple: async (query: string) => {
+  getSimple: async (sources: string[], query: string) => {
     const jsondata = {
       event: 'search',
       state: 'PLAIN_TEXT',
-      sources: [
-        'fr.openent.mediacentre.source.GAR',
-        'fr.openent.mediacentre.source.Moodle',
-        'fr.openent.mediacentre.source.PMB',
-        'fr.openent.mediacentre.source.Signet',
-      ],
+      sources,
       data: {
         query,
       },
