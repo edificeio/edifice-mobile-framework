@@ -20,9 +20,9 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { Badge } from './badge';
 import { UI_SIZES } from './constants';
-import { Icon } from './picture';
-import { Picture, PictureProps } from './picture';
-import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle, remlh } from './text';
+import { Icon } from './picture/Icon';
+import { Picture, PictureProps } from './picture/index';
+import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle, responsiveLineHeight } from './text';
 
 const cardPaddingV = 12;
 const cardPaddingH = 16;
@@ -292,7 +292,13 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
       <Picture {...picture} />
       {text ? (
         typeof text === 'string' ? (
-          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: UI_SIZES.spacing.smallPlus, height: remlh(2) }}>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: UI_SIZES.spacing.smallPlus,
+              height: responsiveLineHeight(2),
+            }}>
             <Text
               numberOfLines={2}
               style={[

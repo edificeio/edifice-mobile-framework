@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
-import { remlh } from '~/framework/components/text';
+import { responsiveLineHeight } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -41,7 +41,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const contentsLanguages = contents && Object.keys(contents);
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];
     const maxLines = 4,
-      maxHeight = remlh(maxLines);
+      maxHeight = responsiveLineHeight(maxLines);
 
     return contents && contentsLanguages.length > 0 ? (
       <ArticleContainer style={{ width: '100%', opacity: measuredText ? 1 : 0 }}>
@@ -65,7 +65,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                   ? {}
                   : longText
                   ? {
-                      maxHeight: remlh(4 + 1),
+                      maxHeight: responsiveLineHeight(4 + 1),
                       overflow: 'hidden',
                     }
                   : {}
@@ -77,7 +77,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                     color: theme.color.text.inverse,
                   },
                   boldTextStyle: {
-                    color: theme.color.text.inverse
+                    color: theme.color.text.inverse,
                   },
                   textColor: false,
                   images: false,

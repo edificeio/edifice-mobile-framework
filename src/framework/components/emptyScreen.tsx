@@ -15,8 +15,6 @@ import { UI_SIZES } from './constants';
 import { PageView_Style } from './page';
 import { Text, TextSemiBold } from './text';
 
-import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-
 export const EmptyScreen = ({
   svgImage,
   title,

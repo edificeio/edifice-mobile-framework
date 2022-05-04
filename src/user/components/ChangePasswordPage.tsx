@@ -5,12 +5,10 @@ import { Alert, ScrollView, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
+import { Text, TextSizeStyle, responsiveLineHeight } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { FlatButton } from '~/ui/FlatButton';
@@ -20,7 +18,6 @@ import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
-
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -259,10 +256,8 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                         <MiniSpacer />
                       </View>
                       <View style={{ flexShrink: 0 }}>
-                        <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
-                          {showError &&
-                          hasErrorKey &&
-                          (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
+                        <ErrorMessage style={{ marginTop: 0, minHeight: responsiveLineHeight(3) }}>
+                          {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                             ? errorText
                             : ' \n '}
                         </ErrorMessage>
