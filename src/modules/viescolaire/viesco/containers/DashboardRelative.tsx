@@ -96,9 +96,9 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps, IDashboard
     return (
       <>
         <DashboardComponent {...this.props} />
-        {this.props.authorizedViescoApps.presences ? (
+        {/*this.props.authorizedViescoApps.presences ? (
           <NotificationRelativesModal showModal={this.state.notificationModal} onClose={this.onCloseNotificationModal} />
-        ) : null}
+        ) : null*/}
       </>
     );
   }
