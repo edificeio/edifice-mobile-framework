@@ -194,8 +194,9 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                 underlineColorAndroid="lightgrey"
                 onChangeText={updateComment}
               />
-              <FilePicker multiple callback={att => this.props.onPickAttachment(att)}>
-                <IconButton onPress={() => {}} text={I18n.t('viesco-attachment')} color="white" icon="attachment" />
+              <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                <Icon size={20} name="attachment" style={{ marginRight: 5}} />
+                <Text>{I18n.t('viesco-attachment')}</Text>
               </FilePicker>
             </View>
             {attachment && <RenderAttachment />}

@@ -20,6 +20,7 @@ export type IResourceBackend = {
   user: string;
   favorite?: boolean;
   structure_uai?: string;
+  orientation?: boolean;
   owner_id?: string;
   owner_name?: string;
 }[];
@@ -40,7 +41,9 @@ export function transformArray(array: string[]) {
 
 export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => {
   const resources = [] as Resource[];
-  if (!data) return resources;
+  if (!data || !Array.isArray(data)) {
+    return [];
+  }
   for (const resource of data) {
     const res = {
       id: resource.id,
@@ -58,6 +61,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
       user: resource.user,
       favorite: resource.favorite,
       structure_uai: resource.structure_uai,
+      orientation: resource.orientation,
       owner_id: resource.owner_id,
     } as Resource;
     resources.push(res);

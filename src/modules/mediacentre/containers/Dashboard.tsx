@@ -58,7 +58,6 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
       Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
       });
       this.props.fetchFavorites();
     } catch (err) {
@@ -72,7 +71,6 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
       Toast.showSuccess(I18n.t('mediacentre.favorite-removed'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
       });
       this.props.fetchFavorites();
     } catch (err) {
@@ -82,14 +80,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
 
   public render() {
     return (
-      <PageView
-        navigation={this.props.navigation}
-        navBarWithBack={{
-          title: I18n.t('mediacentre.mediacentre'),
-          style: {
-            backgroundColor: '#F53B56',
-          },
-        }}>
+      <PageView navigation={this.props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.mediacentre') }}>
         <PageContainer>
           <ConnectionTrackingBar />
           <HomePageContainer {...this.props} {...this.state} addFavorite={this.addFavorite} removeFavorite={this.removeFavorite} />

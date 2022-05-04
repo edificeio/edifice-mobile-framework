@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
@@ -27,15 +28,15 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   gridDisplayAllText: {
-    color: '#F53B56',
+    color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
   mainContainer: {
     flex: 1,
   },
-  advancedSearchButtonContainer: {
-    marginLeft: 20,
-    paddingVertical: 10,
+  searchContainer: {
+    marginHorizontal: 20,
+    marginTop: 10,
   },
 });
 
@@ -56,6 +57,7 @@ interface ResourcesGridProps {
 interface HomePageProps {
   externals: Resource[];
   favorites: Resource[];
+  includePMB: boolean;
   navigation: any;
   search: Resource[];
   signets: ISignets;
@@ -85,6 +87,10 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
     setSearchedResources(props.search);
   }, [props.search]);
 
+  useEffect(() => {
+    setSearchParams({ ...searchParams, sources: { ...searchParams.sources, PMB: props.includePMB } });
+  }, [props.includePMB]);
+
   function onSearch(query: string) {
     props.searchResources(query);
     setSearchState(SearchState.SIMPLE);
@@ -108,6 +114,9 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   function showSearchModal() {
     setSearchModalVisible(true);
+    if (searchBarRef.current) {
+      searchBarRef.current.blur();
+    }
   }
 
   function hideSearchModal() {
@@ -147,18 +156,17 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   return (
     <View style={styles.mainContainer}>
-      <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
-      <View style={styles.advancedSearchButtonContainer}>
+      <View style={styles.searchContainer}>
+        <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
         <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
       </View>
       {searchState !== SearchState.NONE ? (
         <SearchContent
+          {...props}
           resources={searchedResources}
           searchState={searchState}
           params={searchParams}
           onCancelSearch={onCancelSearch}
-          addFavorite={props.addFavorite}
-          removeFavorite={props.removeFavorite}
         />
       ) : (
         <FlatList
@@ -177,6 +185,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         isVisible={searchModalVisible}
         onSearch={onAdvancedSearch}
         closeModal={hideSearchModal}
+        includePMB={props.includePMB}
         ref={searchModalRef}
       />
     </View>

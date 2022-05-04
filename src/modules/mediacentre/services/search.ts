@@ -11,7 +11,13 @@ const concatResources = (response: any) => {
 };
 
 const addFieldWhenFilled = (field: Field) => {
-  return { value: field.value, operands: field.operand ? '$and' : '$or' };
+  return { value: field.value, comparator: field.operand ? '$and' : '$or' };
+};
+
+const addSource = (sources: string[], value: boolean, name: string) => {
+  if (value) {
+    sources.push(`fr.openent.mediacentre.source.${name}`);
+  }
 };
 
 export const searchService = {
@@ -49,17 +55,17 @@ export const searchService = {
     return resourcesAdapter(concatResources(response));
   },
   getAdvanced: async (params: AdvancedSearchParams) => {
+    const sources: string[] = [];
     const jsondata = {
       event: 'search',
       state: 'ADVANCED',
-      sources: [
-        params.sources.GAR && 'fr.openent.mediacentre.source.GAR',
-        params.sources.Moodle && 'fr.openent.mediacentre.source.Moodle',
-        params.sources.PMB && 'fr.openent.mediacentre.source.PMB',
-        params.sources.Signets && 'fr.openent.mediacentre.source.Signet',
-      ],
+      sources,
       data: {},
     };
+    addSource(jsondata.sources, params.sources.GAR, 'GAR');
+    addSource(jsondata.sources, params.sources.Moodle, 'Moodle');
+    addSource(jsondata.sources, params.sources.PMB, 'PMB');
+    addSource(jsondata.sources, params.sources.Signets, 'Signet');
     for (const field of params.fields) {
       if (field.value !== '') {
         jsondata.data[field.name] = addFieldWhenFilled(field);

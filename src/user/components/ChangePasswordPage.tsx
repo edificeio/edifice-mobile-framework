@@ -1,11 +1,10 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, ScrollView, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
-
-
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -20,7 +19,6 @@ import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
-
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -195,99 +193,80 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     const isIDF = DEPRECATED_getCurrentPlatform()!.displayName === 'MonLycée.net'; // WTF ??!! 🤪🤪🤪
 
     return (
-      <View style={{ backgroundColor: theme.color.background.card, flex: 1 }}>
-        <KeyboardPageView
-          navigation={this.props.navigation}
-          style={{
-            marginBottom: UI_SIZES.screen.bottomInset,
-            flex: 1,
-            backgroundColor: theme.color.background.card,
-          }}>
-          <View style={{ height: '100%' }}>
-            <ScrollView
-              alwaysBounceVertical={false}
-              overScrollMode="never"
-              style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1 }}>
-              <FormPage>
-                <FormTouchable onPress={() => formModel.blur()}>
-                  <FormWrapper>
-                    <FormContainer style={{ justifyContent: 'space-between', alignItems: 'stretch' }}>
-                      <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
-                        {this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
-                          <View
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              padding: 5,
-                              flex: 0,
-                            }}>
-                            <Text style={{ ...TextSizeStyle.SlightBig, textAlign: 'center' }}>
-                              {I18n.t('PasswordChangeWarning')}
-                            </Text>
-                            <MiniSpacer />
-                            <MiniSpacer />
-                          </View>
-                        ) : null}
-                        {isIDF ? (
-                          <View
-                            style={{
-                              backgroundColor: theme.color.secondary.light,
-                              paddingVertical: 6,
-                              paddingHorizontal: 14,
-                              borderColor: theme.color.secondary.regular,
-                              borderWidth: 1,
-                              borderRadius: 10,
-                              flex: 0,
-                            }}>
-                            <Text style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
-                              {I18n.t('common.idf.passwordRules')}
-                            </Text>
-                          </View>
-                        ) : null}
-                      </View>
-                      <View style={{ flexShrink: 0 }}>
-                        <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />
-                        <MiniSpacer />
-                      </View>
-                      <View style={{ flexShrink: 0 }}>
-                        <NewPasswordField newPassword={newPassword} form={formModel} onChange={this.onChange('newPassword')} />
-                        <MiniSpacer />
-                      </View>
-                      <View style={{ flexShrink: 0 }}>
-                        <PasswordConfirmField confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
-                        <MiniSpacer />
-                      </View>
-                      <View style={{ flexShrink: 0 }}>
-                        <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
-                          {showError &&
-                          hasErrorKey &&
-                          (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
-                            ? errorText
-                            : ' \n '}
-                        </ErrorMessage>
-                      </View>
-                      <View style={{ flexShrink: 0 }}>
-                        <ButtonWrapper error={hasErrorKey} typing={typing}>
-                          <FlatButton
-                            onPress={() => this.handleSubmit()}
-                            disabled={isNotValid}
-                            title={I18n.t('Save')}
-                            loading={isSubmitLoading}
-                          />
-                        </ButtonWrapper>
-                        <MiniSpacer />
-                        <MiniSpacer />
-                        <MiniSpacer />
-                      </View>
-                    </FormContainer>
-                  </FormWrapper>
-                </FormTouchable>
-              </FormPage>
-            </ScrollView>
-          </View>
-        </KeyboardPageView>
-      </View>
+      <KeyboardPageView
+        navigation={this.props.navigation}
+        scrollable={true}
+        navBarWithBack={{
+          title: I18n.t('PasswordChange'),
+        }}>
+        <Pressable onPress={() => formModel.blur()} style={{flexGrow: 1}}>
+          <FormContainer>
+            <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
+              {this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: 5,
+                    flex: 0,
+                  }}>
+                  <Text style={{ ...TextSizeStyle.SlightBig, textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</Text>
+                  <MiniSpacer />
+                  <MiniSpacer />
+                </View>
+              ) : null}
+              {isIDF ? (
+                <View
+                  style={{
+                    backgroundColor: theme.color.secondary.light,
+                    paddingVertical: 6,
+                    paddingHorizontal: 14,
+                    borderColor: theme.color.secondary.regular,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    flex: 0,
+                  }}>
+                  <Text style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
+                    {I18n.t('common.idf.passwordRules')}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+            <View style={{ flexShrink: 0 }}>
+              <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />
+              <MiniSpacer />
+            </View>
+            <View style={{ flexShrink: 0 }}>
+              <NewPasswordField newPassword={newPassword} form={formModel} onChange={this.onChange('newPassword')} />
+              <MiniSpacer />
+            </View>
+            <View style={{ flexShrink: 0 }}>
+              <PasswordConfirmField confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
+              <MiniSpacer />
+            </View>
+            <View style={{ flexShrink: 0 }}>
+              <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
+                {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
+                  ? errorText
+                  : ' \n '}
+              </ErrorMessage>
+            </View>
+            <View style={{ flexShrink: 0 }}>
+              <ButtonWrapper error={hasErrorKey} typing={typing}>
+                <FlatButton
+                  onPress={() => this.handleSubmit()}
+                  disabled={isNotValid}
+                  title={I18n.t('Save')}
+                  loading={isSubmitLoading}
+                />
+              </ButtonWrapper>
+              <MiniSpacer />
+              <MiniSpacer />
+              <MiniSpacer />
+            </View>
+          </FormContainer>
+        </Pressable>
+      </KeyboardPageView>
     );
   }
 }
@@ -331,17 +310,11 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
     />
   );
 }
-
-const FormPage = styled.View({
-  flex: 1,
-});
-const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
-const FormWrapper = styled.View({ flex: 1 });
 const FormContainer = styled.View({
-  alignItems: 'center',
-  flex: 1,
-  flexDirection: 'column',
-  justifyContent: 'flex-start',
+  alignItems: 'stretch',
+  flexGrow: 1,
+  flexShrink: 0,
+  justifyContent: 'space-between',
   paddingTop: 30,
   paddingHorizontal: 30,
 });
