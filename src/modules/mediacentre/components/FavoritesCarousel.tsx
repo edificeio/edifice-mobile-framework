@@ -5,7 +5,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { TouchCard } from '~/framework/components/card';
+import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     width: '35%',
-    overflow: 'hidden',
   },
   coloredContainer: {
     width: 10,
@@ -45,7 +44,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   contentContainer: {
-    left: 5,
+    marginLeft: 12,
+    padding: 10,
+    backgroundColor: 'white',
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14,
   },
   imageContainer: {
     width: 90,
@@ -102,8 +105,7 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     Toast.show(I18n.t('mediacentre.link-copied'));
   };
   return (
-    <TouchCard onPress={openURL} style={styles.cardContainer}>
-      <View style={[styles.coloredContainer, { backgroundColor: props.color }]} />
+    <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
       <View style={styles.contentContainer}>
         <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
         <Image
@@ -116,7 +118,7 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
           <IconButton icon="link" size={20} onPress={copyToClipboard} />
         </View>
       </View>
-    </TouchCard>
+    </TouchCardWithoutPadding>
   );
 };
 
