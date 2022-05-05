@@ -15,6 +15,7 @@ import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/
 import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
 import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
 import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { HomePage } from '~/modules/mediacentre/components/HomePage';
 import { getExternalsState } from '~/modules/mediacentre/state/externals';
 import { getFavoritesState } from '~/modules/mediacentre/state/favorites';
 import { getSearchState } from '~/modules/mediacentre/state/search';
@@ -24,9 +25,7 @@ import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 
-import HomePageContainer from './HomePage';
-
-type IDashboardProps = {
+type IHomePageProps = {
   externals: Resource[];
   favorites: Resource[];
   navigation: { navigate };
@@ -45,12 +44,12 @@ type IDashboardProps = {
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
 
-type IDashboardState = {
+type IHomePageState = {
   sources: string[];
 };
 
-export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardState> {
-  constructor(props: IDashboardProps) {
+export class HomeContainer extends React.PureComponent<IHomePageProps, IHomePageState> {
+  constructor(props: IHomePageProps) {
     super(props);
     this.state = {
       sources: [],
@@ -117,7 +116,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardSt
       <PageView navigation={this.props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.mediacentre') }}>
         <PageContainer>
           <ConnectionTrackingBar />
-          <HomePageContainer {...this.props} {...this.state} addFavorite={this.addFavorite} removeFavorite={this.removeFavorite} />
+          <HomePage {...this.props} {...this.state} addFavorite={this.addFavorite} removeFavorite={this.removeFavorite} />
         </PageContainer>
       </PageView>
     );
@@ -171,4 +170,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default withViewTracking('mediacentre')(connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(Dashboard)));
+export default withViewTracking('mediacentre')(connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(HomeContainer)));

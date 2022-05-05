@@ -1,11 +1,11 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import Dashboard from './containers/Dashboard';
+import HomeContainer from './containers/HomeContainer';
 
 export default () =>
   createStackNavigator(
     {
-      Mediacentre: Dashboard,
+      Mediacentre: HomeContainer,
     },
     {
       headerMode: 'none',
