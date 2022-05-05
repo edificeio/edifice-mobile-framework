@@ -88,6 +88,7 @@ const sessionListAdapter: (data: ISessionListBackend) => ISessionList = data => 
   result = data.map(item => ({
     id: item.id,
     is_published: item.is_published,
+    is_empty: item.is_empty,
     date: moment(item.date),
     subject_id: item.subject_id,
     subject: item.subject,

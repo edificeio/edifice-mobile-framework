@@ -4,21 +4,21 @@ import { bindActionCreators } from 'redux';
 
 import { putSignatureAction } from '~/modules/zimbra/actions/signature';
 import SignatureModalComponent from '~/modules/zimbra/components/Modals/SignatureModal';
-import { getSignatureState, ISignature } from '~/modules/zimbra/state/signature';
+import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
 
 type SignatureModalProps = {
+  show: boolean;
   signature: string;
   signatureData: ISignature;
-  show: boolean;
   closeModal: () => any;
   putSignature: (signatureData: string, isGlobalSignature: boolean) => any;
   successCallback: () => any;
 };
 
 type MoveToFolderModalState = {
-  signature: string;
   isGlobalSignature: boolean;
   isUpdated: boolean;
+  signature: string;
 };
 
 class SignatureModal extends React.Component<SignatureModalProps, MoveToFolderModalState> {

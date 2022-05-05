@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
-import { TouchCard } from '~/framework/components/card';
+import theme from '~/app/theme';
+import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { Text, TextBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   displayText: {
-    color: '#F53B56',
+    color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
   carouselContainer: {
@@ -36,7 +37,6 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     width: '35%',
-    overflow: 'hidden',
   },
   coloredContainer: {
     width: 10,
@@ -44,7 +44,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   contentContainer: {
-    left: 5,
+    marginLeft: 12,
+    padding: 10,
+    backgroundColor: 'white',
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14,
   },
   imageContainer: {
     width: 90,
@@ -101,8 +105,7 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     Toast.show(I18n.t('mediacentre.link-copied'));
   };
   return (
-    <TouchCard onPress={openURL} style={styles.cardContainer}>
-      <View style={[styles.coloredContainer, { backgroundColor: props.color }]} />
+    <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
       <View style={styles.contentContainer}>
         <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
         <Image
@@ -112,16 +115,16 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
         />
         <View style={styles.actionsContainer}>
           <FavoriteIcon {...props} />
-          <IconButton icon="link" size={20} color="#F53B56" onPress={copyToClipboard} />
+          <IconButton icon="link" size={20} onPress={copyToClipboard} />
         </View>
       </View>
-    </TouchCard>
+    </TouchCardWithoutPadding>
   );
 };
 
 export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> = (props: FavoritesCarouselProps) => {
   const [index, setIndex] = useState<number>(0);
-  const [cardColors] = useState<string[]>(getCardColors(props.resources.length));
+  const [cardColors, setCardColors] = useState<string[]>(getCardColors(props.resources.length));
   const decreaseIndex = () => {
     setIndex(index - 1);
   };
@@ -130,6 +133,11 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
   };
   useEffect(() => {
     setIndex(0);
+    if (props.resources.length > cardColors.length) {
+      const difference = props.resources.length - cardColors.length;
+      const colors = cardColors.concat(getCardColors(difference));
+      setCardColors(colors);
+    }
   }, [props.resources.length]);
   return (
     <View style={styles.mainContainer}>

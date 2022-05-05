@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
@@ -27,15 +28,15 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   gridDisplayAllText: {
-    color: '#F53B56',
+    color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
   mainContainer: {
     flex: 1,
   },
-  advancedSearchButtonContainer: {
-    marginLeft: 20,
-    paddingVertical: 10,
+  searchContainer: {
+    marginHorizontal: 20,
+    marginTop: 10,
   },
 });
 
@@ -59,11 +60,12 @@ interface HomePageProps {
   navigation: any;
   search: Resource[];
   signets: ISignets;
+  sources: string[];
   textbooks: Resource[];
 
   addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
-  searchResources: (query: string) => any;
+  searchResources: (sources: string[], query: string) => any;
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 }
 
@@ -74,6 +76,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<AdvancedSearchParams>(defaultParams);
+  const [includePMB] = useState<boolean>(props.sources.includes(Source.PMB));
   const sections = [
     { title: 'mediacentre.external-resources', resources: props.externals },
     { title: 'mediacentre.my-textbooks', resources: props.textbooks },
@@ -85,8 +88,12 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
     setSearchedResources(props.search);
   }, [props.search]);
 
+  useEffect(() => {
+    setSearchParams({ ...searchParams, sources: { ...searchParams.sources, PMB: includePMB } });
+  }, [includePMB]);
+
   function onSearch(query: string) {
-    props.searchResources(query);
+    props.searchResources(props.sources, query);
     setSearchState(SearchState.SIMPLE);
   }
 
@@ -108,6 +115,9 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   function showSearchModal() {
     setSearchModalVisible(true);
+    if (searchBarRef.current) {
+      searchBarRef.current.blur();
+    }
   }
 
   function hideSearchModal() {
@@ -147,18 +157,18 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   return (
     <View style={styles.mainContainer}>
-      <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
-      <View style={styles.advancedSearchButtonContainer}>
+      <View style={styles.searchContainer}>
+        <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
         <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
       </View>
       {searchState !== SearchState.NONE ? (
         <SearchContent
+          {...props}
           resources={searchedResources}
           searchState={searchState}
           params={searchParams}
+          includePMB={includePMB}
           onCancelSearch={onCancelSearch}
-          addFavorite={props.addFavorite}
-          removeFavorite={props.removeFavorite}
         />
       ) : (
         <FlatList
@@ -177,6 +187,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         isVisible={searchModalVisible}
         onSearch={onAdvancedSearch}
         closeModal={hideSearchModal}
+        includePMB={includePMB}
         ref={searchModalRef}
       />
     </View>

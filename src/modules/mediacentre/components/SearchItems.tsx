@@ -12,18 +12,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   searchInput: {
-    marginHorizontal: 20,
-    marginTop: 10,
+    flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    flex: 1,
     borderWidth: 2,
     borderRadius: 50,
-    borderColor: '#F53B56',
+    borderColor: theme.color.secondary.regular,
   },
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 10,
   },
   buttonIcon: {
     marginRight: 5,
@@ -68,7 +67,7 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = (props: Search
 
 export const IconButtonText: React.FunctionComponent<IconButtonTextProps> = (props: IconButtonTextProps) => (
   <TouchableOpacity style={styles.buttonContainer} onPress={props.onPress}>
-    <Icon style={styles.buttonIcon} size={16} color={props.color ? props.color : theme.themeOpenEnt.cyan} name={props.icon} />
-    <Text style={{ color: theme.themeOpenEnt.cyan }}>{props.text}</Text>
+    <Icon style={styles.buttonIcon} size={16} color={props.color ? props.color : theme.color.secondary.regular} name={props.icon} />
+    <Text style={{ color: theme.color.secondary.regular }}>{props.text}</Text>
   </TouchableOpacity>
 );

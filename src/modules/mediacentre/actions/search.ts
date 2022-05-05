@@ -11,11 +11,11 @@ const dataActions = createAsyncActionCreators<ISearch>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function searchResourcesAction(query: string) {
+export function searchResourcesAction(sources: string[], query: string) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await searchService.getSimple(query);
+      const data = await searchService.getSimple(sources, query);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

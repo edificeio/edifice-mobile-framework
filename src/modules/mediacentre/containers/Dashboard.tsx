@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchWithCache } from '~/infra/fetchWithCache';
 import { fetchExternalsAction } from '~/modules/mediacentre/actions/externals';
 import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
 import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
@@ -35,22 +36,55 @@ type IDashboardProps = {
   userId: string;
 
   postAddFavorite: (id: string, resource: Resource) => any;
-  fetchExternals: () => any;
+  fetchExternals: (sources: string[]) => any;
   fetchFavorites: () => any;
   fetchSignets: (userId: string) => any;
   fetchTextbooks: () => any;
   postRemoveFavorite: (id: string, source: Source) => any;
-  searchResources: (query: string) => any;
+  searchResources: (sources: string[], query: string) => any;
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
 
-export class Dashboard extends React.PureComponent<IDashboardProps> {
+type IDashboardState = {
+  sources: string[];
+};
+
+export class Dashboard extends React.PureComponent<IDashboardProps, IDashboardState> {
+  constructor(props: IDashboardProps) {
+    super(props);
+    this.state = {
+      sources: [],
+    };
+    this.fetchSources();
+  }
+
   componentDidMount() {
-    this.props.fetchExternals();
     this.props.fetchFavorites();
     this.props.fetchTextbooks();
     this.props.fetchSignets(this.props.userId);
   }
+
+  fetchSources = async () => {
+    const response = await fetchWithCache(`/mediacentre`, {
+      method: 'get',
+    });
+    let html = response?.toString();
+    if (!html) {
+      return [];
+    }
+    html = html.replace(/\s/g, '');
+    const startIndex = html.indexOf('sources=[');
+    const endIndex = html.indexOf('];');
+    if (!startIndex || !endIndex || startIndex + 9 > endIndex - 2) {
+      return [];
+    }
+    html = html.substring(startIndex + 9, endIndex - 2).replaceAll('"', '');
+    const sources = html.split(',');
+    this.setState({
+      sources,
+    });
+    this.props.fetchExternals(sources);
+  };
 
   addFavorite = async (resourceId: string, resource: Resource) => {
     try {
@@ -58,7 +92,6 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
       Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
       });
       this.props.fetchFavorites();
     } catch (err) {
@@ -72,7 +105,6 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
       Toast.showSuccess(I18n.t('mediacentre.favorite-removed'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
       });
       this.props.fetchFavorites();
     } catch (err) {
@@ -82,14 +114,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps> {
 
   public render() {
     return (
-      <PageView
-        navigation={this.props.navigation}
-        navBarWithBack={{
-          title: I18n.t('mediacentre.mediacentre'),
-          style: {
-            backgroundColor: '#F53B56',
-          },
-        }}>
+      <PageView navigation={this.props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.mediacentre') }}>
         <PageContainer>
           <ConnectionTrackingBar />
           <HomePageContainer {...this.props} {...this.state} addFavorite={this.addFavorite} removeFavorite={this.removeFavorite} />
