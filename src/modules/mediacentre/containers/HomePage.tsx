@@ -13,11 +13,12 @@ type IHomePageContainerProps = {
   navigation: any;
   search: Resource[];
   signets: ISignets;
+  sources: string[];
   textbooks: Resource[];
 
   addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
-  searchResources: (query: string) => any;
+  searchResources: (sources: string[], query: string) => any;
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 };
 

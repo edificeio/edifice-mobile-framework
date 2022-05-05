@@ -57,15 +57,15 @@ interface ResourcesGridProps {
 interface HomePageProps {
   externals: Resource[];
   favorites: Resource[];
-  includePMB: boolean;
   navigation: any;
   search: Resource[];
   signets: ISignets;
+  sources: string[];
   textbooks: Resource[];
 
   addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
-  searchResources: (query: string) => any;
+  searchResources: (sources: string[], query: string) => any;
   searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
 }
 
@@ -76,6 +76,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<AdvancedSearchParams>(defaultParams);
+  const [includePMB] = useState<boolean>(props.sources.includes(Source.PMB));
   const sections = [
     { title: 'mediacentre.external-resources', resources: props.externals },
     { title: 'mediacentre.my-textbooks', resources: props.textbooks },
@@ -88,11 +89,11 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }, [props.search]);
 
   useEffect(() => {
-    setSearchParams({ ...searchParams, sources: { ...searchParams.sources, PMB: props.includePMB } });
-  }, [props.includePMB]);
+    setSearchParams({ ...searchParams, sources: { ...searchParams.sources, PMB: includePMB } });
+  }, [includePMB]);
 
   function onSearch(query: string) {
-    props.searchResources(query);
+    props.searchResources(props.sources, query);
     setSearchState(SearchState.SIMPLE);
   }
 
@@ -166,6 +167,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           resources={searchedResources}
           searchState={searchState}
           params={searchParams}
+          includePMB={includePMB}
           onCancelSearch={onCancelSearch}
         />
       ) : (
@@ -185,7 +187,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         isVisible={searchModalVisible}
         onSearch={onAdvancedSearch}
         closeModal={hideSearchModal}
-        includePMB={props.includePMB}
+        includePMB={includePMB}
         ref={searchModalRef}
       />
     </View>
