@@ -1,4 +1,5 @@
 /* eslint-disable no-fallthrough */
+
 /**
  * Workspace state reducer
  * Holds a list of simple element in a simple Array
@@ -76,15 +77,6 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
   }
 };
 
-function pushData(state: IState, action: IAction<IItems<IItem | string>>, actionTypes) {
-  return {
-    data: {
-      ...state.data,
-      [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(state.data[action.payload.parentId], action),
-    },
-  };
-}
-
 const node = (data: IItems<IItem> = {}, action: IAction<IItems<IItem | string>>): IItems<IItem> => {
   switch (action.type) {
     case actionTypesMove.received:
@@ -106,3 +98,12 @@ const node = (data: IItems<IItem> = {}, action: IAction<IItems<IItem | string>>)
       return data;
   }
 };
+
+function pushData(state: IState, action: IAction<IItems<IItem | string>>, actionTypes) {
+  return {
+    data: {
+      ...state.data,
+      [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(state.data[action.payload.parentId], action),
+    },
+  };
+}

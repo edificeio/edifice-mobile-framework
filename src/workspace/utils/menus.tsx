@@ -2,8 +2,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
 
-import { copyDocuments, moveDocuments } from './copypast';
-
 import { Trackers } from '~/framework/util/tracker';
 import { FilePicker } from '~/infra/filePicker';
 import { createFolderAction } from '~/workspace/actions/create';
@@ -14,6 +12,8 @@ import { renameAction } from '~/workspace/actions/rename';
 import { restoreAction } from '~/workspace/actions/restore';
 import { uploadAction } from '~/workspace/actions/upload';
 import { ContentUri, FilterId } from '~/workspace/types';
+
+import { copyDocuments, moveDocuments } from './copypast';
 
 export const addMenu = () => {
   return {

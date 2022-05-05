@@ -1,8 +1,8 @@
-import { FilterId, IFiltersParameters } from './filters';
-import { IItemsProps, IDataItemsProps, IDetailsProps, IActionProps, IEventProps, INavigationProps, EVENT_TYPE } from './props';
-import { IAsyncItems, IItem, IItems, IFolder, IFile, IState } from './states';
-
 import { ContentUri } from '~/types/contentUri';
+
+import { FilterId, IFiltersParameters } from './filters';
+import { EVENT_TYPE, IActionProps, IDataItemsProps, IDetailsProps, IEventProps, IItemsProps, INavigationProps } from './props';
+import { IAsyncItems, IFile, IFolder, IItem, IItems, IState } from './states';
 
 export {
   ContentUri,

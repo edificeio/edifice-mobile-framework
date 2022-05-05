@@ -2,12 +2,11 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { nbItems } from './index';
-
+import { FakeHeader_Container, FakeHeader_Row } from '~/framework/components/header';
 import { EVENT_TYPE, IEvent } from '~/types/ievents';
-import ProgressBar from '~/ui/ProgressBar';
 import { ConfirmDialog } from '~/ui/ConfirmDialog';
 import FloatingAction from '~/ui/FloatingButton/FloatingAction';
+import ProgressBar from '~/ui/ProgressBar';
 import { ToolbarAction } from '~/ui/Toolbar';
 import { IMenuItem, initialMenuItem } from '~/ui/types';
 import { newDownloadThenOpenAction } from '~/workspace/actions/download';
@@ -17,7 +16,8 @@ import { selectAction, selectClearAction } from '~/workspace/actions/select';
 import { IItems } from '~/workspace/reducers/select';
 import { IFile, IItem } from '~/workspace/types';
 import { FilterId } from '~/workspace/types/filters';
-import { FakeHeader_Container, FakeHeader_Row } from '~/framework/components/header';
+
+import { nbItems } from './index';
 
 export interface IProps {
   dispatch: any;
@@ -85,7 +85,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
         case EVENT_TYPE.LONG_SELECT:
           const filterId = navigation.getParam('filter');
-          if (filterId != 'root') dispatch(selectAction(item));
+          if (filterId !== 'root') dispatch(selectAction(item));
           return;
 
         case EVENT_TYPE.MENU_SELECT: {

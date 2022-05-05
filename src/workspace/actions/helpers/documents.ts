@@ -17,45 +17,6 @@ import { filters } from '~/workspace/types/filters/helpers/filters';
 
 export type IDocumentArray = any[];
 
-// ADAPTER ----------------------------------------------------------------------------------------
-
-function checkAncestorsAndFormat(result, item, parentId) {
-  const { eParent } = item;
-
-  if (typeof item === 'string') {
-    result[item as string] = item;
-    return result;
-  }
-
-  if (!parentId || eParent === parentId || (!eParent && parentId === 'owner')) {
-    result[item._id] = formatResult(item);
-    return result;
-  }
-
-  return result;
-}
-
-export const formatResults: (
-  data: IDocumentArray | IBackendDocument | IBackendFolder | string[],
-  parentId?: string,
-) => IItems<IItem | string> = (data, parentId) => {
-  let result = {} as IItems<IFile | IFolder | string>;
-
-  if (!data) {
-    return result;
-  } else if (data instanceof Array) {
-    (data as any[]).map(item => (result = checkAncestorsAndFormat(result, item, parentId)));
-    return result;
-  } else {
-    return checkAncestorsAndFormat(result, data, parentId);
-  }
-};
-
-function formatResult(item: IBackendDocument | IBackendFolder | any): IFile | IFolder {
-  if (item.metadata) return formatFileResult(item as IBackendDocument);
-  else return formatFolderResult(item as IBackendFolder);
-}
-
 // File TYPE -------------------------------------------------------------------------------------------
 
 export type IBackendDocument = {
@@ -137,6 +98,45 @@ function formatFolderResult(item: IBackendFolder): IFolder {
     number: 1,
   };
 }
+
+// ADAPTER ----------------------------------------------------------------------------------------
+
+function formatResult(item: IBackendDocument | IBackendFolder | any): IFile | IFolder {
+  if (item.metadata) return formatFileResult(item as IBackendDocument);
+  else return formatFolderResult(item as IBackendFolder);
+}
+
+function checkAncestorsAndFormat(result, item, parentId) {
+  const { eParent } = item;
+
+  if (typeof item === 'string') {
+    result[item as string] = item;
+    return result;
+  }
+
+  if (!parentId || eParent === parentId || (!eParent && parentId === 'owner')) {
+    result[item._id] = formatResult(item);
+    return result;
+  }
+
+  return result;
+}
+
+export const formatResults: (
+  data: IDocumentArray | IBackendDocument | IBackendFolder | string[],
+  parentId?: string,
+) => IItems<IItem | string> = (data, parentId) => {
+  let result = {} as IItems<IFile | IFolder | string>;
+
+  if (!data) {
+    return result;
+  } else if (data instanceof Array) {
+    (data as any[]).map(item => (result = checkAncestorsAndFormat(result, item, parentId)));
+    return result;
+  } else {
+    return checkAncestorsAndFormat(result, data, parentId);
+  }
+};
 
 // UPLOAD --------------------------------------------------------------------------------------
 

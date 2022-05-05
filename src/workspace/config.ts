@@ -1,6 +1,5 @@
 import FunctionalModuleConfig from '~/infra/moduleTool';
 
-
 export default new FunctionalModuleConfig({
   name: 'workspace',
   apiName: 'Espace documentaire',

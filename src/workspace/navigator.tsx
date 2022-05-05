@@ -1,6 +1,8 @@
 import I18n from 'i18n-js';
 import { createStackNavigator } from 'react-navigation-stack';
 
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+
 import Details from './containers/Details';
 import ContainerItems from './containers/Items';
 import { FilterId } from './types';
@@ -10,18 +12,16 @@ import {
   copyMenu,
   createMenu,
   deleteMenu,
-  trashMenu,
   downloadMenu,
   emptyMenu,
   moveMenu,
   nbSelectedMenu,
   renameMenu,
-  separatorMenu,
   restoreMenu,
+  separatorMenu,
   titleMenu,
+  trashMenu,
 } from './utils/menus';
-
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
 const WorkspaceNavigator = createStackNavigator(
   {

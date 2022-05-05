@@ -2,15 +2,52 @@
  * workspace list actions
  * Build actions to be dispatched to the hworkspace list reducer.
  */
-
-import { formatResults } from './helpers/documents';
-import { factoryRootFolder } from './helpers/factoryRootFolder';
-
 import { asyncActionRawFactory } from '~/infra/actions/asyncActionFactory';
 import { asyncActionTypes, asyncGetJson } from '~/infra/redux/async';
 import { IId } from '~/types';
 import config from '~/workspace/config';
 import { FilterId, IFiltersParameters, IFolder, IItems } from '~/workspace/types';
+
+import { formatResults } from './helpers/documents';
+import { factoryRootFolder } from './helpers/factoryRootFolder';
+
+// GET -----------------------------------------------------------------------------------------
+
+const formatParameters = (parameters = {}) => {
+  let result = '?';
+  (parameters as { includeall: string }).includeall = 'true';
+  for (const key in parameters) {
+    if (!(parameters as any)[key]) {
+      // skip empty parameters
+      continue;
+    }
+    if (key === 'parentId' && (parameters as any)[key] in FilterId) {
+      // its a root folder, no pass parentId
+      continue;
+    }
+    result = result.concat(`${key}=${(parameters as any)[key]}&`);
+  }
+  return result.slice(0, -1);
+};
+
+export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
+  return asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, formatResults);
+}
+
+export function getFolders(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
+  return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, formatResults);
+}
+
+const getRootFolders: () => IItems<IFolder> = () => {
+  const result = {} as IItems<IFolder>;
+
+  result[FilterId.owner] = factoryRootFolder(FilterId.owner);
+  result[FilterId.protected] = factoryRootFolder(FilterId.protected);
+  result[FilterId.shared] = factoryRootFolder(FilterId.shared);
+  result[FilterId.trash] = factoryRootFolder(FilterId.trash);
+
+  return result;
+};
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -38,41 +75,3 @@ export function listAction(payload: IFiltersParameters) {
     return await getDocuments(payload); // Now getDocuments returns folders too
   });
 }
-
-// GET -----------------------------------------------------------------------------------------
-
-export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
-  return asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, formatResults);
-}
-
-export function getFolders(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
-  return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, formatResults);
-}
-
-const getRootFolders: () => IItems<IFolder> = () => {
-  const result = {} as IItems<IFolder>;
-
-  result[FilterId.owner] = factoryRootFolder(FilterId.owner);
-  result[FilterId.protected] = factoryRootFolder(FilterId.protected);
-  result[FilterId.shared] = factoryRootFolder(FilterId.shared);
-  result[FilterId.trash] = factoryRootFolder(FilterId.trash);
-
-  return result;
-};
-
-const formatParameters = (parameters = {}) => {
-  let result = '?';
-  (parameters as { includeall: string }).includeall = 'true';
-  for (const key in parameters) {
-    if (!(parameters as any)[key]) {
-      // skip empty parameters
-      continue;
-    }
-    if (key === 'parentId' && (parameters as any)[key] in FilterId) {
-      // its a root folder, no pass parentId
-      continue;
-    }
-    result = result.concat(`${key}=${(parameters as any)[key]}&`);
-  }
-  return result.slice(0, -1);
-};

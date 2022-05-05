@@ -10,21 +10,21 @@ type IResult = {
   notFormated: IBackendFolder[];
 };
 
-export function formatResults(data: IBackendFolder[]): ITreeItem[] {
-  let result: IResult = {
-    treeItems: [],
-    notFormated: data,
+function mapObject(item: IBackendFolder): ITreeItem {
+  return {
+    id: item._id,
+    name: item.name,
+    parentId: item.eParent ? item.eParent : 'owner',
+    sortNo: item.name,
+    children: [],
   };
-  let notFormatedLength = 0;
+}
 
-  do {
-    notFormatedLength = result.notFormated.length;
-    result = result.notFormated.reduce((acc, item) => insertItem(acc, item), {
-      treeItems: result.treeItems,
-      notFormated: [] as IBackendFolder[],
-    });
-  } while (result.notFormated.length !== notFormatedLength);
-  return result.treeItems;
+function findParent(treeItems: ITreeItem[], parentId: string): ITreeItem | null {
+  return treeItems.reduce(
+    (acc, item) => (acc ? acc : item.id === parentId ? item : item.children ? findParent(item.children, parentId) : acc),
+    null as ITreeItem | null,
+  );
 }
 
 function insertItem(result: IResult, item: IBackendFolder): IResult {
@@ -53,22 +53,21 @@ function insertItem(result: IResult, item: IBackendFolder): IResult {
   };
 }
 
-function findParent(treeItems: ITreeItem[], parentId: string): ITreeItem | null {
-  return treeItems.reduce(
-    (acc, item) =>
-      acc ? acc : item.id === parentId ? item : item.children ? findParent(item.children, parentId) : acc,
-    null as ITreeItem | null
-  );
-}
-
-function mapObject(item: IBackendFolder): ITreeItem {
-  return {
-    id: item._id,
-    name: item.name,
-    parentId: item.eParent ? item.eParent : "owner",
-    sortNo: item.name,
-    children: [],
+export function formatResults(data: IBackendFolder[]): ITreeItem[] {
+  let result: IResult = {
+    treeItems: [],
+    notFormated: data,
   };
+  let notFormatedLength = 0;
+
+  do {
+    notFormatedLength = result.notFormated.length;
+    result = result.notFormated.reduce((acc, item) => insertItem(acc, item), {
+      treeItems: result.treeItems,
+      notFormated: [] as IBackendFolder[],
+    });
+  } while (result.notFormated.length !== notFormatedLength);
+  return result.treeItems;
 }
 
 // Folder TYPE -------------------------------------------------------------------------------------------

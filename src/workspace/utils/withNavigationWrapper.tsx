@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 
 export interface IProps {
   navigation: any;
@@ -7,6 +7,7 @@ export interface IProps {
 function withNavigationWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
   return class extends React.PureComponent<T> {
     childRoute: any = null;
+
     childParams: any = null;
 
     public componentDidMount() {
@@ -14,13 +15,13 @@ function withNavigationWrapper<T extends IProps>(WrappedComponent: React.Compone
     }
 
     public componentDidUpdate() {
-      this.handleNavigation()
+      this.handleNavigation();
     }
 
-    private handleNavigation(){
+    private handleNavigation() {
       const { navigation } = this.props;
-      const childRoute: any = navigation.getParam("childRoute");
-      const childParams: any = navigation.getParam("childParams");
+      const childRoute: any = navigation.getParam('childRoute');
+      const childParams: any = navigation.getParam('childParams');
 
       if (childRoute && childParams) {
         if (childRoute !== this.childRoute || childParams !== this.childParams) {
@@ -39,5 +40,4 @@ function withNavigationWrapper<T extends IProps>(WrappedComponent: React.Compone
   };
 }
 
-export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  withNavigationWrapper(wrappedComponent);
+export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> => withNavigationWrapper(wrappedComponent);

@@ -1,80 +1,47 @@
 import * as React from 'react';
-import { Image, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { DEPRECATED_signImageURISource } from '~/infra/oauth';
 import { DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui/icons/Icon';
 import ImageOptional from '~/ui/ImageOptional';
+import { Icon } from '~/ui/icons/Icon';
 import { IFile } from '~/workspace/types';
 import { FilterId } from '~/workspace/types/filters';
 import { filters } from '~/workspace/types/filters/helpers/filters';
 
-export const renderSmallIcon = (id: string | null, isFolder: boolean, name: string, contentType: string | undefined): any => {
-  const icon = getIcon(id, isFolder, name, contentType);
-
-  if (icon) {
-    return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_30} name={icon} />;
-  } else {
-    // @ts-ignore
-    const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
-    const style = { width: layoutSize.LAYOUT_30, height: layoutSize.LAYOUT_30 };
-    return (
-      // resizeRatio === contain by default
-      <ImageOptional
-        style={style}
-        imageComponent={Image}
-        errorComponent={<UnavailableIcon />}
-        source={DEPRECATED_signImageURISource(uri)}
-      />
-    );
-  }
+const height = () => {
+  return DEVICE_HEIGHT() - layoutSize.LAYOUT_160;
 };
 
-export const renderIcon = (id: string | null, isFolder: boolean, name: string, contentType: string | undefined): any => {
-  const icon = getIcon(id, isFolder, name, contentType);
-
-  if (icon) {
-    return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_50} name={icon} />;
-  } else {
-    // @ts-ignore
-    const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
-    const style = { width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50 };
-    return (
-      // resizeRatio === contain by default
-      <ImageOptional
-        style={style}
-        imageComponent={Image}
-        errorComponent={<UnavailableIcon />}
-        source={DEPRECATED_signImageURISource(uri)}
-      />
-    );
-  }
+const width = () => {
+  return DEVICE_WIDTH();
 };
 
-export const renderImage = (item: IFile, isFolder: boolean, name: string): any => {
-  const icon = getIcon(item.id, isFolder, name, item.contentType);
-  const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${item.id}`;
+const styles = StyleSheet.create({
+  unavailableImageContainer: {
+    width: width(),
+    height: height(),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  renderImageContainer: {
+    width: width(),
+    height: height(),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
-  if (icon) {
-    return (
-      <View style={{ width: width(), height: height(), justifyContent: 'center', alignItems: 'center' }}>
-        <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon} />
-      </View>
-    );
-  }
-  return (
-    <ImageOptional
-      style={{ width: width(), height: height() }}
-      imageComponent={Image}
-      errorComponent={<UnavailableImage />}
-      resizeMode={FastImage.resizeMode.contain}
-      source={DEPRECATED_signImageURISource(uri)}
-    />
-  );
-};
+const UnavailableImage = () => (
+  <View style={styles.unavailableImageContainer}>
+    <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_200} name="picture" />
+  </View>
+);
+
+const UnavailableIcon = () => <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_46} name="picture" />;
 
 const getIcon = (id: string | null, isFolder: boolean, pName: string | null, contentType: string | undefined): string | null => {
   if (isFolder) {
@@ -147,18 +114,66 @@ const getIcon = (id: string | null, isFolder: boolean, pName: string | null, con
   return 'file-document-outline';
 };
 
-const UnavailableImage = () => (
-  <View style={{ width: width(), height: height(), justifyContent: 'center', alignItems: 'center' }}>
-    <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_200} name="picture" />
-  </View>
-);
+export const renderSmallIcon = (id: string | null, isFolder: boolean, name: string, contentType: string | undefined): any => {
+  const icon = getIcon(id, isFolder, name, contentType);
 
-const UnavailableIcon = () => <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_46} name="picture" />;
-
-const height = () => {
-  return DEVICE_HEIGHT() - layoutSize.LAYOUT_160;
+  if (icon) {
+    return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_30} name={icon} />;
+  } else {
+    // @ts-ignore
+    const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
+    const style = { width: layoutSize.LAYOUT_30, height: layoutSize.LAYOUT_30 };
+    return (
+      // resizeRatio === contain by default
+      <ImageOptional
+        style={style}
+        imageComponent={Image}
+        errorComponent={<UnavailableIcon />}
+        source={DEPRECATED_signImageURISource(uri)}
+      />
+    );
+  }
 };
 
-const width = () => {
-  return DEVICE_WIDTH();
+export const renderIcon = (id: string | null, isFolder: boolean, name: string, contentType: string | undefined): any => {
+  const icon = getIcon(id, isFolder, name, contentType);
+
+  if (icon) {
+    return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_50} name={icon} />;
+  } else {
+    // @ts-ignore
+    const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
+    const style = { width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50 };
+    return (
+      // resizeRatio === contain by default
+      <ImageOptional
+        style={style}
+        imageComponent={Image}
+        errorComponent={<UnavailableIcon />}
+        source={DEPRECATED_signImageURISource(uri)}
+      />
+    );
+  }
+};
+
+export const renderImage = (item: IFile, isFolder: boolean, name: string): any => {
+  const icon = getIcon(item.id, isFolder, name, item.contentType);
+  const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${item.id}`;
+
+  if (icon) {
+    return (
+      <View style={styles.renderImageContainer}>
+        <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon} />
+      </View>
+    );
+  }
+  return (
+    <ImageOptional
+      style={{ width: width(), height: height() }}
+      imageComponent={Image}
+      errorComponent={<UnavailableImage />}
+      resizeMode={FastImage.resizeMode.contain}
+      source={DEPRECATED_signImageURISource(uri)}
+    />
+  );
 };

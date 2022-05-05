@@ -1,5 +1,3 @@
-import { formatResults } from './helpers/documents';
-
 import { Trackers } from '~/framework/util/tracker';
 import { asyncActionFactory } from '~/infra/actions/asyncActionFactory';
 import { asyncActionTypes } from '~/infra/redux/async';
@@ -7,6 +5,8 @@ import { IId } from '~/types';
 import { IItems } from '~/types/iid';
 import config from '~/workspace/config';
 import { IItem } from '~/workspace/types';
+
+import { formatResults } from './helpers/documents';
 
 const WORKSPACE_RESTORE = '/workspace/documents/restore';
 

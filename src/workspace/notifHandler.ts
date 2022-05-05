@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 
-import { FilterId, IFile } from './types';
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { NotificationHandlerFactory } from '~/infra/pushNotification';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+
+import { FilterId, IFile } from './types';
 
 const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, trackCategory) => {
   if (!notificationData?.resourceUri?.startsWith('/workspace')) {
