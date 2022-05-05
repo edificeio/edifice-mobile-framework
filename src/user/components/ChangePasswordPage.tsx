@@ -1,15 +1,13 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Alert, Pressable, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
+import { Text, TextSizeStyle, responsiveStyledLineHeight } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { FlatButton } from '~/ui/FlatButton';
@@ -199,7 +197,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
         navBarWithBack={{
           title: I18n.t('PasswordChange'),
         }}>
-        <Pressable onPress={() => formModel.blur()} style={{flexGrow: 1}}>
+        <Pressable onPress={() => formModel.blur()} style={{ flexGrow: 1 }}>
           <FormContainer>
             <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
               {this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
@@ -245,7 +243,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
               <MiniSpacer />
             </View>
             <View style={{ flexShrink: 0 }}>
-              <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
+              <ErrorMessage style={{ marginTop: 0, minHeight: responsiveStyledLineHeight(undefined) * 3 }}>
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}

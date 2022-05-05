@@ -22,7 +22,7 @@ import { Badge } from './badge';
 import { UI_SIZES } from './constants';
 import { Icon } from './picture/Icon';
 import { Picture, PictureProps } from './picture/index';
-import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle, responsiveLineHeight } from './text';
+import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle, responsiveStyledLineHeight } from './text';
 
 const cardPaddingV = 12;
 const cardPaddingH = 16;
@@ -297,7 +297,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               justifyContent: 'center',
               alignItems: 'center',
               marginTop: UI_SIZES.spacing.smallPlus,
-              height: responsiveLineHeight(2),
+              height: responsiveStyledLineHeight(textStyle) * 2,
             }}>
             <Text
               numberOfLines={2}

@@ -67,6 +67,7 @@ export const TextColorStyle = {
 
 export const responsiveFontSize = (value: number) => RFValue(value, UI_SIZES.standardScreen.height);
 export const responsiveLineHeight = (value: number) => responsiveFontSize(value + 6);
+export const responsiveStyledLineHeight = (textStyle: TextStyle | undefined) => responsiveLineHeight(textStyle?.fontSize || 14);
 
 export const responsiveStyle = (value: number) => ({
   fontSize: responsiveFontSize(value),
