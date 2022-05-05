@@ -85,7 +85,7 @@ class TeacherTimetableContainer extends React.PureComponent<TimetableProps, Time
       <PageView
         navigation={this.props.navigation}
         navBarWithBack={{
-          title: I18n.t('viesco-timetable'),
+          title: I18n.t('Homework'),
           style: {
             backgroundColor: '#00AB6F',
           },
