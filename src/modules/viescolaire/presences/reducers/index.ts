@@ -3,7 +3,6 @@ import { combineReducers } from 'redux';
 import history from './history';
 import multipleSlots from './multipleSlots';
 import registerPreferences from './registerPreferences';
-import relativesNotification from './relativesNotificationModal';
 import callList from './teacherClassesCall';
 import coursesRegister from './teacherCourseRegister';
 import coursesList from './teacherCourses';
@@ -16,7 +15,6 @@ const combinedReducer = combineReducers({
   history,
   multipleSlots,
   registerPreferences,
-  relativesNotification,
   userChildren,
 });
 

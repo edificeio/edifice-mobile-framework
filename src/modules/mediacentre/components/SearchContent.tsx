@@ -2,7 +2,6 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cancelButton: {
-    backgroundColor: theme.color.secondary.regular,
+    backgroundColor: '#F53B56',
   },
   fieldsContainer: {
     flexDirection: 'row',
@@ -64,7 +63,6 @@ interface AdvancedSearchFieldProps {
 }
 
 interface SearchParamsProps {
-  includePMB: boolean;
   params: AdvancedSearchParams;
   searchState: SearchState;
 
@@ -72,7 +70,6 @@ interface SearchParamsProps {
 }
 
 interface SearchContentProps {
-  includePMB: boolean;
   params: AdvancedSearchParams;
   resources: Resource[];
   searchState: SearchState;
@@ -117,7 +114,7 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
         {props.searchState === SearchState.SIMPLE || props.params.sources.Moodle ? (
           <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} />
         ) : null}
-        {(props.searchState === SearchState.SIMPLE && props.includePMB) || props.params.sources.PMB ? (
+        {props.searchState === SearchState.SIMPLE || props.params.sources.PMB ? (
           <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} />
         ) : null}
         {props.searchState === SearchState.SIMPLE || props.params.sources.Signets ? (
@@ -128,8 +125,8 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>
-        {props.params.fields.map((field, index) => (
-          <AdvancedSearchField field={field} key={index} />
+        {props.params.fields.map(field => (
+          <AdvancedSearchField field={field} />
         ))}
       </View>
     ) : null}

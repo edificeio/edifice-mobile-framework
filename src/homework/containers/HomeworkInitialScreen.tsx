@@ -47,10 +47,10 @@ class HomeworkInitialScreenContainer extends React.PureComponent<any & { dispatc
 
   render() {
     const { isPristine } = this.state;
-    const { diaryList, isFetching, navigation } = this.props;
+    const { diaryList, didInvalidate, isFetching, navigation } = this.props;
     const hasOneDiary = diaryList?.length === 1;
 
-    return isPristine || isFetching ? (
+    return isPristine || (isFetching && didInvalidate) ? (
       <PageView navigation={navigation} navBarWithBack={{}}>
         <Loading />
       </PageView>

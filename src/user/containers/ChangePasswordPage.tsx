@@ -5,16 +5,23 @@ import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-
-
-
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
-import { IChangePasswordUserInfo, cancelChangePasswordAction, changePasswordAction, initChangePasswordAction } from '~/user/actions/changePassword';
-import { ChangePasswordPage, IChangePasswordPageDataProps, IChangePasswordPageEventProps, IChangePasswordPageProps } from '~/user/components/ChangePasswordPage';
+
+import {
+  changePasswordAction,
+  cancelChangePasswordAction,
+  initChangePasswordAction,
+  IChangePasswordUserInfo,
+} from '~/user/actions/changePassword';
+import {
+  IChangePasswordPageDataProps,
+  IChangePasswordPageEventProps,
+  IChangePasswordPageProps,
+  ChangePasswordPage,
+} from '~/user/components/ChangePasswordPage';
 import userConfig from '~/user/config';
 import { IChangePasswordState } from '~/user/reducers/changePassword';
-
 
 const mapStateToProps: (state: any) => IChangePasswordPageDataProps = state => {
   const activationState: IChangePasswordState = state[userConfig.reducerName].changePassword;
@@ -49,9 +56,18 @@ class ChangePasswordPageContainer extends React.PureComponent<
   IChangePasswordPageProps & { dispatch: any; version: number; navigation: NavigationInjectedProps<NavigationState>['navigation'] },
   object
 > {
+
   public render() {
     // use the key to recompute state from props
-    return <ChangePasswordPage {...this.props} key={this.props.version + ''} />;
+    return (
+      <PageView
+        navigation={this.props.navigation}
+        navBarWithBack={{
+          title: I18n.t('PasswordChange'),
+        }}>
+        <ChangePasswordPage {...this.props} key={this.props.version + ''} />
+      </PageView>
+    );
   }
 }
 

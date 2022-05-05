@@ -7,7 +7,7 @@ import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item'
 
 import { IPunishment } from '../state/events';
 
-export const colors = {
+const colors = {
   no_reason: '#E61610',
   unregularized: '#FA8A85',
   regularized: '#72bb53',
@@ -200,24 +200,16 @@ export const PunishmentCard = ({ elements }) => {
         return I18n.t('viesco-incidents-punishments-date.for-the') + dutyDate;
       case 2: //DETENTION
         let startDetentionDate: string = createdDate;
-        let endDetentionDate: string | undefined = undefined;
         if (punishment.start_date) {
-          startDetentionDate = punishment.start_date.format('DD/MM/YY - H:mm');
+          startDetentionDate = punishment.start_date.format('DD/MM/YY');
         }
-        if (punishment.end_date) {
-          endDetentionDate = punishment.end_date.format('H:mm');
-        }
-        return (
-          I18n.t('viesco-incidents-punishments-date.for-the') +
-          startDetentionDate +
-          (endDetentionDate !== undefined ? ' - ' + endDetentionDate : null)
-        );
+        return I18n.t('viesco-incidents-punishments-date.for-the') + startDetentionDate;
       case 3: //BLAME
         return I18n.t('viesco-incidents-punishments-date.created-on') + createdDate;
       case 4: // EXCLUSION
         if (punishment.start_date && punishment.end_date) {
-          const startExcludeDate: string = punishment.start_date.format('DD/MM/YY');
-          const endExcludeDate: string = punishment.end_date.format('DD/MM/YY');
+          let startExcludeDate: string = punishment.start_date.format('DD/MM/YY');
+          let endExcludeDate: string = punishment.end_date.format('DD/MM/YY');
           if (startExcludeDate && endExcludeDate) {
             return startExcludeDate === endExcludeDate
               ? startExcludeDate
@@ -229,7 +221,6 @@ export const PunishmentCard = ({ elements }) => {
             return ' ';
           }
         }
-        break;
       default:
         return createdDate;
     }

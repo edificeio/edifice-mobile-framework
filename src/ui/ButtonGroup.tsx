@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-import theme from '~/app/theme';
-
 import { TextBold } from './Typography';
 
 const style = StyleSheet.create({
@@ -25,19 +23,18 @@ const style = StyleSheet.create({
 export const ButtonGroup = (props: {
   buttons: string[];
   selectedButton: number;
+  color: string;
   onPress: (index: number) => void;
   containerStyle?: ViewStyle;
 }) => {
   return (
-    <View style={[style.mainContainer, props.containerStyle, { borderColor: theme.color.secondary.regular }]}>
+    <View style={[style.mainContainer, props.containerStyle, { borderColor: props.color }]}>
       {props.buttons.map((button, index) => (
         <TouchableOpacity
           onPress={() => props.onPress(index)}
-          style={[style.buttonContainer, index === props.selectedButton && { backgroundColor: theme.color.secondary.regular }]}
+          style={[style.buttonContainer, index === props.selectedButton && { backgroundColor: props.color }]}
           key={index}>
-          <TextBold style={[style.buttonText, index !== props.selectedButton && { color: theme.color.secondary.regular }]}>
-            {button}
-          </TextBold>
+          <TextBold style={[style.buttonText, index !== props.selectedButton && { color: props.color }]}>{button}</TextBold>
         </TouchableOpacity>
       ))}
     </View>

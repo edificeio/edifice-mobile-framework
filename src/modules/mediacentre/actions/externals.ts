@@ -10,11 +10,11 @@ const dataActions = createAsyncActionCreators<IExternals>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchExternalsAction(sources: string[]) {
+export function fetchExternalsAction() {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await searchService.getExternals(sources);
+      const data = await searchService.getExternals();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

@@ -337,9 +337,9 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
       <ScrollView contentContainerStyle={{ height: (slots!.length + 2) * slotHeight! }} showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {slots!.map((slot, i) => (
-            <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('HH:mm')}</Text>
+            <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('LT')}</Text>
           ))}
-          <Text style={[styles.slotDisplay, { top: slotHeight! * slots!.length }]}>{moment(lastSlot.endHour).format('HH:mm')}</Text>
+          <Text style={[styles.slotDisplay, { top: slotHeight! * slots!.length }]}>{moment(lastSlot.endHour).format('LT')}</Text>
           {slots!.map((slot, i) => (
             <EmptySlot height={slotHeight! - 5} top={slotHeight! * i} />
           ))}
@@ -451,9 +451,5 @@ const styles = StyleSheet.create({
     width: '42%',
     right: '0%',
   },
-  slotDisplay: {
-    position: 'absolute',
-    width: '15%',
-    textAlign: 'center',
-  },
+  slotDisplay: { position: 'absolute', right: '88%' },
 });

@@ -21,6 +21,5 @@ export interface Resource {
   user: string;
   favorite?: boolean;
   structure_uai?: string;
-  orientation?: boolean;
   owner_id?: string;
 }

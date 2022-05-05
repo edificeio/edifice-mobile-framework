@@ -1,5 +1,5 @@
 import { createSessionAsyncReducer } from '~/infra/redux/async2';
-import { actionTypes, initialState } from '~/modules/viescolaire/presences/state/multipleSlots';
+import { initialState, actionTypes } from '~/modules/viescolaire/presences/state/multipleSlots';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

@@ -15,20 +15,9 @@ export const signetsService = {
       .sort(compareResources);
   },
   getOrientation: async () => {
-    const signetsResponse = await fetchJSONWithCache(`/mediacentre/signets`, {
+    const resources = await fetchJSONWithCache(`/mediacentre/signets`, {
       method: 'get',
     });
-    const mysignetsResponse = await fetchJSONWithCache(`/mediacentre/mysignets`, {
-      method: 'get',
-    });
-    const resources = resourcesAdapter(signetsResponse.data.signets.resources).filter(resource =>
-      resource.types.includes('Orientation'),
-    );
-    for (const res of resourcesAdapter(mysignetsResponse)) {
-      if (res.orientation === true && resources.findIndex(resource => resource.id === String(res.id)) === -1) {
-        resources.push(res);
-      }
-    }
-    return resources.sort(compareResources);
+    return resourcesAdapter(resources.data.signets.resources).filter(resource => resource.types.includes('Orientation'));
   },
 };

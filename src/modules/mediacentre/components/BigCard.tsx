@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
-import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { Text } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
@@ -48,7 +47,7 @@ const styles = StyleSheet.create({
 });
 
 interface ActionButtonProps {
-  color?: string;
+  color: string;
   icon: string;
   text: string;
 
@@ -76,7 +75,7 @@ interface BigCardProps {
 
 const ActionButton: React.FunctionComponent<ActionButtonProps> = (props: ActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
-    <Icon size={20} color={props.color || theme.color.secondary.regular} name={props.icon} />
+    <Icon size={20} color={props.color} name={props.icon} />
     <Text style={styles.actionText}>{props.text}</Text>
   </TouchableOpacity>
 );
@@ -84,11 +83,9 @@ const ActionButton: React.FunctionComponent<ActionButtonProps> = (props: ActionB
 const FavoriteAction: React.FunctionComponent<FavoriteActionProps> = (props: FavoriteActionProps) => {
   const removeFavorite = () => {
     props.removeFavorite(props.resource.id, props.resource.source);
-    props.resource.favorite = false;
   };
   const addFavorite = () => {
     props.addFavorite(props.resource.id, props.resource);
-    props.resource.favorite = true;
   };
   return props.resource.favorite ? (
     <ActionButton icon="star" color="#FEC63D" text={I18n.t('mediacentre.remove-favorite')} onPress={removeFavorite} />
@@ -136,7 +133,7 @@ export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardPro
         />
         <View style={styles.actionsContainer}>
           <FavoriteAction {...props} />
-          <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
+          <ActionButton icon="link" color="#F53B56" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
         </View>
         {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={25} /> : null}
       </View>

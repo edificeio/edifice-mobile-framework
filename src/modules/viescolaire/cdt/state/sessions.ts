@@ -9,7 +9,6 @@ import viescoConfig from '~/modules/viescolaire/moduleConfig';
 export interface ISession {
   id: string;
   is_published: boolean;
-  is_empty: boolean;
   date: moment.Moment;
   subject_id: string;
   subject: {
@@ -44,7 +43,6 @@ export const initialState: ISessionList = [
   {
     id: '',
     is_published: false,
-    is_empty: false,
     date: moment(),
     subject_id: '',
     subject: {
