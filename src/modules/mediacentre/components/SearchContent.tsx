@@ -64,7 +64,6 @@ interface AdvancedSearchFieldProps {
 }
 
 interface SearchParamsProps {
-  includePMB: boolean;
   params: AdvancedSearchParams;
   searchState: SearchState;
 
@@ -72,7 +71,6 @@ interface SearchParamsProps {
 }
 
 interface SearchContentProps {
-  includePMB: boolean;
   params: AdvancedSearchParams;
   resources: Resource[];
   searchState: SearchState;
@@ -111,18 +109,12 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
   <View style={styles.parametersContainer}>
     <View style={styles.upperContainer}>
       <View style={styles.sourcesContainer}>
-        {props.searchState === SearchState.SIMPLE || props.params.sources.GAR ? (
-          <Image source={require('ASSETS/images/logo-gar.png')} style={styles.sourceImage} />
-        ) : null}
-        {props.searchState === SearchState.SIMPLE || props.params.sources.Moodle ? (
+        {props.params.sources.GAR ? <Image source={require('ASSETS/images/logo-gar.png')} style={styles.sourceImage} /> : null}
+        {props.params.sources.Moodle ? (
           <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} />
         ) : null}
-        {(props.searchState === SearchState.SIMPLE && props.includePMB) || props.params.sources.PMB ? (
-          <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} />
-        ) : null}
-        {props.searchState === SearchState.SIMPLE || props.params.sources.Signets ? (
-          <Icon name="bookmark_outline" size={24} />
-        ) : null}
+        {props.params.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
+        {props.params.sources.Signets ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
       <DialogButtonOk style={styles.cancelButton} label={I18n.t('mediacentre.cancel-search')} onPress={props.onCancelSearch} />
     </View>
@@ -158,14 +150,23 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
     setActiveFilters(activeFilters);
     filterResources();
   };
+  const getSources = () => {
+    if (props.searchState === SearchState.SIMPLE) {
+      return {
+        GAR: props.resources.some(resource => resource.source === Source.GAR),
+        Moodle: props.resources.some(resource => resource.source === Source.Moodle),
+        PMB: props.resources.some(resource => resource.source === Source.PMB),
+        Signets: props.resources.some(resource => resource.source === Source.Signet),
+      };
+    }
+    return props.params.sources;
+  };
   return (
     <View style={styles.mainContainer}>
-      <SearchParams {...props} />
+      <SearchParams {...props} params={{ ...props.params, sources: getSources() }} />
       <FlatList
         data={filteredResources.length ? filteredResources : props.resources}
-        renderItem={({ item }) => {
-          return <BigCard {...props} resource={item} key={item.uid || item.id} />;
-        }}
+        renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}
         keyExtractor={item => item.uid || item.id}
         ListHeaderComponent={
           props.resources.length ? (

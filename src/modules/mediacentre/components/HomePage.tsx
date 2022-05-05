@@ -76,7 +76,6 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useState<AdvancedSearchParams>(defaultParams);
-  const [includePMB] = useState<boolean>(props.sources.includes(Source.PMB));
   const sections = [
     { title: 'mediacentre.external-resources', resources: props.externals },
     { title: 'mediacentre.my-textbooks', resources: props.textbooks },
@@ -89,8 +88,16 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }, [props.search]);
 
   useEffect(() => {
-    setSearchParams({ ...searchParams, sources: { ...searchParams.sources, PMB: includePMB } });
-  }, [includePMB]);
+    setSearchParams({
+      ...searchParams,
+      sources: {
+        GAR: props.sources.includes(Source.GAR),
+        Moodle: props.sources.includes(Source.Moodle),
+        PMB: props.sources.includes(Source.PMB),
+        Signets: props.sources.includes(Source.Signet),
+      },
+    });
+  }, [props.sources]);
 
   function onSearch(query: string) {
     props.searchResources(props.sources, query);
@@ -167,7 +174,6 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           resources={searchedResources}
           searchState={searchState}
           params={searchParams}
-          includePMB={includePMB}
           onCancelSearch={onCancelSearch}
         />
       ) : (
@@ -187,7 +193,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
         isVisible={searchModalVisible}
         onSearch={onAdvancedSearch}
         closeModal={hideSearchModal}
-        includePMB={includePMB}
+        availableSources={props.sources}
         ref={searchModalRef}
       />
     </View>
