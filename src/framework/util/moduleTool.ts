@@ -71,10 +71,16 @@ interface IModuleConfig_Base<Name extends string> {
   entcoreScope: string[];
 }
 interface IModuleConfig_Rights {
-  matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) => boolean;
+  matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[]) => boolean;
+  matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
+  hasRight: (matchingApps: IEntcoreApp[], matchingWidgets?: IEntcoreWidget[]) => boolean;
+  getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
+  getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
 }
 interface IModuleConfigDeclaration_Rights {
   matchEntcoreApp: IModuleConfig_Rights['matchEntcoreApp'] | string;
+  matchEntcoreWidget?: IModuleConfig_Rights['matchEntcoreWidget'];
+  hasRight?: IModuleConfig_Rights['hasRight'];
 }
 interface IModuleConfigDeclaration_Redux {
   actionTypesPrefix: string; // Uppercase prefix used for action types. Computed from `name` if not specified.
@@ -92,7 +98,7 @@ export type IModuleConfig<Name extends string, State> = IModuleConfig_Base<Name>
   IModuleConfig_Rights &
   IModuleConfig_Redux<State> &
   IModuleConfig_Tracking & {
-    init: (matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) => void;
+    init: (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => void;
     isReady: boolean;
   };
 // All information config as needed to be declared.
@@ -110,6 +116,10 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
   name: IModuleConfig<Name, State>['name'];
   entcoreScope: IModuleConfig<Name, State>['entcoreScope'];
   matchEntcoreApp: IModuleConfig<Name, State>['matchEntcoreApp'];
+  matchEntcoreWidget: IModuleConfig<Name, State>['matchEntcoreWidget'];
+  hasRight: IModuleConfig<Name, State>['hasRight'];
+  getMatchingEntcoreApps: IModuleConfig<Name, State>['getMatchingEntcoreApps'];
+  getMatchingEntcoreWidgets: IModuleConfig<Name, State>['getMatchingEntcoreWidgets'];
   actionTypesPrefix: IModuleConfig<Name, State>['actionTypesPrefix'];
   reducerName: IModuleConfig<Name, State>['reducerName'];
   namespaceActionType: IModuleConfig<Name, State>['namespaceActionType'];
@@ -117,7 +127,17 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
   trackingName: IModuleConfig<Name, State>['trackingName'];
 
   constructor(decl: IModuleConfigDeclaration<Name>) {
-    const { name, entcoreScope, matchEntcoreApp, actionTypesPrefix, reducerName, trackingName, ...rest } = decl;
+    const {
+      name,
+      entcoreScope,
+      matchEntcoreApp,
+      matchEntcoreWidget,
+      hasRight,
+      actionTypesPrefix,
+      reducerName,
+      trackingName,
+      ...rest
+    } = decl;
     // Base
     this.name = name;
     this.entcoreScope = entcoreScope;
@@ -126,6 +146,11 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
       (typeof matchEntcoreApp === 'string'
         ? (entcoreApp: IEntcoreApp) => entcoreApp.address === matchEntcoreApp
         : matchEntcoreApp) || (() => true);
+    this.matchEntcoreWidget = matchEntcoreWidget ?? (() => false);
+    this.hasRight = hasRight ?? ((matchingApps, matchingWidgets) => matchingApps.length > 0);
+    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app, allEntcoreApps));
+    this.getMatchingEntcoreWidgets = allEntcoreWidgets =>
+      allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
     // Redux
     this.actionTypesPrefix = actionTypesPrefix ?? toSnakeCase(this.name).toUpperCase() + '_';
     this.reducerName = reducerName ?? this.name;
@@ -138,11 +163,11 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
   }
 
   isReady: boolean = false;
-  init(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
-    this.handleInit(matchingApps, allEntcoreApps, allEntcoreWidgets);
+  init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+    this.handleInit(matchingApps, matchingWidgets);
     this.isReady = true;
   }
-  handleInit(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {}
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {}
 }
 
 //  888b     d888               888          888
@@ -187,11 +212,11 @@ export class Module<Name extends string, ConfigType extends IModuleConfig<Name, 
     this.reducer = moduleDeclaration.reducer;
   }
 
-  init(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
+  init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
     if (!this.config.isReady) throw new Error(`Try to init module with non-initialized config '${this.config.name}'`);
-    this.handleInit(matchingApps, allEntcoreApps, allEntcoreWidgets);
+    this.handleInit(matchingApps, matchingWidgets);
   }
-  handleInit(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {}
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {}
 
   get isReady() {
     return true;
@@ -229,39 +254,19 @@ interface INavigableModuleConfig_Display {
 interface IModuleConfigDeclaration_Display {
   displayI18n:
     | INavigableModuleConfig_Display['displayI18n']
-    | ((
-        matchingApps: IEntcoreApp[],
-        allEntcoreApps: IEntcoreApp[],
-        allEntcoreWidgets: IEntcoreWidget[],
-      ) => INavigableModuleConfig_Display['displayI18n']);
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayI18n']);
   displayAs?:
     | INavigableModuleConfig_Display['displayAs']
-    | ((
-        matchingApps: IEntcoreApp[],
-        allEntcoreApps: IEntcoreApp[],
-        allEntcoreWidgets: IEntcoreWidget[],
-      ) => INavigableModuleConfig_Display['displayAs']);
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayAs']);
   displayOrder?:
     | INavigableModuleConfig_Display['displayOrder']
-    | ((
-        matchingApps: IEntcoreApp[],
-        allEntcoreApps: IEntcoreApp[],
-        allEntcoreWidgets: IEntcoreWidget[],
-      ) => INavigableModuleConfig_Display['displayOrder']);
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayOrder']);
   displayPicture?:
     | INavigableModuleConfig_Display['displayPicture']
-    | ((
-        matchingApps: IEntcoreApp[],
-        allEntcoreApps: IEntcoreApp[],
-        allEntcoreWidgets: IEntcoreWidget[],
-      ) => INavigableModuleConfig_Display['displayPicture']);
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayPicture']);
   displayPictureFocus?:
     | INavigableModuleConfig_Display['displayPictureFocus']
-    | ((
-        matchingApps: IEntcoreApp[],
-        allEntcoreApps: IEntcoreApp[],
-        allEntcoreWidgets: IEntcoreWidget[],
-      ) => INavigableModuleConfig_Display['displayPictureFocus']);
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayPictureFocus']);
   routeName?: INavigableModuleConfig_Display['routeName'];
 }
 
@@ -305,24 +310,17 @@ export class NavigableModuleConfig<Name extends string, State>
     this.routeName = routeName ?? this.name;
   }
 
-  handleInit(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
     this.#displayI18n =
-      typeof this.#_displayI18n === 'function'
-        ? this.#_displayI18n(matchingApps, allEntcoreApps, allEntcoreWidgets)
-        : this.#_displayI18n;
-    this.#displayAs =
-      typeof this.#_displayAs === 'function' ? this.#_displayAs(matchingApps, allEntcoreApps, allEntcoreWidgets) : this.#_displayAs;
+      typeof this.#_displayI18n === 'function' ? this.#_displayI18n(matchingApps, matchingWidgets) : this.#_displayI18n;
+    this.#displayAs = typeof this.#_displayAs === 'function' ? this.#_displayAs(matchingApps, matchingWidgets) : this.#_displayAs;
     this.#displayOrder =
-      typeof this.#_displayOrder === 'function'
-        ? this.#_displayOrder(matchingApps, allEntcoreApps, allEntcoreWidgets)
-        : this.#_displayOrder;
+      typeof this.#_displayOrder === 'function' ? this.#_displayOrder(matchingApps, matchingWidgets) : this.#_displayOrder;
     this.#displayPicture =
-      typeof this.#_displayPicture === 'function'
-        ? this.#_displayPicture(matchingApps, allEntcoreApps, allEntcoreWidgets)
-        : this.#_displayPicture;
+      typeof this.#_displayPicture === 'function' ? this.#_displayPicture(matchingApps, matchingWidgets) : this.#_displayPicture;
     this.#displayPictureFocus =
       typeof this.#_displayPictureFocus === 'function'
-        ? this.#_displayPictureFocus(matchingApps, allEntcoreApps, allEntcoreWidgets)
+        ? this.#_displayPictureFocus(matchingApps, matchingWidgets)
         : this.#_displayPictureFocus;
   }
 
@@ -368,7 +366,7 @@ export interface INavigableModule_Base<
   State,
   Root extends NavigationComponent<any, any>,
 > extends IModule<Name, ConfigType, State> {
-  getRoot(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]): Root;
+  getRoot(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]): Root;
 }
 export interface INavigableModule<
   Name extends string,
@@ -408,10 +406,10 @@ export class NavigableModule<
     this.getRoot = getRoot;
   }
 
-  handleInit(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
-    super.handleInit(matchingApps, allEntcoreApps, allEntcoreWidgets);
-    this.#root = this.getRoot(matchingApps, allEntcoreApps, allEntcoreWidgets);
-    this.#route = this.createModuleRoute(matchingApps, allEntcoreApps, allEntcoreWidgets);
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+    super.handleInit(matchingApps, matchingWidgets);
+    this.#root = this.getRoot(matchingApps, matchingWidgets);
+    this.#route = this.createModuleRoute(matchingApps, matchingWidgets);
   }
 
   get isReady() {
@@ -427,7 +425,7 @@ export class NavigableModule<
     return this.#route;
   }
 
-  createModuleRoute(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
+  createModuleRoute(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
     return {
       screen: this.root,
       navigationOptions: createMainTabNavOption(
@@ -482,9 +480,14 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     super(...items);
     Object.setPrototypeOf(this, ModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
-  filterAvailables(availableApps: IEntcoreApp[], availableWidgets: IEntcoreWidget[]) {
+  filterAvailables(availableApps: IEntcoreApp[], availableWidgets?: IEntcoreWidget[]) {
     return new ModuleArray<ModuleType>(
-      ...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app, availableApps, availableWidgets))),
+      ...this.filter(m =>
+        m.config.hasRight(
+          m.config.getMatchingEntcoreApps(availableApps),
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
+        ),
+      ),
     );
   }
   getReducers() {
@@ -502,15 +505,13 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   }
   initModules(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
     this.forEach(m => {
-      const matchingApps = allEntcoreApps.filter(app => m.config.matchEntcoreApp(app, allEntcoreApps, allEntcoreWidgets));
-      m.init(matchingApps, allEntcoreApps, allEntcoreWidgets);
+      m.init(m.config.getMatchingEntcoreApps(allEntcoreApps), m.config.getMatchingEntcoreWidgets(allEntcoreWidgets));
     });
     return this;
   }
   initModuleConfigs(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
     this.forEach(m => {
-      const matchingApps = allEntcoreApps.filter(app => m.config.matchEntcoreApp(app, allEntcoreApps, allEntcoreWidgets));
-      m.config.init(matchingApps, allEntcoreApps, allEntcoreWidgets);
+      m.config.init(m.config.getMatchingEntcoreApps(allEntcoreApps), m.config.getMatchingEntcoreWidgets(allEntcoreWidgets));
     });
     return this;
   }
@@ -523,9 +524,14 @@ export class NavigableModuleArray<
     super(...items);
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
-  filterAvailables(availableApps: IEntcoreApp[], availableWidgets: IEntcoreWidget[]) {
+  filterAvailables(availableApps: IEntcoreApp[], availableWidgets?: IEntcoreWidget[]) {
     return new NavigableModuleArray<ModuleType>(
-      ...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app, availableApps, availableWidgets))),
+      ...this.filter(m =>
+        m.config.hasRight(
+          m.config.getMatchingEntcoreApps(availableApps),
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
+        ),
+      ),
     );
   }
   getRoutes() {

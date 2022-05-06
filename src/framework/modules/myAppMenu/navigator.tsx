@@ -1,17 +1,12 @@
 import * as React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
 
-
-
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { IAppModule } from '~/infra/moduleTool/types';
 import { getModules, getRoutes } from '~/navigation/helpers/navBuilder';
 
-
-
 import MyAppGrid from './components/MyAppGrid';
 import { myAppsModules } from './myAppsModules';
-
 
 const MyAppGridContainer = (modules: NavigableModuleArray, legacyModules: IAppModule[]) =>
   createStackNavigator(
@@ -25,9 +20,9 @@ const MyAppGridContainer = (modules: NavigableModuleArray, legacyModules: IAppMo
     },
   );
 
-export default (matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) => {
-  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(allEntcoreApps, allEntcoreWidgets));
-  const legacyFilter = (mod: IAppModule) => !!mod.config.hasRight?.(allEntcoreApps) && !!mod.config.group;
+export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => {
+  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(matchingApps, matchingWidgets));
+  const legacyFilter = (mod: IAppModule) => !!mod.config.hasRight?.(matchingApps) && !!mod.config.group;
   const legacyModules = getModules(legacyFilter);
   return createStackNavigator(
     {

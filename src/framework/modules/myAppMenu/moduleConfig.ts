@@ -1,15 +1,12 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-
-
 import { myAppsModules } from './myAppsModules';
-
 
 export default new NavigableModuleConfig<'myapps', null>({
   name: 'myapps',
   entcoreScope: [],
-  matchEntcoreApp: (entcoreApp, allEntcoreApps, allEntcoreWidgets) => {
-    const modules = myAppsModules.get().filterAvailables(allEntcoreApps, allEntcoreWidgets);
+  matchEntcoreApp: (entcoreApp, allEntcoreApps) => {
+    const modules = myAppsModules.get().filterAvailables(allEntcoreApps);
     return modules.length > 0;
   },
 

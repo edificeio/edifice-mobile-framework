@@ -2,8 +2,16 @@
  * Every module is imported here.
  */
 import IncludedModules from '~/app/override/modules';
-import { AnyModule, IEntcoreApp, IEntcoreWidget, ModuleArray, NavigableModule, NavigableModuleArray, dynamiclyRegisterModules, loadModules } from '~/framework/util/moduleTool';
-
+import {
+  AnyModule,
+  IEntcoreApp,
+  IEntcoreWidget,
+  ModuleArray,
+  NavigableModule,
+  NavigableModuleArray,
+  dynamiclyRegisterModules,
+  loadModules,
+} from '~/framework/util/moduleTool';
 
 // We first imports all modules and their code hierarchy. Registrations are executed,
 // and then, we call initModules to instanciate RootComponents for each module.
@@ -36,7 +44,8 @@ export const setUpModulesAccess = (entcoreApps: IEntcoreApp[], entcoreWidgets: I
   if (AllModules) {
     AllModules.initModuleConfigs(entcoreApps, entcoreWidgets);
     const ret = dynamiclyRegisterModules(AllModules.filter(m => m instanceof NavigableModule) as NavigableModuleArray);
-    AllModules.initModules(entcoreApps, entcoreWidgets);
+    // We only init module with rights, some without arn't expected to work right (it's a pun 🤭).
+    AllModules.filterAvailables(entcoreApps, entcoreWidgets).initModules(entcoreApps, entcoreWidgets);
     return ret;
   } else {
     throw new Error('setUpModulesAccess cannot perform until modules are loaded.');
