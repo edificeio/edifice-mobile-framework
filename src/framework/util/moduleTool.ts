@@ -8,16 +8,11 @@ import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from
 import type { StackNavigationOptions, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import type { Reducer } from 'redux';
 
-
-
 import { IGlobalState } from '~/AppStore';
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 
-
-
 import { PictureProps } from '../components/picture';
 import { toSnakeCase } from './string';
-
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -312,12 +307,19 @@ export class NavigableModuleConfig<Name extends string, State>
 
   handleInit(matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
     this.#displayI18n =
-      typeof this.#_displayI18n === 'function' ? this.#_displayI18n(matchingApps, allEntcoreApps, allEntcoreWidgets) : this.#_displayI18n;
-    this.#displayAs = typeof this.#_displayAs === 'function' ? this.#_displayAs(matchingApps, allEntcoreApps, allEntcoreWidgets) : this.#_displayAs;
+      typeof this.#_displayI18n === 'function'
+        ? this.#_displayI18n(matchingApps, allEntcoreApps, allEntcoreWidgets)
+        : this.#_displayI18n;
+    this.#displayAs =
+      typeof this.#_displayAs === 'function' ? this.#_displayAs(matchingApps, allEntcoreApps, allEntcoreWidgets) : this.#_displayAs;
     this.#displayOrder =
-      typeof this.#_displayOrder === 'function' ? this.#_displayOrder(matchingApps, allEntcoreApps, allEntcoreWidgets) : this.#_displayOrder;
+      typeof this.#_displayOrder === 'function'
+        ? this.#_displayOrder(matchingApps, allEntcoreApps, allEntcoreWidgets)
+        : this.#_displayOrder;
     this.#displayPicture =
-      typeof this.#_displayPicture === 'function' ? this.#_displayPicture(matchingApps, allEntcoreApps, allEntcoreWidgets) : this.#_displayPicture;
+      typeof this.#_displayPicture === 'function'
+        ? this.#_displayPicture(matchingApps, allEntcoreApps, allEntcoreWidgets)
+        : this.#_displayPicture;
     this.#displayPictureFocus =
       typeof this.#_displayPictureFocus === 'function'
         ? this.#_displayPictureFocus(matchingApps, allEntcoreApps, allEntcoreWidgets)
@@ -514,7 +516,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   }
 }
 
-export class NavigableModuleArray<ModuleType extends UnknownNavigableModule = UnknownNavigableModule> extends ModuleArray<ModuleType> {
+export class NavigableModuleArray<
+  ModuleType extends UnknownNavigableModule = UnknownNavigableModule,
+> extends ModuleArray<ModuleType> {
   constructor(...items: Array<ModuleType>) {
     super(...items);
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
@@ -584,6 +588,9 @@ export class CustomRegister<ItemType, FormattedRegisterType> {
   get() {
     return this.formater(this.items.sort((a, b) => a.order - b.order).map(i => i.item));
   }
+  clear() {
+    this.items = [];
+  }
 }
 
 export class ModuleRegister<ModuleType extends UnknownModule> extends CustomRegister<ModuleType, ModuleArray<ModuleType>> {
@@ -608,10 +615,20 @@ export const getGlobalRegister = <RegisterType extends CustomRegister<unknown, u
 export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule = AnyNavigableModule>(
   modules: ModuleArray<ModuleType>,
 ) => {
+  // 1. Clear previous data
+  const registers = new Set<CustomRegister<any, any>>();
   modules.forEach(module => {
     if (module.config.displayAs) {
       const register = getGlobalRegister(module.config.displayAs);
-      register && register.register(module, module.config.displayOrder);
+      register && registers.add(register);
+    }
+  });
+  registers.forEach(r => r.clear());
+
+  // 2. Write new data
+  modules.forEach(module => {
+    if (module.config.displayAs) {
+      getGlobalRegister(module.config.displayAs)?.register(module, module.config.displayOrder);
     }
   });
   return modules; // Allow chaining
