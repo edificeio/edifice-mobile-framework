@@ -9,17 +9,19 @@ export interface FlatListProps<ItemT> extends RNFlatListProps<ItemT> {
 
 export default function FlatList<ItemT>(props: FlatListProps<ItemT>) {
   const { bottomInset = true, ListFooterComponent, scrollIndicatorInsets, ...otherProps } = props;
+  const realListFooterComponent = React.useMemo(() => {
+    return bottomInset ? (
+      <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }}>{ListFooterComponent}</View>
+    ) : (
+      ListFooterComponent
+    );
+  }, [bottomInset, ListFooterComponent]);
   return (
     <RNFlatList
       {...otherProps}
-      ListFooterComponent={
-        bottomInset ? (
-          <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }}>{ListFooterComponent}</View>
-        ) : (
-          ListFooterComponent
-        )
-      }
-      scrollIndicatorInsets={scrollIndicatorInsets || { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
+      ListFooterComponent={realListFooterComponent}
+      scrollIndicatorInsets={scrollIndicatorInsets || FlatList.scrollIndicatorInsets} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
     />
   );
 }
+FlatList.scrollIndicatorInsets = { right: 0.001 };

@@ -5,6 +5,8 @@ import {
   ColorValue,
   Image,
   ImageSourcePropType,
+  ImageStyle,
+  StyleSheet,
   TextProps,
   TextStyle,
   TouchableOpacityProps,
@@ -20,13 +22,13 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { Badge } from './badge';
 import { UI_SIZES } from './constants';
-import { Icon } from './picture';
-import { Picture, PictureProps } from './picture';
+import { Icon, NamedSVG, Picture, PictureProps } from './picture';
 import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle, remlh } from './text';
 
 const cardPaddingV = 12;
 const cardPaddingH = 16;
 const cardPadding: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: cardPaddingV };
+const cardPaddingEqual: ViewStyle = { paddingHorizontal: 0, paddingVertical: cardPaddingH - cardPaddingV };
 const cardPaddingMerging: ViewStyle = { paddingHorizontal: cardPaddingH, paddingBottom: cardPaddingV };
 const cardPaddingSmall: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: (cardPaddingV * 2) / 3 };
 
@@ -45,8 +47,10 @@ const cardShadow: ViewStyle = {
 
 export const Card = styled.View(cardStyle, cardPadding, cardShadow);
 export const CardWithoutPadding = styled.View(cardStyle, cardShadow);
+export const CardPaddingEqual = styled.View(cardStyle, cardPaddingEqual);
 export const TouchCard = styled.TouchableOpacity(cardStyle, cardPadding, cardShadow);
 export const TouchCardWithoutPadding = styled.TouchableOpacity(cardStyle, cardShadow);
+export const TouchCardPaddingEqual = styled.TouchableOpacity(cardStyle, cardPaddingEqual);
 export const InfoCard = styled.View(cardStyle, cardPadding, { backgroundColor: theme.color.secondary.light });
 
 export interface IContentCardProps extends ViewProps {
@@ -55,8 +59,9 @@ export interface IContentCardProps extends ViewProps {
 }
 export interface ITouchableContentCardProps extends IContentCardProps, TouchableOpacityProps {
   headerIndicator?: React.ReactElement;
+  customHeaderIndicatorStyle?: ViewStyle;
 }
-interface IContentCardProps_Base extends IContentCardProps, ITouchableContentCardProps {
+interface IContentCardPropsBase extends IContentCardProps, ITouchableContentCardProps {
   cardComponent?: React.ComponentType;
   withoutPadding?: boolean;
   emphasizedHeader?: boolean;
@@ -78,7 +83,7 @@ const ContentFlexView = styled.View({
 const FooterFlexView = styled.View({
   // ...cardPaddingSmall,
 });
-const ContentCard_base = (props: IContentCardProps_Base) => {
+const ContentCardBase = (props: IContentCardPropsBase) => {
   const CC = props.cardComponent ?? CardWithoutPadding;
   const {
     header,
@@ -123,7 +128,7 @@ const ContentCard_base = (props: IContentCardProps_Base) => {
 
 /** Card for displaying some fancy content */
 export const ContentCard = (props: IContentCardProps) => {
-  return <ContentCard_base {...props} />;
+  return <ContentCardBase {...props} />;
 };
 export const TouchableContentCard = (props: ITouchableContentCardProps) => {
   const { headerIndicator, ...otherProps } = props;
@@ -134,10 +139,10 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
       style={{ paddingVertical: 6, paddingLeft: 8, marginRight: -3 }}
     />
   );
-  return <ContentCard_base {...otherProps} headerIndicator={realHeaderIndicator} cardComponent={TouchCardWithoutPadding} />;
+  return <ContentCardBase {...otherProps} headerIndicator={realHeaderIndicator} cardComponent={TouchCardWithoutPadding} />;
 };
 export const ContentView = (props: IContentCardProps) => {
-  return <ContentCard_base {...props} cardComponent={View} />;
+  return <ContentCardBase {...props} cardComponent={View} />;
 };
 
 /** Pre-configured title for ContentCard */
@@ -336,4 +341,71 @@ export function SelectorPictureCard(props: PictureCardProps) {
 }
 export function TouchableSelectorPictureCard(props: PictureCardProps & TouchableOpacityProps) {
   return <SelectorPictureCard_Base cardComponent={TouchCard} {...props} />;
+}
+
+export type OverviewCardProps = {
+  title?: string | React.ReactElement;
+  picture?: PictureProps;
+  pictureStyle?: PictureProps['style'];
+  pictureWrapperStyle?: ViewStyle;
+} & ViewProps;
+
+function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.ComponentType<IContentCardProps> }) {
+  const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;
+  if (picture) {
+    if (picture.type === 'Image') picture.resizeMode = 'contain';
+  }
+  const CC = cardComponent ?? ContentCard;
+  return (
+    <CC
+      {...rest}
+      style={[OverviewCardBase.styles.card, style]}
+      header={
+        <View style={OverviewCardBase.styles.header}>
+          {picture ? (
+            <View style={[OverviewCardBase.styles.pictureWrapper, pictureWrapperStyle]}>
+              <Picture style={[OverviewCardBase.styles.picture, pictureStyle] as ImageStyle} {...picture} />
+            </View>
+          ) : null}
+          {title ? typeof title === 'string' ? <ContentCardTitle>{title}</ContentCardTitle> : title : null}
+        </View>
+      }>
+      {children}
+    </CC>
+  );
+}
+OverviewCardBase.styles = StyleSheet.create({
+  card: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...cardPaddingEqual,
+  },
+  header: {
+    flexDirection: 'row',
+  },
+  picture: {
+    width: 20,
+    height: 20,
+  },
+  pictureWrapper: {
+    width: 24,
+    height: 24,
+    backgroundColor: theme.color.secondary.regular,
+    borderRadius: 12,
+    overflow: 'hidden',
+    padding: 2,
+    marginRight: 8,
+  },
+});
+export function OverviewCard(props: OverviewCardProps) {
+  return <OverviewCardBase {...props} />;
+}
+export function TouchableOverviewCard(props: OverviewCardProps & TouchableOpacityProps) {
+  return (
+    <OverviewCardBase
+      cardComponent={TouchableContentCard}
+      headerIndicator={<NamedSVG width={24} height={24} name="scrapbook" />}
+      {...props}
+    />
+  );
 }

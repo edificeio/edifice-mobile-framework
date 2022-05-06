@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ColorValue, TextStyle, View, ViewStyle } from 'react-native';
+import { ColorValue, StyleProp, TextStyle, View, ViewStyle } from 'react-native';
 
 import { Status } from '~/ui/avatars/Avatar';
 
@@ -9,14 +9,14 @@ import { Text, TextSizeStyle } from './text';
 
 export interface BadgeAvatarProps {
   text: string;
-  textStyle: TextStyle;
+  textStyle: StyleProp<TextStyle>;
   userId:
     | string
     | {
         id: string;
         isGroup: boolean;
       };
-  badgeContent: number | string;
+  badgeContent?: number | string;
   badgeColor?: string | ColorValue;
   badgePosition?: BadgePosition;
   customAvatarStyle?: ViewStyle;

@@ -6,6 +6,7 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 
 
+import CarnetDeBord from './containers/CarnetDeBord';
 import ConnectorContainer from './containers/ConnectorContainer';
 import ConnectorSelector from './containers/ConnectorSelector';
 import moduleConfig from './moduleConfig';
@@ -18,9 +19,11 @@ export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) 
 
   // Add Functional screens
 
-  if (matchingWidgets.length > 2) {
+  console.log('matchingWidgets', matchingWidgets);
+
+  if (matchingWidgets.length > 0) {
     routes[`${moduleConfig.routeName}/carnetDeBord`] = {
-      screen: () => null // ToDo
+      screen: CarnetDeBord
     };
   } else if (matchingApps.length > 1) {
     // Many connectors => show connector select

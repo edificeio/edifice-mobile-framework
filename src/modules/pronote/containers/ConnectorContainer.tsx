@@ -11,6 +11,7 @@ import ConnectorView from '~/modules/pronote/components/ConnectorView';
 import connectorConfig from '~/modules/pronote/moduleConfig';
 import userConfig from '~/user/config';
 import { PageView } from '~/framework/components/page';
+import { IConnectorState } from '../reducers/connector';
 
 interface IApplicationBackend {
   name: string;
@@ -85,7 +86,7 @@ const getConnectorAddress: (appAddress: string, userType: string) => string = (a
 };
 
 const mapStateToProps: (state: any) => IConnectorContainerDataProps = state => {
-  const connectorState = connectorConfig.getState(state);
+  const connectorState = connectorConfig.getState(state).connector as IConnectorState;
   const authState = userConfig.getLocalState(state).auth;
   const infoState = userConfig.getLocalState(state).info;
   return {

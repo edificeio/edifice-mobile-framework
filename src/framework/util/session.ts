@@ -31,6 +31,8 @@ export interface IUserDefinition {
   login: string;
   id: string;
   displayName: string;
+  firstName: string;
+  lastName: string;
   type: UserType;
   entcoreApps: IEntcoreApp[];
   entcoreWidgets: IEntcoreWidget[];
@@ -59,6 +61,8 @@ export const computeUserSession = (authState?: IUserAuthState, infoState?: IUser
       entcoreWidgets: authState ? authState.widgets : sessionCache?.user?.entcoreWidgets,
       authorizedActions: infoState ? infoState.authorizedActions : sessionCache?.user?.authorizedActions,
       groupsIds: infoState ? infoState.groupsIds : sessionCache?.user?.groupsIds,
+      firstName: infoState ? infoState.firstName : sessionCache?.user?.firstName,
+      lastName: infoState ? infoState.lastName : sessionCache?.user?.lastName,
     },
   } as IUserSession;
 };

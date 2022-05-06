@@ -1,8 +1,8 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { IConnectorState } from './reducers/connector';
+import reducer from './reducers';
 
-export default new NavigableModuleConfig<'pronote', IConnectorState>({
+export default new NavigableModuleConfig<'pronote', ReturnType<typeof reducer>>({
   name: 'pronote',
   entcoreScope: ['pronote'],
   matchEntcoreApp: entcoreApp => entcoreApp.casType === 'PronoteRegisteredService',

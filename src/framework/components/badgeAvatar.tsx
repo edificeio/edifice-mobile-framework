@@ -18,7 +18,7 @@ export interface BadgeAvatarProps {
         id: string;
         isGroup: boolean;
       };
-  badgeContent: number | string;
+  badgeContent?: number | string;
   badgeColor?: string | ColorValue;
   badgePosition?: BadgePosition;
   customStyle?: ViewStyle;
@@ -47,7 +47,7 @@ export const BadgeAvatar = ({ userId, badgeContent, badgeColor, badgePosition, c
     <View>
       <SingleAvatar size={size || 48} userId={userId} status={status} />
       <View style={[{ position: 'absolute', ...position }, customStyle]}>
-        <Badge content={badgeContent} color={badgeColor} />
+        {badgeContent ? <Badge content={badgeContent} color={badgeColor} /> : null}
       </View>
     </View>
   );
