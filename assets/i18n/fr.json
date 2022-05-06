@@ -1,4 +1,7 @@
 {
+  "pronote.selector.title": "Votre compte est relié à plusieurs établissements.\nChoississez l’établissement avec lequel vous voulez vous connecter.",
+  "pronote.selector.action": "Ouvrir Pronote",
+  "pronote.selector.placeholder": "Choisir l’établissement",
   "Activate": "Activer votre compte",
   "Actualites": "Actualités",
   "AutoLogin": "Me reconnecter automatiquement",

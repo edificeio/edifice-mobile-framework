@@ -32,10 +32,6 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
     ) as NavigableModuleArray;
 
     const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
-      console.log('renderGridItem', item.config.displayPicture, {
-        ...item.config.displayPicture,
-        style: { height: 64, width: '100%' },
-      });
       return (
         <TouchableSelectorPictureCard
           onPress={() => this.props.navigation.navigate(item.config.name)}

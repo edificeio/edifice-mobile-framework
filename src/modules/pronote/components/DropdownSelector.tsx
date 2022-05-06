@@ -1,0 +1,124 @@
+/**
+ * DropdownSelector
+ * = Template =
+ *
+ * A view that show a single dropdown picker and a validate button.
+ */
+import * as React from 'react';
+import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import DropDownPicker, { DropDownPickerProps } from 'react-native-dropdown-picker';
+
+
+
+import theme from '~/app/theme';
+import { ActionButton, ActionButtonProps } from '~/framework/components/ActionButton';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Picture, PictureProps } from '~/framework/components/picture';
+import { Text, TextSizeStyle } from '~/framework/components/text';
+
+
+type OptionalDropDownPickerProps =
+  | 'open'
+  | 'value'
+  | 'setValue'
+  | 'style'
+  | 'setOpen'
+  | 'textStyle'
+  | 'dropDownContainerStyle'
+  | 'placeholderStyle';
+export interface DropdownSelectorTemplateProps {
+  picture?: PictureProps;
+  message?: string;
+  dropDownPickerProps: Omit<DropDownPickerProps, OptionalDropDownPickerProps> &
+    Partial<Pick<DropDownPickerProps, OptionalDropDownPickerProps>>;
+  button?: Omit<ActionButtonProps, 'action' | 'url'> & {
+    action?: (value: Parameters<Required<DropDownPickerProps>['onChangeValue']>[0]) => void;
+    url?: string | ((value: Parameters<Required<DropDownPickerProps>['onChangeValue']>[0]) => string);
+  };
+}
+
+export default function DropdownSelectorTemplate(props: DropdownSelectorTemplateProps) {
+  const [dropdownOpen, setDropdownOpened] = React.useState<boolean>(false);
+  const [selected, setSelected] = React.useState<DropDownPickerProps['value']>(props.dropDownPickerProps.value);
+  const {
+    open,
+    value,
+    setValue,
+    style,
+    setOpen,
+    textStyle,
+    dropDownContainerStyle,
+    placeholderStyle,
+    ...otherDropdownPickerProps
+  } = props.dropDownPickerProps;
+
+  return (
+    <TouchableWithoutFeedback
+      style={STYLES.selectBackDrop}
+      onPress={() => {
+        setDropdownOpened(false);
+      }}>
+      <View style={STYLES.container}>
+        {props.picture ? <Picture {...props.picture} /> : null}
+        {props.message ? <Text style={STYLES.text}>{props.message}</Text> : null}
+        <View>
+          <DropDownPicker
+            open={open ?? dropdownOpen}
+            dropDownContainerStyle={[STYLES.selectContainer, dropDownContainerStyle]}
+            placeholderStyle={[STYLES.selectPlaceholder, placeholderStyle]}
+            setOpen={setOpen ?? (() => setDropdownOpened(prev => !prev))}
+            style={[STYLES.select, style]}
+            textStyle={[STYLES.selectText, textStyle]}
+            value={selected}
+            setValue={setSelected as DropDownPickerProps['setValue']}
+            {...otherDropdownPickerProps}
+          />
+          {props.button ? renderButton(props.button, selected) : null}
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+}
+
+function renderButton(buttonProps: Required<DropdownSelectorTemplateProps>['button'], selected: DropDownPickerProps['value']) {
+  const { action, url, disabled, ...otherButtonProps } = buttonProps;
+  return (
+    <ActionButton
+      action={typeof action === 'function' ? () => action(selected) : action}
+      url={typeof url === 'function' ? url(selected) : url}
+      disabled={Array.isArray(selected) ? selected.length === 0 : !selected}
+      {...otherButtonProps}
+    />
+  );
+}
+
+const STYLES = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'space-around',
+    paddingHorizontal: 32,
+    paddingVertical: 96,
+    flexBasis: '66%',
+    flexGrow: 0,
+    flexShrink: 1,
+  },
+  help: { marginTop: 32, textAlign: 'center' },
+  safeView: { flex: 1, backgroundColor: theme.color.background.card },
+  select: { borderColor: theme.color.secondary.regular, borderWidth: 1, marginVertical: UI_SIZES.spacing.extraLargePlus },
+  selectBackDrop: { flex: 1 },
+  selectContainer: {
+    borderColor: theme.color.secondary.regular,
+    borderWidth: 1,
+    maxHeight: 120,
+    marginVertical: UI_SIZES.spacing.extraLargePlus,
+  },
+  selectPlaceholder: { color: theme.color.neutral.regular },
+  selectText: { color: theme.color.neutral.regular },
+  text: {
+    textAlign: 'center',
+    color: theme.greyPalette.black,
+    ...TextSizeStyle.SlightBig,
+    marginVertical: UI_SIZES.spacing.extraLargePlus,
+  },
+});

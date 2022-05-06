@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+
+
 import theme from '~/app/theme';
+import { transformedSrc } from '~/infra/oauth';
+
+
 
 import { DEPRECATED_getCurrentPlatform } from '../util/_legacy_appConf';
 import { openUrl } from '../util/linking';
@@ -9,17 +14,20 @@ import { UI_SIZES } from './constants';
 import { Picture } from './picture';
 import { TextSemiBold } from './text';
 
+
 export interface ActionButtonProps {
   text: string;
   url?: string;
   action?: () => void;
+  disabled?: boolean;
 }
 
-export const ActionButton = ({ text, url, action }: ActionButtonProps) => {
+export const ActionButton = ({ text, url, action, disabled }: ActionButtonProps) => {
+  const Component = disabled ? View : TouchableOpacity;
   return (
-    <TouchableOpacity
+    <Component
       style={{
-        backgroundColor: theme.color.secondary.regular,
+        backgroundColor: disabled ? theme.color.neutral.regular : theme.color.secondary.regular,
         height: UI_SIZES.dimensions.height.largePlus,
         paddingVertical: UI_SIZES.spacing.smallPlus,
         paddingHorizontal: UI_SIZES.spacing.large,
@@ -27,8 +35,9 @@ export const ActionButton = ({ text, url, action }: ActionButtonProps) => {
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'center',
+        opacity: disabled ? 0.5 : 1
       }}
-      onPress={() => {
+      { ...(!disabled ? { onPress: () => {
         if (action) {
           action();
         }
@@ -37,10 +46,10 @@ export const ActionButton = ({ text, url, action }: ActionButtonProps) => {
           if (!DEPRECATED_getCurrentPlatform()) {
             return null;
           }
-          const fullUrl = `${DEPRECATED_getCurrentPlatform()!.url}${url}`;
+          const fullUrl = transformedSrc(url);
           openUrl(fullUrl);
         }
-      }}>
+      }} : {})}>
       <TextSemiBold numberOfLines={1} style={{ color: theme.color.text.inverse, marginRight: UI_SIZES.spacing.smallPlus }}>
         {text}
       </TextSemiBold>
@@ -53,6 +62,6 @@ export const ActionButton = ({ text, url, action }: ActionButtonProps) => {
           fill={theme.color.text.inverse}
         />
       ) : null}
-    </TouchableOpacity>
+    </Component>
   );
 };
