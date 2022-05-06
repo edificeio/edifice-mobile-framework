@@ -3,7 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 
 
-import { IEntcoreApp, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
 import { IAppModule } from '~/infra/moduleTool/types';
 import { getModules, getRoutes } from '~/navigation/helpers/navBuilder';
 
@@ -25,8 +25,8 @@ const MyAppGridContainer = (modules: NavigableModuleArray, legacyModules: IAppMo
     },
   );
 
-export default (matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[]) => {
-  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(allEntcoreApps));
+export default (matchingApps: IEntcoreApp[], allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) => {
+  const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(allEntcoreApps, allEntcoreWidgets));
   const legacyFilter = (mod: IAppModule) => !!mod.config.hasRight?.(allEntcoreApps) && !!mod.config.group;
   const legacyModules = getModules(legacyFilter);
   return createStackNavigator(

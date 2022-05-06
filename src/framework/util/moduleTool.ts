@@ -76,7 +76,7 @@ interface IModuleConfig_Base<Name extends string> {
   entcoreScope: string[];
 }
 interface IModuleConfig_Rights {
-  matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[]) => boolean;
+  matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) => boolean;
 }
 interface IModuleConfigDeclaration_Rights {
   matchEntcoreApp: IModuleConfig_Rights['matchEntcoreApp'] | string;
@@ -480,9 +480,9 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     super(...items);
     Object.setPrototypeOf(this, ModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
-  filterAvailables(availableApps: IEntcoreApp[]) {
+  filterAvailables(availableApps: IEntcoreApp[], availableWidgets: IEntcoreWidget[]) {
     return new ModuleArray<ModuleType>(
-      ...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app, availableApps))),
+      ...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app, availableApps, availableWidgets))),
     );
   }
   getReducers() {
@@ -500,30 +500,28 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   }
   initModules(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
     this.forEach(m => {
-      const matchingApps = allEntcoreApps.filter(app => m.config.matchEntcoreApp(app, allEntcoreApps));
+      const matchingApps = allEntcoreApps.filter(app => m.config.matchEntcoreApp(app, allEntcoreApps, allEntcoreWidgets));
       m.init(matchingApps, allEntcoreApps, allEntcoreWidgets);
     });
     return this;
   }
   initModuleConfigs(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
     this.forEach(m => {
-      const matchingApps = allEntcoreApps.filter(app => m.config.matchEntcoreApp(app, allEntcoreApps));
+      const matchingApps = allEntcoreApps.filter(app => m.config.matchEntcoreApp(app, allEntcoreApps, allEntcoreWidgets));
       m.config.init(matchingApps, allEntcoreApps, allEntcoreWidgets);
     });
     return this;
   }
 }
 
-export class NavigableModuleArray<
-  ModuleType extends UnknownNavigableModule = UnknownNavigableModule,
-> extends ModuleArray<ModuleType> {
+export class NavigableModuleArray<ModuleType extends UnknownNavigableModule = UnknownNavigableModule> extends ModuleArray<ModuleType> {
   constructor(...items: Array<ModuleType>) {
     super(...items);
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
-  filterAvailables(availableApps: IEntcoreApp[]) {
+  filterAvailables(availableApps: IEntcoreApp[], availableWidgets: IEntcoreWidget[]) {
     return new NavigableModuleArray<ModuleType>(
-      ...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app, availableApps))),
+      ...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app, availableApps, availableWidgets))),
     );
   }
   getRoutes() {

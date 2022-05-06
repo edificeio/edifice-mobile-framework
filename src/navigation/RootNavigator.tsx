@@ -49,18 +49,18 @@ function getMainRoutes(appsInfo: any[]) {
 }
 
 /** Returns every route that are to be displayed in tab navigation.*/
-function getTabRoutes(appsInfo: IEntcoreApp[]): NavigationRouteConfigMap<any, any> {
-  return new NavigableModuleArray(...tabModules.get().filterAvailables(appsInfo)).getRoutes();
+function getTabRoutes(appsInfo: IEntcoreApp[], widgetsInfo: IEntcoreWidget[]): NavigationRouteConfigMap<any, any> {
+  return new NavigableModuleArray(...tabModules.get().filterAvailables(appsInfo, widgetsInfo)).getRoutes();
 }
 
 /**
  * Build a tab navigator with given functional modules (they need to be declared in AppModules.ts).
  * @param apps Allowed functional module names to be displayed.
  */
-function getMainNavigator(appsInfo: any[]) {
+function getMainNavigator(appsInfo: any[], widgetsInfo: IEntcoreWidget[]) {
   // 2. Build modules navigation
   const mainTabNavigator = createMainTabNavigator({
-    ...getTabRoutes(appsInfo),
+    ...getTabRoutes(appsInfo, widgetsInfo),
     ...getMainRoutes(appsInfo),
   });
   const RootStack = createStackNavigator(
@@ -82,9 +82,8 @@ function getMainNavigator(appsInfo: any[]) {
   return RootStack;
 }
 
-function getMainNavContainer(appsInfo: any[]) {
-
-  const navigator = getMainNavigator(appsInfo);
+function getMainNavContainer(appsInfo: any[], widgetsInfo: IEntcoreWidget[]) {
+  const navigator = getMainNavigator(appsInfo, widgetsInfo);
   return createAppContainer(navigator);
 }
 
@@ -108,7 +107,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     // 1. Init modules access
     const modules = AllModules();
     setUpModulesAccess(appsInfo, widgetsInfo);
-    const MainNavigationContainer = getMainNavContainer(appsInfo);
+    const MainNavigationContainer = getMainNavContainer(appsInfo, widgetsInfo);
     return (
       <AppPushNotificationHandlerComponent>
         <MainNavigationContainer
