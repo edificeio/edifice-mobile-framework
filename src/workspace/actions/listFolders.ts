@@ -2,12 +2,11 @@
  * workspace list actions
  * Build actions to be dispatched to the hworkspace list reducer.
  */
-
-import { formatResults } from './helpers/formatListFolders';
-
 import { asyncActionFactory } from '~/infra/actions/asyncActionFactory';
 import { asyncActionTypes } from '~/infra/redux/async';
 import config from '~/workspace/config';
+
+import { formatResults } from './helpers/formatListFolders';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

@@ -1,11 +1,11 @@
-import { formatResults } from './helpers/documents';
-
 import { Trackers } from '~/framework/util/tracker';
 import { asyncActionFactory } from '~/infra/actions/asyncActionFactory';
 import { asyncActionTypes } from '~/infra/redux/async';
 import config from '~/workspace/config';
 import { IItems } from '~/workspace/reducers/select';
 import { IItem } from '~/workspace/types/states';
+
+import { formatResults } from './helpers/documents';
 
 const WORKSPACE_TRASH = '/workspace/documents/trash';
 const WORKSPACE_DELETE = '/workspace/documents';

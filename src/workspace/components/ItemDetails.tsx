@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View, SafeAreaView, Platform } from 'react-native';
+import { Platform, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { ButtonIconText } from '~/ui/ButtonIconText';
-import { IEventProps, EVENT_TYPE } from '~/workspace/types';
+import { EVENT_TYPE, IEventProps } from '~/workspace/types';
 import { IFile } from '~/workspace/types/states';
 import { renderImage } from '~/workspace/utils/image';
 

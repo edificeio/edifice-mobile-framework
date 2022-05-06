@@ -1,17 +1,18 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Text, NestedText } from '~/framework/components/text';
+import { NestedText, Text } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
-import { IEventProps, EVENT_TYPE } from '~/workspace/types';
+import { EVENT_TYPE, IEventProps } from '~/workspace/types';
 import { renderIcon } from '~/workspace/utils/image';
 
 const style = StyleSheet.create({
+  itemListContainer: { margin: 0 },
   centerPanel: {
     alignItems: 'stretch',
     justifyContent: 'space-around',
@@ -24,6 +25,7 @@ const style = StyleSheet.create({
     color: CommonStyles.shadowColor,
     fontSize: layoutSize.LAYOUT_14,
   },
+  dateContainer: { flexDirection: 'row' },
   date: { flex: 1, alignItems: 'flex-start' },
   author: { flex: 3, alignItems: 'flex-end' },
 });
@@ -44,14 +46,17 @@ export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any
         });
         onEvent(eventInfos);
       }}
-      style={{ backgroundColor: selected ? theme.color.secondary.extraLight : theme.color.background.card, margin: 0 }}
+      style={[
+        style.itemListContainer,
+        { backgroundColor: selected ? theme.color.secondary.extraLight : theme.color.background.card },
+      ]}
       borderBottomWidth={0}>
       <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>
         <Text numberOfLines={1} style={style.fileName}>
           {name}
         </Text>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={style.dateContainer}>
           {!!date && (
             <View style={style.date}>
               <DateView min date={date} />

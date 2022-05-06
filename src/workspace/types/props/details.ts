@@ -1,9 +1,9 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IActionProps } from './actions';
-
 import { IEventProps } from '~/types';
 import { INavigationProps } from '~/workspace/types/index';
+
+import { IActionProps } from './actions';
 
 export type IDetailsProps = IActionProps &
   IEventProps &

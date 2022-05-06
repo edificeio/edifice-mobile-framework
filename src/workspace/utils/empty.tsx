@@ -1,8 +1,8 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
-import { FilterId } from '~/workspace/types/filters';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { FilterId } from '~/workspace/types/filters';
 
 export const getEmptyScreen = (parentId: string): React.ReactElement => {
   switch (parentId) {

@@ -26,12 +26,7 @@ export type IResourceBackend = {
 }[];
 
 export function compareResources(a: Resource, b: Resource) {
-  if (a.title < b.title) {
-    return -1;
-  } else if (a.title > b.title) {
-    return 1;
-  }
-  return 0;
+  return a.title.localeCompare(b.title);
 }
 
 export function transformArray(array: string[]) {

@@ -30,9 +30,6 @@ export const convertIFileToIDistantFile = (file: IFile) => {
   } as IDistantFile;
 };
 
-export const newDownloadThenOpenAction = (parentId: string, selected: IItems<IFile>) =>
-  newDownloadAction(parentId, selected, f => f.open());
-
 export const newDownloadAction =
   (parentId: string, selected: IItems<IFile>, callback: (f: SyncedFile) => void) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
@@ -63,6 +60,9 @@ export const newDownloadAction =
       }),
     );
   };
+
+export const newDownloadThenOpenAction = (parentId: string, selected: IItems<IFile>) =>
+  newDownloadAction(parentId, selected, f => f.open());
 
 export const downloadAndSaveAction =
   (downloadable: IItems<IFile>) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {

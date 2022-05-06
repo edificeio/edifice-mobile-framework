@@ -1,7 +1,4 @@
 // ACTION LIST ------------------------------------------------------------------------------------
-
-import { formatResults } from './helpers/documents';
-
 import { Trackers } from '~/framework/util/tracker';
 import { asyncActionFactory } from '~/infra/actions/asyncActionFactory';
 import { getExtension } from '~/infra/actions/downloadHelper';
@@ -9,6 +6,8 @@ import { asyncActionTypes } from '~/infra/redux/async';
 import config from '~/workspace/config';
 import { IItems } from '~/workspace/reducers/select';
 import { IItem } from '~/workspace/types';
+
+import { formatResults } from './helpers/documents';
 
 const WORKSPACE_RENAME = '/workspace/rename';
 const WORKSPACE_FOLDER_RENAME = '/workspace/folder/rename';

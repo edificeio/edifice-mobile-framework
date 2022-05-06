@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
+import { Source } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -40,6 +41,7 @@ const styles = StyleSheet.create({
   sourceCheckBoxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginHorizontal: 10,
   },
   sourceImage: {
     width: 30,
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
   },
   sourcesContentContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 5,
   },
@@ -114,10 +116,10 @@ export const defaultParams: AdvancedSearchParams = {
     { name: 'level', value: '', operand: Operand.OR },
   ],
   sources: {
-    GAR: true,
-    Moodle: true,
+    GAR: false,
+    Moodle: false,
     PMB: false,
-    Signets: true,
+    Signets: false,
   },
 };
 
@@ -130,10 +132,10 @@ const defaultFields: Field[] = [
 ];
 
 const defaultSources = {
-  GAR: true,
-  Moodle: true,
+  GAR: false,
+  Moodle: false,
   PMB: false,
-  Signets: true,
+  Signets: false,
 };
 
 type CriteriaInputProps = {
@@ -151,7 +153,7 @@ type SourceCheckboxProps = {
 };
 
 type AdvancedSearchModalProps = {
-  includePMB: boolean;
+  availableSources: string[];
   isVisible: boolean;
 
   closeModal: () => void;
@@ -218,20 +220,26 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
     const onSearch = () => {
       props.onSearch({ fields, sources });
     };
+    const resetSources = () => {
+      setSources({
+        GAR: props.availableSources.includes(Source.GAR),
+        Moodle: props.availableSources.includes(Source.Moodle),
+        PMB: props.availableSources.includes(Source.PMB),
+        Signets: props.availableSources.includes(Source.Signet),
+      });
+    };
     const resetParams = () => {
       for (const field of fields) {
         field.value = '';
         field.operand = Operand.OR;
       }
       setFields(fields);
-      setSources(defaultSources);
+      resetSources();
     };
 
     useEffect(() => {
-      if (props.includePMB) {
-        setSources({ ...sources, PMB: true });
-      }
-    }, [props.includePMB]);
+      resetSources();
+    }, [props.availableSources]);
     useImperativeHandle(ref, () => ({ resetParams }));
 
     return (
@@ -254,28 +262,34 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
             <View style={styles.sourcesContainer}>
               <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
               <View style={styles.sourcesContentContainer}>
-                <SourceCheckbox
-                  source={require('ASSETS/images/logo-gar.png')}
-                  checked={sources.GAR}
-                  onChange={value => setSources({ ...sources, GAR: value })}
-                />
-                <SourceCheckbox
-                  source={require('ASSETS/images/logo-moodle.png')}
-                  checked={sources.Moodle}
-                  onChange={value => setSources({ ...sources, Moodle: value })}
-                />
-                {props.includePMB ? (
+                {props.availableSources.includes(Source.GAR) ? (
+                  <SourceCheckbox
+                    source={require('ASSETS/images/logo-gar.png')}
+                    checked={sources.GAR}
+                    onChange={value => setSources({ ...sources, GAR: value })}
+                  />
+                ) : null}
+                {props.availableSources.includes(Source.Moodle) ? (
+                  <SourceCheckbox
+                    source={require('ASSETS/images/logo-moodle.png')}
+                    checked={sources.Moodle}
+                    onChange={value => setSources({ ...sources, Moodle: value })}
+                  />
+                ) : null}
+                {props.availableSources.includes(Source.PMB) ? (
                   <SourceCheckbox
                     source={require('ASSETS/images/logo-pmb.png')}
                     checked={sources.PMB}
                     onChange={value => setSources({ ...sources, PMB: value })}
                   />
                 ) : null}
-                <SourceCheckbox
-                  iconName="bookmark_outline"
-                  checked={sources.Signets}
-                  onChange={value => setSources({ ...sources, Signets: value })}
-                />
+                {props.availableSources.includes(Source.Signet) ? (
+                  <SourceCheckbox
+                    iconName="bookmark_outline"
+                    checked={sources.Signets}
+                    onChange={value => setSources({ ...sources, Signets: value })}
+                  />
+                ) : null}
               </View>
             </View>
             <View style={styles.dialogButtonsContainer}>

@@ -28,6 +28,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     marginLeft: layoutSize.LAYOUT_80,
   },
+  transparentRender: {
+    backgroundColor: 'transparent',
+  },
+  listContainer: {
+    backgroundColor: CommonStyles.lightGrey,
+    flexGrow: 1,
+  },
 });
 
 export class Items extends React.Component<IDispatchProps & IItemsProps & ISelectedProps, { isFocused: boolean }> {
@@ -55,7 +62,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
     );
   }
 
-  private sortItems(a: IItem, b: IItem): number {
+  private sortItems(firstItem: IItem, secondItem: IItem): number {
     const sortByType = (a: IItem, b: IItem): number => {
       if (a.isFolder === b.isFolder) {
         return 0;
@@ -70,7 +77,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
       return removeAccents(a.name.toLocaleLowerCase()).localeCompare(removeAccents(b.name.toLocaleLowerCase()));
     };
 
-    return sortByType(a, b) !== 0 ? sortByType(a, b) : sortByName(a, b);
+    return sortByType(firstItem, secondItem) !== 0 ? sortByType(firstItem, secondItem) : sortByName(firstItem, secondItem);
   }
 
   public render(): React.ReactNode {
@@ -79,7 +86,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
     const values = Object.values(items);
 
     if (values.length === 0) {
-      if (isFetching === null) return <View style={{ backgroundColor: 'transparent' }} />;
+      if (isFetching === null) return <View style={styles.transparentRender} />;
     }
 
     const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
@@ -90,7 +97,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
       <PageContainer>
         <Notifier id="workspace" />
         <FlatList
-          contentContainerStyle={{ backgroundColor: CommonStyles.lightGrey, flexGrow: 1 }}
+          contentContainerStyle={styles.listContainer}
           data={itemsArray}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={(item: IItem) => item.id}
