@@ -5,7 +5,7 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json',
   },
-  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'react-hooks'],
   rules: {
     '@typescript-eslint/naming-convention': ['error'],
     'import/extensions': [
@@ -28,6 +28,8 @@ module.exports = {
         allowBind: true,
       },
     ],
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
