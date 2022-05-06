@@ -6,7 +6,7 @@ import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-
 
 import { A } from './Typography';
 
-import { contentStyle } from '~/myAppMenu/components/NewContainerContent';
+import { contentStyle } from '~/framework/modules/myAppMenu/components/NewContainerContent';
 import { CommonStyles } from '~/styles/common/styles';
 
 export interface ITextPreviewProps {

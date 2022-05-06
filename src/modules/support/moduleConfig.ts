@@ -1,17 +1,13 @@
-import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
-import { CommonStyles } from '~/styles/common/styles';
-
-
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { ISupport_State } from './reducer';
 
-
-export default createNavigableModuleConfig<'support', ISupport_State>({
+export default new NavigableModuleConfig<'support', ISupport_State>({
   name: 'support',
-  displayName: 'support',
-  matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('SUPPORT'),
   entcoreScope: ['support'],
-  picture: { type: 'NamedSvg', name: 'support' },
-  group: true,
-  registerAs: 'myAppsModule',
+  matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('SUPPORT'),
+
+  displayI18n: 'support',
+  displayAs: 'myAppsModule',
+  displayPicture: { type: 'NamedSvg', name: 'support' },
 });

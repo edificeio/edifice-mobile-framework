@@ -1,17 +1,13 @@
-import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
-
-
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IConnectorState } from './reducers/connector';
 
-
-export default createNavigableModuleConfig<'pronote', IConnectorState>({
+export default new NavigableModuleConfig<'pronote', IConnectorState>({
   name: 'pronote',
-  displayName: 'Pronote',
-  matchEntcoreApp: entcoreApp => entcoreApp.casType === 'PronoteRegisteredService',
   entcoreScope: ['pronote'],
-  iconName: 'pronote',
-  iconColor: '#763294',
-  picture: { type: 'Image', source: require('ASSETS/images/logo-pronote.png') },
-  registerAs: 'myAppsModule',
+  matchEntcoreApp: entcoreApp => entcoreApp.casType === 'PronoteRegisteredService',
+
+  displayI18n: 'Pronote',
+  displayAs: 'myAppsModule',
+  displayPicture: { type: 'Image', source: require('ASSETS/images/logo-pronote.png') },
 });

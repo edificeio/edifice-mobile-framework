@@ -1,14 +1,14 @@
 import theme from '~/app/theme';
-import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { ISchoolbook_State } from './reducer';
 
-export default createNavigableModuleConfig<'schoolbook', ISchoolbook_State>({
+export default new NavigableModuleConfig<'schoolbook', ISchoolbook_State>({
   name: 'schoolbook',
-  displayName: 'schoolbook.tabName',
-  iconName: 'chat3',
-  iconColor: theme.themeOpenEnt.green,
-  matchEntcoreApp: '/schoolbook',
   entcoreScope: ['schoolbook'],
-  registerAs: 'myAppsModule',
+  matchEntcoreApp: '/schoolbook',
+
+  displayI18n: 'schoolbook.tabName',
+  displayAs: 'myAppsModule',
+  displayPicture: { type: 'Icon', name: 'chat3', color: theme.themeOpenEnt.green },
 });

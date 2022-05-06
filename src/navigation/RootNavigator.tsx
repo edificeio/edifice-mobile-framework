@@ -5,6 +5,10 @@ import { NavigationRouteConfigMap, createAppContainer, createSwitchNavigator } f
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 
+
+
+import { setUpModulesAccess } from '~/app/modules';
+import AllModules from '~/app/modules';
 import { IEntcoreApp, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { IAppModule } from '~/infra/moduleTool/types';
@@ -12,10 +16,13 @@ import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
 import Carousel from '~/ui/Carousel';
 import { IFrame } from '~/ui/IFrame';
 
+
+
 import LoginNavigator from './LoginNavigator';
 import NavigationService from './NavigationService';
 import { createMainTabNavigator } from './helpers/mainTabNavigator';
 import { getModules, getRoutes } from './helpers/navBuilder';
+
 
 /**
  * MAIN NAVIGATOR
@@ -51,6 +58,7 @@ function getTabRoutes(appsInfo: IEntcoreApp[]): NavigationRouteConfigMap<any, an
  * @param apps Allowed functional module names to be displayed.
  */
 function getMainNavigator(appsInfo: any[]) {
+  // 2. Build modules navigation
   const mainTabNavigator = createMainTabNavigator({
     ...getTabRoutes(appsInfo),
     ...getMainRoutes(appsInfo),
@@ -75,6 +83,7 @@ function getMainNavigator(appsInfo: any[]) {
 }
 
 function getMainNavContainer(appsInfo: any[]) {
+
   const navigator = getMainNavigator(appsInfo);
   return createAppContainer(navigator);
 }
@@ -95,8 +104,10 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 
   public render() {
     const { appsInfo, ...forwardProps } = this.props;
+    // 1. Init modules access
+    const modules = AllModules();
+    setUpModulesAccess(appsInfo);
     const MainNavigationContainer = getMainNavContainer(appsInfo);
-
     return (
       <AppPushNotificationHandlerComponent>
         <MainNavigationContainer

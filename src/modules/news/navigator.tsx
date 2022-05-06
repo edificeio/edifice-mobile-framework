@@ -11,12 +11,12 @@ export const timelineRoutes = addViewTrackingToStackRoutes({
   },
 });
 
-export default () =>
-  createStackNavigator(
-    {
-      ...timelineRoutes,
-    },
-    {
-      headerMode: 'none',
-    },
-  );
+// export default () =>
+//   createStackNavigator(
+//     {
+//       ...timelineRoutes,
+//     },
+//     {
+//       headerMode: 'none',
+//     },
+//   );

@@ -1,11 +1,13 @@
-import { createNavigableModuleConfig } from "~/framework/util/moduleTool";
-import { IBlog_State } from "./reducer";
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-export default createNavigableModuleConfig<"blog", IBlog_State>({
-    name: "blog",
-    displayName: "blog.tabName",
-    picture: {type: 'NamedSvg', name: 'blog'},
-    matchEntcoreApp: "/blog",
-    entcoreScope: ['blog'],
-    registerAs: 'myAppsModule'
+import { IBlog_State } from './reducer';
+
+export default new NavigableModuleConfig<'blog', IBlog_State>({
+  name: 'blog',
+  entcoreScope: ['blog'],
+  matchEntcoreApp: '/blog',
+
+  displayI18n: 'blog.tabName',
+  displayAs: 'myAppsModule',
+  displayPicture: { type: 'NamedSvg', name: 'blog' },
 });

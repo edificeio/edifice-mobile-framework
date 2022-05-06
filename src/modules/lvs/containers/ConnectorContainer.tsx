@@ -40,7 +40,7 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
       <PageView
         navigation={this.props.navigation}
         navBarWithBack={{
-          title: I18n.t(connectorConfig.displayName),
+          title: I18n.t(connectorConfig.displayI18n),
         }}>
         <ConnectorView
           openConnector={() => this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))}

@@ -6,10 +6,13 @@ import AppCenter from 'appcenter';
 import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
 
+
+
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import appConf from '~/framework/util/appConf';
-import { IAnyModuleConfig, IAnyNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { signRequest } from '~/infra/oauth';
+
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
@@ -93,7 +96,7 @@ export abstract class AbstractTracker<OptionsType> {
       // TODO: Manage error
     }
   }
-  async trackEventOfModule(moduleConfig: IAnyNavigableModuleConfig, action: string, name?: string, value?: number) {
+  async trackEventOfModule(moduleConfig: AnyNavigableModuleConfig, action: string, name?: string, value?: number) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
@@ -111,7 +114,7 @@ export abstract class AbstractTracker<OptionsType> {
       // TODO: Manage error
     }
   }
-  async trackViewOfModule(moduleConfig: IAnyNavigableModuleConfig, path: string[]) {
+  async trackViewOfModule(moduleConfig: AnyNavigableModuleConfig, path: string[]) {
     await this._trackView([moduleConfig.routeName, ...path]);
   }
 }
@@ -269,7 +272,7 @@ export class ConcreteTrackerSet {
   async trackView(path: string[]) {
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
-  async trackViewOfModule(moduleConfig: IAnyNavigableModuleConfig, path: string[]) {
+  async trackViewOfModule(moduleConfig: AnyNavigableModuleConfig, path: string[]) {
     await this.trackView([moduleConfig.routeName, ...path]);
   }
   async setUserId(id: string) {

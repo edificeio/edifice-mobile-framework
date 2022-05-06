@@ -1,5 +1,6 @@
 import styled from '@emotion/native';
 import * as React from 'react';
+import { View } from 'react-native';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
@@ -10,6 +11,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { CommonStyles } from '~/styles/common/styles';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
+
 
 export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
   createBottomTabNavigator(routeConfigs, {
@@ -38,21 +40,51 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
     },
   });
 
-export const createMainTabNavOption = (title: string, icon: string | PictureProps) => {
-  if (typeof icon === 'string') {
+export const createMainTabNavOption = (title: string, icon?: string | PictureProps, iconFocus?: PictureProps) => {
+  const computePicture = (icon: PictureProps) => {
+    if (icon.type === 'NamedSvg') {
+      icon.height = icon.width = 24;
+      icon.style = { marginTop: -6 };
+    } else if (icon.type === 'Image') {
+      icon.style = { width: 24, height: 24, marginTop: -6 };
+    } else if (icon.type === 'Icon') {
+      icon.size = 24;
+      icon.style = { marginTop: -6 };
+    };
+    return icon;
+  }
+  if (!icon) {
+    return {
+      tabBarIcon: ({ focused }) => <View />,
+      tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
+    };
+  } else if (typeof icon === 'string') {
     return {
       tabBarIcon: ({ focused }) => <IconOnOff size={24} name={icon} focused={focused} style={{ marginTop: -6 }} />,
       tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
     };
   } else {
+    icon = computePicture(icon);
+    iconFocus = computePicture(iconFocus ?? icon);
     if (icon.type === 'NamedSvg') {
-      icon.height = icon.width = 24;
-      icon.style = { marginTop: -6 };
-    } else {
+      return {
+        tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} /> : <Picture {...icon} />),
+        tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
+      };
+    } else if (icon.type === 'Image') {
       icon.style = { width: 24, height: 24, marginTop: -6 };
-    }
-    return {
-      tabBarIcon: ({ focused }) => <Picture {...icon} />,
+      return {
+        tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} /> : <Picture {...icon} />),
+        tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
+      };
+    } else if (icon.type === 'Icon') {
+      return {
+        // focused ? theme.color.secondary.regular : CommonStyles.iconColorOff
+        tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} color={theme.color.secondary.regular}/> : <Picture {...icon} color={theme.color.text.light}/>),
+        tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
+      };
+    } else return {
+      tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} /> : <Picture {...icon} />),
       tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
     };
   }

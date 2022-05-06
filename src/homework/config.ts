@@ -1,12 +1,13 @@
 import FunctionalModuleConfig from '~/infra/moduleTool';
 
+
 // tslint:disable:object-literal-sort-keys
 
 export default new FunctionalModuleConfig({
   name: 'homework',
   apiName: 'Cahier de texte',
   displayName: 'Homework',
-  picture: {type: 'NamedSvg', name: 'homework2D'},
+  picture: { type: 'NamedSvg', name: 'homework2D' },
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors

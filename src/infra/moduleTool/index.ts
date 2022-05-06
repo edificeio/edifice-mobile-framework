@@ -1,12 +1,17 @@
 import I18n from 'i18n-js';
 
-import { IFunctionalConfig, IAppModule } from './types';
 
+
+import { PictureProps } from '~/framework/components/picture';
 import { NotificationHandlerFactory } from '~/infra/pushNotification';
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 import { CommonStyles } from '~/styles/common/styles';
 import { backendUserApp } from '~/user/reducers/auth';
-import { PictureProps } from '~/framework/components/picture';
+
+
+
+import { IAppModule, IFunctionalConfig } from './types';
+
 
 /**
  * All specs to define functional module
@@ -36,6 +41,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public actionPrefix: string;
   public reducerName: string;
   public displayName: string;
+  public displayI18n: string;
   public iconName: string;
   public iconColor: string;
   public group: boolean;
@@ -43,6 +49,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
   public hasRight: (apps: any[]) => boolean;
   public picture?: PictureProps;
+  public displayPicture?: PictureProps;
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
@@ -50,6 +57,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.actionPrefix = opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + '_';
     this.reducerName = opts.reducerName || this.name;
     this.displayName = opts.displayName || this.name;
+    this.displayI18n = opts.displayName || this.name;
     this.iconName = opts.iconName || this.name;
     this.group = opts.group === undefined ? false : opts.group;
     this.iconColor = opts.iconColor || CommonStyles.actionColor;
@@ -57,6 +65,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.hasRight = opts.hasRight || (apps => apps.some(app => app.name === this.apiName));
     this.blacklistFolders = opts.blacklistFolders; // Some hack here. This type of config will be gone soon
     this.picture = opts.picture;
+    this.displayPicture = opts.picture;
   }
 
   public getLocalState(globalState: any) {
@@ -71,7 +80,8 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     return {
       screen: comp,
 
-      navigationOptions: () => (this.group ? { headerShown: false } : createMainTabNavOption(I18n.t(this.displayName), this.picture ?? this.iconName)),
+      navigationOptions: () =>
+        this.group ? { headerShown: false } : createMainTabNavOption(I18n.t(this.displayName), this.picture ?? this.iconName),
     };
   }
 
