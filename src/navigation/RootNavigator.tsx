@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 
 import { setUpModulesAccess } from '~/app/modules';
 import AllModules from '~/app/modules';
-import { IEntcoreApp, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
+import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { IAppModule } from '~/infra/moduleTool/types';
 import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
@@ -92,6 +92,7 @@ interface MainNavigatorHOCProps {
   appsInfo: any[];
   apps: string[];
   dispatch: any;
+  widgetsInfo: IEntcoreWidget[];
 }
 
 class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
@@ -103,10 +104,10 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   }
 
   public render() {
-    const { appsInfo, ...forwardProps } = this.props;
+    const { appsInfo, widgetsInfo, ...forwardProps } = this.props;
     // 1. Init modules access
     const modules = AllModules();
-    setUpModulesAccess(appsInfo);
+    setUpModulesAccess(appsInfo, widgetsInfo);
     const MainNavigationContainer = getMainNavContainer(appsInfo);
     return (
       <AppPushNotificationHandlerComponent>
@@ -136,6 +137,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 const mapStateToProps = ({ user }) => ({
   apps: ['user', 'myapps', ...user.auth.apps],
   appsInfo: [{ name: 'user' }, { name: 'myapps' }, ...user.auth.appsInfo],
+  widgetsInfo: user.auth.widgets
 });
 
 export const MainNavigator = connect(mapStateToProps, null)(withLinkingAppWrapper(MainNavigatorHOC));

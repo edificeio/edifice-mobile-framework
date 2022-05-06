@@ -6,9 +6,12 @@ import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 
+
+
 import { DEPRECATED_getCurrentPlatform } from './_legacy_appConf';
 import { Platform } from './appConf';
-import { IEntcoreApp } from './moduleTool';
+import { IEntcoreApp, IEntcoreWidget } from './moduleTool';
+
 
 export enum UserType {
   Student = 'Student',
@@ -30,6 +33,7 @@ export interface IUserDefinition {
   displayName: string;
   type: UserType;
   entcoreApps: IEntcoreApp[];
+  entcoreWidgets: IEntcoreWidget[];
   authorizedActions: IUserAuthorizedAction[];
   groupsIds: string[];
 }
@@ -52,6 +56,7 @@ export const computeUserSession = (authState?: IUserAuthState, infoState?: IUser
       displayName: infoState ? infoState.displayName : sessionCache?.user?.displayName,
       type: infoState ? infoState.type : sessionCache?.user?.type,
       entcoreApps: authState ? authState.appsInfo : sessionCache?.user?.entcoreApps,
+      entcoreWidgets: authState ? authState.widgets : sessionCache?.user?.entcoreWidgets,
       authorizedActions: infoState ? infoState.authorizedActions : sessionCache?.user?.authorizedActions,
       groupsIds: infoState ? infoState.groupsIds : sessionCache?.user?.groupsIds,
     },
