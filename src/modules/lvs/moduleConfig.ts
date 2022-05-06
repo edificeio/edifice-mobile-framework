@@ -1,4 +1,5 @@
 import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
+
 import { IConnectorState } from './reducers/connector';
 
 const regexp = /la[- ]+vie[- ]+scolaire/i;

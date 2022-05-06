@@ -25,6 +25,37 @@ const stateDefault: IState = {
 
 const actionTypeResetError = 'WORKSPACE_RESET_ERROR';
 
+const node = (data: IItems<IItem> = {}, action: IAction<IItems<IItem | string>>): IItems<IItem> => {
+  switch (action.type) {
+    case actionTypesMove.received:
+    case actionTypesRestore.received:
+    case actionTypesDelete.received:
+      for (const id in action.data as IItems<string>) delete data[id];
+      return { ...data };
+    case actionTypesUpload.received:
+    case actionTypesRename.received:
+    case actionTypesPast.received:
+    case actionTypesCreateFolder.received:
+      return {
+        ...data,
+        ...(action.data as IItems<IItem>),
+      };
+    case actionTypesList.received:
+      return action.data as IItems<IItem>;
+    default:
+      return data;
+  }
+};
+
+function pushData(state: IState, action: IAction<IItems<IItem | string>>, actionTypes) {
+  return {
+    data: {
+      ...state.data,
+      [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(state.data[action.payload.parentId], action),
+    },
+  };
+}
+
 export const resetError = () => (dispatch: Dispatch) => {
   dispatch({ type: actionTypeResetError });
 };
@@ -76,34 +107,3 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
       return state;
   }
 };
-
-const node = (data: IItems<IItem> = {}, action: IAction<IItems<IItem | string>>): IItems<IItem> => {
-  switch (action.type) {
-    case actionTypesMove.received:
-    case actionTypesRestore.received:
-    case actionTypesDelete.received:
-      for (const id in action.data as IItems<string>) delete data[id];
-      return { ...data };
-    case actionTypesUpload.received:
-    case actionTypesRename.received:
-    case actionTypesPast.received:
-    case actionTypesCreateFolder.received:
-      return {
-        ...data,
-        ...(action.data as IItems<IItem>),
-      };
-    case actionTypesList.received:
-      return action.data as IItems<IItem>;
-    default:
-      return data;
-  }
-};
-
-function pushData(state: IState, action: IAction<IItems<IItem | string>>, actionTypes) {
-  return {
-    data: {
-      ...state.data,
-      [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(state.data[action.payload.parentId], action),
-    },
-  };
-}

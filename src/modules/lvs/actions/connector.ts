@@ -2,7 +2,6 @@
  * Connector list actions
  * Build actions to be dispatched to the Connector reducer.
  */
-
 import { Linking } from 'react-native';
 
 import { signedFetchJson } from '~/infra/fetchWithCache';

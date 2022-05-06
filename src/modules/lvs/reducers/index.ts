@@ -1,7 +1,6 @@
 /*
   Reducers for LVS app.
 */
-
-import connector from "./connector";
+import connector from './connector';
 
 export default connector;
