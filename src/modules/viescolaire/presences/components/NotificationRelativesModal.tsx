@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     marginBottom: 10,
-    fontSize: 18,
+    fontSize: 20,
   },
   modalSubsection: {
     paddingLeft: 15,
@@ -76,8 +76,8 @@ const renderChild = (key: string, event) => {
       <Text style={{ marginVertical: 2 }}>
         <NestedText style={{ color, fontSize: 10 }}>{'\u25A0 '}</NestedText>
         <TextBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</TextBold> -{' '}
-        <Text style={{ color }}>{moment(event.start_date).format('HH:mm')}</Text>
-        <Text style={{ color }}> - {moment(event.end_date).format('HH:mm')}</Text>
+        <Text style={{ color }}>{moment(event.start_date).format('hh:mm')}</Text>
+        <Text style={{ color }}> - {moment(event.end_date).format('hh:mm')}</Text>
         {duration > 0 ? <NestedTextBold style={{ color }}> - {duration}mn</NestedTextBold> : null}
       </Text>
     </>
