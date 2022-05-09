@@ -60,6 +60,12 @@ const styleConstant = StyleSheet.create({
     width: '25%',
     justifyContent: 'center',
   },
+  competenceRoundContainerWidthQuarter: {
+    width: '25%',
+  },
+  competenceRoundContainerWidthAuto: {
+    width: 'auto',
+  },
   competenceRound: {
     borderRadius: 45,
     minWidth: 60,
@@ -197,7 +203,10 @@ const CompetenceRound = ({
     <View
       style={[
         styleConstant.competenceRoundContainer,
-        { alignItems: stateFullRound, width: stateFullRound === 'flex-end' ? 'auto' : '25%' },
+        stateFullRound === 'flex-end'
+          ? styleConstant.competenceRoundContainerWidthAuto
+          : styleConstant.competenceRoundContainerWidthQuarter,
+        { alignItems: stateFullRound },
       ]}>
       {competences.length > 0 && (
         <TouchableOpacity

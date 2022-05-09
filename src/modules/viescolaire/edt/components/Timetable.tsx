@@ -6,11 +6,82 @@ import { StyleSheet, Text, View } from 'react-native';
 import { getSessionInfo } from '~/App';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { Icon } from '~/ui/icons/Icon';
-import { Loading } from '~/ui/Loading';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
+import { Loading } from '~/ui/Loading';
 import { TextBold } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
+
+const style = StyleSheet.create({
+  refreshContainer: {
+    height: '100%',
+    zIndex: 0,
+  },
+  calendarContainer: {
+    height: 1,
+    flexGrow: 1,
+  },
+  weekPickerView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderStyle: 'solid',
+    borderColor: 'rgba(0, 0, 0, 0)',
+    borderWidth: 1,
+    paddingTop: 5,
+  },
+  courseView: {
+    flexDirection: 'row',
+    padding: 5,
+    height: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+  },
+  halfCourseView: {
+    flexShrink: 1,
+    padding: 5,
+    height: '100%',
+    justifyContent: 'center',
+  },
+  subjectView: {
+    maxWidth: '56%',
+  },
+  halfTextStyle: {
+    flex: 1,
+  },
+  halfSplitLineView: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  halfRoomLabelContainer: {
+    flexDirection: 'row',
+  },
+  courseStatus: {
+    alignItems: 'center',
+    paddingHorizontal: 15,
+  },
+  roomView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoView: {
+    paddingHorizontal: 15,
+  },
+  teacherClassNameText: {
+    fontSize: 20,
+  },
+  tagsLabel: {
+    fontStyle: 'italic',
+  },
+  greyishBackground: {
+    backgroundColor: '#E8E8E8',
+  },
+  whiteBackground: {
+    backgroundColor: '#FFF',
+  },
+});
 
 const adaptCourses = (courses, teachers) => {
   return courses.map(c => ({
@@ -31,7 +102,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     );
 
     return (
-      <View style={[style.courseView, { backgroundColor: isCourseWithTags ? '#E8E8E8' : '#FFF' }]}>
+      <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.subjectView}>
           <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
           <Text numberOfLines={1}>{course.teacher}</Text>
@@ -63,10 +134,10 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     );
 
     return (
-      <View style={[style.courseView, { backgroundColor: isCourseWithTags ? '#E8E8E8' : '#FFF' }]}>
+      <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.subjectView}>
           <View style={style.infoView}>
-            <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
+            <TextBold style={style.teacherClassNameText}>{className}</TextBold>
           </View>
           <View style={style.infoView}>
             <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
@@ -95,11 +166,12 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
 
     return (
-      <View style={[style.halfCourseView, { backgroundColor: isCourseWithTags && isCourseTagNotUlis ? '#E8E8E8' : '#FFF' }]}>
+      <View
+        style={[style.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.halfSplitLineView}>
           {firstJSX}
           {isCourseWithRoomLabel && (
-            <View style={{ flexDirection: 'row' }}>
+            <View style={style.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
               <Text numberOfLines={1}>&ensp;{course.roomLabels && course.roomLabels[0]}</Text>
             </View>
@@ -117,24 +189,24 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     if (getSessionInfo().type === 'Teacher') {
       const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
       const classNameJSX = (
-        <TextBold style={{ fontSize: 18 }} numberOfLines={1}>
+        <TextBold style={style.halfTextStyle} numberOfLines={1}>
           {className}
         </TextBold>
       );
       const subjectNameJSX = (
-        <Text style={{ flex: 1 }} numberOfLines={1}>
+        <Text style={style.halfTextStyle} numberOfLines={1}>
           {course.subject?.name || course.exceptionnal}
         </Text>
       );
       return this.renderHalfCourse(course, classNameJSX, subjectNameJSX);
     }
     const teacherNameJSX = (
-      <Text style={{ flex: 1 }} numberOfLines={1}>
+      <Text style={style.halfTextStyle} numberOfLines={1}>
         {course.teacher}
       </Text>
     );
     const subjectNameJSX = (
-      <TextBold style={{ flex: 1 }} numberOfLines={1}>
+      <TextBold style={style.halfTextStyle} numberOfLines={1}>
         {course.subject?.name || course.exceptionnal}
       </TextBold>
     );
@@ -175,59 +247,3 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     );
   }
 }
-
-const style = StyleSheet.create({
-  refreshContainer: {
-    height: '100%',
-    zIndex: 0,
-  },
-  calendarContainer: {
-    height: 1,
-    flexGrow: 1,
-  },
-  weekPickerView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 0)',
-    borderWidth: 1,
-    paddingTop: 5,
-  },
-  courseView: {
-    flexDirection: 'row',
-    padding: 5,
-    height: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-  },
-  halfCourseView: {
-    flexShrink: 1,
-    padding: 5,
-    height: '100%',
-    justifyContent: 'center',
-  },
-  subjectView: {
-    maxWidth: '56%',
-  },
-  halfSplitLineView: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  courseStatus: {
-    alignItems: 'center',
-    paddingHorizontal: 15,
-  },
-  roomView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  infoView: {
-    paddingHorizontal: 15,
-  },
-  tagsLabel: {
-    fontStyle: 'italic',
-  },
-});

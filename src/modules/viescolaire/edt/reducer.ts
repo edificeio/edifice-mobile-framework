@@ -1,7 +1,6 @@
 /**
  * Sub-module EDT Reducer
  */
-
 import { IEdtCourseListState } from './state/edtCourses';
 import { ISlotListState } from './state/slots';
 import { IEdtUserChildrenState } from './state/userChildren';
