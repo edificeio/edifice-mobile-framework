@@ -81,20 +81,24 @@ interface SearchContentProps {
 }
 
 const resourceMatchesFilters = (resource: Resource, filters: SearchFilters) => {
+  let typeMatches = filters['resource-type'].length === 0;
+  let sourceMatches = filters.source.length === 0;
+  let levelMatches = filters.level.length === 0;
+
   for (const type of filters['resource-type']) {
     if (resource.types.includes(type)) {
-      return true;
+      typeMatches = true;
     }
   }
   if (filters.source.includes(resource.source.substring(30))) {
-    return true;
+    sourceMatches = true;
   }
   for (const level of filters.level) {
     if (resource.levels.includes(level)) {
-      return true;
+      levelMatches = true;
     }
   }
-  return false;
+  return typeMatches && sourceMatches && levelMatches;
 };
 
 const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (props: AdvancedSearchFieldProps) =>
@@ -131,6 +135,8 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
 export const SearchContent: React.FunctionComponent<SearchContentProps> = (props: SearchContentProps) => {
   const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
   const [activeFilters, setActiveFilters] = useState<SearchFilters>({ 'resource-type': [], source: [], level: [] });
+  const isFiltering =
+    activeFilters['resource-type'].length > 0 || activeFilters.source.length > 0 || activeFilters.level.length > 0;
   const filterResources = () => {
     const filtered: Resource[] = [];
     for (const resource of props.resources) {
@@ -165,7 +171,7 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
     <View style={styles.mainContainer}>
       <SearchParams {...props} params={{ ...props.params, sources: getSources() }} />
       <FlatList
-        data={filteredResources.length ? filteredResources : props.resources}
+        data={isFiltering ? filteredResources : props.resources}
         renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}
         keyExtractor={item => item.uid || item.id}
         ListHeaderComponent={
