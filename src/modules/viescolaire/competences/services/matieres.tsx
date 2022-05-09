@@ -1,4 +1,3 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { IMatiereList } from '~/modules/viescolaire/competences/state/matieres';
 

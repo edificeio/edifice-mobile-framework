@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { MatieresService } from '~/modules/viescolaire/competences/services/matieres';
-import { actionTypes, IMatiereList } from '~/modules/viescolaire/competences/state/matieres';
+import { IMatiereList, actionTypes } from '~/modules/viescolaire/competences/state/matieres';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

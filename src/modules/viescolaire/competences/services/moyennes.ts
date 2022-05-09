@@ -1,11 +1,7 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import querystring from 'querystring';
-
-
 
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
-
 
 export type IMoyenneListBackend = {
   matiere: string;
@@ -24,7 +20,7 @@ export type IMoyenneListBackend = {
 };
 
 const moyenneListAdapter: (data: IMoyenneListBackend) => IMoyenneList = data => {
-  let result = [] as IMoyenneList;
+  const result = [] as IMoyenneList;
   if (!data) return result;
   for (const key in data) {
     const item = data[key];

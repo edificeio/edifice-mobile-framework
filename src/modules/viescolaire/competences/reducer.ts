@@ -1,7 +1,6 @@
 /**
  * Sub-module Competences Reducer
  */
-
 import { ILevelsListState } from './state/competencesLevels';
 import { IDevoirsMatieresState } from './state/devoirs';
 import { IMoyenneListState } from './state/moyennes';

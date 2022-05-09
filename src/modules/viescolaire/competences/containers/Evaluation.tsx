@@ -12,15 +12,15 @@ import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions
 import { fetchDevoirMoyennesListAction } from '~/modules/viescolaire/competences/actions/moyennes';
 import { fetchUserChildrenAction } from '~/modules/viescolaire/competences/actions/userChildren';
 import Competences from '~/modules/viescolaire/competences/components/Evaluation';
-import { getLevelsListState, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
-import { getDevoirListState, IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
-import { getMoyenneListState, IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
+import { ILevelsList, getLevelsListState } from '~/modules/viescolaire/competences/state/competencesLevels';
+import { IDevoirsMatieresState, getDevoirListState } from '~/modules/viescolaire/competences/state/devoirs';
+import { IMoyenneListState, getMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
 import { getUserChildrenState } from '~/modules/viescolaire/competences/state/userChildren';
 import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
 import { fetchPeriodsListAction } from '~/modules/viescolaire/viesco/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
-import { getPeriodsListState, IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
+import { IPeriodsList, getPeriodsListState } from '~/modules/viescolaire/viesco/state/periods';
 
 export type CompetencesProps = {
   devoirsList: IDevoirsMatieresState;

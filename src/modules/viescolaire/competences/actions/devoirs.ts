@@ -2,12 +2,11 @@
  * Notification list actions
  * Build actions to be dispatched to the notification list reducer.
  */
-
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { devoirListService } from '~/modules/viescolaire/competences/services/devoirs';
-import { actionTypes, IDevoirsMatieres } from '~/modules/viescolaire/competences/state/devoirs';
+import { IDevoirsMatieres, actionTypes } from '~/modules/viescolaire/competences/state/devoirs';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
