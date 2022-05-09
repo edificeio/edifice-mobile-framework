@@ -80,21 +80,20 @@ export interface NamedSVGProps extends SvgProps {
 
 export const NamedSVG = ({ name, ...rest }: NamedSVGProps): JSX.Element | null => {
   const ImportedSVGRef = useRef<any>();
-  const [loading, setLoading] = React.useState(false);
+  const [loaded, setLoaded] = React.useState(false);
   useEffect((): void => {
-    setLoading(true);
     const importSVG = async (): Promise<void> => {
       try {
         ImportedSVGRef.current = (await imports[name]).default;
       } catch (err) {
         throw err;
       } finally {
-        setLoading(false);
+        setLoaded(true);
       }
     };
-    importSVG();
-  }, [name]);
-  if (!loading && ImportedSVGRef.current) {
+    if (!loaded) importSVG();
+  }, [name, loaded]);
+  if (loaded && ImportedSVGRef.current) {
     const { current: ImportedSVG } = ImportedSVGRef;
     return <ImportedSVG {...rest} />;
   }
