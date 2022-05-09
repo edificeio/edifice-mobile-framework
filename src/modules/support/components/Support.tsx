@@ -4,12 +4,83 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, Vie
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 
-import Attachment from './Attachment';
-import { CategoryPicker, EstablishmentPicker, FormInputs, IconButton } from './Items';
-
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
+
+import Attachment from './Attachment';
+import { CategoryPicker, EstablishmentPicker, FormInputs, IconButton } from './Items';
+
+const styles = StyleSheet.create({
+  containerTitle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: CommonStyles.themeOpenEnt.cyan,
+    padding: 10,
+  },
+  textTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  textMobileOnly: {
+    color: 'grey',
+    fontSize: 15,
+    padding: 10,
+  },
+  containerFieldsSelect: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginRight: 10,
+  },
+  textTicketFields: {
+    width: '50%',
+    fontSize: 15,
+    fontWeight: 'bold',
+    padding: 10,
+  },
+  textColor: {
+    color: 'red',
+  },
+  lineSeparator: {
+    marginVertical: 10,
+    width: '100%',
+    borderColor: CommonStyles.extraLightGrey,
+    borderBottomWidth: 1,
+    borderRadius: 1,
+  },
+  buttonTicketRegister: {
+    alignSelf: 'center',
+    bottom: 139,
+    width: '98%',
+    backgroundColor: CommonStyles.secondary,
+    borderRadius: 5,
+    marginTop: 45,
+    padding: 12,
+  },
+  buttonTicketRegisterDisabled: {
+    alignSelf: 'center',
+    bottom: 139,
+    width: '98%',
+    backgroundColor: CommonStyles.fadColor,
+    borderRadius: 5,
+    marginTop: 45,
+    padding: 12,
+  },
+  textButtonTicketRegister: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  overflowHidden: {
+    overflow: 'hidden',
+  },
+  scrollStyle: {
+    flexGrow: 1,
+  },
+  iosBottomMarginView: {
+    height: 200,
+  },
+});
 
 type SupportProps = {
   ticket: ITicket;
@@ -55,7 +126,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
       <>
         <View style={styles.lineSeparator} />
         <Text style={styles.textTicketFields}>
-          <Text style={{ color: 'red' }}>* </Text>
+          <Text style={styles.textColor}>* </Text>
           {I18n.t(fieldTranslation)}
         </Text>
         <FormInputs
@@ -152,11 +223,11 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           behavior="position"
           keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : -120}
           style={styles.overflowHidden}>
-          <ScrollView keyboardShouldPersistTaps="never" contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView keyboardShouldPersistTaps="never" contentContainerStyle={styles.scrollStyle}>
             <Text style={styles.textMobileOnly}>{I18n.t('support-mobile-only')}</Text>
             {this.renderForm()}
             {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
-            <View style={Platform.OS === 'android' ? { height: 200 } : null} />
+            <View style={Platform.OS === 'android' ? styles.iosBottomMarginView : null} />
           </ScrollView>
         </KeyboardAvoidingView>
         {this.renderIOSRegisterButton()}
@@ -165,65 +236,3 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  containerTitle: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: CommonStyles.themeOpenEnt.cyan,
-    padding: 10,
-  },
-  textTitle: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  textMobileOnly: {
-    color: 'grey',
-    fontSize: 15,
-    padding: 10,
-  },
-  containerFieldsSelect: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginRight: 10,
-  },
-  textTicketFields: {
-    width: '50%',
-    fontSize: 15,
-    fontWeight: 'bold',
-    padding: 10,
-  },
-  lineSeparator: {
-    marginVertical: 10,
-    width: '100%',
-    borderColor: CommonStyles.extraLightGrey,
-    borderBottomWidth: 1,
-    borderRadius: 1,
-  },
-  buttonTicketRegister: {
-    alignSelf: 'center',
-    bottom: 139,
-    width: '98%',
-    backgroundColor: CommonStyles.secondary,
-    borderRadius: 5,
-    marginTop: 45,
-    padding: 12,
-  },
-  buttonTicketRegisterDisabled: {
-    alignSelf: 'center',
-    bottom: 139,
-    width: '98%',
-    backgroundColor: CommonStyles.fadColor,
-    borderRadius: 5,
-    marginTop: 45,
-    padding: 12,
-  },
-  textButtonTicketRegister: {
-    color: 'white',
-    textAlign: 'center',
-  },
-  overflowHidden: {
-    overflow: 'hidden',
-  },
-});
