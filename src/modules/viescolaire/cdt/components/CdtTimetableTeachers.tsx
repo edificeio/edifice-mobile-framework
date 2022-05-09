@@ -17,6 +17,9 @@ import { TextBold } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
+  pageContainer: {
+    margin: 5,
+  },
   refreshContainer: {
     height: '100%',
     zIndex: 0,
@@ -45,6 +48,9 @@ const style = StyleSheet.create({
   infoView: {
     paddingHorizontal: 5,
   },
+  classNameText: {
+    fontSize: 20,
+  },
   buttonsView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -62,6 +68,13 @@ const style = StyleSheet.create({
     height: 45,
     marginBottom: 15,
     paddingHorizontal: 10,
+  },
+  sessionIconButton: {
+    paddingRight: 20,
+  },
+  dayHomeworkTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
@@ -84,9 +97,9 @@ const adaptCourses = (courses: ICourse[], homeworks: IHomeworkList, sessions: IS
     .sort((a, b) => moment(a.date).diff(moment(b.date)))
     .map(s => {
       let isSessionPlaced = false as boolean;
-      s['startDate'] = moment(s.date.format('YYYY-MM-DD ') + s.start_time);
-      s['endDate'] = moment(s.date.format('YYYY-MM-DD ') + s.end_time);
-      s['classes'] = [s.audience.name];
+      s.startDate = moment(s.date.format('YYYY-MM-DD ') + s.start_time);
+      s.endDate = moment(s.date.format('YYYY-MM-DD ') + s.end_time);
+      s.classes = [s.audience.name];
       courses.map((c, index) => {
         if (s.course_id === c.id && s.startDate?.isSame(c.startDate) && s.endDate?.isSame(c.endDate)) {
           calendarList[index] = { ...c, session: s };
@@ -118,7 +131,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const isEmpty = !homeworks.length;
     return (
       <View style={style.homeworksToDoContainer}>
-        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+        <Text style={style.dayHomeworkTitle}>
           {I18n.t('viesco-homework')} {homeworks.length > 1 && '(' + homeworks.length + ')'}
         </Text>
         <TouchableOpacity
@@ -165,7 +178,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
       ((course.session && course.session.is_published) || course.calendarType === 'session') && !course.session.is_empty;
     return (
       <TouchableOpacity
-        style={{ paddingRight: 20 }}
+        style={style.sessionIconButton}
         onPress={() => navigation.navigate('SessionPage', sessionListDetailsTeacherAdapter(course.session || course))}
         disabled={!isSessionPublished}>
         <Icon name="insert_drive_file1" size={24} color={isSessionPublished ? '#2BAB6F' : 'lightgrey'} />
@@ -180,7 +193,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
       <View style={style.courseView}>
         <View style={style.subjectView}>
           <View style={!isHalfCourse && style.infoView}>
-            <TextBold style={{ fontSize: 20 }} numberOfLines={1}>
+            <TextBold style={style.classNameText} numberOfLines={1}>
               {className}
             </TextBold>
           </View>
@@ -204,7 +217,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const slotEvents = adaptCourses(courses.data, homeworks.data, sessions.data);
 
     return (
-      <PageContainer style={{ marginTop: 5 }}>
+      <PageContainer style={style.pageContainer}>
         <View style={style.refreshContainer}>
           <View style={style.weekPickerView}>
             <Text>{I18n.t('viesco-edt-week-of')}</Text>

@@ -17,7 +17,7 @@ import HomeworkList from '~/modules/viescolaire/cdt/components/HomeworkList';
 import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
-import { getPersonnelListState, IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
+import { IPersonnelList, getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
 
 type HomeworkListProps = {
   homeworks: any;
@@ -35,7 +35,6 @@ type HomeworkListProps = {
 } & NavigationInjectedProps;
 
 class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps> {
-
   private fetchHomeworks = (startDate, endDate) =>
     getSessionInfo().type === 'Student'
       ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)

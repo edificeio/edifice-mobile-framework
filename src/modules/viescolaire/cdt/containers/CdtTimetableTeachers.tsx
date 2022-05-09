@@ -11,11 +11,11 @@ import { fetchHomeworkListAction } from '~/modules/viescolaire/cdt/actions/homew
 import { fetchSessionListAction } from '~/modules/viescolaire/cdt/actions/sessions';
 import { fetchSlotListAction } from '~/modules/viescolaire/cdt/actions/timeSlots';
 import TeacherCdtTimetable from '~/modules/viescolaire/cdt/components/CdtTimetableTeachers';
-import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
-import { getSessionsListState, ISessionListState } from '~/modules/viescolaire/cdt/state/sessions';
-import { getSlotsListState, ITimeSlotsState } from '~/modules/viescolaire/cdt/state/timeSlots';
+import { IHomeworkListState, getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { ISessionListState, getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
+import { ITimeSlotsState, getSlotsListState } from '~/modules/viescolaire/cdt/state/timeSlots';
 import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/actions/courses';
-import { getCoursesListState, ICourseListState } from '~/modules/viescolaire/viesco/state/courses';
+import { ICourseListState, getCoursesListState } from '~/modules/viescolaire/viesco/state/courses';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
 
 export type TimetableProps = {

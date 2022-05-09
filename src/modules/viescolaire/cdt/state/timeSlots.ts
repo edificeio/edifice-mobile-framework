@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import { AsyncActionTypes, AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
