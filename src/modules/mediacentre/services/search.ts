@@ -3,6 +3,8 @@ import { AdvancedSearchParams, Field } from '~/modules/mediacentre/components/Ad
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 import { Source } from '../utils/Resource';
 
+import { Source } from '../utils/Resource';
+
 const concatResources = (response: any) => {
   let resources: any[] = [];
   for (const res of response) {
