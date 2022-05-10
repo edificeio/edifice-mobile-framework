@@ -7,7 +7,9 @@ import { Source } from '../utils/Resource';
 const concatResources = (response: any) => {
   let resources: any[] = [];
   for (const res of response) {
-    resources = resources.concat(res.data.resources);
+    if (res.data && res.data.resources) {
+      resources = resources.concat(res.data.resources);
+    }
   }
   return resources;
 };
