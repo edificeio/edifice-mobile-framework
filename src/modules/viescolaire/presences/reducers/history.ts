@@ -3,34 +3,34 @@ import { initialState, studentEventsActionsTypes } from '~/modules/viescolaire/p
 
 export default createSessionReducer(initialState, {
   [studentEventsActionsTypes.event]: (state = initialState, action) => {
-    const new_state = { ...state };
-    new_state.lateness = action.data.lateness;
-    new_state.departure = action.data.departure;
-    new_state.regularized = action.data.regularized;
-    new_state.unregularized = action.data.unregularized;
-    new_state.no_reason = action.data.no_reason;
-    new_state.isPristine = false;
-    return new_state;
+    const newState = { ...state };
+    newState.lateness = action.data.lateness;
+    newState.departure = action.data.departure;
+    newState.regularized = action.data.regularized;
+    newState.unregularized = action.data.unregularized;
+    newState.no_reason = action.data.no_reason;
+    newState.isPristine = false;
+    return newState;
   },
   [studentEventsActionsTypes.incident]: (state, action) => {
-    const new_state = { ...state };
-    new_state.incidents = action.data.incidents;
-    new_state.punishments = action.data.punishments;
-    new_state.isPristine = false;
-    return new_state;
+    const newState = { ...state };
+    newState.incidents = action.data.incidents;
+    newState.punishments = action.data.punishments;
+    newState.isPristine = false;
+    return newState;
   },
   [studentEventsActionsTypes.notebook]: (state, action) => {
-    const new_state = { ...state };
-    new_state.notebooks = action.data;
-    new_state.isPristine = false;
-    return new_state;
+    const newState = { ...state };
+    newState.notebooks = action.data;
+    newState.isPristine = false;
+    return newState;
   },
   [studentEventsActionsTypes.clear]: () => {
     return initialState;
   },
   [studentEventsActionsTypes.error]: (state, action) => {
-    const new_state = { ...state };
-    new_state.error = action.data;
-    return new_state;
+    const newState = { ...state };
+    newState.error = action.data;
+    return newState;
   },
 });

@@ -10,6 +10,8 @@ import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   itemContainer: { flex: 1, padding: 0 },
+  itemContainerOpacityFull: { opacity: 1 },
+  itemContainerOpacityScaledDown: { opacity: 0.4 },
   imageBackgroundContainer: { flex: 1, overflow: 'hidden' },
   imageBackground: {
     height: '100%',
@@ -20,6 +22,9 @@ const styles = StyleSheet.create({
     left: '30%',
   },
   itemContent: { flex: 1, padding: 15, justifyContent: 'space-evenly' },
+  itemRowStyle: { flexDirection: 'row' },
+  iconMarginRight: { marginRight: 10 },
+  itemClassGroupText: { fontSize: 20 },
 });
 
 export default ({
@@ -37,7 +42,7 @@ export default ({
     shadow={isCourseNow}
     disabled={!isCourseEditable}
     onPress={onPress}
-    style={[styles.itemContainer, { opacity: isCourseNow ? 1 : 0.4 }]}
+    style={[styles.itemContainer, isCourseNow ? styles.itemContainerOpacityFull : styles.itemContainerOpacityScaledDown]}
     color={isCourseEditable ? '#FFB600' : 'dimgrey'}>
     <ImageBackground
       source={isCourseEditable ? require('ASSETS/viesco/presences.png') : require('ASSETS/viesco/presence_gris.png')}
@@ -45,17 +50,17 @@ export default ({
       imageStyle={styles.imageBackground}
       resizeMode="contain">
       <View style={styles.itemContent}>
-        <View style={{ flexDirection: 'row' }}>
-          <Icon style={{ marginRight: 10 }} size={20} name="access_time" />
+        <View style={styles.itemRowStyle}>
+          <Icon style={styles.iconMarginRight} size={20} name="access_time" />
           <Text>
             {moment(item.startDate).format('LT')} - {moment(item.endDate).format('LT')}
           </Text>
         </View>
-        <TextBold style={{ fontSize: 20 }}>{item.classes[0] !== undefined ? item.classes : item.groups}</TextBold>
+        <TextBold style={styles.itemClassGroupText}>{item.classes[0] !== undefined ? item.classes : item.groups}</TextBold>
 
         {item.roomLabels[0] !== '' && (
-          <View style={{ flexDirection: 'row' }}>
-            <Icon style={{ marginRight: 10 }} size={20} name="pin_drop" />
+          <View style={styles.itemRowStyle}>
+            <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
             <Text>
               {I18n.t('viesco-room')} {item.roomLabels}
             </Text>

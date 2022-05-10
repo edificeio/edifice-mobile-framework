@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import { createSessionAsyncReducer } from '~/infra/redux/async2';
 import { actionTypes as registerActionTypes } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
-import { initialState, actionTypes } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { actionTypes, initialState } from '~/modules/viescolaire/presences/state/teacherCourses';
 
 export default createSessionAsyncReducer(initialState, actionTypes, {
   [actionTypes.receipt]: (data, action) => action.data.sort((a, b) => moment(a.startDate).diff(moment(b.startDate))),

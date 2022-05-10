@@ -14,7 +14,7 @@ import { getCoursesListState } from '~/modules/viescolaire/presences/state/teach
 class CallSheet extends React.PureComponent<any> {
   public render() {
     const courseInfos = this.props.navigation.state.params.courseInfos;
-    const course = this.props.courses.find(course => course.id === courseInfos.id && course.registerId === courseInfos.registerId);
+    const course = this.props.courses.find(elem => elem.id === courseInfos.id && elem.registerId === courseInfos.registerId);
 
     return (
       <PageView

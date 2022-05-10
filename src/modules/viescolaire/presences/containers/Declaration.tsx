@@ -5,8 +5,8 @@ import { Asset } from 'react-native-image-picker';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { PageView } from '~/framework/components/page';
 
+import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';

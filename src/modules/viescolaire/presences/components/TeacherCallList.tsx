@@ -10,6 +10,62 @@ import { TextBold } from '~/ui/Typography';
 
 import CourseComponent from './CourseComponent';
 
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 8,
+    paddingHorizontal: 27,
+    flex: 1,
+  },
+  dateText: {
+    fontSize: 15,
+    marginBottom: 10,
+  },
+  renderContainer: {
+    flex: 1,
+    justifyContent: 'space-evenly',
+  },
+  noCallText: {
+    alignSelf: 'center',
+    fontSize: 15,
+    color: 'grey',
+  },
+  noCallChip: {
+    alignSelf: 'center',
+    height: 18,
+    width: 60,
+    borderRadius: 10,
+  },
+  absentColor: { backgroundColor: '#E61610' },
+  presentColor: { backgroundColor: '#FFB600' },
+  carouselContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  carouselPagination: {
+    position: 'absolute',
+    bottom: -50,
+  },
+  carouselFooter: {
+    height: 80,
+  },
+  carouselDot: {
+    backgroundColor: 'rgba(0,0,0,.1)',
+    width: 10,
+    height: 10,
+    borderRadius: 4,
+    marginHorizontal: 10,
+    marginTop: 3,
+    marginBottom: 3,
+  },
+  carouselActiveDot: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#FFB600',
+  },
+});
+
 interface ICallListProps {
   courseList: ICourses[];
   isFetching: boolean;
@@ -61,19 +117,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   }
 
   private setCarouselDotStyle = () => {
-    return (
-      <View
-        style={{
-          backgroundColor: 'rgba(0,0,0,.1)',
-          width: 10,
-          height: 10,
-          borderRadius: 4,
-          marginHorizontal: 10,
-          marginTop: 3,
-          marginBottom: 3,
-        }}
-      />
-    );
+    return <View style={styles.carouselDot} />;
   };
 
   private Carousel = () => {
@@ -94,18 +138,18 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
 
     return (
       <>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.carouselContainer}>
           <Swiper
             automaticallyAdjustContentInsets
             horizontal
             index={this.state.currentIndex}
-            paginationStyle={{ position: 'absolute', bottom: -50 }}
+            paginationStyle={styles.carouselPagination}
             dot={this.setCarouselDotStyle()}
             activeDotStyle={styles.carouselActiveDot}>
             {courseList.map(item => getCourseCallItem(item))}
           </Swiper>
         </View>
-        <View style={{ height: 80 }} />
+        <View style={styles.carouselFooter} />
       </>
     );
   };
@@ -113,23 +157,18 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   public render() {
     const { isFetching, courseList } = this.props;
     return (
-      <View
-        style={{
-          paddingVertical: 8,
-          paddingHorizontal: 27,
-          flex: 1,
-        }}>
-        <TextBold style={{ fontSize: 15, marginBottom: 10 }}>
+      <View style={styles.container}>
+        <TextBold style={styles.dateText}>
           {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
         </TextBold>
-        <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
+        <View style={styles.renderContainer}>
           {isFetching ? (
             <Loading />
           ) : courseList.length === 0 ? (
             <>
-              <View style={[styles.noCallChip, { backgroundColor: '#E61610' }]} />
+              <View style={[styles.noCallChip, styles.absentColor]} />
               <TextBold style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</TextBold>
-              <View style={[styles.noCallChip, { backgroundColor: '#FFB600' }]} />
+              <View style={[styles.noCallChip, styles.presentColor]} />
             </>
           ) : (
             <this.Carousel />
@@ -139,23 +178,3 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
     );
   }
 }
-
-const styles = StyleSheet.create({
-  noCallText: {
-    alignSelf: 'center',
-    fontSize: 15,
-    color: 'grey',
-  },
-  noCallChip: {
-    alignSelf: 'center',
-    height: 18,
-    width: 60,
-    borderRadius: 10,
-  },
-  carouselActiveDot: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#FFB600',
-  },
-});

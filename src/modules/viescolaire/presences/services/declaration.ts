@@ -24,7 +24,7 @@ export const absenceDeclarationService = {
     endDate: moment.Moment,
     studentId: string,
     structureId: string,
-    description: string,
+    descriptionText: string,
     file: LocalFile,
     session: IUserSession,
   ) => {
@@ -39,7 +39,7 @@ export const absenceDeclarationService = {
             end_at: endDate.format('YYYY-MM-DD HH:mm:ss'),
             structure_id: structureId,
             student_id: studentId,
-            description: description,
+            description: descriptionText,
           },
         },
         res => {
