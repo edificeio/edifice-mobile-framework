@@ -178,14 +178,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           navigation={navigation}
           navBarWithBack={this.navBarInfo()}
           onBack={() => {
-            const commentFieldComment = this.commentFieldRef?.current?.getComment();
-            if (commentFieldComment) {
-              this.commentFieldRef?.current?.confirmDiscard(() => {
-                navigation.dispatch(NavigationActions.back());
-              });
-            } else {
-              return true;
-            }
+            this.commentFieldRef?.current?.confirmDiscard(() => {
+              navigation.dispatch(NavigationActions.back());
+            });
           }}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
             <LoadingIndicator />

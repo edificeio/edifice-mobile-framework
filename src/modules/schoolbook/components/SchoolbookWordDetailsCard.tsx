@@ -48,16 +48,12 @@ export interface ISchoolBookWordDetailsCardProps {
   schoolbookWord: IWordReport;
 }
 
-export const SchoolbookWordDetailsCard = ({
-  action,
-  onPublishReply,
-  isPublishingReply,
-  userType,
-  userId,
-  studentId,
-  schoolbookWord,
-}: ISchoolBookWordDetailsCardProps) => {
+const SchoolbookWordDetailsCard = (
+  { action, onPublishReply, isPublishingReply, userType, userId, studentId, schoolbookWord }: ISchoolBookWordDetailsCardProps,
+  ref,
+) => {
   const modalBoxRef: { current: any } = React.createRef();
+  const commentFieldRef: { current: any } = React.createRef();
   const usersTextMaxLines = 1;
   const word = schoolbookWord.word;
   const report = schoolbookWord.report;
@@ -83,6 +79,8 @@ export const SchoolbookWordDetailsCard = ({
     (isParent && isWordAcknowledgedForParent);
   const responses = isStudent ? report[0]?.responses : isParent ? reportByStudentForParent?.responses : undefined;
   const isBottomSheetVisible = isTeacher || (isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent)));
+  const disableReplyEdit = () => commentFieldRef?.current?.setIsEditingFalse();
+  React.useImperativeHandle(ref, () => ({ disableReplyEdit }));
 
   return (
     <>
@@ -173,6 +171,7 @@ export const SchoolbookWordDetailsCard = ({
             keyExtractor={item => item.id.toString()}
             renderItem={({ item, index }) => (
               <CommentField
+                ref={commentFieldRef}
                 index={index}
                 placeholder={I18n.t('common.comment.addReply')}
                 isPublishingComment={isPublishingReply}
@@ -217,3 +216,5 @@ export const SchoolbookWordDetailsCard = ({
     </>
   );
 };
+
+export default React.forwardRef(SchoolbookWordDetailsCard);

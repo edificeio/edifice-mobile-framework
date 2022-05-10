@@ -38,10 +38,10 @@ const CommentField = (props: CommentFieldProps, ref) => {
   const session = useSelector(() => getUserSession());
   const [isEditing, setIsEditing] = React.useState(false);
   const [comment, setComment] = React.useState<string>(props.comment || '');
-  const [commentId, setCommentId] = React.useState<string | undefined>();
   const isUserComment = session.user.id === props.commentAuthorId;
   const isIdleExistingComment = !!props.commentId && !isEditing;
   const isFirstComment = props.index === 0;
+
   const publishComment = () => {
     inputRef.current && inputRef.current.blur();
     props.onPublishComment && props.onPublishComment(comment, props.commentId?.toString());
@@ -51,19 +51,20 @@ const CommentField = (props: CommentFieldProps, ref) => {
     setIsEditing(true);
   };
   const deleteComment = () => {
-    props.onDeleteComment && commentId && props.onDeleteComment(commentId);
+    props.onDeleteComment && props.commentId && props.onDeleteComment(props.commentId?.toString());
   };
+
+  const setIsEditingFalse = () => setIsEditing(false);
   const clearCommentField = () => {
     inputRef.current && inputRef.current.clear();
     setComment('');
-    setCommentId(undefined);
   };
   const confirmDiscard = (quitCallback?: Function, continueCallback?: Function) => {
-    if (!props.isPublishingComment && !alertDisplayed && comment) {
+    if (comment && !props.isPublishingComment && !alertDisplayed) {
       alertDisplayed = true; //  Due to Alert + Keyboard bug, we need to set a flag when Alert is displayed
       Alert.alert(
-        I18n.t(`common.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
-        I18n.t(`common.comment.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
+        I18n.t(`common.confirmationUnsaved${props.commentId ? 'Modification' : 'Publication'}`),
+        I18n.t(`common.comment.confirmationUnsaved${props.commentId ? 'Modification' : 'Publication'}`),
         [
           {
             text: I18n.t('common.quit'),
@@ -87,10 +88,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
       );
     }
   };
-  const getComment = () => {
-    return comment;
-  };
-  React.useImperativeHandle(ref, () => ({ clearCommentField, confirmDiscard, getComment }));
+  React.useImperativeHandle(ref, () => ({ clearCommentField, confirmDiscard, setIsEditingFalse }));
 
   return (
     <View
@@ -108,7 +106,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <SingleAvatar size={isIdleExistingComment ? 24 : 36} userId={props.commentAuthorId || session.user.id} />
         {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
           <>
-            <TextSemiBold style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.medium }}>
+            <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.medium, flexShrink: 1 }}>
               {props.commentAuthor}
             </TextSemiBold>
             <TextItalic style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, color: theme.greyPalette.graphite }}>

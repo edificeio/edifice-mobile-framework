@@ -18,7 +18,7 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
 
-import { SchoolbookWordDetailsCard } from '../components/SchoolbookWordDetailsCard';
+import SchoolbookWordDetailsCard from '../components/SchoolbookWordDetailsCard';
 import { IWordReport } from '../reducer';
 import { getSchoolbookWorkflowInformation } from '../rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '../service';
@@ -219,9 +219,11 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
 
   // SCHOOLBOOK WORD DETAILS =========================================================================
 
+  const detailsCardRef: { current: any } = React.createRef();
   const renderSchoolbookWordDetails = () => {
     return (
       <SchoolbookWordDetailsCard
+        ref={detailsCardRef}
         action={() => (isTeacher ? openSchoolbookWordReport() : isParent ? acknowledgeSchoolbookWord() : undefined)}
         userType={userType}
         userId={userId}
