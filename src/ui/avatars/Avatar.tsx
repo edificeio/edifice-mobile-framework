@@ -1,9 +1,13 @@
 import styled from '@emotion/native';
 import * as React from 'react';
-import { Image, ImageProps, ImageURISource } from 'react-native';
+import { ImageProps, ImageURISource } from 'react-native';
+import FastImage from 'react-native-fast-image';
+
+
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Connection } from '~/infra/Connection';
+
 
 export enum Size {
   aligned,
@@ -16,14 +20,14 @@ const StyledImage = {
   borderWidth: 1,
 };
 
-const LargeImage = styled(Image)({
+const LargeImage = styled(FastImage)({
   ...StyledImage,
   borderRadius: 24,
   height: 45,
   width: 45,
 });
 
-const MediumImage = styled(Image)({
+const MediumImage = styled(FastImage)({
   ...StyledImage,
   borderRadius: 16,
   height: 35,
@@ -67,14 +71,14 @@ const MediumContainer = styled.View({
   backgroundColor: '#EEEEEE',
 });
 
-const AlignedImage = styled(Image)({
+const AlignedImage = styled(FastImage)({
   ...StyledImage,
   borderRadius: 16,
   height: 29,
   width: 29,
 });
 
-const VeryLargeImage = styled(Image)<{ decorate: boolean }>(
+const VeryLargeImage = styled(FastImage)<{decorate: boolean}>(
   {
     ...StyledImage,
     alignSelf: 'center',
@@ -88,7 +92,7 @@ const VeryLargeImage = styled(Image)<{ decorate: boolean }>(
   }),
 );
 
-const SmallImage = styled(Image)<{ count: number }>(
+const SmallImage = styled(FastImage)<{count: number}>(
   {
     borderColor: 'white',
     borderWidth: 1,
@@ -100,7 +104,7 @@ const SmallImage = styled(Image)<{ count: number }>(
   }),
 );
 
-const SmallContainer = styled.View<{ count: number; index: number }>(
+const SmallContainer = styled.View<{count: number, index: number}>(
   {
     position: 'absolute',
     backgroundColor: '#EEEEEE',
