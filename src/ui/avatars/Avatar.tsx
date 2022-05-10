@@ -3,11 +3,15 @@ import * as React from 'react';
 import { ImageProps, ImageURISource } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { getUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
 
+const getSelfAvatarUniqueKey = () => Date.now();
+let selfAvatarUniqueKey = getSelfAvatarUniqueKey();
+export const refreshSelfAvatarUniqueKey = () => {
+  selfAvatarUniqueKey = getSelfAvatarUniqueKey();
+};
 
 export enum Size {
   aligned,
@@ -78,7 +82,7 @@ const AlignedImage = styled(FastImage)({
   width: 29,
 });
 
-const VeryLargeImage = styled(FastImage)<{decorate: boolean}>(
+const VeryLargeImage = styled(FastImage)<{ decorate: boolean }>(
   {
     ...StyledImage,
     alignSelf: 'center',
@@ -92,7 +96,7 @@ const VeryLargeImage = styled(FastImage)<{decorate: boolean}>(
   }),
 );
 
-const SmallImage = styled(FastImage)<{count: number}>(
+const SmallImage = styled(FastImage)<{ count: number }>(
   {
     borderColor: 'white',
     borderWidth: 1,
@@ -104,7 +108,7 @@ const SmallImage = styled(FastImage)<{count: number}>(
   }),
 );
 
-const SmallContainer = styled.View<{count: number, index: number}>(
+const SmallContainer = styled.View<{ count: number; index: number }>(
   {
     position: 'absolute',
     backgroundColor: '#EEEEEE',
@@ -269,7 +273,7 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
         this.setState({ status: 'success' });
       },
     };
-    const source =
+    let source =
       !this.userId && this.props.sourceOrId
         ? (this.props.sourceOrId as ImageURISource)
         : {
@@ -277,33 +281,55 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
               typeof this.userId === 'string' ? this.userId : this.userId!.id
             }?thumbnail=${this.props.size === Size.verylarge ? '150x150' : '100x100'}`,
           };
+    const isSelf = source.uri?.includes(getUserSession().user.id);
+    if (isSelf) {
+      source = {
+        ...source,
+        uri: source.uri + '&uniqId=' + selfAvatarUniqueKey,
+      };
+    }
     //in case of success,initial,loading status...
     if (this.props.size === Size.large || this.count === 1) {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <LargeContainer style={{ width, height: width }}>
-          <LargeImage {...sharedProps} source={source} style={{ width, height: width }} />
+          <LargeImage
+            {...sharedProps}
+            source={source}
+            style={{ width, height: width }}
+            key={isSelf ? selfAvatarUniqueKey : source.uri}
+          />
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <AlignedContainer index={this.props.index}>
-          <AlignedImage {...sharedProps} source={source} />
+          <AlignedImage {...sharedProps} source={source} key={isSelf ? selfAvatarUniqueKey : source.uri} />
         </AlignedContainer>
       );
     } else if (this.props.size === Size.verylarge) {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <VLContainer>
-          <VeryLargeImage {...sharedProps} decorate={this.decorate} source={source} />
+          <VeryLargeImage
+            {...sharedProps}
+            decorate={this.decorate}
+            source={source}
+            key={isSelf ? selfAvatarUniqueKey : source.uri}
+          />
         </VLContainer>
       );
     } else {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
-          <SmallImage {...sharedProps} count={this.props.count || 1} source={source} />
+          <SmallImage
+            {...sharedProps}
+            count={this.props.count || 1}
+            source={source}
+            key={isSelf ? selfAvatarUniqueKey : source.uri}
+          />
         </SmallContainer>
       );
     }
