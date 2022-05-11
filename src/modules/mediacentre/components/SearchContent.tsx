@@ -105,7 +105,7 @@ const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
       <TextBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</TextBold>
-      <Text> {props.field.value}</Text>
+      <Text numberOfLines={1}> {props.field.value}</Text>
     </View>
   ) : null;
 
@@ -120,7 +120,7 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
         {props.params.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
         {props.params.sources.Signets ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
-      <DialogButtonOk style={styles.cancelButton} label={I18n.t('mediacentre.cancel-search')} onPress={props.onCancelSearch} />
+      <DialogButtonOk style={styles.cancelButton} label={I18n.t('common.cancel')} onPress={props.onCancelSearch} />
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>
@@ -156,20 +156,15 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
     setActiveFilters(activeFilters);
     filterResources();
   };
-  const getSources = () => {
-    if (props.searchState === SearchState.SIMPLE) {
-      return {
-        GAR: props.resources.some(resource => resource.source === Source.GAR),
-        Moodle: props.resources.some(resource => resource.source === Source.Moodle),
-        PMB: props.resources.some(resource => resource.source === Source.PMB),
-        Signets: props.resources.some(resource => resource.source === Source.Signet),
-      };
-    }
-    return props.params.sources;
+  const sources = {
+    GAR: props.resources.some(resource => resource.source === Source.GAR),
+    Moodle: props.resources.some(resource => resource.source === Source.Moodle),
+    PMB: props.resources.some(resource => resource.source === Source.PMB),
+    Signets: props.resources.some(resource => resource.source === Source.Signet),
   };
   return (
     <View style={styles.mainContainer}>
-      <SearchParams {...props} params={{ ...props.params, sources: getSources() }} />
+      <SearchParams {...props} params={{ ...props.params, sources }} />
       <FlatList
         data={isFiltering ? filteredResources : props.resources}
         renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}

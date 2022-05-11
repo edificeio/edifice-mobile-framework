@@ -147,9 +147,11 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
       <View style={styles.gridMainContainer}>
         <View style={styles.gridHeaderContainer}>
           <TextBold style={styles.gridTitleText}>{gridProps.title.toLocaleUpperCase()}</TextBold>
-          <TouchableOpacity onPress={showResources}>
-            <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
-          </TouchableOpacity>
+          {gridProps.resources.length > 4 ? (
+            <TouchableOpacity onPress={showResources}>
+              <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
         <GridList
           data={gridProps.resources.slice(0, 4)}

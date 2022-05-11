@@ -21,7 +21,12 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  iconContainer: {
+    marginRight: 10,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -150,7 +155,8 @@ export const SearchFilter: React.FunctionComponent<SearchFilterProps> = (props: 
   return (
     <View style={[styles.mainContainer, props.containerStyle]}>
       <TouchableOpacity style={styles.titleContainer} onPress={expand}>
-        <Text>{I18n.t('mediacentre.filter-search').toUpperCase()}</Text>
+        <Icon name="filter" size={16} style={styles.iconContainer} />
+        <Text>{I18n.t('mediacentre.filter').toUpperCase()}</Text>
       </TouchableOpacity>
       {expanded ? (
         <FlatList
