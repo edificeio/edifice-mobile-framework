@@ -3,7 +3,7 @@ import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const screenDimensions = Dimensions.get('window');
 const standardScreen = { height: 667, width: 375 }; // iPhone 8
-const responsiveSpacing = (value: number) => Math.max(Math.round((value * screenDimensions.width) / standardScreen.width), 1.25);
+const responsiveSpacing = (value: number) => Math.round(svalue * Math.max(screenDimensions.width / standardScreen.width, 1.5));
 
 export const UI_ANIMATIONS = {
   fade: {
