@@ -4,12 +4,12 @@ import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { IGroupList } from '~/modules/viescolaire/viesco/state/group';
 
 // Data type of what is given by the backend.
-export type IGroupListBackend = Array<{
+export type IGroupListBackend = {
   id_classe: string;
   id_groups: string[];
   name_classe: string;
   name_groups: string[];
-}>;
+}[];
 
 const groupListAdapter: (data: IGroupListBackend) => IGroupList = data => {
   let result = [] as IGroupList;

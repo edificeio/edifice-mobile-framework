@@ -2,7 +2,6 @@ import { getSessionInfo } from '~/App';
 import viescoConfig from '~/modules/viescolaire/moduleConfig';
 import userConfig from '~/user/config';
 
-
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IChild {
@@ -46,7 +45,7 @@ export const getSelectedChildStructure = (globalState: any) => {
   const infos = getSessionInfo();
   return infos.schools?.find(
     school =>
-      infos.childrenStructure?.find(school => school.children.some(child => child.id === getSelectedChild(globalState).id))
+      infos.childrenStructure?.find(elem => elem.children.some(child => child.id === getSelectedChild(globalState).id))
         ?.structureName === school.name,
   );
 };

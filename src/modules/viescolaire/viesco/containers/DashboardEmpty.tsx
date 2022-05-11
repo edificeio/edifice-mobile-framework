@@ -3,9 +3,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { PageContainer } from '~/ui/ContainerContent';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
 
 class Dashboard extends React.PureComponent<any> {
   public render() {

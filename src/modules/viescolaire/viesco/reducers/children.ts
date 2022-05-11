@@ -1,5 +1,5 @@
 import { createSessionReducer } from '~/infra/redux/reducerFactory';
-import { selectChildActionType, initialState } from '~/modules/viescolaire/viesco/state/children';
+import { initialState, selectChildActionType } from '~/modules/viescolaire/viesco/state/children';
 import { actionTypeLoggedIn } from '~/user/actions/actionTypes/login';
 
 // THE REDUCER ------------------------------------------------------------------------------------

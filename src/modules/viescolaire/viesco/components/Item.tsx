@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, ViewStyle, StyleProp } from 'react-native';
+import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -72,7 +72,7 @@ const ShadowedItem: React.FunctionComponent<ItemProps> = ({ style, ...rest }) =>
  * @param props
  */
 const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
-  const { side, shadow, style, ...rest } = props;
+  const { shadow, style, ...rest } = props;
 
   const ItemComponent = shadow ? ShadowedItem : Item;
 
@@ -89,7 +89,7 @@ const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
     }
   };
 
-  return <ItemComponent style={[getStyleFromSide(side, props.color), style]} {...rest} />;
+  return <ItemComponent style={[getStyleFromSide(props.side, props.color), style]} {...rest} />;
 };
 
 /**

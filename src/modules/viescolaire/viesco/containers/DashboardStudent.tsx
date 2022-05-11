@@ -4,21 +4,21 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { IAuthorizedViescoApps } from './Dashboard';
-
 import { getSessionInfo } from '~/App';
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchHomeworkListAction, updateHomeworkProgressAction } from '~/modules/viescolaire/cdt/actions/homeworks';
-import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { IHomeworkListState, getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
-import { getLevelsListState, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
+import { ILevelsList, getLevelsListState } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { getDevoirListState } from '~/modules/viescolaire/competences/state/devoirs';
 import { fetchPersonnelListAction } from '~/modules/viescolaire/viesco/actions/personnel';
 import { fetchSubjectListAction } from '~/modules/viescolaire/viesco/actions/subjects';
 import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardStudent';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
-import { getUserSession } from '~/framework/util/session';
+
+import { IAuthorizedViescoApps } from './Dashboard';
 
 class Dashboard extends React.PureComponent<{
   authorizedViescoApps: IAuthorizedViescoApps;
@@ -60,7 +60,7 @@ class Dashboard extends React.PureComponent<{
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-const homeworks = getHomeworksListState(state);
+  const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
   const childId = getUserSession().user.id;

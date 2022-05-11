@@ -3,13 +3,13 @@ import * as React from 'react';
 import { NavigationInjectedProps, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 
+import { getSessionInfo } from '~/App';
+import { PageView } from '~/framework/components/page';
+
 import DashboardEmpty from './DashboardEmpty';
 import DashboardRelative from './DashboardRelative';
 import DashboardStudent from './DashboardStudent';
 import DashboardTeacher from './DashboardTeacher';
-
-import { getSessionInfo } from '~/App';
-import { PageView } from '~/framework/components/page';
 
 export type IAuthorizedViescoApps = {
   diary: boolean;

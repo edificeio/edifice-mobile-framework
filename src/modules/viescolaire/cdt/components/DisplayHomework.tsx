@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import { Text, TextBold } from '~/framework/components/text';
-import { homework } from '~/modules/viescolaire/utils/cdt';
+import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -42,8 +42,8 @@ const style = StyleSheet.create({
 });
 
 type IDisplayHomeworkProps = {
-  homework: homework;
-  homeworkList: homework[];
+  homework: Homework;
+  homeworkList: Homework[];
 } & INavigationProps;
 
 type IDisplayHomeworkState = {

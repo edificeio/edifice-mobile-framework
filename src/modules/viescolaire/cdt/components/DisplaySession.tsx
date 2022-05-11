@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
 import { Text, TextBold } from '~/framework/components/text';
-import { session } from '~/modules/viescolaire/utils/cdt';
+import { Session } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -46,8 +46,8 @@ const style = StyleSheet.create({
 });
 
 type IDisplaySessionProps = {
-  session: session;
-  sessionList: session[];
+  session: Session;
+  sessionList: Session[];
 } & INavigationProps;
 
 type IDisplaySessionState = {

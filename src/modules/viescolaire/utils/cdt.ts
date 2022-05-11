@@ -1,13 +1,10 @@
 import moment from 'moment';
 
-
-
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
 import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
 
-
-export type homework = {
+export type Homework = {
   id: string;
   subject: string;
   description: string;
@@ -17,7 +14,7 @@ export type homework = {
   audience?: string;
 };
 
-export type session = {
+export type Session = {
   id: string;
   subject: string;
   date: moment.Moment;
@@ -44,13 +41,13 @@ export const homeworkDetailsAdapter = (homework: IHomework) => {
     due_date: homework.due_date,
     type: homework.type.label,
     created_date: homework.created_date,
-  } as homework;
+  } as Homework;
 };
 
 export const homeworkListDetailsAdapter = (homework: IHomework, homeworkList?: IHomeworkList) => {
   const homeworkDataList = homeworkList as IHomeworkList;
   const homeworksArray = Object.values(homeworkDataList) as IHomework[];
-  const reformatedHomeworkArray = [] as homework[];
+  const reformatedHomeworkArray = [] as Homework[];
   homeworksArray.forEach(item => reformatedHomeworkArray.push(homeworkDetailsAdapter(item)));
   reformatedHomeworkArray.sort(
     (a, b) => moment(a.due_date).diff(moment(b.due_date)) || moment(a.created_date).diff(moment(b.created_date)),
@@ -73,7 +70,7 @@ const homeworkDetailsTeacherAdapter = (homework: IHomework) => {
     type: homework.type.label,
     created_date: homework.created_date,
     audience: homework.audience.name,
-  } as homework;
+  } as Homework;
 };
 
 export const homeworkListDetailsTeacherAdapter = (homeworkList: IHomeworkList | IHomework[], subject: string = '') => {
@@ -84,7 +81,7 @@ export const homeworkListDetailsTeacherAdapter = (homeworkList: IHomeworkList | 
   } else {
     homeworksArray = homeworkList;
   }
-  const reformatedHomeworkArray = [] as homework[];
+  const reformatedHomeworkArray = [] as Homework[];
   homeworksArray.forEach(item => reformatedHomeworkArray.push(homeworkDetailsTeacherAdapter(item)));
 
   return {
@@ -103,11 +100,11 @@ export const sessionDetailsAdapter = (session: ISession, teachersList?: IPersonn
     teacher: teachersList ? getTeacherName(session.teacher_id, teachersList) : null,
     description: session?.description ? session.description : null,
     title: session?.title ? session.title : null,
-  } as session;
+  } as Session;
 };
 
 export const sessionListDetailsAdapter = (session: ISession, teachersList: IPersonnelList, sessionList?: ISession[]) => {
-  const reformatedSessionArray = [] as session[];
+  const reformatedSessionArray = [] as Session[];
   sessionList?.forEach(item => reformatedSessionArray.push(sessionDetailsAdapter(item, teachersList)));
 
   return {
@@ -119,7 +116,7 @@ export const sessionListDetailsAdapter = (session: ISession, teachersList: IPers
 // -- SESSIONS DETAILS FOR TEACHERS ------------------
 
 export const sessionListDetailsTeacherAdapter = (session: ISession) => {
-  const reformatedSessionArray = [sessionDetailsAdapter(session)] as session[];
+  const reformatedSessionArray = [sessionDetailsAdapter(session)] as Session[];
 
   return {
     session: sessionDetailsAdapter(session),

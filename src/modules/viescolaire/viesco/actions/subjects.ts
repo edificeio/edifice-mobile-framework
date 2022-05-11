@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { subjectListService } from '~/modules/viescolaire/viesco/services/subjects';
-import { actionTypes, ISubjectList } from '~/modules/viescolaire/viesco/state/subjects';
+import { ISubjectList, actionTypes } from '~/modules/viescolaire/viesco/state/subjects';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

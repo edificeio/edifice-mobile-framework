@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Text, TextBold } from '~/framework/components/text';
-import { homework } from '~/modules/viescolaire/utils/cdt';
+import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -49,7 +49,7 @@ const style = StyleSheet.create({
 
 type IDisplayListHomeworkProps = {
   subject: string;
-  homeworkList: homework[];
+  homeworkList: Homework[];
 };
 
 export default class DisplayListHomework extends React.PureComponent<IDisplayListHomeworkProps> {

@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 
 import { selectStructureAction } from '~/modules/viescolaire/viesco/actions/structure';
 import StructurePicker from '~/modules/viescolaire/viesco/components/StructurePicker';
-import { getStructuresList, getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
+import { getSelectedStructure, getStructuresList } from '~/modules/viescolaire/viesco/state/structure';
 
 const mapStateToProps: (state: any) => any = state => {
   return {

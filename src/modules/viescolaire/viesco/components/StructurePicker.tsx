@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { IStructure, IStructureArray } from '~/modules/viescolaire/viesco/state/structure';
 import Dropdown from '~/ui/Dropdown';
-import { IStructureArray, IStructure } from '~/modules/viescolaire/viesco/state/structure';
 
 const styles = StyleSheet.create({
   container: {
