@@ -131,6 +131,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }
 
   const ResourcesGrid: React.FunctionComponent<ResourcesGridProps> = (gridProps: ResourcesGridProps) => {
+    const maxSize = sections.length > 1 ? 4 : 8;
     const showResources = () => {
       setSearchedResources(gridProps.resources);
       setSearchState(SearchState.SIMPLE);
@@ -139,14 +140,14 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
       <View style={styles.gridMainContainer}>
         <View style={styles.gridHeaderContainer}>
           <TextBold style={styles.gridTitleText}>{gridProps.title.toLocaleUpperCase()}</TextBold>
-          {gridProps.resources.length > 4 ? (
+          {gridProps.resources.length > maxSize ? (
             <TouchableOpacity onPress={showResources}>
               <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
             </TouchableOpacity>
           ) : null}
         </View>
         <GridList
-          data={gridProps.resources.slice(0, 4)}
+          data={gridProps.resources.slice(0, maxSize)}
           renderItem={({ item }) => <SmallCard {...gridProps} resource={item} />}
           keyExtractor={item => item.uid || item.id}
           gap={10}
