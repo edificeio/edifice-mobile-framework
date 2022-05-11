@@ -161,6 +161,7 @@ const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: Crite
         <TextInput
           defaultValue={props.field.value}
           placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
+          clearButtonMode="always"
           onChangeText={onChangeText}
           style={styles.criteriaInput}
         />

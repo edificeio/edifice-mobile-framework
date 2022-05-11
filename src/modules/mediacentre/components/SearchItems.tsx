@@ -51,15 +51,14 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = (props: Search
   return (
     <View style={styles.searchBarContainer}>
       <TextInput
-        style={styles.searchInput}
-        placeholder={I18n.t('mediacentre.find-resources')}
-        placeholderTextColor="grey"
-        numberOfLines={1}
         defaultValue={value}
+        placeholder={I18n.t('mediacentre.find-resources')}
         returnKeyType="search"
+        clearButtonMode="while-editing"
         onChangeText={text => setValue(text)}
         onSubmitEditing={onSearch}
         ref={props.inputRef}
+        style={styles.searchInput}
       />
     </View>
   );
