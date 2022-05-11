@@ -4,6 +4,7 @@ import { FlatList, Image, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -47,6 +48,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
+  loadingIndicator: {
+    marginTop: '45%',
+  },
   filterContainer: {
     marginHorizontal: 20,
     marginBottom: 15,
@@ -73,6 +77,7 @@ interface SearchParamsProps {
 
 interface SearchContentProps {
   fields: Field[];
+  isFetching: boolean;
   resources: Resource[];
   searchState: SearchState;
 
@@ -168,17 +173,21 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
   return (
     <View style={styles.mainContainer}>
       <SearchParams {...props} sources={sources} />
-      <FlatList
-        data={isFiltering ? filteredResources : props.resources}
-        renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}
-        keyExtractor={item => item.uid || item.id}
-        ListHeaderComponent={
-          props.resources.length ? (
-            <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
-          ) : null
-        }
-        ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
-      />
+      {props.isFetching ? (
+        <LoadingIndicator customStyle={styles.loadingIndicator} />
+      ) : (
+        <FlatList
+          data={isFiltering ? filteredResources : props.resources}
+          renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}
+          keyExtractor={item => item.uid || item.id}
+          ListHeaderComponent={
+            props.resources.length ? (
+              <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
+            ) : null
+          }
+          ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
+        />
+      )}
     </View>
   );
 };

@@ -5,10 +5,11 @@ import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-n
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { Text, TextBold } from '~/framework/components/text';
-import { ISignets } from '~/modules/mediacentre/state/signets';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResourcesState, Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
+import { ISignetsState } from '../state/signets';
 import { AdvancedSearchModal, Field, Sources } from './AdvancedSearchModal';
 import { FavoritesCarousel } from './FavoritesCarousel';
 import { SearchContent } from './SearchContent';
@@ -38,6 +39,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 10,
   },
+  loadingIndicator: {
+    marginTop: '45%',
+  },
 });
 
 export enum SearchState {
@@ -55,13 +59,13 @@ interface ResourcesGridProps {
 }
 
 interface HomePageProps {
-  externals: Resource[];
-  favorites: Resource[];
+  externals: IResourcesState;
+  favorites: IResourcesState;
   navigation: any;
-  search: Resource[];
-  signets: ISignets;
+  search: IResourcesState;
+  signets: ISignetsState;
   sources: string[];
-  textbooks: Resource[];
+  textbooks: IResourcesState;
 
   addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
@@ -77,14 +81,14 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
   const [searchFields, setSearchFields] = useState<Field[]>([]);
   const sections = [
-    { title: 'mediacentre.external-resources', resources: props.externals },
-    { title: 'mediacentre.my-textbooks', resources: props.textbooks },
-    { title: 'mediacentre.my-signets', resources: props.signets.sharedSignets },
-    { title: 'mediacentre.orientation-signets', resources: props.signets.orientationSignets },
+    { title: 'mediacentre.external-resources', resources: props.externals.data },
+    { title: 'mediacentre.my-textbooks', resources: props.textbooks.data },
+    { title: 'mediacentre.my-signets', resources: props.signets.data.sharedSignets },
+    { title: 'mediacentre.orientation-signets', resources: props.signets.data.orientationSignets },
   ].filter(section => section.resources.length > 0);
 
   useEffect(() => {
-    setSearchedResources(props.search);
+    setSearchedResources(props.search.data);
   }, [props.search]);
 
   function onSearch(query: string) {
@@ -104,7 +108,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }
 
   function showFavorites() {
-    setSearchedResources(props.favorites);
+    setSearchedResources(props.favorites.data);
     setSearchState(SearchState.SIMPLE);
   }
 
@@ -164,6 +168,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           resources={searchedResources}
           searchState={searchState}
           fields={searchFields}
+          isFetching={props.search.isFetching}
           onCancelSearch={onCancelSearch}
         />
       ) : (
@@ -172,11 +177,17 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           renderItem={({ item }) => <ResourcesGrid {...props} title={I18n.t(item.title)} resources={item.resources} />}
           keyExtractor={item => item.title}
           ListHeaderComponent={
-            props.favorites.length > 0 ? (
-              <FavoritesCarousel {...props} resources={props.favorites} onDisplayAll={showFavorites} />
+            props.favorites.data.length > 0 ? (
+              <FavoritesCarousel {...props} resources={props.favorites.data} onDisplayAll={showFavorites} />
             ) : null
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />}
+          ListEmptyComponent={
+            props.externals.isFetching ? (
+              <LoadingIndicator customStyle={styles.loadingIndicator} />
+            ) : (
+              <EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />
+            )
+          }
         />
       )}
       <AdvancedSearchModal
