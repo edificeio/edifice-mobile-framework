@@ -6,7 +6,6 @@
  */
 import styled from '@emotion/native';
 import { Platform, Text as RNText, TextStyle } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
 
 import theme from '~/app/theme';
 
@@ -65,16 +64,13 @@ export const TextColorStyle = {
   Normal: { color: theme.color.text.regular },
 } as { [key in TextColorStyleKey]: TextStyle };
 
-export const responsiveFontSize = (value: number) => RFValue(value, UI_SIZES.standardScreen.height);
-export const responsiveLineHeight = (value: number) => responsiveFontSize(value + 6);
-export const responsiveStyledLineHeight = (textStyle: TextStyle | undefined) => responsiveLineHeight(textStyle?.fontSize || 14);
+type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'Big' | 'Huge';
 
-export const responsiveStyle = (value: number) => ({
-  fontSize: responsiveFontSize(value),
-  lineHeight: responsiveLineHeight(value),
+const responsiveStyle = (value: number) => ({
+  fontSize: UI_SIZES.getResponsiveFontSize(value),
+  lineHeight: UI_SIZES.getResponsiveLineHeight(value),
 });
 
-type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'Big' | 'Huge';
 export const TextSizeStyle = {
   Tiny: responsiveStyle(10),
   Small: responsiveStyle(12),

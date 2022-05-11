@@ -1,9 +1,19 @@
-import { Dimensions, Platform, StatusBar } from 'react-native';
+import { Dimensions, Platform, StatusBar, TextStyle } from 'react-native';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const screenDimensions = Dimensions.get('window');
-const standardScreen = { height: 667, width: 375 }; // iPhone 8
-const responsiveSpacing = (value: number) => Math.round(svalue * Math.max(screenDimensions.width / standardScreen.width, 1.5));
+const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
+
+const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
+  Math.round(
+    dimension *
+      Math.min(
+        type === 'height'
+          ? screenDimensions.height / standardScreenDimensions.height
+          : screenDimensions.width / standardScreenDimensions.width,
+        1.75,
+      ),
+  );
 
 export const UI_ANIMATIONS = {
   fade: {
@@ -55,19 +65,22 @@ export const UI_SIZES = {
     width: screenDimensions.width,
   },
   spacing: {
-    tiny: responsiveSpacing(2),
-    extraSmall: responsiveSpacing(4),
-    small: responsiveSpacing(6),
-    smallPlus: responsiveSpacing(8),
-    medium: responsiveSpacing(12),
-    mediumPlus: responsiveSpacing(14),
-    large: responsiveSpacing(16),
-    largePlus: responsiveSpacing(22),
-    extraLarge: responsiveSpacing(24),
-    extraLargePlus: responsiveSpacing(36),
-    huge: responsiveSpacing(64),
+    tiny: getScaleDimension(2, 'width'),
+    extraSmall: getScaleDimension(4, 'width'),
+    small: getScaleDimension(6, 'width'),
+    smallPlus: getScaleDimension(8, 'width'),
+    medium: getScaleDimension(12, 'width'),
+    mediumPlus: getScaleDimension(14, 'width'),
+    large: getScaleDimension(16, 'width'),
+    largePlus: getScaleDimension(22, 'width'),
+    extraLarge: getScaleDimension(24, 'width'),
+    extraLargePlus: getScaleDimension(36, 'width'),
+    huge: getScaleDimension(64, 'width'),
   },
-  standardScreen,
+  getResponsiveFontSize: (dimension: number) => getScaleDimension(dimension, 'font'),
+  getResponsiveLineHeight: (dimension: number) => getScaleDimension(dimension + 6, 'height'),
+  getResponsiveStyledLineHeight: (textStyle: TextStyle | undefined = undefined) =>
+    getScaleDimension((textStyle?.fontSize || 14) + 6, 'height'),
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (
