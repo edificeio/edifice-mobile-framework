@@ -1,9 +1,6 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { AdvancedSearchParams, Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
-import { Source } from '../utils/Resource';
-
-import { Source } from '../utils/Resource';
 
 import { Source } from '../utils/Resource';
 
