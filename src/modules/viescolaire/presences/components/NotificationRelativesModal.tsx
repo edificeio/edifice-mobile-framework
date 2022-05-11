@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     marginBottom: 10,
-    fontSize: 20,
+    fontSize: 18,
   },
   modalSubsection: {
     paddingLeft: 15,
@@ -26,6 +26,12 @@ const styles = StyleSheet.create({
   eventTitle: {
     textTransform: 'uppercase',
     color: 'grey',
+  },
+  eventTextContainer: {
+    marginVertical: 2,
+  },
+  eventNestedText: {
+    fontSize: 10,
   },
   modalContainerView: {
     flex: 1,
@@ -73,8 +79,8 @@ const renderChild = (key: string, event) => {
   return (
     <>
       <Text style={styles.eventTitle}>{title}</Text>
-      <Text style={{ marginVertical: 2 }}>
-        <NestedText style={{ color, fontSize: 10 }}>{'\u25A0 '}</NestedText>
+      <Text style={styles.eventTextContainer}>
+        <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
         <TextBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</TextBold> -{' '}
         <Text style={{ color }}>{moment(event.start_date).format('hh:mm')}</Text>
         <Text style={{ color }}> - {moment(event.end_date).format('hh:mm')}</Text>
