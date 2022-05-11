@@ -97,27 +97,32 @@ const imports = {
   'schoolbook-outing': import(`../../../../assets/images/schoolbook/outing.svg`),
   'schoolbook-various': import(`../../../../assets/images/schoolbook/various.svg`),
 };
+const importsCache = {};
 
 export interface NamedSVGProps extends SvgProps {
   name: string;
 }
 
 export const NamedSVG = ({ name, ...rest }: NamedSVGProps): JSX.Element | null => {
-  const ImportedSVGRef = useRef<any>();
-  const [loaded, setLoaded] = React.useState(false);
+  const ImportedSVGRef = useRef<any>(importsCache[name]);
+  const [loading, setLoading] = React.useState(false);
   useEffect((): void => {
-    const importSVG = async (): Promise<void> => {
-      try {
-        ImportedSVGRef.current = (await imports[name]).default;
-      } catch (err) {
-        throw err;
-      } finally {
-        setLoaded(true);
-      }
-    };
-    if (!loaded) importSVG();
-  }, [name, loaded]);
-  if (loaded && ImportedSVGRef.current) {
+    if (!importsCache[name]) {
+      setLoading(true);
+      const importSVG = async (): Promise<void> => {
+        try {
+          ImportedSVGRef.current = (await imports[name]).default;
+          importsCache[name] = ImportedSVGRef.current;
+        } catch (err) {
+          throw err;
+        } finally {
+          setLoading(false);
+        }
+      };
+      importSVG();
+    }
+  }, [name]);
+  if (!loading && ImportedSVGRef.current) {
     const { current: ImportedSVG } = ImportedSVGRef;
     return <ImportedSVG {...rest} />;
   }
