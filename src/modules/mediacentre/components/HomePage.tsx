@@ -9,7 +9,7 @@ import { Text, TextBold } from '~/framework/components/text';
 import { ISignets } from '~/modules/mediacentre/state/signets';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
-import { AdvancedSearchModal, AdvancedSearchParams, defaultParams } from './AdvancedSearchModal';
+import { AdvancedSearchModal, Field, Sources } from './AdvancedSearchModal';
 import { FavoritesCarousel } from './FavoritesCarousel';
 import { SearchContent } from './SearchContent';
 import { IconButtonText, SearchBar } from './SearchItems';
@@ -66,7 +66,7 @@ interface HomePageProps {
   addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
   searchResources: (sources: string[], query: string) => any;
-  searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
+  searchResourcesAdvanced: (fields: Field[], sources: Sources) => any;
 }
 
 export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePageProps) => {
@@ -75,7 +75,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
-  const [searchParams, setSearchParams] = useState<AdvancedSearchParams>(defaultParams);
+  const [searchFields, setSearchFields] = useState<Field[]>([]);
   const sections = [
     { title: 'mediacentre.external-resources', resources: props.externals },
     { title: 'mediacentre.my-textbooks', resources: props.textbooks },
@@ -86,18 +86,6 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   useEffect(() => {
     setSearchedResources(props.search);
   }, [props.search]);
-
-  useEffect(() => {
-    setSearchParams({
-      ...searchParams,
-      sources: {
-        GAR: props.sources.includes(Source.GAR),
-        Moodle: props.sources.includes(Source.Moodle),
-        PMB: props.sources.includes(Source.PMB),
-        Signets: props.sources.includes(Source.Signet),
-      },
-    });
-  }, [props.sources]);
 
   function onSearch(query: string) {
     props.searchResources(props.sources, query);
@@ -131,11 +119,11 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
     setSearchModalVisible(false);
   }
 
-  function onAdvancedSearch(params: AdvancedSearchParams) {
-    props.searchResourcesAdvanced(params);
+  function onAdvancedSearch(fields: Field[], sources: Sources) {
+    props.searchResourcesAdvanced(fields, sources);
     setSearchModalVisible(false);
     setSearchState(SearchState.ADVANCED);
-    setSearchParams(params);
+    setSearchFields(fields);
   }
 
   const ResourcesGrid: React.FunctionComponent<ResourcesGridProps> = (gridProps: ResourcesGridProps) => {
@@ -175,7 +163,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           {...props}
           resources={searchedResources}
           searchState={searchState}
-          params={searchParams}
+          fields={searchFields}
           onCancelSearch={onCancelSearch}
         />
       ) : (

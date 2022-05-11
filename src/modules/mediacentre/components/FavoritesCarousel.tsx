@@ -28,16 +28,13 @@ const styles = StyleSheet.create({
     color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
-  carouselContainer: {
-    marginVertical: 10,
-  },
   chevronButtonContainer: {
     width: 24,
   },
   cardSlideContainer: {
     width: 135,
-    height: 130,
-    paddingHorizontal: 10,
+    height: 150,
+    padding: 10,
   },
   cardContainer: {
     width: 125,
@@ -159,7 +156,6 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
         itemHeight={styles.cardSlideContainer.height}
         sliderHeight={styles.cardSlideContainer.height}
         inactiveSlideOpacity={1}
-        containerCustomStyle={styles.carouselContainer}
         enableMomentum
         loop
       />

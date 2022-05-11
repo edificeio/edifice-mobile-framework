@@ -14,7 +14,7 @@ import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~
 import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
 import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
 import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
-import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { Field, Sources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { HomePage } from '~/modules/mediacentre/components/HomePage';
 import { getExternalsState } from '~/modules/mediacentre/state/externals';
 import { getFavoritesState } from '~/modules/mediacentre/state/favorites';
@@ -41,7 +41,7 @@ type IHomePageProps = {
   fetchTextbooks: () => any;
   postRemoveFavorite: (id: string, source: Source) => any;
   searchResources: (sources: string[], query: string) => any;
-  searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
+  searchResourcesAdvanced: (fields: Field[], sources: Sources) => any;
 };
 
 type IHomePageState = {
