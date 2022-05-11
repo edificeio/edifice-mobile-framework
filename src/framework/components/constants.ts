@@ -26,6 +26,7 @@ export const UI_SIZES = {
       large: 22,
       largePlus: 36,
       huge: 38,
+      larger: 24,
     },
     width: {
       tiny: 1,
@@ -34,6 +35,7 @@ export const UI_SIZES = {
       large: 22,
       largePlus: 36,
       huge: 38,
+      larger: 24,
     },
   },
   elements: {

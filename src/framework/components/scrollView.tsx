@@ -9,13 +9,15 @@ export interface ScrollViewProps extends RNScrollViewProps {
 
 export default function ScrollView(props: ScrollViewProps) {
   const { bottomInset = true, contentContainerStyle, scrollIndicatorInsets, ...otherProps } = props;
+  const realContentContainerStyle = React.useMemo(() => {
+    return bottomInset ? [{ paddingBottom: UI_SIZES.screen.bottomInset }, contentContainerStyle] : contentContainerStyle;
+  }, [bottomInset, contentContainerStyle]);
   return (
     <RNScrollView
       {...otherProps}
-      contentContainerStyle={
-        bottomInset ? [{ paddingBottom: UI_SIZES.screen.bottomInset }, contentContainerStyle] : contentContainerStyle
-      }
-      scrollIndicatorInsets={scrollIndicatorInsets || { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
+      contentContainerStyle={realContentContainerStyle}
+      scrollIndicatorInsets={scrollIndicatorInsets || ScrollView.scrollIndicatorInsets} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
     />
   );
 }
+ScrollView.scrollIndicatorInsets = { right: 0.001 };

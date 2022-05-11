@@ -9,13 +9,13 @@ import moduleConfig from '~/modules/pronote/moduleConfig';
 
 import { ICarnetDeBord } from '.';
 
-export type ICarnetDeBord_State_Data = ICarnetDeBord[];
-export type ICarnetDeBord_State = AsyncState<ICarnetDeBord_State_Data>;
+export type ICarnetDeBordStateData = ICarnetDeBord[];
+export type ICarnetDeBordState = AsyncState<ICarnetDeBordStateData>;
 
-const initialState: ICarnetDeBord_State_Data = [];
+const initialState: ICarnetDeBordStateData = [];
 
 export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('CARNET_DE_BORD'));
-export const actions = createAsyncActionCreators<ICarnetDeBord_State_Data>(actionTypes);
+export const actions = createAsyncActionCreators<ICarnetDeBordStateData>(actionTypes);
 
 export default createSessionAsyncReducer(initialState, actionTypes);
 

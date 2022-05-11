@@ -89,3 +89,42 @@ export const findLongestCommonSubstring = function (a: string, b: string) {
   }
   return longest;
 };
+
+/**
+ * Split a string in a given number of lines. Tries to generate homogenous line lengths.
+ * @param input the input string is not modified.
+ * @param nbLines number of lines of the output (>= 1)
+ * @param separator a string or a regex that represent a word separator. MUST HAVE CAPTURING PARENTHESIS if regex given. (\s+ by default)
+ * @param newLine character or string to insert at every line. (\n by default)
+ * @param minLength minimal length of a line
+ * @returns The new string
+ */
+export function splitWords(
+  input: string,
+  nbLines: number,
+  separator: string | RegExp = /(\s+)/g,
+  newLine: string = '\n',
+  minLength: number = 2,
+) {
+  if (nbLines <= 0) throw new Error(`splitWords lines cannot be zero or negatives`);
+  let regex = typeof separator === 'string' ? new RegExp(separator.replace(/([-/\\^$*+?.()|[\]{}])/g, '\\$&')) : separator;
+  if (!regex.global) {
+    regex = new RegExp(regex, 'g');
+  }
+  const lineSize = input.length / nbLines;
+  const words = input.split(regex);
+  console.log('words', words);
+  let output = '';
+  let curLine = 0;
+  let nbReturns = 0;
+  words.forEach(word => {
+    if (curLine + word.length > lineSize && curLine > minLength) {
+      if (nbReturns < nbLines) output += newLine;
+      ++nbReturns;
+      curLine = 0;
+    }
+    output += word;
+    curLine += word.length;
+  });
+  return output;
+}

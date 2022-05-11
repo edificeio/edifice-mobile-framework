@@ -1,16 +1,11 @@
 import { Dispatch } from 'redux';
 
-
-
 import { IGlobalState } from '~/AppStore';
 import { getUserSession } from '~/framework/util/session';
 import { IUserInfoState } from '~/user/state/info';
 
-
-
 import carnetDeBordService, { IChildrenInfo } from '../../service/carnetDeBord';
 import { actions as carnetDeBordAsyncActions } from './reducer';
-
 
 export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState: () => IGlobalState) => {
   try {
@@ -30,7 +25,7 @@ export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState:
           displayName: child.displayName,
           firstName: correspondingChild[1].firstName,
           lastName: correspondingChild[1].lastName,
-        })
+        });
       }
     }
 

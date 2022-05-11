@@ -1,10 +1,15 @@
 import moment from 'moment';
 
+export enum CarnetDeBordSection {
+  CAHIER_DE_TEXTES = 1, // No falsy values in this
+  NOTES,
+  COMPETENCES,
+  VIE_SCOLAIRE,
+}
 
 export type IPronoteConnectorInfo = {
   structureId: string;
   address: string;
-  idPronote: string;
 };
 
 export type IUserBasic = {
@@ -12,53 +17,55 @@ export type IUserBasic = {
   displayName: string;
   firstName: string;
   lastName: string;
+  idPronote: string;
 };
 
 export type ICarnetDeBord = IUserBasic &
   IPronoteConnectorInfo & {
     PageCahierDeTextes: {
       Titre: string;
-      CahierDeTextes?: ICarnetDeBord__CahierDeTextes[];
+      CahierDeTextes?: ICarnetDeBordCahierDeTextes[];
     };
     PageCompetences: {
       Titre: string;
-      Competences?: Array<
-        ICarnetDeBord__Competences_Evaluation | ICarnetDeBord__Competences_Item | ICarnetDeBord__Competences_Domaine
-      >;
+      Competences?: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
     };
     PageReleveDeNotes: {
       Titre: string;
       Message?: string;
-      Devoir?: ICarnetDeBord__ReleveDeNotes_Devoir[];
+      Devoir?: ICarnetDeBordReleveDeNotesDevoir[];
     };
     PageVieScolaire: {
       Titre: string;
-      VieScolaire?: Array<
-        | ICarnetDeBord__VieScolaire_Absence
-        | ICarnetDeBord__VieScolaire_Retard
-        | ICarnetDeBord__VieScolaire_PassageInfirmerie
-        | ICarnetDeBord__VieScolaire_Punition
-        | ICarnetDeBord__VieScolaire_Sanction
-        | ICarnetDeBord__VieScolaire_Observation
-      >;
+      VieScolaire?: (
+        | ICarnetDeBordVieScolaireAbsence
+        | ICarnetDeBordVieScolaireRetard
+        | ICarnetDeBordVieScolairePassageInfirmerie
+        | ICarnetDeBordVieScolairePunition
+        | ICarnetDeBordVieScolaireSanction
+        | ICarnetDeBordVieScolaireObservation
+      )[];
+    };
+    PagePronote?: {
+      [pageName: string]: string;
     };
   };
 
-export type ICarnetDeBord__CahierDeTextes = {
+export type ICarnetDeBordCahierDeTextes = {
   Date: moment.Moment;
   DateString: string;
   Matiere?: string;
-  TravailAFaire?: ICarnetDeBord__CahierDeTextes_TravailAFaire[];
-  ContenuDeCours?: ICarnetDeBord__CahierDeTextes_ContenuDeCours[];
+  TravailAFaire?: ICarnetDeBordCahierDeTextesTravailAFaire[];
+  ContenuDeCours?: ICarnetDeBordCahierDeTextesContenuDeCours[];
 };
-export type ICarnetDeBord__CahierDeTextes_TravailAFaire = {
+export type ICarnetDeBordCahierDeTextesTravailAFaire = {
   Descriptif?: string;
   PourLeString: string;
   PourLe: moment.Moment;
   PieceJointe?: string[];
   SiteInternet?: string[];
 };
-export type ICarnetDeBord__CahierDeTextes_ContenuDeCours = {
+export type ICarnetDeBordCahierDeTextesContenuDeCours = {
   Titre?: string;
   Descriptif?: string;
   Categorie?: string;
@@ -66,7 +73,7 @@ export type ICarnetDeBord__CahierDeTextes_ContenuDeCours = {
   SiteInternet?: string[];
 };
 
-export type ICarnetDeBord__Competences_Item = {
+export type ICarnetDeBordCompetencesItem = {
   type: 'Item';
   Competence?: string;
   Intitule?: string;
@@ -78,13 +85,13 @@ export type ICarnetDeBord__Competences_Item = {
   Date: moment.Moment;
   DateString: string;
 };
-export type ICarnetDeBord__Competences_Evaluation = Omit<ICarnetDeBord__Competences_Item, 'type'> & {
+export type ICarnetDeBordCompetencesEvaluation = Omit<ICarnetDeBordCompetencesItem, 'type'> & {
   type: 'Evaluation';
   Item?: string;
 };
-export type ICarnetDeBord__Competences_Domaine = Omit<ICarnetDeBord__Competences_Item, 'type'> & { type: 'Domaine' };
+export type ICarnetDeBordCompetencesDomaine = Omit<ICarnetDeBordCompetencesItem, 'type'> & { type: 'Domaine' };
 
-export type ICarnetDeBord__ReleveDeNotes_Devoir = {
+export type ICarnetDeBordReleveDeNotesDevoir = {
   Note: string;
   Bareme: string;
   Matiere?: string;
@@ -92,7 +99,7 @@ export type ICarnetDeBord__ReleveDeNotes_Devoir = {
   DateString: string;
 };
 
-export type ICarnetDeBord__VieScolaire_Absence = {
+export type ICarnetDeBordVieScolaireAbsence = {
   type: 'Absence';
   DateDebut: moment.Moment;
   DateDebutString: string;
@@ -102,19 +109,19 @@ export type ICarnetDeBord__VieScolaire_Absence = {
   Justifie: boolean;
   Motif?: string;
 };
-export type ICarnetDeBord__VieScolaire_Retard = {
+export type ICarnetDeBordVieScolaireRetard = {
   type: 'Retard';
   Date: moment.Moment;
   DateString: string;
   Justifie: boolean;
   Motif?: string;
 };
-export type ICarnetDeBord__VieScolaire_PassageInfirmerie = {
+export type ICarnetDeBordVieScolairePassageInfirmerie = {
   type: 'PassageInfirmerie';
   Date: moment.Moment;
   DateString: string;
 };
-export type ICarnetDeBord__VieScolaire_Punition = {
+export type ICarnetDeBordVieScolairePunition = {
   type: 'Punition';
   Date: moment.Moment;
   DateString: string;
@@ -123,7 +130,7 @@ export type ICarnetDeBord__VieScolaire_Punition = {
   Motif?: string;
   Circonstances?: string;
 };
-export type ICarnetDeBord__VieScolaire_Sanction = {
+export type ICarnetDeBordVieScolaireSanction = {
   type: 'Sanction';
   Date: moment.Moment;
   DateString: string;
@@ -132,7 +139,7 @@ export type ICarnetDeBord__VieScolaire_Sanction = {
   Circonstances?: string;
   Duree?: number;
 };
-export type ICarnetDeBord__VieScolaire_Observation = {
+export type ICarnetDeBordVieScolaireObservation = {
   type: 'Observation';
   Date: moment.Moment;
   DateString: string;

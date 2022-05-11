@@ -10,6 +10,26 @@ import React, { useEffect, useRef } from 'react';
 import { SvgProps } from 'react-native-svg';
 
 const imports = {
+  // UI Icons
+  'ui-answer': import(`../../../../assets/icons/uiIcons/answer.svg`),
+  'ui-arrowDown': import(`../../../../assets/icons/uiIcons/arrowDown.svg`),
+  'ui-arrowLeft': import(`../../../../assets/icons/uiIcons/arrowLeft.svg`),
+  'ui-arrowRight': import(`../../../../assets/icons/uiIcons/arrowRight.svg`),
+  'ui-arrowUp': import(`../../../../assets/icons/uiIcons/arrowUp.svg`),
+  'ui-calendar': import(`../../../../assets/icons/uiIcons/calendar.svg`),
+  'ui-close': import(`../../../../assets/icons/uiIcons/close.svg`),
+  'ui-externalLink': import(`../../../../assets/icons/uiIcons/externalLink.svg`),
+  'ui-flag': import(`../../../../assets/icons/uiIcons/flag.svg`),
+  'ui-options': import(`../../../../assets/icons/uiIcons/options.svg`),
+  'ui-rafterDown': import(`../../../../assets/icons/uiIcons/rafterDown.svg`),
+  'ui-rafterLeft': import(`../../../../assets/icons/uiIcons/rafterLeft.svg`),
+  'ui-rafterRight': import(`../../../../assets/icons/uiIcons/rafterRight.svg`),
+  'ui-rafterUp': import(`../../../../assets/icons/uiIcons/rafterUp.svg`),
+  'ui-save': import(`../../../../assets/icons/uiIcons/save.svg`),
+  'ui-send': import(`../../../../assets/icons/uiIcons/send.svg`),
+  'ui-skills': import(`../../../../assets/icons/uiIcons/skills.svg`),
+  'ui-success': import(`../../../../assets/icons/uiIcons/success.svg`),
+  'ui-users': import(`../../../../assets/icons/uiIcons/users.svg`),
   // ModuleIcons
   admin: import(`../../../../assets/icons/moduleIcons/admin.svg`),
   adressBook: import(`../../../../assets/icons/moduleIcons/adressBook.svg`),

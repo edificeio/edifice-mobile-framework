@@ -1,16 +1,16 @@
-import I18n, { placeholder } from 'i18n-js';
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { NavigationInjectedProps } from 'react-navigation';
 
-
-
 import { PageView } from '~/framework/components/page';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
+
 import DropdownSelector from '../components/DropdownSelector';
 
-export interface IConnectorSelectorProps extends NavigationInjectedProps<{
-    connectors: IEntcoreApp[],
-}> {}
+export interface IConnectorSelectorProps
+  extends NavigationInjectedProps<{
+    connectors: IEntcoreApp[];
+  }> {}
 
 class ConnectorSelector extends React.PureComponent<IConnectorSelectorProps> {
   public render() {
@@ -24,14 +24,18 @@ class ConnectorSelector extends React.PureComponent<IConnectorSelectorProps> {
         navBarWithBack={{
           title: I18n.t('Pronote'),
         }}>
-            <DropdownSelector message={I18n.t('pronote.selector.title')} dropDownPickerProps={{
-              items,
-              showTickIcon: false,
-              placeholder: I18n.t('pronote.selector.placeholder')
-            }} button={{
-              text: I18n.t('pronote.selector.action'),
-              url: (v => v ? v as string : 'aaa') // This space is to have a dummy truthy value
-            }}/>
+        <DropdownSelector
+          message={I18n.t('pronote.selector.title')}
+          dropDownPickerProps={{
+            items,
+            showTickIcon: false,
+            placeholder: I18n.t('pronote.selector.placeholder'),
+          }}
+          button={{
+            text: I18n.t('pronote.selector.action'),
+            url: v => (v ? (v as string) : 'aaa'), // This space is to have a dummy truthy value
+          }}
+        />
       </PageView>
     );
   }

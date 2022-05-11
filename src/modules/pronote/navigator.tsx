@@ -1,16 +1,12 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-
-
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-
-
 import CarnetDeBord from './containers/CarnetDeBord';
+import CarnetDeBordDetails from './containers/CarnetDeBordDetails';
 import ConnectorContainer from './containers/ConnectorContainer';
 import ConnectorSelector from './containers/ConnectorSelector';
 import moduleConfig from './moduleConfig';
-
 
 export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => {
   const routes: Parameters<typeof createStackNavigator>['0'] = {};
@@ -23,7 +19,10 @@ export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) 
 
   if (matchingWidgets.length > 0) {
     routes[`${moduleConfig.routeName}/carnetDeBord`] = {
-      screen: CarnetDeBord
+      screen: CarnetDeBord,
+    };
+    routes[`${moduleConfig.routeName}/carnetDeBord/details`] = {
+      screen: CarnetDeBordDetails,
     };
   } else if (matchingApps.length > 1) {
     // Many connectors => show connector select

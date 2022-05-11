@@ -25,12 +25,12 @@ import { UI_SIZES } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
 import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle, remlh } from './text';
 
-const cardPaddingV = 12;
-const cardPaddingH = 16;
-const cardPadding: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: cardPaddingV };
-const cardPaddingEqual: ViewStyle = { paddingHorizontal: 0, paddingVertical: cardPaddingH - cardPaddingV };
-const cardPaddingMerging: ViewStyle = { paddingHorizontal: cardPaddingH, paddingBottom: cardPaddingV };
-const cardPaddingSmall: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: (cardPaddingV * 2) / 3 };
+export const cardPaddingV = 12;
+export const cardPaddingH = 16;
+export const cardPadding: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: cardPaddingV };
+export const cardPaddingEqual: ViewStyle = { paddingHorizontal: 0, paddingVertical: cardPaddingH - cardPaddingV };
+export const cardPaddingMerging: ViewStyle = { paddingHorizontal: cardPaddingH, paddingBottom: cardPaddingV };
+export const cardPaddingSmall: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: (cardPaddingV * 2) / 3 };
 
 const cardStyle: ViewStyle = {
   backgroundColor: theme.color.background.card,
@@ -355,6 +355,7 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
   const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;
   if (picture) {
     if (picture.type === 'Image') picture.resizeMode = 'contain';
+    if (picture.type === 'NamedSvg') picture.fill = theme.color.text.inverse;
   }
   const CC = cardComponent ?? ContentCard;
   return (
@@ -368,7 +369,13 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
               <Picture style={[OverviewCardBase.styles.picture, pictureStyle] as ImageStyle} {...picture} />
             </View>
           ) : null}
-          {title ? typeof title === 'string' ? <ContentCardTitle>{title}</ContentCardTitle> : title : null}
+          {title ? (
+            typeof title === 'string' ? (
+              <ContentCardTitle style={FontStyle.SemiBold}>{title}</ContentCardTitle>
+            ) : (
+              title
+            )
+          ) : null}
         </View>
       }>
       {children}
@@ -377,16 +384,15 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
 }
 OverviewCardBase.styles = StyleSheet.create({
   card: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'stretch',
     ...cardPaddingEqual,
   },
   header: {
     flexDirection: 'row',
   },
   picture: {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
   },
   pictureWrapper: {
     width: 24,
@@ -394,7 +400,7 @@ OverviewCardBase.styles = StyleSheet.create({
     backgroundColor: theme.color.secondary.regular,
     borderRadius: 12,
     overflow: 'hidden',
-    padding: 2,
+    padding: 4,
     marginRight: 8,
   },
 });
@@ -405,7 +411,15 @@ export function TouchableOverviewCard(props: OverviewCardProps & TouchableOpacit
   return (
     <OverviewCardBase
       cardComponent={TouchableContentCard}
-      headerIndicator={<NamedSVG width={24} height={24} name="scrapbook" />}
+      headerIndicator={
+        <NamedSVG
+          key="chevron"
+          width={UI_SIZES.dimensions.width.larger}
+          height={UI_SIZES.dimensions.width.larger} // width again to ensure it's a square !
+          name="ui-rafterRight"
+          fill={theme.color.secondary.regular}
+        />
+      }
       {...props}
     />
   );
