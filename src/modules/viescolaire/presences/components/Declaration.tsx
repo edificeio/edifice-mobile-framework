@@ -4,6 +4,8 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
+
+
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { CommonStyles } from '~/styles/common/styles';
@@ -13,102 +15,6 @@ import DateTimePicker from '~/ui/DateTimePicker';
 import { Text, TextBold } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
 
-const styles = StyleSheet.create({
-  switchContainer: {
-    justifyContent: 'center',
-    padding: 10,
-  },
-  switchPart: {
-    flex: 1,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'lightgrey',
-    padding: 15,
-    justifyContent: 'center',
-  },
-  leftSwitch: {
-    borderBottomLeftRadius: 10,
-    borderTopLeftRadius: 10,
-  },
-  rightSwitch: {
-    borderBottomRightRadius: 10,
-    borderTopRightRadius: 10,
-  },
-  rightSwitchSingle: { flexDirection: 'row' },
-  rightSwitchSingleText: { marginHorizontal: 10 },
-  selected: {
-    backgroundColor: 'white',
-    elevation: CommonStyles.elevation,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-  },
-  row: {
-    marginVertical: 10,
-    justifyContent: 'space-evenly',
-    flexDirection: 'row',
-  },
-  column: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 15,
-    flexGrow: 1,
-    flexBasis: 0,
-  },
-  timePickerContainer: {
-    flex: 1,
-    justifyContent: 'space-evenly',
-    backgroundColor: 'white',
-    alignItems: 'center',
-    margin: 10,
-  },
-  timePickerRender: {
-    borderStyle: 'solid',
-    borderBottomWidth: 2,
-    borderColor: '#FCB602',
-    padding: 10,
-  },
-  timePickerTitleText: {
-    color: '#FCB602',
-    textTransform: 'uppercase',
-  },
-  timePickerDate: {
-    padding: 10,
-    fontSize: 24,
-  },
-  timeContainer: {
-    backgroundColor: 'white',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 30,
-  },
-  inputContainer: {
-    backgroundColor: 'white',
-    flexDirection: 'column',
-    paddingHorizontal: 25,
-    paddingTop: 25,
-  },
-  inputContainerText: { marginBottom: 10 },
-  filePickerStyle: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-  },
-  iconPickerMarginRight: { marginRight: 5 },
-  attachment: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
-    marginLeft: 20,
-  },
-  attachmentNameText: {
-    flex: 1,
-    color: CommonStyles.primary,
-  },
-  iconAttMarginRight: { marginRight: 10 },
-  dialogButtonOk: { alignSelf: 'center' },
-});
 
 type DeclarationProps = {
   startDate: moment.Moment;
@@ -133,6 +39,22 @@ enum SwitchState {
 type DeclarationState = {
   switchState: SwitchState;
 };
+
+interface IIconButtonProps {
+  icon: string;
+  color: string;
+  text: string;
+  onPress: () => void;
+}
+
+const IconButton = ({ icon, color, text, onPress }: IIconButtonProps) => (
+  <View style={styles.gridButtonContainer}>
+    <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>
+      <Icon size={20} color="black" name={icon} />
+      <Text style={styles.gridButtonText}>{text}</Text>
+    </TouchableOpacity>
+  </View>
+);
 
 export default class AbsenceDeclaration extends React.PureComponent<DeclarationProps, DeclarationState> {
   constructor(props) {
@@ -160,12 +82,12 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
     const RightSwitchComponent = () => (
       <TouchableOpacity
-        style={[styles.switchPart, styles.rightSwitch, this.state.switchState === SwitchState.SEVERAL && styles.selected]}
+        style={[styles.switchPart, styles.rightSwitch, this.state.switchState == SwitchState.SEVERAL && styles.selected]}
         onPress={() => this.setState({ switchState: SwitchState.SEVERAL })}>
-        {this.state.switchState === SwitchState.SINGLE ? (
-          <View style={styles.rightSwitchSingle}>
+        {this.state.switchState == SwitchState.SINGLE ? (
+          <View style={{ flexDirection: 'row' }}>
             <Text>{I18n.t('viesco-several-days')}</Text>
-            <TextBold style={styles.rightSwitchSingleText}>+</TextBold>
+            <TextBold style={{ marginHorizontal: 10 }}>+</TextBold>
           </View>
         ) : (
           <View>
@@ -180,7 +102,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
     const LeftSwitchComponent = () => (
       <TouchableOpacity
-        style={[styles.switchPart, styles.leftSwitch, this.state.switchState === SwitchState.SINGLE && styles.selected]}
+        style={[styles.switchPart, styles.leftSwitch, this.state.switchState == SwitchState.SINGLE && styles.selected]}
         onPress={() => this.setState({ switchState: SwitchState.SINGLE })}>
         <Text>{I18n.t('viesco-single-day')}</Text>
         <TextBold>{startDate.format('DD/MM')}</TextBold>
@@ -190,13 +112,25 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     const TimePickerComponent = ({ time, onChange, title }) => (
       <DateTimePicker
         value={time}
-        style={styles.timePickerContainer}
+        style={{
+          flex: 1,
+          justifyContent: 'space-evenly',
+          backgroundColor: 'white',
+          alignItems: 'center',
+          margin: 10,
+        }}
         renderDate={date => (
           <>
-            <View style={styles.timePickerRender}>
-              <Text style={styles.timePickerTitleText}>{title}</Text>
+            <View
+              style={{
+                borderStyle: 'solid',
+                borderBottomWidth: 2,
+                borderColor: '#FCB602',
+                padding: 10,
+              }}>
+              <Text style={{ color: '#FCB602', textTransform: 'uppercase' }}>{title}</Text>
             </View>
-            <TextBold style={styles.timePickerDate}>{date.format('HH    :    mm')}</TextBold>
+            <TextBold style={{ padding: 10, fontSize: 24 }}>{date.format('HH    :    mm')}</TextBold>
           </>
         )}
         mode="time"
@@ -225,10 +159,10 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
     const RenderAttachment = () => (
       <View style={styles.attachment}>
-        <Icon size={20} style={styles.iconAttMarginRight} color={CommonStyles.primary} name="attachment" />
-        <Text style={styles.attachmentNameText}>{this.props.attachment.filename}</Text>
+        <Icon size={20} style={{ margin: 10 }} color={CommonStyles.primary} name="attachment" />
+        <Text style={{ flex: 1, color: CommonStyles.primary }}>{this.props.attachment.filename}</Text>
         <TouchableOpacity onPress={() => this.props.removeAttachment()}>
-          <Icon name="close" style={styles.iconAttMarginRight} color="red" />
+          <Icon name="close" style={{ margin: 10 }} color="red" />
         </TouchableOpacity>
       </View>
     );
@@ -252,7 +186,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
             </View>
 
             <View style={[styles.row, styles.inputContainer]}>
-              <TextBold style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</TextBold>
+              <TextBold style={{ marginBottom: 10 }}>{I18n.t('viesco-absence-motive')}</TextBold>
               <TextInput
                 multiline
                 placeholder={I18n.t('viesco-enter-text')}
@@ -260,15 +194,15 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                 underlineColorAndroid="lightgrey"
                 onChangeText={updateComment}
               />
-              <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
-                <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
+              <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={{ flexDirection: 'row', paddingVertical: 10 }}>
+                <Icon size={20} name="attachment" style={{ marginRight: 5}} />
                 <Text>{I18n.t('viesco-attachment')}</Text>
               </FilePicker>
             </View>
             {attachment && <RenderAttachment />}
 
             <DialogButtonOk
-              style={styles.dialogButtonOk}
+              style={{ alignSelf: 'center' }}
               disabled={!this.props.validate()}
               label={I18n.t('viesco-validate')}
               onPress={submit}
@@ -279,3 +213,80 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     );
   }
 }
+
+const styles = StyleSheet.create({
+  switchContainer: {
+    justifyContent: 'center',
+    padding: 10,
+  },
+  switchPart: {
+    flex: 1,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'lightgrey',
+    padding: 15,
+    justifyContent: 'center',
+  },
+  leftSwitch: {
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  rightSwitch: {
+    borderBottomRightRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  selected: {
+    backgroundColor: 'white',
+    elevation: CommonStyles.elevation,
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius,
+  },
+  row: {
+    marginVertical: 10,
+    justifyContent: 'space-evenly',
+    flexDirection: 'row',
+  },
+  column: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 15,
+    flexGrow: 1,
+    flexBasis: 0,
+  },
+  timeContainer: {
+    backgroundColor: 'white',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: 30,
+  },
+  inputContainer: {
+    backgroundColor: 'white',
+    flexDirection: 'column',
+    paddingHorizontal: 25,
+    paddingTop: 25,
+  },
+  gridButtonContainer: {
+    width: '50%',
+    paddingBottom: 6,
+  },
+  gridButton: {
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+  },
+  gridButtonText: {
+    color: 'black',
+    flex: 1,
+    textAlign: 'center',
+  },
+  attachment: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
+    marginLeft: 20,
+  },
+});

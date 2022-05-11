@@ -26,21 +26,13 @@ interface PresenceCardProps {
   renderItem: (item: any) => React.ReactElement;
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   title: {
     fontSize: 16,
     textTransform: 'uppercase',
     color: 'gray',
   },
-  row: { flexDirection: 'row' },
   leftColumn: { width: '30%', alignItems: 'center' },
-  leftColumnText: { fontSize: 48 },
-  itemContainer: { flex: 1 },
-  itemView: { flex: 1, justifyContent: 'center' },
-  childText: { marginVertical: 2 },
-  childNestedText: { fontSize: 10 },
-  itemText: { alignSelf: 'center', color: 'grey' },
-  itemMoretext: { alignSelf: 'flex-end' },
 });
 
 const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title, elements = [], subNumber, renderItem }) => {
@@ -51,15 +43,15 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
 
   const renderChild = item => {
     return (
-      <Text style={styles.childText}>
-        <NestedText style={[styles.childNestedText, { color }]}>{'\u25A0 '}</NestedText>
+      <Text style={{ marginVertical: 2 }}>
+        <NestedText style={{ color, fontSize: 10 }}>{'\u25A0 '}</NestedText>
         {renderItem(item)}
       </Text>
     );
   };
 
   const renderMore = () => (
-    <Text onPress={() => setExpanded(!expanded)} style={styles.itemMoretext}>
+    <Text onPress={() => setExpanded(!expanded)} style={{ alignSelf: 'flex-end' }}>
       {expanded ? (
         <>
           {I18n.t('seeLess')} <TextBold>-</TextBold>
@@ -74,18 +66,18 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
 
   return (
     <BottomColoredItem shadow color={color}>
-      <Text style={styles.title}>{title}</Text>
-      <View style={styles.row}>
-        <View style={styles.leftColumn}>
-          <NestedTextBold style={styles.leftColumnText}>{numberChildren}</NestedTextBold>
+      <Text style={style.title}>{title}</Text>
+      <View style={{ flexDirection: 'row' }}>
+        <View style={style.leftColumn}>
+          <NestedTextBold style={{ fontSize: 48 }}>{numberChildren}</NestedTextBold>
           {subNumber && <Text>{subNumber}</Text>}
         </View>
-        <View style={styles.itemContainer}>
+        <View style={{ flex: 1 }}>
           {numberChildren !== 0 ? (
             displayedElements.map(renderChild)
           ) : (
-            <View style={styles.itemView}>
-              <Text style={styles.itemText}>{I18n.t('viesco-empty-card')}</Text>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={{ alignSelf: 'center', color: 'grey' }}>{I18n.t('viesco-empty-card')}</Text>
             </View>
           )}
           {numberChildren > 2 && renderMore()}
@@ -198,20 +190,17 @@ export const IncidentCard = ({ elements }) => {
 
 export const PunishmentCard = ({ elements }) => {
   const getPunishmentDate = (punishment: IPunishment) => {
-    const createdDate: string = punishment?.created_at.format('DD/MM/YY');
+    let createdDate: string = punishment?.created_at.format('DD/MM/YY');
     switch (punishment.punishment_category_id) {
-      case 1: {
-        //DUTY
+      case 1: //DUTY
         let dutyDate: string = createdDate;
         if (punishment.delay_at) {
           dutyDate = punishment.delay_at.format('DD/MM/YY');
         }
         return I18n.t('viesco-incidents-punishments-date.for-the') + dutyDate;
-      }
-      case 2: {
-        //DETENTION
+      case 2: //DETENTION
         let startDetentionDate: string = createdDate;
-        let endDetentionDate: string = '';
+        let endDetentionDate: string | undefined = undefined;
         if (punishment.start_date) {
           startDetentionDate = punishment.start_date.format('DD/MM/YY - H:mm');
         }
@@ -221,9 +210,8 @@ export const PunishmentCard = ({ elements }) => {
         return (
           I18n.t('viesco-incidents-punishments-date.for-the') +
           startDetentionDate +
-          (endDetentionDate !== '' ? ' - ' + endDetentionDate : null)
+          (endDetentionDate !== undefined ? ' - ' + endDetentionDate : null)
         );
-      }
       case 3: //BLAME
         return I18n.t('viesco-incidents-punishments-date.created-on') + createdDate;
       case 4: // EXCLUSION

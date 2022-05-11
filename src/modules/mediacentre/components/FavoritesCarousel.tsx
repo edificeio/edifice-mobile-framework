@@ -2,10 +2,12 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Carousel from 'react-native-snap-carousel';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -26,17 +28,16 @@ const styles = StyleSheet.create({
     color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
-  carouselContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
   chevronButtonContainer: {
     width: 24,
   },
+  cardSlideContainer: {
+    width: 135,
+    height: 150,
+    padding: 10,
+  },
   cardContainer: {
-    width: '35%',
+    width: 125,
   },
   coloredContainer: {
     width: 10,
@@ -105,34 +106,32 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     Toast.show(I18n.t('mediacentre.link-copied'));
   };
   return (
-    <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
-      <View style={styles.contentContainer}>
-        <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
-        <Image
-          source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
-          style={styles.imageContainer}
-          resizeMode="contain"
-        />
-        <View style={styles.actionsContainer}>
-          <FavoriteIcon {...props} />
-          <IconButton icon="link" size={20} onPress={copyToClipboard} />
+    <View style={styles.cardSlideContainer}>
+      <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
+        <View style={styles.contentContainer}>
+          <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
+          <Image
+            source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
+            style={styles.imageContainer}
+            resizeMode="contain"
+          />
+          <View style={styles.actionsContainer}>
+            <FavoriteIcon {...props} />
+            <IconButton icon="link" size={20} onPress={copyToClipboard} />
+          </View>
         </View>
-      </View>
-    </TouchCardWithoutPadding>
+      </TouchCardWithoutPadding>
+    </View>
   );
 };
 
 export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> = (props: FavoritesCarouselProps) => {
-  const [index, setIndex] = useState<number>(0);
   const [cardColors, setCardColors] = useState<string[]>(getCardColors(props.resources.length));
-  const decreaseIndex = () => {
-    setIndex(index - 1);
-  };
-  const increaseIndex = () => {
-    setIndex(index + 1);
+  const { width } = UI_SIZES.screen;
+  const renderFavorite = ({ index, item }) => {
+    return <Card {...props} resource={item} color={cardColors[index % cardColors.length]} key={item.uid || item.id} />;
   };
   useEffect(() => {
-    setIndex(0);
     if (props.resources.length > cardColors.length) {
       const difference = props.resources.length - cardColors.length;
       const colors = cardColors.concat(getCardColors(difference));
@@ -143,23 +142,23 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
     <View style={styles.mainContainer}>
       <View style={styles.categoryHeaderContainer}>
         <TextBold>{I18n.t('mediacentre.favorites').toUpperCase()}</TextBold>
-        <TouchableOpacity onPress={props.onDisplayAll}>
-          <Text style={styles.displayText}>{I18n.t('mediacentre.display-all')}</Text>
-        </TouchableOpacity>
+        {props.resources.length > 1 ? (
+          <TouchableOpacity onPress={props.onDisplayAll}>
+            <Text style={styles.displayText}>{I18n.t('mediacentre.display-all')}</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
-      <View style={styles.carouselContainer}>
-        <View style={styles.chevronButtonContainer}>
-          {index > 0 ? <IconButton icon="chevron-left" size={24} color="black" onPress={decreaseIndex} /> : null}
-        </View>
-        {props.resources.slice(index, index + 2).map((item, idx) => {
-          return <Card {...props} resource={item} color={cardColors[index + idx]} key={item.uid || item.id} />;
-        })}
-        <View style={styles.chevronButtonContainer}>
-          {index + 2 < props.resources.length ? (
-            <IconButton icon="chevron-right" size={24} color="black" onPress={increaseIndex} />
-          ) : null}
-        </View>
-      </View>
+      <Carousel
+        data={props.resources}
+        renderItem={renderFavorite}
+        itemWidth={styles.cardSlideContainer.width}
+        sliderWidth={width}
+        itemHeight={styles.cardSlideContainer.height}
+        sliderHeight={styles.cardSlideContainer.height}
+        inactiveSlideOpacity={1}
+        enableMomentum
+        loop
+      />
     </View>
   );
 };
