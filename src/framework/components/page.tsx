@@ -18,6 +18,7 @@ import {
   ScrollView,
   ScrollViewProps,
   StatusBar,
+  StyleSheet,
   View,
   ViewProps,
 } from 'react-native';
@@ -119,9 +120,11 @@ export const KeyboardPageView = (
           overScrollMode="never"
           keyboardShouldPersistTaps="never"
           {...props.scrollViewProps}>
-          <AreaComponent style={{ flexGrow: 1 }}>{children}</AreaComponent>
+          <AreaComponent style={styles.area}>{children}</AreaComponent>
         </InnerViewComponent>
       </KeyboardAvoidingView>
     </PageView>
   );
 };
+
+const styles = StyleSheet.create({ area: { flex: 1 } });

@@ -5,7 +5,7 @@ import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -13,7 +13,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
@@ -161,7 +161,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
       setIsPublishingReply(true);
       if (commentId) {
         await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment);
-        detailsCardRef?.current?.disableReplyEdit();
+        detailsCardRef?.current?.cardSelectedCommentFieldRef()?.setIsEditingFalse();
       } else {
         await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
       }
@@ -271,9 +271,24 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
 
   return (
     <>
-      <PageView navigation={props.navigation} navBarWithBack={navBarInfo}>
+      <KeyboardPageView
+        safeArea={false}
+        navigation={props.navigation}
+        navBarWithBack={navBarInfo}
+        onBack={() => {
+          detailsCardRef?.current?.cardBottomEditorSheetRef()?.doesCommentExist()
+            ? detailsCardRef?.current
+                ?.cardBottomEditorSheetRef()
+                ?.confirmDiscard(() => props.navigation.dispatch(NavigationActions.back()))
+            : detailsCardRef?.current?.cardSelectedCommentFieldRef()?.doesCommentExist() &&
+              !detailsCardRef?.current?.cardSelectedCommentFieldRef()?.isCommentUnchanged()
+            ? detailsCardRef?.current
+                ?.cardSelectedCommentFieldRef()
+                ?.confirmDiscard(() => props.navigation.dispatch(NavigationActions.back()))
+            : props.navigation.dispatch(NavigationActions.back());
+        }}>
         {renderPage()}
-      </PageView>
+      </KeyboardPageView>
       <ActionsMenu onClickOutside={() => setShowMenu(!showMenu)} show={showMenu} data={menuData} />
     </>
   );

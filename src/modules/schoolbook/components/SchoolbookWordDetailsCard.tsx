@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
-import { BottomEditorSheet } from '~/framework/components/BottomEditorSheet';
+import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import ModalBox from '~/framework/components/ModalBox';
 import UserList from '~/framework/components/UserList';
 import { ContentCardHeader, ResourceView } from '~/framework/components/card';
@@ -54,7 +54,10 @@ const SchoolbookWordDetailsCard = (
 ) => {
   const scrollViewRef: { current: any } = React.createRef();
   const modalBoxRef: { current: any } = React.createRef();
-  const commentFieldRef: { current: any } = React.createRef();
+  const commentFieldRefs = React.useRef([]);
+  const bottomEditorSheetRef: { current: any } = React.useRef();
+  const [editedCommentId, setEditedCommentId] = React.useState<string>('');
+
   const usersTextMaxLines = 1;
   const word = schoolbookWord.word;
   const report = schoolbookWord.report;
@@ -82,13 +85,19 @@ const SchoolbookWordDetailsCard = (
     (isParent && isWordAcknowledgedForParent);
   const responses = isStudent ? report[0]?.responses : isParent ? reportByStudentForParent?.responses : undefined;
   const isBottomSheetVisible = isTeacher || (isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent)));
-  const disableReplyEdit = () => commentFieldRef?.current?.setIsEditingFalse();
+
   const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
-  React.useImperativeHandle(ref, () => ({ disableReplyEdit, scrollToEnd }));
+  const cardBottomEditorSheetRef = () => bottomEditorSheetRef?.current;
+  const cardSelectedCommentFieldRef = () => commentFieldRefs[editedCommentId];
+  React.useImperativeHandle(ref, () => ({
+    scrollToEnd,
+    cardBottomEditorSheetRef,
+    cardSelectedCommentFieldRef,
+  }));
 
   return (
     <>
-      <ScrollView ref={scrollViewRef} bottomInset={!isBottomSheetVisible}>
+      <ScrollView keyboardShouldPersistTaps="handled" ref={scrollViewRef} bottomInset={!isBottomSheetVisible}>
         <ResourceView
           style={{
             backgroundColor: theme.color.background.card,
@@ -178,21 +187,29 @@ const SchoolbookWordDetailsCard = (
         {word.reply && responses ? (
           <FlatList
             bottomInset={false}
+            keyboardShouldPersistTaps="handled"
             style={{ marginTop: UI_SIZES.spacing.large }}
             data={responses}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item, index }) => (
               <CommentField
-                ref={commentFieldRef}
+                ref={element => (commentFieldRefs[item.id] = element)}
                 index={index}
-                placeholder={I18n.t('common.comment.addReply')}
                 isPublishingComment={isPublishingReply}
                 onPublishComment={(comment, commentId) => onPublishReply(comment, commentId)}
+                editCommentCallback={() => {
+                  const otherSchoolbookWordResponses = responses?.filter(response => response.id !== item.id);
+                  setEditedCommentId(item.id.toString());
+                  otherSchoolbookWordResponses?.forEach(otherSchoolbookWordResponse => {
+                    commentFieldRefs[otherSchoolbookWordResponse.id]?.setIsEditingFalse();
+                  });
+                }}
                 comment={item.comment}
                 commentId={item.id}
                 commentAuthorId={item.owner}
                 commentAuthor={item.parentName}
                 commentDate={item.modified}
+                isResponse
               />
             )}
           />
@@ -205,9 +222,10 @@ const SchoolbookWordDetailsCard = (
           <BottomButtonSheet text={I18n.t('schoolbook.acknowledge')} action={action} />
         ) : word.reply && !isWordRepliedToForParent ? (
           <BottomEditorSheet
-            placeholder={I18n.t('common.comment.addReply')}
+            ref={bottomEditorSheetRef}
             isPublishingComment={isPublishingReply}
             onPublishComment={comment => onPublishReply(comment)}
+            isResponse
           />
         ) : null
       ) : null}

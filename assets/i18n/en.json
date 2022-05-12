@@ -152,7 +152,7 @@
     "cancel": "Cancel",
     "close": "Close",
     "comment": {
-      "addComment": "Add a comment...",
+      "add": "Add a comment...",
       "comment": "Comment",
       "comments": "Comments",
       "confirmationDelete": "This action is permanent. Are you sure you want to delete the comment?",

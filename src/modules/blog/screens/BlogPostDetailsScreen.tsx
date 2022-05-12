@@ -1,18 +1,7 @@
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  Alert,
-  EmitterSubscription,
-  FlatList,
-  Keyboard,
-  KeyboardAvoidingViewProps,
-  Platform,
-  RefreshControl,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { Alert, EmitterSubscription, FlatList, Keyboard, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -20,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
-import { BottomEditorSheet } from '~/framework/components/BottomEditorSheet';
+import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
 import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
@@ -105,11 +94,14 @@ export enum BlogPostCommentLoadingState {
 export interface IBlogPostDetailsScreenState {
   loadingState: BlogPostDetailsLoadingState;
   publishCommentLoadingState: BlogPostCommentLoadingState;
+  updateCommentLoadingState: BlogPostCommentLoadingState;
   blogInfos: IDisplayedBlog | IBlog | undefined;
   blogPostData: IBlogPost | undefined;
   errorState: boolean;
   showHeaderTitle: boolean;
   showMenu: boolean;
+  isCommentFieldFocused: boolean;
+  editedCommentId: string;
 }
 
 // COMPONENT ======================================================================================
@@ -118,37 +110,33 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   // DECLARATIONS =================================================================================
 
   _titleRef?: React.Ref<any> = undefined;
-  commentFieldRef: { current: any } = React.createRef();
   flatListRef: FlatList | null = null;
-
+  commentFieldRefs = [];
+  bottomEditorSheetRef: { current: any } = React.createRef();
   event: string | null = null;
   showSubscription: EmitterSubscription | undefined;
 
   state: IBlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
     publishCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
+    updateCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
     blogInfos: undefined,
     blogPostData: undefined,
     errorState: false,
     showHeaderTitle: false,
     showMenu: false,
+    isCommentFieldFocused: false,
+    editedCommentId: '',
   };
 
   // RENDER =======================================================================================
 
   render() {
     const { navigation, session } = this.props;
-    const { loadingState, errorState, showMenu, blogPostData, blogInfos } = this.state;
+    const { loadingState, errorState, showMenu, blogPostData, blogInfos, editedCommentId } = this.state;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const isBottomSheetVisible =
       (blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight) || blogPostData?.state === 'SUBMITTED';
-    const keyboardAvoidingViewBehavior = Platform.select({
-      ios: 'padding',
-      android: 'height',
-    }) as KeyboardAvoidingViewProps['behavior'];
-    // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
-    // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
-    const keyboardAvoidingViewVerticalOffset = hasNotch() ? 100 : 76; // Those are "magic" values found by try&error. Seems to be fine on every phone.
     const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
     const blogId = navigation.getParam('blog')?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -178,9 +166,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           navigation={navigation}
           navBarWithBack={this.navBarInfo()}
           onBack={() => {
-            this.commentFieldRef?.current?.confirmDiscard(() => {
-              navigation.dispatch(NavigationActions.back());
-            });
+            this.bottomEditorSheetRef?.current?.doesCommentExist()
+              ? this.bottomEditorSheetRef?.current?.confirmDiscard(() => navigation.dispatch(NavigationActions.back()))
+              : this.commentFieldRefs[editedCommentId]?.doesCommentExist() &&
+                !this.commentFieldRefs[editedCommentId]?.isCommentUnchanged()
+              ? this.commentFieldRefs[editedCommentId]?.confirmDiscard(() => navigation.dispatch(NavigationActions.back()))
+              : navigation.dispatch(NavigationActions.back());
           }}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
             <LoadingIndicator />
@@ -228,7 +219,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   renderContent() {
     const { session } = this.props;
-    const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
+    const { loadingState, publishCommentLoadingState, blogPostData, blogInfos, isCommentFieldFocused } = this.state;
     const blogPostComments = blogPostData?.comments;
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
@@ -238,6 +229,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         <Viewport.Tracker>
           <FlatList
             ref={ref => (this.flatListRef = ref)}
+            keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.page }}
             data={blogPostComments}
             keyExtractor={(item: IBlogPostComment) => item.id.toString()}
@@ -263,11 +255,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           />
         </Viewport.Tracker>
         {blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight ? (
-          <BottomEditorSheet
-            placeholder={I18n.t('common.comment.addComment')}
-            onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
-            isPublishingComment={isPublishingComment}
-          />
+          <View style={{ display: isCommentFieldFocused ? 'none' : 'flex' }}>
+            <BottomEditorSheet
+              ref={this.bottomEditorSheetRef}
+              onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
+              isPublishingComment={isPublishingComment}
+            />
+          </View>
         ) : null}
         {blogPostData?.state === 'SUBMITTED' ? (
           hasPublishBlogPostRight ? (
@@ -378,16 +372,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   renderComment(blogPostComment: IBlogPostComment, index: number) {
     const { session } = this.props;
-    const { blogInfos, publishCommentLoadingState } = this.state;
-    const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
+    const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;
+    const isUpdatingComment = updateCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasUpdateCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
     const hasDeleteCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
     return (
       <CommentField
-        ref={this.commentFieldRef}
+        ref={element => (this.commentFieldRefs[blogPostComment.id] = element)}
         index={index}
-        placeholder={I18n.t('common.comment.addComment')}
-        isPublishingComment={isPublishingComment}
+        isPublishingComment={isUpdatingComment}
         onPublishComment={
           hasUpdateCommentBlogPostRight ? (comment, commentId) => this.doCreateComment(comment, commentId) : undefined
         }
@@ -408,6 +401,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               }
             : undefined
         }
+        editCommentCallback={() => {
+          const blogPostComments = blogPostData?.comments;
+          const otherBlogPostComments = blogPostComments?.filter(comment => comment.id !== blogPostComment.id);
+          this.setState({ editedCommentId: blogPostComment.id });
+          otherBlogPostComments?.forEach(otherBlogPostComment => {
+            this.commentFieldRefs[otherBlogPostComment.id]?.setIsEditingFalse();
+          });
+        }}
         comment={blogPostComment.comment}
         commentId={blogPostComment.id}
         commentAuthorId={blogPostComment.author.userId}
@@ -432,11 +433,17 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       });
     } else this.doInit();
 
-    this.showSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      this.commentFieldRef?.current?.confirmDiscard();
+    this.showSubscription = Keyboard.addListener('keyboardWillShow', () => {
+      const { editedCommentId } = this.state;
+      if (this.commentFieldRefs[editedCommentId]?.isCommentFieldFocused()) this.setState({ isCommentFieldFocused: true });
     });
 
-    // Update notificaion event if any
+    this.showSubscription = Keyboard.addListener('keyboardWillHide', () => {
+      const { editedCommentId } = this.state;
+      if (!this.commentFieldRefs[editedCommentId]?.isCommentFieldFocused()) this.setState({ isCommentFieldFocused: false });
+    });
+
+    // Update notification event if any
     const notification = this.props.navigation?.state?.params?.notification;
     this.event = notification ? notification['event-type'] : null;
   }
@@ -481,15 +488,21 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   async doCreateComment(comment: string, commentId?: string) {
     try {
-      this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
+      commentId
+        ? this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.PUBLISH })
+        : this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
       await this.doCreateBlogPostComment(comment, commentId);
       await this.doGetBlogPostDetails();
       // Note #1: setTimeout is used to wait for the FlatList height to update (after a comment is added).
       // Note #2: scrollToEnd seems to become less precise once there is lots of data.
-      !commentId && setTimeout(() => this.flatListRef?.scrollToEnd(), 1000);
-      this.bottomEditorSheetRef?.current?.clearCommentField();
+      if (!commentId) {
+        this.bottomEditorSheetRef?.current?.clearCommentField();
+        setTimeout(() => this.flatListRef?.scrollToEnd(), 1000);
+      } else this.commentFieldRefs[commentId]?.setIsEditingFalse();
     } finally {
-      this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.DONE });
+      commentId
+        ? this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.DONE })
+        : this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.DONE });
     }
   }
 

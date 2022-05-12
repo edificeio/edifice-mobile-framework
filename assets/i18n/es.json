@@ -152,7 +152,7 @@
     "cancel": "Cancelar",
     "close": "Cerrar",
     "comment": {
-      "addComment": "Agregar un comentario...",
+      "add": "Agregar un comentario...",
       "comment": "Comentario",
       "comments": "Comentarios",
       "confirmationDelete": "Esta acción es irreversible. ¿Está seguro de que desea eliminar el comentario?",
