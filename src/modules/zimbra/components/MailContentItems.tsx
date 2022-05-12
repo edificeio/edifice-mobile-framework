@@ -5,8 +5,6 @@ import { Platform, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import { Text, TextBold } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
@@ -19,258 +17,7 @@ import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Icon } from '~/ui/icons/Icon';
 
-
-
 import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from './MailItem';
-
-
-const User = ({ userId, userName }: { userId: string; userName: string }) => {
-  const [dotColor, setDotColor] = React.useState('white');
-
-  getUserColor(userId).then(setDotColor);
-
-  return (
-    <View style={{ flexDirection: 'row', marginLeft: 5 }} key={userId}>
-      <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
-      <Text>{userName}</Text>
-    </View>
-  );
-};
-
-const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
-  return (
-    <View>
-      {inInbox || (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-from-prefix')}</Text>
-          <User userId={sender} userName={displayNames.find(item => item[0] === sender)[1]} />
-        </View>
-      )}
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.greyColor}>{I18n.t('zimbra-to-prefix')}</Text>
-        <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-          {receivers.map(receiver => (
-            <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
-          ))}
-        </View>
-      </View>
-      {cc && (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-receiversCC')}</Text>
-          <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-            {cc.map(person => (
-              <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
-            ))}
-          </View>
-        </View>
-      )}
-    </View>
-  );
-};
-
-const IconButton = ({ icon, color, text, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.gridButton}>
-      <Text style={styles.gridButtonText}>{text}</Text>
-      <Icon size={12} color={color} name={icon} />
-    </TouchableOpacity>
-  );
-};
-
-const HeaderMailInfos = ({
-  mailInfos,
-  setDetailsVisibility,
-  isDetails,
-}: {
-  mailInfos: any;
-  setDetailsVisibility: (v: boolean) => void;
-  isDetails: boolean;
-}) => {
-  const inOutboxOrDraft = mailInfos.systemFolder === 'OUTBOX' || mailInfos.systemFolder === 'DRAFT';
-  return (
-    <Header>
-      <LeftPanel style={{ justifyContent: 'flex-start' }}>
-        <BadgeAvatar
-          avatars={
-            inOutboxOrDraft
-              ? findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)
-              : findSenderAvatar(mailInfos.from, mailInfos.displayNames)
-          }
-          badgeContent={mailInfos.unread}
-        />
-      </LeftPanel>
-
-      <CenterPanel style={{ marginRight: 5, paddingRight: 0 }}>
-        <Author nb={mailInfos.unread} numberOfLines={1}>
-          {inOutboxOrDraft
-            ? findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
-                .map(r => {
-                  const u = mailInfos.displayNames.find(dn => dn[0] === r);
-                  return u ? u[1] : I18n.t('unknown-user');
-                })
-                .join(', ')
-            : mailInfos.displayNames.find(dn => dn[0] === mailInfos.from)[1]}
-        </Author>
-        <IconButton
-          onPress={setDetailsVisibility}
-          text={I18n.t('zimbra-see_detail')}
-          color="#2A9CC8"
-          icon={!isDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
-        />
-      </CenterPanel>
-      {!isDetails ? (
-        <Text style={{ marginTop: 4 }}>{moment(mailInfos.date).format('LL - LT')}</Text>
-      ) : (
-        <Text style={{ marginTop: 4 }}>{moment(mailInfos.date).format('dddd LL')}</Text>
-      )}
-    </Header>
-  );
-};
-
-// EXPORTED COMPONENTS
-
-export const HeaderMailDetails = ({
-  mailInfos,
-  setDetailsVisibility,
-}: {
-  mailInfos: any;
-  setDetailsVisibility: (v: boolean) => void;
-}) => {
-  const inInbox = mailInfos.systemFolder === 'INBOX';
-  return (
-    <View style={[styles.containerMailDetails, styles.shadow]}>
-      <HeaderMailInfos mailInfos={mailInfos} setDetailsVisibility={() => setDetailsVisibility(false)} isDetails />
-
-      <SendersDetails
-        receivers={mailInfos.to}
-        cc={mailInfos.cc}
-        displayNames={mailInfos.displayNames}
-        inInbox={inInbox}
-        sender={mailInfos.from}
-      />
-
-      {mailInfos.subject && mailInfos.subject.length ? (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
-          <TextBold style={{ flex: 1 }}> {mailInfos.subject}</TextBold>
-        </View>
-      ) : (
-        <View />
-      )}
-    </View>
-  );
-};
-
-export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any; setDetailsVisibility: (v: boolean) => void }) => {
-  return (
-    <View style={styles.containerMail}>
-      <HeaderMailInfos mailInfos={mailInfos} setDetailsVisibility={() => setDetailsVisibility(true)} isDetails={false} />
-
-      {mailInfos.subject && mailInfos.subject.length ? (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
-          <TextBold style={{ flex: 1 }}> {mailInfos.subject}</TextBold>
-        </View>
-      ) : (
-        <View />
-      )}
-    </View>
-  );
-};
-
-export const FooterButton = ({ icon, text, onPress }) => {
-  return (
-    <View
-      style={{
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        marginBottom: 10,
-      }}>
-      <ButtonIcon
-        name={icon}
-        onPress={onPress}
-        style={[{ backgroundColor: 'white' }, styles.shadow]}
-        color="black"
-        colorText="#F4F7F9"
-      />
-      <Text>{text}</Text>
-    </View>
-  );
-};
-
-export const RenderPJs = ({
-  attachments,
-  mailId,
-  onDownload,
-  dispatch,
-}: {
-  attachments: IDistantFile[];
-  mailId: string;
-  onDownload: (att: IDistantFile) => void;
-  dispatch: ThunkDispatch<any, any, any>;
-}) => {
-  const [isVisible, toggleVisible] = React.useState(false);
-  const displayedAttachments = isVisible ? attachments : (attachments.slice(0, 1) as any);
-  return (
-    <View style={[styles.containerMail, { flexDirection: 'column' }]}>
-      {displayedAttachments.map((item, index) => {
-        const df: IDistantFileWithId = {
-          url: `/conversation/message/${mailId}/attachment/${item.id}`,
-          id: item.id,
-          filename: item.filename,
-          filesize: item.size,
-          filetype: item.contentType,
-        };
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-              onDownload(df);
-            }}>
-            <View style={[styles.gridViewStyle, { justifyContent: 'space-between' }]}>
-              <View style={[styles.gridViewStyle, { justifyContent: 'flex-start', flex: 1 }]}>
-                <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
-                <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
-                  {item.filename}
-                </Text>
-              </View>
-
-              <View style={[styles.gridViewStyle, { justifyContent: 'flex-end' }]}>
-                {Platform.OS !== 'ios' ? (
-                  <TouchableOpacity
-                    onPress={async () => {
-                      try {
-                        const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
-                        await sf.mirrorToDownloadFolder();
-                        Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
-                      } catch (e) {
-                        Toast.show(I18n.t('download-error-generic'));
-                      }
-                    }}
-                    style={{ paddingHorizontal: 12, flex: 0 }}>
-                    <Icon name="download" size={18} color="#2A9CC8" />
-                  </TouchableOpacity>
-                ) : null}
-                {index === 0 ? (
-                  <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5 }}>
-                    {attachments.length > 1 && (
-                      <Text style={{ color: '#2A9CC8' }}>
-                        {isVisible ? '-' : '+'}
-                        {attachments.length - 1}
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                ) : (
-                  <View style={{ width: 25, height: 30 }} />
-                )}
-              </View>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-};
 
 // STYLE
 
@@ -324,4 +71,303 @@ const styles = StyleSheet.create({
     shadowRadius: 3.8,
     marginBottom: 10,
   },
+  attachmentContainer: {
+    flexDirection: 'column',
+  },
+  attachmentGridView: {
+    justifyContent: 'space-between',
+  },
+  attachmentGridViewChild: {
+    justifyContent: 'flex-start',
+    flex: 1,
+  },
+  attachmentDownloadContainer: {
+    justifyContent: 'flex-end',
+  },
+  attachmentDownloadButton: {
+    paddingHorizontal: 12,
+    flex: 0,
+  },
+  attachmentListButton: {
+    padding: 5,
+  },
+  attachmentListText: {
+    color: '#2A9CC8',
+  },
+  attachmentEmpty: {
+    width: 25,
+    height: 30,
+  },
+  footerButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    marginBottom: 10,
+  },
+  footerButton: {
+    backgroundColor: 'white',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  fullView: {
+    flex: 1,
+  },
+  headerLeftPanel: {
+    justifyContent: 'flex-start',
+  },
+  headerCenterPanel: {
+    marginRight: 5,
+    paddingRight: 0,
+  },
+  detailsDateText: {
+    marginTop: 4,
+  },
+  sendersContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  userContainer: {
+    flexDirection: 'row',
+    marginLeft: 5,
+  },
 });
+
+// COMPONENTS
+
+const User = ({ userId, userName }: { userId: string; userName: string }) => {
+  const [dotColor, setDotColor] = React.useState('white');
+
+  getUserColor(userId).then(setDotColor);
+
+  return (
+    <View style={styles.userContainer} key={userId}>
+      <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
+      <Text>{userName}</Text>
+    </View>
+  );
+};
+
+const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
+  return (
+    <View>
+      {inInbox || (
+        <View style={styles.row}>
+          <Text style={styles.greyColor}>{I18n.t('zimbra-from-prefix')}</Text>
+          <User userId={sender} userName={displayNames.find(item => item[0] === sender)[1]} />
+        </View>
+      )}
+      <View style={styles.row}>
+        <Text style={styles.greyColor}>{I18n.t('zimbra-to-prefix')}</Text>
+        <View style={styles.sendersContainer}>
+          {receivers.map(receiver => (
+            <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
+          ))}
+        </View>
+      </View>
+      {cc && (
+        <View style={styles.row}>
+          <Text style={styles.greyColor}>{I18n.t('zimbra-receiversCC')}</Text>
+          <View style={styles.sendersContainer}>
+            {cc.map(person => (
+              <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
+            ))}
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
+
+const IconButton = ({ icon, color, text, onPress }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.gridButton}>
+      <Text style={styles.gridButtonText}>{text}</Text>
+      <Icon size={12} color={color} name={icon} />
+    </TouchableOpacity>
+  );
+};
+
+const HeaderMailInfos = ({
+  mailInfos,
+  setDetailsVisibility,
+  isDetails,
+}: {
+  mailInfos: any;
+  setDetailsVisibility: (v: boolean) => void;
+  isDetails: boolean;
+}) => {
+  const inOutboxOrDraft = mailInfos.systemFolder === 'OUTBOX' || mailInfos.systemFolder === 'DRAFT';
+  return (
+    <Header>
+      <LeftPanel style={styles.headerLeftPanel}>
+        <BadgeAvatar
+          avatars={
+            inOutboxOrDraft
+              ? findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)
+              : findSenderAvatar(mailInfos.from, mailInfos.displayNames)
+          }
+          badgeContent={mailInfos.unread}
+        />
+      </LeftPanel>
+
+      <CenterPanel style={styles.headerCenterPanel}>
+        <Author nb={mailInfos.unread} numberOfLines={1}>
+          {inOutboxOrDraft
+            ? findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
+                .map(r => {
+                  const u = mailInfos.displayNames.find(dn => dn[0] === r);
+                  return u ? u[1] : I18n.t('unknown-user');
+                })
+                .join(', ')
+            : mailInfos.displayNames.find(dn => dn[0] === mailInfos.from)[1]}
+        </Author>
+        <IconButton
+          onPress={setDetailsVisibility}
+          text={I18n.t('zimbra-see_detail')}
+          color="#2A9CC8"
+          icon={!isDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
+        />
+      </CenterPanel>
+      {!isDetails ? (
+        <Text style={styles.detailsDateText}>{moment(mailInfos.date).format('LL - LT')}</Text>
+      ) : (
+        <Text style={styles.detailsDateText}>{moment(mailInfos.date).format('dddd LL')}</Text>
+      )}
+    </Header>
+  );
+};
+
+// EXPORTED COMPONENTS
+
+export const HeaderMailDetails = ({
+  mailInfos,
+  setDetailsVisibility,
+}: {
+  mailInfos: any;
+  setDetailsVisibility: (v: boolean) => void;
+}) => {
+  const inInbox = mailInfos.systemFolder === 'INBOX';
+  return (
+    <View style={[styles.containerMailDetails, styles.shadow]}>
+      <HeaderMailInfos mailInfos={mailInfos} setDetailsVisibility={() => setDetailsVisibility(false)} isDetails />
+
+      <SendersDetails
+        receivers={mailInfos.to}
+        cc={mailInfos.cc}
+        displayNames={mailInfos.displayNames}
+        inInbox={inInbox}
+        sender={mailInfos.from}
+      />
+
+      {mailInfos.subject && mailInfos.subject.length ? (
+        <View style={styles.row}>
+          <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
+          <TextBold style={styles.fullView}> {mailInfos.subject}</TextBold>
+        </View>
+      ) : (
+        <View />
+      )}
+    </View>
+  );
+};
+
+export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any; setDetailsVisibility: (v: boolean) => void }) => {
+  return (
+    <View style={styles.containerMail}>
+      <HeaderMailInfos mailInfos={mailInfos} setDetailsVisibility={() => setDetailsVisibility(true)} isDetails={false} />
+
+      {mailInfos.subject && mailInfos.subject.length ? (
+        <View style={styles.row}>
+          <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
+          <TextBold style={styles.fullView}> {mailInfos.subject}</TextBold>
+        </View>
+      ) : (
+        <View />
+      )}
+    </View>
+  );
+};
+
+export const FooterButton = ({ icon, text, onPress }) => {
+  return (
+    <View style={styles.footerButtonContainer}>
+      <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color="black" colorText="#F4F7F9" />
+      <Text>{text}</Text>
+    </View>
+  );
+};
+
+export const RenderPJs = ({
+  attachments,
+  mailId,
+  onDownload,
+  dispatch,
+}: {
+  attachments: IDistantFile[];
+  mailId: string;
+  onDownload: (att: IDistantFile) => void;
+  dispatch: ThunkDispatch<any, any, any>;
+}) => {
+  const [isVisible, toggleVisible] = React.useState(false);
+  const displayedAttachments = isVisible ? attachments : (attachments.slice(0, 1) as any);
+  return (
+    <View style={[styles.containerMail, styles.attachmentContainer]}>
+      {displayedAttachments.map((item, index) => {
+        const df: IDistantFileWithId = {
+          url: `/conversation/message/${mailId}/attachment/${item.id}`,
+          id: item.id,
+          filename: item.filename,
+          filesize: item.size,
+          filetype: item.contentType,
+        };
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
+              onDownload(df);
+            }}>
+            <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
+              <View style={[styles.gridViewStyle, styles.attachmentGridViewChild]}>
+                <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
+                <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
+                  {item.filename}
+                </Text>
+              </View>
+
+              <View style={[styles.gridViewStyle, styles.attachmentDownloadContainer]}>
+                {Platform.OS !== 'ios' ? (
+                  <TouchableOpacity
+                    onPress={async () => {
+                      try {
+                        const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
+                        await sf.mirrorToDownloadFolder();
+                        Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
+                      } catch (e) {
+                        Toast.show(I18n.t('download-error-generic'));
+                      }
+                    }}
+                    style={styles.attachmentDownloadButton}>
+                    <Icon name="download" size={18} color="#2A9CC8" />
+                  </TouchableOpacity>
+                ) : null}
+                {index === 0 ? (
+                  <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={styles.attachmentListButton}>
+                    {attachments.length > 1 && (
+                      <Text style={styles.attachmentListText}>
+                        {isVisible ? '-' : '+'}
+                        {attachments.length - 1}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.attachmentEmpty} />
+                )}
+              </View>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+};

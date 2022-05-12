@@ -1,12 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { withNavigationFocus } from 'react-navigation';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import theme from '~/app/theme';
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
@@ -32,7 +33,27 @@ import { Text } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
 
 import { IInit } from './DrawerMenu';
-import theme from '~/app/theme';
+
+// STYLE
+
+const styles = StyleSheet.create({
+  selectedMailsNumberText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '400',
+  },
+  headerContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  headerIconsSpace: {
+    marginRight: 20,
+  },
+  headerRightIconSpace: {
+    marginRight: 10,
+  },
+});
 
 // ------------------------------------------------------------------------------------------------
 
@@ -315,13 +336,13 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         <FakeHeader_Container style={{ backgroundColor: theme.color.primary.regular }}>
           <FakeHeader_Row>
             <HeaderBackAction onPress={() => this.onUnselectListMails()} />
-            <Text style={{ color: 'white', fontSize: 16, fontWeight: '400' }}>{this.getListSelectedMails().length}</Text>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
+            <View style={styles.headerContainer}>
               <TouchableOpacity onPress={() => this.restoreSelectedMails()}>
-                <Icon name="delete-restore" size={24} color="white" style={{ marginRight: 20 }} />
+                <Icon name="delete-restore" size={24} color="white" style={styles.headerIconsSpace} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.deleteSelectedMails()}>
-                <Icon name="delete" size={24} color="white" style={{ marginRight: 10 }} />
+                <Icon name="delete" size={24} color="white" style={styles.headerRightIconSpace} />
               </TouchableOpacity>
             </View>
           </FakeHeader_Row>
@@ -342,17 +363,17 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         <FakeHeader_Container style={{ backgroundColor: theme.color.primary.regular }}>
           <FakeHeader_Row>
             <HeaderBackAction onPress={() => this.onUnselectListMails()} />
-            <Text style={{ color: 'white', fontSize: 16, fontWeight: '400' }}>{this.getListSelectedMails().length}</Text>
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
+            <View style={styles.headerContainer}>
               <TouchableOpacity onPress={() => this.markSelectedMailsAsUnread()}>
                 {this.checkMailReadState() ? (
-                  <Icon name="email" size={24} color="white" style={{ marginRight: 20 }} />
+                  <Icon name="email" size={24} color="white" style={styles.headerIconsSpace} />
                 ) : (
-                  <Icon name="email-open" size={24} color="white" style={{ marginRight: 20 }} />
+                  <Icon name="email-open" size={24} color="white" style={styles.headerIconsSpace} />
                 )}
               </TouchableOpacity>
               <TouchableOpacity onPress={this.showMenu}>
-                <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
+                <Icon name="more_vert" size={24} color="white" style={styles.headerRightIconSpace} />
               </TouchableOpacity>
             </View>
           </FakeHeader_Row>

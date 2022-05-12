@@ -19,8 +19,21 @@ import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const styles = StyleSheet.create({
-  userLabel: { color: CommonStyles.primary, textAlignVertical: 'center' },
-  scrollField: { maxHeight: 181, flexGrow: 0 },
+  fullView: {
+    flex: 1,
+  },
+  fullGrowVIew: {
+    flexGrow: 1,
+  },
+  userLabel: {
+    color: CommonStyles.primary,
+    textAlignVertical: 'center',
+  },
+  scrollField: {
+    maxHeight: 181,
+    flexGrow: 0,
+    backgroundColor: '#FFFFFF',
+  },
   fieldContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -29,12 +42,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 17,
   },
-  fieldName: {
-    textAlignVertical: 'center',
-    marginRight: 5,
-    marginVertical: 5,
+  pickedUsersButton: {
+    backgroundColor: CommonStyles.primaryLight,
+    borderRadius: 3,
+    padding: 5,
+    maxWidth: '100%',
     marginHorizontal: 3,
-    color: CommonStyles.lightTextColor,
+    marginVertical: 5,
   },
   textInput: {
     flex: 1,
@@ -42,6 +56,23 @@ const styles = StyleSheet.create({
     color: CommonStyles.textColor,
     borderBottomColor: '#EEEEEE',
     borderBottomWidth: 2,
+  },
+  usersArrayContainer: {
+    marginLeft: 40,
+  },
+  userListStyle: {
+    flex: 1,
+    borderTopColor: '#EEEEEE',
+    borderTopWidth: 1,
+  },
+  userLineText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 40,
+    marginLeft: 10,
+  },
+  userRoleDot: {
+    fontSize: 20,
   },
   shadow: {
     backgroundColor: 'white',
@@ -74,14 +105,8 @@ export const rolesDotColor = role => {
 
 const UserLine = ({ id, displayName, name, checked, onPick, onUnpick, isGroup, profile }) => (
   <TouchableOpacity onPress={() => (!checked ? onPick() : onUnpick())}>
-    <Text style={{ flexDirection: 'row', alignItems: 'center', height: 40, marginLeft: 10 }} numberOfLines={1}>
-      <Text
-        style={{
-          color: rolesDotColor(profile),
-          fontSize: 20,
-        }}>
-        {'\u25CF '}
-      </Text>
+    <Text style={styles.userLineText} numberOfLines={1}>
+      <Text style={[styles.userRoleDot, { color: rolesDotColor(profile) }]}>{'\u25CF '}</Text>
       {name || displayName}
     </Text>
   </TouchableOpacity>
@@ -97,7 +122,7 @@ export function UserList(props: {
   return (
     <FlatList
       keyboardShouldPersistTaps="always"
-      style={[styles.shadow, { flex: 1, borderTopColor: '#EEEEEE', borderTopWidth: 1 }]}
+      style={[styles.shadow, styles.userListStyle]}
       data={props.users}
       keyExtractor={(user: IUser) => user.id} //increment in next line
       renderItem={user => (
@@ -118,6 +143,7 @@ export default class SelectMailInfos extends React.Component<
   { searchText: string; subjectText: string; max: number }
 > {
   state = { searchText: '', subjectText: '', max: 20 };
+
   input: any;
 
   public inputRef: any;
@@ -155,7 +181,7 @@ export default class SelectMailInfos extends React.Component<
     const { onUnpickUser, pickedUsers, onHandleInputChange, inputName } = this.props;
     let index = 0;
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.fullView}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <KeyboardAvoidingView
             enabled
@@ -164,23 +190,13 @@ export default class SelectMailInfos extends React.Component<
             <ScrollView
               alwaysBounceVertical={false}
               overScrollMode="never"
-              style={[styles.scrollField, { backgroundColor: '#FFFFFF' }]}
+              style={styles.scrollField}
               ref={r => (this.inputRef = (r as any)?.innerComponent)}>
               <View style={styles.fieldContainer}>
                 {pickedUsers &&
                   pickedUsers.length > 0 &&
                   pickedUsers.map(p => (
-                    <TouchableOpacity
-                      key={'Touchable_' + index++}
-                      onPress={() => onUnpickUser(p)}
-                      style={{
-                        backgroundColor: CommonStyles.primaryLight,
-                        borderRadius: 3,
-                        padding: 5,
-                        maxWidth: '100%',
-                        marginHorizontal: 3,
-                        marginVertical: 5,
-                      }}>
+                    <TouchableOpacity key={'Touchable_' + index++} onPress={() => onUnpickUser(p)} style={styles.pickedUsersButton}>
                       {typeof p === 'string' ? (
                         <Text style={styles.userLabel} numberOfLines={2}>
                           {p}
@@ -201,7 +217,9 @@ export default class SelectMailInfos extends React.Component<
                     this.setState({ searchText: text });
                   }}
                   onKeyPress={({ nativeEvent }) => {
-                    searchText.length === 0 && nativeEvent.key === 'Backspace' && onUnpickUser(pickedUsers[pickedUsers.length - 1]);
+                    if (searchText.length === 0 && nativeEvent.key === 'Backspace') {
+                      onUnpickUser(pickedUsers[pickedUsers.length - 1]);
+                    }
                   }}
                   onSubmitEditing={e => this.addExternalUser(e.nativeEvent.text)}
                 />
@@ -213,8 +231,8 @@ export default class SelectMailInfos extends React.Component<
                 keyboardShouldPersistTaps="always"
                 alwaysBounceVertical={false}
                 overScrollMode="never"
-                contentContainerStyle={{ flexGrow: 1 }}
-                style={{ marginLeft: 40 }}>
+                contentContainerStyle={styles.fullGrowVIew}
+                style={styles.usersArrayContainer}>
                 <UserList
                   selectable
                   users={this.usersArray}

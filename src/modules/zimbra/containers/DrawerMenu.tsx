@@ -7,8 +7,8 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchRootFoldersAction } from '~/modules/zimbra/actions/folders';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import DrawerMenu from '~/modules/zimbra/components/DrawerMenu';
-import { getInitMailListState, IInitMail, IQuota } from '~/modules/zimbra/state/initMails';
-import { getRootFolderListState, IRootFolderList } from '~/modules/zimbra/state/rootFolders';
+import { IInitMail, IQuota, getInitMailListState } from '~/modules/zimbra/state/initMails';
+import { IRootFolderList, getRootFolderListState } from '~/modules/zimbra/state/rootFolders';
 
 export type IRootFolders = {
   data: IRootFolderList;
@@ -48,6 +48,7 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
       quota: { storage: 0, quota: '' },
     };
   }
+
   componentDidMount() {
     this.props.fetchInit();
     this.props.fetchRootFolders();

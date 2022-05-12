@@ -2,7 +2,7 @@ import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -34,6 +34,19 @@ import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature'
 import { DropdownMenu } from '~/ui/DropdownMenu';
 
 import SignatureModal from './SignatureModal';
+
+//STYLE
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+  },
+  navBarHeaders: {
+    alignSelf: 'flex-end',
+  },
+});
+
+// TYPES
 
 export enum DraftType {
   NEW,
@@ -75,9 +88,18 @@ interface ICreateMailOtherProps {
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & NavigationInjectedProps<any>;
 
+type NewMail = {
+  to: ISearchUsers;
+  cc: ISearchUsers;
+  bcc: ISearchUsers;
+  subject: string;
+  body: string;
+  attachments: IDistantFile[];
+};
+
 interface ICreateMailState {
   id?: string;
-  mail: newMail;
+  mail: NewMail;
   tempAttachment?: any;
   isPrefilling?: boolean;
   prevBody?: string;
@@ -89,15 +111,7 @@ interface ICreateMailState {
   isNewSignature: boolean;
 }
 
-type newMail = {
-  to: ISearchUsers;
-  cc: ISearchUsers;
-  bcc: ISearchUsers;
-  subject: string;
-  body: string;
-  attachments: IDistantFile[];
-};
-
+// COMPONENT
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
   constructor(props) {
     super(props);
@@ -133,7 +147,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     this.setSignatureState(true);
   };
 
-  componentDidUpdate = async (prevProps: NewMailContainerProps, prevState: ICreateMailState) => {
+  componentDidUpdate = async (prevProps: NewMailContainerProps) => {
     const { signatureMail } = this.props;
     if (prevProps.mail !== this.props.mail) {
       const { mail, ...rest } = this.getPrefilledMail();
@@ -183,7 +197,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       try {
         const { mail } = this.state;
         if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
-        this.props.sendMail(this.getMailData(), this.state.id, this.state.replyTo);
+        this.props.sendMail(this.getMailData(), this.state.id!, this.state.replyTo!);
 
         Toast.show(I18n.t('zimbra-send-mail'), {
           position: Toast.position.BOTTOM,
@@ -315,12 +329,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         const to = [getUser(this.props.mail.from)];
         let index = 0;
         for (const user of this.props.mail.to) {
-          if (user => user !== getSessionInfo().userId && this.props.mail.to.indexOf(user as never) === index) {
+          if (user !== getSessionInfo().userId && this.props.mail.to.indexOf(user as never) === index) {
             to.push(getUser(user));
           }
           ++index;
         }
-        const cc = [] as {}[];
+        const cc = [] as object[];
         for (const id of this.props.mail.cc) {
           if (id !== this.props.mail.from) {
             cc.push(getUser(id));
@@ -352,7 +366,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (this.props.mail.body.length > 0) {
           prevbody += '<br><br>' + this.props.mail.body.split('<br><br>').slice(1).join('<br><br>');
         }
-        const current_body = this.props.mail.body.split('<br><br>')[0];
+        const currentBody = this.props.mail.body.split('<br><br>')[0];
 
         return {
           prevBody: prevbody,
@@ -361,7 +375,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             cc: this.props.mail.cc.map(getUser),
             cci: this.props.mail.bcc.map(getUser),
             subject: this.props.mail.subject,
-            body: deleteHtmlContent(current_body),
+            body: deleteHtmlContent(currentBody),
             attachments: this.props.mail.attachments,
           },
         };
@@ -427,7 +441,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   actionsDeleteSuccess = async () => {
     const { navigation } = this.props;
     if (navigation.state.params?.isTrashed) {
-      await this.props.deleteMessage([this.state.id]);
+      await this.props.deleteMessage([this.state.id!]);
     }
     if (this.state.deleteModal.isShown) {
       this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
@@ -443,7 +457,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   forwardDraft = async () => {
     try {
-      this.props.forwardMail(this.state.id, this.state.replyTo);
+      this.props.forwardMail(this.state.id!, this.state.replyTo!);
     } catch (e) {
       // TODO: Manage error
     }
@@ -503,10 +517,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const showMenu = navigation.getParam('showHeaderMenu');
     return {
       right: (
-        <View style={{ flexDirection: 'row' }}>
-          {askForAttachment && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={askForAttachment} iconName="attachment" />}
-          {sendDraft && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={sendDraft} iconName="outbox" />}
-          {showMenu && <HeaderAction style={{ alignSelf: 'flex-end' }} onPress={showMenu} iconName="more_vert" />}
+        <View style={styles.row}>
+          {askForAttachment && <HeaderAction style={styles.navBarHeaders} onPress={askForAttachment} iconName="attachment" />}
+          {sendDraft && <HeaderAction style={styles.navBarHeaders} onPress={sendDraft} iconName="outbox" />}
+          {showMenu && <HeaderAction style={styles.navBarHeaders} onPress={showMenu} iconName="more_vert" />}
         </View>
       ),
     };
@@ -534,16 +548,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           isFetching={this.props.isFetching || !!isPrefilling}
           headers={headers}
           onDraftSave={this.saveDraft}
-          onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
+          onHeaderChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
           body={this.state.mail.body.replace(/<br>/gs, '\n')}
-          onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
+          onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, newBody } }))}
           attachments={
             this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
           }
-          onAttachmentChange={attachments => {
-            return this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }));
+          onAttachmentChange={newAttachments => {
+            return this.setState(prevState => ({ mail: { ...prevState.mail, newAttachments } }));
           }}
-          onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
+          onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id!, attachmentId)}
           prevBody={this.state.prevBody}
           signature={signature}
           isNewSignature={this.state.isNewSignature}

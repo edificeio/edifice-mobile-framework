@@ -13,5 +13,5 @@ export default () =>
       newMail: CreateMail,
       search: Search,
     },
-    { initialRouteName: "DrawerNavigator", headerMode: "none" }
+    { initialRouteName: 'DrawerNavigator', headerMode: 'none' },
   );

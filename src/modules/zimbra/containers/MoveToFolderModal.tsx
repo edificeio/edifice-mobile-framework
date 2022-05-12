@@ -2,12 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-
-
 import { moveMailsToFolderAction, moveMailsToInboxAction } from '~/modules/zimbra/actions/mail';
 import MoveToFolderModalComponent from '~/modules/zimbra/components/Modals/MoveToFolderModal';
 import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails';
-
 
 type MoveToFolderModalProps = {
   folders: IFolder[];

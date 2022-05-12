@@ -1,51 +1,17 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View } from 'react-native';
-
-
+import { View, ViewStyle } from 'react-native';
 
 import { getSessionInfo } from '~/App';
 import { FontStyle } from '~/framework/components/text';
+import styles from '~/styles';
 import { CommonStyles } from '~/styles/common/styles';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
 
-
-//TODO extract mail-specific field in order to make this component dumb
-
-export default ({ id, subject, date, displayNames, unread, onPress, to, from, cc, ...others }) => {
-  return (
-    <ListItem nb={unread} onPress={() => onPress(id, displayNames, subject)}>
-      <LeftPanel>
-        <BadgeAvatar avatars={findReceiversAvatars(to, from, cc, displayNames)} badgeContent={unread} />
-      </LeftPanel>
-      <CenterPanel style={{ marginRight: 0, paddingRight: 0 }}>
-        <Author nb={unread} numberOfLines={1}>
-          {findReceivers2(to, from, cc)
-            .map(r => {
-              const u = displayNames.find(dn => dn[0] === r);
-              return u ? u[1] : I18n.t('unknown-user');
-            })
-            .join(', ')}
-        </Author>
-        {subject && subject.length ? (
-          <Content nb={unread} numberOfLines={1}>
-            {subject}
-          </Content>
-        ) : (
-          <View />
-        )}
-      </CenterPanel>
-      <RightPanel>
-        <DateView date={date} strong={unread > 0} />
-      </RightPanel>
-    </ListItem>
-  );
-};
-
-export const Author = styled.Text<{nb: number}>(
+export const Author = styled.Text<{ nb: number }>(
   {
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,
@@ -76,4 +42,41 @@ export const findReceiversAvatars = (to, from, cc, displayNames) => {
 export const findSenderAvatar = (from, displayNames) => {
   const foundDisplayName = displayNames.find(displayName => displayName[0] === from);
   return foundDisplayName ? [{ id: from, isGroup: foundDisplayName[2] }] : [{}];
+};
+
+//TODO extract mail-specific field in order to make this component dumb
+
+export default ({ id, subject, date, displayNames, unread, onPress, to, from, cc, ...others }) => {
+  const centerPanelStyle = {
+    marginRight: 0,
+    paddingRight: 0,
+  } as ViewStyle;
+
+  return (
+    <ListItem nb={unread} onPress={() => onPress(id, displayNames, subject)}>
+      <LeftPanel>
+        <BadgeAvatar avatars={findReceiversAvatars(to, from, cc, displayNames)} badgeContent={unread} />
+      </LeftPanel>
+      <CenterPanel style={centerPanelStyle}>
+        <Author nb={unread} numberOfLines={1}>
+          {findReceivers2(to, from, cc)
+            .map(r => {
+              const u = displayNames.find(dn => dn[0] === r);
+              return u ? u[1] : I18n.t('unknown-user');
+            })
+            .join(', ')}
+        </Author>
+        {subject && subject.length ? (
+          <Content nb={unread} numberOfLines={1}>
+            {subject}
+          </Content>
+        ) : (
+          <View />
+        )}
+      </CenterPanel>
+      <RightPanel>
+        <DateView date={date} strong={unread > 0} />
+      </RightPanel>
+    </ListItem>
+  );
 };

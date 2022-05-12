@@ -89,7 +89,7 @@ export const newMailService = {
   addAttachment: async (session: IUserSession, draftId: string, file: LocalFile, handleProgession) => {
     const url = `/zimbra/message/${draftId}/attachment`;
     let dataJson;
-    const ret = await fileHandlerService.uploadFile(
+    await fileHandlerService.uploadFile(
       session,
       file,
       {

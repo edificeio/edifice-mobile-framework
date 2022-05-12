@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { Trackers } from '~/framework/util/tracker';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { foldersService } from '~/modules/zimbra/service/folders';
-import { actionTypes, IFolderList } from '~/modules/zimbra/state/folders';
+import { IFolderList, actionTypes } from '~/modules/zimbra/state/folders';
 import { IFolder } from '~/modules/zimbra/state/initMails';
 import { actionTypesRootFolders } from '~/modules/zimbra/state/rootFolders';
 

@@ -4,8 +4,6 @@ import { StyleSheet, View } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
-
-
 import CreateFolderModal from '~/modules/zimbra/containers/CreateFolderModal';
 import { IFolder, IQuota } from '~/modules/zimbra/state/initMails';
 import { IRootFolderList } from '~/modules/zimbra/state/rootFolders';
@@ -13,10 +11,52 @@ import { PageContainer } from '~/ui/ContainerContent';
 import { Text } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
 
-
-
 import DrawerOption from './DrawerOption';
 
+const styles = StyleSheet.create({
+  labelContainer: {
+    backgroundColor: '#eef7fb',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  labelText: {
+    fontSize: 18,
+    paddingLeft: 10,
+  },
+  container: {
+    backgroundColor: '#FFF',
+  },
+  folderCreationButton: {
+    marginBottom: 2,
+  },
+  folderCreationText: {
+    justifyContent: 'center',
+    marginBottom: 2,
+  },
+  storageText: {
+    justifyContent: 'center',
+  },
+  loadBar: {
+    backgroundColor: 'lightgrey',
+    width: '100%',
+    height: 20,
+  },
+  loadBarPercent: {
+    backgroundColor: '#444',
+    height: '100%',
+  },
+  loadBarText: {
+    textAlign: 'center',
+    color: 'white',
+  },
+  drawerBottom: {
+    flexGrow: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+  },
+});
 
 type DrawerMenuProps = {
   activeItemKey: string;
@@ -93,9 +133,9 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     }
 
     return (
-      <View style={style.loadBar}>
-        <View style={[style.loadBarPercent, { width: `${storagePercent}%` }]}>
-          <Text style={{ textAlign: 'center', color: 'white' }}>
+      <View style={styles.loadBar}>
+        <View style={[styles.loadBarPercent, { width: `${storagePercent}%` }]}>
+          <Text style={styles.loadBarText}>
             {storage}&ensp;{unit}
           </Text>
         </View>
@@ -171,28 +211,26 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
   render() {
     return (
-      <PageContainer style={style.container}>
+      <PageContainer style={styles.container}>
         <ScrollView>
-          <View style={style.labelContainer}>
-            <Text style={style.labelText}>{I18n.t('zimbra-messages')}</Text>
+          <View style={styles.labelContainer}>
+            <Text style={styles.labelText}>{I18n.t('zimbra-messages')}</Text>
           </View>
           {this.renderDrawerMessages()}
-          <View style={style.labelContainer}>
-            <Text style={style.labelText}>{I18n.t('zimbra-directories')}</Text>
+          <View style={styles.labelContainer}>
+            <Text style={styles.labelText}>{I18n.t('zimbra-directories')}</Text>
           </View>
           {this.renderDrawerFolders()}
-          <View style={style.drawerBottom}>
-            <TouchableOpacity onPress={this.onFolderCreationModalShow} style={[style.labelContainer, { marginBottom: 2 }]}>
+          <View style={styles.drawerBottom}>
+            <TouchableOpacity onPress={this.onFolderCreationModalShow} style={[styles.labelContainer, styles.folderCreationButton]}>
               <Icon size={22} name="create_new_folder" />
-              <Text style={[style.labelText, { justifyContent: 'center', marginBottom: 2 }]}>
-                {I18n.t('zimbra-create-directory')}
-              </Text>
+              <Text style={[styles.labelText, styles.folderCreationText]}>{I18n.t('zimbra-create-directory')}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
-        <View style={style.drawerBottom}>
-          <View style={style.labelContainer}>
-            <Text style={[style.labelText, { justifyContent: 'center' }]}>{I18n.t('zimbra-storage')}</Text>
+        <View style={styles.drawerBottom}>
+          <View style={styles.labelContainer}>
+            <Text style={[styles.labelText, styles.storageText]}>{I18n.t('zimbra-storage')}</Text>
           </View>
           {this.renderStorage()}
         </View>
@@ -201,34 +239,3 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     );
   }
 }
-
-const style = StyleSheet.create({
-  labelContainer: {
-    backgroundColor: '#eef7fb',
-    paddingHorizontal: 5,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  labelText: {
-    fontSize: 18,
-    paddingLeft: 10,
-  },
-  container: {
-    backgroundColor: '#FFF',
-  },
-  loadBar: {
-    backgroundColor: 'lightgrey',
-    width: '100%',
-    height: 20,
-  },
-  loadBarPercent: {
-    backgroundColor: '#444',
-    height: '100%',
-  },
-  drawerBottom: {
-    flexGrow: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-  },
-});

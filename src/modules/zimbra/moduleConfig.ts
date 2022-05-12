@@ -1,9 +1,6 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-
-
 import { IZimbra_State } from './reducer';
-
 
 export default new NavigableModuleConfig<'zimbra', IZimbra_State>({
   name: 'zimbra',

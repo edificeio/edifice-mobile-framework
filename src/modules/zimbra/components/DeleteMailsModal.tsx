@@ -1,8 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, useWindowDimensions } from 'react-native';
-
-
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -10,6 +8,17 @@ import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 import { Text, TextBold } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
 
+const styles = StyleSheet.create({
+  titleContainer: { alignSelf: 'flex-start' },
+  titleText: { fontSize: 16 },
+  footerContainer: { alignSelf: 'flex-end' },
+  contentBlock: { flexDirection: 'row' },
+  messageContainer: {
+    width: '100%',
+    marginBottom: 35,
+    paddingHorizontal: 20,
+  },
+});
 
 export const ModalPermanentDelete = ({
   deleteModal,
@@ -22,19 +31,19 @@ export const ModalPermanentDelete = ({
 }) => (
   <ModalBox isVisible={deleteModal.isShown} backdropOpacity={0.5}>
     <ModalContent style={{ width: useWindowDimensions().width - 60 }}>
-      <View style={{ alignSelf: 'flex-start' }}>
-        <ModalContentBlock style={{ flexDirection: 'row' }}>
+      <View style={styles.titleContainer}>
+        <ModalContentBlock style={styles.contentBlock}>
           <Icon size={18} name="warning" color={CommonStyles.secondary} />
-          <TextBold style={{ fontSize: 16 }}>&emsp;{I18n.t('zimbra-message-deleted-confirm')}</TextBold>
+          <TextBold style={styles.titleText}>&emsp;{I18n.t('zimbra-message-deleted-confirm')}</TextBold>
         </ModalContentBlock>
       </View>
 
-      <View style={{ width: '100%', marginBottom: 35, paddingHorizontal: 20 }}>
+      <View style={styles.messageContainer}>
         <Text>{I18n.t('zimbra-message-deleted-confirm-text')}</Text>
       </View>
 
-      <View style={{ alignSelf: 'flex-end' }}>
-        <ModalContentBlock style={{ flexDirection: 'row' }}>
+      <View style={styles.footerContainer}>
+        <ModalContentBlock style={styles.contentBlock}>
           <DialogButtonCancel onPress={() => closeModal()} />
           <DialogButtonOk
             style={{ backgroundColor: CommonStyles.secondary }}

@@ -1,5 +1,5 @@
 import { createSessionAsyncReducer } from '~/infra/redux/async2';
-import { initialState, actionTypes } from '~/modules/zimbra/state/signature';
+import { actionTypes, initialState } from '~/modules/zimbra/state/signature';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

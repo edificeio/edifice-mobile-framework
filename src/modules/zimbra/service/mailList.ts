@@ -48,7 +48,7 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
 };
 
 export const mailListService = {
-  get: async (page: number, folder: string = 'inbox', searchText: string) => {
+  get: async (page: number, searchText: string, folder: string = 'inbox') => {
     const searchParam = searchText === '' ? '' : (('&search=' + searchText) as string);
     switch (folder) {
       case 'inbox':
@@ -65,7 +65,7 @@ export const mailListService = {
         return [];
     }
   },
-  getFromFolder: async (folderLocation: string, page: number = 1, searchText: string) => {
+  getFromFolder: async (folderLocation: string, page: number = 1, searchText: string = '') => {
     const searchParam = searchText === '' ? '' : (('&search=' + searchText) as string);
     return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox/${folderLocation}&page=${page}${searchParam}`));
   },

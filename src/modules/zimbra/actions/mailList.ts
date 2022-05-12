@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { mailListService } from '~/modules/zimbra/service/mailList';
-import { actionTypes, IMailList } from '~/modules/zimbra/state/mailList';
+import { IMailList, actionTypes } from '~/modules/zimbra/state/mailList';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ export function fetchMailListAction(page: number, folderName: string, searchText
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await mailListService.get(page, folderName, searchText);
+      const data = await mailListService.get(page, searchText, folderName);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

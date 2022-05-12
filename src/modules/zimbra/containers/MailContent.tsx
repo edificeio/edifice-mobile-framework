@@ -54,6 +54,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       htmlError: false,
     };
   }
+
   public componentDidMount() {
     this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
     this.props.fetchStorage();
@@ -122,16 +123,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       await this.props.trashMails([this.props.mail.id]);
       this.actionsDeleteSuccess();
     }
-  };
-
-  restore = async () => {
-    await this.props.restoreMails([this.props.mail.id]);
-    this.goBack();
-    Toast.show(I18n.t('zimbra-message-restored'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
   };
 
   restore = async () => {
