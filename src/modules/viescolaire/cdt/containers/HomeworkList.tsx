@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import {
   fetchChildHomeworkAction,
@@ -36,12 +37,12 @@ type HomeworkListProps = {
 
 class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps> {
   private fetchHomeworks = (startDate, endDate) =>
-    getSessionInfo().type === 'Student'
+    getUserSession().user.type === 'Student'
       ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)
       : this.props.fetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
 
   private fetchSessions = (startDate, endDate) =>
-    getSessionInfo().type === 'Student'
+    getUserSession().user.type === 'Student'
       ? this.props.fetchSessions(this.props.structureId, startDate, endDate)
       : this.props.fetchChildSessions(this.props.childId, startDate, endDate);
 
@@ -86,7 +87,7 @@ const mapStateToProps: (state: any) => any = state => {
     isFetchingSession: sessionsState.isFetching || personnelState.isFetching,
     childId: getSelectedChild(state).id,
     structureId:
-      getSessionInfo().type === 'Student'
+      getUserSession().user.type === 'Student'
         ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
         : getSelectedChildStructure(state)?.id,
   };

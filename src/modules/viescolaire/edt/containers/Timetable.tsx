@@ -64,16 +64,16 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   fetchCourses = () => {
     const { startDate } = this.state;
     const { fetchTeacherCourses, fetchChildCourses, structureId, group, groupsIds, teacherId } = this.props;
-    if (getSessionInfo().type === 'Teacher')
+    if (getUserSession().user.type === 'Teacher')
       fetchTeacherCourses(structureId, startDate, startDate.clone().endOf('week'), teacherId);
     else fetchChildCourses(structureId, startDate, startDate.clone().endOf('week'), group, groupsIds);
   };
 
   initComponent = async () => {
     const { structureId, childId, childClasses, group } = this.props;
-    if (getSessionInfo().type === 'Relative') await this.props.fetchChildInfos();
+    if (getUserSession().user.type === 'Relative') await this.props.fetchChildInfos();
     await this.props.fetchChildGroups(childClasses, childId);
-    if (getSessionInfo().type === 'Teacher' || (group && group.length > 0)) this.fetchCourses();
+    if (getUserSession().user.type === 'Teacher' || (group && group.length > 0)) this.fetchCourses();
     this.props.fetchSlots(structureId);
   };
 
@@ -149,8 +149,8 @@ const mapStateToProps = (state: any): any => {
   const group = [] as string[];
   const groupsIds = [] as string[];
   // get groups and childClasses
-  if (getSessionInfo().type === 'Student') {
-    childId = getUserSession(state).user.id;
+  if (getUserSession().user.type === 'Student') {
+    childId = getUserSession().user.id;
     childClasses = getSessionInfo().classes[0];
     const childGroups = getGroupsListState(state).data;
     if (childGroups !== undefined && childGroups[0] !== undefined) {
@@ -165,10 +165,10 @@ const mapStateToProps = (state: any): any => {
         groupsStructures?.nameGroups?.forEach(item => group.push(item));
       });
     } else {
-      groupsIds.push(getUserSession(state).user.groupsIds);
+      groupsIds.push(getUserSession().user.groupsIds);
       group.push(getSessionInfo().realClassesNames[0]);
     }
-  } else if (getSessionInfo().type === 'Relative') {
+  } else if (getUserSession().user.type === 'Relative') {
     childId = getSelectedChild(state)?.id;
     childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
     const childGroups = getGroupsListState(state);
@@ -196,16 +196,16 @@ const mapStateToProps = (state: any): any => {
     teachers: getPersonnelListState(state),
     slots: getSlotsListState(state),
     structureId:
-      getSessionInfo().type === 'Student'
+      getUserSession().user.type === 'Student'
         ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
-        : getSessionInfo().type === 'Relative'
+        : getUserSession().user.type === 'Relative'
         ? getSelectedChildStructure(state).id
         : getSelectedStructure(state),
     childId,
     childClasses,
     group,
     groupsIds,
-    teacherId: getSessionInfo().id,
+    teacherId: getUserSession().user.id,
   };
 };
 

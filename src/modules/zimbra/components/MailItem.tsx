@@ -3,9 +3,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
-import { getSessionInfo } from '~/App';
 import { FontStyle } from '~/framework/components/text';
-import styles from '~/styles';
+import { getUserSession } from '~/framework/util/session';
 import { CommonStyles } from '~/styles/common/styles';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from '~/ui/ContainerContent';
@@ -24,9 +23,9 @@ export const Author = styled.Text<{ nb: number }>(
 
 export const findReceivers2 = (to, from, cc) => {
   cc = cc || [];
-  const receiversSet = new Set([...to, ...cc, from].filter(el => el && el !== getSessionInfo().userId));
+  const receiversSet = new Set([...to, ...cc, from].filter(el => el && el !== getUserSession().user.id));
   if (receiversSet.size === 0) {
-    receiversSet.add(getSessionInfo().userId);
+    receiversSet.add(getUserSession().user.id);
   }
   return [...receiversSet];
 };

@@ -5,8 +5,8 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import { fetchHomeworkListAction } from '~/modules/viescolaire/cdt/actions/homeworks';
 import { fetchSessionListAction } from '~/modules/viescolaire/cdt/actions/sessions';
 import { fetchSlotListAction } from '~/modules/viescolaire/cdt/actions/timeSlots';
@@ -106,7 +106,7 @@ const mapStateToProps = (state: any): any => {
     courses: getCoursesListState(state),
     slots: getSlotsListState(state),
     structure: { id: getSelectedStructure(state) },
-    teacherId: getSessionInfo().id,
+    teacherId: getUserSession().user.id,
     sessions: getSessionsListState(state),
     homeworks: getHomeworksListState(state),
   };

@@ -3,7 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { getSessionInfo } from '~/App';
+import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import Calendar from '~/ui/Calendar';
@@ -186,7 +186,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   };
 
   renderHalf = course => {
-    if (getSessionInfo().type === 'Teacher') {
+    if (getUserSession().user.type === 'Teacher') {
       const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
       const classNameJSX = (
         <TextBold style={style.halfTextStyle} numberOfLines={1}>
@@ -217,7 +217,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const { startDate, selectedDate, courses, teachers, slots, updateSelectedDate } = this.props;
     return (
       <View style={style.refreshContainer}>
-        {getSessionInfo().type === 'Relative' && <ChildPicker />}
+        {getUserSession().user.type === 'Relative' && <ChildPicker />}
         <View style={style.weekPickerView}>
           <Text>{I18n.t('viesco-edt-week-of')}</Text>
           <View>
@@ -232,7 +232,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
               <Calendar
                 startDate={startDate}
                 data={adaptCourses(courses.data, teachers.data)}
-                renderElement={getSessionInfo().type === 'Teacher' ? this.renderTeacherCourse : this.renderChildCourse}
+                renderElement={getUserSession().user.type === 'Teacher' ? this.renderTeacherCourse : this.renderChildCourse}
                 renderHalf={this.renderHalf}
                 numberOfDays={6}
                 slotHeight={70}

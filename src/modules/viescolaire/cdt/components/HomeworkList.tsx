@@ -3,9 +3,9 @@ import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, ScrollView, StyleSheet, Switch, View } from 'react-native';
 
-import { getSessionInfo } from '~/App';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
+import { getUserSession } from '~/framework/util/session';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
 import {
@@ -106,7 +106,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
             ) : null}
             <HomeworkItem
               onPress={() => onHomeworkTap(homework)}
-              disabled={getSessionInfo().type !== 'Student'}
+              disabled={getUserSession().user.type !== 'Student'}
               checked={isHomeworkDone(homework)}
               title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
               subtitle={homework.type}
@@ -230,7 +230,7 @@ export default (props: HomeworkListProps) => {
 
   return (
     <PageContainer>
-      {getSessionInfo().type === 'Relative' && <ChildPicker />}
+      {getUserSession().user.type === 'Relative' && <ChildPicker />}
       <View style={style.homeworkPart}>
         <DatePickers startDate={startDate} endDate={endDate} />
         <PlatformSpecificSwitch value={switchValue} />

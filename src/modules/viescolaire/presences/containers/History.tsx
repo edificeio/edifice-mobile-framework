@@ -227,7 +227,7 @@ const mapStateToProps = (state: any) => {
   const events = getHistoryEvents(state);
   const periods = getPeriodsListState(state);
   const year = getYearState(state);
-  const userType = getSessionInfo().type;
+  const userType = getUserSession().user.type;
   const userId = getUserSession().user.id;
   const childId = userType === 'Student' ? getUserSession().user.id : getSelectedChild(state).id;
   const groupId =

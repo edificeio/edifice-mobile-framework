@@ -2,8 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
-import { getSessionInfo } from '~/App';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { getUserSession } from '~/framework/util/session';
 import { DraftType } from '~/modules/zimbra/containers/NewMail';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -71,7 +71,7 @@ type MailContentProps = {
 };
 
 const GetTopBarColor = ({ senderId, receiverId }) => {
-  const userId = getSessionInfo().userId === senderId ? receiverId : senderId;
+  const userId = getUserSession().user.id === senderId ? receiverId : senderId;
   const [color, setColor] = React.useState<string>();
   getUserColor(userId).then(setColor);
   return color ? <View style={[styles.topBar, { backgroundColor: color }]} /> : <View />;

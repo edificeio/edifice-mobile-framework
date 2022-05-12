@@ -46,7 +46,7 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
     const { structureId, userId, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
     this.props.getLevels(structureId);
-    if (getSessionInfo().type === 'Relative' && userId !== undefined) await this.props.fetchChildInfos(userId);
+    if (getUserSession().user.type === 'Relative' && userId !== undefined) await this.props.fetchChildInfos(userId);
     this.props.getPeriods(structureId, childClasses);
     this.props.fetchChildGroups(childClasses, childId);
   };
@@ -54,7 +54,7 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   componentDidUpdate = async prevProps => {
     const { structureId, userId, childId, childClasses } = this.props;
     if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) {
-      if (getSessionInfo().type === 'Relative') await this.props.fetchChildInfos(userId);
+      if (getUserSession().user.type === 'Relative') await this.props.fetchChildInfos(userId);
       this.props.getDevoirs(structureId, childId);
       this.props.getPeriods(structureId, childClasses);
       this.props.fetchChildGroups(childClasses, childId);
@@ -78,7 +78,7 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  const userType = getSessionInfo().type;
+  const userType = getUserSession().user.type;
   const userId = getUserSession().user.id;
   const childId = userType === 'Student' ? userId : getSelectedChild(state)?.id;
   const structureId =
@@ -90,7 +90,7 @@ const mapStateToProps: (state: any) => any = state => {
   let childClasses: string = '';
   const groups = [] as string[];
   const childGroups = getGroupsListState(state).data;
-  if (getSessionInfo().type === 'Student') {
+  if (getUserSession().user.type === 'Student') {
     childClasses = getSessionInfo().classes[0];
   } else {
     childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasse!;
@@ -98,7 +98,7 @@ const mapStateToProps: (state: any) => any = state => {
   if (childGroups !== undefined && childGroups[0] !== undefined) {
     if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);
     childGroups[0]?.nameGroups?.forEach(item => groups.push(item));
-  } else if (getSessionInfo().type === 'Student') {
+  } else if (getUserSession().user.type === 'Student') {
     groups.push(getSessionInfo().realClassesNames[0]);
   }
 

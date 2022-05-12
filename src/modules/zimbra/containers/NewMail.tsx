@@ -8,10 +8,10 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
+import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';
@@ -329,7 +329,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         const to = [getUser(this.props.mail.from)];
         let index = 0;
         for (const user of this.props.mail.to) {
-          if (user !== getSessionInfo().userId && this.props.mail.to.indexOf(user as never) === index) {
+          if (user !== getUserSession().user.id && this.props.mail.to.indexOf(user as never) === index) {
             to.push(getUser(user));
           }
           ++index;
