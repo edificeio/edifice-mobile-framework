@@ -28,16 +28,19 @@ const styles = StyleSheet.create({
     color: theme.color.secondary.regular,
     textDecorationLine: 'underline',
   },
-  chevronButtonContainer: {
-    width: 24,
+  cardListContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    margin: 10,
   },
   cardSlideContainer: {
-    width: 135,
+    width: 145,
     height: 150,
     padding: 10,
   },
   cardContainer: {
     width: 125,
+    height: 131,
   },
   coloredContainer: {
     width: 10,
@@ -106,22 +109,20 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     Toast.show(I18n.t('mediacentre.link-copied'));
   };
   return (
-    <View style={styles.cardSlideContainer}>
-      <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
-        <View style={styles.contentContainer}>
-          <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
-          <Image
-            source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
-            style={styles.imageContainer}
-            resizeMode="contain"
-          />
-          <View style={styles.actionsContainer}>
-            <FavoriteIcon {...props} />
-            <IconButton icon="link" size={20} onPress={copyToClipboard} />
-          </View>
+    <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
+      <View style={styles.contentContainer}>
+        <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
+        <Image
+          source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
+          style={styles.imageContainer}
+          resizeMode="contain"
+        />
+        <View style={styles.actionsContainer}>
+          <FavoriteIcon {...props} />
+          <IconButton icon="link" size={20} onPress={copyToClipboard} />
         </View>
-      </TouchCardWithoutPadding>
-    </View>
+      </View>
+    </TouchCardWithoutPadding>
   );
 };
 
@@ -129,7 +130,11 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
   const [cardColors, setCardColors] = useState<string[]>(getCardColors(props.resources.length));
   const { width } = UI_SIZES.screen;
   const renderFavorite = ({ index, item }) => {
-    return <Card {...props} resource={item} color={cardColors[index % cardColors.length]} key={item.uid || item.id} />;
+    return (
+      <View style={styles.cardSlideContainer}>
+        <Card {...props} resource={item} color={cardColors[index % cardColors.length]} key={item.uid || item.id} />
+      </View>
+    );
   };
   useEffect(() => {
     if (props.resources.length > cardColors.length) {
@@ -148,17 +153,25 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
           </TouchableOpacity>
         ) : null}
       </View>
-      <Carousel
-        data={props.resources}
-        renderItem={renderFavorite}
-        itemWidth={styles.cardSlideContainer.width}
-        sliderWidth={width}
-        itemHeight={styles.cardSlideContainer.height}
-        sliderHeight={styles.cardSlideContainer.height}
-        inactiveSlideOpacity={1}
-        enableMomentum
-        loop
-      />
+      {props.resources.length > 2 ? (
+        <Carousel
+          data={props.resources}
+          renderItem={renderFavorite}
+          itemWidth={styles.cardSlideContainer.width}
+          sliderWidth={width}
+          itemHeight={styles.cardSlideContainer.height}
+          sliderHeight={styles.cardSlideContainer.height}
+          inactiveSlideOpacity={1}
+          enableMomentum
+          loop
+        />
+      ) : (
+        <View style={styles.cardListContainer}>
+          {props.resources.map((item, index) => {
+            return <Card {...props} resource={item} color={cardColors[index]} key={item.uid || item.id} />;
+          })}
+        </View>
+      )}
     </View>
   );
 };

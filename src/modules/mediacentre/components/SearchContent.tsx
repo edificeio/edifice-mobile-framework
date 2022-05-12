@@ -120,7 +120,7 @@ const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
       <TextBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</TextBold>
-      <Text numberOfLines={1}> {props.field.value}</Text>
+      <Text> {props.field.value}</Text>
     </View>
   ) : null;
 

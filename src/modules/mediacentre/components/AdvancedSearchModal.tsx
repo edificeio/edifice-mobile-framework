@@ -162,6 +162,7 @@ const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: Crite
           defaultValue={props.field.value}
           placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
           clearButtonMode="always"
+          maxLength={30}
           onChangeText={onChangeText}
           style={styles.criteriaInput}
         />
