@@ -41,14 +41,11 @@ const CommentField = (props: CommentFieldProps, ref) => {
   const isUserComment = session.user.id === props.commentAuthorId;
   const isIdleExistingComment = !!props.commentId && !isEditing;
   const isFirstComment = props.index === 0;
+  const isCommentUnchanged = comment === props.comment;
 
   const publishComment = () => {
     inputRef.current && inputRef.current.blur();
     props.onPublishComment && props.onPublishComment(comment, props.commentId?.toString());
-  };
-  const editComment = () => {
-    inputRef.current && inputRef.current.focus();
-    setIsEditing(true);
   };
   const deleteComment = () => {
     props.onDeleteComment && props.commentId && props.onDeleteComment(props.commentId?.toString());
@@ -89,6 +86,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
     }
   };
   React.useImperativeHandle(ref, () => ({ clearCommentField, confirmDiscard, setIsEditingFalse }));
+
+  React.useEffect(() => {
+    if (isEditing) {
+      inputRef.current && inputRef.current.focus();
+    }
+  }, [isEditing]);
 
   return (
     <View
@@ -144,7 +147,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           <RoundButton
             iconName={isEditing ? 'pictos-save' : 'pictos-send'}
             action={() => publishComment()}
-            disabled={!comment}
+            disabled={!comment || isCommentUnchanged}
             loading={props.isPublishingComment}
           />
         </View>
@@ -152,7 +155,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
       {isIdleExistingComment && isUserComment && (props.onPublishComment || props.onDeleteComment) ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
-            <TouchableOpacity onPress={() => editComment()}>
+            <TouchableOpacity onPress={() => setIsEditing(true)}>
               <TextSemiBold style={{ color: theme.color.secondary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
             </TouchableOpacity>
           ) : null}

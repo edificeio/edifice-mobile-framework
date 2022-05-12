@@ -52,6 +52,7 @@ const SchoolbookWordDetailsCard = (
   { action, onPublishReply, isPublishingReply, userType, userId, studentId, schoolbookWord }: ISchoolBookWordDetailsCardProps,
   ref,
 ) => {
+  const scrollViewRef: { current: any } = React.createRef();
   const modalBoxRef: { current: any } = React.createRef();
   const commentFieldRef: { current: any } = React.createRef();
   const usersTextMaxLines = 1;
@@ -82,11 +83,12 @@ const SchoolbookWordDetailsCard = (
   const responses = isStudent ? report[0]?.responses : isParent ? reportByStudentForParent?.responses : undefined;
   const isBottomSheetVisible = isTeacher || (isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent)));
   const disableReplyEdit = () => commentFieldRef?.current?.setIsEditingFalse();
-  React.useImperativeHandle(ref, () => ({ disableReplyEdit }));
+  const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
+  React.useImperativeHandle(ref, () => ({ disableReplyEdit, scrollToEnd }));
 
   return (
     <>
-      <ScrollView bottomInset={!isBottomSheetVisible}>
+      <ScrollView ref={scrollViewRef} bottomInset={!isBottomSheetVisible}>
         <ResourceView
           style={{
             backgroundColor: theme.color.background.card,

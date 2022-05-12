@@ -35,6 +35,7 @@ export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProp
 // COMPONENT ======================================================================================
 
 const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => {
+  const detailsCardRef: { current: any } = React.useRef();
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
@@ -84,7 +85,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
 
   const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    getSchoolbookWordIds()
+    return getSchoolbookWordIds()
       .then(schoolbookWordId => fetchSchoolbookWord(schoolbookWordId))
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
@@ -158,10 +159,18 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
   const replyToSchoolbookWord = async (comment: string, commentId?: string) => {
     try {
       setIsPublishingReply(true);
-      commentId
-        ? await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment)
-        : await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
-      refreshSilent();
+      if (commentId) {
+        await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment);
+        detailsCardRef?.current?.disableReplyEdit();
+      } else {
+        await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
+      }
+      await refreshSilent();
+      if (!commentId) {
+        // Note #1: setTimeout is used to wait for the ScrollView height to update (after a response is added).
+        // Note #2: scrollToEnd seems to become less precise once there is lots of data.
+        setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
+      }
     } catch (e) {
       Toast.show(I18n.t('common.error.text'));
     } finally {
@@ -228,7 +237,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
 
   // SCHOOLBOOK WORD DETAILS =========================================================================
 
-  const detailsCardRef: { current: any } = React.createRef();
   const renderSchoolbookWordDetails = () => {
     return (
       <SchoolbookWordDetailsCard
