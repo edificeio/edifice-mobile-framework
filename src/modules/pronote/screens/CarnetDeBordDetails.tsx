@@ -17,47 +17,51 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { TextSizeStyle } from '~/framework/components/text';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { splitWords } from '~/framework/util/string';
 import { TextBold, TextSemiBold } from '~/ui/Typography';
 
-import { CarnetDeBordSection, ICarnetDeBord } from '../state/carnetDeBord';
+import { CarnetDeBordSection, ICarnetDeBord } from '../model/carnetDeBord';
+import redirect from '../service/redirect';
 
-export interface CarnetDeBordDetailsDataProps {}
+export interface CarnetDeBordDetailsScreenDataProps {
+  session: IUserSession;
+}
 
-export interface CarnetDeBordDetailsEventProps {}
+export interface CarnetDeBordDetailsScreenEventProps {}
 
-export interface CarnetDeBordDetailsNavigationParams {
+export interface CarnetDeBordDetailsScreenNavigationParams {
   type: CarnetDeBordSection;
   data: ICarnetDeBord;
 }
 
-export type CarnetDeBordDetailsProps = CarnetDeBordDetailsDataProps &
-  CarnetDeBordDetailsEventProps &
-  NavigationInjectedProps<CarnetDeBordDetailsNavigationParams>;
+export type CarnetDeBordDetailsScreenProps = CarnetDeBordDetailsScreenDataProps &
+  CarnetDeBordDetailsScreenEventProps &
+  NavigationInjectedProps<CarnetDeBordDetailsScreenNavigationParams>;
 
-function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
+function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
   const type = props.navigation.getParam('type');
   const data = props.navigation.getParam('data');
   const pageTitleComponent = React.useMemo(() => {
-    const title = type && CarnetDeBordDetails.pageTiteI18n[type];
+    const title = type && CarnetDeBordDetailsScreen.pageTiteI18n[type];
     return <HeaderTitleAndSubtitle title={I18n.t(title)} subtitle={I18n.t(`CarnetDeBord`)} />;
   }, [type]);
   const items = React.useMemo(() => {
-    const itemArray = CarnetDeBordDetails.getItems(type, data);
+    const itemArray = CarnetDeBordDetailsScreen.getItems(type, data);
     return itemArray?.map((item, index) => (
       <View
         key={index}
         style={[
-          CarnetDeBordDetails.styles.section,
-          index + 1 < itemArray.length ? CarnetDeBordDetails.styles.sectionWithBorder : {},
+          CarnetDeBordDetailsScreen.styles.section,
+          index + 1 < itemArray.length ? CarnetDeBordDetailsScreen.styles.sectionWithBorder : {},
         ]}>
-        <View style={CarnetDeBordDetails.styles.sectionLeft}>
+        <View style={CarnetDeBordDetailsScreen.styles.sectionLeft}>
           {item.title ? <TextBold numberOfLines={1}>{item.title}</TextBold> : null}
           {item.date ? (
             <TextSemiBold
               style={[
-                CarnetDeBordDetails.styles.textDate,
-                item.label || item.description ? CarnetDeBordDetails.styles.textDateMargin : undefined,
+                CarnetDeBordDetailsScreen.styles.textDate,
+                item.label || item.description ? CarnetDeBordDetailsScreen.styles.textDateMargin : undefined,
               ]}
               numberOfLines={1}>
               {item.date}
@@ -67,7 +71,7 @@ function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
           {item.description ? <Text numberOfLines={1}>{extractTextFromHtml(item.description)}</Text> : null}
         </View>
         {item.value ? (
-          <Text numberOfLines={2} style={CarnetDeBordDetails.styles.sectionRight}>
+          <Text numberOfLines={2} style={CarnetDeBordDetailsScreen.styles.sectionRight}>
             {item.value}
           </Text>
         ) : null}
@@ -75,16 +79,17 @@ function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
     ));
   }, [type, data]);
 
-  const externalLink = React.useMemo(() => {
+  const pageId = React.useMemo(() => {
+    console.log(data.PagePronote);
     switch (type) {
       case CarnetDeBordSection.CAHIER_DE_TEXTES:
-        return `${data.address}?page=${data.PagePronote?.['Travail à faire à la maison'] ?? ''}`;
+        return data.PagePronote?.['Travail à faire à la maison'];
       case CarnetDeBordSection.NOTES:
-        return `${data.address}?page=${data.PagePronote?.['Mon relevé de notes'] ?? ''}`;
+        return data.PagePronote?.['Mon relevé de notes'];
       case CarnetDeBordSection.COMPETENCES:
-        return `${data.address}?page=${data.PagePronote?.['Évaluations par compétence'] ?? ''}`;
+        return data.PagePronote?.['Évaluations par compétence'];
       case CarnetDeBordSection.VIE_SCOLAIRE:
-        return `${data.address}?page=${data.PagePronote?.['Récapitulatif des évènements de la vie scolaire'] ?? ''}`;
+        return data.PagePronote?.['Récapitulatif des évènements de la vie scolaire'];
     }
   }, [data, type]);
 
@@ -96,38 +101,41 @@ function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
       }}>
       <ScrollView alwaysBounceVertical={false}>
         {type === CarnetDeBordSection.NOTES && data.PageReleveDeNotes.Message ? (
-          <Text style={CarnetDeBordDetails.styles.message}>{data.PageReleveDeNotes.Message}</Text>
+          <Text style={CarnetDeBordDetailsScreen.styles.message}>{data.PageReleveDeNotes.Message}</Text>
         ) : null}
-        <CardWithoutPadding style={CarnetDeBordDetails.styles.card}>{items}</CardWithoutPadding>
+        <CardWithoutPadding style={CarnetDeBordDetailsScreen.styles.card}>{items}</CardWithoutPadding>
         <ActionButton
-          style={CarnetDeBordDetails.styles.button}
+          style={CarnetDeBordDetailsScreen.styles.button}
           type="secondary"
-          url={externalLink}
+          action={() => {
+            redirect(props.session, data.address, pageId);
+          }}
+          iconName="pictos-external-link"
           text={I18n.t('pronote.carnetDeBord.openInPronote')}
         />
       </ScrollView>
     </PageView>
   );
 }
-CarnetDeBordDetails.pageTiteI18n = {
+CarnetDeBordDetailsScreen.pageTiteI18n = {
   [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'pronote.carnetDeBord.cahierDeTextes.title',
   [CarnetDeBordSection.NOTES]: 'pronote.carnetDeBord.releveDeNotes.title',
   [CarnetDeBordSection.COMPETENCES]: 'pronote.carnetDeBord.competences.title',
   [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote.carnetDeBord.vieScolaire.title',
 };
-CarnetDeBordDetails.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) => {
+CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) => {
   switch (type) {
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
-      const tafs: object[] = [];
+      const tafs: { date: string; label?: string; description: string }[] = [];
       if (data.PageCahierDeTextes.CahierDeTextes)
         for (const item of data.PageCahierDeTextes.CahierDeTextes) {
           if (item.TravailAFaire)
             for (const taf of item.TravailAFaire) {
               tafs.push({
                 date: I18n.t('pronote.carnetDeBord.cahierDeTextes.PourDate', {
-                  date: CarnetDeBordDetails.formatDatePast(taf.PourLe),
+                  date: CarnetDeBordDetailsScreen.formatDatePast(taf.PourLe),
                 }),
-                lavel: item.Matiere,
+                label: item.Matiere,
                 description: taf.Descriptif || `<p>${I18n.t('pronote.carnetDeBord.noInfo')}</p>`,
               });
             }
@@ -137,7 +145,7 @@ CarnetDeBordDetails.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) 
     case CarnetDeBordSection.NOTES: {
       return data.PageReleveDeNotes.Devoir?.map(item => ({
         title: item.Matiere,
-        date: CarnetDeBordDetails.formatDate(item.Date),
+        date: CarnetDeBordDetailsScreen.formatDate(item.Date),
         value: item.Bareme
           ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
               note: item.Note,
@@ -149,7 +157,7 @@ CarnetDeBordDetails.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) 
     case CarnetDeBordSection.COMPETENCES: {
       return data.PageCompetences.Competences?.map(item => ({
         title: item.Matiere,
-        date: CarnetDeBordDetails.formatDate(item.Date),
+        date: CarnetDeBordDetailsScreen.formatDate(item.Date),
         value: splitWords(item.NiveauDAcquisition.Libelle, 2),
       }));
     }
@@ -159,12 +167,12 @@ CarnetDeBordDetails.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) 
         date:
           item.type === 'Absence'
             ? item.DateDebut.isSame(item.DateFin, 'day')
-              ? CarnetDeBordDetails.formatDate(item.DateDebut)
+              ? CarnetDeBordDetailsScreen.formatDate(item.DateDebut)
               : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
-                  start: CarnetDeBordDetails.formatDate(item.DateDebut),
-                  end: CarnetDeBordDetails.formatDate(item.DateFin),
+                  start: CarnetDeBordDetailsScreen.formatDate(item.DateDebut),
+                  end: CarnetDeBordDetailsScreen.formatDate(item.DateFin),
                 })
-            : CarnetDeBordDetails.formatDate(item.Date),
+            : CarnetDeBordDetailsScreen.formatDate(item.Date),
         description:
           item.type === 'Absence' || item.type === 'Retard'
             ? item.Motif
@@ -177,7 +185,7 @@ CarnetDeBordDetails.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) 
     }
   }
 };
-CarnetDeBordDetails.formatDate = (m: moment.Moment) =>
+CarnetDeBordDetailsScreen.formatDate = (m: moment.Moment) =>
   m.calendar(null, {
     sameDay: '[Today]',
     nextDay: '[Tomorrow]',
@@ -186,7 +194,7 @@ CarnetDeBordDetails.formatDate = (m: moment.Moment) =>
     lastWeek: '[Last] dddd',
     sameElse: 'DD MMM',
   });
-CarnetDeBordDetails.formatDatePast = (m: moment.Moment) =>
+CarnetDeBordDetailsScreen.formatDatePast = (m: moment.Moment) =>
   m.calendar(null, {
     sameDay: '[Today]',
     nextDay: '[Tomorrow]',
@@ -195,7 +203,7 @@ CarnetDeBordDetails.formatDatePast = (m: moment.Moment) =>
     lastWeek: '[Last] dddd',
     sameElse: 'ddd DD MMM',
   });
-CarnetDeBordDetails.styles = StyleSheet.create({
+CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   card: {
     marginHorizontal: UI_SIZES.spacing.large,
     marginVertical: UI_SIZES.spacing.large,
@@ -235,6 +243,8 @@ CarnetDeBordDetails.styles = StyleSheet.create({
 });
 
 export default connect(
-  (state: IGlobalState) => ({}),
+  (state: IGlobalState) => ({
+    session: getUserSession(),
+  }),
   (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
-)(CarnetDeBordDetails);
+)(CarnetDeBordDetailsScreen);

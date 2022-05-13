@@ -22,23 +22,24 @@ import { TextBold } from '~/ui/Typography';
 import { IUserInfoState } from '~/user/state/info';
 
 import UserList, { IUserListItem, UserListProps } from '../../../framework/components/UserList';
+import { CarnetDeBordSection, ICarnetDeBord } from '../model/carnetDeBord';
 import moduleConfig from '../moduleConfig';
-import { CarnetDeBordSection, ICarnetDeBord } from '../state/carnetDeBord';
+import redirect from '../service/redirect';
 import { loadCarnetDeBordAction } from '../state/carnetDeBord/actions';
 import { ICarnetDeBordStateData } from '../state/carnetDeBord/reducer';
-import CarnetDeBordDetails from './CarnetDeBordDetails';
+import CarnetDeBordDetailsScreen from './CarnetDeBordDetails';
 
-export interface CarnetDeBordDataProps {
+export interface CarnetDeBordScreenDataProps {
   session: IUserSession;
   data: ICarnetDeBordStateData;
   structures: IUserInfoState['structureNodes'];
 }
-export interface CarnetDeBordEventProps {
+export interface CarnetDeBordScreenEventProps {
   handleLoadData: () => Promise<ICarnetDeBord[]>;
 }
-export type CarnetDeBordProps = CarnetDeBordDataProps & CarnetDeBordEventProps & NavigationInjectedProps;
+export type CarnetDeBordScreenProps = CarnetDeBordScreenDataProps & CarnetDeBordScreenEventProps & NavigationInjectedProps;
 
-function CarnetDeBord({ data, session, handleLoadData, navigation, structures }: CarnetDeBordProps) {
+function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structures }: CarnetDeBordScreenProps) {
   // UserList info & selected user
   const getUsers = React.useCallback(
     (_data: typeof data) => _data.map(cdb => ({ id: cdb.idPronote, avatarId: cdb.id, name: cdb.firstName })),
@@ -52,7 +53,7 @@ function CarnetDeBord({ data, session, handleLoadData, navigation, structures }:
     const idToBeSelected = usersRef.current.find(u => u.id === id) ? id : usersRef.current[0]?.id;
     if (!idToBeSelected) throw new Error(`idToBeSelected is undefined. CarnetDeBord need to select an existing user`);
     setSelectedId(idToBeSelected);
-    setItemJson(CarnetDeBord.STORAGE_KEY, idToBeSelected);
+    setItemJson(CarnetDeBordScreen.STORAGE_KEY, idToBeSelected);
   }, []);
   const isUserListShown = React.useMemo(
     () => /* session.user.type === UserType.Relative || */ users.length > 1,
@@ -63,7 +64,7 @@ function CarnetDeBord({ data, session, handleLoadData, navigation, structures }:
   // Data & content
   const loadData = React.useCallback(async () => {
     try {
-      const [newData, savedSelectedId] = await Promise.all([handleLoadData(), getItemJson<string>(CarnetDeBord.STORAGE_KEY)]);
+      const [newData, savedSelectedId] = await Promise.all([handleLoadData(), getItemJson<string>(CarnetDeBordScreen.STORAGE_KEY)]);
       usersRef.current = getUsers(newData);
       await selectUser(savedSelectedId);
     } catch (e) {
@@ -81,7 +82,7 @@ function CarnetDeBord({ data, session, handleLoadData, navigation, structures }:
     () =>
       isEmpty
         ? () => <EmptyContentScreen />
-        : CarnetDeBord.getRenderContent(
+        : CarnetDeBordScreen.getRenderContent(
             selectedCdbData!,
             users,
             selectedId,
@@ -90,8 +91,9 @@ function CarnetDeBord({ data, session, handleLoadData, navigation, structures }:
             isStructureShown,
             navigation,
             structures,
+            session,
           ),
-    [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, isEmpty, structures],
+    [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, isEmpty, structures, session],
   );
 
   return (
@@ -104,7 +106,7 @@ function CarnetDeBord({ data, session, handleLoadData, navigation, structures }:
     </PageView>
   );
 }
-CarnetDeBord.getRenderContent =
+CarnetDeBordScreen.getRenderContent =
   (
     data: ICarnetDeBord | undefined,
     users: Readonly<IUserListItem[]>,
@@ -112,8 +114,9 @@ CarnetDeBord.getRenderContent =
     setSelected: (id: string) => void,
     isUserListShown: boolean,
     isStructureShown: boolean,
-    navigation: CarnetDeBordProps['navigation'],
-    structures: CarnetDeBordProps['structures'],
+    navigation: CarnetDeBordScreenProps['navigation'],
+    structures: CarnetDeBordScreenProps['structures'],
+    session: IUserSession,
   ) =>
   (refreshControl: ScrollViewProps['refreshControl']) => {
     return (
@@ -121,28 +124,30 @@ CarnetDeBord.getRenderContent =
         {isUserListShown ? (
           <UserList horizontal data={users} selectedId={selectedId} onSelect={setSelected} bottomInset={false} />
         ) : (
-          <View style={CarnetDeBord.styles.card} /> // for top-page spacing
+          <View style={CarnetDeBordScreen.styles.card} /> // for top-page spacing
         )}
         {isStructureShown ? (
-          <Text style={[CarnetDeBord.styles.card, FontStyle.Bold, TextSizeStyle.SlightBig]}>
+          <Text style={[CarnetDeBordScreen.styles.card, FontStyle.Bold, TextSizeStyle.SlightBig]}>
             {structures.find(s => s.id === data?.structureId)?.name ?? ' '}
           </Text>
         ) : null}
         {data ? (
           <>
-            <CarnetDeBord.SectionContent
+            <CarnetDeBordScreen.SectionContent
               title={I18n.t('pronote.carnetDeBord.cahierDeTextes.title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-calendar',
               }}
-              textLabel={data.PageCahierDeTextes.CahierDeTextes?.[0]?.Matiere}
+              textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere}
               valueLabel={
-                data.PageCahierDeTextes.CahierDeTextes?.[0] &&
+                data.PageCahierDeTextes?.CahierDeTextes?.[0] &&
                 I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
                   date:
                     data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe &&
-                    CarnetDeBordDetails.formatDatePast(data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe),
+                    CarnetDeBordDetailsScreen.formatDatePast(
+                      data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe,
+                    ),
                 })
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.cahierDeTextes.empty')}
@@ -150,58 +155,58 @@ CarnetDeBord.getRenderContent =
               type={CarnetDeBordSection.CAHIER_DE_TEXTES}
               data={data}
             />
-            <CarnetDeBord.SectionContent
+            <CarnetDeBordScreen.SectionContent
               title={I18n.t('pronote.carnetDeBord.releveDeNotes.title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-success',
               }}
-              textLabel={data.PageReleveDeNotes.Devoir?.[0]?.Matiere}
+              textLabel={data.PageReleveDeNotes?.Devoir?.[0]?.Matiere}
               valueLabel={
-                data.PageReleveDeNotes.Devoir?.[0] && data.PageReleveDeNotes.Devoir?.[0].Bareme
+                data.PageReleveDeNotes?.Devoir?.[0] && data.PageReleveDeNotes.Devoir?.[0].Bareme
                   ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
                       note: data.PageReleveDeNotes.Devoir?.[0].Note,
                       bareme: data.PageReleveDeNotes.Devoir?.[0].Bareme,
                     })
-                  : data.PageReleveDeNotes.Devoir?.[0].Note
+                  : data.PageReleveDeNotes?.Devoir?.[0].Note
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.releveDeNotes.empty')}
               navigation={navigation}
               type={CarnetDeBordSection.NOTES}
               data={data}
             />
-            <CarnetDeBord.SectionContent
+            <CarnetDeBordScreen.SectionContent
               title={I18n.t('pronote.carnetDeBord.competences.title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-skills',
               }}
-              textLabel={data.PageCompetences.Competences?.[0]?.Matiere}
+              textLabel={data.PageCompetences?.Competences?.[0]?.Matiere}
               valueLabel={
-                data.PageCompetences.Competences?.[0] && `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
+                data.PageCompetences?.Competences?.[0] && `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.competences.empty')}
               navigation={navigation}
               type={CarnetDeBordSection.COMPETENCES}
               data={data}
             />
-            <CarnetDeBord.SectionContent
+            <CarnetDeBordScreen.SectionContent
               title={I18n.t('pronote.carnetDeBord.vieScolaire.title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-flag',
               }}
-              textLabel={data.PageVieScolaire.VieScolaire?.[0] && data.PageVieScolaire.VieScolaire?.[0]?.type.toLocaleUpperCase()}
+              textLabel={data.PageVieScolaire?.VieScolaire?.[0] && data.PageVieScolaire.VieScolaire?.[0]?.type.toLocaleUpperCase()}
               valueLabel={
-                data.PageVieScolaire.VieScolaire?.[0] &&
+                data.PageVieScolaire?.VieScolaire?.[0] &&
                 (data.PageVieScolaire.VieScolaire?.[0].type === 'Absence'
                   ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.isSame(data.PageVieScolaire.VieScolaire?.[0].DateFin, 'day')
-                    ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.toNow()
+                    ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.fromNow()
                     : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
-                        start: CarnetDeBordDetails.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateDebut),
-                        end: CarnetDeBordDetails.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateFin),
+                        start: CarnetDeBordDetailsScreen.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateDebut),
+                        end: CarnetDeBordDetailsScreen.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateFin),
                       })
-                  : data.PageVieScolaire.VieScolaire?.[0].Date.toNow(false))
+                  : data.PageVieScolaire.VieScolaire?.[0].Date.fromNow(false))
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.vieScolaire.empty')}
               navigation={navigation}
@@ -209,9 +214,12 @@ CarnetDeBord.getRenderContent =
               data={data}
             />
             <ActionButton
-              style={CarnetDeBord.styles.button}
+              style={CarnetDeBordScreen.styles.button}
               type="secondary"
-              url={data.address}
+              action={() => {
+                redirect(session, data.address);
+              }}
+              iconName="pictos-external-link"
               text={I18n.t('pronote.carnetDeBord.openInPronote')}
             />
           </>
@@ -219,8 +227,8 @@ CarnetDeBord.getRenderContent =
       </ScrollView>
     );
   };
-CarnetDeBord.STORAGE_KEY = `${moduleConfig.name}.CarnetDeBord.selectedUserId`;
-CarnetDeBord.styles = StyleSheet.create({
+CarnetDeBordScreen.STORAGE_KEY = `${moduleConfig.name}.CarnetDeBord.selectedUserId`;
+CarnetDeBordScreen.styles = StyleSheet.create({
   textRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -243,13 +251,13 @@ CarnetDeBord.styles = StyleSheet.create({
     marginTop: UI_SIZES.spacing.extraLarge,
   },
 });
-CarnetDeBord.SectionContent = function (props: {
+CarnetDeBordScreen.SectionContent = function (props: {
   textLabel?: string;
   valueLabel?: string;
   emptyLabel: string;
   title: string;
   picture: PictureProps;
-  navigation: CarnetDeBordProps['navigation'];
+  navigation: CarnetDeBordScreenProps['navigation'];
   type: CarnetDeBordSection;
   data: ICarnetDeBord;
 }) {
@@ -261,16 +269,16 @@ CarnetDeBord.SectionContent = function (props: {
   const isNotEmpty = props.textLabel && props.valueLabel;
   const CC = isNotEmpty ? TouchableOverviewCard : OverviewCard;
   return (
-    <CC picture={props.picture} title={props.title} style={CarnetDeBord.styles.card} onPress={goToDetails}>
+    <CC picture={props.picture} title={props.title} style={CarnetDeBordScreen.styles.card} onPress={goToDetails}>
       {isNotEmpty ? (
-        <View style={CarnetDeBord.styles.textRow}>
-          <TextBold numberOfLines={1} style={CarnetDeBord.styles.textLabel}>
+        <View style={CarnetDeBordScreen.styles.textRow}>
+          <TextBold numberOfLines={1} style={CarnetDeBordScreen.styles.textLabel}>
             {props.textLabel}
           </TextBold>
           <Text numberOfLines={1}>{props.valueLabel}</Text>
         </View>
       ) : (
-        <View style={CarnetDeBord.styles.emptyRow}>
+        <View style={CarnetDeBordScreen.styles.emptyRow}>
           <Text numberOfLines={1} style={TextColorStyle.Light}>
             {props.emptyLabel}
           </Text>
@@ -295,4 +303,4 @@ export default connect(
       },
       dispatch,
     ),
-)(CarnetDeBord);
+)(CarnetDeBordScreen);

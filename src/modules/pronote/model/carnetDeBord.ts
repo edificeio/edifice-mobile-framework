@@ -22,20 +22,20 @@ export type IUserBasic = {
 
 export type ICarnetDeBord = IUserBasic &
   IPronoteConnectorInfo & {
-    PageCahierDeTextes: {
+    PageCahierDeTextes?: {
       Titre: string;
       CahierDeTextes?: ICarnetDeBordCahierDeTextes[];
     };
-    PageCompetences: {
+    PageCompetences?: {
       Titre: string;
       Competences?: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
     };
-    PageReleveDeNotes: {
+    PageReleveDeNotes?: {
       Titre: string;
       Message?: string;
       Devoir?: ICarnetDeBordReleveDeNotesDevoir[];
     };
-    PageVieScolaire: {
+    PageVieScolaire?: {
       Titre: string;
       VieScolaire?: (
         | ICarnetDeBordVieScolaireAbsence

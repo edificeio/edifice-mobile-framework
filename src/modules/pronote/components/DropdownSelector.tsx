@@ -8,14 +8,11 @@ import * as React from 'react';
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker, { DropDownPickerProps } from 'react-native-dropdown-picker';
 
-
-
 import theme from '~/app/theme';
 import { ActionButton, ActionButtonProps } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { Text, TextSizeStyle } from '~/framework/components/text';
-
 
 type OptionalDropDownPickerProps =
   | 'open'
@@ -54,33 +51,36 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
 
   return (
     <TouchableWithoutFeedback
-      style={STYLES.selectBackDrop}
+      style={DropdownSelectorTemplate.styles.selectBackDrop}
       onPress={() => {
         setDropdownOpened(false);
       }}>
-      <View style={STYLES.container}>
+      <View style={DropdownSelectorTemplate.styles.container}>
         {props.picture ? <Picture {...props.picture} /> : null}
-        {props.message ? <Text style={STYLES.text}>{props.message}</Text> : null}
+        {props.message ? <Text style={DropdownSelectorTemplate.styles.text}>{props.message}</Text> : null}
         <View>
           <DropDownPicker
             open={open ?? dropdownOpen}
-            dropDownContainerStyle={[STYLES.selectContainer, dropDownContainerStyle]}
-            placeholderStyle={[STYLES.selectPlaceholder, placeholderStyle]}
+            dropDownContainerStyle={[DropdownSelectorTemplate.styles.selectContainer, dropDownContainerStyle]}
+            placeholderStyle={[DropdownSelectorTemplate.styles.selectPlaceholder, placeholderStyle]}
             setOpen={setOpen ?? (() => setDropdownOpened(prev => !prev))}
-            style={[STYLES.select, style]}
-            textStyle={[STYLES.selectText, textStyle]}
+            style={[DropdownSelectorTemplate.styles.select, style]}
+            textStyle={[DropdownSelectorTemplate.styles.selectText, textStyle]}
             value={selected}
             setValue={setSelected as DropDownPickerProps['setValue']}
             {...otherDropdownPickerProps}
           />
-          {props.button ? renderButton(props.button, selected) : null}
+          {props.button ? DropdownSelectorTemplate.renderButton(props.button, selected) : null}
         </View>
       </View>
     </TouchableWithoutFeedback>
   );
 }
 
-function renderButton(buttonProps: Required<DropdownSelectorTemplateProps>['button'], selected: DropDownPickerProps['value']) {
+DropdownSelectorTemplate.renderButton = (
+  buttonProps: Required<DropdownSelectorTemplateProps>['button'],
+  selected: DropDownPickerProps['value'],
+) => {
   const { action, url, disabled, ...otherButtonProps } = buttonProps;
   return (
     <ActionButton
@@ -90,9 +90,9 @@ function renderButton(buttonProps: Required<DropdownSelectorTemplateProps>['butt
       {...otherButtonProps}
     />
   );
-}
+};
 
-const STYLES = StyleSheet.create({
+DropdownSelectorTemplate.styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,

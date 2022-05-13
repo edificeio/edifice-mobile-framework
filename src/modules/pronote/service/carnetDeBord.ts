@@ -24,7 +24,7 @@ import {
   ICarnetDeBordVieScolaireRetard,
   ICarnetDeBordVieScolaireSanction,
   IPronoteConnectorInfo,
-} from '../state/carnetDeBord';
+} from '../model/carnetDeBord';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
   xmlResponse: string;
@@ -65,10 +65,10 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
     if (tag.hasOwnProperty('PageCahierDeTextes')) {
       const PageCahierDeTextes = {};
       for (const cdtTag of tag.PageCahierDeTextes) {
-        if (!(PageCahierDeTextes as ICarnetDeBord['PageCahierDeTextes']).CahierDeTextes)
-          (PageCahierDeTextes as ICarnetDeBord['PageCahierDeTextes']).CahierDeTextes = [];
+        if (!(PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes'])?.CahierDeTextes)
+          (PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes']).CahierDeTextes = [];
         if (cdtTag.hasOwnProperty('Titre')) {
-          (PageCahierDeTextes as ICarnetDeBord['PageCahierDeTextes']).Titre = cdtTag.Titre[0]?.['#text'];
+          (PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes']).Titre = cdtTag.Titre[0]?.['#text'];
         } else if (cdtTag.hasOwnProperty('CahierDeTextes')) {
           const cdt = {};
           for (const cdtItemTag of cdtTag.CahierDeTextes) {
@@ -128,7 +128,9 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (cdt as ICarnetDeBordCahierDeTextes).TravailAFaire?.push(taf as ICarnetDeBordCahierDeTextesTravailAFaire);
             }
           }
-          (PageCahierDeTextes as ICarnetDeBord['PageCahierDeTextes']).CahierDeTextes?.push(cdt as ICarnetDeBordCahierDeTextes);
+          (PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes']).CahierDeTextes?.push(
+            cdt as ICarnetDeBordCahierDeTextes,
+          );
         }
       }
       (ret as ICarnetDeBord).PageCahierDeTextes = PageCahierDeTextes as ICarnetDeBord['PageCahierDeTextes'];
@@ -138,22 +140,24 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
     else if (tag.hasOwnProperty('PageCompetences')) {
       const PageCompetences = {};
       for (const pageTag of tag.PageCompetences) {
-        if (!(PageCompetences as ICarnetDeBord['PageCompetences']).Competences)
-          (PageCompetences as ICarnetDeBord['PageCompetences']).Competences = [];
+        if (!(PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences)
+          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences = [];
         if (pageTag.hasOwnProperty('Titre')) {
-          (PageCompetences as ICarnetDeBord['PageCompetences']).Titre = pageTag.Titre[0]?.['#text'];
+          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Titre = pageTag.Titre[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Item')) {
           const item = { type: 'Item' };
           for (const itemTag of pageTag.Item) {
             parseCompetencesItem(itemTag, item);
           }
-          (PageCompetences as ICarnetDeBord['PageCompetences']).Competences?.push(item as ICarnetDeBordCompetencesItem);
+          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences?.push(item as ICarnetDeBordCompetencesItem);
         } else if (pageTag.hasOwnProperty('Domaine')) {
           const item = { type: 'Domaine' };
           for (const itemTag of pageTag.Domaine) {
             parseCompetencesItem(itemTag, item);
           }
-          (PageCompetences as ICarnetDeBord['PageCompetences']).Competences?.push(item as ICarnetDeBordCompetencesDomaine);
+          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences?.push(
+            item as ICarnetDeBordCompetencesDomaine,
+          );
         } else if (pageTag.hasOwnProperty('Evaluation')) {
           const item = { type: 'Evaluation' };
           for (const itemTag of pageTag.Evaluation) {
@@ -162,7 +166,9 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (item as ICarnetDeBordCompetencesEvaluation).Item = itemTag.Item[0]?.['#text'];
             }
           }
-          (PageCompetences as ICarnetDeBord['PageCompetences']).Competences?.push(item as ICarnetDeBordCompetencesEvaluation);
+          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences?.push(
+            item as ICarnetDeBordCompetencesEvaluation,
+          );
         }
 
         (ret as ICarnetDeBord).PageCompetences = PageCompetences as ICarnetDeBord['PageCompetences'];
@@ -174,12 +180,12 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
       const PageReleveDeNotes = {};
       for (const pageTag of tag.PageReleveDeNotes) {
         if (pageTag.hasOwnProperty('Titre')) {
-          (PageReleveDeNotes as ICarnetDeBord['PageReleveDeNotes']).Titre = pageTag.Titre[0]?.['#text'];
+          (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Titre = pageTag.Titre[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Message')) {
-          (PageReleveDeNotes as ICarnetDeBord['PageReleveDeNotes']).Message = pageTag.Message[0]?.['#text'];
+          (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Message = pageTag.Message[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Devoir')) {
-          if (!(PageReleveDeNotes as ICarnetDeBord['PageReleveDeNotes']).Devoir)
-            (PageReleveDeNotes as ICarnetDeBord['PageReleveDeNotes']).Devoir = [];
+          if (!(PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Devoir)
+            (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Devoir = [];
           const devoir = {};
           for (const dTag of pageTag.Devoir) {
             if (dTag.hasOwnProperty('Note')) {
@@ -193,7 +199,9 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (devoir as ICarnetDeBordReleveDeNotesDevoir).Date = moment(dTag.Date[0]?.['#text']);
             }
           }
-          (PageReleveDeNotes as ICarnetDeBord['PageReleveDeNotes']).Devoir?.push(devoir as ICarnetDeBordReleveDeNotesDevoir);
+          (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Devoir?.push(
+            devoir as ICarnetDeBordReleveDeNotesDevoir,
+          );
         }
       }
       (ret as ICarnetDeBord).PageReleveDeNotes = PageReleveDeNotes as ICarnetDeBord['PageReleveDeNotes'];
@@ -202,11 +210,11 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
     // VieScolaire
     else if (tag.hasOwnProperty('PageVieScolaire')) {
       const PageVieScolaire = {};
-      if (!(PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire)
-        (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire = [];
+      if (!(PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire)
+        (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire = [];
       for (const pageTag of tag.PageVieScolaire) {
         if (pageTag.hasOwnProperty('Titre')) {
-          (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).Titre = pageTag.Titre[0]?.['#text'];
+          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).Titre = pageTag.Titre[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Absence')) {
           const item = { type: 'Absence' };
           for (const iTag of pageTag.Absence) {
@@ -224,7 +232,9 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (item as ICarnetDeBordVieScolaireAbsence).Motif = iTag.Motif[0]?.['#text'];
             }
           }
-          (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire?.push(item as ICarnetDeBordVieScolaireAbsence);
+          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
+            item as ICarnetDeBordVieScolaireAbsence,
+          );
         } else if (pageTag.hasOwnProperty('Retard')) {
           const item = { type: 'Retard' };
           for (const iTag of pageTag.Retard) {
@@ -237,7 +247,7 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (item as ICarnetDeBordVieScolaireRetard).Motif = iTag.Motif[0]?.['#text'];
             }
           }
-          (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire?.push(item as ICarnetDeBordVieScolaireRetard);
+          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(item as ICarnetDeBordVieScolaireRetard);
         } else if (pageTag.hasOwnProperty('PassageInfirmerie')) {
           const item = { type: 'PassageInfirmerie' };
           for (const iTag of pageTag.PassageInfirmerie) {
@@ -246,7 +256,7 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (item as ICarnetDeBordVieScolairePassageInfirmerie).Date = moment(iTag.Date[0]?.['#text']);
             }
           }
-          (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire?.push(
+          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
             item as ICarnetDeBordVieScolairePassageInfirmerie,
           );
         } else if (pageTag.hasOwnProperty('Punition')) {
@@ -265,7 +275,9 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (item as ICarnetDeBordVieScolairePunition).Circonstances = iTag.Circonstances[0]?.['#text'];
             }
           }
-          (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire?.push(item as ICarnetDeBordVieScolairePunition);
+          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
+            item as ICarnetDeBordVieScolairePunition,
+          );
         } else if (pageTag.hasOwnProperty('Sanction')) {
           const item = { type: 'Sanction' };
           for (const iTag of pageTag.Sanction) {
@@ -282,7 +294,9 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (item as ICarnetDeBordVieScolaireSanction).Duree = iTag.Duree[0]?.['#text'];
             }
           }
-          (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire?.push(item as ICarnetDeBordVieScolaireSanction);
+          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
+            item as ICarnetDeBordVieScolaireSanction,
+          );
         } else if (pageTag.hasOwnProperty('Observation')) {
           const item = { type: 'Observation' };
           for (const iTag of pageTag.Observation) {
@@ -297,7 +311,9 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
               (item as ICarnetDeBordVieScolaireObservation).Observation = iTag.Observation[0]?.['#text'];
             }
           }
-          (PageVieScolaire as ICarnetDeBord['PageVieScolaire']).VieScolaire?.push(item as ICarnetDeBordVieScolaireObservation);
+          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
+            item as ICarnetDeBordVieScolaireObservation,
+          );
         }
       }
       (ret as ICarnetDeBord).PageVieScolaire = PageVieScolaire as ICarnetDeBord['PageVieScolaire'];
