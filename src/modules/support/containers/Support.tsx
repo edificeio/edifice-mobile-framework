@@ -5,12 +5,12 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { PageView } from '~/framework/components/page';
 import { IUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile from '~/infra/actions/pickFile';
-import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from '~/modules/support/actions/support';
+import { addAttachmentAction, createTicketAction, deleteAttachmentAction } from '~/modules/support/actions/support';
 import Support from '~/modules/support/components/Support';
-import { PageView } from '~/framework/components/page';
 
 export type INewAttachment = {
   contentType?: string;
@@ -190,9 +190,9 @@ const mapStateToProps: (state: any) => any = state => {
     if (app.address && app.name && app.address.length > 0 && app.name.length > 0) {
       const translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
       if (translation.substring(0, 9) !== '[missing ') {
-        categoryList.push({...app, name: translation});
+        categoryList.push({ ...app, name: translation });
       } else if (/^[A-Z]/.test(app.displayName)) {
-        categoryList.push({...app, name: app.displayName});
+        categoryList.push({ ...app, name: app.displayName });
       }
     }
   }

@@ -10,6 +10,43 @@ import { ModalBox, ModalContent } from '~/ui/Modal';
 import { Text } from '~/ui/Typography';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
 
+const styles = StyleSheet.create({
+  containerView: {
+    flexGrow: 1,
+    width: '100%',
+    marginTop: -25,
+  },
+  titleContainer: {
+    alignSelf: 'baseline',
+    paddingBottom: 8,
+    paddingHorizontal: 12,
+  },
+  titleText: {
+    fontSize: 18,
+    color: 'black',
+  },
+  textZone: {
+    marginHorizontal: 10,
+    borderBottomWidth: 0.5,
+    borderColor: 'lightgrey',
+    maxHeight: UI_SIZES.screen.height / 4,
+  },
+  infosView: {
+    flexDirection: 'row',
+    marginTop: 10,
+    marginHorizontal: 10,
+  },
+  useSignatureText: {
+    paddingTop: 3,
+    paddingLeft: 10,
+  },
+  actionsButtonsContainer: {
+    flexDirection: 'row-reverse',
+    padding: 20,
+    paddingBottom: 10,
+  },
+});
+
 type SignatureModalProps = {
   isGlobalSignature: boolean;
   show: boolean;
@@ -28,27 +65,27 @@ export default class SignatureModal extends React.Component<SignatureModalProps>
     return (
       <ModalBox isVisible={show}>
         <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
-          <View style={style.containerView}>
-            <View style={{ alignSelf: 'baseline', paddingBottom: 8, paddingHorizontal: 12 }}>
-              <Text style={{ fontSize: 18, color: 'black' }}>{I18n.t('zimbra-signature')}</Text>
+          <View style={styles.containerView}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.titleText}>{I18n.t('zimbra-signature')}</Text>
             </View>
             <TextInput
               textAlignVertical="top"
               multiline
               scrollEnabled
-              style={style.textZone}
+              style={styles.textZone}
               defaultValue={this.props.signature}
               onChangeText={(text: string) => this.props.setSignature(text)}
             />
-            <View style={style.infosView}>
+            <View style={styles.infosView}>
               <SquareCheckbox
                 value={this.props.isGlobalSignature}
                 color={CommonStyles.primary}
                 onChange={this.props.toggleGlobal}
               />
-              <Text style={{ paddingTop: 3, paddingLeft: 10 }}>{I18n.t('zimbra-signature-use')}</Text>
+              <Text style={styles.useSignatureText}>{I18n.t('zimbra-signature-use')}</Text>
             </View>
-            <View style={{ flexDirection: 'row-reverse', padding: 20, paddingBottom: 10 }}>
+            <View style={styles.actionsButtonsContainer}>
               <DialogButtonOk label={I18n.t('zimbra-add')} onPress={confirm} />
               <DialogButtonCancel onPress={closeModal} />
             </View>
@@ -58,22 +95,3 @@ export default class SignatureModal extends React.Component<SignatureModalProps>
     );
   }
 }
-
-const style = StyleSheet.create({
-  containerView: {
-    flexGrow: 1,
-    width: '100%',
-    marginTop: -25,
-  },
-  textZone: {
-    marginHorizontal: 10,
-    borderBottomWidth: 0.5,
-    borderColor: 'lightgrey',
-    maxHeight: UI_SIZES.screen.height / 4,
-  },
-  infosView: {
-    flexDirection: 'row',
-    marginTop: 10,
-    marginHorizontal: 10,
-  },
-});

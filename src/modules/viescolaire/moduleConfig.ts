@@ -1,21 +1,22 @@
-import { IViesco_State } from './reducer';
+import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { IViesco_State } from './reducer';
 
 const ViescoApps = ['PRESENCES', 'INCIDENTS', 'DIARY'];
 
-function hasViescoModule(entcoreApp) {
+function hasViescoModule(entcoreApp: IEntcoreApp) {
   const isModule = ViescoApps.findIndex(app => app === entcoreApp.name.toUpperCase());
   if (isModule && isModule !== -1) return true;
   return false;
 }
 
-export default createNavigableModuleConfig<'viescolaire', IViesco_State>({
+export default new NavigableModuleConfig<'viescolaire', IViesco_State>({
   name: 'viescolaire',
-  displayName: 'viesco',
-  matchEntcoreApp: entcoreApp => hasViescoModule(entcoreApp),
   entcoreScope: ['viescolaire'],
-  iconName: 'school',
-  registerAs: 'tabModule',
-  registerOrder: 2,
+  matchEntcoreApp: entcoreApp => hasViescoModule(entcoreApp),
+
+  displayI18n: 'viesco',
+  displayAs: 'tabModule',
+  displayOrder: 2,
+  displayPicture: { type: 'Icon', name: 'school' },
 });

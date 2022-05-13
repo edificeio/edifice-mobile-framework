@@ -4,12 +4,13 @@ import { FlatList, Image, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import { Text, TextBold } from '~/ui/Typography';
 
-import { AdvancedSearchParams, Field } from './AdvancedSearchModal';
+import { Field, Sources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
 import { SearchState } from './HomePage';
 import { SearchFilter } from './SearchFilter';
@@ -47,6 +48,9 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
+  loadingIndicator: {
+    marginTop: '45%',
+  },
   filterContainer: {
     marginHorizontal: 20,
     marginBottom: 15,
@@ -64,14 +68,16 @@ interface AdvancedSearchFieldProps {
 }
 
 interface SearchParamsProps {
-  params: AdvancedSearchParams;
+  fields: Field[];
   searchState: SearchState;
+  sources: Sources;
 
   onCancelSearch: () => void;
 }
 
 interface SearchContentProps {
-  params: AdvancedSearchParams;
+  fields: Field[];
+  isFetching: boolean;
   resources: Resource[];
   searchState: SearchState;
 
@@ -81,27 +87,40 @@ interface SearchContentProps {
 }
 
 const resourceMatchesFilters = (resource: Resource, filters: SearchFilters) => {
+  let typeMatches = filters['resource-type'].length === 0;
+  let sourceMatches = filters.source.length === 0;
+  let levelMatches = filters.level.length === 0;
+
   for (const type of filters['resource-type']) {
     if (resource.types.includes(type)) {
-      return true;
+      typeMatches = true;
     }
   }
   if (filters.source.includes(resource.source.substring(30))) {
-    return true;
+    sourceMatches = true;
   }
   for (const level of filters.level) {
     if (resource.levels.includes(level)) {
-      return true;
+      levelMatches = true;
     }
   }
-  return false;
+  return typeMatches && sourceMatches && levelMatches;
+};
+
+const getSources = (resources: Resource[]) => {
+  return {
+    GAR: resources.some(resource => resource.source === Source.GAR),
+    Moodle: resources.some(resource => resource.source === Source.Moodle),
+    PMB: resources.some(resource => resource.source === Source.PMB),
+    Signets: resources.some(resource => resource.source === Source.Signet),
+  };
 };
 
 const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (props: AdvancedSearchFieldProps) =>
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
       <TextBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</TextBold>
-      <Text> {props.field.value}</Text>
+      <Text numberOfLines={1}> {props.field.value}</Text>
     </View>
   ) : null;
 
@@ -109,18 +128,16 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
   <View style={styles.parametersContainer}>
     <View style={styles.upperContainer}>
       <View style={styles.sourcesContainer}>
-        {props.params.sources.GAR ? <Image source={require('ASSETS/images/logo-gar.png')} style={styles.sourceImage} /> : null}
-        {props.params.sources.Moodle ? (
-          <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} />
-        ) : null}
-        {props.params.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
-        {props.params.sources.Signets ? <Icon name="bookmark_outline" size={24} /> : null}
+        {props.sources.GAR ? <Image source={require('ASSETS/images/logo-gar.png')} style={styles.sourceImage} /> : null}
+        {props.sources.Moodle ? <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} /> : null}
+        {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
+        {props.sources.Signets ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
-      <DialogButtonOk style={styles.cancelButton} label={I18n.t('mediacentre.cancel-search')} onPress={props.onCancelSearch} />
+      <DialogButtonOk style={styles.cancelButton} label={I18n.t('common.cancel')} onPress={props.onCancelSearch} />
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>
-        {props.params.fields.map((field, index) => (
+        {props.fields.map((field, index) => (
           <AdvancedSearchField field={field} key={index} />
         ))}
       </View>
@@ -131,6 +148,9 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
 export const SearchContent: React.FunctionComponent<SearchContentProps> = (props: SearchContentProps) => {
   const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
   const [activeFilters, setActiveFilters] = useState<SearchFilters>({ 'resource-type': [], source: [], level: [] });
+  const isFiltering =
+    activeFilters['resource-type'].length > 0 || activeFilters.source.length > 0 || activeFilters.level.length > 0;
+  const sources = getSources(isFiltering ? filteredResources : props.resources);
   const filterResources = () => {
     const filtered: Resource[] = [];
     for (const resource of props.resources) {
@@ -150,31 +170,24 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
     setActiveFilters(activeFilters);
     filterResources();
   };
-  const getSources = () => {
-    if (props.searchState === SearchState.SIMPLE) {
-      return {
-        GAR: props.resources.some(resource => resource.source === Source.GAR),
-        Moodle: props.resources.some(resource => resource.source === Source.Moodle),
-        PMB: props.resources.some(resource => resource.source === Source.PMB),
-        Signets: props.resources.some(resource => resource.source === Source.Signet),
-      };
-    }
-    return props.params.sources;
-  };
   return (
     <View style={styles.mainContainer}>
-      <SearchParams {...props} params={{ ...props.params, sources: getSources() }} />
-      <FlatList
-        data={filteredResources.length ? filteredResources : props.resources}
-        renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}
-        keyExtractor={item => item.uid || item.id}
-        ListHeaderComponent={
-          props.resources.length ? (
-            <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
-          ) : null
-        }
-        ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
-      />
+      <SearchParams {...props} sources={sources} />
+      {props.isFetching ? (
+        <LoadingIndicator customStyle={styles.loadingIndicator} />
+      ) : (
+        <FlatList
+          data={isFiltering ? filteredResources : props.resources}
+          renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}
+          keyExtractor={item => item.uid || item.id}
+          ListHeaderComponent={
+            props.resources.length ? (
+              <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
+            ) : null
+          }
+          ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
+        />
+      )}
     </View>
   );
 };

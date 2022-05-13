@@ -5,7 +5,7 @@ import { NavigationFocusInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
+import { getUserSession } from '~/framework/util/session';
 import { fetchMultipleSlotsAction } from '~/modules/viescolaire/presences/actions/multipleSlots';
 import { fetchRegiterPreferencesAction } from '~/modules/viescolaire/presences/actions/registerPreferences';
 import { fetchCoursesRegisterAction } from '~/modules/viescolaire/presences/actions/teacherCourseRegister';
@@ -155,7 +155,7 @@ const mapStateToProps: (state: any) => any = state => {
 
   return {
     courses: coursesData,
-    teacherId: getSessionInfo().id,
+    teacherId: getUserSession().user.id,
     structureId: getSelectedStructure(state),
     isFetching: courses.isFetching || registerData.isFetching,
     multipleSlots: getMultipleSlotsState(state),

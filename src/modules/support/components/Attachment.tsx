@@ -12,22 +12,37 @@ const attachmentStyle = {
   alignItems: 'center',
 } as ViewStyle;
 
+const styles = StyleSheet.create({
+  attachmentView: {
+    backgroundColor: CommonStyles.primaryLight,
+    right: undefined,
+  },
+  iconStyle: {
+    margin: 10,
+  },
+  fileNameText: {
+    flex: 1,
+    color: CommonStyles.primary,
+  },
+});
+
 const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemove }) => {
   return (
     <TouchableOpacity style={attachmentStyle} onPress={onRemove}>
       <View
         style={[
           StyleSheet.absoluteFill,
-          {
-            backgroundColor: CommonStyles.primaryLight,
-            right: undefined,
-            width: uploadSuccess ? '100%' : `${uploadProgress}%`,
-          },
+          [
+            styles.attachmentView,
+            {
+              width: uploadSuccess ? '100%' : `${uploadProgress}%`,
+            },
+          ],
         ]}
       />
-      <Icon size={25} style={{ margin: 10 }} color={CommonStyles.primary} name={getFileIcon(fileType)} />
-      <Text style={{ flex: 1, color: CommonStyles.primary }}>{fileName}</Text>
-      <Icon name="close" style={{ margin: 10 }} color="red" />
+      <Icon size={25} style={styles.iconStyle} color={CommonStyles.primary} name={getFileIcon(fileType)} />
+      <Text style={styles.fileNameText}>{fileName}</Text>
+      <Icon name="close" style={styles.iconStyle} color="red" />
     </TouchableOpacity>
   );
 };

@@ -9,15 +9,6 @@ enum UserRole {
   GUEST = 'GUEST',
 }
 
-export const getUserColor = async (userId: string) => {
-  try {
-    const { result } = await mailContentService.getUserInfos(userId);
-    return getProfileColor(result?.[0].type[0]);
-  } catch (err) {
-    return getProfileColor();
-  }
-};
-
 export const getProfileColor = (role?) => {
   switch (role?.toUpperCase()) {
     case UserRole.STUDENT:
@@ -34,5 +25,14 @@ export const getProfileColor = (role?) => {
       return CommonStyles.profileTypes.Guest;
     default:
       return '#BBBFC6';
+  }
+};
+
+export const getUserColor = async (userId: string) => {
+  try {
+    const { result } = await mailContentService.getUserInfos(userId);
+    return getProfileColor(result?.[0].type[0]);
+  } catch (err) {
+    return getProfileColor();
   }
 };

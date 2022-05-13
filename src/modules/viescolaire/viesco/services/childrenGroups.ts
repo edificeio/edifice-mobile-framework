@@ -2,14 +2,14 @@ import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { IChildrenGroups } from '~/modules/viescolaire/viesco/state/childrenGroups';
 
 // Data type of what is given by the backend.
-export type IChildrenGroupsBackend = Array<{
+export type IChildrenGroupsBackend = {
   color: string;
   externalId: string;
   id: string;
   name: string;
   notEmptyClass: boolean;
   type_groupe: number;
-}>;
+}[];
 
 const groupListAdapter: (data: IChildrenGroupsBackend) => IChildrenGroups = data => {
   let result = [] as IChildrenGroups;

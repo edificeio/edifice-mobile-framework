@@ -4,13 +4,15 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { openConnector } from '~/modules/pronote/actions/connector';
 import ConnectorView from '~/modules/pronote/components/ConnectorView';
 import connectorConfig from '~/modules/pronote/moduleConfig';
 import userConfig from '~/user/config';
-import { PageView } from '~/framework/components/page';
+
+import { IConnectorState } from '../reducers/connector';
 
 interface IApplicationBackend {
   name: string;
@@ -35,7 +37,6 @@ interface IConnectorContainerEventProps {
 type IConnectorContainerProps = IConnectorContainerDataProps & IConnectorContainerEventProps & NavigationInjectedProps;
 
 class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
-
   public render() {
     return (
       <PageView
@@ -85,7 +86,7 @@ const getConnectorAddress: (appAddress: string, userType: string) => string = (a
 };
 
 const mapStateToProps: (state: any) => IConnectorContainerDataProps = state => {
-  const connectorState = connectorConfig.getState(state);
+  const connectorState = connectorConfig.getState(state).connector as IConnectorState;
   const authState = userConfig.getLocalState(state).auth;
   const infoState = userConfig.getLocalState(state).info;
   return {

@@ -66,6 +66,7 @@ export interface IWord {
   id: number;
   ownerId: string;
   ownerName: string;
+  reply: boolean;
   sendingDate: Moment;
   text: string;
   title: string;
@@ -95,16 +96,16 @@ export default createSessionReducer(initialState, {
 
 // Getters
 
-export const getStudentsForTeacher = (wordReport: IWordReport) => {
-  return wordReport.report?.map(student => ({
+export const getStudentsForTeacher = (recipients: IConcernedStudent[]) => {
+  return recipients?.map(student => ({
     owner: student.owner,
     ownerName: student.ownerName,
   }));
 };
 
-export const getStudentsByAcknowledgementForTeacher = (wordReport: IWordReport) => {
-  const acknowledgedStudents = wordReport.report?.filter(student => student.acknowledgments?.length > 0);
-  const unacknowledgedStudents = wordReport.report?.filter(student => student.acknowledgments?.length === 0);
+export const getStudentsByAcknowledgementForTeacher = (recipients: IConcernedStudent[]) => {
+  const acknowledgedStudents = recipients?.filter(student => student.acknowledgments?.length > 0);
+  const unacknowledgedStudents = recipients?.filter(student => student.acknowledgments?.length === 0);
   return {
     acknowledged: acknowledgedStudents,
     unacknowledged: unacknowledgedStudents,
@@ -115,7 +116,7 @@ export const getIsWordAcknowledgedForTeacher = (ackNumber: number, total: number
   return ackNumber === total;
 };
 
-export const getHasSingleRecipientForTeacher = (recipients: IRecipient[]) => {
+export const getHasSingleRecipientForTeacher = (recipients: IRecipient[] | IConcernedStudent[]) => {
   return recipients?.length === 1;
 };
 
@@ -128,22 +129,16 @@ export const getIsWordAcknowledgedForStudent = (acknowledgments: IAcknowledgment
   return acknowledgments?.length > 0;
 };
 
-export const getUnacknowledgedStudentIdsForParent = (parentId: string, wordReport: IWordReport) => {
-  const acknowledgedStudents: string[] = [];
-  for (const concernedStudent of wordReport.report) {
-    concernedStudent.acknowledgments?.forEach(acknowledgment => {
-      if (parentId === acknowledgment.owner) acknowledgedStudents.push(concernedStudent.owner);
-    });
-  }
-  const unacknowledgedStudents = wordReport.report?.filter(
-    concernedStudent => !acknowledgedStudents.includes(concernedStudent.owner),
-  );
-  const unacknowledgedStudentsIds = unacknowledgedStudents?.map(unacknowledgedStudent => unacknowledgedStudent.owner);
-  return unacknowledgedStudentsIds;
+export const getReportByStudentForParent = (studentId: string, report: IConcernedStudent[]) => {
+  return report?.find(concernedStudent => concernedStudent.owner === studentId);
 };
 
 export const getIsWordAcknowledgedForParent = (parentId: string, acknowledgments: IAcknowledgment[]) => {
   return acknowledgments?.some(acknowledgment => acknowledgment.owner === parentId);
+};
+
+export const getIsWordRepliedToForParent = (parentId: string, responses: IResponse[] | null) => {
+  return responses?.some(response => response.owner === parentId);
 };
 
 export const getResponsesForParent = (parentId: string, responses: IResponse[]) => {

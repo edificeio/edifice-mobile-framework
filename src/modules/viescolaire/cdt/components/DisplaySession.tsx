@@ -1,21 +1,32 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
 import { Text, TextBold } from '~/framework/components/text';
-import { session } from '~/modules/viescolaire/utils/cdt';
+import { Session } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
-import { Icon } from '~/ui/icons/Icon';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
+  mainView: {
+    flex: 1,
+  },
   sessionPart: {
     paddingVertical: 8,
     paddingHorizontal: 15,
+  },
+  sessionInfoBar: {
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+  },
+  LeftColoredItemInfoBar: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
   },
   pageTitle: {
     color: '#AFAFAF',
@@ -35,8 +46,8 @@ const style = StyleSheet.create({
 });
 
 type IDisplaySessionProps = {
-  session: session;
-  sessionList: session[];
+  session: Session;
+  sessionList: Session[];
 } & INavigationProps;
 
 type IDisplaySessionState = {
@@ -111,9 +122,9 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
     return (
       <PageContainer>
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
-          <View style={{ flex: 1 }}>
-            <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-              <LeftColoredItem shadow style={{ alignItems: 'flex-end', flexDirection: 'row' }} color="#00ab6f">
+          <View style={style.mainView}>
+            <View style={style.sessionInfoBar}>
+              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color="#00ab6f">
                 {sessionList && sessionList[indexSelectedSession]?.date ? (
                   <>
                     <Icon size={20} color="#00ab6f" name="date_range" />

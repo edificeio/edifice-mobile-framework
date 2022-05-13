@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { moyenneListService } from '~/modules/viescolaire/competences/services/moyennes';
-import { actionTypes, IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
+import { IMoyenneList, actionTypes } from '~/modules/viescolaire/competences/state/moyennes';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

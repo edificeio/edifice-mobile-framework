@@ -1,9 +1,34 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { TextBold, Text } from '~/framework/components/text';
+import { Text, TextBold } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
+
+const styles = StyleSheet.create({
+  homeworkLeftColoredItem: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  homeworkView: {
+    flex: 1,
+    justifyContent: 'space-evenly',
+  },
+  sessionLeftColoredItem: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  sessionView: {
+    flex: 1,
+    justifyContent: 'space-evenly',
+  },
+  sessionMatiereText: {
+    textTransform: 'uppercase',
+  },
+  sessionAuthorText: {
+    color: '#AFAFAF',
+  },
+});
 
 export const HomeworkItem = ({
   onPress,
@@ -27,8 +52,8 @@ export const HomeworkItem = ({
   onChange: () => void;
   hideCheckbox: boolean;
 }) => (
-  <LeftColoredItem shadow onPress={onPress} style={{ alignItems: 'center', flexDirection: 'row' }} color="#FA9700">
-    <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
+  <LeftColoredItem shadow onPress={onPress} style={styles.homeworkLeftColoredItem} color="#FA9700">
+    <View style={styles.homeworkView}>
       <TextBold>{title}</TextBold>
       <Text>{subtitle.label}</Text>
     </View>
@@ -37,10 +62,10 @@ export const HomeworkItem = ({
 );
 
 export const SessionItem = ({ onPress, matiere, author }: any) => (
-  <LeftColoredItem shadow onPress={onPress} style={{ alignItems: 'center', flexDirection: 'row' }} color="#2bab6f">
-    <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
-      <TextBold style={{ textTransform: 'uppercase' }}>{matiere}</TextBold>
-      <Text style={{ color: '#AFAFAF' }}>{author}</Text>
+  <LeftColoredItem shadow onPress={onPress} style={styles.sessionLeftColoredItem} color="#2bab6f">
+    <View style={styles.sessionView}>
+      <TextBold style={styles.sessionMatiereText}>{matiere}</TextBold>
+      <Text style={styles.sessionAuthorText}>{author}</Text>
     </View>
   </LeftColoredItem>
 );

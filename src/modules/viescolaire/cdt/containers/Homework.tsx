@@ -2,8 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { PageView } from '~/framework/components/page';
 
+import { PageView } from '~/framework/components/page';
 import DisplayHomework from '~/modules/viescolaire/cdt/components/DisplayHomework';
 import DisplayListHomework from '~/modules/viescolaire/cdt/components/DisplayListHomework';
 

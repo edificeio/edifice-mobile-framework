@@ -14,12 +14,155 @@ import { CommonStyles } from '~/styles/common/styles';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
+// STYLE
+
+const styleConstant = StyleSheet.create({
+  dash: { height: 15, width: 30, borderRadius: 10, marginTop: 2 },
+  container: { borderRadius: 5 },
+  coloredSquareText: { color: 'white' },
+  devoirsList: {
+    width: '100%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    borderRadius: 5,
+    backgroundColor: '#FFF',
+    marginBottom: 10,
+  },
+  competencesList: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    maxWidth: '50%',
+  },
+  coloredSquare: {
+    backgroundColor: CommonStyles.primary,
+    borderRadius: 5,
+    padding: 10,
+    minWidth: '29%',
+  },
+  coloredSquareNoteTextContainer: {
+    alignSelf: 'center',
+    color: 'white',
+    marginVertical: 8,
+  },
+  coloredSquareNoteText: {
+    fontSize: 20,
+    color: 'white',
+  },
+  gradeDevoirsNoteContainer: {
+    justifyContent: 'center',
+  },
+  gradeDevoirsNoteText: {
+    alignSelf: 'center',
+    fontSize: 20,
+    color: 'white',
+  },
+  competenceRoundContainer: {
+    width: '25%',
+    justifyContent: 'center',
+  },
+  competenceRoundContainerWidthQuarter: {
+    width: '25%',
+  },
+  competenceRoundContainerWidthAuto: {
+    width: 'auto',
+  },
+  competenceRound: {
+    borderRadius: 45,
+    minWidth: 60,
+    minHeight: 60,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+  },
+  competenceRoundText: {
+    paddingTop: 5,
+    textAlign: 'center',
+    fontSize: 20,
+  },
+  competenceRoundModalStyle: {
+    width: '100%',
+  },
+  competenceRoundModalContentStyle: {
+    marginLeft: -20,
+    marginRight: 20,
+  },
+  competenceRoundModalText: {
+    width: '85%',
+  },
+  round: {
+    marginLeft: 5,
+    height: 25,
+    width: 25,
+    borderRadius: 15,
+  },
+  subMatieres: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingBottom: 10,
+    paddingHorizontal: 15,
+  },
+  shadow: {
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius,
+    elevation: 3,
+  },
+  modalBlock: {
+    width: '92%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+    padding: 10,
+  },
+  gradesDevoirsMoyennesView: {
+    flexGrow: 1,
+  },
+  gradesDevoirsMoyennesItemView: {
+    padding: 8,
+    maxWidth: '75%',
+  },
+  gradesDevoirsMoyennesCourseNameText: {
+    maxWidth: '80%',
+  },
+  denseDevoirListContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  denseDevoirListMatiereContainer: {
+    flexDirection: 'row',
+    width: '75%',
+    padding: 8,
+    justifyContent: 'space-between',
+  },
+  denseDevoirListMatiereText: {
+    maxWidth: '65%',
+    paddingRight: 10,
+  },
+  denseDevoirListNoteText: {
+    flexGrow: 1,
+    textAlign: 'right',
+    fontSize: 18,
+    paddingTop: 8,
+  },
+  denseDevoirListDiviseurText: {
+    paddingTop: 8,
+  },
+  gradesDevoirsResumeContainer: {
+    padding: 8,
+    maxWidth: '52%',
+  },
+});
+
+// COMPONENTS
+
 const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
-  let cycleLevels = levels.filter(obj => {
+  const cycleLevels = levels.filter(obj => {
     return obj.cycle === 'Cycle 3';
   });
   if (evaluation >= 0 && evaluation < cycleLevels.length) {
-    let color = cycleLevels[evaluation].couleur;
+    const color = cycleLevels[evaluation].couleur;
     return color ? color : cycleLevels[evaluation].default;
   }
   return '#DDDDDD';
@@ -37,17 +180,8 @@ const getColorFromNote = (note: number, moy: number, diviseur: number) => {
 
 const CompetenceRoundModal = (competences: any, levels: ILevelsList) => {
   return competences.map((competence, index) => (
-    <ModalContentBlock
-      style={{
-        width: '92%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
-        padding: 10,
-      }}
-      key={index}>
-      <Text style={{ width: '85%' }}>{competence.nom}</Text>
+    <ModalContentBlock style={styleConstant.modalBlock} key={index}>
+      <Text style={styleConstant.competenceRoundModalText}>{competence.nom}</Text>
       <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
     </ModalContentBlock>
   ));
@@ -69,7 +203,10 @@ const CompetenceRound = ({
     <View
       style={[
         styleConstant.competenceRoundContainer,
-        { alignItems: stateFullRound, width: stateFullRound === 'flex-end' ? 'auto' : '25%' },
+        stateFullRound === 'flex-end'
+          ? styleConstant.competenceRoundContainerWidthAuto
+          : styleConstant.competenceRoundContainerWidthQuarter,
+        { alignItems: stateFullRound },
       ]}>
       {competences.length > 0 && (
         <TouchableOpacity
@@ -83,8 +220,8 @@ const CompetenceRound = ({
         <ModalBox isVisible={isVisible}>
           <ModalContent>
             <ScrollView
-              style={{ width: '100%' }}
-              contentContainerStyle={{ marginLeft: -20, marginRight: 20 }}
+              style={styleConstant.competenceRoundModalStyle}
+              contentContainerStyle={styleConstant.competenceRoundModalContentStyle}
               showsVerticalScrollIndicator={false}>
               {CompetenceRoundModal(competences, levels)}
             </ScrollView>
@@ -114,14 +251,14 @@ const ColoredSquare = ({
   backgroundColor?: string;
 }) => (
   <View style={[styleConstant.coloredSquare, { backgroundColor: backgroundColor ? backgroundColor : CommonStyles.primary }]}>
-    <Text style={{ alignSelf: 'center', color: 'white', marginVertical: 8 }}>
+    <Text style={styleConstant.coloredSquareNoteTextContainer}>
       {!isNaN(Number(note)) ? (
         <>
-          <TextBold style={{ fontSize: 20, color: 'white' }}>{+parseFloat(Number(note).toFixed(2))}</TextBold>
+          <TextBold style={styleConstant.coloredSquareNoteText}>{+parseFloat(Number(note).toFixed(2))}</TextBold>
           {!hideScore ? `/ ${diviseur}` : null}
         </>
       ) : (
-        <TextBold style={{ fontSize: 20, color: 'white' }}>{note}</TextBold>
+        <TextBold style={styleConstant.coloredSquareNoteText}>{note}</TextBold>
       )}
     </Text>
     {coeff ? <Text style={styleConstant.coloredSquareText}>coeff : {coeff}</Text> : null}
@@ -130,7 +267,7 @@ const ColoredSquare = ({
 );
 
 const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
-  <View style={{ padding: 8, maxWidth: '52%' }}>
+  <View style={styleConstant.gradesDevoirsResumeContainer}>
     <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
     <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
     <Text numberOfLines={1}>{devoir.title}</Text>
@@ -144,9 +281,9 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
   <>
     {devoirs.map((devoir, index) => (
       <LeftColoredItem shadow color="#F95303" key={index}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ flexDirection: 'row', width: '75%', padding: 8, justifyContent: 'space-between' }}>
-            <TextBold style={{ maxWidth: '65%', paddingRight: 10 }} numberOfLines={1}>
+        <View style={styleConstant.denseDevoirListContainer}>
+          <View style={styleConstant.denseDevoirListMatiereContainer}>
+            <TextBold style={styleConstant.denseDevoirListMatiereText} numberOfLines={1}>
               {devoir.matiere}
             </TextBold>
             <Text>{moment(devoir.date).format('L')}</Text>
@@ -154,16 +291,12 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
           {devoir.competences.length ? (
             <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} levels={levels} />
           ) : (
-            isNaN(Number(devoir.note)) && (
-              <TextBold style={{ flexGrow: 1, textAlign: 'right', fontSize: 18, paddingTop: 8 }}>{devoir.note}</TextBold>
-            )
+            isNaN(Number(devoir.note)) && <TextBold style={styleConstant.denseDevoirListNoteText}>{devoir.note}</TextBold>
           )}
           {devoir.note && !isNaN(Number(devoir.note)) && (
             <>
-              <TextBold style={{ flexGrow: 1, textAlign: 'right', fontSize: 18, paddingTop: 8 }}>
-                {devoir.note.replace(/\./g, ',')}
-              </TextBold>
-              <Text style={{ paddingTop: 8 }}>/{devoir.diviseur}</Text>
+              <TextBold style={styleConstant.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</TextBold>
+              <Text style={styleConstant.denseDevoirListDiviseurText}>/{devoir.diviseur}</Text>
             </>
           )}
         </View>
@@ -173,11 +306,11 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
 );
 
 export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) => (
-  <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+  <ScrollView contentContainerStyle={styleConstant.gradesDevoirsMoyennesView}>
     {devoirs.map((devoir, index) => (
       <LeftColoredItem color={CommonStyles.primary} key={index}>
         <View style={styleConstant.devoirsList}>
-          <View style={{ padding: 8, maxWidth: '75%' }}>
+          <View style={styleConstant.gradesDevoirsMoyennesItemView}>
             <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
             <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
           </View>
@@ -189,7 +322,7 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
               (course, index) =>
                 course.is_evaluated && (
                   <View style={styleConstant.subMatieres} key={index}>
-                    <Text style={{ maxWidth: '80%' }} numberOfLines={1}>
+                    <Text style={styleConstant.gradesDevoirsMoyennesCourseNameText} numberOfLines={1}>
                       {course.name.toUpperCase()}
                     </Text>
                     {course.note ? (
@@ -238,8 +371,8 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
           ) : devoir.competences !== undefined && devoir.competences.length ? (
             <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={60} levels={levels} />
           ) : (
-            <View style={[styleConstant.coloredSquare, { justifyContent: 'center' }]}>
-              <TextBold style={{ alignSelf: 'center', fontSize: 20, color: 'white' }}>{devoir.note}</TextBold>
+            <View style={[styleConstant.coloredSquare, styleConstant.gradeDevoirsNoteContainer]}>
+              <TextBold style={styleConstant.gradeDevoirsNoteText}>{devoir.note}</TextBold>
             </View>
           )}
         </View>
@@ -256,66 +389,3 @@ export const getSortedEvaluationList = (evaluations: IDevoirList) => {
       Number(a.note) - Number(b.note),
   );
 };
-
-// STYLE
-
-const styleConstant = StyleSheet.create({
-  dash: { height: 15, width: 30, borderRadius: 10, marginTop: 2 },
-  container: { borderRadius: 5 },
-  coloredSquareText: { color: 'white' },
-  devoirsList: {
-    width: '100%',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    borderRadius: 5,
-    backgroundColor: '#FFF',
-    marginBottom: 10,
-  },
-  competencesList: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    maxWidth: '50%',
-  },
-  coloredSquare: {
-    backgroundColor: CommonStyles.primary,
-    borderRadius: 5,
-    padding: 10,
-    minWidth: '29%',
-  },
-  competenceRoundContainer: {
-    width: '25%',
-    justifyContent: 'center',
-  },
-  competenceRound: {
-    borderRadius: 45,
-    minWidth: 60,
-    minHeight: 60,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-  },
-  competenceRoundText: {
-    paddingTop: 5,
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  round: {
-    marginLeft: 5,
-    height: 25,
-    width: 25,
-    borderRadius: 15,
-  },
-  subMatieres: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingBottom: 10,
-    paddingHorizontal: 15,
-  },
-  shadow: {
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-    elevation: 3,
-  },
-});

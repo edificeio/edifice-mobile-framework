@@ -3,25 +3,69 @@ import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-
-
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 import { CommonStyles } from '~/styles/common/styles';
 import { Text, TextBold } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
 
+const styles = StyleSheet.create({
+  studentInfos: {
+    padding: 10,
+    paddingBottom: 20,
+  },
+  studentName: {
+    fontSize: 15,
+    marginBottom: 10,
+  },
+  studentGroups: {
+    marginTop: -5,
+    marginBottom: 5,
+  },
+  infoLine: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  iconDisplay: {
+    marginRight: 10,
+    marginTop: -3,
+  },
+  relativesInfos: {
+    flex: 1,
+    borderStyle: 'solid',
+    padding: 10,
+  },
+  relativesTitleText: {
+    marginBottom: 10,
+  },
+  relativesContainer: {
+    marginBottom: 20,
+  },
+  relativesIdentity: {
+    marginBottom: 5,
+  },
+  shadow: {
+    backgroundColor: 'white',
+    elevation: 4,
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius,
+  },
+});
 
 export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
   return (
     <View style={[styles.relativesInfos, styles.shadow]}>
-      <Text style={{ marginBottom: 10 }}>{I18n.t('viesco-memento-relatives')}</Text>
+      <Text style={styles.relativesTitleText}>{I18n.t('viesco-memento-relatives')}</Text>
 
       {props.relatives &&
         props.relatives.map(relative => {
           return (
-            <View style={{ marginBottom: 20 }}>
+            <View style={styles.relativesContainer}>
               {relative.name ? (
-                <TextBold style={{ marginBottom: 5 }}>
+                <TextBold style={styles.relativesIdentity}>
                   {relative.title} {relative.name}
                 </TextBold>
               ) : null}
@@ -76,7 +120,7 @@ export const StudentInfos = (props: { memento: IMemento }) => {
           <Text>-</Text>
         )}
       </View>
-      {props.memento.groups.length > 0 && <Text style={{ marginTop: -5, marginBottom: 5 }}>{props.memento.groups.join(', ')}</Text>}
+      {props.memento.groups.length > 0 && <Text style={styles.studentGroups}>{props.memento.groups.join(', ')}</Text>}
 
       <View style={styles.infoLine}>
         <Icon style={styles.iconDisplay} size={20} name="silverware" />
@@ -85,37 +129,3 @@ export const StudentInfos = (props: { memento: IMemento }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  studentInfos: {
-    padding: 10,
-    paddingBottom: 20,
-  },
-  studentName: {
-    fontSize: 15,
-    marginBottom: 10,
-  },
-  infoLine: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    marginBottom: 10,
-  },
-  iconDisplay: {
-    marginRight: 10,
-    marginTop: -3,
-  },
-  relativesInfos: {
-    flex: 1,
-    borderStyle: 'solid',
-    padding: 10,
-  },
-  shadow: {
-    backgroundColor: 'white',
-    elevation: 4,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-  },
-});

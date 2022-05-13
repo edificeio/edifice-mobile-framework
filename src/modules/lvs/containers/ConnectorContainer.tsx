@@ -4,13 +4,13 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { openConnector } from '~/modules/lvs/actions/connector';
 import ConnectorView from '~/modules/lvs/components/ConnectorView';
 import connectorConfig from '~/modules/lvs/moduleConfig';
 import userConfig from '~/user/config';
-import { PageView } from '~/framework/components/page';
 
 interface IApplicationBackend {
   name: string;
@@ -35,13 +35,12 @@ interface IConnectorContainerEventProps {
 type IConnectorContainerProps = IConnectorContainerDataProps & IConnectorContainerEventProps & NavigationInjectedProps;
 
 class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
-
   public render() {
     return (
       <PageView
         navigation={this.props.navigation}
         navBarWithBack={{
-          title: I18n.t(connectorConfig.displayName),
+          title: I18n.t(connectorConfig.displayI18n),
         }}>
         <ConnectorView
           openConnector={() => this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))}

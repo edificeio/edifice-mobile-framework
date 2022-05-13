@@ -3,13 +3,13 @@ import * as React from 'react';
 import { NavigationInjectedProps, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 
+import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
+
 import DashboardEmpty from './DashboardEmpty';
 import DashboardRelative from './DashboardRelative';
 import DashboardStudent from './DashboardStudent';
 import DashboardTeacher from './DashboardTeacher';
-
-import { getSessionInfo } from '~/App';
-import { PageView } from '~/framework/components/page';
 
 export type IAuthorizedViescoApps = {
   diary: boolean;
@@ -37,7 +37,7 @@ export class Dashboard extends React.PureComponent<IDashboardProps, any> {
   };
 
   public render() {
-    const DashboardContainer = this.getDashboardForType(getSessionInfo().type);
+    const DashboardContainer = this.getDashboardForType(getUserSession().user.type);
 
     return (
       <PageView

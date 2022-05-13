@@ -1,7 +1,7 @@
 import { createSessionAsyncReducer } from '~/infra/redux/async2';
 import {
-  periodsInitialState,
   periodsActionTypes,
+  periodsInitialState,
   yearActionTypes,
   yearInitialState,
 } from '~/modules/viescolaire/viesco/state/periods';

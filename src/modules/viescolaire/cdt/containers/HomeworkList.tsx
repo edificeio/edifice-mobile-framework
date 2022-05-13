@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import {
   fetchChildHomeworkAction,
@@ -17,7 +18,7 @@ import HomeworkList from '~/modules/viescolaire/cdt/components/HomeworkList';
 import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
-import { getPersonnelListState, IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
+import { IPersonnelList, getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
 
 type HomeworkListProps = {
   homeworks: any;
@@ -35,14 +36,13 @@ type HomeworkListProps = {
 } & NavigationInjectedProps;
 
 class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps> {
-
   private fetchHomeworks = (startDate, endDate) =>
-    getSessionInfo().type === 'Student'
+    getUserSession().user.type === 'Student'
       ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)
       : this.props.fetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
 
   private fetchSessions = (startDate, endDate) =>
-    getSessionInfo().type === 'Student'
+    getUserSession().user.type === 'Student'
       ? this.props.fetchSessions(this.props.structureId, startDate, endDate)
       : this.props.fetchChildSessions(this.props.childId, startDate, endDate);
 
@@ -87,7 +87,7 @@ const mapStateToProps: (state: any) => any = state => {
     isFetchingSession: sessionsState.isFetching || personnelState.isFetching,
     childId: getSelectedChild(state).id,
     structureId:
-      getSessionInfo().type === 'Student'
+      getUserSession().user.type === 'Student'
         ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
         : getSelectedChildStructure(state)?.id,
   };

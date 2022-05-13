@@ -1,22 +1,11 @@
+import { IEntcoreWidget } from '~/framework/util/moduleTool';
 import { computeUserSession } from '~/framework/util/session';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
-import {
-  actionTypeLoggedIn,
-  actionTypeLoggedInPartial,
-  actionTypeLoggedOut,
-  actionTypeLoginCancel,
-  actionTypeLoginError,
-  actionTypeRequestLogin,
-} from '~/user/actions/actionTypes/login';
+import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoggedOut, actionTypeLoginCancel, actionTypeLoginError, actionTypeRequestLogin } from '~/user/actions/actionTypes/login';
 import { actionTypeSetNotifPrefs } from '~/user/actions/notifPrefs';
 import { actionTypePlatformSelect } from '~/user/actions/platform';
-import {
-  INewVersionAction,
-  IVersionContext,
-  actionTypeNewVersion,
-  actionTypeRequestVersion,
-  actionTypeSkipVersion,
-} from '~/user/actions/version';
+import { INewVersionAction, IVersionContext, actionTypeNewVersion, actionTypeRequestVersion, actionTypeSkipVersion } from '~/user/actions/version';
+
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -49,6 +38,7 @@ export interface IUserAuthState {
   //version
   skipVersion: boolean;
   versionContext: IVersionContext;
+  widgets: IEntcoreWidget[];
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -56,6 +46,7 @@ export interface IUserAuthState {
 export const stateDefault: IUserAuthState = {
   apps: [],
   appsInfo: [],
+  widgets: [],
   loggedIn: false,
   loggingIn: false,
   notification: null,
@@ -99,6 +90,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         ...state,
         apps: action.userbook.apps,
         appsInfo: action.userbook.appsInfo,
+        widgets: action.userbook.widgets,
         error: '',
         errtype: '',
         loggedIn: true,
@@ -117,6 +109,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         userId: action.userbook.id,
         apps: action.userbook.apps,
         appsInfo: action.userbook.appsInfo,
+        widgets: action.userbook.widgets,
         error: '',
         errtype: '',
         loggedIn: false,

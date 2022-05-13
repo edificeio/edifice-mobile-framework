@@ -3,178 +3,14 @@ import moment from 'moment';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { getSessionInfo } from '~/App';
+import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { Icon } from '~/ui/icons/Icon';
-import { Loading } from '~/ui/Loading';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
+import { Loading } from '~/ui/Loading';
 import { TextBold } from '~/ui/Typography';
-
-const adaptCourses = (courses, teachers) => {
-  return courses.map(c => ({
-    ...c,
-    teacher: c.teacherIds ? teachers.find(t => t.id === c.teacherIds[0])?.displayName : undefined,
-  }));
-};
-
-type TimetableComponentProps = TimetableProps & TimetableState & { updateSelectedDate: (newDate: moment.Moment) => void };
-
-export default class Timetable extends React.PureComponent<TimetableComponentProps> {
-  renderChildCourse = course => {
-    const isCourseWithTags = !!(
-      course.tags &&
-      course.tags !== undefined &&
-      course.tags.length > 0 &&
-      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
-    );
-
-    return (
-      <View style={[style.courseView, { backgroundColor: isCourseWithTags ? '#E8E8E8' : '#FFF' }]}>
-        <View style={style.subjectView}>
-          <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
-          <Text numberOfLines={1}>{course.teacher}</Text>
-        </View>
-        <View style={style.courseStatus}>
-          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
-            <View style={style.roomView}>
-              <Icon name="pin_drop" size={16} />
-              <Text>
-                &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
-              </Text>
-            </View>
-          )}
-          {course.tags && course.tags !== undefined && course.tags.length > 0 && (
-            <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
-          )}
-        </View>
-      </View>
-    );
-  };
-
-  renderTeacherCourse = course => {
-    const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
-    const isCourseWithTags = !!(
-      course.tags &&
-      course.tags !== undefined &&
-      course.tags.length > 0 &&
-      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
-    );
-
-    return (
-      <View style={[style.courseView, { backgroundColor: isCourseWithTags ? '#E8E8E8' : '#FFF' }]}>
-        <View style={style.subjectView}>
-          <View style={style.infoView}>
-            <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
-          </View>
-          <View style={style.infoView}>
-            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
-          </View>
-        </View>
-        <View style={style.courseStatus}>
-          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
-            <View style={style.roomView}>
-              <Icon name="pin_drop" size={16} />
-              <Text>
-                &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
-              </Text>
-            </View>
-          )}
-          {course.tags && course.tags !== undefined && course.tags.length > 0 && (
-            <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
-          )}
-        </View>
-      </View>
-    );
-  };
-
-  renderHalfCourse = (course, firstJSX: JSX.Element, secondJSX: JSX.Element) => {
-    const isCourseWithTags = !!(course.tags && course.tags !== undefined && course.tags.length > 0);
-    const isCourseTagNotUlis = !!(course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS');
-    const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
-
-    return (
-      <View style={[style.halfCourseView, { backgroundColor: isCourseWithTags && isCourseTagNotUlis ? '#E8E8E8' : '#FFF' }]}>
-        <View style={style.halfSplitLineView}>
-          {firstJSX}
-          {isCourseWithRoomLabel && (
-            <View style={{ flexDirection: 'row' }}>
-              <Icon name="pin_drop" size={16} />
-              <Text numberOfLines={1}>&ensp;{course.roomLabels && course.roomLabels[0]}</Text>
-            </View>
-          )}
-        </View>
-        <View style={style.halfSplitLineView}>
-          {secondJSX}
-          {isCourseWithTags && <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>}
-        </View>
-      </View>
-    );
-  };
-
-  renderHalf = course => {
-    if (getSessionInfo().type === 'Teacher') {
-      const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
-      const classNameJSX = (
-        <TextBold style={{ fontSize: 18 }} numberOfLines={1}>
-          {className}
-        </TextBold>
-      );
-      const subjectNameJSX = (
-        <Text style={{ flex: 1 }} numberOfLines={1}>
-          {course.subject?.name || course.exceptionnal}
-        </Text>
-      );
-      return this.renderHalfCourse(course, classNameJSX, subjectNameJSX);
-    }
-    const teacherNameJSX = (
-      <Text style={{ flex: 1 }} numberOfLines={1}>
-        {course.teacher}
-      </Text>
-    );
-    const subjectNameJSX = (
-      <TextBold style={{ flex: 1 }} numberOfLines={1}>
-        {course.subject?.name || course.exceptionnal}
-      </TextBold>
-    );
-    return this.renderHalfCourse(course, subjectNameJSX, teacherNameJSX);
-  };
-
-  public render() {
-    const { startDate, selectedDate, courses, teachers, slots, updateSelectedDate } = this.props;
-    return (
-      <View style={style.refreshContainer}>
-        {getSessionInfo().type === 'Relative' && <ChildPicker />}
-        <View style={style.weekPickerView}>
-          <Text>{I18n.t('viesco-edt-week-of')}</Text>
-          <View>
-            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#162EAE" />
-          </View>
-        </View>
-        {courses !== undefined &&
-          (courses.isFetching || courses.isPristine ? (
-            <Loading />
-          ) : (
-            <View style={style.calendarContainer}>
-              <Calendar
-                startDate={startDate}
-                data={adaptCourses(courses.data, teachers.data)}
-                renderElement={getSessionInfo().type === 'Teacher' ? this.renderTeacherCourse : this.renderChildCourse}
-                renderHalf={this.renderHalf}
-                numberOfDays={6}
-                slotHeight={70}
-                mainColor="#162EAE"
-                slots={slots.data}
-                initialSelectedDate={selectedDate}
-                hideSlots
-              />
-            </View>
-          ))}
-      </View>
-    );
-  }
-}
+import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
   refreshContainer: {
@@ -211,10 +47,16 @@ const style = StyleSheet.create({
   subjectView: {
     maxWidth: '56%',
   },
+  halfTextStyle: {
+    flex: 1,
+  },
   halfSplitLineView: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  halfRoomLabelContainer: {
+    flexDirection: 'row',
   },
   courseStatus: {
     alignItems: 'center',
@@ -227,7 +69,181 @@ const style = StyleSheet.create({
   infoView: {
     paddingHorizontal: 15,
   },
+  teacherClassNameText: {
+    fontSize: 20,
+  },
   tagsLabel: {
     fontStyle: 'italic',
   },
+  greyishBackground: {
+    backgroundColor: '#E8E8E8',
+  },
+  whiteBackground: {
+    backgroundColor: '#FFF',
+  },
 });
+
+const adaptCourses = (courses, teachers) => {
+  return courses.map(c => ({
+    ...c,
+    teacher: c.teacherIds ? teachers.find(t => t.id === c.teacherIds[0])?.displayName : undefined,
+  }));
+};
+
+type TimetableComponentProps = TimetableProps & TimetableState & { updateSelectedDate: (newDate: moment.Moment) => void };
+
+export default class Timetable extends React.PureComponent<TimetableComponentProps> {
+  renderChildCourse = course => {
+    const isCourseWithTags = !!(
+      course.tags &&
+      course.tags !== undefined &&
+      course.tags.length > 0 &&
+      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
+    );
+
+    return (
+      <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
+        <View style={style.subjectView}>
+          <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
+          <Text numberOfLines={1}>{course.teacher}</Text>
+        </View>
+        <View style={style.courseStatus}>
+          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
+            <View style={style.roomView}>
+              <Icon name="pin_drop" size={16} />
+              <Text>
+                &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
+              </Text>
+            </View>
+          )}
+          {course.tags && course.tags !== undefined && course.tags.length > 0 && (
+            <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
+          )}
+        </View>
+      </View>
+    );
+  };
+
+  renderTeacherCourse = course => {
+    const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
+    const isCourseWithTags = !!(
+      course.tags &&
+      course.tags !== undefined &&
+      course.tags.length > 0 &&
+      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
+    );
+
+    return (
+      <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
+        <View style={style.subjectView}>
+          <View style={style.infoView}>
+            <TextBold style={style.teacherClassNameText}>{className}</TextBold>
+          </View>
+          <View style={style.infoView}>
+            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
+          </View>
+        </View>
+        <View style={style.courseStatus}>
+          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
+            <View style={style.roomView}>
+              <Icon name="pin_drop" size={16} />
+              <Text>
+                &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
+              </Text>
+            </View>
+          )}
+          {course.tags && course.tags !== undefined && course.tags.length > 0 && (
+            <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
+          )}
+        </View>
+      </View>
+    );
+  };
+
+  renderHalfCourse = (course, firstJSX: JSX.Element, secondJSX: JSX.Element) => {
+    const isCourseWithTags = !!(course.tags && course.tags !== undefined && course.tags.length > 0);
+    const isCourseTagNotUlis = !!(course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS');
+    const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
+
+    return (
+      <View
+        style={[style.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? style.greyishBackground : style.whiteBackground]}>
+        <View style={style.halfSplitLineView}>
+          {firstJSX}
+          {isCourseWithRoomLabel && (
+            <View style={style.halfRoomLabelContainer}>
+              <Icon name="pin_drop" size={16} />
+              <Text numberOfLines={1}>&ensp;{course.roomLabels && course.roomLabels[0]}</Text>
+            </View>
+          )}
+        </View>
+        <View style={style.halfSplitLineView}>
+          {secondJSX}
+          {isCourseWithTags && <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>}
+        </View>
+      </View>
+    );
+  };
+
+  renderHalf = course => {
+    if (getUserSession().user.type === 'Teacher') {
+      const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
+      const classNameJSX = (
+        <TextBold style={style.halfTextStyle} numberOfLines={1}>
+          {className}
+        </TextBold>
+      );
+      const subjectNameJSX = (
+        <Text style={style.halfTextStyle} numberOfLines={1}>
+          {course.subject?.name || course.exceptionnal}
+        </Text>
+      );
+      return this.renderHalfCourse(course, classNameJSX, subjectNameJSX);
+    }
+    const teacherNameJSX = (
+      <Text style={style.halfTextStyle} numberOfLines={1}>
+        {course.teacher}
+      </Text>
+    );
+    const subjectNameJSX = (
+      <TextBold style={style.halfTextStyle} numberOfLines={1}>
+        {course.subject?.name || course.exceptionnal}
+      </TextBold>
+    );
+    return this.renderHalfCourse(course, subjectNameJSX, teacherNameJSX);
+  };
+
+  public render() {
+    const { startDate, selectedDate, courses, teachers, slots, updateSelectedDate } = this.props;
+    return (
+      <View style={style.refreshContainer}>
+        {getUserSession().user.type === 'Relative' && <ChildPicker />}
+        <View style={style.weekPickerView}>
+          <Text>{I18n.t('viesco-edt-week-of')}</Text>
+          <View>
+            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#162EAE" />
+          </View>
+        </View>
+        {courses !== undefined &&
+          (courses.isFetching || courses.isPristine ? (
+            <Loading />
+          ) : (
+            <View style={style.calendarContainer}>
+              <Calendar
+                startDate={startDate}
+                data={adaptCourses(courses.data, teachers.data)}
+                renderElement={getUserSession().user.type === 'Teacher' ? this.renderTeacherCourse : this.renderChildCourse}
+                renderHalf={this.renderHalf}
+                numberOfDays={6}
+                slotHeight={70}
+                mainColor="#162EAE"
+                slots={slots.data}
+                initialSelectedDate={selectedDate}
+                hideSlots
+              />
+            </View>
+          ))}
+      </View>
+    );
+  }
+}

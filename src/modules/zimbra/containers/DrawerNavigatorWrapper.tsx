@@ -1,11 +1,9 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { NavigationDrawerScreenProps, createDrawerNavigator } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
-
-
 
 import { DEPRECATED_HeaderPrimaryAction, HeaderAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
@@ -14,12 +12,20 @@ import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Icon } from '~/ui/icons/Icon';
 
-
-
 import DrawerMenuContainer from './DrawerMenu';
 import MailList from './MailList';
 import { DraftType } from './NewMail';
 
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerAction: {
+    width: 30,
+    alignItems: 'flex-end',
+  },
+});
 
 type DrawerNavigatorWrapperProps = {
   storage: IQuota;
@@ -117,9 +123,14 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
               />
             ),
             title: (
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={styles.headerContainer}>
                 <HeaderTitle>{title}</HeaderTitle>
-                <HeaderAction iconName="search2" iconSize={16} iconStyle={{width: 30, alignItems: 'flex-end'}} onPress={() => navigation.navigate('search')} />
+                <HeaderAction
+                  iconName="search2"
+                  iconSize={16}
+                  iconStyle={styles.headerAction}
+                  onPress={() => navigation.navigate('search')}
+                />
               </View>
             ),
           }

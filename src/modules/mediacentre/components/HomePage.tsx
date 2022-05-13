@@ -5,11 +5,12 @@ import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-n
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { Text, TextBold } from '~/framework/components/text';
-import { ISignets } from '~/modules/mediacentre/state/signets';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResourcesState, Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
-import { AdvancedSearchModal, AdvancedSearchParams, defaultParams } from './AdvancedSearchModal';
+import { ISignetsState } from '../state/signets';
+import { AdvancedSearchModal, Field, Sources } from './AdvancedSearchModal';
 import { FavoritesCarousel } from './FavoritesCarousel';
 import { SearchContent } from './SearchContent';
 import { IconButtonText, SearchBar } from './SearchItems';
@@ -38,6 +39,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 10,
   },
+  loadingIndicator: {
+    marginTop: '45%',
+  },
 });
 
 export enum SearchState {
@@ -55,18 +59,18 @@ interface ResourcesGridProps {
 }
 
 interface HomePageProps {
-  externals: Resource[];
-  favorites: Resource[];
+  externals: IResourcesState;
+  favorites: IResourcesState;
   navigation: any;
-  search: Resource[];
-  signets: ISignets;
+  search: IResourcesState;
+  signets: ISignetsState;
   sources: string[];
-  textbooks: Resource[];
+  textbooks: IResourcesState;
 
   addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
   searchResources: (sources: string[], query: string) => any;
-  searchResourcesAdvanced: (params: AdvancedSearchParams) => any;
+  searchResourcesAdvanced: (fields: Field[], sources: Sources) => any;
 }
 
 export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePageProps) => {
@@ -75,29 +79,17 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
-  const [searchParams, setSearchParams] = useState<AdvancedSearchParams>(defaultParams);
+  const [searchFields, setSearchFields] = useState<Field[]>([]);
   const sections = [
-    { title: 'mediacentre.external-resources', resources: props.externals },
-    { title: 'mediacentre.my-textbooks', resources: props.textbooks },
-    { title: 'mediacentre.my-signets', resources: props.signets.sharedSignets },
-    { title: 'mediacentre.orientation-signets', resources: props.signets.orientationSignets },
+    { title: 'mediacentre.external-resources', resources: props.externals.data },
+    { title: 'mediacentre.my-textbooks', resources: props.textbooks.data },
+    { title: 'mediacentre.my-signets', resources: props.signets.data.sharedSignets },
+    { title: 'mediacentre.orientation-signets', resources: props.signets.data.orientationSignets },
   ].filter(section => section.resources.length > 0);
 
   useEffect(() => {
-    setSearchedResources(props.search);
+    setSearchedResources(props.search.data);
   }, [props.search]);
-
-  useEffect(() => {
-    setSearchParams({
-      ...searchParams,
-      sources: {
-        GAR: props.sources.includes(Source.GAR),
-        Moodle: props.sources.includes(Source.Moodle),
-        PMB: props.sources.includes(Source.PMB),
-        Signets: props.sources.includes(Source.Signet),
-      },
-    });
-  }, [props.sources]);
 
   function onSearch(query: string) {
     props.searchResources(props.sources, query);
@@ -116,7 +108,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }
 
   function showFavorites() {
-    setSearchedResources(props.favorites);
+    setSearchedResources(props.favorites.data);
     setSearchState(SearchState.SIMPLE);
   }
 
@@ -131,14 +123,15 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
     setSearchModalVisible(false);
   }
 
-  function onAdvancedSearch(params: AdvancedSearchParams) {
-    props.searchResourcesAdvanced(params);
+  function onAdvancedSearch(fields: Field[], sources: Sources) {
+    props.searchResourcesAdvanced(fields, sources);
     setSearchModalVisible(false);
     setSearchState(SearchState.ADVANCED);
-    setSearchParams(params);
+    setSearchFields(fields);
   }
 
   const ResourcesGrid: React.FunctionComponent<ResourcesGridProps> = (gridProps: ResourcesGridProps) => {
+    const maxSize = sections.length > 1 ? 4 : 8;
     const showResources = () => {
       setSearchedResources(gridProps.resources);
       setSearchState(SearchState.SIMPLE);
@@ -147,12 +140,14 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
       <View style={styles.gridMainContainer}>
         <View style={styles.gridHeaderContainer}>
           <TextBold style={styles.gridTitleText}>{gridProps.title.toLocaleUpperCase()}</TextBold>
-          <TouchableOpacity onPress={showResources}>
-            <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
-          </TouchableOpacity>
+          {gridProps.resources.length > maxSize ? (
+            <TouchableOpacity onPress={showResources}>
+              <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
         <GridList
-          data={gridProps.resources.slice(0, 4)}
+          data={gridProps.resources.slice(0, maxSize)}
           renderItem={({ item }) => <SmallCard {...gridProps} resource={item} />}
           keyExtractor={item => item.uid || item.id}
           gap={10}
@@ -173,7 +168,8 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           {...props}
           resources={searchedResources}
           searchState={searchState}
-          params={searchParams}
+          fields={searchFields}
+          isFetching={props.search.isFetching}
           onCancelSearch={onCancelSearch}
         />
       ) : (
@@ -182,11 +178,17 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           renderItem={({ item }) => <ResourcesGrid {...props} title={I18n.t(item.title)} resources={item.resources} />}
           keyExtractor={item => item.title}
           ListHeaderComponent={
-            props.favorites.length > 0 ? (
-              <FavoritesCarousel {...props} resources={props.favorites} onDisplayAll={showFavorites} />
+            props.favorites.data.length > 0 ? (
+              <FavoritesCarousel {...props} resources={props.favorites.data} onDisplayAll={showFavorites} />
             ) : null
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />}
+          ListEmptyComponent={
+            props.externals.isFetching ? (
+              <LoadingIndicator customStyle={styles.loadingIndicator} />
+            ) : (
+              <EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />
+            )
+          }
         />
       )}
       <AdvancedSearchModal

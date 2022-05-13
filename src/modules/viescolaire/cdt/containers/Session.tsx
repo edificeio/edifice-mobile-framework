@@ -2,8 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { PageView } from '~/framework/components/page';
 
+import { PageView } from '~/framework/components/page';
 import DisplaySession from '~/modules/viescolaire/cdt/components/DisplaySession';
 
 class Session extends React.PureComponent<any> {

@@ -1,9 +1,27 @@
 {
+  "pronote.selector.title": "Votre compte est relié à plusieurs établissements.\nChoississez l’établissement avec lequel vous voulez vous connecter.",
+  "pronote.selector.action": "Ouvrir Pronote",
+  "pronote.selector.placeholder": "Choisir l’établissement",
+  "pronote.carnetDeBord.cahierDeTextes.title": "Cahier de textes",
+  "pronote.carnetDeBord.cahierDeTextes.pourDate": "pour {{date}}",
+  "pronote.carnetDeBord.cahierDeTextes.PourDate": "Pour {{date}}",
+  "pronote.carnetDeBord.cahierDeTextes.empty": "Pas de travail pour les 7 prochains jours",
+  "pronote.carnetDeBord.releveDeNotes.title": "Notes",
+  "pronote.carnetDeBord.releveDeNotes.note": "{{note}} / {{bareme}}",
+  "pronote.carnetDeBord.releveDeNotes.empty": "Pas de notes remontées",
+  "pronote.carnetDeBord.competences.title": "Compétences",
+  "pronote.carnetDeBord.competences.empty": "Pas de compétences remontées",
+  "pronote.carnetDeBord.vieScolaire.title": "Vie Scolaire",
+  "pronote.carnetDeBord.vieScolaire.empty": "Pas d’évènements sur les 30 derniers jours",
+  "pronote.carnetDeBord.vieScolaire.dateFromTo": "{{start}} – {{end}}",
+  "pronote.carnetDeBord.noInfo": "––",
+  "pronote.carnetDeBord.openInPronote": "Ouvrir sur Pronote",
   "Activate": "Activer votre compte",
   "Actualites": "Actualités",
   "AutoLogin": "Me reconnecter automatiquement",
   "Birthdate": "Date de naissance",
   "Cancel": "Annuler",
+  "CarnetDeBord": "Carnet de bord Pronote",
   "CellPhone": "Téléphone mobile",
   "Connect": "Se connecter",
   "Conversation": "Messagerie",
@@ -152,7 +170,8 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "comment": {
-      "addComment": "Ajoutez un commentaire...",
+      "addComment": "Ajouter un commentaire...",
+      "addReply": "Ajouter une réponse...",
       "comment": "Commentaire",
       "comments": "Commentaires",
       "confirmationDelete": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer le commentaire ?",
@@ -375,9 +394,39 @@
   "createPost-submitAction": "Envoyer",
   "createPost-submitSuccess": "Votre billet a bien été soumis. Il sera publié une fois validé par le gestionnaire du blog.",
   "date": {
-    "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
-    "abbr_month_names": [null, "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"],
-    "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+    "abbr_day_names": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
+    "abbr_month_names": [
+      null,
+      "Jan",
+      "Fév",
+      "Mar",
+      "Avr",
+      "Mai",
+      "Juin",
+      "Juil",
+      "Août",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Déc"
+    ],
+    "day_names": [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi"
+    ],
     "month_names": [
       null,
       "Janvier",
@@ -495,7 +544,6 @@
   "mediacentre.advancedSearch.search-editors": "Rechercher un éditeur",
   "mediacentre.advancedSearch.search-levels": "Rechercher un niveau",
   "mediacentre.advancedSearch.search-title": "Rechercher un titre",
-  "mediacentre.cancel-search": "Annuler la recherche",
   "mediacentre.copy-link": "Copier le lien",
   "mediacentre.display-all": "Afficher tout",
   "mediacentre.download-textbooks": "Votre manuel va s'afficher dans quelques instants...",
@@ -505,7 +553,7 @@
   "mediacentre.favorite-added": "Cette ressource a été ajoutée dans vos favoris",
   "mediacentre.favorite-removed": "Cette ressource a été supprimée de vos favoris",
   "mediacentre.favorites": "Mes favoris",
-  "mediacentre.filter-search": "Filtrer la recherche",
+  "mediacentre.filter": "Filtrer",
   "mediacentre.find-resources": "Rechercher une ressource",
   "mediacentre.home": "Accueil",
   "mediacentre.level": "Niveau",
@@ -582,6 +630,8 @@
     "acknowledged": "Lu",
     "acknowledgement": "Lu",
     "acknowledgements": "Lus",
+    "acknowledgementNeededStudent": "Un responsable doit confirmer la lecture.",
+    "acknowledgementNeededRelative": "Vous devez confirmer la lecture du mot.",
     "categories": {
       "canteen": "Cantine",
       "event": "Événements",
@@ -593,16 +643,14 @@
     "response": "Réponse",
     "responses": "Réponses",
     "schoolbookWordDetailsScreen": {
-      "acknowledge": "Confirmer la lecture",
-      "alreadyConfirmed": "Vous avez confirmé la lecture de ce mot",
-      "backWithoutAck": "Quitter",
-      "backWithoutAckConfirm": "Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
-      "mustRead": "Un parent doit lire ce mot !",
-      "readBy": "Lu par",
-      "readByNumberRelative": "Lu par {{nb}} parent",
-      "readByNumberRelatives": "Lu par {{nb}} parents",
-      "readBySeparator": ", ",
-      "title": "Carnet de liaison"
+      "deleteAlert": {
+        "text": "Êtes-vous sûr de vouloir supprimer ce mot ? Les parents et les élèves n'y auront plus accès.",
+        "title": "Supprimer le mot"
+      },
+      "recipientsModal": {
+        "text": "Le mot est envoyé aux élèves suivants et à leurs responsables.",
+        "title": "Liste des destinataires"
+      }
     },
     "schoolbookWordListScreen": {
       "emptyScreen": {
@@ -614,6 +662,7 @@
       }
     },
     "students": "Élèves",
+    "wordFollowUp": "Suivi du mot",
     "appName": "Carnet de liaison",
     "tabName": "Carnet de liaison"
   },

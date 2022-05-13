@@ -1,12 +1,15 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { AdvancedSearchParams, Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { Field, Sources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
+
 import { Source } from '../utils/Resource';
 
 const concatResources = (response: any) => {
   let resources: any[] = [];
   for (const res of response) {
-    resources = resources.concat(res.data.resources);
+    if (res.data && res.data.resources) {
+      resources = resources.concat(res.data.resources);
+    }
   }
   return resources;
 };
@@ -50,7 +53,7 @@ export const searchService = {
     });
     return resourcesAdapter(concatResources(response));
   },
-  getAdvanced: async (params: AdvancedSearchParams) => {
+  getAdvanced: async (fields: Field[], checkedSources: Sources) => {
     const sources: string[] = [];
     const jsondata = {
       event: 'search',
@@ -58,11 +61,11 @@ export const searchService = {
       sources,
       data: {},
     };
-    addSource(jsondata.sources, params.sources.GAR, 'GAR');
-    addSource(jsondata.sources, params.sources.Moodle, 'Moodle');
-    addSource(jsondata.sources, params.sources.PMB, 'PMB');
-    addSource(jsondata.sources, params.sources.Signets, 'Signet');
-    for (const field of params.fields) {
+    addSource(jsondata.sources, checkedSources.GAR, 'GAR');
+    addSource(jsondata.sources, checkedSources.Moodle, 'Moodle');
+    addSource(jsondata.sources, checkedSources.PMB, 'PMB');
+    addSource(jsondata.sources, checkedSources.Signets, 'Signet');
+    for (const field of fields) {
       if (field.value !== '') {
         jsondata.data[field.name] = addFieldWhenFilled(field);
       }

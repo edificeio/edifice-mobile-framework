@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -8,9 +8,23 @@ import { bindActionCreators } from 'redux';
 
 import { fetchRootFoldersAction, postFolderAction } from '~/modules/zimbra/actions/folders';
 import { CommonStyles } from '~/styles/common/styles';
-import { DialogButtonOk, DialogButtonCancel } from '~/ui/ConfirmDialog';
+import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 import { TextBold } from '~/ui/Typography';
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    width: 350,
+  },
+  directoryNameContainer: {
+    width: '100%',
+    marginBottom: 35,
+    paddingHorizontal: 20,
+  },
+  row: {
+    flexDirection: 'row',
+  },
+});
 
 type CreateFolderModalProps = {
   show: boolean;
@@ -60,12 +74,12 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
     } as ViewStyle;
     return (
       <ModalBox isVisible={show} backdropOpacity={0.5}>
-        <ModalContent style={{ width: 350 }}>
+        <ModalContent style={styles.modalContainer}>
           <ModalContentBlock>
             <TextBold>{I18n.t('zimbra-create-directory')}</TextBold>
           </ModalContentBlock>
 
-          <View style={{ width: '100%', marginBottom: 35, paddingHorizontal: 20 }}>
+          <View style={styles.directoryNameContainer}>
             <TextInput
               value={name}
               onChangeText={this.onNameChange}
@@ -73,7 +87,7 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
               style={textInputStyle}
             />
           </View>
-          <ModalContentBlock style={{ flexDirection: 'row' }}>
+          <ModalContentBlock style={styles.row}>
             <DialogButtonCancel onPress={this.props.onClose} />
             <DialogButtonOk disabled={!this.state.name} label={I18n.t('zimbra-create')} onPress={this.onConfirm} />
           </ModalContentBlock>

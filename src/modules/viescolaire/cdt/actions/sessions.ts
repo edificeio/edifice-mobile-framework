@@ -2,12 +2,11 @@
  * Notification list actions
  * Build actions to be dispatched to the notification list reducer.
  */
-
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { sessionsService } from '~/modules/viescolaire/cdt/services/sessions';
-import { actionTypes, ISessionList } from '~/modules/viescolaire/cdt/state/sessions';
+import { ISessionList, actionTypes } from '~/modules/viescolaire/cdt/state/sessions';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

@@ -5,20 +5,20 @@ import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { HeaderAction } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { downloadAttachmentAction } from '~/modules/zimbra/actions/download';
-import { toggleReadAction, trashMailsAction, deleteMailsAction, restoreMailsAction } from '~/modules/zimbra/actions/mail';
+import { deleteMailsAction, restoreMailsAction, toggleReadAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
 import { fetchMailContentAction } from '~/modules/zimbra/actions/mailContent';
 import { fetchQuotaAction } from '~/modules/zimbra/actions/quota';
 import MailContent from '~/modules/zimbra/components/MailContent';
-import MailContentMenu from '~/modules/zimbra/components/MailContentMenu';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
 import { getMailContentState } from '~/modules/zimbra/state/mailContent';
-import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
-import { PageView } from '~/framework/components/page';
-import { HeaderAction } from '~/framework/components/header';
+import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
+import { DropdownMenu } from '~/ui/DropdownMenu';
 
 type MailContentContainerProps = {
   mail: any;
@@ -54,6 +54,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       htmlError: false,
     };
   }
+
   public componentDidMount() {
     this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
     this.props.fetchStorage();
@@ -134,16 +135,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     });
   };
 
-  restore = async () => {
-    await this.props.restoreMails([this.props.mail.id]);
-    this.goBack();
-    Toast.show(I18n.t('zimbra-message-restored'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
-  };
-
   goBack = () => {
     const { navigation } = this.props;
     navigation.state.params.onGoBack?.();
@@ -205,7 +196,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
         </PageView>
 
         <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />
-        <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
+        <DropdownMenu data={menuData} isVisible={showMenu} onTapOutside={this.showMenu} />
         <ModalPermanentDelete
           deleteModal={this.state.deleteModal}
           closeModal={this.closeDeleteModal}

@@ -2,20 +2,62 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
-
-
-import { getSessionInfo } from '~/App';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { getUserSession } from '~/framework/util/session';
 import { DraftType } from '~/modules/zimbra/containers/NewMail';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 
-
-
 import { FooterButton, HeaderMail, HeaderMailDetails, RenderPJs } from './MailContentItems';
 
+const styles = StyleSheet.create({
+  fullContainer: {
+    flex: 1,
+  },
+  topBar: {
+    width: '100%',
+    height: 12,
+  },
+  shadowContainer: {
+    flexGrow: 1,
+    marginTop: 5,
+    marginBottom: 0,
+    flexDirection: 'column-reverse',
+    backgroundColor: 'white',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    backgroundColor: '#FFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
+  },
+  marginView: {
+    height: 115,
+  },
+  scrollAlign: {
+    height: 1,
+  },
+  scrollContent: {
+    padding: 10,
+  },
+  containerFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    position: 'absolute',
+    width: '100%',
+    bottom: 0,
+    zIndex: 10,
+    elevation: 10,
+  },
+});
 
 type MailContentProps = {
   navigation: any;
@@ -29,7 +71,7 @@ type MailContentProps = {
 };
 
 const GetTopBarColor = ({ senderId, receiverId }) => {
-  const userId = getSessionInfo().userId === senderId ? receiverId : senderId;
+  const userId = getUserSession().user.id === senderId ? receiverId : senderId;
   const [color, setColor] = React.useState<string>();
   getUserColor(userId).then(setColor);
   return color ? <View style={[styles.topBar, { backgroundColor: color }]} /> : <View />;
@@ -110,13 +152,9 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
     };
     return (
       <View style={styles.shadowContainer}>
-        <View style={{ height: 115 }} />
+        <View style={styles.marginView} />
         <View style={styles.scrollContainer}>
-          <ScrollView
-            style={{ height: 1 }}
-            contentContainerStyle={{
-              padding: 10,
-            }}>
+          <ScrollView style={styles.scrollAlign} contentContainerStyle={styles.scrollContent}>
             {mail.body ? (
               <HtmlContentView
                 onHtmlError={() => {
@@ -146,13 +184,13 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
     const { htmlError } = this.state;
     return (
       <PageContainer>
-        <SafeAreaView style={{ flex: 1 }}>
+        <SafeAreaView style={styles.fullContainer}>
           {this.props.isFetching ? (
             <Loading />
           ) : error || htmlError ? (
             this.renderError()
           ) : (
-            <View style={{ flex: 1 }}>
+            <View style={styles.fullContainer}>
               {this.props.mail.id && <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />}
               {this.props.mail.id &&
                 this.mailHeader(v => {
@@ -185,38 +223,3 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
     );
   }
 }
-
-const styles = StyleSheet.create({
-  topBar: {
-    width: '100%',
-    height: 12,
-  },
-  shadowContainer: {
-    flexGrow: 1,
-    marginTop: 5,
-    marginBottom: 0,
-    flexDirection: 'column-reverse',
-    backgroundColor: 'white',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    backgroundColor: '#FFF',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 0.34,
-    shadowRadius: 6.27,
-    elevation: 10,
-  },
-  containerFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    position: 'absolute',
-    width: '100%',
-    bottom: 0,
-    zIndex: 10,
-    elevation: 10,
-  },
-});

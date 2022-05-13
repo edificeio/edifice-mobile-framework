@@ -1,4 +1,4 @@
-import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 import supportConfig from '~/modules/support/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------

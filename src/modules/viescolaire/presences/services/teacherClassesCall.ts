@@ -12,12 +12,12 @@ export type IClassesCallListBackend = {
   start_date: string;
   end_date: string;
   counsellor_input: boolean;
-  teachers: Array<{
+  teachers: {
     id: string;
     displayName: string;
     functions: string;
-  }>;
-  students: Array<{
+  }[];
+  students: {
     id: string;
     name: string;
     group: string;
@@ -26,12 +26,12 @@ export type IClassesCallListBackend = {
     exempted: boolean;
     exemption_attendance: boolean;
     forgotten_notebook: boolean;
-    day_history: Array<{
+    day_history: {
       name: string;
       start_date: string;
       end_date: string;
       type_id: number;
-      events: Array<{
+      events: {
         id: number;
         comment: string;
         counsellor_input: boolean;
@@ -39,9 +39,9 @@ export type IClassesCallListBackend = {
         start_date: string;
         register_id: string;
         type_id: number;
-      }>;
-    }>;
-  }>;
+      }[];
+    }[];
+  }[];
 };
 
 const classesCallAdapter: (data: IClassesCallListBackend) => IClassesCall = data => {

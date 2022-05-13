@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { AdvancedSearchParams } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { Field, Sources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { searchService } from '~/modules/mediacentre/services/search';
 import { ISearch, actionTypes } from '~/modules/mediacentre/state/search';
 
@@ -23,11 +23,11 @@ export function searchResourcesAction(sources: string[], query: string) {
   };
 }
 
-export function searchResourcesAdvancedAction(params: AdvancedSearchParams) {
+export function searchResourcesAdvancedAction(fields: Field[], sources: Sources) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await searchService.getAdvanced(params);
+      const data = await searchService.getAdvanced(fields, sources);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

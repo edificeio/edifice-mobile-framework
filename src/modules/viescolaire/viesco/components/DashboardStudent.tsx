@@ -4,8 +4,6 @@ import * as React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
-
-
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
@@ -17,12 +15,12 @@ import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolair
 import { Loading } from '~/ui/Loading';
 import { Icon } from '~/ui/icons/Icon';
 
-
-
 import { IHomeworkByDateList } from './DashboardRelative';
 
-
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+  },
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
   gridAllModules: {
     flexDirection: 'row',
@@ -37,6 +35,21 @@ const styles = StyleSheet.create({
   },
   gridButton: {
     borderRadius: 5,
+  },
+  gridButtonTextWidthFull: {
+    width: '100%',
+  },
+  gridButtonTextWidthHalf: {
+    width: '50%',
+  },
+  gridButtonDefaultColor: {
+    backgroundColor: '#858FA9',
+  },
+  gridButtonAllModules: {
+    justifyContent: 'flex-start',
+  },
+  gridButtonLineModules: {
+    justifyContent: 'center',
   },
   viewButton: {
     flexDirection: 'row',
@@ -63,13 +76,13 @@ interface IIconButtonProps {
   nbModules: number;
 }
 
-const IconButton = ({ disabled, icon, color, text, onPress, nbModules }: IIconButtonProps) => (
-  <View style={[styles.gridButtonContainer, { width: nbModules === 4 ? '50%' : '100%' }]}>
+const IconButtonModule = ({ disabled, icon, color, text, onPress, nbModules }: IIconButtonProps) => (
+  <View style={[styles.gridButtonContainer, nbModules === 4 ? styles.gridButtonTextWidthHalf : styles.gridButtonTextWidthFull]}>
     <TouchableOpacity
       disabled={disabled}
       onPress={onPress}
-      style={[styles.gridButton, { backgroundColor: disabled ? '#858FA9' : color }]}>
-      <View style={[styles.viewButton, { justifyContent: nbModules === 4 ? 'flex-start' : 'center' }]}>
+      style={[styles.gridButton, disabled ? styles.gridButtonDefaultColor : { backgroundColor: color }]}>
+      <View style={[styles.viewButton, nbModules === 4 ? styles.gridButtonAllModules : styles.gridButtonLineModules]}>
         <Icon size={20} color="white" name={icon} />
         <Text style={styles.gridButtonText}>{text}</Text>
       </View>
@@ -84,7 +97,7 @@ export default class Dashboard extends React.PureComponent<any> {
     return (
       <View style={[styles.dashboardPart, nbModules === 4 ? styles.gridAllModules : styles.gridModulesLine]}>
         {this.props.authorizedViescoApps.presences && (
-          <IconButton
+          <IconButtonModule
             onPress={() =>
               this.props.navigation.navigate(
                 'presences',
@@ -104,7 +117,7 @@ export default class Dashboard extends React.PureComponent<any> {
           />
         )}
         {this.props.authorizedViescoApps.edt && (
-          <IconButton
+          <IconButtonModule
             onPress={() => this.props.navigation.navigate('Timetable')}
             text={I18n.t('viesco-timetable')}
             color="#162EAE"
@@ -113,7 +126,7 @@ export default class Dashboard extends React.PureComponent<any> {
           />
         )}
         {this.props.authorizedViescoApps.diary && (
-          <IconButton
+          <IconButtonModule
             onPress={() => this.props.navigation.navigate('HomeworkList')}
             text={I18n.t('Homework')}
             color="#2BAB6F"
@@ -122,7 +135,7 @@ export default class Dashboard extends React.PureComponent<any> {
           />
         )}
         {this.props.authorizedViescoApps.competences && (
-          <IconButton
+          <IconButtonModule
             onPress={() => this.props.navigation.navigate('EvaluationList')}
             text={I18n.t('viesco-tests')}
             color="#F95303"
@@ -227,7 +240,7 @@ export default class Dashboard extends React.PureComponent<any> {
     const { authorizedViescoApps, homeworks, evaluations, levels } = this.props;
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.mainContainer}>
         {this.renderNavigationGrid()}
         <ScrollView>
           {authorizedViescoApps.diary && this.renderHomework(homeworks.data)}

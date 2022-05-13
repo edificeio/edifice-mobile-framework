@@ -1,5 +1,4 @@
 import moment from 'moment';
-import querystring from 'querystring';
 
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { ICourseTag, IEdtCourseList } from '~/modules/viescolaire/edt/state/edtCourses';

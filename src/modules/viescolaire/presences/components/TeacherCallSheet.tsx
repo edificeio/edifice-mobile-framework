@@ -1,9 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-
-import StudentRow from './StudentRow';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
@@ -12,6 +10,8 @@ import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Text, TextBold } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
+
+import StudentRow from './StudentRow';
 
 const style = StyleSheet.create({
   validateButton: {
@@ -160,10 +160,6 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
   };
 
   public render() {
-    return (
-      <PageContainer>
-        {this.state.callData.course_id !== undefined ? this.renderCall() : null}
-      </PageContainer>
-    );
+    return <PageContainer>{this.state.callData.course_id !== undefined ? this.renderCall() : null}</PageContainer>;
   }
 }

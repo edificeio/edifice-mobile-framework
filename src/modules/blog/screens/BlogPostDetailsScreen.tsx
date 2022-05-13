@@ -1,6 +1,5 @@
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
-import moment from 'moment';
 import * as React from 'react';
 import {
   Alert,
@@ -20,22 +19,22 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
+import { BottomEditorSheet } from '~/framework/components/BottomEditorSheet';
+import { BottomSheet } from '~/framework/components/BottomSheet';
 import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
-import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { TextBold, TextColorStyle, TextLight, TextLightItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { KeyboardPageView } from '~/framework/components/page';
+import { TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
-import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
@@ -57,10 +56,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
-import { FlatButton } from '~/ui/FlatButton';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { TextPreview } from '~/ui/TextPreview';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { IDisplayedBlog } from './BlogExplorerScreen';
 
@@ -141,8 +137,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   // RENDER =======================================================================================
 
   render() {
-    const { navigation } = this.props;
-    const { loadingState, errorState, showMenu, blogPostData } = this.state;
+    const { navigation, session } = this.props;
+    const { loadingState, errorState, showMenu, blogPostData, blogInfos } = this.state;
+    const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
+    const isBottomSheetVisible =
+      (blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight) || blogPostData?.state === 'SUBMITTED';
     const keyboardAvoidingViewBehavior = Platform.select({
       ios: 'padding',
       android: 'height',
@@ -175,20 +174,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return (
       <>
         <KeyboardPageView
+          safeArea={!isBottomSheetVisible}
           navigation={navigation}
           navBarWithBack={this.navBarInfo()}
           onBack={() => {
-            const commentFieldComment = this.commentFieldRef?.current?.getComment();
-            if (commentFieldComment) {
-              this.commentFieldRef?.current?.confirmDiscard(() => {
-                navigation.dispatch(NavigationActions.back());
-              });
-            } else {
-              return true;
-            }
-          }}
-          style={{
-            backgroundColor: errorState ? undefined : theme.color.background.card,
+            this.commentFieldRef?.current?.confirmDiscard(() => {
+              navigation.dispatch(NavigationActions.back());
+            });
           }}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
             <LoadingIndicator />
@@ -256,7 +248,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 onRefresh={() => this.doRefresh()}
               />
             }
-            renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
+            renderItem={({ item, index }) => this.renderComment(item, index)}
             scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
             style={{ backgroundColor: theme.color.background.page, flex: 1 }}
             onLayout={() => {
@@ -271,53 +263,44 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           />
         </Viewport.Tracker>
         {blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight ? (
-          <CommentField
-            ref={this.commentFieldRef}
+          <BottomEditorSheet
+            placeholder={I18n.t('common.comment.addComment')}
             onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
             isPublishingComment={isPublishingComment}
           />
         ) : null}
         {blogPostData?.state === 'SUBMITTED' ? (
-          <View
-            style={{
-              justifyContent: 'center',
-              backgroundColor: theme.color.background.card,
-              flexDirection: 'row',
-              alignItems: 'center',
-              padding: 12,
-              borderTopWidth: 1,
-              borderTopColor: theme.color.listItemBorder,
-            }}>
-            {hasPublishBlogPostRight ? (
-              <FlatButton
-                title={I18n.t('blog.post.publishAction')}
-                onPress={async () => {
-                  try {
-                    await this.props.handlePublishBlogPost({ blogId: blogInfos.id, postId: blogPostData._id });
-                    const newBlogPostData = await this.props.handleGetBlogPostDetails({
-                      blogId: blogInfos.id,
-                      postId: blogPostData._id,
+          hasPublishBlogPostRight ? (
+            <BottomButtonSheet
+              text={I18n.t('blog.post.publishAction')}
+              action={async () => {
+                try {
+                  await this.props.handlePublishBlogPost({ blogId: blogInfos.id, postId: blogPostData._id });
+                  const newBlogPostData = await this.props.handleGetBlogPostDetails({
+                    blogId: blogInfos.id,
+                    postId: blogPostData._id,
+                  });
+                  newBlogPostData && this.setState({ blogPostData: newBlogPostData });
+                  newBlogPostData &&
+                    this.props.navigation.setParams({
+                      blogPost: newBlogPostData,
                     });
-                    newBlogPostData && this.setState({ blogPostData: newBlogPostData });
-                    newBlogPostData &&
-                      this.props.navigation.setParams({
-                        blogPost: newBlogPostData,
-                      });
-                  } catch {
-                    this.props.dispatch(
-                      notifierShowAction({
-                        type: 'error',
-                        id: `${moduleConfig.routeName}/details`,
-                        text: I18n.t('common.error.text'),
-                      }),
-                    );
-                  }
-                }}
-              />
-            ) : (
-              <TextBold style={{ ...TextColorStyle.Important }}>{I18n.t('blog.post.waitingValidation')}</TextBold>
-            )}
-          </View>
+                } catch {
+                  this.props.dispatch(
+                    notifierShowAction({
+                      type: 'error',
+                      id: `${moduleConfig.routeName}/details`,
+                      text: I18n.t('common.error.text'),
+                    }),
+                  );
+                }
+              }}
+            />
+          ) : (
+            <BottomSheet
+              content={<TextBold style={{ ...TextColorStyle.Important }}>{I18n.t('blog.post.waitingValidation')}</TextBold>}
+            />
+          )
         ) : null}
       </>
     );
@@ -330,7 +313,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View style={{ backgroundColor: theme.color.background.card }}>
-        <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
+        <View style={{ marginTop: 16 }}>
           <ResourceView
             header={
               <ContentCardHeader
@@ -393,23 +376,24 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     );
   }
 
-  renderCommentActions(blogPostComment: IBlogPostComment) {
+  renderComment(blogPostComment: IBlogPostComment, index: number) {
     const { session } = this.props;
-    const { blogInfos } = this.state;
+    const { blogInfos, publishCommentLoadingState } = this.state;
+    const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasUpdateCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
     const hasDeleteCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
-    const hasNoCommentBlogPostRights = !hasUpdateCommentBlogPostRight && !hasDeleteCommentBlogPostRight;
-    const isCommentByOtherUser = blogPostComment.author.userId !== session.user.id;
-
-    if (isCommentByOtherUser || hasNoCommentBlogPostRights) {
-      return null;
-    } else
-      return (
-        <View style={{ alignSelf: 'flex-end', flexDirection: 'row', marginTop: 5 }}>
-          {hasDeleteCommentBlogPostRight ? (
-            <TouchableOpacity
-              style={{ marginRight: hasUpdateCommentBlogPostRight ? 15 : undefined }}
-              onPress={() => {
+    return (
+      <CommentField
+        ref={this.commentFieldRef}
+        index={index}
+        placeholder={I18n.t('common.comment.addComment')}
+        isPublishingComment={isPublishingComment}
+        onPublishComment={
+          hasUpdateCommentBlogPostRight ? (comment, commentId) => this.doCreateComment(comment, commentId) : undefined
+        }
+        onDeleteComment={
+          hasDeleteCommentBlogPostRight
+            ? () => {
                 Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.confirmationDelete'), [
                   {
                     text: I18n.t('common.cancel'),
@@ -421,52 +405,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                     onPress: () => this.doDeleteComment(blogPostComment.id),
                   },
                 ]);
-              }}>
-              <Icon name="trash" color={theme.color.failure} size={UI_SIZES.elements.actionButtonSize} />
-            </TouchableOpacity>
-          ) : null}
-          {hasUpdateCommentBlogPostRight ? (
-            <TouchableOpacity
-              onPress={() => this.commentFieldRef?.current?.prefillCommentField(blogPostComment.comment, blogPostComment.id)}>
-              <Icon name="pencil" color={theme.greyPalette.black} size={UI_SIZES.elements.actionButtonSize} />
-            </TouchableOpacity>
-          ) : null}
-        </View>
-      );
-  }
-
-  renderComment(blogPostComment: IBlogPostComment) {
-    return (
-      <View>
-        <ListItem
-          style={{ justifyContent: 'flex-start', alignItems: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
-          leftElement={
-            <GridAvatars
-              users={[blogPostComment.author.userId || require('ASSETS/images/resource-avatar.png')]}
-              fallback={require('ASSETS/images/resource-avatar.png')}
-            />
-          }
-          rightElement={
-            <View style={{ flex: 1, marginLeft: 15 }}>
-              <View style={{ flexDirection: 'row' }}>
-                <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: 5, maxWidth: '70%' }}>
-                  {blogPostComment.author.username}
-                </TextSemiBold>
-                <TextLight style={{ fontSize: 10 }}>{moment(blogPostComment.created).fromNow()}</TextLight>
-              </View>
-              <TextPreview
-                textContent={blogPostComment.comment}
-                additionalText={
-                  blogPostComment.modified ? (
-                    <TextLightItalic style={{ fontSize: 10 }}>{I18n.t('common.modified')}</TextLightItalic>
-                  ) : undefined
-                }
-              />
-              {this.renderCommentActions(blogPostComment)}
-            </View>
-          }
-        />
-      </View>
+              }
+            : undefined
+        }
+        comment={blogPostComment.comment}
+        commentId={blogPostComment.id}
+        commentAuthorId={blogPostComment.author.userId}
+        commentAuthor={blogPostComment.author.username}
+        commentDate={blogPostComment.created}
+      />
     );
   }
 
@@ -540,7 +487,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       // Note #1: setTimeout is used to wait for the FlatList height to update (after a comment is added).
       // Note #2: scrollToEnd seems to become less precise once there is lots of data.
       !commentId && setTimeout(() => this.flatListRef?.scrollToEnd(), 1000);
-      this.commentFieldRef?.current?.clearCommentField();
+      this.bottomEditorSheetRef?.current?.clearCommentField();
     } finally {
       this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.DONE });
     }
@@ -549,9 +496,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   async doDeleteComment(commentId: string) {
     await this.doDeleteBlogPostComment(commentId);
     await this.doGetBlogPostDetails();
-    const commentFieldCommentId = this.commentFieldRef?.current?.getCommentId();
-    const isDeletedCommentEdited = commentId === commentFieldCommentId;
-    isDeletedCommentEdited && this.commentFieldRef?.current?.clearCommentField();
   }
 
   async doGetBlogPostDetails() {

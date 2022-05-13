@@ -1,4 +1,4 @@
-import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 import quotaConfig from '~/modules/zimbra/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------

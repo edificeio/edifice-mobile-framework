@@ -1,9 +1,8 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { IChildArray, IChild } from '~/modules/viescolaire/viesco/state/children';
+import { IChild, IChildArray } from '~/modules/viescolaire/viesco/state/children';
 import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
 

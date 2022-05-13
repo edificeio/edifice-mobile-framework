@@ -4,8 +4,6 @@ import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
-
-
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
@@ -19,6 +17,45 @@ import { Loading } from '~/ui/Loading';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 import { Icon } from '~/ui/icons/Icon';
 
+const styles = StyleSheet.create({
+  fullView: {
+    flex: 1,
+  },
+  fullGrowView: {
+    flexGrow: 1,
+  },
+  containerMail: {
+    marginTop: 5,
+    marginHorizontal: 8,
+    maxWidth: UI_SIZES.screen.width - 16,
+    padding: 10,
+    backgroundColor: 'white',
+  },
+  containerMailSelected: {
+    backgroundColor: '#C5E6F2',
+  },
+  mailInfos: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+  },
+  mailInfoSender: { flex: 1 },
+  greyColor: { color: '#AFAFAF' },
+  subjectText: {
+    flex: 1,
+    color: '#AFAFAF',
+  },
+  attachmentIcon: {
+    alignSelf: 'flex-end',
+  },
+  shadow: {
+    elevation: 4,
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius,
+  },
+});
 
 type MailListProps = {
   notifications: any;
@@ -166,10 +203,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               <Text style={styles.greyColor}>{this.renderDateFormat(moment(mailInfos.date))}</Text>
             </View>
             <View style={styles.mailInfos}>
-              <Text style={{ flex: 1, color: '#AFAFAF' }} numberOfLines={1}>
+              <Text style={styles.subjectText} numberOfLines={1}>
                 {mailInfos.subject}
               </Text>
-              {mailInfos.hasAttachment && <Icon style={{ alignSelf: 'flex-end' }} name="attached" size={18} color="black" />}
+              {mailInfos.hasAttachment && <Icon style={styles.attachmentIcon} name="attached" size={18} color="black" />}
             </View>
           </CenterPanel>
         </Header>
@@ -206,7 +243,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     return (
       <PageContainer>
         <FlatList
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={styles.fullGrowView}
           data={uniqueMails.length > 0 ? uniqueMails : []}
           renderItem={({ item }) => this.renderMailItemInfos(item)}
           extraData={uniqueMails}
@@ -224,7 +261,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             isFetching && firstFetch ? (
               <Loading />
             ) : (
-              <View style={{ flex: 1 }}>
+              <View style={styles.fullView}>
                 <EmptyScreen
                   svgImage="empty-conversation"
                   title={I18n.t('zimbra-empty-mailbox-title')}
@@ -238,30 +275,3 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     );
   }
 }
-
-const styles = StyleSheet.create({
-  containerMail: {
-    marginTop: 5,
-    marginHorizontal: 8,
-    maxWidth: UI_SIZES.screen.width - 16,
-    padding: 10,
-    backgroundColor: 'white',
-  },
-  containerMailSelected: {
-    backgroundColor: '#C5E6F2',
-  },
-  mailInfos: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'flex-end',
-  },
-  mailInfoSender: { flex: 1 },
-  greyColor: { color: '#AFAFAF' },
-  shadow: {
-    elevation: 4,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-  },
-});

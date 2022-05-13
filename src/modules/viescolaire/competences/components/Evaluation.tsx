@@ -17,7 +17,47 @@ import { Loading } from '~/ui/Loading';
 
 import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from './Item';
 
-// eslint-disable-next-line flowtype/no-types-missing-file-annotation
+const styles = StyleSheet.create({
+  subtitle: { color: '#AFAFAF', paddingVertical: 8 },
+  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 },
+  containerDropdowns: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 10,
+    marginHorizontal: 5,
+  },
+  dropdownStyle: {
+    marginRight: 5,
+  },
+  mainView: {
+    flex: 1,
+  },
+  headerView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  headerGradeText: {
+    marginBottom: 10,
+    maxWidth: '50%',
+  },
+  headerSelectedPeriodText: {
+    color: '#AFAFAF',
+  },
+  headerColorSwitchContainer: {
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  renderDevoirsByPeriodView: {
+    flexDirection: 'row',
+    maxWidth: '50%',
+  },
+  selectedPeriodText: {
+    marginBottom: 10,
+  },
+});
+
 export type ICompetencesProps = {
   devoirsList: IDevoirsMatieresState;
   devoirsMoyennesList: IMoyenneListState;
@@ -125,7 +165,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   getSwitchDefaultPosition = async () => {
     let value = false as boolean;
-    let object = await AsyncStorage.getItem('competences-switch-color');
+    const object = await AsyncStorage.getItem('competences-switch-color');
     if (object) value = JSON.parse(object);
     this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
   };
@@ -168,9 +208,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirsMoyennesList } = this.props;
     const { devoirs, selectedPeriod } = this.state;
     return (
-      <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row', maxWidth: '50%' }}>
-          <TextBold style={{ marginBottom: 10 }} numberOfLines={1}>
+      <View style={styles.mainView}>
+        <View style={styles.renderDevoirsByPeriodView}>
+          <TextBold style={styles.selectedPeriodText} numberOfLines={1}>
             {selectedPeriod.type}
           </TextBold>
           <Text> - {I18n.t('viesco-average').toUpperCase()}</Text>
@@ -198,21 +238,21 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         }
       }
     }
-    let value = (switchValue === SwitchState.DEFAULT) as boolean;
+    const value = (switchValue === SwitchState.DEFAULT) as boolean;
 
     return (
       <>
         {screenDisplay === ScreenDisplay.DISCIPLINE && <TextBold numberOfLines={1}>{selectedDiscipline}</TextBold>}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={styles.headerView}>
           {screenDisplay === ScreenDisplay.DASHBOARD ? (
-            <TextBold style={{ marginBottom: 10, maxWidth: '50%' }} numberOfLines={1}>
+            <TextBold style={styles.headerGradeText} numberOfLines={1}>
               {I18n.t('viesco-last-grades')}
             </TextBold>
           ) : (
-            <Text style={{ color: '#AFAFAF' }}>{selectedPeriod.type}</Text>
+            <Text style={styles.headerSelectedPeriodText}>{selectedPeriod.type}</Text>
           )}
           {isDevoirsNoted ? (
-            <View style={{ marginBottom: 10, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.headerColorSwitchContainer}>
               <Text>{I18n.t('viesco-colors')}&ensp;</Text>
               <Switch
                 trackColor={{ false: '#D1D1D1', true: '#A1DED5' }}
@@ -236,7 +276,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirs, switchValue } = this.state;
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.mainView}>
         {this.renderHeaderDevoirsList()}
         {devoirsList && devoirsList.isFetching ? (
           <Loading />
@@ -280,7 +320,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   private displayDisciplinesDropdown() {
-    let disciplines = this.state.disciplineList
+    const disciplines = this.state.disciplineList
       .map(({ name }) => name)
       .sort((a, b) => String(a.toLocaleLowerCase() ?? '').localeCompare(b.toLocaleLowerCase() ?? ''));
     disciplines.unshift(I18n.t('viesco-competences-disciplines'));
@@ -298,7 +338,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   private displayPeriodsDropdown() {
     const { selectedPeriod } = this.state;
-    let periodsList = [{ type: I18n.t('viesco-competences-period'), value: undefined }] as ISelectedPeriod[];
+    const periodsList = [{ type: I18n.t('viesco-competences-period'), value: undefined }] as ISelectedPeriod[];
     this.props.periods.map(({ order, type, id_type }) =>
       periodsList.push({
         type: `${I18n.t('viesco-competences-period-' + type) + ' ' + order}`,
@@ -310,7 +350,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     return (
       <Dropdown
         keyId="competences.periods"
-        style={{ marginRight: 5 }}
+        style={styles.dropdownStyle}
         data={periodsList.map(x => x.type)}
         value={selectedPeriod.type}
         onSelect={(key: string) => {
@@ -340,15 +380,3 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     );
   }
 }
-
-const styles = StyleSheet.create({
-  subtitle: { color: '#AFAFAF', paddingVertical: 8 },
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 },
-  containerDropdowns: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
-    marginHorizontal: 5,
-  },
-});

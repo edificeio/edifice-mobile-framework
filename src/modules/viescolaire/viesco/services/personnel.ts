@@ -2,15 +2,15 @@ import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
 
 // Data type of what is given by the backend.
-export type IPersonnelListBackend = Array<{
-  aafFunctions: Array<string>;
-  allClasses: Array<{
+export type IPersonnelListBackend = {
+  aafFunctions: string[];
+  allClasses: {
     name: string;
     id: string | number;
-  }>;
+  }[];
   attachmentId?: any;
   birthDate: string;
-  children: Array<any>;
+  children: any[];
   code?: any;
   displayName: string;
   externalId: string;
@@ -21,14 +21,14 @@ export type IPersonnelListBackend = Array<{
   login: string;
   parent1ExternalId: any;
   parent2ExternalId: any;
-  parents: Array<any>;
+  parents: any[];
   source: string;
-  structures: Array<{
+  structures: {
     id: string;
     name: string;
-  }>;
+  }[];
   type: string;
-}>;
+}[];
 
 const personnelListAdapter: (data: IPersonnelListBackend) => IPersonnelList = data => {
   let result = [] as IPersonnelList;

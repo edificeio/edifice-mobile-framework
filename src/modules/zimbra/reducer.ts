@@ -1,7 +1,6 @@
 /**
  * Zimbra Reducer
  */
-
 import { ICountListState } from './state/count';
 import { IFolderListState } from './state/folders';
 import { IInitMailState } from './state/initMails';

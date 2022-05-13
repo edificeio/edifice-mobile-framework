@@ -29,7 +29,7 @@ import { isInActivatingMode } from './user/selectors';
 import { IUserInfoState } from './user/state/info';
 
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
-require('./myAppMenu');
+// require('./myAppMenu');
 // require("./timelinev2");
 // require('./mailbox');
 //require("./pronote");

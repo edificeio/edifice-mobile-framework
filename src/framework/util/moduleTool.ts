@@ -3,19 +3,28 @@
  * Everything for managing and declaring modules
  */
 import I18n from 'i18n-js';
-import * as React from 'react';
-import type { ColorValue } from 'react-native';
-import { NavigationRouteConfig } from 'react-navigation';
+import { NavigationComponent, NavigationRouteConfig } from 'react-navigation';
 import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from 'react-navigation';
 import type { StackNavigationOptions, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import type { Reducer } from 'redux';
 
+import { IGlobalState } from '~/AppStore';
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 
-import { toSnakeCase } from './string';
 import { PictureProps } from '../components/picture';
+import { toSnakeCase } from './string';
 
-// Module Config ==================================================================================
+//  8888888888          888                                              d8888
+//  888                 888                                             d88888
+//  888                 888                                            d88P888
+//  8888888    88888b.  888888  .d8888b  .d88b.  888d888  .d88b.      d88P 888 88888b.  88888b.
+//  888        888 "88b 888    d88P"    d88""88b 888P"   d8P  Y8b    d88P  888 888 "88b 888 "88b
+//  888        888  888 888    888      888  888 888     88888888   d88P   888 888  888 888  888
+//  888        888  888 Y88b.  Y88b.    Y88..88P 888     Y8b.      d8888888888 888 d88P 888 d88P
+//  8888888888 888  888  "Y888  "Y8888P  "Y88P"  888      "Y8888  d88P     888 88888P"  88888P"
+//                                                                             888      888
+//                                                                             888      888
+//                                                                             888      888
 
 /**
  * Describes an app as it lives in Backend, on the platform.
@@ -32,195 +41,403 @@ export interface IEntcoreApp {
   isExternal?: boolean;
 }
 
-interface IModuleConfigBase<Name extends string> {
-  // Module configured information
-  name: Name; // Technical (and unique) name of the module. This module will be referenced by this name everywhere in the code.
-  displayName: string; // I18n key of the module title displayed. Equals to `name` if not specified.
+/**
+ * Describes a widget as it lives in Backend, on the platform.
+ */
+export interface IEntcoreWidget {
+  name: string;
+  id: string;
+  application: string | null;
+  mandatory: boolean;
+  // path: string;  // web-specific
+  // i18n: string;  // web-specific
+  // js: string;    // web-specific
+}
 
-  // matchEntcoreApp: ((entcoreApp: IEntcoreApp) => boolean); // Function that tell if the module can be accessible by the user. If stirng is provided, compare to prefix.
-  entcoreScope: string[]; // oAuth scope required for this module
+//  888b     d888               888          888           .d8888b.                     .d888 d8b
+//  8888b   d8888               888          888          d88P  Y88b                   d88P"  Y8P
+//  88888b.d88888               888          888          888    888                   888
+//  888Y88888P888  .d88b.   .d88888 888  888 888  .d88b.  888         .d88b.  88888b.  888888 888  .d88b.
+//  888 Y888P 888 d88""88b d88" 888 888  888 888 d8P  Y8b 888        d88""88b 888 "88b 888    888 d88P"88b
+//  888  Y8P  888 888  888 888  888 888  888 888 88888888 888    888 888  888 888  888 888    888 888  888
+//  888   "   888 Y88..88P Y88b 888 Y88b 888 888 Y8b.     Y88b  d88P Y88..88P 888  888 888    888 Y88b 888
+//  888       888  "Y88P"   "Y88888  "Y88888 888  "Y8888   "Y8888P"   "Y88P"  888  888 888    888  "Y88888
+//                                                                                                     888
+//                                                                                                Y8b d88P
+//                                                                                                 "Y88P"
 
-  // Module computed information
+interface IModuleConfig_Base<Name extends string> {
+  name: Name; // Unique identifier of this module. Use the same as its folder name.
+  entcoreScope: string[];
+}
+interface IModuleConfig_Rights {
+  matchEntcoreApp: (entcoreApp: IEntcoreApp, allEntcoreApps: IEntcoreApp[]) => boolean;
+  matchEntcoreWidget: (entcoreWidget: IEntcoreWidget, allEntcoreWidgets: IEntcoreWidget[]) => boolean;
+  hasRight: (matchingApps: IEntcoreApp[], matchingWidgets?: IEntcoreWidget[]) => boolean;
+  getMatchingEntcoreApps: (allEntcoreApps: IEntcoreApp[]) => IEntcoreApp[];
+  getMatchingEntcoreWidgets: (allEntcoreWidgets: IEntcoreWidget[]) => IEntcoreWidget[];
+}
+interface IModuleConfigDeclaration_Rights {
+  matchEntcoreApp: IModuleConfig_Rights['matchEntcoreApp'] | string;
+  matchEntcoreWidget?: IModuleConfig_Rights['matchEntcoreWidget'];
+  hasRight?: IModuleConfig_Rights['hasRight'];
+}
+interface IModuleConfigDeclaration_Redux {
   actionTypesPrefix: string; // Uppercase prefix used for action types. Computed from `name` if not specified.
   reducerName: string; // Name of the reducer. Computed from `name` if not specified.
-  trackingName: string; // Name used for tracking category. Computed from `name` if not specified.
-
-  // Module registration
-  registerAs?: string; // In which global register to puy this module
-  registerOrder?: number; // In which order
-
-  // Additional keys
-  [k: string]: any;
 }
-
-/**
- * An usable moduleConfig. A moduleConfig is importable within a module itself.
- * So use moduleConfig for module constants.
- */
-export interface IModuleConfig<Name extends string, State> extends IModuleConfigBase<Name> {
-  matchEntcoreApp: (entcoreApp: IEntcoreApp) => boolean; // Function that tell if the module can be accessible by the user. If stirng is provided, compare to prefix.
-  getState: (globalState: any) => State;
+interface IModuleConfig_Redux<State> extends IModuleConfigDeclaration_Redux {
   namespaceActionType: (actionType: string) => string;
+  getState: (globalState: IGlobalState) => State;
 }
-
+interface IModuleConfig_Tracking {
+  trackingName: string; // Name used for tracking category. Computed from `name` if not specified.
+}
+// All information config available about a module
+export type IModuleConfig<Name extends string, State> = IModuleConfig_Base<Name> &
+  IModuleConfig_Rights &
+  IModuleConfig_Redux<State> &
+  IModuleConfig_Tracking & {
+    init: (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => void;
+    isReady: boolean;
+  };
+// All information config as needed to be declared.
+export type IModuleConfigDeclaration<Name extends string> = IModuleConfig_Base<Name> &
+  IModuleConfigDeclaration_Rights &
+  Partial<IModuleConfigDeclaration_Redux> &
+  Partial<IModuleConfig_Tracking>;
 export type IUnkownModuleConfig = IModuleConfig<string, unknown>;
 export type IAnyModuleConfig = IModuleConfig<string, any>;
 
 /**
- * An usable moduleConfig is build from its declaration with the `createModuleConfig` function.
- * This represents this sort of module config declaration.
+ * Instancies a usable module config from its declaration.
  */
-export interface IModuleConfigDeclaration<Name extends string> extends Partial<IModuleConfigBase<Name>> {
-  name: Name;
-  matchEntcoreApp?: string | ((entcoreApp: IEntcoreApp) => boolean);
+export class ModuleConfig<Name extends string, State> implements IModuleConfig<Name, State> {
+  name: IModuleConfig<Name, State>['name'];
+  entcoreScope: IModuleConfig<Name, State>['entcoreScope'];
+  matchEntcoreApp: IModuleConfig<Name, State>['matchEntcoreApp'];
+  matchEntcoreWidget: IModuleConfig<Name, State>['matchEntcoreWidget'];
+  hasRight: IModuleConfig<Name, State>['hasRight'];
+  getMatchingEntcoreApps: IModuleConfig<Name, State>['getMatchingEntcoreApps'];
+  getMatchingEntcoreWidgets: IModuleConfig<Name, State>['getMatchingEntcoreWidgets'];
+  actionTypesPrefix: IModuleConfig<Name, State>['actionTypesPrefix'];
+  reducerName: IModuleConfig<Name, State>['reducerName'];
+  namespaceActionType: IModuleConfig<Name, State>['namespaceActionType'];
+  getState: IModuleConfig<Name, State>['getState'];
+  trackingName: IModuleConfig<Name, State>['trackingName'];
+
+  constructor(decl: IModuleConfigDeclaration<Name>) {
+    const {
+      name,
+      entcoreScope,
+      matchEntcoreApp,
+      matchEntcoreWidget,
+      hasRight,
+      actionTypesPrefix,
+      reducerName,
+      trackingName,
+      ...rest
+    } = decl;
+    // Base
+    this.name = name;
+    this.entcoreScope = entcoreScope;
+    // Rights
+    this.matchEntcoreApp =
+      (typeof matchEntcoreApp === 'string'
+        ? (entcoreApp: IEntcoreApp) => entcoreApp.address === matchEntcoreApp
+        : matchEntcoreApp) || (() => true);
+    this.matchEntcoreWidget = matchEntcoreWidget ?? (() => false);
+    this.hasRight = hasRight ?? ((matchingApps, matchingWidgets) => matchingApps.length > 0);
+    this.getMatchingEntcoreApps = allEntcoreApps => allEntcoreApps.filter(app => this.matchEntcoreApp(app, allEntcoreApps));
+    this.getMatchingEntcoreWidgets = allEntcoreWidgets =>
+      allEntcoreWidgets.filter(wig => this.matchEntcoreWidget(wig, allEntcoreWidgets));
+    // Redux
+    this.actionTypesPrefix = actionTypesPrefix ?? toSnakeCase(this.name).toUpperCase() + '_';
+    this.reducerName = reducerName ?? this.name;
+    this.namespaceActionType = actionType => this.actionTypesPrefix + actionType;
+    this.getState = (globalState: IGlobalState) => globalState[this.reducerName];
+    // Tracking
+    this.trackingName = trackingName ?? this.name;
+    // Rest
+    Object.assign(this, rest);
+  }
+
+  isReady: boolean = false;
+  init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+    this.handleInit(matchingApps, matchingWidgets);
+    this.isReady = true;
+  }
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {}
 }
 
-/**
- * Creates an usable moduleConfig from its declaration.
- */
-export const createModuleConfig: <Name extends string, State>(
-  opts: IModuleConfigDeclaration<Name>,
-) => IModuleConfig<Name, State> = opts => {
-  const ret = {
-    name: opts.name,
-    displayName: opts.displayName || opts.name,
-    matchEntcoreApp:
-      (typeof opts.matchEntcoreApp === 'string'
-        ? (entcoreApp: IEntcoreApp) => entcoreApp.address === opts.matchEntcoreApp
-        : opts.matchEntcoreApp) || (() => true),
-    entcoreScope: opts.entcoreScope || [],
-    actionTypesPrefix: opts.actionTypesPrefix || toSnakeCase(opts.name).toUpperCase() + '_',
-    reducerName: opts.reducerName || opts.name,
-    trackingName: opts.trackingName || opts.name[0].toUpperCase() + opts.name.slice(1),
-    registerAs: opts.registerAs,
-    registerOrder: opts.registerOrder,
-  };
-  const otherOpts = Object.fromEntries(Object.entries(opts).filter(([k, v]) => !ret.hasOwnProperty(k)));
-  return {
-    ...ret,
-    ...otherOpts,
-    getState: globalState => globalState[ret.reducerName],
-    namespaceActionType: actionType => ret.actionTypesPrefix + actionType,
-  };
-};
+//  888b     d888               888          888
+//  8888b   d8888               888          888
+//  88888b.d88888               888          888
+//  888Y88888P888  .d88b.   .d88888 888  888 888  .d88b.
+//  888 Y888P 888 d88""88b d88" 888 888  888 888 d8P  Y8b
+//  888  Y8P  888 888  888 888  888 888  888 888 88888888
+//  888   "   888 Y88..88P Y88b 888 Y88b 888 888 Y8b.
+//  888       888  "Y88P"   "Y88888  "Y88888 888  "Y8888
 
-// Module =========================================================================================
-
-export interface IModuleBase<Name extends string, ConfigType extends IModuleConfig<Name, State>, State> {
+export interface IModule_Base<Name extends string, ConfigType extends IModuleConfig<Name, State>, State> {
   config: ConfigType;
+}
+export interface IModule_Redux<State> {
   reducer: Reducer<State>;
 }
-
-/**
- * all props passed to the Module constructor to create a Module.
- */
-export interface IModuleDeclaration<Name extends string, ConfigType extends IModuleConfig<Name, State>, State, Root>
-  extends IModuleBase<Name, ConfigType, State> {
-  getRoot: () => Root /*(React.ComponentClass | React.FunctionComponent)*/;
+export interface IModule<Name extends string, ConfigType extends IModuleConfig<Name, State>, State>
+  extends IModule_Base<Name, ConfigType, State>,
+    IModule_Redux<State> {
+  // ToDo add Module methods here
 }
+
+export interface IModuleDeclaration<Name extends string, ConfigType extends IModuleConfig<Name, State>, State>
+  extends IModule_Base<Name, ConfigType, State>,
+    IModule_Redux<State> {}
 
 /**
  * Use this class constructor to init a module from its definition.
  * Note: before being intantiated, EVERY dependant module MUST have registered their things in its module map.
  * ToDo: make a resolution algorithm to make things easier ?
  */
-export class Module<Name extends string, ConfigType extends IModuleConfig<Name, State>, State, Root>
-  implements IModuleBase<Name, ConfigType, State>
+export class Module<Name extends string, ConfigType extends IModuleConfig<Name, State>, State>
+  implements IModule<Name, ConfigType, State>
 {
   // Gathered from declaration
   config: ConfigType;
   reducer: Reducer<State>;
-  _getRoot: () => Root;
-  // Computed during initialization
-  root?: Root; /* React.ComponentClass | React.FunctionComponent | undefined */
 
-  constructor(moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, Root>) {
+  constructor(moduleDeclaration: IModuleDeclaration<Name, ConfigType, State>) {
     this.config = moduleDeclaration.config;
     this.reducer = moduleDeclaration.reducer;
-    this._getRoot = moduleDeclaration.getRoot;
   }
 
-  init() {
-    if (!this.root) {
-      this.root = this._getRoot();
-    }
+  init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+    if (!this.config.isReady) throw new Error(`Try to init module with non-initialized config '${this.config.name}'`);
+    this.handleInit(matchingApps, matchingWidgets);
+  }
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {}
+
+  get isReady() {
+    return true;
   }
 
   get() {
-    if (!this.root) throw new Error(`Try to get non-initialized module '${this.config.name}'`);
-    return this as Required<Module<Name, ConfigType, State, Root>>;
+    if (!this.isReady) throw new Error(`Try to get non-initialized module '${this.config.name}'`);
+    return this as Required<Module<Name, ConfigType, State>>;
   }
 }
 
-export type UnknownModule = Module<string, IModuleConfig<string, unknown>, unknown, unknown>;
-export type AnyModule = Module<string, IModuleConfig<string, any>, any, any>;
+export type UnknownModule = Module<string, IModuleConfig<string, unknown>, unknown>;
+export type AnyModule = Module<string, IModuleConfig<string, any>, any>;
 
-// Navigable Modules ==============================================================================
+//  888b    888                   d8b                   888      888          888b     d888               888          888           .d8888b.                     .d888 d8b
+//  8888b   888                   Y8P                   888      888          8888b   d8888               888          888          d88P  Y88b                   d88P"  Y8P
+//  88888b  888                                         888      888          88888b.d88888               888          888          888    888                   888
+//  888Y88b 888  8888b.  888  888 888  .d88b.   8888b.  88888b.  888  .d88b.  888Y88888P888  .d88b.   .d88888 888  888 888  .d88b.  888         .d88b.  88888b.  888888 888  .d88b.
+//  888 Y88b888     "88b 888  888 888 d88P"88b     "88b 888 "88b 888 d8P  Y8b 888 Y888P 888 d88""88b d88" 888 888  888 888 d8P  Y8b 888        d88""88b 888 "88b 888    888 d88P"88b
+//  888  Y88888 .d888888 Y88  88P 888 888  888 .d888888 888  888 888 88888888 888  Y8P  888 888  888 888  888 888  888 888 88888888 888    888 888  888 888  888 888    888 888  888
+//  888   Y8888 888  888  Y8bd8P  888 Y88b 888 888  888 888 d88P 888 Y8b.     888   "   888 Y88..88P Y88b 888 Y88b 888 888 Y8b.     Y88b  d88P Y88..88P 888  888 888    888 Y88b 888
+//  888    Y888 "Y888888   Y88P   888  "Y88888 "Y888888 88888P"  888  "Y8888  888       888  "Y88P"   "Y88888  "Y88888 888  "Y8888   "Y8888P"   "Y88P"  888  888 888    888  "Y88888
+//                                         888                                                                                                                                   888
+//                                    Y8b d88P                                                                                                                              Y8b d88P
+//                                     "Y88P"                                                                                                                                "Y88P"
 
-// ToDo : move this into the future Navigation Manager ?
-
-interface INavigableModuleConfigBase {
-  iconName: string; // Name of the icon in Icomoon font. Equals to `name` if not specified.
-  iconColor?: ColorValue; // Color of the icon. Default color if not specified.
-  picture?: PictureProps; // Use arbitrary picture instead of old-school icon.
-  routeName: string;
+interface INavigableModuleConfig_Display {
+  displayI18n: string; // I18n key of the module title displayed.
+  displayAs?: string; // In which global register to put this module
+  displayOrder: number; // In which order
+  displayPicture?: PictureProps; // Picture used to show the module acces link/button
+  displayPictureFocus?: PictureProps; // Picture used to show the modulle acces link/button when its active
+  routeName: string; // Technical route name of the module. Must be unique (by default, same as the module name).
 }
-export interface INavigableModuleConfig<Name extends string, State>
-  extends IModuleConfig<Name, State>,
-    INavigableModuleConfigBase {}
-export interface INavigableModuleConfigDeclaration<Name extends string>
-  extends IModuleConfigDeclaration<Name>,
-    Partial<INavigableModuleConfigBase> {}
+interface IModuleConfigDeclaration_Display {
+  displayI18n:
+    | INavigableModuleConfig_Display['displayI18n']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayI18n']);
+  displayAs?:
+    | INavigableModuleConfig_Display['displayAs']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayAs']);
+  displayOrder?:
+    | INavigableModuleConfig_Display['displayOrder']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayOrder']);
+  displayPicture?:
+    | INavigableModuleConfig_Display['displayPicture']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayPicture']);
+  displayPictureFocus?:
+    | INavigableModuleConfig_Display['displayPictureFocus']
+    | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfig_Display['displayPictureFocus']);
+  routeName?: INavigableModuleConfig_Display['routeName'];
+}
 
-export const createNavigableModuleConfig = <Name extends string, State>(opts: INavigableModuleConfigDeclaration<Name>) =>
-  ({
-    ...createModuleConfig(opts),
-    iconName: opts.iconName || opts.name,
-    iconColor: opts.iconColor,
-    routeName: opts.routeName || opts.name,
-  } as INavigableModuleConfig<Name, State>);
+// All information config available about a navigable module
+export type INavigableModuleConfig<Name extends string, State> = IModuleConfig<Name, State> & INavigableModuleConfig_Display;
+// All information config as needed to be declared.
+export type INavigableModuleConfigDeclaration<Name extends string> = IModuleConfigDeclaration<Name> &
+  IModuleConfigDeclaration_Display;
+export type UnkownNavigableModuleConfig = INavigableModuleConfig<string, unknown>;
+export type AnyNavigableModuleConfig = INavigableModuleConfig<string, any>;
+
+export class NavigableModuleConfig<Name extends string, State>
+  extends ModuleConfig<Name, State>
+  implements INavigableModuleConfig<Name, State>
+{
+  // gathered from declaration
+  routeName: INavigableModuleConfig<Name, State>['routeName'];
+
+  // declaration backup for computing
+  #_displayI18n: INavigableModuleConfigDeclaration<Name>['displayI18n'];
+  #_displayAs: INavigableModuleConfigDeclaration<Name>['displayAs'];
+  #_displayOrder: INavigableModuleConfigDeclaration<Name>['displayOrder'];
+  #_displayPicture: INavigableModuleConfigDeclaration<Name>['displayPicture'];
+  #_displayPictureFocus: INavigableModuleConfigDeclaration<Name>['displayPictureFocus'];
+
+  // computed values after init
+  #displayI18n?: INavigableModuleConfig<Name, State>['displayI18n'];
+  #displayAs?: INavigableModuleConfig<Name, State>['displayAs'];
+  #displayOrder?: INavigableModuleConfig<Name, State>['displayOrder'];
+  #displayPicture?: INavigableModuleConfig<Name, State>['displayPicture'];
+  #displayPictureFocus?: INavigableModuleConfig<Name, State>['displayPictureFocus'];
+
+  constructor(decl: INavigableModuleConfigDeclaration<Name>) {
+    const { displayI18n, displayAs, displayOrder, displayPicture, displayPictureFocus, routeName, ...rest } = decl;
+    super(rest);
+    this.#_displayI18n = displayI18n;
+    this.#_displayAs = displayAs;
+    this.#_displayOrder = displayOrder ?? 0;
+    this.#_displayPicture = displayPicture;
+    this.#_displayPictureFocus = displayPictureFocus ?? displayPicture;
+    this.routeName = routeName ?? this.name;
+  }
+
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+    this.#displayI18n =
+      typeof this.#_displayI18n === 'function' ? this.#_displayI18n(matchingApps, matchingWidgets) : this.#_displayI18n;
+    this.#displayAs = typeof this.#_displayAs === 'function' ? this.#_displayAs(matchingApps, matchingWidgets) : this.#_displayAs;
+    this.#displayOrder =
+      typeof this.#_displayOrder === 'function' ? this.#_displayOrder(matchingApps, matchingWidgets) : this.#_displayOrder;
+    this.#displayPicture =
+      typeof this.#_displayPicture === 'function' ? this.#_displayPicture(matchingApps, matchingWidgets) : this.#_displayPicture;
+    this.#displayPictureFocus =
+      typeof this.#_displayPictureFocus === 'function'
+        ? this.#_displayPictureFocus(matchingApps, matchingWidgets)
+        : this.#_displayPictureFocus;
+  }
+
+  get displayI18n() {
+    if (!this.isReady || this.#displayI18n === undefined)
+      throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    return this.#displayI18n;
+  }
+  get displayAs() {
+    if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    return this.#displayAs;
+  }
+  get displayOrder() {
+    if (!this.isReady || this.#displayOrder === undefined)
+      throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    return this.#displayOrder;
+  }
+  get displayPicture() {
+    if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    return this.#displayPicture;
+  }
+  get displayPictureFocus() {
+    if (!this.isReady) throw new Error(`Try to get display info of non-initialized module '${this.name}'`);
+    return this.#displayPictureFocus;
+  }
+}
+
+//  888b    888                   d8b                   888      888          888b     d888               888          888
+//  8888b   888                   Y8P                   888      888          8888b   d8888               888          888
+//  88888b  888                                         888      888          88888b.d88888               888          888
+//  888Y88b 888  8888b.  888  888 888  .d88b.   8888b.  88888b.  888  .d88b.  888Y88888P888  .d88b.   .d88888 888  888 888  .d88b.
+//  888 Y88b888     "88b 888  888 888 d88P"88b     "88b 888 "88b 888 d8P  Y8b 888 Y888P 888 d88""88b d88" 888 888  888 888 d8P  Y8b
+//  888  Y88888 .d888888 Y88  88P 888 888  888 .d888888 888  888 888 88888888 888  Y8P  888 888  888 888  888 888  888 888 88888888
+//  888   Y8888 888  888  Y8bd8P  888 Y88b 888 888  888 888 d88P 888 Y8b.     888   "   888 Y88..88P Y88b 888 Y88b 888 888 Y8b.
+//  888    Y888 "Y888888   Y88P   888  "Y88888 "Y888888 88888P"  888  "Y8888  888       888  "Y88P"   "Y88888  "Y88888 888  "Y8888
+//                                         888
+//                                    Y8b d88P
+//                                     "Y88P"
+
+export interface INavigableModule_Base<
+  Name extends string,
+  ConfigType extends IModuleConfig<Name, State>,
+  State,
+  Root extends NavigationComponent<any, any>,
+> extends IModule<Name, ConfigType, State> {
+  getRoot(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]): Root;
+}
+export interface INavigableModule<
+  Name extends string,
+  ConfigType extends IModuleConfig<Name, State>,
+  State,
+  Root extends NavigationComponent<any, any>,
+> extends INavigableModule_Base<Name, ConfigType, State, Root> {
+  // ToDo add Module methods here
+}
 
 export interface INavigableModuleDeclaration<
   Name extends string,
-  ConfigType extends INavigableModuleConfig<Name, State>,
+  ConfigType extends IModuleConfig<Name, State>,
   State,
-  Root,
-> extends IModuleDeclaration<Name, ConfigType, State, Root> {
-  config: ConfigType;
-}
-
-export type IAnyNavigableModuleConfig = INavigableModuleConfig<string, any>;
+  Root extends NavigationComponent<any, any>,
+> extends INavigableModule_Base<Name, ConfigType, State, Root>,
+    IModule_Redux<State> {}
 
 export class NavigableModule<
-  Name extends string,
-  ConfigType extends INavigableModuleConfig<Name, State>,
-  State,
-  Root extends React.ComponentClass | React.FunctionComponent,
-> extends Module<Name, ConfigType, State, Root> {
-  config: ConfigType;
-  // Computed during initialization
-  route?: NavigationRouteConfig<any, any>;
+    Name extends string,
+    ConfigType extends INavigableModuleConfig<Name, State>,
+    State,
+    Root extends NavigationComponent<any, any>,
+  >
+  extends Module<Name, ConfigType, State>
+  implements IModule<Name, ConfigType, State>
+{
+  // Gathered from declaration
+  getRoot: INavigableModule<Name, ConfigType, State, Root>['getRoot'];
+  // Self-managed
+  #root?: Root;
+  #route?: NavigationRouteConfig<any, any>;
 
   constructor(moduleDeclaration: INavigableModuleDeclaration<Name, ConfigType, State, Root>) {
+    const { getRoot } = moduleDeclaration;
     super(moduleDeclaration);
-    this.config = moduleDeclaration.config;
+    this.getRoot = getRoot;
   }
 
-  init() {
-    super.init();
-    if (!this.route) this.route = this.createModuleRoute();
+  handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+    super.handleInit(matchingApps, matchingWidgets);
+    this.#root = this.getRoot(matchingApps, matchingWidgets);
+    this.#route = this.createModuleRoute(matchingApps, matchingWidgets);
+  }
+
+  get isReady() {
+    return super.isReady && !!this.#root && !!this.#route;
+  }
+
+  get root() {
+    if (!this.#root) throw new Error(`Try to get root of non-initialized module '${this.config.name}'`);
+    return this.#root;
+  }
+  get route() {
+    if (!this.#route) throw new Error(`Try to get route of non-initialized module '${this.config.name}'`);
+    return this.#route;
+  }
+
+  createModuleRoute(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
+    return {
+      screen: this.root,
+      navigationOptions: createMainTabNavOption(
+        I18n.t(this.config.displayI18n),
+        this.config.displayPicture,
+        this.config.displayPictureFocus,
+      ),
+    };
   }
 
   get() {
-    if (!this.root || !this.route) throw new Error(`Try to get non-initialized module '${this.config.name}'`);
-    return this as Required<NavigableModule<Name, ConfigType, State, Root>>;
-  }
-
-  createModuleRoute() {
-    return {
-      screen: this.root!,
-      navigationOptions: createMainTabNavOption(I18n.t(this.config.displayName), this.config.picture || this.config.iconName),
-    };
+    return super.get() as Required<NavigableModule<Name, ConfigType, State, Root>>;
   }
 }
 
@@ -228,14 +445,9 @@ export type UnknownNavigableModule = NavigableModule<
   string,
   INavigableModuleConfig<string, unknown>,
   unknown,
-  React.ComponentClass | React.FunctionComponent
+  NavigationComponent<any, any>
 >;
-export type AnyNavigableModule = NavigableModule<
-  string,
-  INavigableModuleConfig<string, any>,
-  any,
-  React.ComponentClass | React.FunctionComponent
->;
+export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, NavigationComponent<any, any>>;
 
 export type RouteMap = NavigationRouteConfigMap<
   StackNavigationOptions,
@@ -243,7 +455,17 @@ export type RouteMap = NavigationRouteConfigMap<
   unknown
 >;
 
-// Module Array ===================================================================================
+//  888b     d888               888          888                 d8888
+//  8888b   d8888               888          888                d88888
+//  88888b.d88888               888          888               d88P888
+//  888Y88888P888  .d88b.   .d88888 888  888 888  .d88b.      d88P 888 888d888 888d888  8888b.  888  888
+//  888 Y888P 888 d88""88b d88" 888 888  888 888 d8P  Y8b    d88P  888 888P"   888P"       "88b 888  888
+//  888  Y8P  888 888  888 888  888 888  888 888 88888888   d88P   888 888     888     .d888888 888  888
+//  888   "   888 Y88..88P Y88b 888 Y88b 888 888 Y8b.      d8888888888 888     888     888  888 Y88b 888
+//  888       888  "Y88P"   "Y88888  "Y88888 888  "Y8888  d88P     888 888     888     "Y888888  "Y88888
+//                                                                                                   888
+//                                                                                              Y8b d88P
+//                                                                                               "Y88P"
 
 // Modules included in the app as it appears in IncludedModules.tsx
 // They may have a config override with the array-style syntax
@@ -254,12 +476,19 @@ export type ModuleInclusion<ModuleType extends UnknownModule> = [ModuleType, IUn
  * This class extends built-in Array object.
  */
 export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> extends Array<ModuleType> {
-  constructor(...items) {
+  constructor(...items: Array<ModuleType>) {
     super(...items);
     Object.setPrototypeOf(this, ModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
-  filterAvailables(availableApps: IEntcoreApp[]) {
-    return new ModuleArray<ModuleType>(...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app))));
+  filterAvailables(availableApps: IEntcoreApp[], availableWidgets?: IEntcoreWidget[]) {
+    return new ModuleArray<ModuleType>(
+      ...this.filter(m =>
+        m.config.hasRight(
+          m.config.getMatchingEntcoreApps(availableApps),
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
+        ),
+      ),
+    );
   }
   getReducers() {
     return this.reduce((acc, m) => {
@@ -274,20 +503,36 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     }
     return scopes;
   }
-  initModules() {
-    this.forEach(m => m.init());
+  initModules(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
+    this.forEach(m => {
+      m.init(m.config.getMatchingEntcoreApps(allEntcoreApps), m.config.getMatchingEntcoreWidgets(allEntcoreWidgets));
+    });
+    return this;
+  }
+  initModuleConfigs(allEntcoreApps: IEntcoreApp[], allEntcoreWidgets: IEntcoreWidget[]) {
+    this.forEach(m => {
+      m.config.init(m.config.getMatchingEntcoreApps(allEntcoreApps), m.config.getMatchingEntcoreWidgets(allEntcoreWidgets));
+    });
     return this;
   }
 }
+
 export class NavigableModuleArray<
   ModuleType extends UnknownNavigableModule = UnknownNavigableModule,
 > extends ModuleArray<ModuleType> {
-  constructor(...items) {
+  constructor(...items: Array<ModuleType>) {
     super(...items);
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
   }
-  filterAvailables(availableApps: IEntcoreApp[]) {
-    return new NavigableModuleArray<ModuleType>(...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app))));
+  filterAvailables(availableApps: IEntcoreApp[], availableWidgets?: IEntcoreWidget[]) {
+    return new NavigableModuleArray<ModuleType>(
+      ...this.filter(m =>
+        m.config.hasRight(
+          m.config.getMatchingEntcoreApps(availableApps),
+          availableWidgets && m.config.getMatchingEntcoreWidgets(availableWidgets),
+        ),
+      ),
+    );
   }
   getRoutes() {
     const routes = {} as { [k: string]: NavigationRouteConfig<any, any, unknown> };
@@ -320,7 +565,17 @@ export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(mo
   return new ModuleArray(...Object.values(moduleMap));
 };
 
-// Module registers ===============================================================================
+//  888b     d888               888          888          8888888b.                    d8b          888
+//  8888b   d8888               888          888          888   Y88b                   Y8P          888
+//  88888b.d88888               888          888          888    888                                888
+//  888Y88888P888  .d88b.   .d88888 888  888 888  .d88b.  888   d88P  .d88b.   .d88b.  888 .d8888b  888888  .d88b.  888d888 .d8888b
+//  888 Y888P 888 d88""88b d88" 888 888  888 888 d8P  Y8b 8888888P"  d8P  Y8b d88P"88b 888 88K      888    d8P  Y8b 888P"   88K
+//  888  Y8P  888 888  888 888  888 888  888 888 88888888 888 T88b   88888888 888  888 888 "Y8888b. 888    88888888 888     "Y8888b.
+//  888   "   888 Y88..88P Y88b 888 Y88b 888 888 Y8b.     888  T88b  Y8b.     Y88b 888 888      X88 Y88b.  Y8b.     888          X88
+//  888       888  "Y88P"   "Y88888  "Y88888 888  "Y8888  888   T88b  "Y8888   "Y88888 888  88888P'  "Y888  "Y8888  888      88888P'
+//                                                                                 888
+//                                                                            Y8b d88P
+//                                                                             "Y88P"
 
 /**
  * Create a register to store module dependencies and links.
@@ -338,6 +593,9 @@ export class CustomRegister<ItemType, FormattedRegisterType> {
   }
   get() {
     return this.formater(this.items.sort((a, b) => a.order - b.order).map(i => i.item));
+  }
+  clear() {
+    this.items = [];
   }
 }
 
@@ -360,10 +618,24 @@ export const getGlobalRegister = <RegisterType extends CustomRegister<unknown, u
  * @param modules
  * @returns
  */
-export const dynamiclyRegisterModules = <ModuleType extends AnyModule = AnyModule>(modules: ModuleArray<ModuleType>) => {
+export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule = AnyNavigableModule>(
+  modules: ModuleArray<ModuleType>,
+) => {
+  // 1. Clear previous data
+  const registers = new Set<CustomRegister<any, any>>();
   modules.forEach(module => {
-    const register = getGlobalRegister(module.config.registerAs);
-    register && register.register(module, module.config.registerOrder);
+    if (module.config.displayAs) {
+      const register = getGlobalRegister(module.config.displayAs);
+      register && registers.add(register);
+    }
+  });
+  registers.forEach(r => r.clear());
+
+  // 2. Write new data
+  modules.forEach(module => {
+    if (module.config.displayAs) {
+      getGlobalRegister(module.config.displayAs)?.register(module, module.config.displayOrder);
+    }
   });
   return modules; // Allow chaining
 };

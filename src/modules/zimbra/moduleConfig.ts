@@ -1,13 +1,15 @@
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
 import { IZimbra_State } from './reducer';
 
-import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
-
-export default createNavigableModuleConfig<'zimbra', IZimbra_State>({
+export default new NavigableModuleConfig<'zimbra', IZimbra_State>({
   name: 'zimbra',
-  displayName: 'Conversation',
-  matchEntcoreApp: '/zimbra/zimbra',
   entcoreScope: ['zimbra'],
-  iconName: 'mail',
-  apiName: 'Zimbra',
-  registerAs: 'tabModule',
+  matchEntcoreApp: '/zimbra/zimbra',
+
+  displayI18n: 'Conversation',
+  displayAs: 'tabModule',
+  displayOrder: 1,
+  displayPicture: { type: 'Icon', name: 'messagerie-off' },
+  displayPictureFocus: { type: 'Icon', name: 'messagerie-on' },
 });

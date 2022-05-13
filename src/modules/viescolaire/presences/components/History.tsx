@@ -5,8 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationScreenProp } from 'react-navigation';
 
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { Loading } from '~/ui/Loading';
 import Dropdown from '~/ui/Dropdown';
+import { Loading } from '~/ui/Loading';
 
 import {
   DepartureCard,
@@ -18,6 +18,20 @@ import {
   RegularizedCard,
   UnregularizedCard,
 } from './PresenceCard';
+
+const styles = StyleSheet.create({
+  mainView: {
+    flex: 1,
+  },
+  container: {
+    padding: 15,
+    alignItems: 'stretch',
+  },
+  dropdownStyle: {
+    alignSelf: 'center',
+    width: '50%',
+  },
+});
 
 type HistoryProps = {
   data: any;
@@ -40,12 +54,12 @@ class History extends React.PureComponent<HistoryProps> {
     const { events, onPeriodChange, selected, periods } = this.props;
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.mainView}>
         {this.props.navigation.state.params.user_type === 'Relative' && <ChildPicker />}
-        <ScrollView contentContainerStyle={style.container}>
+        <ScrollView contentContainerStyle={styles.container}>
           {periods !== undefined && periods.length > 1 && periods[0].code !== 'YEAR' && (
             <Dropdown
-              style={{ alignSelf: 'center', width: '50%' }}
+              style={styles.dropdownStyle}
               data={periods}
               value={selected}
               onSelect={onPeriodChange}
@@ -72,12 +86,5 @@ class History extends React.PureComponent<HistoryProps> {
     );
   }
 }
-
-const style = StyleSheet.create({
-  container: {
-    padding: 15,
-    alignItems: 'stretch',
-  },
-});
 
 export default History;

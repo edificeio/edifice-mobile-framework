@@ -1,18 +1,29 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import { Text, TextBold } from '~/framework/components/text';
-import { homework } from '~/modules/viescolaire/utils/cdt';
+import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
-import { Icon } from '~/ui/icons/Icon';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
+  mainView: {
+    flex: 1,
+  },
+  homeworkInfoBar: {
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+  },
+  LeftColoredItemInfoBar: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+  },
   homeworkPart: {
     paddingVertical: 8,
     paddingHorizontal: 15,
@@ -31,8 +42,8 @@ const style = StyleSheet.create({
 });
 
 type IDisplayHomeworkProps = {
-  homework: homework;
-  homeworkList: homework[];
+  homework: Homework;
+  homeworkList: Homework[];
 } & INavigationProps;
 
 type IDisplayHomeworkState = {
@@ -111,9 +122,9 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
     return (
       <PageContainer>
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
-          <View style={{ flex: 1 }}>
-            <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-              <LeftColoredItem shadow style={{ alignItems: 'flex-end', flexDirection: 'row' }} color="#FA9700">
+          <View style={style.mainView}>
+            <View style={style.homeworkInfoBar}>
+              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color="#FA9700">
                 {homeworkList && homeworkList[indexSelectedHomework]?.created_date ? (
                   <>
                     <Icon size={20} color="#FA9700" name="date_range" />

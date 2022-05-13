@@ -69,9 +69,9 @@ export const foldersService = {
     });
     const results = await Promise.all(promises);
     const ret: ICount = results.reduce((acc, res, i) => {
-      const new_acc = { ...acc };
-      new_acc[`${ids[i]}`] = res.count;
-      return new_acc;
+      const newAcc = { ...acc };
+      newAcc[`${ids[i]}`] = res.count;
+      return newAcc;
     }, {});
     return ret;
   },

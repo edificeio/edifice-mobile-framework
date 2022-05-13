@@ -1,20 +1,26 @@
+import { NavigationComponent, NavigationScreenConfig, NavigationScreenOptions } from "react-navigation";
 import { Reducer } from "redux";
-import { NavigationScreenConfig, NavigationScreenOptions, NavigationComponent } from "react-navigation";
+
+
+
 import { PictureProps } from "~/framework/components/picture";
 
+
 export interface IFunctionalConfig {
-    name: string;
-    apiName: string; // name in list of avaible apps received from the backend
-    actionPrefix?: string;
-    reducerName?: string;
-    displayName: string;
-    iconName: string;
-    iconColor?: string;
-    group?: boolean;
-    appInfo: backendUserApp;
-    notifHandlerFactory?: () => Promise<NotificationHandlerFactory>;
-    hasRight?: (apps: any[]) => boolean;
-    picture?: PictureProps;
+  name: string;
+  apiName: string; // name in list of avaible apps received from the backend
+  actionPrefix?: string;
+  reducerName?: string;
+  displayName: string;
+  displayI18n: string;
+  iconName: string;
+  iconColor?: string;
+  group?: boolean;
+  appInfo: backendUserApp;
+  notifHandlerFactory?: () => Promise<NotificationHandlerFactory>;
+  hasRight?: (apps: any[]) => boolean;
+  picture?: PictureProps;
+  displayPicture?: PictureProps;
 }
 
 export interface IAppModule {

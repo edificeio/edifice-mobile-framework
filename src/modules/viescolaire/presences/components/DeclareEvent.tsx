@@ -6,16 +6,72 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-
-
 import { PageView } from '~/framework/components/page';
-import { deleteEvent, postLateEvent, postLeavingEvent, updateLateEvent, updateLeavingEvent } from '~/modules/viescolaire/presences/actions/events';
+import {
+  deleteEvent,
+  postLateEvent,
+  postLeavingEvent,
+  updateLateEvent,
+  updateLeavingEvent,
+} from '~/modules/viescolaire/presences/actions/events';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
 import { Label, Text, TextBold } from '~/ui/Typography';
 import { Icon } from '~/ui/icons/Icon';
 
+const style = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    alignItems: 'stretch',
+    justifyContent: 'flex-end',
+  },
+  recapHeader: {
+    marginTop: 10,
+    paddingVertical: 12,
+    alignSelf: 'flex-end',
+    width: '90%',
+    marginBottom: 15,
+  },
+  recapHeaderView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  recapHeaderText: {
+    marginHorizontal: 5,
+  },
+  underlinedText: {
+    alignSelf: 'center',
+    borderBottomWidth: 2,
+    padding: 10,
+  },
+  inputContainer: {
+    marginHorizontal: 30,
+    marginBottom: 20,
+  },
+  timeView: {
+    margin: 40,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderStyle: 'solid',
+    borderRadius: 3,
+    backgroundColor: 'white',
+  },
+  timeViewText: {
+    fontSize: 55,
+    paddingVertical: 50,
+    textDecorationLine: 'underline',
+  },
+  inputLabel: {
+    fontSize: 12,
+  },
+  buttonOkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'nowrap',
+  },
+});
 
 type DeclarationState = {
   date: Date;
@@ -69,7 +125,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
 
   onSubmit = () => {
     const { date, reason } = this.state;
-    const { declareLateness, declareLeaving, updateLateness, updateLeaving, deleteEvent } = this.props;
+    const { declareLateness, declareLeaving, updateLateness, updateLeaving } = this.props;
     const { type, student, event, registerId, startDate, endDate } = this.props.navigation.state.params;
     const momentDate = moment(date).second(0);
     const startDateMoment = moment(startDate).second(0);
@@ -78,7 +134,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
       if (event === undefined) {
         // deleting absence when lateness is declared
         const absence = student.events.find(i => i.type_id === 1);
-        if (absence !== undefined) deleteEvent(absence);
+        if (absence !== undefined) this.props.deleteEvent(absence);
         declareLateness(student.id, momentDate, reason, registerId, startDateMoment);
       } else {
         updateLateness(student.id, momentDate, reason, event.id, registerId, startDateMoment);
@@ -95,8 +151,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
 
   onCancel = () => {
     const { event, student } = this.props.navigation.state.params;
-    const { deleteEvent } = this.props;
-    deleteEvent({ ...event, student_id: student.id });
+    this.props.deleteEvent({ ...event, student_id: student.id });
     this.props.navigation.goBack();
   };
 
@@ -145,9 +200,9 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
       <PageView navigation={this.props.navigation} navBarWithBack={navBarInfo}>
         <KeyboardAvoidingView style={[style.container]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <LeftColoredItem color={mainColor} style={style.recapHeader}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={style.recapHeaderView}>
               <Icon color="grey" size={12} name="access_time" />
-              <Text style={{ marginHorizontal: 5 }}>
+              <Text style={style.recapHeaderText}>
                 {startDateString} - {endDateString}
               </Text>
               <TextBold>{student.name}</TextBold>
@@ -158,15 +213,15 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
             value={moment(date)}
             mode="time"
             onChange={this.onTimeChange}
-            renderDate={date => (
+            renderDate={dateItem => (
               <View style={[style.timeView, { borderColor: lightColor }]}>
-                <Text style={{ fontSize: 55, paddingVertical: 50, textDecorationLine: 'underline' }}>{date.format('HH : mm')}</Text>
+                <Text style={style.timeViewText}>{dateItem.format('HH : mm')}</Text>
               </View>
             )}
           />
 
           <View style={style.inputContainer}>
-            <Label style={{ fontSize: 12 }}>{inputLabel}</Label>
+            <Label style={style.inputLabel}>{inputLabel}</Label>
             <TextInput
               defaultValue={event === undefined ? '' : event.comment}
               placeholder={I18n.t('viesco-enter-text')}
@@ -174,7 +229,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
               onChangeText={this.onReasonChange}
             />
           </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'nowrap' }}>
+          <View style={style.buttonOkContainer}>
             {event !== undefined && <ButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
             <ButtonOk
               disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
@@ -187,39 +242,6 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     );
   }
 }
-
-const style = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    alignItems: 'stretch',
-    justifyContent: 'flex-end',
-  },
-  recapHeader: {
-    marginTop: 10,
-    paddingVertical: 12,
-    alignSelf: 'flex-end',
-    width: '90%',
-    marginBottom: 15,
-  },
-  underlinedText: {
-    alignSelf: 'center',
-    borderBottomWidth: 2,
-    padding: 10,
-  },
-  inputContainer: {
-    marginHorizontal: 30,
-    marginBottom: 20,
-  },
-  timeView: {
-    margin: 40,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderRadius: 3,
-    backgroundColor: 'white',
-  },
-});
 
 const mapStateToProps = (state: any) => {
   return {};

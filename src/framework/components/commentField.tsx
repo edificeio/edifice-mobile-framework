@@ -1,59 +1,70 @@
 import I18n from 'i18n-js';
+import { Moment } from 'moment';
 import * as React from 'react';
-import { Alert, Platform, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
 import { getUserSession } from '~/framework/util/session';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { LoadingIndicator } from './loading';
-import { TextAction } from './text';
+import { displayPastDate } from '../util/date';
+import { RoundButton } from './RoundButton';
+import { UI_SIZES } from './constants';
+import { TextItalic, TextSemiBold, TextSizeStyle } from './text';
 
 // TYPES ==========================================================================================
 
-export interface ICommentField_DataProps {
+export interface CommentFieldProps {
+  placeholder: string;
   isPublishingComment: boolean;
+  onPublishComment?: (comment: string, commentId?: string) => any;
+  onDeleteComment?: (commentId: string) => any;
+  comment?: string;
+  commentId?: number | string;
+  commentAuthorId?: string;
+  commentAuthor?: string;
+  commentDate?: string | Moment;
+  index?: number;
 }
-export interface ICommentField_EventProps {
-  onPublishComment: (comment: string, commentId?: string) => any;
-}
-export type ICommentField_Props = ICommentField_DataProps & ICommentField_EventProps;
 
 // COMPONENT ======================================================================================
 
-const CommentField = (props: ICommentField_Props, ref) => {
+const CommentField = (props: CommentFieldProps, ref) => {
   //  Due to Alert + Keyboard bug, we need to set/unset a flag when Alert is displayed/discarded
   let alertDisplayed = false;
   const resetAlertDisplay = () => setTimeout(() => (alertDisplayed = false), 1000);
-
   const inputRef: { current: TextInput | undefined } = React.useRef();
-  const session = useSelector(state => getUserSession());
-  const [comment, setComment] = React.useState<string>('');
-  const [publishButtonWidth, setPublishButtonWidth] = React.useState<number | undefined>();
-  const [commentId, setCommentId] = React.useState<string | undefined>();
-  const onPublish = () => {
+  const session = useSelector(() => getUserSession());
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [comment, setComment] = React.useState<string>(props.comment || '');
+  const isUserComment = session.user.id === props.commentAuthorId;
+  const isIdleExistingComment = !!props.commentId && !isEditing;
+  const isFirstComment = props.index === 0;
+
+  const publishComment = () => {
     inputRef.current && inputRef.current.blur();
-    props.onPublishComment(comment, commentId);
+    props.onPublishComment && props.onPublishComment(comment, props.commentId?.toString());
   };
+  const editComment = () => {
+    inputRef.current && inputRef.current.focus();
+    setIsEditing(true);
+  };
+  const deleteComment = () => {
+    props.onDeleteComment && props.commentId && props.onDeleteComment(props.commentId?.toString());
+  };
+
+  const setIsEditingFalse = () => setIsEditing(false);
   const clearCommentField = () => {
     inputRef.current && inputRef.current.clear();
     setComment('');
-    commentId && setPublishButtonWidth(undefined);
-    setCommentId(undefined);
-  };
-  const prefillCommentField = (comment: string, commentId: string) => {
-    inputRef.current && inputRef.current.focus();
-    setComment(comment);
-    setCommentId(commentId);
-    setPublishButtonWidth(undefined);
   };
   const confirmDiscard = (quitCallback?: Function, continueCallback?: Function) => {
-    if (!props.isPublishingComment && !alertDisplayed && comment) {
+    if (comment && !props.isPublishingComment && !alertDisplayed) {
       alertDisplayed = true; //  Due to Alert + Keyboard bug, we need to set a flag when Alert is displayed
       Alert.alert(
-        I18n.t(`common.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
-        I18n.t(`common.comment.confirmationUnsaved${commentId ? 'Modification' : 'Publication'}`),
+        I18n.t(`common.confirmationUnsaved${props.commentId ? 'Modification' : 'Publication'}`),
+        I18n.t(`common.comment.confirmationUnsaved${props.commentId ? 'Modification' : 'Publication'}`),
         [
           {
             text: I18n.t('common.quit'),
@@ -77,65 +88,83 @@ const CommentField = (props: ICommentField_Props, ref) => {
       );
     }
   };
-  const getCommentId = () => {
-    return commentId;
-  };
-  const getComment = () => {
-    return comment;
-  };
-  React.useImperativeHandle(ref, () => ({ clearCommentField, prefillCommentField, confirmDiscard, getCommentId, getComment }));
+  React.useImperativeHandle(ref, () => ({ clearCommentField, confirmDiscard, setIsEditingFalse }));
 
   return (
     <View
       style={{
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        padding: 12,
-        borderTopWidth: 1,
-        borderTopColor: theme.color.listItemBorder,
+        backgroundColor: theme.color.background.card,
+        padding: props.commentId ? UI_SIZES.spacing.large : undefined,
+        borderTopWidth: props.commentId && isFirstComment ? 1 : 0,
+        borderBottomWidth: props.commentId ? 1 : 0,
+        borderTopColor: theme.greyPalette.pearl,
+        borderBottomColor: theme.greyPalette.pearl,
+        alignItems: isIdleExistingComment ? undefined : 'flex-end',
+        flexDirection: isIdleExistingComment ? 'column' : 'row',
       }}>
-      <SingleAvatar userId={session.user.id} />
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <SingleAvatar size={isIdleExistingComment ? 24 : 36} userId={props.commentAuthorId || session.user.id} />
+        {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
+          <>
+            <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.medium, flexShrink: 1 }}>
+              {props.commentAuthor}
+            </TextSemiBold>
+            <TextItalic style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, color: theme.greyPalette.graphite }}>
+              {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
+            </TextItalic>
+          </>
+        ) : null}
+      </View>
       <View
         style={{
           flex: 1,
+          backgroundColor: theme.greyPalette.fog,
+          borderWidth: isIdleExistingComment ? 0 : 1,
+          borderColor: theme.greyPalette.cloudy,
+          borderRadius: UI_SIZES.radius.mediumPlus,
+          marginLeft: UI_SIZES.spacing[isIdleExistingComment ? 'extraLargePlus' : 'smallPlus'],
+          paddingHorizontal: UI_SIZES.spacing.medium,
+          paddingVertical: UI_SIZES.spacing.smallPlus,
+          maxHeight: isIdleExistingComment ? undefined : UI_SIZES.elements.textFieldMaxHeight,
           height: '100%',
-          paddingLeft: 8,
-          paddingRight: 12,
-          paddingVertical: Platform.OS === 'android' ? 8 : undefined,
-          marginLeft: 12,
-          maxHeight: 120,
-          borderRadius: 20,
-          borderWidth: 0.5,
-          borderColor: theme.color.inputBorder,
-          flexDirection: 'row',
-          alignItems: 'center',
         }}>
         <TextInput
           ref={inputRef}
-          style={{ flex: 1, marginRight: 12, paddingTop: 0, paddingBottom: 0 }}
-          placeholder={I18n.t('common.comment.addComment')}
+          placeholder={props.placeholder}
+          placeholderTextColor={theme.greyPalette.graphite}
+          multiline
+          editable={!(props.isPublishingComment || isIdleExistingComment)}
           onChangeText={text => setComment(text)}
           value={comment}
-          editable={!props.isPublishingComment}
-          multiline
+          style={{ paddingTop: 0 }}
         />
-        <View
-          style={{ width: publishButtonWidth, justifyContent: 'center' }}
-          onLayout={e => {
-            const publishButtonWidth = e.nativeEvent.layout.width;
-            setPublishButtonWidth(publishButtonWidth);
-          }}>
-          {props.isPublishingComment ? (
-            <LoadingIndicator small />
-          ) : (
-            <TouchableOpacity onPress={() => onPublish()} disabled={!comment}>
-              <TextAction style={{ opacity: !comment ? 0.5 : 1 }}>
-                {I18n.t(`common.${commentId ? 'modify' : 'publish'}`)}
-              </TextAction>
-            </TouchableOpacity>
-          )}
-        </View>
       </View>
+      {!isIdleExistingComment ? (
+        <View style={{ marginLeft: UI_SIZES.spacing.smallPlus }}>
+          <RoundButton
+            iconName={isEditing ? 'pictos-save' : 'pictos-send'}
+            action={() => publishComment()}
+            disabled={!comment}
+            loading={props.isPublishingComment}
+          />
+        </View>
+      ) : null}
+      {isIdleExistingComment && isUserComment && (props.onPublishComment || props.onDeleteComment) ? (
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+          {props.onPublishComment ? (
+            <TouchableOpacity onPress={() => editComment()}>
+              <TextSemiBold style={{ color: theme.color.secondary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
+            </TouchableOpacity>
+          ) : null}
+          {props.onDeleteComment ? (
+            <TouchableOpacity onPress={() => deleteComment()}>
+              <TextSemiBold style={{ color: theme.color.secondary.regular, marginLeft: UI_SIZES.spacing.large }}>
+                {I18n.t('common.delete')}
+              </TextSemiBold>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 };

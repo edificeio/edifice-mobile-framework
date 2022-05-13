@@ -1,4 +1,4 @@
-import { IDeclarationState, stateDefault, declarationActionsTypes } from '~/modules/viescolaire/presences/state/declaration';
+import { IDeclarationState, declarationActionsTypes, stateDefault } from '~/modules/viescolaire/presences/state/declaration';
 
 const reducer: (state: IDeclarationState, action: { type: string; errmsg: string }) => IDeclarationState = (
   state = stateDefault,

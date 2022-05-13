@@ -1,10 +1,13 @@
-import { createStackNavigator } from "react-navigation-stack";
+import { createStackNavigator } from 'react-navigation-stack';
 
-import ConnectorContainer from "./containers/ConnectorContainer";
+import ConnectorContainer from './containers/ConnectorContainer';
 
 export default () =>
-  createStackNavigator({
-    Connector: ConnectorContainer
-  }, {
-    headerMode: 'none'
-  });
+  createStackNavigator(
+    {
+      Connector: ConnectorContainer,
+    },
+    {
+      headerMode: 'none',
+    },
+  );

@@ -97,31 +97,12 @@ export interface Field {
   value: string;
 }
 
-export interface AdvancedSearchParams {
-  fields: Field[];
-  sources: {
-    GAR: boolean;
-    Moodle: boolean;
-    PMB: boolean;
-    Signets: boolean;
-  };
+export interface Sources {
+  GAR: boolean;
+  Moodle: boolean;
+  PMB: boolean;
+  Signets: boolean;
 }
-
-export const defaultParams: AdvancedSearchParams = {
-  fields: [
-    { name: 'title', value: '', operand: Operand.OR },
-    { name: 'author', value: '', operand: Operand.OR },
-    { name: 'editor', value: '', operand: Operand.OR },
-    { name: 'discipline', value: '', operand: Operand.OR },
-    { name: 'level', value: '', operand: Operand.OR },
-  ],
-  sources: {
-    GAR: false,
-    Moodle: false,
-    PMB: false,
-    Signets: false,
-  },
-};
 
 const defaultFields: Field[] = [
   { name: 'title', value: '', operand: Operand.OR },
@@ -157,7 +138,7 @@ type AdvancedSearchModalProps = {
   isVisible: boolean;
 
   closeModal: () => void;
-  onSearch: (params: AdvancedSearchParams) => void;
+  onSearch: (fields: Field[], sources: Sources) => void;
 };
 
 const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: CriteriaInputProps) => {
@@ -180,6 +161,8 @@ const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: Crite
         <TextInput
           defaultValue={props.field.value}
           placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
+          clearButtonMode="always"
+          maxLength={30}
           onChangeText={onChangeText}
           style={styles.criteriaInput}
         />
@@ -210,7 +193,7 @@ const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: Sou
 export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = forwardRef(
   (props: AdvancedSearchModalProps, ref) => {
     const [fields, setFields] = useState<Field[]>(defaultFields);
-    const [sources, setSources] = useState(defaultSources);
+    const [sources, setSources] = useState<Sources>(defaultSources);
     const areFieldsEmpty = !fields.some(field => field.value !== '');
     const updateField = (index: number, field: Field) => {
       const newFields = [...fields];
@@ -218,7 +201,7 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
       setFields(newFields);
     };
     const onSearch = () => {
-      props.onSearch({ fields, sources });
+      props.onSearch(fields, sources);
     };
     const resetSources = () => {
       setSources({

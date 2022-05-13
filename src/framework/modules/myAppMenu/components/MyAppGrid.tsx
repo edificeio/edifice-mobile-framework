@@ -4,6 +4,8 @@ import { Platform, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
+
+
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card';
@@ -12,33 +14,49 @@ import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
-import { AnyModule } from '~/framework/util/moduleTool';
+import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
 import { FlatButton } from '~/ui/FlatButton';
 
-class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
-  private renderGrid(modules: IAppModule[], newModules?: AnyModule[]) {
-    const allModules = [...modules, ...(newModules || [])]?.sort((a, b) =>
-      I18n.t(a.config.displayName).localeCompare(I18n.t(b.config.displayName)),
-    ) as (IAppModule | AnyModule)[];
 
-    const renderGridItem = ({ item }: { item: IAppModule | AnyModule }) => (
-      <TouchableSelectorPictureCard
-        onPress={() => this.props.navigation.navigate(item.config.name)}
-        text={I18n.t(item.config.displayName)}
-        picture={
-          item.config['picture']
-            ? { ...item.config['picture'], height: 64, width: '100%', size: 64 }
-            : {
-                type: 'Icon',
-                color: item.config.iconColor,
-                name: item.config.iconName,
-                size: 64,
-              }
-        }
-      />
-    );
+export interface MyAppGrid_Props extends NavigationInjectedProps {
+  modules: NavigableModuleArray;
+  legacyModules: IAppModule[];
+}
+
+class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
+  private renderGrid(modules?: NavigableModuleArray, legacyModules?: IAppModule[]) {
+    const allModules = [...(legacyModules || []), ...(modules || [])]?.sort((a, b) =>
+      I18n.t(a.config.displayI18n).localeCompare(I18n.t(b.config.displayI18n)),
+    ) as NavigableModuleArray;
+
+    const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
+      return (
+        <TouchableSelectorPictureCard
+          onPress={() => this.props.navigation.navigate(item.config.name)}
+          text={I18n.t(item.config.displayI18n)}
+          picture={
+            item.config.displayPicture
+              ? item.config.displayPicture.type === 'NamedSvg'
+                ? { ...item.config.displayPicture, height: 64, width: '100%' }
+                : item.config.displayPicture.type === 'Image'
+                ? { ...item.config.displayPicture }
+                : /* item.config.displayPicture.type === 'Icon' */ { ...item.config.displayPicture, size: 64 }
+              : {
+                  // Fallback on legacy moduleConfig properties
+                  type: 'Icon',
+                  color: item.config['iconColor'],
+                  name: item.config['iconName'],
+                  size: 64,
+                }
+          }
+          pictureStyle={
+            item.config.displayPicture?.type === 'Image' ? { height: 64, width: '100%' } : {}
+          }
+        />
+      );
+    };
 
     return (
       <GridList
@@ -84,14 +102,14 @@ class MyAppGrid extends React.PureComponent<NavigationInjectedProps, object> {
   }
 
   public render() {
-    const { modules, newModules } = this.props;
+    const { modules, legacyModules } = this.props;
     return (
       <PageView
         navigation={this.props.navigation}
         navBar={{
           title: I18n.t('MyApplications'),
         }}>
-        {this.renderGrid(modules, newModules)}
+        {this.renderGrid(modules, legacyModules)}
       </PageView>
     );
   }

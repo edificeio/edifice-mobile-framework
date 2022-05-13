@@ -1,4 +1,5 @@
-import { createNavigableModuleConfig } from '~/framework/util/moduleTool';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
 import { IConnectorState } from './reducers/connector';
 
 const regexp = /la[- ]+vie[- ]+scolaire/i;
@@ -9,12 +10,12 @@ function hasConnectorModule(entcoreApp) {
   return false;
 }
 
-export default createNavigableModuleConfig<'lvs', IConnectorState>({
+export default new NavigableModuleConfig<'lvs', IConnectorState>({
   name: 'lvs',
-  displayName: 'LVS',
-  matchEntcoreApp: entcoreApp => hasConnectorModule(entcoreApp),
   entcoreScope: ['lvs'],
-  iconName: 'lvs',
-  iconColor: '#299cc8',
-  registerAs: 'myAppsModule',
+  matchEntcoreApp: entcoreApp => hasConnectorModule(entcoreApp),
+
+  displayI18n: 'LVS',
+  displayAs: 'myAppsModule',
+  displayPicture: { type: 'Icon', name: 'lvs', color: '#299cc8' },
 });

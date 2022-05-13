@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationActions } from 'react-navigation';
 
@@ -11,7 +11,7 @@ import StructurePicker from '~/modules/viescolaire/viesco/containers/StructurePi
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
   coursesPart: {
     backgroundColor: 'white',
@@ -23,6 +23,12 @@ const style = StyleSheet.create({
     shadowOpacity: CommonStyles.shadowOpacity,
     shadowRadius: CommonStyles.shadowRadius,
     marginBottom: 10,
+  },
+  coursesPartHeight: {
+    height: 'auto',
+  },
+  coursesPartHeightDefined: {
+    height: 400,
   },
   grid: {
     flexDirection: 'row',
@@ -40,15 +46,19 @@ const style = StyleSheet.create({
     shadowRadius: CommonStyles.shadowRadius,
   },
   gridButton: {
-    borderRadius: 5,
-    flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
+    flexDirection: 'column',
+    backgroundColor: '#FFF',
   },
-  gridButtonText: {
-    color: '#FFFFFF',
-    flex: 1,
-    textAlign: 'center',
+  gridButtonEnabled: {
+    opacity: 1,
+  },
+  gridButtonDisabled: {
+    opacity: 0.6,
+  },
+  gridButtonImage: {
+    height: 70,
+    width: 70,
   },
 });
 
@@ -60,23 +70,16 @@ interface ImageButtonProps {
   disabled?: boolean;
 }
 
-const ImageButton = ({ imageSrc, color, text, onPress, disabled }: ImageButtonProps) => {
+const ImageButtonModule = ({ imageSrc, color, text, onPress, disabled }: ImageButtonProps) => {
   return (
-    <View style={style.gridButtonContainer}>
+    <View style={styles.gridButtonContainer}>
       <BottomColoredItem
         shadow
-        style={[
-          {
-            alignItems: 'center',
-            flexDirection: 'column',
-            backgroundColor: '#FFF',
-          },
-          { opacity: disabled ? 0.6 : 1 },
-        ]}
+        style={[styles.gridButton, disabled ? styles.gridButtonDisabled : styles.gridButtonEnabled]}
         color={color}
         onPress={onPress}
         disabled={disabled}>
-        <Image source={imageSrc} style={{ height: 70, width: 70 }} resizeMode="contain" />
+        <Image source={imageSrc} style={styles.gridButtonImage} resizeMode="contain" />
         <Text>{text}</Text>
       </BottomColoredItem>
     </View>
@@ -87,14 +90,18 @@ export default props => {
   return (
     <PageContainer>
       <ScrollView overScrollMode="never" bounces={false}>
-        <View style={[style.coursesPart, { height: props.authorizedViescoApps.presences ? 400 : 'auto' }]}>
+        <View
+          style={[
+            styles.coursesPart,
+            props.authorizedViescoApps.presences ? styles.coursesPartHeightDefined : styles.coursesPartHeight,
+          ]}>
           <StructurePicker />
           {props.authorizedViescoApps.presences && <CallList {...props} />}
         </View>
-        <View style={style.dashboardPart}>
-          <View style={style.grid}>
+        <View style={styles.dashboardPart}>
+          <View style={styles.grid}>
             {props.authorizedViescoApps.edt && (
-              <ImageButton
+              <ImageButtonModule
                 onPress={() => props.navigation.navigate('Timetable')}
                 text={I18n.t('viesco-timetable')}
                 color="#162EAE"
@@ -102,7 +109,7 @@ export default props => {
               />
             )}
             {props.authorizedViescoApps.diary && (
-              <ImageButton
+              <ImageButtonModule
                 onPress={() =>
                   props.navigation.navigate(
                     'cdt',

@@ -5,17 +5,17 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
+import { getUserSession } from '~/framework/util/session';
 import { fetchHomeworkListAction } from '~/modules/viescolaire/cdt/actions/homeworks';
 import { fetchSessionListAction } from '~/modules/viescolaire/cdt/actions/sessions';
 import { fetchSlotListAction } from '~/modules/viescolaire/cdt/actions/timeSlots';
 import TeacherCdtTimetable from '~/modules/viescolaire/cdt/components/CdtTimetableTeachers';
-import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
-import { getSessionsListState, ISessionListState } from '~/modules/viescolaire/cdt/state/sessions';
-import { getSlotsListState, ITimeSlotsState } from '~/modules/viescolaire/cdt/state/timeSlots';
+import { IHomeworkListState, getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { ISessionListState, getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
+import { ITimeSlotsState, getSlotsListState } from '~/modules/viescolaire/cdt/state/timeSlots';
 import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/actions/courses';
-import { getCoursesListState, ICourseListState } from '~/modules/viescolaire/viesco/state/courses';
+import { ICourseListState, getCoursesListState } from '~/modules/viescolaire/viesco/state/courses';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
 
 export type TimetableProps = {
@@ -106,7 +106,7 @@ const mapStateToProps = (state: any): any => {
     courses: getCoursesListState(state),
     slots: getSlotsListState(state),
     structure: { id: getSelectedStructure(state) },
-    teacherId: getSessionInfo().id,
+    teacherId: getUserSession().user.id,
     sessions: getSessionsListState(state),
     homeworks: getHomeworksListState(state),
   };

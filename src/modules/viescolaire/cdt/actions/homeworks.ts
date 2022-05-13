@@ -2,12 +2,11 @@
  * Notification list actions
  * Build actions to be dispatched to the notification list reducer.
  */
-
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { homeworksService } from '~/modules/viescolaire/cdt/services/homeworks';
-import { listActionTypes, IHomeworkList, updateActionTypes } from '~/modules/viescolaire/cdt/state/homeworks';
+import { IHomeworkList, listActionTypes, updateActionTypes } from '~/modules/viescolaire/cdt/state/homeworks';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

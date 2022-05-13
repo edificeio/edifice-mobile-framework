@@ -1,4 +1,3 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import querystring from 'querystring';
 
 
@@ -24,7 +23,7 @@ export type IMoyenneListBackend = {
 };
 
 const moyenneListAdapter: (data: IMoyenneListBackend) => IMoyenneList = data => {
-  let result = [] as IMoyenneList;
+  const result = [] as IMoyenneList;
   if (!data) return result;
   for (const key in data) {
     const item = data[key];

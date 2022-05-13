@@ -1,7 +1,6 @@
 /**
  * Support Reducer
  */
-
 import { ISupportListState } from './state/support';
 
 // State

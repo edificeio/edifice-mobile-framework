@@ -6,6 +6,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { Trackers } from '~/framework/util/tracker';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { notifierShowAction } from '~/infra/notifier/actions';
+import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 import userConfig from '~/user/config';
 
 // TYPES
@@ -84,6 +85,9 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
           type: 'success',
         }),
       );
+      if (updateAvatar) {
+        refreshSelfAvatarUniqueKey();
+      }
       Trackers.trackEvent('Profile', 'UPDATE');
     } catch (e) {
       dispatch(profileUpdateErrorAction(updatedProfileValues));

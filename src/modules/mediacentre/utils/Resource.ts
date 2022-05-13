@@ -1,3 +1,5 @@
+import { AsyncState } from '~/infra/redux/async2';
+
 export enum Source {
   GAR = 'fr.openent.mediacentre.source.GAR',
   Moodle = 'fr.openent.mediacentre.source.Moodle',
@@ -24,3 +26,5 @@ export interface Resource {
   orientation?: boolean;
   owner_id?: string;
 }
+
+export type IResourcesState = AsyncState<Resource[]>;

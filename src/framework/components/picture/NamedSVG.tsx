@@ -10,6 +10,26 @@ import React, { useEffect, useRef } from 'react';
 import { SvgProps } from 'react-native-svg';
 
 const imports = {
+  // UI Icons
+  'ui-answer': import(`../../../../assets/icons/uiIcons/answer.svg`),
+  'ui-arrowDown': import(`../../../../assets/icons/uiIcons/arrowDown.svg`),
+  'ui-arrowLeft': import(`../../../../assets/icons/uiIcons/arrowLeft.svg`),
+  'ui-arrowRight': import(`../../../../assets/icons/uiIcons/arrowRight.svg`),
+  'ui-arrowUp': import(`../../../../assets/icons/uiIcons/arrowUp.svg`),
+  'ui-calendar': import(`../../../../assets/icons/uiIcons/calendar.svg`),
+  'ui-close': import(`../../../../assets/icons/uiIcons/close.svg`),
+  'ui-externalLink': import(`../../../../assets/icons/uiIcons/externalLink.svg`),
+  'ui-flag': import(`../../../../assets/icons/uiIcons/flag.svg`),
+  'ui-options': import(`../../../../assets/icons/uiIcons/options.svg`),
+  'ui-rafterDown': import(`../../../../assets/icons/uiIcons/rafterDown.svg`),
+  'ui-rafterLeft': import(`../../../../assets/icons/uiIcons/rafterLeft.svg`),
+  'ui-rafterRight': import(`../../../../assets/icons/uiIcons/rafterRight.svg`),
+  'ui-rafterUp': import(`../../../../assets/icons/uiIcons/rafterUp.svg`),
+  'ui-save': import(`../../../../assets/icons/uiIcons/save.svg`),
+  'ui-send': import(`../../../../assets/icons/uiIcons/send.svg`),
+  'ui-skills': import(`../../../../assets/icons/uiIcons/skills.svg`),
+  'ui-success': import(`../../../../assets/icons/uiIcons/success.svg`),
+  'ui-users': import(`../../../../assets/icons/uiIcons/users.svg`),
   // ModuleIcons
   admin: import(`../../../../assets/icons/moduleIcons/admin.svg`),
   adressBook: import(`../../../../assets/icons/moduleIcons/adressBook.svg`),
@@ -65,7 +85,11 @@ const imports = {
   'onboarding-2': import(`../../../../assets/images/onboarding/onboarding_2.svg`),
   'onboarding-3': import(`../../../../assets/images/onboarding/onboarding_3.svg`),
   'pictos-answer': import(`../../../../assets/images/pictos/answer.svg`),
+  'pictos-arrow-right': import(`../../../../assets/images/pictos/arrow-right.svg`),
+  'pictos-close': import(`../../../../assets/images/pictos/close.svg`),
   'pictos-external-link': import(`../../../../assets/images/pictos/external-link.svg`),
+  'pictos-save': import(`../../../../assets/images/pictos/save.svg`),
+  'pictos-send': import(`../../../../assets/images/pictos/send.svg`),
   'schoolbook-canteen': import(`../../../../assets/images/schoolbook/canteen.svg`),
   'schoolbook-event': import(`../../../../assets/images/schoolbook/event.svg`),
   'schoolbook-last-minute': import(`../../../../assets/images/schoolbook/last-minute.svg`),
@@ -73,26 +97,30 @@ const imports = {
   'schoolbook-outing': import(`../../../../assets/images/schoolbook/outing.svg`),
   'schoolbook-various': import(`../../../../assets/images/schoolbook/various.svg`),
 };
+const importsCache = {};
 
 export interface NamedSVGProps extends SvgProps {
   name: string;
 }
 
 export const NamedSVG = ({ name, ...rest }: NamedSVGProps): JSX.Element | null => {
-  const ImportedSVGRef = useRef<any>();
+  const ImportedSVGRef = useRef<any>(importsCache[name]);
   const [loading, setLoading] = React.useState(false);
   useEffect((): void => {
-    setLoading(true);
-    const importSVG = async (): Promise<void> => {
-      try {
-        ImportedSVGRef.current = (await imports[name]).default;
-      } catch (err) {
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    };
-    importSVG();
+    if (!importsCache[name]) {
+      setLoading(true);
+      const importSVG = async (): Promise<void> => {
+        try {
+          ImportedSVGRef.current = (await imports[name]).default;
+          importsCache[name] = ImportedSVGRef.current;
+        } catch (err) {
+          throw err;
+        } finally {
+          setLoading(false);
+        }
+      };
+      importSVG();
+    }
   }, [name]);
   if (!loading && ImportedSVGRef.current) {
     const { current: ImportedSVG } = ImportedSVGRef;

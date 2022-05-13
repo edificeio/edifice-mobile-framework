@@ -3,8 +3,21 @@ import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-
 
 import { IApp, IEstablishment } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui/icons/Icon';
 import Dropdown from '~/ui/Dropdown';
+import { Icon } from '~/ui/icons/Icon';
+
+const styles = StyleSheet.create({
+  fullView: {
+    flex: 1,
+  },
+  dropdown: {
+    backgroundColor: 'transparent',
+    borderRadius: 0,
+    borderWidth: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: CommonStyles.grey,
+  },
+});
 
 export const EstablishmentPicker = ({
   list,
@@ -15,7 +28,7 @@ export const EstablishmentPicker = ({
 }) => {
   const [currentValue, updateCurrentValue] = list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.fullView}>
       <Dropdown
         style={styles.dropdown}
         data={list.map(x => x.name)}
@@ -36,7 +49,7 @@ export const EstablishmentPicker = ({
 export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldChange: (field: string) => void }) => {
   const [currentValue, updateCurrentValue] = list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.fullView}>
       <Dropdown
         style={styles.dropdown}
         data={list.map(x => x.name)}
@@ -111,13 +124,3 @@ export const IconButton = ({ icon, color, onPress }) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  dropdown: {
-    backgroundColor: 'transparent',
-    borderRadius: 0,
-    borderWidth: 0,
-    borderBottomWidth: 2,
-    borderBottomColor: CommonStyles.grey,
-  },
-});

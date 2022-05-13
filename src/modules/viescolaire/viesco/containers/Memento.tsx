@@ -3,11 +3,11 @@ import * as React from 'react';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { PageView } from '~/framework/components/page';
 
+import { PageView } from '~/framework/components/page';
 import { fetchMementoAction } from '~/modules/viescolaire/viesco/actions/memento';
 import { RelativesInfos, StudentInfos } from '~/modules/viescolaire/viesco/components/Memento';
-import { getMementoState, IMementoState } from '~/modules/viescolaire/viesco/state/memento';
+import { IMementoState, getMementoState } from '~/modules/viescolaire/viesco/state/memento';
 
 export type IMementoContainerProps = {
   memento: IMementoState;
