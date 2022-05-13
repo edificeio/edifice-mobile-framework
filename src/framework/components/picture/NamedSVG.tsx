@@ -97,6 +97,7 @@ const imports = {
   'schoolbook-outing': import(`../../../../assets/images/schoolbook/outing.svg`),
   'schoolbook-various': import(`../../../../assets/images/schoolbook/various.svg`),
 };
+
 const importsCache = {};
 
 export interface NamedSVGProps extends SvgProps {
