@@ -2,8 +2,6 @@ import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { Field, Sources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
-import { Source } from '../utils/Resource';
-
 const concatResources = (response: any) => {
   let resources: any[] = [];
   for (const res of response) {
@@ -25,20 +23,6 @@ const addSource = (sources: string[], value: boolean, name: string) => {
 };
 
 export const searchService = {
-  getExternals: async (sources: string[]) => {
-    const jsondata = {
-      event: 'search',
-      state: 'PLAIN_TEXT',
-      sources: sources.filter(source => source !== Source.Signet),
-      data: {
-        query: '.*',
-      },
-    };
-    const response = await fetchJSONWithCache(`/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`, {
-      method: 'get',
-    });
-    return resourcesAdapter(concatResources(response));
-  },
   getSimple: async (sources: string[], query: string) => {
     const jsondata = {
       event: 'search',

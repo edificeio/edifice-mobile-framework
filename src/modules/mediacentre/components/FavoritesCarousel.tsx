@@ -1,14 +1,14 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text, TextBold } from '~/framework/components/text';
+import { TextBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { getAuthHeader } from '~/infra/oauth';
@@ -19,10 +19,8 @@ const styles = StyleSheet.create({
   mainContainer: {
     marginBottom: 15,
   },
-  categoryHeaderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 10,
+  titleText: {
+    marginLeft: 10,
   },
   displayText: {
     color: theme.color.secondary.regular,
@@ -40,12 +38,6 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     width: 125,
-    height: 131,
-  },
-  coloredContainer: {
-    width: 10,
-    height: '200%',
-    position: 'absolute',
   },
   contentContainer: {
     marginLeft: 12,
@@ -145,14 +137,7 @@ export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> 
   }, [props.resources.length]);
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.categoryHeaderContainer}>
-        <TextBold>{I18n.t('mediacentre.favorites').toUpperCase()}</TextBold>
-        {props.resources.length > 1 ? (
-          <TouchableOpacity onPress={props.onDisplayAll}>
-            <Text style={styles.displayText}>{I18n.t('mediacentre.display-all')}</Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
+      <TextBold style={styles.titleText}>{I18n.t('mediacentre.favorites').toUpperCase()}</TextBold>
       {props.resources.length > 2 ? (
         <Carousel
           data={props.resources}
