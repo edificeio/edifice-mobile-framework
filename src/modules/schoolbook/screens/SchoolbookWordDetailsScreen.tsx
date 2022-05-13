@@ -4,6 +4,7 @@
 import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -144,7 +145,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
       await schoolbookService.word.acknowledge(session, schoolbookWordId, studentId);
       refreshSilent();
     } catch (e) {
-      throw e;
+      Toast.show(I18n.t('common.error.text'));
     }
   };
 
@@ -156,7 +157,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
         : await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
       refreshSilent();
     } catch (e) {
-      throw e;
+      Toast.show(I18n.t('common.error.text'));
     } finally {
       setIsPublishingReply(false);
     }
@@ -167,7 +168,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
       await schoolbookService.word.delete(session, schoolbookWordId);
       props.navigation.goBack();
     } catch (e) {
-      throw e;
+      Toast.show(I18n.t('common.error.text'));
     }
   };
 
@@ -196,10 +197,12 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
   // HEADER =====================================================================================
 
   const [showMenu, setShowMenu] = React.useState(false);
+  const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
+  const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const navBarInfo = {
     title: I18n.t('schoolbook.appName'),
     right:
-      isSchoolbookWordRendered && hasSchoolbookWordCreationRights ? (
+      isSchoolbookWordRendered && hasSchoolbookWordCreationRights && isUserSchoolbookWordOwner ? (
         <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <HeaderIcon name="more_vert" iconSize={24} />
         </TouchableOpacity>
