@@ -139,7 +139,7 @@ const SchoolbookWordDetailsCard = (
             </TouchableOpacity>
           }>
           {!isTeacher && !isWordAcknowledged ? (
-            <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.color.secondary.regular }}>
+            <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.color.warning }}>
               {unacknowledgedString(userType)}
             </TextSemiBold>
           ) : null}
