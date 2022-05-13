@@ -61,6 +61,8 @@ const SchoolbookWordDetailsCard = (
   const schoolbookWordMedia = extractMediaFromHtml(word.text);
   const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
   const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
+  const schoolbookWordOwnerId = word?.ownerId;
+  const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const isParent = userType === UserType.Relative;
   const isTeacher = userType === UserType.Teacher;
   const isStudent = userType === UserType.Student;
@@ -138,7 +140,15 @@ const SchoolbookWordDetailsCard = (
               />
             </TouchableOpacity>
           }>
-          {!isTeacher && !isWordAcknowledged ? (
+          {isTeacher && !isUserSchoolbookWordOwner ? (
+            <View style={{ marginTop: UI_SIZES.spacing.large, flexDirection: 'row', alignItems: 'center' }}>
+              <SingleAvatar size={36} userId={schoolbookWord.word.ownerId} />
+              <Text style={{ flex: 1, marginLeft: UI_SIZES.spacing.smallPlus }} numberOfLines={usersTextMaxLines}>
+                {`${I18n.t('common.from')} `}
+                <TextSemiBold>{word.ownerName}</TextSemiBold>
+              </Text>
+            </View>
+          ) : !isTeacher && !isWordAcknowledged ? (
             <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.color.warning }}>
               {unacknowledgedString(userType)}
             </TextSemiBold>
