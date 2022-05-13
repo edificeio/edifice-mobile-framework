@@ -66,18 +66,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  React.useEffect(() => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-    // focusEventListener = props.navigation.addListener('didFocus', () => {
-    //   if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    //   else refreshSilent();
-    // });
-    // return () => {
-    //   focusEventListener.remove();
-    // };
-  }, []);
-
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
     getSchoolbookWordIds()
@@ -101,6 +89,24 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
+
+  const fetchOnNavigation = () => {
+    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    else refreshSilent();
+  };
+
+  React.useEffect(() => {
+    // Note: 'didFocus' does not work when navigating from a notification, so we use this condition instead
+    if (props.navigation.getParam('useNotification')) {
+      fetchOnNavigation();
+    }
+    focusEventListener = props.navigation.addListener('didFocus', () => {
+      fetchOnNavigation();
+    });
+    return () => {
+      focusEventListener.remove();
+    };
+  }, []);
 
   // EVENTS =====================================================================================
 
