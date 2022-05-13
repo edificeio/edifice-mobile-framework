@@ -17,7 +17,6 @@ import { fetchPersonnelListAction } from '~/modules/viescolaire/viesco/actions/p
 import { fetchSubjectListAction } from '~/modules/viescolaire/viesco/actions/subjects';
 import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardStudent';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
-import { getUserSession } from '~/framework/util/session';
 
 import { IAuthorizedViescoApps } from './Dashboard';
 

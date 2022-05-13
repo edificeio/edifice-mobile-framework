@@ -78,7 +78,7 @@ export const UI_SIZES = {
     huge: getScaleDimension(64, 'width'),
   },
   getResponsiveFontSize: (dimension: number) => getScaleDimension(dimension, 'font'),
-  getResponsiveLineHeight: (dimension: number) => getScaleDimension(dimension + 6, 'height'),
+  getResponsiveLineHeight: (dimension: number) => getScaleDimension(dimension + 6, 'font'),
   getResponsiveStyledLineHeight: (textStyle: TextStyle | undefined = undefined) =>
     getScaleDimension((textStyle?.fontSize || 14) + 6, 'height'),
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
