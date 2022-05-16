@@ -43,6 +43,7 @@ const imports = {
   homeLiaisonDiary: import(`../../../../assets/icons/moduleIcons/homeLiaisonDiary.svg`),
   homework1D: import(`../../../../assets/icons/moduleIcons/homework1D.svg`),
   homework2D: import(`../../../../assets/icons/moduleIcons/homework2D.svg`),
+  mediacentre: import(`../../../../assets/icons/moduleIcons/mediacentre.svg`),
   messages: import(`../../../../assets/icons/moduleIcons/messages.svg`),
   newsFeed: import(`../../../../assets/icons/moduleIcons/newsFeed.svg`),
   pad: import(`../../../../assets/icons/moduleIcons/pad.svg`),
