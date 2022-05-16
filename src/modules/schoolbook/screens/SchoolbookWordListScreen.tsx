@@ -122,12 +122,11 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   const fetchParentChildren = async () => {
     try {
       const childrenByStructure = await userService.getUserChildren(userId);
-      const children =
-        childrenByStructure &&
-        childrenByStructure[0]?.children?.map(child => ({
-          id: child.id,
-          name: child.displayName?.split(' ')[1],
-        }));
+      const allChildren = childrenByStructure?.map(structure => structure.children)?.flat();
+      const children = allChildren?.map(child => ({
+        id: child.id,
+        name: child.displayName?.split(' ')[1],
+      }));
       const wordsCountPromises = children?.map(child => schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id));
       const childrenUnacknowledgedWordsCount = wordsCountPromises && (await Promise.all(wordsCountPromises));
       const childrenWithUnacknowledgedWordsCount = children?.map((child, index) => ({
