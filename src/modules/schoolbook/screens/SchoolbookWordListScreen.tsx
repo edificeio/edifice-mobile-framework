@@ -214,9 +214,10 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
         const childrenWordListPromises = fetchedChildren?.map(fetchedChild => fetchPage(true, true, fetchedChild.id));
         const childrenWordLists =
           childrenWordListPromises && ((await Promise.all(childrenWordListPromises)) as IStudentAndParentWordList[]);
-        const childIdWithNewestWord =
-          fetchedChildren && childrenWordLists && getChildIdWithNewestWord(fetchedChildren, childrenWordLists);
-        isFirstFetch && childIdWithNewestWord && setSelectedChildId(childIdWithNewestWord);
+        const childToSelect =
+          fetchedChildren &&
+          ((childrenWordLists && getChildIdWithNewestWord(fetchedChildren, childrenWordLists)) || fetchedChildren[0]?.id);
+        isFirstFetch && childToSelect && setSelectedChildId(childToSelect);
       }
     } else await fetchPage(true, true);
   };
