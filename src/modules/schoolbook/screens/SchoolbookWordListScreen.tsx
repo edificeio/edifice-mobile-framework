@@ -202,18 +202,19 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 
   const fetchFromStart = async () => {
     if (isParent) {
+      const isFirstFetch = loadingState === AsyncPagedLoadingState.INIT || loadingState === AsyncPagedLoadingState.RETRY;
       const fetchedChildren = await fetchParentChildren();
       if (fetchedChildren?.length === 1) {
         const singleChildId = fetchedChildren[0]?.id;
         await fetchPage(true, true, singleChildId);
-        setSelectedChildId(singleChildId);
+        isFirstFetch && setSelectedChildId(singleChildId);
       } else {
         const childrenWordListPromises = fetchedChildren?.map(fetchedChild => fetchPage(true, true, fetchedChild.id));
         const childrenWordLists =
           childrenWordListPromises && ((await Promise.all(childrenWordListPromises)) as IStudentAndParentWordList[]);
         const childIdWithNewestWord =
           fetchedChildren && childrenWordLists && getChildIdWithNewestWord(fetchedChildren, childrenWordLists);
-        childIdWithNewestWord && setSelectedChildId(childIdWithNewestWord);
+        isFirstFetch && childIdWithNewestWord && setSelectedChildId(childIdWithNewestWord);
       }
     } else await fetchPage(true, true);
   };
