@@ -30,6 +30,7 @@ export interface ISchoolbookWordListScreen_DataProps {
   initialLoadingState: AsyncPagedLoadingState;
   session: IUserSession;
 }
+
 export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProps & NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
@@ -237,7 +238,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
 
   // SCHOOLBOOK WORD DETAILS =========================================================================
 
-  const detailsCardRef: { current: any } = React.createRef();
   const renderSchoolbookWordDetails = () => {
     return (
       <SchoolbookWordDetailsCard
