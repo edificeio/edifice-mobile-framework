@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "private": true,
   "scripts": {
     "add-dev": "yarn add --dev --exact",
@@ -56,6 +56,7 @@
     "buffer": "6.0.3",
     "deepmerge": "4.2.2",
     "events": "3.3.0",
+    "fast-xml-parser": "4.0.7",
     "filesize": "8.0.7",
     "flat": "5.0.2",
     "hoist-non-react-statics": "3.3.2",
@@ -154,6 +155,7 @@
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.29.4",
+    "eslint-plugin-react-hooks": "4.5.0",
     "husky": "7.0.4",
     "jest": "27.5.1",
     "metro-react-native-babel-preset": "0.70.0",
