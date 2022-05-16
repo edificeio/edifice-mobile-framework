@@ -19,6 +19,7 @@ import { PageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
+import { removeFirstWord } from '~/framework/util/string';
 import { SchoolbookWordSummaryCard } from '~/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
 import { userService } from '~/user/service';
@@ -125,7 +126,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
       const allChildren = childrenByStructure?.map(structure => structure.children)?.flat();
       const children = allChildren?.map(child => ({
         id: child.id,
-        name: child.displayName?.split(' ')[1],
+        name: child.displayName && removeFirstWord(child.displayName),
       }));
       const wordsCountPromises = children?.map(child => schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id));
       const childrenUnacknowledgedWordsCount = wordsCountPromises && (await Promise.all(wordsCountPromises));
