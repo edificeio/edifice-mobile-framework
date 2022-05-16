@@ -201,7 +201,10 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 
   const fetchFromStart = async () => {
     if (isParent) {
-      const isFirstFetch = loadingState === AsyncPagedLoadingState.INIT || loadingState === AsyncPagedLoadingState.RETRY;
+      const isFirstFetch =
+        loadingState === AsyncPagedLoadingState.PRISTINE ||
+        loadingState === AsyncPagedLoadingState.INIT ||
+        loadingState === AsyncPagedLoadingState.RETRY;
       const fetchedChildren = await fetchParentChildren();
       if (fetchedChildren?.length === 1) {
         const singleChildId = fetchedChildren[0]?.id;
@@ -222,10 +225,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     children: { id: string; name: string; unacknowledgedWordsCount: number }[],
     childrenWordLists: IStudentAndParentWordList[],
   ) => {
-    const newestWordDates = childrenWordLists?.map((childWordList, index) => ({
-      index,
-      sendingDate: childWordList && childWordList[0]?.sendingDate,
-    }));
+    const newestWordDates = childrenWordLists
+      ?.map((childWordList, index) => ({
+        index,
+        sendingDate: childWordList && childWordList[0]?.sendingDate,
+      }))
+      ?.filter(newestWordDate => newestWordDate.sendingDate);
     const sortedNewestWordDates = newestWordDates?.sort((a, b) => moment(a.sendingDate).diff(b.sendingDate));
     const newestWordDate = sortedNewestWordDates && sortedNewestWordDates[sortedNewestWordDates?.length - 1];
     const childWithNewestWord = children && newestWordDate && children[newestWordDate.index];
