@@ -89,7 +89,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
 
   useEffect(() => {
     setSearchedResources(props.search.data);
-  }, [props.search]);
+  }, [props.search.data]);
 
   function onSearch(query: string) {
     props.searchResources(props.sources, query);

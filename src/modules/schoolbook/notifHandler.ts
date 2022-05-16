@@ -15,6 +15,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction = notification
   const isParent = userType === UserType.Relative;
   mainNavNavigate(`${moduleConfig.routeName}${isParent ? '' : '/details'}`, {
     notification,
+    useNotification: true,
   });
   return {
     managed: 1,

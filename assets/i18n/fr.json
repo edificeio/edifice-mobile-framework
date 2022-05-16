@@ -14,6 +14,9 @@
   "pronote.carnetDeBord.vieScolaire.title": "Vie Scolaire",
   "pronote.carnetDeBord.vieScolaire.empty": "Pas d’évènements sur les 30 derniers jours",
   "pronote.carnetDeBord.vieScolaire.dateFromTo": "{{start}} – {{end}}",
+  "common.redirect.browser.title": "Redirection sur le navigateur",
+  "common.redirect.browser.message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
+  "common.redirect.browser.error": "Erreur lors de la redirection.",
   "pronote.carnetDeBord.noInfo": "––",
   "pronote.carnetDeBord.openInPronote": "Ouvrir sur Pronote",
   "Activate": "Activer votre compte",
@@ -220,6 +223,7 @@
     "quit": "Quitter",
     "readMore": "lire plus",
     "save": "Enregistrer",
+    "send": "Envoyer",
     "sommeNumeriqueAlert_temp": "La plateforme \"Somme Numérique\" ne sera plus disponible à partir de la rentrée 2021. Il faudra utiliser l'accès \"ENT Hauts-de-France\" dans la liste des réseaux sociaux éducatifs.",
     "to": "À :",
     "url": {
@@ -660,6 +664,17 @@
         "title": "Il est temps de créer votre premier mot",
         "titleNoCreationRights": "Il n'y a aucun mot dans votre carnet pour le moment..."
       }
+    },
+    "schoolbookWordReportScreen": {
+      "acknowledgedBy": "Lu par",
+      "relativesDidAcknowledge": "Les responsables de ces élèves ont lu le mot.",
+      "relativesDidNotAcknowledge": "Les responsables de ces élèves n'ont pas encore lu le mot. Vous pouvez leur envoyer un rappel de lecture.",
+      "reminder": "Rappel",
+      "reminderModal": {
+        "text": "Vous allez envoyer une notification de rappel à toutes les personnes qui n'ont pas encore comfirmé la lecture du mot.",
+        "title": "Envoie d'un rappel"
+      },
+      "unacknowledgements": "Non-lus"
     },
     "students": "Élèves",
     "wordFollowUp": "Suivi du mot",

@@ -1,14 +1,15 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, Pressable, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { FlatButton } from '~/ui/FlatButton';
@@ -35,14 +36,12 @@ export interface IChangePasswordPageDataProps extends IChangePasswordModel {
   submitState: SubmitState;
   session: IUserSession;
 }
-
 export interface IChangePasswordPageEventProps {
   onSubmit(model: IChangePasswordModel, redirectCallback?: (dispatch) => void, forceChange?: boolean): Promise<void>;
   onRetryLoad: (arg: IChangePasswordUserInfo) => void;
   onCancelLoad: () => void;
   dispatch: Dispatch;
 }
-
 export type IChangePasswordPageProps = IChangePasswordPageDataProps &
   IChangePasswordPageEventProps &
   NavigationInjectedProps<{
@@ -50,32 +49,6 @@ export type IChangePasswordPageProps = IChangePasswordPageDataProps &
     forceChange?: boolean;
     isLoginNavigator?: boolean;
   }>;
-
-// Styled components -------------------------------------------------------------------------------------
-
-const FormContainer = styled.View({
-  alignItems: 'stretch',
-  flexGrow: 1,
-  flexShrink: 0,
-  justifyContent: 'space-between',
-  paddingTop: 30,
-  paddingHorizontal: 30,
-});
-
-const ButtonWrapper = styled.View(
-  {
-    alignItems: 'center',
-    flex: 0,
-    justifyContent: 'flex-start',
-  },
-  ({ error, typing }: { error: boolean; typing: boolean }) => ({
-    marginTop: error && !typing ? 10 : 10,
-  }),
-);
-
-const MiniSpacer = styled.View({
-  marginTop: 10,
-});
 
 // Form Model -------------------------------------------------------------------------------------
 
@@ -87,21 +60,16 @@ class ChangePasswordFormModel {
       newPassword: ValueGetter<string>;
     },
   ) {}
-
   oldPassword = new ValidatorBuilder().withRequired(true).build<string>();
-
   newPassword = new ValidatorBuilder()
     .withRequired(true)
     .withRegex(this.args.passwordRegex)
     .withCompareString(this.args.oldPassword, false)
     .build<string>();
-
   confirm = new ValidatorBuilder().withRequired(true).withCompareString(this.args.newPassword, true).build<string>();
 
   inputOldPassword?: TextInput;
-
   inputNewPassword?: TextInput;
-
   inputPasswordConfirm?: TextInput;
 
   private check(errors: string[], valid: boolean, errorKey: string = '') {
@@ -110,7 +78,6 @@ class ChangePasswordFormModel {
     }
     return errors;
   }
-
   errors(model: IChangePasswordModel) {
     const errors: string[] = [];
     this.check(errors, this.oldPassword.isValid(model.oldPassword));
@@ -118,30 +85,24 @@ class ChangePasswordFormModel {
     this.check(errors, this.confirm.isValid(model.confirm), 'changePassword-errorConfirm');
     return errors;
   }
-
   firstErrorKey(model: IChangePasswordModel) {
     const errors = this.errors(model);
     return errors.find(err => !!err && err.trim().length > 0);
   }
-
   validate(model: IChangePasswordModel) {
     return this.errors(model).length == 0;
   }
-
   blur() {
     this.inputOldPassword && this.inputOldPassword.blur();
     this.inputNewPassword && this.inputNewPassword.blur();
     this.inputPasswordConfirm && this.inputPasswordConfirm.blur();
   }
-
   showOldPasswordError(oldPassword: string) {
     return this.oldPassword.isNotValid(oldPassword) && !!oldPassword;
   }
-
   showNewPasswordError(newPassword: string) {
     return this.newPassword.isNotValid(newPassword) && !!newPassword;
   }
-
   showPasswordConfirmError(confirm: string) {
     return this.confirm.isNotValid(confirm) && !!confirm;
   }
@@ -238,7 +199,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
         navBarWithBack={{
           title: I18n.t('PasswordChange'),
         }}>
-        <Pressable onPress={() => formModel.blur()} style={{ flexGrow: 1 }}>
+        <Pressable onPress={() => formModel.blur()} style={{flexGrow: 1}}>
           <FormContainer>
             <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
               {this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
@@ -284,7 +245,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
               <MiniSpacer />
             </View>
             <View style={{ flexShrink: 0 }}>
-              <ErrorMessage style={{ marginTop: 0, minHeight: 3 * UI_SIZES.getResponsiveStyledLineHeight() }}>
+              <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}
@@ -323,7 +284,6 @@ function OldPasswordField(props: { oldPassword: string; form: ChangePasswordForm
     />
   );
 }
-
 function NewPasswordField(props: { newPassword: string; form: ChangePasswordFormModel; onChange: ValueChange<string> }) {
   const validator = props.form.newPassword;
   return (
@@ -337,7 +297,6 @@ function NewPasswordField(props: { newPassword: string; form: ChangePasswordForm
     />
   );
 }
-
 function PasswordConfirmField(props: { confirm: string; form: ChangePasswordFormModel; onChange: ValueChange<string> }) {
   const validator = props.form.confirm;
   return (
@@ -351,3 +310,24 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
     />
   );
 }
+const FormContainer = styled.View({
+  alignItems: 'stretch',
+  flexGrow: 1,
+  flexShrink: 0,
+  justifyContent: 'space-between',
+  paddingTop: 30,
+  paddingHorizontal: 30,
+});
+const ButtonWrapper = styled.View(
+  {
+    alignItems: 'center',
+    flex: 0,
+    justifyContent: 'flex-start',
+  },
+  ({ error, typing }: { error: boolean; typing: boolean }) => ({
+    marginTop: error && !typing ? 10 : 10,
+  }),
+);
+const MiniSpacer = styled.View({
+  marginTop: 10,
+});

@@ -1,6 +1,6 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import reducer from './reducers';
+import reducer from './state/reducer';
 
 export default new NavigableModuleConfig<'pronote', ReturnType<typeof reducer>>({
   name: 'pronote',

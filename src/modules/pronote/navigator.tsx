@@ -2,47 +2,44 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import CarnetDeBord from './containers/CarnetDeBord';
-import CarnetDeBordDetails from './containers/CarnetDeBordDetails';
-import ConnectorContainer from './containers/ConnectorContainer';
-import ConnectorSelector from './containers/ConnectorSelector';
 import moduleConfig from './moduleConfig';
+import CarnetDeBordScreen from './screens/CarnetDeBord';
+import CarnetDeBordDetailsScreen from './screens/CarnetDeBordDetails';
+import ConnectorRedirectScreen from './screens/ConnectorRedirect';
+import ConnectorSelectorScreen from './screens/ConnectorSelector';
 
 export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => {
   const routes: Parameters<typeof createStackNavigator>['0'] = {};
 
-  matchingApps = [...matchingApps, ...matchingApps]; // DEBUG PURPOSE - REMOVE IT AFTER
-
   // Add Functional screens
-
-  console.log('matchingWidgets', matchingWidgets);
 
   if (matchingWidgets.length > 0) {
     routes[`${moduleConfig.routeName}/carnetDeBord`] = {
-      screen: CarnetDeBord,
+      screen: CarnetDeBordScreen,
     };
     routes[`${moduleConfig.routeName}/carnetDeBord/details`] = {
-      screen: CarnetDeBordDetails,
+      screen: CarnetDeBordDetailsScreen,
     };
   } else if (matchingApps.length > 1) {
     // Many connectors => show connector select
     routes[`${moduleConfig.routeName}/select`] = {
-      screen: ConnectorSelector,
+      screen: ConnectorSelectorScreen,
       params: {
         connectors: matchingApps,
       },
     };
   }
 
-  // Add Connector redirections screens (at last position)
-  matchingApps.forEach(app => {
-    routes[`${moduleConfig.routeName}/redirect`] = {
-      screen: ConnectorContainer,
-      params: {
-        app,
-      },
-    };
-  });
+  // Redirection route (only use from myApps)
+  routes[`${moduleConfig.routeName}/redirect`] = {
+    screen: ConnectorRedirectScreen,
+    params:
+      matchingApps.length === 1
+        ? {
+            connector: matchingApps[0],
+          }
+        : undefined,
+  };
 
   // Return stack navigator
   return createStackNavigator(routes, {

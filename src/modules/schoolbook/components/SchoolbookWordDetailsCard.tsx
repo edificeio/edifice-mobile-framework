@@ -52,6 +52,7 @@ const SchoolbookWordDetailsCard = (
   { action, onPublishReply, isPublishingReply, userType, userId, studentId, schoolbookWord }: ISchoolBookWordDetailsCardProps,
   ref,
 ) => {
+  const scrollViewRef: { current: any } = React.createRef();
   const modalBoxRef: { current: any } = React.createRef();
   const commentFieldRef: { current: any } = React.createRef();
   const usersTextMaxLines = 1;
@@ -61,6 +62,8 @@ const SchoolbookWordDetailsCard = (
   const schoolbookWordMedia = extractMediaFromHtml(word.text);
   const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
   const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
+  const schoolbookWordOwnerId = word?.ownerId;
+  const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const isParent = userType === UserType.Relative;
   const isTeacher = userType === UserType.Teacher;
   const isStudent = userType === UserType.Student;
@@ -80,11 +83,12 @@ const SchoolbookWordDetailsCard = (
   const responses = isStudent ? report[0]?.responses : isParent ? reportByStudentForParent?.responses : undefined;
   const isBottomSheetVisible = isTeacher || (isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent)));
   const disableReplyEdit = () => commentFieldRef?.current?.setIsEditingFalse();
-  React.useImperativeHandle(ref, () => ({ disableReplyEdit }));
+  const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
+  React.useImperativeHandle(ref, () => ({ disableReplyEdit, scrollToEnd }));
 
   return (
     <>
-      <ScrollView bottomInset={!isBottomSheetVisible}>
+      <ScrollView ref={scrollViewRef} bottomInset={!isBottomSheetVisible}>
         <ResourceView
           style={{
             backgroundColor: theme.color.background.card,
@@ -138,8 +142,16 @@ const SchoolbookWordDetailsCard = (
               />
             </TouchableOpacity>
           }>
-          {!isTeacher && !isWordAcknowledged ? (
-            <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.color.secondary.regular }}>
+          {isTeacher && !isUserSchoolbookWordOwner ? (
+            <View style={{ marginTop: UI_SIZES.spacing.large, flexDirection: 'row', alignItems: 'center' }}>
+              <SingleAvatar size={36} userId={schoolbookWord.word.ownerId} />
+              <Text style={{ flex: 1, marginLeft: UI_SIZES.spacing.smallPlus }} numberOfLines={usersTextMaxLines}>
+                {`${I18n.t('common.from')} `}
+                <TextSemiBold>{word.ownerName}</TextSemiBold>
+              </Text>
+            </View>
+          ) : !isTeacher && !isWordAcknowledged ? (
+            <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.color.warning }}>
               {unacknowledgedString(userType)}
             </TextSemiBold>
           ) : null}

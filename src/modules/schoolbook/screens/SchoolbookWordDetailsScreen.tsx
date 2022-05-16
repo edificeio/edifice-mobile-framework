@@ -4,6 +4,7 @@
 import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -34,6 +35,7 @@ export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProp
 // COMPONENT ======================================================================================
 
 const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => {
+  const detailsCardRef: { current: any } = React.useRef();
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
@@ -65,18 +67,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  React.useEffect(() => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-    // focusEventListener = props.navigation.addListener('didFocus', () => {
-    //   if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    //   else refreshSilent();
-    // });
-    // return () => {
-    //   focusEventListener.remove();
-    // };
-  }, []);
-
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
     getSchoolbookWordIds()
@@ -95,11 +85,29 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
 
   const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    getSchoolbookWordIds()
+    return getSchoolbookWordIds()
       .then(schoolbookWordId => fetchSchoolbookWord(schoolbookWordId))
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
+
+  const fetchOnNavigation = () => {
+    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    else refreshSilent();
+  };
+
+  React.useEffect(() => {
+    // Note: 'didFocus' does not work when navigating from a notification, so we use this condition instead
+    if (props.navigation.getParam('useNotification')) {
+      fetchOnNavigation();
+    }
+    focusEventListener = props.navigation.addListener('didFocus', () => {
+      fetchOnNavigation();
+    });
+    return () => {
+      focusEventListener.remove();
+    };
+  }, []);
 
   // EVENTS =====================================================================================
 
@@ -144,19 +152,27 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
       await schoolbookService.word.acknowledge(session, schoolbookWordId, studentId);
       refreshSilent();
     } catch (e) {
-      throw e;
+      Toast.show(I18n.t('common.error.text'));
     }
   };
 
   const replyToSchoolbookWord = async (comment: string, commentId?: string) => {
     try {
       setIsPublishingReply(true);
-      commentId
-        ? await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment)
-        : await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
-      refreshSilent();
+      if (commentId) {
+        await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment);
+      } else {
+        await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
+      }
+      if (commentId) detailsCardRef?.current?.disableReplyEdit();
+      await refreshSilent();
+      if (!commentId) {
+        // Note #1: setTimeout is used to wait for the ScrollView height to update (after a response is added).
+        // Note #2: scrollToEnd seems to become less precise once there is lots of data.
+        setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
+      }
     } catch (e) {
-      throw e;
+      Toast.show(I18n.t('common.error.text'));
     } finally {
       setIsPublishingReply(false);
     }
@@ -167,7 +183,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
       await schoolbookService.word.delete(session, schoolbookWordId);
       props.navigation.goBack();
     } catch (e) {
-      throw e;
+      Toast.show(I18n.t('common.error.text'));
     }
   };
 
@@ -196,10 +212,12 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
   // HEADER =====================================================================================
 
   const [showMenu, setShowMenu] = React.useState(false);
+  const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
+  const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const navBarInfo = {
     title: I18n.t('schoolbook.appName'),
     right:
-      isSchoolbookWordRendered && hasSchoolbookWordCreationRights ? (
+      isSchoolbookWordRendered && hasSchoolbookWordCreationRights && isUserSchoolbookWordOwner ? (
         <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <HeaderIcon name="more_vert" iconSize={24} />
         </TouchableOpacity>

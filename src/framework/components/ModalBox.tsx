@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, View } from 'react-native';
 import NativeModal from 'react-native-modal';
 
 import theme from '~/app/theme';

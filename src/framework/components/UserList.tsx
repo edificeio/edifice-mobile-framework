@@ -18,7 +18,7 @@ export interface IUserListItem {
   name: string;
 }
 
-export interface UserListProps<ItemType extends IUserListItem>
+export interface UserListProps<ItemType extends IUserListItem = IUserListItem>
   extends Omit<FlatListProps<ItemType>, 'renderItem' | 'keyExtractor'> {
   selectedId?: ItemType['id'];
   onSelect?: (user: ItemType['id']) => void;
@@ -26,7 +26,7 @@ export interface UserListProps<ItemType extends IUserListItem>
   avatarSize?: number;
 }
 
-export default function UserList<ItemType extends IUserListItem>(props: UserListProps<ItemType>) {
+export default function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserListProps<ItemType>) {
   const { selectedId, onSelect, renderBadge, avatarSize, data, horizontal, ...otherProps } = props;
   const renderItem: FlatListProps<ItemType>['renderItem'] = React.useCallback(
     info => UserList.renderItem({ info, onSelect, renderBadge, avatarSize, selectedId, horizontal, data }),
