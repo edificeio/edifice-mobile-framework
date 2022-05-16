@@ -8,8 +8,8 @@ export default createNavigableModuleConfig<'Mediacentre', IMediacentre_State>({
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('MEDIACENTRE'),
   entcoreScope: ['mediacentre'],
   picture: {
-    type: 'Image',
-    source: require('ASSETS/images/logo-mediacentre.png'),
+    type: 'NamedSvg',
+    name: 'mediacentre',
   },
   registerAs: 'myAppsModule',
 });
