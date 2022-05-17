@@ -88,7 +88,7 @@ export const downloadMenu = () => ({
   text: I18n.t('download'),
   icon: 'download',
   id: 'download',
-  options: { onlyFiles: true, monoselection: true },
+  options: { onlyFiles: true },
   dialog: {
     title: I18n.t('download-documents'),
     okLabel: I18n.t('download'),

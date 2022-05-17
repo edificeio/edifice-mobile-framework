@@ -70,7 +70,15 @@ export const downloadAndSaveAction =
       dispatch(
         newDownloadAction('', downloadable, async file => {
           await file.mirrorToDownloadFolder();
-          Toast.showSuccess(I18n.t('download-success-name', { name: file.filename }));
+          const length = Object.keys(downloadable).length;
+          if (length === 1) {
+            Toast.showSuccess(I18n.t('download-success-name', { name: file.filename }));
+            return;
+          }
+          const lastFile = downloadable[Object.keys(downloadable)[length - 1]];
+          if (lastFile.filename === file.filename) {
+            Toast.showSuccess(I18n.t('download-success-all'));
+          }
         }),
       );
     } catch (e) {
