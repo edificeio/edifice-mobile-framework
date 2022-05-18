@@ -101,7 +101,7 @@ export const pushNotifsService = {
   _getPrefs: async (session: IUserSession) => {
     const api = '/userbook/preference/timeline';
     const response = (await fetchJSONWithCache(api)) as IEntcoreTimelinePreference;
-    const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent;
+    const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent | null;
     return prefs;
   },
   _getConfig: async (session: IUserSession) => {
@@ -126,7 +126,7 @@ export const pushNotifsService = {
       notifPrefsUpdated[k] = { 'push-notif': changes[k] };
     }
     const prefsOriginal = await pushNotifsService._getPrefs(session);
-    const notifPrefsOriginal = prefsOriginal.config ?? {};
+    const notifPrefsOriginal = prefsOriginal?.config ?? {};
     const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
     const prefsUpdated = { config: notifPrefs };
     const payload = { ...prefsOriginal, ...prefsUpdated };

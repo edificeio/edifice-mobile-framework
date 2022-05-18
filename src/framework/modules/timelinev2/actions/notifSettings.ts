@@ -100,6 +100,7 @@ export const updatePushNotifsSettingsAction =
       const session = getUserSession();
       await pushNotifsService.set(session, changes);
       dispatch(pushNotifsSettingsActions.setReceipt(changes));
+      dispatch(loadPushNotifsSettingsAction()); // no await here it's for refreshing datas
     } catch (e) {
       // ToDo: Error handling
       dispatch(pushNotifsSettingsActions.setError(e));
