@@ -54,12 +54,13 @@ const style = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   halfRoomLabelContainer: {
     flexDirection: 'row',
   },
   courseStatus: {
-    alignItems: 'center',
+    alignItems: 'flex-end',
     paddingHorizontal: 15,
   },
   roomView: {
