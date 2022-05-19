@@ -26,7 +26,7 @@
   "Password": "Password",
   "PasswordChange": "Change my password",
   "PasswordChangeSuccess": "Password successfully updated.",
-  "PasswordChangeWarning": "For security reasons, please renew your password.",
+  "PasswordChangeWarning": "For security reasons, please change your password.",
   "PasswordConfirm": "Password confirmed",
   "PasswordNew": "Confirm new password",
   "PasswordNewConfirm": "Password confirmed",
@@ -84,12 +84,12 @@
   "blog": {
     "blogsEmptyScreen": {
       "button": "Create a blog online",
-      "text": "Put on your reporter's cap and write your first blog!",
-      "textNoCreationRights": "Suggest blog ideas to your school (homeroom, field trips, presentations, etc.)",
+      "text": "Put on your reporter hat and write your first blog!",
+      "textNoCreationRights": "Suggest blog ideas for your school (classroom rules, field trips, presentations, etc.)",
       "title": "No Blogs in sight"
     },
     "blogCreatePostScreen": {
-      "confirmationUnsavedPublication": "If you leave, the blog post you wrote will be lost.",
+      "confirmationUnsavedPublication": "If you leave this page, your post will be lost.",
       "createAction": "Save",
       "createSuccess": "Your post was saved.",
       "postContent": "Post content",
@@ -125,9 +125,9 @@
       "title": "Choose a blog"
     },
     "post": {
-      "needValidation": "Post submitted",
-      "waitingValidation": "Post pending validation",
-      "publishAction": "Publish the post"
+      "needValidation": "Post pending approval",
+      "publishAction": "Publish post",
+      "waitingValidation": "Post ready for approval"
     },
     "appName": "Blog",
     "resourceName": "Blog post",
@@ -173,11 +173,11 @@
     "discard": "Cancel",
     "error": {
       "connection": {
-        "text": "An error has occurred. We cannot display the page. Please check your WiFi connection or try later.",
-        "title": "Sorry... \nThe lights are off"
+        "text": "A problem has occurred. We cannot display the page. Please check your Wi-Fi connection or try again later.",
+        "title": "Sorry...\nThe lights are out"
       },
       "content": {
-        "text": "It appears this content has been deleted or you no longer have access.",
+        "text": "It looks like the content has been deleted or you no longer have access.",
         "title": "Whoops...\nThis content has disappeared"
       },
       "text": "An error occurred. Please try again later.",
@@ -255,20 +255,20 @@
     "draft": "Draft",
     "emptyScreen": {
       "drafts": {
-        "text": "Not enough time to finish your email? No worries! You can save it as a draft.",
+        "text": "Not enough time to finish your messages? No worries! You can save them as drafts. ",
         "title": "No drafts"
       },
       "mailbox": {
-        "text": "The Mailbox can help you start communicating with your network today.",
+        "text": "With Mailbox, you can start communicating with the other members of your network right now.",
         "title": "No messages in sight..."
       },
       "sent": {
-        "text": "The Mailbox can help you start communicating with your network today.",
-        "title": "No messages sent"
+        "text": "With Mailbox, you can start communicating with the other members of your network right now.",
+        "title": "No sent messages"
       },
       "trash": {
-        "text": "This is where you'll find your deleted messages. Right now, there's no rubbish in sight!",
-        "title": "The trashbin is empty"
+        "text": "This is where you can find your deleted messages. Right now, everything's tidy.",
+        "title": "The trash can is empty"
       }
     },
     "emptyTo": "(No recipient)",
@@ -294,11 +294,11 @@
     "restore": "Restore",
     "restoreTo": "Restore to",
     "saveDraftMessage": "Would you like to save your message as a draft and finish it later?",
-    "saveAgainDraftMessage": "Would you like to save the changes to your draft?",
+    "saveAgainDraftMessage": "Would you like to save the changes you made to the draft?",
     "saveDraftTitle": "Draft",
     "saveModifications": "Save changes",
-    "cancelModifications": "Cancel changes",
-    "deleteDraft": "Delete your draft",
+    "cancelModifications": "Cancel edits",
+    "deleteDraft": "Delete draft",
     "seeDetail": "See details",
     "selectDirectory": "Select folder",
     "sendAttachmentProgress": "Please wait until the attachment has been added",
@@ -432,32 +432,32 @@
   "forgot-success": "Email sent",
   "homework": {
     "homeworkExplorerScreen": {
-      "homeworks": "Homework notebook"
+      "homeworks": "Homework Notebook"
     },
     "homeworkTaskListScreen": {
       "displayPastDays": "Show previous days",
-      "noFutureHomework": "No activities",
-      "noFutureHomeworkTryAgain": "No activities in sight; come back later!",
+      "noFutureHomework": "No other activities",
+      "noFutureHomeworkTryAgain": "No activities on the radar—come back later!",
       "noMorePastHomework": "No previous activities"
     }
   },
-  "homework-createDiary": "Create a homework notebook",
   "homework-createActivity": "Add an activity",
-  "homework-diaries-emptyScreenText": "With the Homework notebook application, you'll never forget another assignment.",
-  "homework-diaries-emptyScreenTitle": "No Homework notebooks yet",
-  "homework-tasks-emptyScreenText": "Add new activities to your Homework notebook.",
-  "homework-tasks-emptyScreenText-NoCreationRights": "Take advantage of this momentary lull. Is everyone on vacation?",
-  "homework-tasks-emptyScreenText-NoTasks": "Add an activity to your week. You can use this feature to create a to-do-list or simply write down notes.",
-  "homework-tasks-emptyScreenText-NoTasks-NoCreationRights": "Your Homework notebook includes a list of future activities.",
-  "homework-tasks-emptyScreenTitle": "Relax! No activities on the roster!",
-  "homework-tasks-emptyScreenTitle-NoTasks": "Start filling out your Homework notebook",
+  "homework-createDiary": "Create a Homework Notebook",
+  "homework-diaries-emptyScreenText": "With the Homework Notebook app, you can't use the scatterbrained excuse anymore! Just write down all your assignments!",
+  "homework-diaries-emptyScreenTitle": "No Homework Notebooks have been created yet",
+  "homework-tasks-emptyScreenText": "Add new activities to your Homework Notebook.",
+  "homework-tasks-emptyScreenText-NoCreationRights": "Enjoy the peace and quiet. Is it the holidays?",
+  "homework-tasks-emptyScreenText-NoTasks": "Add an activity to your week. You might find it handy to make a list of to-dos or simply take notes.",
+  "homework-tasks-emptyScreenText-NoTasks-NoCreationRights": "Your Homework Notebook will show the list of activities for the next few days.",
+  "homework-tasks-emptyScreenTitle": "Relax—there are no activities planned",
+  "homework-tasks-emptyScreenTitle-NoTasks": "Start filling out your Homework Notebook",
   "homework-tasks-emptyScreenTitle-NoTasks-NoCreationRights": "No activities yet",
   "imageNotAvailable": "Image not available",
   "linkTo": "Link",
   "loading": "Loading",
   "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
   "login-back": "Back to login",
-  "login-wayf-empty-text": "An error has occurred. We cannot display the page. Please check your WiFi connection or try later.",
+  "login-wayf-empty-text": "We cannot show the content. Please check your Wi-Fi connection or try again later.",
   "login-wayf-empty-title": "Whoops...\nThis content has disappeared",
   "login-wayf-error-retry": "Try again",
   "login-wayf-loading-text": "Loading...",
@@ -835,8 +835,8 @@
   "viesco-declareAbsence": "Report absence",
   "viesco-edt-week-of": "Week of",
   "viesco-empty-card": "Nothing to display",
-  "viesco-empty-screen-text": "The Homeroom app is open to families and teachers only.",
-  "viesco-empty-screen-title": "Sorry; your profile doesn't have any information",
+  "viesco-empty-screen-text": "The school office app is only for families and teachers",
+  "viesco-empty-screen-title": "Sorry! There is no content in your profile",
   "viesco-enter-text": "Enter Text",
   "viesco-eval-EmptyScreenText": "No new evaluation...",
   "viesco-from": "From",
@@ -888,24 +888,24 @@
   "workspace": "Workspace",
   "workspaceEmptyScreen": {
     "owner": {
-      "text": "This is where you can store personal information, including photos, videos, audio files, PDFs, and more...",
-      "title": "There's nothing on your personal shelf"
+      "text": "This is where you can store your personal documents, including photos, videos, audio recordings, PDFs, and more.",
+      "title": "There's nothing in your personal rack"
     },
     "protected": {
-      "text": "This is where you can find the photos, videos, and documents you used in your virtual learning space.",
-      "title": "Your shelf is empty"
+      "text": "This is where you can find all the photos, videos, and documents that you used in your virtual learning environment.",
+      "title": "There's nothing in the rack"
     },
     "shared": {
-      "text": "This is where you can find the documents your shared with others and the documents that have been shared with you.",
-      "title": "No shared resources"
+      "text": "This is where you can find all the documents that you've shared with others and all the documents that have been shared with you.",
+      "title": "No resources shared"
     },
     "subfolder": {
       "text": "There are no documents in this folder.",
       "title": "This folder is empty"
     },
     "trashed": {
-      "text": "This is where you can find deleted documents. Right now, everything's been filed away.",
-      "title": "The trashbin is empty"
+      "text": "This is where you can find all your deleted documents. Right now, everything's tidy.",
+      "title": "The trash can is empty"
     }
   },
   "workspace-quota-overflowText": "Your storage space is full. You cannot upload more files.",
@@ -925,7 +925,7 @@
   "zimbra-directory-name": "Directory name",
   "zimbra-download-all": "Download all attachments",
   "zimbra-drafts": "Drafts",
-  "zimbra-empty-mailbox-text": "The Mailbox can help you start communicating with your network today.",
+  "zimbra-empty-mailbox-text": "With Mailbox, you can start communicating with the other members of your network right now.",
   "zimbra-empty-mailbox-title": "No messages in sight...",
   "zimbra-external-mail-right-error": "You are not authorized to send external emails",
   "zimbra-forward": "Forward",

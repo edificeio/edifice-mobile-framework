@@ -89,7 +89,7 @@
       "title": "No hay ningún blog a la vista"
     },
     "blogCreatePostScreen": {
-      "confirmationUnsavedPublication": "Si abandona la página, la entrada de blog que escribió se perderá.",
+      "confirmationUnsavedPublication": "Si abandona la página, la entrada de blog se perderá.",
       "createAction": "Guardar",
       "createSuccess": "La entrada de blog se ha guardado correctamente.",
       "postContent": "Contenido de la entrada",
@@ -125,9 +125,9 @@
       "title": "Seleccionar un blog"
     },
     "post": {
-      "needValidation": "Entradas de blog enviadas",
-      "waitingValidation": "Entradas de blog pendiente de validación",
-      "publishAction": "Publicar la entrada de blog"
+      "needValidation": "Entrada de blog a validar",
+      "publishAction": "Publicar la entrada de blog",
+      "waitingValidation": "Entrada de blog a la espera de validación"
     },
     "appName": "Blog",
     "resourceName": "Entrada de blog",
@@ -260,7 +260,7 @@
       },
       "mailbox": {
         "text": "Gracias a la aplicación Correo electrónico, ya puede empezar a comunicarse con los miembros de su red.",
-        "title": "No hay ningún mensaje a la vista..."
+        "title": "Ningún mensaje a la vista..."
       },
       "sent": {
         "text": "Gracias a la aplicación Correo electrónico, ya puede empezar a comunicarse con los miembros de su red.",
@@ -268,7 +268,7 @@
       },
       "trash": {
         "text": "Aquí encontrará los mensajes eliminados. Actualmente todo está limpio.",
-        "title": "La papelera esta vacía"
+        "title": "La papelera está vacía"
       }
     },
     "emptyTo": "(Sin destinatario)",
@@ -450,7 +450,7 @@
   "homework-tasks-emptyScreenText-NoTasks": "Agregar deberes a la semana. Esto puede ser útil para enumerar las tareas o simplemente para escribir notas.",
   "homework-tasks-emptyScreenText-NoTasks-NoCreationRights": "En el cuaderno semanal hay disponible la lista de los deberes para los próximos días.",
   "homework-tasks-emptyScreenTitle": "¡Relax total: no hay deberes!",
-  "homework-tasks-emptyScreenTitle-NoTasks": "Empezar a rellebar el cuaderno semanal",
+  "homework-tasks-emptyScreenTitle-NoTasks": "Empezar a rellenar el cuaderno semanal",
   "homework-tasks-emptyScreenTitle-NoTasks-NoCreationRights": "Todavía no hay deberes",
   "imageNotAvailable": "Imagen no disponible",
   "linkTo": "Enlace",
@@ -815,6 +815,7 @@
       }
     }
   },
+
   "version-number": "Versión",
   "videoNotAvailable": "Lector de video no disponible",
   "viesco": "Vida escolar",
@@ -889,24 +890,24 @@
   "workspaceEmptyScreen": {
     "owner": {
       "text": "Guarde aquí los documentos personales: fotos, videos, audio, archivos PDF, etc.",
-      "title": "No hay nada en la estantería personal"
+      "title": "No hay nada en su estantería personal"
     },
     "protected": {
-      "text": "Aquí están disponibles todas las fotos, videos y documentos que se han utilizado en la red educativa.",
-      "title": "No hay nada en la estantería"
-    },
-    "shared": {
-      "text": "Aquí están disponibles todos los documentos que ha compartido con otros y también los que se han compartido con usted.",
-      "title": "Ningún recurso compartido"
-    },
-    "subfolder": {
-      "text": "No hay ningún documento en esta carpeta.",
-      "title": "Esta carpeta está vacía"
-    },
-    "trashed": {
-      "text": "Aquí encontrará los documentos eliminados. Actualmente todo está limpio.",
-      "title": "La papelera esta vacía"
-    }
+        "text": "Aquí están disponibles todas las fotos, videos y documentos que se han utilizado en la red educativa.",
+        "title": "No hay nada en la estantería"
+      },
+      "shared": {
+        "text": "Aquí están disponibles todos los documentos que ha compartido con otros y también los que se han compartido con usted.",
+        "title": "Ningún recurso compartido"
+      },
+      "subfolder": {
+        "text": "No hay ningún documento en esta carpeta.",
+        "title": "Esta carpeta está vacía"
+      },
+      "trashed": {
+        "text": "Aquí encontrará los documentos eliminados. Actualmente todo está limpio.",
+        "title": "La papelera está vacía"
+      }
   },
   "workspace-quota-overflowText": "El espacio de almacenamiento insuficiente para completar esta operación.",
   "workspace-quota-overflowTitle": "Espacio de almacenamiento completo",
@@ -926,7 +927,7 @@
   "zimbra-download-all": "Descargar archivos adjuntos",
   "zimbra-drafts": "Borradores",
   "zimbra-empty-mailbox-text": "Gracias a la aplicación Correo electrónico, ya puede empezar a comunicarse con los miembros de su red.",
-  "zimbra-empty-mailbox-title": "No hay ningún mensaje a la vista...",
+  "zimbra-empty-mailbox-title": "Ningún mensaje a la vista...",
   "zimbra-external-mail-right-error": "No está autorizado a enviar correos electrónicos externos",
   "zimbra-forward": "Reenviar",
   "zimbra-forward-subject": "RV:",
