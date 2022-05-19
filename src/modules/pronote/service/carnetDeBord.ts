@@ -389,6 +389,7 @@ function carnetDeBordAdapter(data: ICarnetDeBordBackend, children: IChildrenInfo
           firstName: session.user.firstName,
           lastName: session.user.lastName,
           id: session.user.id,
+          idPronote: session.user.id, // Yes it's not really the Pronote ID but in this case we have to mock it.
         });
     } else {
       throw new Error(`Malformed xml. Do not contain either Parent or Eleve tag.`);

@@ -8,9 +8,9 @@ import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
 import I18n from 'i18n-js';
 import moment from 'moment';
+// Moment.js translations
 // import "moment/locale/en"; // Built-in locale
 import 'moment/locale/es';
-// Moment.js translations
 import 'moment/locale/fr';
 import { I18nManager } from 'react-native';
 import * as RNLocalize from 'react-native-localize';

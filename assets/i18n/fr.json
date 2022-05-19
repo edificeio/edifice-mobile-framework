@@ -17,7 +17,7 @@
   "common.redirect.browser.title": "Redirection sur le navigateur",
   "common.redirect.browser.message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
   "common.redirect.browser.error": "Erreur lors de la redirection.",
-  "pronote.carnetDeBord.noInfo": "––",
+  "pronote.carnetDeBord.noInfo": " –– ",
   "pronote.carnetDeBord.openInPronote": "Ouvrir sur Pronote",
   "Activate": "Activer votre compte",
   "Actualites": "Actualités",

@@ -141,14 +141,15 @@ CarnetDeBordScreen.getRenderContent =
               }}
               textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere}
               valueLabel={
-                data.PageCahierDeTextes?.CahierDeTextes?.[0] &&
-                I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
-                  date:
-                    data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe &&
-                    CarnetDeBordDetailsScreen.formatDatePast(
-                      data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe,
-                    ),
-                })
+                data.PageCahierDeTextes?.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe
+                  ? I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
+                      date:
+                        data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe &&
+                        CarnetDeBordDetailsScreen.formatDatePast(
+                          data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe,
+                        ),
+                    })
+                  : I18n.t('pronote.carnetDeBord.noInfo')
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.cahierDeTextes.empty')}
               navigation={navigation}
