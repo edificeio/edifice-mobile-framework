@@ -368,7 +368,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   getMailData = () => {
-    let { mail, prevBody } = this.state;
+    let { mail, prevBody, signature, isNewSignature } = this.state;
     const regexp = /(\r\n|\n|\r)/gm;
 
     mail.body = mail.body.replace(regexp, '<br>');
@@ -382,8 +382,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       if (key === 'to' || key === 'cc' || key === 'bcc') {
         ret[key] = value.map(user => user.id);
       } else if (key === 'body') {
-        if (this.state.signature.text !== '') {
-          const sign = '<div class="signature new-signature ng-scope">' + this.state.signature.text + '</div>\n\n';
+        if (signature.text !== '' && (signature.useGlobal || isNewSignature)) {
+          const sign = '<div class="signature new-signature ng-scope">' + signature.text + '</div>\n\n';
           ret[key] = value + sign + prevBody;
         } else {
           ret[key] = value + prevBody;
