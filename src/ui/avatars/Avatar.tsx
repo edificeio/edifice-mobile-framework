@@ -1,10 +1,8 @@
 import styled from '@emotion/native';
 import * as React from 'react';
-import { ImageProps, ImageURISource, View } from 'react-native';
-import { Grayscale } from 'react-native-color-matrix-image-filters';
+import { ImageProps, ImageURISource } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-import theme from '~/app/theme';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
@@ -21,44 +19,24 @@ export enum Size {
   small,
   verylarge,
 }
+const StyledImage = {
+  borderColor: 'white',
+  borderWidth: 1,
+};
 
-export enum Status {
-  selected,
-  disabled,
-}
-
-const SelectedView = styled(View)({
-  position: 'absolute',
-  borderColor: theme.color.secondary.regular,
-  borderWidth: 2,
+const LargeImage = styled(FastImage)({
+  ...StyledImage,
+  borderRadius: 24,
+  height: 45,
+  width: 45,
 });
 
-const largeImageStyle = {
-  borderRadius: 24,
-  height: 48,
-  width: 48,
-};
-
-const LargeImageBase = styled(FastImage)(largeImageStyle);
-
-const LargeImage = props => {
-  const isSelected = props.status === Status.selected;
-  const isDisabled = props.status === Status.disabled;
-  if (isSelected) {
-    return (
-      <View>
-        <LargeImageBase {...props} />
-        <SelectedView style={largeImageStyle} />
-      </View>
-    );
-  } else if (isDisabled) {
-    return (
-      <Grayscale>
-        <LargeImageBase {...props} />
-      </Grayscale>
-    );
-  } else return <LargeImageBase {...props} />;
-};
+const MediumImage = styled(FastImage)({
+  ...StyledImage,
+  borderRadius: 16,
+  height: 35,
+  width: 35,
+});
 
 const AlignedContainer = styled.View(
   {
@@ -90,91 +68,45 @@ const LargeContainer = styled.View({
   backgroundColor: '#EEEEEE',
 });
 
-const alignedImageStyle = {
+const MediumContainer = styled.View({
+  borderRadius: 16,
+  height: 35,
+  width: 35,
+  backgroundColor: '#EEEEEE',
+});
+
+const AlignedImage = styled(FastImage)({
+  ...StyledImage,
   borderRadius: 16,
   height: 29,
   width: 29,
-};
+});
 
-const AlignedImageBase = styled(FastImage)(alignedImageStyle);
+const VeryLargeImage = styled(FastImage)<{ decorate: boolean }>(
+  {
+    ...StyledImage,
+    alignSelf: 'center',
+    borderRadius: 35,
+    height: 71,
+    width: 71,
+    margin: 0,
+  },
+  ({ decorate }) => ({
+    borderWidth: decorate ? 1 : 0,
+  }),
+);
 
-const AlignedImage = props => {
-  const isSelected = props.status === Status.selected;
-  const isDisabled = props.status === Status.disabled;
-  if (isSelected) {
-    return (
-      <View>
-        <AlignedImageBase {...props} />
-        <SelectedView style={alignedImageStyle} />
-      </View>
-    );
-  } else if (isDisabled) {
-    return (
-      <Grayscale>
-        <AlignedImageBase {...props} />
-      </Grayscale>
-    );
-  } else return <AlignedImageBase {...props} />;
-};
-
-const veryLargeImageStyle = {
-  alignSelf: 'center',
-  borderRadius: 35,
-  height: 71,
-  width: 71,
-  margin: 0,
-};
-
-const VeryLargeImageBase = styled(FastImage)(veryLargeImageStyle);
-
-const VeryLargeImage = props => {
-  const isSelected = props.status === Status.selected;
-  const isDisabled = props.status === Status.disabled;
-  if (isSelected) {
-    return (
-      <View>
-        <VeryLargeImageBase {...props} />
-        <SelectedView style={veryLargeImageStyle} />
-      </View>
-    );
-  } else if (isDisabled) {
-    return (
-      <Grayscale>
-        <VeryLargeImageBase {...props} />
-      </Grayscale>
-    );
-  } else return <VeryLargeImageBase {...props} />;
-};
-
-const smallImageStyle = {
-  borderColor: 'white',
-  borderWidth: 1,
-};
-
-const SmallImageBase = styled(FastImage)(smallImageStyle, ({ count }) => ({
-  borderRadius: count === 1 ? 22 : count === 2 ? 15 : 10,
-  height: count === 1 ? 45 : count === 2 ? 31 : 22,
-  width: count === 1 ? 45 : count === 2 ? 31 : 22,
-}));
-
-const SmallImage = props => {
-  const isSelected = props.status === Status.selected;
-  const isDisabled = props.status === Status.disabled;
-  if (isSelected) {
-    return (
-      <View>
-        <SmallImageBase {...props} />
-        <SelectedView style={smallImageStyle} />
-      </View>
-    );
-  } else if (isDisabled) {
-    return (
-      <Grayscale>
-        <SmallImageBase {...props} />
-      </Grayscale>
-    );
-  } else return <SmallImageBase {...props} />;
-};
+const SmallImage = styled(FastImage)<{ count: number }>(
+  {
+    borderColor: 'white',
+    borderWidth: 1,
+  },
+  ({ count }) => ({
+    borderRadius: count === 1 ? 22 : count === 2 ? 15 : 10,
+    height: count === 1 ? 45 : count === 2 ? 31 : 22,
+    width: count === 1 ? 45 : count === 2 ? 31 : 22,
+  }),
+);
 
 const SmallContainer = styled.View<{ count: number; index: number }>(
   {
@@ -192,7 +124,7 @@ const SmallContainer = styled.View<{ count: number; index: number }>(
 
 export interface IAvatarProps {
   count?: number;
-  status?: Status;
+  decorate?: boolean;
   id:
     | string
     | {
@@ -214,10 +146,17 @@ export interface IAvatarProps {
 }
 
 export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'loading' | 'success' | 'failed' }> {
+  decorate: boolean;
   count: number;
 
   constructor(props) {
     super(props);
+
+    this.decorate = true;
+    if (this.props.decorate !== undefined) {
+      this.decorate = this.props.decorate;
+    }
+
     this.state = { status: 'initial' };
   }
 
@@ -247,25 +186,25 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
     if (this.props.size === Size.large || this.count === 1) {
       return (
         <LargeContainer style={{ width, height: width }}>
-          <LargeImage status={this.props.status} style={{ width, height: width }} source={noAvatarImage} />
+          <LargeImage style={{ width, height: width }} source={noAvatarImage} />
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
       return (
         <AlignedContainer index={this.props.index}>
-          <AlignedImage status={this.props.status} source={noAvatarImage} />
+          <AlignedImage source={noAvatarImage} />
         </AlignedContainer>
       );
     } else if (this.props.size === Size.verylarge) {
       return (
         <VLContainer>
-          <VeryLargeImage status={this.props.status} source={noAvatarImage} />
+          <VeryLargeImage decorate={this.decorate} source={noAvatarImage} />
         </VLContainer>
       );
     } else {
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
-          <SmallImage status={this.props.status} count={this.props.count || 1} source={noAvatarImage} />
+          <SmallImage count={this.props.count || 1} source={noAvatarImage} />
         </SmallContainer>
       );
     }
@@ -275,29 +214,25 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
     if (this.props.size === Size.large || this.count === 1) {
       return (
         <LargeContainer style={{ width, height: width }}>
-          <LargeImage
-            status={this.props.status}
-            style={{ width, height: width }}
-            source={require('ASSETS/images/group-avatar.png')}
-          />
+          <LargeImage style={{ width, height: width }} source={require('ASSETS/images/group-avatar.png')} />
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
       return (
         <AlignedContainer index={this.props.index}>
-          <AlignedImage status={this.props.status} source={require('ASSETS/images/group-avatar.png')} />
+          <AlignedImage source={require('ASSETS/images/group-avatar.png')} />
         </AlignedContainer>
       );
     } else if (this.props.size === Size.verylarge) {
       return (
         <VLContainer>
-          <VeryLargeImage status={this.props.status} source={require('ASSETS/images/group-avatar.png')} />
+          <VeryLargeImage decorate={this.decorate} source={require('ASSETS/images/group-avatar.png')} />
         </VLContainer>
       );
     } else {
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
-          <SmallImage status={this.props.status} count={this.props.count || 1} source={require('ASSETS/images/group-avatar.png')} />
+          <SmallImage count={this.props.count || 1} source={require('ASSETS/images/group-avatar.png')} />
         </SmallContainer>
       );
     }
@@ -362,7 +297,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
             {...sharedProps}
             source={source}
             style={{ width, height: width }}
-            status={this.props.status}
             key={isSelf ? selfAvatarUniqueKey : source.uri}
           />
         </LargeContainer>
@@ -371,12 +305,7 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <AlignedContainer index={this.props.index}>
-          <AlignedImage
-            {...sharedProps}
-            source={source}
-            status={this.props.status}
-            key={isSelf ? selfAvatarUniqueKey : source.uri}
-          />
+          <AlignedImage {...sharedProps} source={source} key={isSelf ? selfAvatarUniqueKey : source.uri} />
         </AlignedContainer>
       );
     } else if (this.props.size === Size.verylarge) {
@@ -387,7 +316,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
             {...sharedProps}
             decorate={this.decorate}
             source={source}
-            status={this.props.status}
             key={isSelf ? selfAvatarUniqueKey : source.uri}
           />
         </VLContainer>
@@ -400,7 +328,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
             {...sharedProps}
             count={this.props.count || 1}
             source={source}
-            status={this.props.status}
             key={isSelf ? selfAvatarUniqueKey : source.uri}
           />
         </SmallContainer>
