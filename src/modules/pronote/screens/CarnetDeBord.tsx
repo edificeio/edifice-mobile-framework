@@ -141,17 +141,16 @@ CarnetDeBordScreen.getRenderContent =
                 cached: true,
               }}
               textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere}
-              valueLabel={
-                data.PageCahierDeTextes?.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe
+              valueLabel={(() => {
+                const cdt = data.PageCahierDeTextes?.CahierDeTextes?.find(c => c.TravailAFaire && c.TravailAFaire.length > 0);
+                return cdt?.TravailAFaire?.[0]?.PourLe
                   ? I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
                       date:
-                        data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe &&
-                        CarnetDeBordDetailsScreen.formatDatePast(
-                          data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe,
-                        ),
+                        cdt?.TravailAFaire?.[0]?.PourLe &&
+                        CarnetDeBordDetailsScreen.formatDatePast(cdt?.TravailAFaire?.[0]?.PourLe),
                     })
-                  : I18n.t('pronote.carnetDeBord.noInfo')
-              }
+                  : I18n.t('pronote.carnetDeBord.noInfo');
+              })()}
               emptyLabel={I18n.t('pronote.carnetDeBord.cahierDeTextes.empty')}
               navigation={navigation}
               type={CarnetDeBordSection.CAHIER_DE_TEXTES}
