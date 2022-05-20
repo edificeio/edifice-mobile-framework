@@ -57,7 +57,11 @@ export const DropdownMenu: React.FunctionComponent<DropdrownMenuProps> = (props:
           data={data}
           style={[style.menuContainer, { backgroundColor: color || theme.color.secondary.regular }]}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={item.onPress}>
+            <TouchableOpacity
+              onPress={() => {
+                item.onPress();
+                onTapOutside();
+              }}>
               <View style={style.itemContainer}>
                 <Icon name={item.icon} size={24} style={style.itemIcon} />
                 <Text style={style.itemText}>{item.text}</Text>
