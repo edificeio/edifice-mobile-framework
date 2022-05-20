@@ -167,6 +167,7 @@ const SchoolbookWordDetailsCard = (
           {word.category ? (
             <View style={{ marginTop: UI_SIZES.spacing.large }}>
               <ImageLabel
+                cachedSVG
                 text={I18n.t(`schoolbook.categories.${word.category}`)}
                 imageName={`schoolbook-${word.category}`}
                 imageType={ImageType.svg}

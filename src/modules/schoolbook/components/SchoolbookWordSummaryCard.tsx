@@ -136,6 +136,7 @@ export const SchoolbookWordSummaryCard = ({
         {category ? (
           <View style={{ marginTop: UI_SIZES.spacing.medium }}>
             <ImageLabel
+              cachedSVG
               text={I18n.t(`schoolbook.categories.${category}`)}
               imageName={`schoolbook-${category}`}
               imageType={ImageType.svg}
@@ -160,6 +161,7 @@ export const SchoolbookWordSummaryCard = ({
               marginTop: UI_SIZES.spacing.medium,
             }}>
             <Picture
+              cached
               type="NamedSvg"
               name="pictos-answer"
               width={UI_SIZES.dimensions.width.medium}
