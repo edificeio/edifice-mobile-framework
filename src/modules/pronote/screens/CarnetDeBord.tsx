@@ -138,6 +138,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-calendar',
+                cached: true,
               }}
               textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere}
               valueLabel={
@@ -161,6 +162,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-success',
+                cached: true,
               }}
               textLabel={data.PageReleveDeNotes?.Devoir?.[0]?.Matiere}
               valueLabel={
@@ -181,6 +183,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-skills',
+                cached: true,
               }}
               textLabel={data.PageCompetences?.Competences?.[0]?.Matiere}
               valueLabel={
@@ -196,6 +199,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-flag',
+                cached: true,
               }}
               textLabel={data.PageVieScolaire?.VieScolaire?.[0] && data.PageVieScolaire.VieScolaire?.[0]?.type.toLocaleUpperCase()}
               valueLabel={

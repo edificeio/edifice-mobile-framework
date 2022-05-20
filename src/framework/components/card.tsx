@@ -418,6 +418,7 @@ export function TouchableOverviewCard(props: OverviewCardProps & TouchableOpacit
           height={UI_SIZES.dimensions.width.larger} // width again to ensure it's a square !
           name="ui-rafterRight"
           fill={theme.color.secondary.regular}
+          cached
         />
       }
       {...props}

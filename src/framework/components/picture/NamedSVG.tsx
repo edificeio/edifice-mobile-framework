@@ -98,22 +98,32 @@ const imports = {
   'schoolbook-outing': import(`../../../../assets/images/schoolbook/outing.svg`),
   'schoolbook-various': import(`../../../../assets/images/schoolbook/various.svg`),
 };
-const importsCache = {};
+let importsCache = {};
+export const removeFromCache = (name: string) => {
+  delete importsCache[name];
+};
+export const clearCache = () => {
+  importsCache = {};
+};
 
 export interface NamedSVGProps extends SvgProps {
   name: string;
+  cached?: boolean;
 }
 
-export const NamedSVG = ({ name, ...rest }: NamedSVGProps): JSX.Element | null => {
+export const NamedSVG = ({ name, cached, ...rest }: NamedSVGProps): JSX.Element | null => {
   const ImportedSVGRef = useRef<any>(importsCache[name]);
   const [loading, setLoading] = React.useState(false);
   useEffect((): void => {
     if (!importsCache[name]) {
+      // We use the cached item even if props.cached === false, if it has already been cached in another context.
       setLoading(true);
       const importSVG = async (): Promise<void> => {
         try {
           ImportedSVGRef.current = (await imports[name]).default;
-          importsCache[name] = ImportedSVGRef.current;
+          if (cached) {
+            importsCache[name] = ImportedSVGRef.current;
+          }
         } catch (err) {
           throw err;
         } finally {
