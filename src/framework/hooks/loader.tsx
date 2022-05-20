@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { RefreshControl, ScrollView, ScrollViewProps } from 'react-native';
 
+import { EmptyConnectionScreen } from '../components/emptyConnectionScreen';
 import { EmptyContentScreen } from '../components/emptyContentScreen';
 import { LoadingIndicator } from '../components/loading';
 
@@ -74,7 +75,7 @@ export function ContentLoader({
         renderError ??
         (refreshControl => (
           <ScrollView refreshControl={refreshControl}>
-            <EmptyContentScreen />
+            <EmptyConnectionScreen />
           </ScrollView>
         ))
       )(<RefreshControl refreshing={loadingState === LoadingState.RETRY} onRefresh={() => reload()} />);
