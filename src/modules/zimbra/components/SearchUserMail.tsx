@@ -176,11 +176,7 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
     } else {
       if (search !== '') {
         updateSearch('');
-        Toast.show(I18n.t('zimbra-external-mail-right-error'), {
-          position: Platform.OS === 'ios' ? Toast.position.CENTER : Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
-        });
+        Toast.show(I18n.t('zimbra-external-mail-right-error'));
       }
     }
   };

@@ -81,11 +81,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     const { navigation } = this.props;
     navigation.state.params.onGoBack?.();
     navigation.navigate('inbox', { key: 'inbox', folderName: undefined });
-    Toast.show(I18n.t('zimbra-message-moved'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t('zimbra-message-moved'));
   };
 
   markAsRead = () => {
@@ -105,11 +101,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     }
 
     this.goBack();
-    Toast.show(I18n.t('zimbra-message-deleted'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t('zimbra-message-deleted'));
   };
 
   public closeDeleteModal = () => this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
@@ -128,11 +120,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   restore = async () => {
     await this.props.restoreMails([this.props.mail.id]);
     this.goBack();
-    Toast.show(I18n.t('zimbra-message-restored'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t('zimbra-message-restored'));
   };
 
   goBack = () => {
