@@ -18,9 +18,10 @@ export interface ImageLabelProps {
   imageName: string;
   imageType: ImageType;
   color: ColorValue;
+  cachedSVG?: boolean;
 }
 
-export const ImageLabel = ({ text, imageName, imageType, color }: ImageLabelProps) => {
+export const ImageLabel = ({ text, imageName, imageType, color, cachedSVG }: ImageLabelProps) => {
   return (
     <View style={{ flexDirection: 'row' }}>
       <View
@@ -35,7 +36,7 @@ export const ImageLabel = ({ text, imageName, imageType, color }: ImageLabelProp
         {imageType === ImageType.icon ? (
           <Icon name={imageName} color={theme.color.text.inverse} size={10} />
         ) : imageType === ImageType.svg ? (
-          <NamedSVG name={imageName} />
+          <NamedSVG cached={cachedSVG} name={imageName} />
         ) : null}
       </View>
       <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.extraSmall, color }}>

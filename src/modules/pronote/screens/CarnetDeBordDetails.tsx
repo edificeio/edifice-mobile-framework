@@ -80,7 +80,6 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
   }, [type, data]);
 
   const pageId = React.useMemo(() => {
-    console.log(data.PagePronote);
     switch (type) {
       case CarnetDeBordSection.CAHIER_DE_TEXTES:
         return data.PagePronote?.['Travail à faire à la maison'];
@@ -187,20 +186,18 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
 };
 CarnetDeBordDetailsScreen.formatDate = (m: moment.Moment) =>
   m.calendar(null, {
-    sameDay: '[Today]',
-    nextDay: '[Tomorrow]',
+    sameDay: `[${I18n.t('common.date.today')}]`,
+    nextDay: `[${I18n.t('common.date.tomorrow')}]`,
     nextWeek: 'dddd',
-    lastDay: '[Yesterday]',
-    lastWeek: '[Last] dddd',
+    lastDay: `[${I18n.t('common.date.yesterday')}]`,
     sameElse: 'DD MMM',
   });
 CarnetDeBordDetailsScreen.formatDatePast = (m: moment.Moment) =>
   m.calendar(null, {
-    sameDay: '[Today]',
-    nextDay: '[Tomorrow]',
+    sameDay: `[${I18n.t('common.date.today')}]`,
+    nextDay: `[${I18n.t('common.date.tomorrow')}]`,
     nextWeek: 'dddd',
-    lastDay: '[Yesterday]',
-    lastWeek: '[Last] dddd',
+    lastDay: `[${I18n.t('common.date.yesterday')}]`,
     sameElse: 'ddd DD MMM',
   });
 CarnetDeBordDetailsScreen.styles = StyleSheet.create({

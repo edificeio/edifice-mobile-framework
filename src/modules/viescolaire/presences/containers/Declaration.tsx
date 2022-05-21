@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Asset } from 'react-native-image-picker';
+import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -80,6 +81,7 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
       await this.props.declareAbsenceWithFileAction(startDate, endDate, comment, attachment);
     } else await this.props.declareAbsenceAction(startDate, endDate, comment);
     this.props.navigation.goBack();
+    Toast.showSuccess(I18n.t('viesco-absence-declared'));
   };
 
   validate = () => {

@@ -17,7 +17,7 @@
   "common.redirect.browser.title": "Redirection sur le navigateur",
   "common.redirect.browser.message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
   "common.redirect.browser.error": "Erreur lors de la redirection.",
-  "pronote.carnetDeBord.noInfo": "––",
+  "pronote.carnetDeBord.noInfo": " –– ",
   "pronote.carnetDeBord.openInPronote": "Ouvrir sur Pronote",
   "Activate": "Activer votre compte",
   "Actualites": "Actualités",
@@ -173,8 +173,7 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "comment": {
-      "addComment": "Ajouter un commentaire...",
-      "addReply": "Ajouter une réponse...",
+      "add": "Ajouter un commentaire...",
       "comment": "Commentaire",
       "comments": "Commentaires",
       "confirmationDelete": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer le commentaire ?",
@@ -222,6 +221,11 @@
     "publish": "Publier",
     "quit": "Quitter",
     "readMore": "lire plus",
+    "response": {
+      "add": "Ajouter une réponse...",
+      "confirmationUnsavedModification": "Vous allez annuler les changements de votre réponse. En êtes-vous sûr ?",
+      "confirmationUnsavedPublication": "Vous allez annuler l'ajout de votre réponse. En êtes-vous sûr ?"  
+    },
     "save": "Enregistrer",
     "send": "Envoyer",
     "sommeNumeriqueAlert_temp": "La plateforme \"Somme Numérique\" ne sera plus disponible à partir de la rentrée 2021. Il faudra utiliser l'accès \"ENT Hauts-de-France\" dans la liste des réseaux sociaux éducatifs.",
@@ -903,6 +907,7 @@
   "videoNotAvailable": "Lecteur vidéo non disponible",
   "viesco": "Vie Scolaire",
   "viesco-absence-declaration": "Déclaration d'absence",
+  "viesco-absence-declared": "Absence déclarée avec succès",
   "viesco-absence-motive": "Motif de l'absence",
   "viesco-arrived": "Arrivée à",
   "viesco-arrived-motive": "Motif du retard",

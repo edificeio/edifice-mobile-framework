@@ -23,6 +23,16 @@ export const removeAccents = (str: string) => {
 };
 
 /**
+ * Remove the first word of a string.
+ * @param str
+ */
+export const removeFirstWord = (str: string) => {
+  const indexOfSpace = str.indexOf(' ');
+  if (indexOfSpace === -1) return '';
+  return str.substring(indexOfSpace + 1);
+};
+
+/**
  * Get a search query (an array of normalized string) from a input text.
  * Spaces are trimmed as separated words.
  * ToDo: make a special treatments for quoted strings

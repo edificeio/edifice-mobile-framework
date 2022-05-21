@@ -19,6 +19,7 @@ import { PageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
+import { removeFirstWord } from '~/framework/util/string';
 import { SchoolbookWordSummaryCard } from '~/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
 import { userService } from '~/user/service';
@@ -122,12 +123,11 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   const fetchParentChildren = async () => {
     try {
       const childrenByStructure = await userService.getUserChildren(userId);
-      const children =
-        childrenByStructure &&
-        childrenByStructure[0]?.children?.map(child => ({
-          id: child.id,
-          name: child.displayName?.split(' ')[1],
-        }));
+      const allChildren = childrenByStructure?.map(structure => structure.children)?.flat();
+      const children = allChildren?.map(child => ({
+        id: child.id,
+        name: child.displayName && removeFirstWord(child.displayName),
+      }));
       const wordsCountPromises = children?.map(child => schoolbookService.list.parentUnacknowledgedWordsCount(session, child.id));
       const childrenUnacknowledgedWordsCount = wordsCountPromises && (await Promise.all(wordsCountPromises));
       const childrenWithUnacknowledgedWordsCount = children?.map((child, index) => ({
@@ -202,18 +202,23 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 
   const fetchFromStart = async () => {
     if (isParent) {
+      const isFirstFetch =
+        loadingState === AsyncPagedLoadingState.PRISTINE ||
+        loadingState === AsyncPagedLoadingState.INIT ||
+        loadingState === AsyncPagedLoadingState.RETRY;
       const fetchedChildren = await fetchParentChildren();
       if (fetchedChildren?.length === 1) {
         const singleChildId = fetchedChildren[0]?.id;
         await fetchPage(true, true, singleChildId);
-        setSelectedChildId(singleChildId);
+        isFirstFetch && setSelectedChildId(singleChildId);
       } else {
         const childrenWordListPromises = fetchedChildren?.map(fetchedChild => fetchPage(true, true, fetchedChild.id));
         const childrenWordLists =
           childrenWordListPromises && ((await Promise.all(childrenWordListPromises)) as IStudentAndParentWordList[]);
-        const childIdWithNewestWord =
-          fetchedChildren && childrenWordLists && getChildIdWithNewestWord(fetchedChildren, childrenWordLists);
-        childIdWithNewestWord && setSelectedChildId(childIdWithNewestWord);
+        const childToSelect =
+          fetchedChildren &&
+          ((childrenWordLists && getChildIdWithNewestWord(fetchedChildren, childrenWordLists)) || fetchedChildren[0]?.id);
+        isFirstFetch && childToSelect && setSelectedChildId(childToSelect);
       }
     } else await fetchPage(true, true);
   };
@@ -222,10 +227,12 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     children: { id: string; name: string; unacknowledgedWordsCount: number }[],
     childrenWordLists: IStudentAndParentWordList[],
   ) => {
-    const newestWordDates = childrenWordLists?.map((childWordList, index) => ({
-      index,
-      sendingDate: childWordList && childWordList[0]?.sendingDate,
-    }));
+    const newestWordDates = childrenWordLists
+      ?.map((childWordList, index) => ({
+        index,
+        sendingDate: childWordList && childWordList[0]?.sendingDate,
+      }))
+      ?.filter(newestWordDate => newestWordDate.sendingDate);
     const sortedNewestWordDates = newestWordDates?.sort((a, b) => moment(a.sendingDate).diff(b.sendingDate));
     const newestWordDate = sortedNewestWordDates && sortedNewestWordDates[sortedNewestWordDates?.length - 1];
     const childWithNewestWord = children && newestWordDate && children[newestWordDate.index];

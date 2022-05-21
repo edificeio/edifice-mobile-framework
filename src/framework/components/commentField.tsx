@@ -16,16 +16,17 @@ import { TextItalic, TextSemiBold, TextSizeStyle } from './text';
 // TYPES ==========================================================================================
 
 export interface CommentFieldProps {
-  placeholder: string;
   isPublishingComment: boolean;
   onPublishComment?: (comment: string, commentId?: string) => any;
   onDeleteComment?: (commentId: string) => any;
+  editCommentCallback?: Function;
   comment?: string;
   commentId?: number | string;
   commentAuthorId?: string;
   commentAuthor?: string;
   commentDate?: string | Moment;
   index?: number;
+  isResponse?: boolean;
 }
 
 // COMPONENT ======================================================================================
@@ -35,23 +36,26 @@ const CommentField = (props: CommentFieldProps, ref) => {
   let alertDisplayed = false;
   const resetAlertDisplay = () => setTimeout(() => (alertDisplayed = false), 1000);
   const inputRef: { current: TextInput | undefined } = React.useRef();
+
   const session = useSelector(() => getUserSession());
   const [isEditing, setIsEditing] = React.useState(false);
   const [comment, setComment] = React.useState<string>(props.comment || '');
   const isUserComment = session.user.id === props.commentAuthorId;
   const isIdleExistingComment = !!props.commentId && !isEditing;
   const isFirstComment = props.index === 0;
-  const isCommentUnchanged = comment === props.comment;
 
   const publishComment = () => {
     inputRef.current && inputRef.current.blur();
     props.onPublishComment && props.onPublishComment(comment, props.commentId?.toString());
   };
+  const editComment = () => {
+    setIsEditing(true);
+    props.editCommentCallback && props.editCommentCallback();
+  };
   const deleteComment = () => {
     props.onDeleteComment && props.commentId && props.onDeleteComment(props.commentId?.toString());
   };
 
-  const setIsEditingFalse = () => setIsEditing(false);
   const clearCommentField = () => {
     inputRef.current && inputRef.current.clear();
     setComment('');
@@ -61,7 +65,11 @@ const CommentField = (props: CommentFieldProps, ref) => {
       alertDisplayed = true; //  Due to Alert + Keyboard bug, we need to set a flag when Alert is displayed
       Alert.alert(
         I18n.t(`common.confirmationUnsaved${props.commentId ? 'Modification' : 'Publication'}`),
-        I18n.t(`common.comment.confirmationUnsaved${props.commentId ? 'Modification' : 'Publication'}`),
+        I18n.t(
+          `common.${props.isResponse ? 'response' : 'comment'}.confirmationUnsaved${
+            props.commentId ? 'Modification' : 'Publication'
+          }`,
+        ),
         [
           {
             text: I18n.t('common.quit'),
@@ -85,7 +93,18 @@ const CommentField = (props: CommentFieldProps, ref) => {
       );
     }
   };
-  React.useImperativeHandle(ref, () => ({ clearCommentField, confirmDiscard, setIsEditingFalse }));
+  const setIsEditingFalse = () => setIsEditing(false);
+  const doesCommentExist = () => !!comment;
+  const isCommentUnchanged = () => comment === props.comment;
+  const isCommentFieldFocused = () => inputRef.current?.isFocused();
+  React.useImperativeHandle(ref, () => ({
+    clearCommentField,
+    confirmDiscard,
+    setIsEditingFalse,
+    doesCommentExist,
+    isCommentUnchanged,
+    isCommentFieldFocused,
+  }));
 
   React.useEffect(() => {
     if (isEditing) {
@@ -133,9 +152,10 @@ const CommentField = (props: CommentFieldProps, ref) => {
         }}>
         <TextInput
           ref={inputRef}
-          placeholder={props.placeholder}
+          placeholder={I18n.t(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
           placeholderTextColor={theme.greyPalette.graphite}
           multiline
+          scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
           editable={!(props.isPublishingComment || isIdleExistingComment)}
           onChangeText={text => setComment(text)}
           value={comment}
@@ -147,7 +167,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           <RoundButton
             iconName={isEditing ? 'pictos-save' : 'pictos-send'}
             action={() => publishComment()}
-            disabled={!comment || isCommentUnchanged}
+            disabled={!comment || isCommentUnchanged()}
             loading={props.isPublishingComment}
           />
         </View>
@@ -155,7 +175,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
       {isIdleExistingComment && isUserComment && (props.onPublishComment || props.onDeleteComment) ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
-            <TouchableOpacity onPress={() => setIsEditing(true)}>
+            <TouchableOpacity onPress={() => editComment()}>
               <TextSemiBold style={{ color: theme.color.secondary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
             </TouchableOpacity>
           ) : null}

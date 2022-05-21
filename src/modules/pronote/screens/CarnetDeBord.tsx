@@ -138,18 +138,19 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-calendar',
+                cached: true,
               }}
               textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere}
-              valueLabel={
-                data.PageCahierDeTextes?.CahierDeTextes?.[0] &&
-                I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
-                  date:
-                    data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe &&
-                    CarnetDeBordDetailsScreen.formatDatePast(
-                      data.PageCahierDeTextes.CahierDeTextes?.[0].TravailAFaire?.[0]?.PourLe,
-                    ),
-                })
-              }
+              valueLabel={(() => {
+                const cdt = data.PageCahierDeTextes?.CahierDeTextes?.find(c => c.TravailAFaire && c.TravailAFaire.length > 0);
+                return cdt?.TravailAFaire?.[0]?.PourLe
+                  ? I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
+                      date:
+                        cdt?.TravailAFaire?.[0]?.PourLe &&
+                        CarnetDeBordDetailsScreen.formatDatePast(cdt?.TravailAFaire?.[0]?.PourLe),
+                    })
+                  : I18n.t('pronote.carnetDeBord.noInfo');
+              })()}
               emptyLabel={I18n.t('pronote.carnetDeBord.cahierDeTextes.empty')}
               navigation={navigation}
               type={CarnetDeBordSection.CAHIER_DE_TEXTES}
@@ -160,6 +161,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-success',
+                cached: true,
               }}
               textLabel={data.PageReleveDeNotes?.Devoir?.[0]?.Matiere}
               valueLabel={
@@ -180,6 +182,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-skills',
+                cached: true,
               }}
               textLabel={data.PageCompetences?.Competences?.[0]?.Matiere}
               valueLabel={
@@ -195,6 +198,7 @@ CarnetDeBordScreen.getRenderContent =
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-flag',
+                cached: true,
               }}
               textLabel={data.PageVieScolaire?.VieScolaire?.[0] && data.PageVieScolaire.VieScolaire?.[0]?.type.toLocaleUpperCase()}
               valueLabel={

@@ -9,5 +9,8 @@ export default new NavigableModuleConfig<'Mediacentre', IMediacentre_State>({
 
   displayI18n: 'mediacentre.mediacentre',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'Image', source: require('ASSETS/images/logo-mediacentre.png') },
+  displayPicture: {
+    type: 'NamedSvg',
+    name: 'mediacentre',
+  },
 });
