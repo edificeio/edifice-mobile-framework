@@ -27,13 +27,14 @@ function ConnectorRedirectScreen(props: IConnectorRedirectScreenProps) {
   const { session } = props;
   const connector = props.navigation.getParam('connector');
   const pageId = props.navigation.getParam('pageId');
-  React.useEffect(() => {
-    redirect(session, connector.address, pageId).catch(e => {
-      console.warn(e);
-      Alert.alert('Error' + e);
-    });
-    props.navigation.goBack(null);
+
+  // Not in useEffet => normal, we want to execute this at first time.
+  redirect(session, connector.address, pageId).catch(e => {
+    console.warn(e);
+    Alert.alert('Error' + e);
   });
+  props.navigation.goBack(null);
+
   return <View />;
 }
 
