@@ -8,7 +8,7 @@ import { DEPRECATED_getCurrentPlatform } from '../util/_legacy_appConf';
 import { openUrl } from '../util/linking';
 import { UI_SIZES } from './constants';
 import { Picture } from './picture';
-import { TextSemiBold } from './text';
+import { TextSemiBold, TextSizeStyle, rem, remlh } from './text';
 
 export interface ActionButtonProps {
   text: string;
@@ -93,6 +93,8 @@ ActionButton.Style = StyleSheet.create({
   },
   textCommon: {
     marginRight: UI_SIZES.spacing.smallPlus,
+    lineHeight: remlh(1),
+    height: remlh(1),
   },
   picture: {
     marginLeft: UI_SIZES.spacing.smallPlus,
