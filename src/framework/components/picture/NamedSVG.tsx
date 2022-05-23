@@ -77,6 +77,7 @@ const imports = {
   'empty-mediacentre': import(`../../../../assets/images/empty-screen/empty-mediacentre.svg`),
   'empty-schoolbook': import(`../../../../assets/images/empty-screen/empty-schoolbook.svg`),
   'empty-search': import(`../../../../assets/images/empty-screen/empty-search.svg`),
+  'empty-support': import(`../../../../assets/images/empty-screen/empty-support.svg`),
   'empty-timeline': import(`../../../../assets/images/empty-screen/empty-timeline.svg`),
   'empty-trash': import(`../../../../assets/images/empty-screen/empty-trash.svg`),
   'empty-viesco': import(`../../../../assets/images/empty-screen/empty-viesco.svg`),
