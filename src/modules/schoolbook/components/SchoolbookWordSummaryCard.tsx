@@ -128,7 +128,7 @@ export const SchoolbookWordSummaryCard = ({
           ) : (
             <View />
           )}
-          <TextSemiBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.schoolbook.acknowledge }}>
+          <TextSemiBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.color.warning }}>
             {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
           </TextSemiBold>
         </View>

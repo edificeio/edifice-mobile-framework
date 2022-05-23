@@ -83,8 +83,6 @@ export interface ITheme {
     orange: ColorValue;
   };
   schoolbook: {
-    acknowledge: ColorValue;
-    acknowledged: ColorValue;
     categories: {
       canteen: ColorValue;
       event: ColorValue;
@@ -184,8 +182,6 @@ export const defaultTheme: ITheme = {
     orange: '#ffefe3',
   },
   schoolbook: {
-    acknowledge: '#ff8d2e',
-    acknowledged: '#6fbe2e',
     categories: {
       canteen: '#2a9cc8',
       event: '#763294',
