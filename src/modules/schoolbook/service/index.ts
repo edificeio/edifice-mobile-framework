@@ -85,10 +85,10 @@ export const teacherWordListAdapter = (teacherWordList: IEntcoreTeacherWordList)
     ackNumber: teacherWord.ack_number,
     category: teacherWord.category,
     id: teacherWord.id,
-    recipients: teacherWord.recipients?.map(recipient => ({ displayName: recipient.display_name, userId: recipient.user_id })),
+    // recipients: teacherWord.recipients?.map(recipient => ({ displayName: recipient.display_name, userId: recipient.user_id })), // Note: unused
     respNumber: teacherWord.resp_number,
     sendingDate: moment(teacherWord.sending_date),
-    text: teacherWord.text,
+    // text: teacherWord.text, // Note: unused
     title: teacherWord.title,
     total: teacherWord.total,
   }));
@@ -114,7 +114,7 @@ export const studentAndParentWordListAdapter = (studentAndParentWordList: IEntco
       parentName: response.parent_name,
     })),
     sendingDate: moment(studentAndParentWord.sending_date),
-    text: studentAndParentWord.text,
+    // text: studentAndParentWord.text, // Note: unused
     title: studentAndParentWord.title,
   }));
   return ret as IStudentAndParentWordList;
