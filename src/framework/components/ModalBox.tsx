@@ -24,8 +24,8 @@ export const ModalBox = ({ content }: ModalBoxProps, ref) => {
       onBackdropPress={() => setShowModal(false)}
       style={{
         marginHorizontal: UI_SIZES.spacing.large,
-        marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.large,
-        marginBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight + UI_SIZES.spacing.large,
+        marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
+        marginBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight,
       }}>
       <View
         style={{

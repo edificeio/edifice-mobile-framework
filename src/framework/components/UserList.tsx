@@ -12,6 +12,8 @@ import FlatList, { FlatListProps } from '~/framework/components/flatList';
 import { BadgeAvatarProps, TextAvatar } from '~/framework/components/textAvatar';
 import { Status } from '~/ui/avatars/Avatar';
 
+import { TextSizeStyle } from './text';
+
 export interface IUserListItem {
   id: string;
   avatarId?: string;
@@ -69,7 +71,10 @@ UserList.renderItem = <ItemType extends IUserListItem>({
       disabled={!onSelect}>
       <TextAvatar
         text={info.item.name}
-        textStyle={!selectedId || info.item.id === selectedId ? undefined : { color: theme.greyPalette.graphite }}
+        textStyle={[
+          !selectedId || info.item.id === selectedId ? undefined : { color: theme.greyPalette.graphite },
+          horizontal ? { ...TextSizeStyle.Small } : undefined,
+        ]}
         userId={info.item.avatarId ?? info.item.id}
         {...(renderBadge ? renderBadge(info.item, selectedId) : undefined)}
         status={!selectedId ? undefined : info.item.id === selectedId ? Status.selected : Status.disabled}

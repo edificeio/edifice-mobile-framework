@@ -234,10 +234,10 @@ const SchoolbookWordDetailsCard = (
         ref={modalBoxRef}
         content={
           <View style={{ flex: 1 }}>
-            <TextSemiBold style={{ ...TextSizeStyle.SlightBig, marginBottom: UI_SIZES.spacing.extraSmall }}>
+            <TextSemiBold style={{ ...TextSizeStyle.SlightBigPlus, marginBottom: UI_SIZES.spacing.extraSmall }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
             </TextSemiBold>
-            <Text style={{ marginBottom: UI_SIZES.spacing.largePlus, color: theme.greyPalette.graphite }}>
+            <Text style={{ marginBottom: UI_SIZES.spacing.large, color: theme.greyPalette.graphite }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </Text>
             <UserList data={studentsForTeacher} avatarSize={24} />
