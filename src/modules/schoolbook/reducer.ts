@@ -66,6 +66,7 @@ export interface IWord {
 
 export interface IReportedWord extends IWord {
   ackNumber: number;
+  respNumber: number;
   total: number;
 }
 

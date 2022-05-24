@@ -152,6 +152,7 @@ export const wordReportAdapter = (wordReport: IEntcoreWordReport) => {
       ownerId: word?.owner_id,
       ownerName: word?.owner_name,
       reply: word?.reply,
+      respNumber: word?.resp_number,
       sendingDate: moment(word?.sending_date),
       text: word?.text,
       title: word?.title,

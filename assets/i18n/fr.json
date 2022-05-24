@@ -208,6 +208,7 @@
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "for": "Pour",
+    "forRecipients": "Pour :",
     "from": "De :",
     "idf": {
       "passwordRules": "Le nouveau mot de passe doit comporter 12 caractères minimum, incluant au minimum 1 majuscule, 1 minuscule et 1 chiffre ou 1 caractère spécial parmi les suivants : $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- ."
@@ -681,7 +682,6 @@
       "unacknowledgements": "Non-lus"
     },
     "students": "Élèves",
-    "wordFollowUp": "Suivi du mot",
     "appName": "Carnet de liaison",
     "tabName": "Carnet de liaison"
   },

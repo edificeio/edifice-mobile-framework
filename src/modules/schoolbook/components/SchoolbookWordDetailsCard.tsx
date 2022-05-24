@@ -12,7 +12,7 @@ import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
-import Label from '~/framework/components/label';
+import { Picture } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
@@ -37,6 +37,10 @@ const acknowledgementsString = (ackNumber: number, total: number) =>
 const unacknowledgedString = (userType: UserType) => I18n.t(`schoolbook.acknowledgementNeeded${userType}`);
 const recipientsString = (report: IConcernedStudent[]) =>
   getHasSingleRecipientForTeacher(report) ? report[0].ownerName : `${report.length} ${I18n.t('schoolbook.students').toLowerCase()}`;
+const responsesString = (responses: number) =>
+  responses === 1
+    ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
+    : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
 
 export interface ISchoolBookWordDetailsCardProps {
   action: () => void;
@@ -66,10 +70,12 @@ const SchoolbookWordDetailsCard = (
   const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
   const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
   const schoolbookWordOwnerId = word?.ownerId;
+  const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const isParent = userType === UserType.Relative;
   const isTeacher = userType === UserType.Teacher;
   const isStudent = userType === UserType.Student;
+  const isAuthorOtherTeacher = isTeacher && !isUserSchoolbookWordOwner;
   const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(report);
   const studentsForTeacher = getStudentsForTeacher(report)?.map(student => ({ id: student.owner, name: student.ownerName }));
   const reportByStudentForParent = getReportByStudentForParent(studentId, schoolbookWord.report);
@@ -84,7 +90,7 @@ const SchoolbookWordDetailsCard = (
     (isStudent && isWordAcknowledgedForStudent) ||
     (isParent && isWordAcknowledgedForParent);
   const responses = isStudent ? report[0]?.responses : isParent ? reportByStudentForParent?.responses : undefined;
-  const isBottomSheetVisible = isTeacher || (isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent)));
+  const isBottomSheetVisible = isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent));
 
   const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
   const cardBottomEditorSheetRef = () => bottomEditorSheetRef?.current;
@@ -110,11 +116,19 @@ const SchoolbookWordDetailsCard = (
           customHeaderIndicatorStyle={{ justifyContent: 'center' }}
           headerIndicator={
             isTeacher ? (
-              <Label
-                text={acknowledgementsString(word.ackNumber, word.total)}
-                color={isWordAcknowledged ? theme.schoolbook.acknowledged : theme.schoolbook.acknowledge}
-                labelStyle="outline"
-              />
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
+                <TextSemiBold style={{ color: theme.color.secondary.regular }}>
+                  {acknowledgementsString(word.ackNumber, word.total)}
+                </TextSemiBold>
+                <Picture
+                  type="NamedSvg"
+                  name="pictos-arrow-right"
+                  width={UI_SIZES.dimensions.width.large}
+                  height={UI_SIZES.dimensions.height.large}
+                  fill={theme.color.secondary.regular}
+                  style={{ marginLeft: UI_SIZES.spacing.smallPlus }}
+                />
+              </TouchableOpacity>
             ) : null
           }
           header={
@@ -124,7 +138,7 @@ const SchoolbookWordDetailsCard = (
               <ContentCardHeader
                 icon={
                   <SingleAvatar
-                    size={24}
+                    size={36}
                     userId={
                       isTeacher
                         ? hasSingleRecipientForTeacher
@@ -136,7 +150,7 @@ const SchoolbookWordDetailsCard = (
                 }
                 text={
                   <Text style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
-                    {`${I18n.t(`common.${isTeacher ? 'to' : 'from'}`)} `}
+                    {`${I18n.t(`common.${isTeacher ? 'forRecipients' : 'from'}`)} `}
                     <TextSemiBold
                       style={{
                         ...TextSizeStyle.Small,
@@ -150,10 +164,27 @@ const SchoolbookWordDetailsCard = (
                 date={word.sendingDate}
               />
             </TouchableOpacity>
+          }
+          footer={
+            schoolbookWordResponsesNumber ? (
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
+                <Picture
+                  type="NamedSvg"
+                  name="pictos-answer"
+                  width={UI_SIZES.dimensions.width.large}
+                  height={UI_SIZES.dimensions.height.large}
+                  fill={theme.color.secondary.regular}
+                  style={{ marginRight: UI_SIZES.spacing.smallPlus }}
+                />
+                <TextSemiBold style={{ color: theme.color.secondary.regular }}>
+                  {responsesString(schoolbookWordResponsesNumber)}
+                </TextSemiBold>
+              </TouchableOpacity>
+            ) : undefined
           }>
-          {isTeacher && !isUserSchoolbookWordOwner ? (
+          {isAuthorOtherTeacher ? (
             <View style={{ marginTop: UI_SIZES.spacing.large, flexDirection: 'row', alignItems: 'center' }}>
-              <SingleAvatar size={36} userId={schoolbookWord.word.ownerId} />
+              <SingleAvatar size={36} userId={word.ownerId} />
               <Text style={{ flex: 1, marginLeft: UI_SIZES.spacing.smallPlus }} numberOfLines={usersTextMaxLines}>
                 {`${I18n.t('common.from')} `}
                 <TextSemiBold>{word.ownerName}</TextSemiBold>
@@ -165,9 +196,8 @@ const SchoolbookWordDetailsCard = (
             </TextSemiBold>
           ) : null}
           {word.category ? (
-            <View style={{ marginTop: UI_SIZES.spacing.large }}>
+            <View style={{ marginTop: UI_SIZES.spacing[isAuthorOtherTeacher ? 'medium' : 'large'] }}>
               <ImageLabel
-                cachedSVG
                 text={I18n.t(`schoolbook.categories.${word.category}`)}
                 imageName={`schoolbook-${word.category}`}
                 imageType={ImageType.svg}
@@ -176,13 +206,16 @@ const SchoolbookWordDetailsCard = (
             </View>
           ) : null}
           {word.title ? (
-            <TextBold style={{ marginTop: UI_SIZES.spacing.mediumPlus, ...TextSizeStyle.SlightBigPlus }}>{word.title}</TextBold>
+            <TextBold style={{ marginTop: UI_SIZES.spacing.medium, ...TextSizeStyle.SlightBigPlus }}>{word.title}</TextBold>
           ) : null}
           {hasSchoolbookWordText ? (
-            <Text style={{ marginTop: UI_SIZES.spacing.smallPlus, ...TextSizeStyle.SlightBig }}>{schoolbookWordText}</Text>
+            <Text
+              style={{ marginTop: UI_SIZES.spacing.smallPlus, marginBottom: UI_SIZES.spacing.tiny, ...TextSizeStyle.SlightBig }}>
+              {schoolbookWordText}
+            </Text>
           ) : null}
           {hasSchoolbookWordMedia ? (
-            <View style={{ marginTop: UI_SIZES.spacing.extraSmall }}>{renderMediaPreview(schoolbookWordMedia)}</View>
+            <View style={{ marginVertical: UI_SIZES.spacing.tiny }}>{renderMediaPreview(schoolbookWordMedia)}</View>
           ) : null}
         </ResourceView>
         {word.reply && responses ? (
@@ -216,9 +249,7 @@ const SchoolbookWordDetailsCard = (
           />
         ) : null}
       </ScrollView>
-      {isTeacher ? (
-        <BottomButtonSheet text={I18n.t('schoolbook.wordFollowUp')} iconName={'pictos-arrow-right'} action={action} />
-      ) : isParent ? (
+      {isParent ? (
         !isWordAcknowledged ? (
           <BottomButtonSheet text={I18n.t('schoolbook.acknowledge')} action={action} />
         ) : word.reply && !isWordRepliedToForParent ? (
