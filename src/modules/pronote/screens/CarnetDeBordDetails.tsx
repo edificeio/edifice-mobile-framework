@@ -203,7 +203,7 @@ CarnetDeBordDetailsScreen.formatDatePast = (m: moment.Moment) =>
 CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   card: {
     marginHorizontal: UI_SIZES.spacing.large,
-    marginVertical: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.spacing.large,
   },
   section: {
     ...cardPadding,
@@ -230,7 +230,10 @@ CarnetDeBordDetailsScreen.styles = StyleSheet.create({
     marginBottom: UI_SIZES.spacing.extraSmall,
   },
   button: {
-    marginTop: UI_SIZES.spacing.extraLarge,
+    marginTop: UI_SIZES.spacing.extraLargePlus,
+    marginBottom: UI_SIZES.screen.bottomInset
+      ? UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.extraLarge - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.large,
   },
   message: {
     marginHorizontal: UI_SIZES.spacing.large,

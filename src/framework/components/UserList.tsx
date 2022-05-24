@@ -40,14 +40,6 @@ export default function UserList<ItemType extends IUserListItem = IUserListItem>
       keyExtractor={UserList.keyExtractor}
       renderItem={renderItem}
       horizontal={horizontal}
-      contentContainerStyle={
-        horizontal
-          ? {
-              paddingVertical: UI_SIZES.spacing.large,
-              paddingHorizontal: UI_SIZES.spacing.large,
-            }
-          : undefined
-      }
       {...otherProps}
     />
   );
