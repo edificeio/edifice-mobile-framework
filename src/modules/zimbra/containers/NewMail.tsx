@@ -528,12 +528,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           onDraftSave={this.saveDraft}
           onHeaderChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
           body={this.state.mail.body.replace(/<br>/gs, '\n')}
-          onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, newBody } }))}
+          onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: newBody } }))}
           attachments={
             this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
           }
           onAttachmentChange={newAttachments => {
-            return this.setState(prevState => ({ mail: { ...prevState.mail, newAttachments } }));
+            return this.setState(prevState => ({ mail: { ...prevState.mail, attachments: newAttachments } }));
           }}
           onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id!, attachmentId)}
           prevBody={this.state.prevBody}
