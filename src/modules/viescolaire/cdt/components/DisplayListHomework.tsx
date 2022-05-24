@@ -1,7 +1,8 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { Text, TextBold } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
@@ -23,6 +24,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   homeworkPart: {
+    flex: 1,
     paddingVertical: 8,
     paddingHorizontal: 15,
   },
@@ -74,23 +76,24 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
             </LeftColoredItem>
           </View>
 
-          <ScrollView>
-            <View style={[style.homeworkPart]}>
-              <TextBold style={style.title}>{I18n.t('viesco-homework-home')}</TextBold>
-              {homeworkList.map(homework => (
+          <View style={style.homeworkPart}>
+            <TextBold style={style.title}>{I18n.t('viesco-homework-home')}</TextBold>
+            <FlatList
+              data={homeworkList}
+              renderItem={({ item }) => (
                 <View style={style.homeworksView}>
-                  {homework?.type && <Text style={style.homeworkType}>{homework?.type}</Text>}
-                  {homework && homework?.subject && (
+                  {item?.type && <Text style={style.homeworkType}>{item?.type}</Text>}
+                  {item && item?.subject && (
                     <Text style={style.subtitle}>
-                      {homework.subject.charAt(0).toLocaleUpperCase() + homework.subject.substring(1).toLocaleLowerCase()} -{' '}
-                      {homework?.audience}
+                      {item.subject.charAt(0).toLocaleUpperCase() + item.subject.substring(1).toLocaleLowerCase()} -{' '}
+                      {item?.audience}
                     </Text>
                   )}
-                  {homeworkList && homework?.description && <HtmlContentView html={homework.description} opts={htmlOpts} />}
+                  {this.props.homeworkList && item?.description && <HtmlContentView html={item.description} opts={htmlOpts} />}
                 </View>
-              ))}
-            </View>
-          </ScrollView>
+              )}
+            />
+          </View>
         </View>
       </PageContainer>
     );

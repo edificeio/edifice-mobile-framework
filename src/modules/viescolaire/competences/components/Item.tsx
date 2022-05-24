@@ -3,7 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { useState } from 'react';
 import { FlexAlignType, StyleSheet, View } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Text, TextBold } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
@@ -178,14 +178,12 @@ const getColorFromNote = (note: number, moy: number, diviseur: number) => {
   }
 };
 
-const CompetenceRoundModal = (competences: any, levels: ILevelsList) => {
-  return competences.map((competence, index) => (
-    <ModalContentBlock style={styleConstant.modalBlock} key={index}>
-      <Text style={styleConstant.competenceRoundModalText}>{competence.nom}</Text>
-      <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
-    </ModalContentBlock>
-  ));
-};
+const CompetenceRoundModal = (competence: any, index: number, levels: ILevelsList) => (
+  <ModalContentBlock style={styleConstant.modalBlock} key={index}>
+    <Text style={styleConstant.competenceRoundModalText}>{competence.nom}</Text>
+    <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
+  </ModalContentBlock>
+);
 
 const CompetenceRound = ({
   competences,
@@ -219,12 +217,13 @@ const CompetenceRound = ({
       {isVisible && (
         <ModalBox isVisible={isVisible}>
           <ModalContent>
-            <ScrollView
+            <FlatList
               style={styleConstant.competenceRoundModalStyle}
               contentContainerStyle={styleConstant.competenceRoundModalContentStyle}
-              showsVerticalScrollIndicator={false}>
-              {CompetenceRoundModal(competences, levels)}
-            </ScrollView>
+              showsVerticalScrollIndicator={false}
+              data={competences}
+              renderItem={({ item, index }) => CompetenceRoundModal(item, index, levels)}
+            />
             <ModalContentBlock>
               <ButtonsOkOnly onValid={() => toggleVisible(false)} title={I18n.t('viesco-close').toUpperCase()} />
             </ModalContentBlock>
@@ -306,22 +305,24 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
 );
 
 export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) => (
-  <ScrollView contentContainerStyle={styleConstant.gradesDevoirsMoyennesView}>
-    {devoirs.map((devoir, index) => (
+  <FlatList
+    contentContainerStyle={styleConstant.gradesDevoirsMoyennesView}
+    data={devoirs}
+    renderItem={({ item, index }) => (
       <LeftColoredItem color={CommonStyles.primary} key={index}>
         <View style={styleConstant.devoirsList}>
           <View style={styleConstant.gradesDevoirsMoyennesItemView}>
-            <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
-            <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
+            <TextBold numberOfLines={1}>{item.matiere.toUpperCase()}</TextBold>
+            <Text numberOfLines={1}>{item.teacher.toUpperCase()}</Text>
           </View>
-          <ColoredSquare hideScore note={devoir.moyenne} />
+          <ColoredSquare hideScore note={item.moyenne} />
         </View>
-        {devoir.devoirs !== undefined
-          ? devoir.devoirs.length > 0 &&
-            devoir.devoirs.map(
-              (course, index) =>
+        {item.devoirs !== undefined
+          ? item.devoirs.length > 0 &&
+            item.devoirs.map(
+              (course, i) =>
                 course.is_evaluated && (
-                  <View style={styleConstant.subMatieres} key={index}>
+                  <View style={styleConstant.subMatieres} key={i}>
                     <Text style={styleConstant.gradesDevoirsMoyennesCourseNameText} numberOfLines={1}>
                       {course.name.toUpperCase()}
                     </Text>
@@ -337,48 +338,51 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
             )
           : null}
       </LeftColoredItem>
-    ))}
-  </ScrollView>
+    )}
+    ListEmptyComponent={null}
+  />
 );
 
 export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList; levels: ILevelsList; color?: boolean }) => (
-  <ScrollView showsVerticalScrollIndicator={false}>
-    {devoirs.map((devoir, index) => (
+  <FlatList
+    showsVerticalScrollIndicator={false}
+    data={devoirs}
+    renderItem={({ item, index }) => (
       <View style={styleConstant.devoirsList} key={index}>
-        <GradesDevoirsResume devoir={devoir} />
+        <GradesDevoirsResume devoir={item} />
         <View style={styleConstant.competencesList}>
-          {devoir.note !== undefined && !isNaN(Number(devoir.note)) ? (
+          {item.note !== undefined && !isNaN(Number(item.note)) ? (
             <>
-              {devoir.competences !== undefined && (
-                <CompetenceRound stateFullRound="center" competences={devoir.competences} size={60} levels={levels} />
+              {item.competences !== undefined && (
+                <CompetenceRound stateFullRound="center" competences={item.competences} size={60} levels={levels} />
               )}
               <ColoredSquare
-                note={devoir.note}
-                coeff={devoir.coefficient}
-                moy={devoir.moyenne}
-                diviseur={devoir.diviseur}
+                note={item.note}
+                coeff={item.coefficient}
+                moy={item.moyenne}
+                diviseur={item.diviseur}
                 backgroundColor={
                   color
                     ? getColorFromNote(
-                        parseFloat(devoir.note.replace(/\./g, ',').replace(',', '.')),
-                        parseFloat(devoir.moyenne.replace(/\./g, ',').replace(',', '.')),
-                        devoir.diviseur,
+                        parseFloat(item.note.replace(/\./g, ',').replace(',', '.')),
+                        parseFloat(item.moyenne.replace(/\./g, ',').replace(',', '.')),
+                        item.diviseur,
                       )
                     : CommonStyles.primary
                 }
               />
             </>
-          ) : devoir.competences !== undefined && devoir.competences.length ? (
-            <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={60} levels={levels} />
+          ) : item.competences !== undefined && item.competences.length ? (
+            <CompetenceRound stateFullRound="flex-end" competences={item.competences} size={60} levels={levels} />
           ) : (
             <View style={[styleConstant.coloredSquare, styleConstant.gradeDevoirsNoteContainer]}>
-              <TextBold style={styleConstant.gradeDevoirsNoteText}>{devoir.note}</TextBold>
+              <TextBold style={styleConstant.gradeDevoirsNoteText}>{item.note}</TextBold>
             </View>
           )}
         </View>
       </View>
-    ))}
-  </ScrollView>
+    )}
+  />
 );
 
 export const getSortedEvaluationList = (evaluations: IDevoirList) => {
