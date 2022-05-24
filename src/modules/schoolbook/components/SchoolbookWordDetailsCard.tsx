@@ -33,7 +33,7 @@ import {
 } from '../reducer';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${total === 1 ? '' : 's'}`).toLowerCase()}`;
+  `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
 const unacknowledgedString = (userType: UserType) => I18n.t(`schoolbook.acknowledgementNeeded${userType}`);
 const recipientsString = (report: IConcernedStudent[]) =>
   getHasSingleRecipientForTeacher(report) ? report[0].ownerName : `${report.length} ${I18n.t('schoolbook.students').toLowerCase()}`;

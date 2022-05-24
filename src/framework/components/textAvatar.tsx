@@ -16,7 +16,7 @@ export interface BadgeAvatarProps {
         isGroup: boolean;
       };
   viewStyle?: ViewStyle;
-  textStyle: StyleProp<TextStyle>;
+  textStyle?: StyleProp<TextStyle>;
   badgeContent?: number | string;
   badgeColor?: string | ColorValue;
   badgePosition?: BadgePosition;

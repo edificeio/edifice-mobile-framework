@@ -1,5 +1,5 @@
 /**
- * Schoolbook word list
+ * Schoolbook word details
  */
 import I18n from 'i18n-js';
 import React from 'react';
@@ -26,15 +26,15 @@ import { schoolbookService, schoolbookUriCaptureFunction } from '../service';
 
 // TYPES ==========================================================================================
 
-export interface ISchoolbookWordListScreen_DataProps {
+export interface ISchoolbookWordDetailsScreen_DataProps {
   initialLoadingState: AsyncPagedLoadingState;
   session: IUserSession;
 }
-export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProps & NavigationInjectedProps;
+export type ISchoolbookWordDetailsScreen_Props = ISchoolbookWordDetailsScreen_DataProps & NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
 
-const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => {
+const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) => {
   const detailsCardRef: { current: any } = React.useRef();
   const session = props.session;
   const userId = session?.user?.id;

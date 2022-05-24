@@ -674,12 +674,17 @@
     "schoolbookWordReportScreen": {
       "acknowledgedBy": "Lu par",
       "relativesDidAcknowledge": "Les responsables de ces élèves ont lu le mot.",
-      "relativesDidNotAcknowledge": "Les responsables de ces élèves n'ont pas encore lu le mot. Vous pouvez leur envoyer un rappel de lecture.",
+      "relativesDidNotAcknowledge": "Les responsables de ces élèves n'ont pas encore lu le mot.",
       "reminder": "Rappel",
       "reminderModal": {
         "text": "Vous allez envoyer une notification de rappel à toutes les personnes qui n'ont pas encore comfirmé la lecture du mot.",
         "title": "Envoie d'un rappel"
       },
+      "reminderPossible": "Vous pouvez leur envoyer un rappel de lecture.",
+      "reminderToast": {
+        "text": "Rappel envoyé aux personnes n'aillant pas confirmé la lecture du mot."
+      },
+      "unacknowledgement": "Non-lu",
       "unacknowledgements": "Non-lus"
     },
     "students": "Élèves",

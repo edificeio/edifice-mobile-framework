@@ -13,20 +13,21 @@ export interface ModalBoxProps {
 
 export const ModalBox = ({ content }: ModalBoxProps, ref) => {
   const [showModal, setShowModal] = React.useState(false);
+  const doDismissModal = () => setShowModal(false);
   const doShowModal = () => setShowModal(true);
-  React.useImperativeHandle(ref, () => ({ doShowModal }));
+  React.useImperativeHandle(ref, () => ({ doShowModal, doDismissModal }));
 
   return (
     <NativeModal
       useNativeDriver
       useNativeDriverForBackdrop
       isVisible={showModal}
-      onBackdropPress={() => setShowModal(false)}
+      onBackdropPress={doDismissModal}
       style={ModalBox.styles.nativeModal}>
       <View style={ModalBox.styles.outerView}>
         {content}
         <View style={ModalBox.styles.innerView}>
-          <TouchableOpacity onPress={() => setShowModal(false)}>
+          <TouchableOpacity onPress={doDismissModal}>
             <Picture
               type="NamedSvg"
               name={'pictos-close'}

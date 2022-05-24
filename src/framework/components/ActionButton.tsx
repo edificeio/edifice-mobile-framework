@@ -13,6 +13,7 @@ import { TextSemiBold, TextSizeStyle, rem, remlh } from './text';
 export interface ActionButtonProps {
   text: string;
   iconName?: string;
+  leftIcon?: boolean;
   url?: string;
   action?: () => void;
   disabled?: boolean;
@@ -20,8 +21,7 @@ export interface ActionButtonProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const ActionButton = ({ text, iconName, url, action, disabled, type, style }: ActionButtonProps) => {
-  const Component = disabled ? View : TouchableOpacity;
+export const ActionButton = ({ text, iconName, leftIcon, url, action, disabled, type, style }: ActionButtonProps) => {
   const viewStyle = {
     primary: {
       backgroundColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
@@ -45,6 +45,17 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
     primary: theme.ui.text.inverse,
     secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
+  const Component = disabled ? View : TouchableOpacity;
+  const PictureComponent = () => (
+    <Picture
+      type="NamedSvg"
+      name={iconName || 'pictos-external-link'}
+      width={UI_SIZES.dimensions.width.large}
+      height={UI_SIZES.dimensions.height.large}
+      fill={pictureFill[type ?? 'primary']}
+      style={leftIcon ? { marginRight: UI_SIZES.spacing.smallPlus } : { marginLeft: UI_SIZES.spacing.smallPlus }}
+    />
+  );
   return (
     <Component
       style={[ActionButton.Style.viewCommon, viewStyle[type ?? 'primary'], style]}
@@ -65,19 +76,11 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
             },
           }
         : {})}>
+      {leftIcon && (url || iconName) ? <PictureComponent /> : null}
       <TextSemiBold numberOfLines={1} style={[ActionButton.Style.textCommon, textStyle[type ?? 'primary']]}>
         {text}
       </TextSemiBold>
-      {url || iconName ? (
-        <Picture
-          type="NamedSvg"
-          name={iconName || 'pictos-external-link'}
-          width={UI_SIZES.dimensions.width.large}
-          height={UI_SIZES.dimensions.height.large}
-          fill={pictureFill[type ?? 'primary']}
-          style={ActionButton.Style.picture}
-        />
-      ) : null}
+      {!leftIcon && (url || iconName) ? <PictureComponent /> : null}
     </Component>
   );
 };
@@ -92,11 +95,7 @@ ActionButton.Style = StyleSheet.create({
     alignSelf: 'center',
   },
   textCommon: {
-    marginRight: UI_SIZES.spacing.smallPlus,
     lineHeight: remlh(1),
     height: remlh(1),
-  },
-  picture: {
-    marginLeft: UI_SIZES.spacing.smallPlus,
   },
 });
