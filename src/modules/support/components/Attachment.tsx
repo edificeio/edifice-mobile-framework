@@ -2,9 +2,9 @@ import * as React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { Icon } from '~/framework/components/picture/Icon';
 import { getFileIcon } from '~/modules/support/utils/fileIcon';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui/icons/Icon';
 
 const attachmentStyle = {
   flexDirection: 'row',

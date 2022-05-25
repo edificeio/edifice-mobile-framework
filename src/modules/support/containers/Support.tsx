@@ -1,14 +1,16 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
+import { LocalFile } from '~/framework/util/fileHandler';
 import { IUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import pickFile from '~/infra/actions/pickFile';
+import { DocumentPicked } from '~/infra/filePicker';
 import { addAttachmentAction, createTicketAction, deleteAttachmentAction } from '~/modules/support/actions/support';
 import Support from '~/modules/support/components/Support';
 
@@ -82,13 +84,9 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
     }
   };
 
-  uploadAttachment = async () => {
-    const file = await pickFile();
-    const fileState = {
-      contentType: file.filetype,
-      filename: file.filename,
-    };
-    this.setState({ tempAttachment: fileState });
+  uploadAttachment = async (att: Asset | DocumentPicked) => {
+    const file = new LocalFile(att, { _needIOSReleaseSecureAccess: false });
+    this.setState({ tempAttachment: file });
     try {
       const newAttachment: INewAttachment = await this.props.addAttachment(file, this.props.session);
       const joinedAttachments = this.state.ticket.attachments.concat(newAttachment);
@@ -98,7 +96,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
       }));
     } catch (e) {
       Toast.show(I18n.t('support-attachment-error'));
-      this.setState({ tempAttachment: fileState });
+      this.setState({ tempAttachment: file });
     }
   };
 

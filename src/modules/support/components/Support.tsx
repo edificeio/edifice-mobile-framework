@@ -5,6 +5,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacit
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/picture';
+import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -180,10 +181,10 @@ export default class Support extends React.PureComponent<SupportProps, any> {
             </View>
             {this.renderForm()}
             <View style={styles.lineSeparator}>
-              <TouchableOpacity onPress={this.props.uploadAttachment} style={styles.attachmentsContainer}>
+              <FilePicker multiple callback={this.props.uploadAttachment} style={styles.attachmentsContainer}>
                 <Icon name="attachment" size={16} style={styles.attachmentsIcon} />
                 <Text>{I18n.t('support-add-attachments')}</Text>
-              </TouchableOpacity>
+              </FilePicker>
               {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
             </View>
             <TouchableOpacity
