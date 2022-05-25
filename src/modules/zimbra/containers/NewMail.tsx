@@ -3,18 +3,20 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { Dispatch, bindActionCreators } from 'redux';
+import { bindActionCreators } from 'redux';
 
-import { HeaderAction } from '~/framework/components/header';
+import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import pickFile, { pickFileError } from '~/infra/actions/pickFile';
+import { pickFileError } from '~/infra/actions/pickFile';
+import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/zimbra/actions/mailContent';
 import {
@@ -28,6 +30,7 @@ import {
 import { getSignatureAction } from '~/modules/zimbra/actions/signature';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import NewMailComponent from '~/modules/zimbra/components/NewMail';
+import moduleConfig from '~/modules/zimbra/moduleConfig';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
@@ -166,16 +169,21 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   navigationHeaderFunction = {
-    getAskForAttachment: (dispatch: Dispatch) => {
-      pickFile()
-        .then(contentUri => {
-          this.getAttachmentData(contentUri);
-        })
-        .catch(err => {
-          if (err.message === 'Error picking image' || err.message === 'Error picking document') {
-            this.props.onPickFileError('zimbra');
-          }
-        });
+    addGivenAttachment: async (file: Asset | DocumentPicked, sourceType: string) => {
+      const actionName =
+        'Rédaction mail - Insérer - Pièce jointe - ' +
+        ({
+          camera: 'Caméra',
+          gallery: 'Galerie',
+          document: 'Document',
+        }[sourceType] ?? 'Source inconnue');
+      try {
+        await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
+        Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
+      } catch (err) {
+        this.props.onPickFileError('conversation');
+        Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
+      }
     },
     getSendDraft: async () => {
       if (this.state.mail.to.length === 0) {
@@ -490,13 +498,17 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   navBarInfo() {
     const { navigation } = this.props;
-    const askForAttachment = navigation.getParam('getAskForAttachment');
+    const addGivenAttachment = navigation.getParam('addGivenAttachment');
     const sendDraft = navigation.getParam('getSendDraft');
     const showMenu = navigation.getParam('showHeaderMenu');
     return {
       right: (
         <View style={styles.row}>
-          {askForAttachment && <HeaderAction style={styles.navBarHeaders} onPress={askForAttachment} iconName="attachment" />}
+          {addGivenAttachment && (
+            <FilePicker multiple callback={addGivenAttachment}>
+              <HeaderIcon name="attachment" />
+            </FilePicker>
+          )}
           {sendDraft && <HeaderAction style={styles.navBarHeaders} onPress={sendDraft} iconName="outbox" />}
           {showMenu && <HeaderAction style={styles.navBarHeaders} onPress={showMenu} iconName="more_vert" />}
         </View>
