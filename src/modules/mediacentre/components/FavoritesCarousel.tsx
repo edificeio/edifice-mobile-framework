@@ -1,19 +1,18 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Toast from 'react-native-tiny-toast';
 
-import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextBold } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
-import { getAuthHeader } from '~/infra/oauth';
 import { FavoriteIcon, IconButton } from '~/modules/mediacentre/components/SmallCard';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+
+import { ResourceImage } from './ResourceImage';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -21,10 +20,6 @@ const styles = StyleSheet.create({
   },
   titleText: {
     marginLeft: 10,
-  },
-  displayText: {
-    color: theme.color.secondary.regular,
-    textDecorationLine: 'underline',
   },
   cardListContainer: {
     flexDirection: 'row',
@@ -84,14 +79,6 @@ const getCardColors = (length: number): string[] => {
   return cardColors;
 };
 
-export const getImageUri = (value: string): string => {
-  if (value.startsWith('/')) {
-    const url = DEPRECATED_getCurrentPlatform()!.url;
-    return url + value;
-  }
-  return value;
-};
-
 const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
   const openURL = () => {
     openUrl(props.resource.link);
@@ -104,11 +91,7 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
     <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
       <View style={styles.contentContainer}>
         <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
-        <Image
-          source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
-          style={styles.imageContainer}
-          resizeMode="contain"
-        />
+        <ResourceImage image={props.resource.image} style={styles.imageContainer} resizeMode="contain" />
         <View style={styles.actionsContainer}>
           <FavoriteIcon {...props} />
           <IconButton icon="link" size={20} onPress={copyToClipboard} />

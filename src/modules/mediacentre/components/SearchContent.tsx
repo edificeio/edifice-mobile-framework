@@ -112,7 +112,7 @@ const getSources = (resources: Resource[]) => {
     GAR: resources.some(resource => resource.source === Source.GAR),
     Moodle: resources.some(resource => resource.source === Source.MOODLE),
     PMB: resources.some(resource => resource.source === Source.PMB),
-    Signets: resources.some(resource => resource.source === Source.SIGNET),
+    Signet: resources.some(resource => resource.source === Source.SIGNET),
   };
 };
 
