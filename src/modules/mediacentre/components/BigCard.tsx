@@ -6,11 +6,11 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { getAuthHeader } from '~/infra/oauth';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
 
 import { getImageUri } from './FavoritesCarousel';
 

@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Resource } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
 import { Text } from '~/ui/Typography';
 import { Checkbox } from '~/ui/forms/Checkbox';
 

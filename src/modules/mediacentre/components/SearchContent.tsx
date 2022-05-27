@@ -5,8 +5,8 @@ import { FlatList, Image, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import { Text, TextBold } from '~/ui/Typography';
 
@@ -185,7 +185,7 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
               <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
             ) : null
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
+          ListEmptyComponent={<EmptyScreen svgImage="empty-search" title={I18n.t('mediacentre.empty-search')} />}
         />
       )}
     </View>

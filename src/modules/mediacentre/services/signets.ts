@@ -1,4 +1,5 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { compareResources, resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
 export const signetsService = {
@@ -30,5 +31,22 @@ export const signetsService = {
       }
     }
     return resources.sort(compareResources);
+  },
+  searchSimple: async (query: string) => {
+    const response = await fetchJSONWithCache(`/mediacentre/signets/search?query=${query}`, {
+      method: 'get',
+    });
+    return resourcesAdapter(response);
+  },
+  searchAdvanced: async (fields: Field[]) => {
+    const body = {};
+    for (const field of fields) {
+      body[field.name] = { value: field.value, comparator: field.operand ? '$and' : '$or' };
+    }
+    const response = await fetchJSONWithCache(`/mediacentre/signets/advanced`, {
+      method: 'post',
+      body: JSON.stringify(body),
+    });
+    return resourcesAdapter(response);
   },
 };

@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   searchBarContainer: {

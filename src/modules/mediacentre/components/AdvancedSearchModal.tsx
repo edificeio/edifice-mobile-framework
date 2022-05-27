@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Source } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { Text, TextBold } from '~/ui/Typography';
