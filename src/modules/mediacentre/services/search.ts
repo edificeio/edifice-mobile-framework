@@ -48,7 +48,7 @@ export const searchService = {
     addSource(jsondata.sources, checkedSources.GAR, 'GAR');
     addSource(jsondata.sources, checkedSources.Moodle, 'Moodle');
     addSource(jsondata.sources, checkedSources.PMB, 'PMB');
-    addSource(jsondata.sources, checkedSources.Signets, 'Signet');
+    addSource(jsondata.sources, checkedSources.Signet, 'Signet');
     for (const field of fields) {
       if (field.value !== '') {
         jsondata.data[field.name] = addFieldWhenFilled(field);

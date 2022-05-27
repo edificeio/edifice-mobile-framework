@@ -15,10 +15,10 @@ import {
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/utils/Resource';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
-import { Text, TextBold } from '~/ui/Typography';
 import { Checkbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({
@@ -101,7 +101,7 @@ export interface Sources {
   GAR: boolean;
   Moodle: boolean;
   PMB: boolean;
-  Signets: boolean;
+  Signet: boolean;
 }
 
 const defaultFields: Field[] = [
@@ -206,9 +206,9 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
     const resetSources = () => {
       setSources({
         GAR: props.availableSources.includes(Source.GAR),
-        Moodle: props.availableSources.includes(Source.Moodle),
+        Moodle: props.availableSources.includes(Source.MOODLE),
         PMB: props.availableSources.includes(Source.PMB),
-        Signets: props.availableSources.includes(Source.Signet),
+        Signet: props.availableSources.includes(Source.SIGNET),
       });
     };
     const resetParams = () => {
@@ -252,7 +252,7 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
                     onChange={value => setSources({ ...sources, GAR: value })}
                   />
                 ) : null}
-                {props.availableSources.includes(Source.Moodle) ? (
+                {props.availableSources.includes(Source.MOODLE) ? (
                   <SourceCheckbox
                     source={require('ASSETS/images/logo-moodle.png')}
                     checked={sources.Moodle}
@@ -266,11 +266,11 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
                     onChange={value => setSources({ ...sources, PMB: value })}
                   />
                 ) : null}
-                {props.availableSources.includes(Source.Signet) ? (
+                {props.availableSources.includes(Source.SIGNET) ? (
                   <SourceCheckbox
                     iconName="bookmark_outline"
-                    checked={sources.Signets}
-                    onChange={value => setSources({ ...sources, Signets: value })}
+                    checked={sources.Signet}
+                    onChange={value => setSources({ ...sources, Signet: value })}
                   />
                 ) : null}
               </View>

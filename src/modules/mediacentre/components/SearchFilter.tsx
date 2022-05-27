@@ -4,8 +4,8 @@ import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import { Resource } from '~/modules/mediacentre/utils/Resource';
-import { Text } from '~/ui/Typography';
 import { Checkbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({

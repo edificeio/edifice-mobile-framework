@@ -47,7 +47,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
       plain_text: resource.plain_text,
       image: resource.image,
       types: resource.document_types || ['livre numérique'],
-      source: resource.source || Source.Signet,
+      source: resource.source || Source.SIGNET,
       link: resource.link || resource.url,
       authors: resource.owner_name || resource.authors,
       editors: resource.editors,

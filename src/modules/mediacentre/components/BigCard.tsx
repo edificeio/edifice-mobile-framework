@@ -103,7 +103,7 @@ export const SourceImage: React.FunctionComponent<SourceImageProps> = (props: So
     case Source.GAR:
       image = require('ASSETS/images/logo-gar.png');
       break;
-    case Source.Moodle:
+    case Source.MOODLE:
       image = require('ASSETS/images/logo-moodle.png');
       break;
     case Source.PMB:
@@ -138,7 +138,7 @@ export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardPro
           <FavoriteAction {...props} />
           <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
         </View>
-        {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={25} /> : null}
+        {props.resource.source !== Source.SIGNET ? <SourceImage source={props.resource.source} size={25} /> : null}
       </View>
     </TouchableResourceCard>
   );

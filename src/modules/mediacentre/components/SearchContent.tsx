@@ -6,9 +6,9 @@ import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
-import { Text, TextBold } from '~/ui/Typography';
 
 import { Field, Sources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
@@ -110,9 +110,9 @@ const resourceMatchesFilters = (resource: Resource, filters: SearchFilters) => {
 const getSources = (resources: Resource[]) => {
   return {
     GAR: resources.some(resource => resource.source === Source.GAR),
-    Moodle: resources.some(resource => resource.source === Source.Moodle),
+    Moodle: resources.some(resource => resource.source === Source.MOODLE),
     PMB: resources.some(resource => resource.source === Source.PMB),
-    Signets: resources.some(resource => resource.source === Source.Signet),
+    Signets: resources.some(resource => resource.source === Source.SIGNET),
   };
 };
 
@@ -131,7 +131,7 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
         {props.sources.GAR ? <Image source={require('ASSETS/images/logo-gar.png')} style={styles.sourceImage} /> : null}
         {props.sources.Moodle ? <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} /> : null}
         {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
-        {props.sources.Signets ? <Icon name="bookmark_outline" size={24} /> : null}
+        {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
       <DialogButtonOk style={styles.cancelButton} label={I18n.t('common.cancel')} onPress={props.onCancelSearch} />
     </View>

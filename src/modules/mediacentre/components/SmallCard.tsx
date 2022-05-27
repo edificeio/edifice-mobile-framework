@@ -104,13 +104,13 @@ export const SmallCard: React.FunctionComponent<SmallCardProps> = (props: SmallC
         <TextBold numberOfLines={1} style={styles.titleText}>
           {props.resource.title}
         </TextBold>
-        {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={18} /> : null}
+        {props.resource.source !== Source.SIGNET ? <SourceImage source={props.resource.source} size={18} /> : null}
       </View>
       <View style={styles.lowerContentContainer}>
         <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }} style={styles.imageContainer} />
         <View style={styles.secondaryContainer}>
           <Text numberOfLines={2} style={styles.descriptionText}>
-            {props.resource.source === Source.Signet ? props.resource.authors : props.resource.editors}
+            {props.resource.source === Source.SIGNET ? props.resource.authors : props.resource.editors}
           </Text>
           <View style={styles.actionsContainer}>
             <FavoriteIcon {...props} />

@@ -2,9 +2,9 @@ import { AsyncState } from '~/infra/redux/async2';
 
 export enum Source {
   GAR = 'fr.openent.mediacentre.source.GAR',
-  Moodle = 'fr.openent.mediacentre.source.Moodle',
+  MOODLE = 'fr.openent.mediacentre.source.Moodle',
   PMB = 'fr.openent.mediacentre.source.PMB',
-  Signet = 'fr.openent.mediacentre.source.Signet',
+  SIGNET = 'fr.openent.mediacentre.source.Signet',
 }
 
 export interface Resource {
