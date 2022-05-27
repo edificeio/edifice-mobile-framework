@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
@@ -29,9 +29,12 @@ const styles = StyleSheet.create({
   },
 });
 
-interface SearchBarProps {
-  inputRef: React.RefObject<TextInput>;
+export interface SearchBarHandle {
+  blur: () => void;
+  clear: () => void;
+}
 
+interface SearchBarProps {
   onSubmitEditing: (query: string) => void;
 }
 
@@ -43,26 +46,43 @@ interface IconButtonTextProps {
   onPress: () => void;
 }
 
-export const SearchBar: React.FunctionComponent<SearchBarProps> = (props: SearchBarProps) => {
-  const [value, setValue] = useState<string>('');
-  const onSearch = () => {
-    props.onSubmitEditing(value);
-  };
-  return (
-    <View style={styles.searchBarContainer}>
-      <TextInput
-        defaultValue={value}
-        placeholder={I18n.t('mediacentre.find-resources')}
-        returnKeyType="search"
-        clearButtonMode="while-editing"
-        onChangeText={text => setValue(text)}
-        onSubmitEditing={onSearch}
-        ref={props.inputRef}
-        style={styles.searchInput}
-      />
-    </View>
-  );
-};
+export const SearchBar: React.FunctionComponent<SearchBarProps> = forwardRef<SearchBarHandle, SearchBarProps>(
+  (props: SearchBarProps, ref) => {
+    const [value, setValue] = useState<string>('');
+    const inputRef = useRef<TextInput>(null);
+    const onSearch = () => {
+      if (value.length) {
+        props.onSubmitEditing(value);
+      }
+    };
+    const blur = () => {
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+    };
+    const clear = () => {
+      if (inputRef.current) {
+        inputRef.current.clear();
+        setValue('');
+      }
+    };
+    useImperativeHandle(ref, () => ({ blur, clear }));
+    return (
+      <View style={styles.searchBarContainer}>
+        <TextInput
+          defaultValue={value}
+          placeholder={I18n.t('mediacentre.find-resources')}
+          returnKeyType="search"
+          clearButtonMode="while-editing"
+          onChangeText={text => setValue(text)}
+          onSubmitEditing={onSearch}
+          style={styles.searchInput}
+          ref={inputRef}
+        />
+      </View>
+    );
+  },
+);
 
 export const IconButtonText: React.FunctionComponent<IconButtonTextProps> = (props: IconButtonTextProps) => (
   <TouchableOpacity style={styles.buttonContainer} onPress={props.onPress}>

@@ -116,7 +116,7 @@ const defaultSources = {
   GAR: false,
   Moodle: false,
   PMB: false,
-  Signets: false,
+  Signet: false,
 };
 
 type CriteriaInputProps = {
@@ -132,6 +132,10 @@ type SourceCheckboxProps = {
 
   onChange: (value: boolean) => void;
 };
+
+export interface SearchModalHandle {
+  resetParams: () => void;
+}
 
 type AdvancedSearchModalProps = {
   availableSources: string[];
@@ -190,103 +194,102 @@ const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: Sou
   );
 };
 
-export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = forwardRef(
-  (props: AdvancedSearchModalProps, ref) => {
-    const [fields, setFields] = useState<Field[]>(defaultFields);
-    const [sources, setSources] = useState<Sources>(defaultSources);
-    const areFieldsEmpty = !fields.some(field => field.value !== '');
-    const updateField = (index: number, field: Field) => {
-      const newFields = [...fields];
-      newFields[index] = field;
-      setFields(newFields);
-    };
-    const onSearch = () => {
-      props.onSearch(fields, sources);
-    };
-    const resetSources = () => {
-      setSources({
-        GAR: props.availableSources.includes(Source.GAR),
-        Moodle: props.availableSources.includes(Source.MOODLE),
-        PMB: props.availableSources.includes(Source.PMB),
-        Signet: props.availableSources.includes(Source.SIGNET),
-      });
-    };
-    const resetParams = () => {
-      for (const field of fields) {
-        field.value = '';
-        field.operand = Operand.OR;
-      }
-      setFields(fields);
-      resetSources();
-    };
-
-    useEffect(() => {
-      resetSources();
-    }, [props.availableSources]);
-    useImperativeHandle(ref, () => ({ resetParams }));
-
-    return (
-      <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
-        <KeyboardAvoidingView
-          enabled={Platform.OS === 'ios'}
-          behavior="padding"
-          keyboardVerticalOffset={60}
-          style={styles.safeAreaContainer}>
-          <View style={styles.headerContainer}>
-            <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
-            <TouchableOpacity onPress={props.closeModal}>
-              <Icon name="close" color="white" size={24} />
-            </TouchableOpacity>
+export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = forwardRef<
+  SearchModalHandle,
+  AdvancedSearchModalProps
+>((props: AdvancedSearchModalProps, ref) => {
+  const [fields, setFields] = useState<Field[]>(defaultFields);
+  const [sources, setSources] = useState<Sources>(defaultSources);
+  const areFieldsEmpty = !fields.some(field => field.value !== '');
+  const updateField = (index: number, field: Field) => {
+    const newFields = [...fields];
+    newFields[index] = field;
+    setFields(newFields);
+  };
+  const onSearch = () => {
+    props.onSearch(fields, sources);
+  };
+  const resetSources = () => {
+    setSources({
+      GAR: props.availableSources.includes(Source.GAR),
+      Moodle: props.availableSources.includes(Source.MOODLE),
+      PMB: props.availableSources.includes(Source.PMB),
+      Signet: props.availableSources.includes(Source.SIGNET),
+    });
+  };
+  const resetParams = () => {
+    for (const field of fields) {
+      field.value = '';
+      field.operand = Operand.OR;
+    }
+    setFields(fields);
+    resetSources();
+  };
+  useEffect(() => {
+    resetSources();
+  }, [props.availableSources]);
+  useImperativeHandle(ref, () => ({ resetParams }));
+  return (
+    <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
+      <KeyboardAvoidingView
+        enabled={Platform.OS === 'ios'}
+        behavior="padding"
+        keyboardVerticalOffset={60}
+        style={styles.safeAreaContainer}>
+        <View style={styles.headerContainer}>
+          <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
+          <TouchableOpacity onPress={props.closeModal}>
+            <Icon name="close" color="white" size={24} />
+          </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
+          {fields.map((field, index) => (
+            <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
+          ))}
+          <View style={styles.sourcesContainer}>
+            <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
+            <View style={styles.sourcesContentContainer}>
+              {props.availableSources.includes(Source.GAR) ? (
+                <SourceCheckbox
+                  source={require('ASSETS/images/logo-gar.png')}
+                  checked={sources.GAR}
+                  onChange={value => setSources({ ...sources, GAR: value })}
+                />
+              ) : null}
+              {props.availableSources.includes(Source.MOODLE) ? (
+                <SourceCheckbox
+                  source={require('ASSETS/images/logo-moodle.png')}
+                  checked={sources.Moodle}
+                  onChange={value => setSources({ ...sources, Moodle: value })}
+                />
+              ) : null}
+              {props.availableSources.includes(Source.PMB) ? (
+                <SourceCheckbox
+                  source={require('ASSETS/images/logo-pmb.png')}
+                  checked={sources.PMB}
+                  onChange={value => setSources({ ...sources, PMB: value })}
+                />
+              ) : null}
+              {props.availableSources.includes(Source.SIGNET) ? (
+                <SourceCheckbox
+                  iconName="bookmark_outline"
+                  checked={sources.Signet}
+                  onChange={value => setSources({ ...sources, Signet: value })}
+                />
+              ) : null}
+            </View>
           </View>
-          <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
-            {fields.map((field, index) => (
-              <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
-            ))}
-            <View style={styles.sourcesContainer}>
-              <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
-              <View style={styles.sourcesContentContainer}>
-                {props.availableSources.includes(Source.GAR) ? (
-                  <SourceCheckbox
-                    source={require('ASSETS/images/logo-gar.png')}
-                    checked={sources.GAR}
-                    onChange={value => setSources({ ...sources, GAR: value })}
-                  />
-                ) : null}
-                {props.availableSources.includes(Source.MOODLE) ? (
-                  <SourceCheckbox
-                    source={require('ASSETS/images/logo-moodle.png')}
-                    checked={sources.Moodle}
-                    onChange={value => setSources({ ...sources, Moodle: value })}
-                  />
-                ) : null}
-                {props.availableSources.includes(Source.PMB) ? (
-                  <SourceCheckbox
-                    source={require('ASSETS/images/logo-pmb.png')}
-                    checked={sources.PMB}
-                    onChange={value => setSources({ ...sources, PMB: value })}
-                  />
-                ) : null}
-                {props.availableSources.includes(Source.SIGNET) ? (
-                  <SourceCheckbox
-                    iconName="bookmark_outline"
-                    checked={sources.Signet}
-                    onChange={value => setSources({ ...sources, Signet: value })}
-                  />
-                ) : null}
-              </View>
-            </View>
-            <View style={styles.dialogButtonsContainer}>
-              <DialogButtonCancel onPress={props.closeModal} />
-              <DialogButtonOk
-                onPress={onSearch}
-                disabled={areFieldsEmpty}
-                label={I18n.t('common.search')}
-                style={styles.searchButton}
-              />
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </Modal>
-    );
-  },
-);
+          <View style={styles.dialogButtonsContainer}>
+            <DialogButtonCancel onPress={props.closeModal} />
+            <DialogButtonOk
+              onPress={onSearch}
+              disabled={areFieldsEmpty}
+              label={I18n.t('common.search')}
+              style={styles.searchButton}
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+});
