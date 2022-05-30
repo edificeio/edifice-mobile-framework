@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { FontStyle } from '~/framework/components/text';
 import { APPBADGES } from '~/framework/modules/timelinev2/appBadges';
 import { ITimelineNotification } from '~/framework/util/notifications';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: IUserSession }) => {
   const message = notification && notification.message;
@@ -62,7 +62,8 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
             },
           }}
         />
-      }></ContentCardHeader>
+      }
+    />
   );
 };
 

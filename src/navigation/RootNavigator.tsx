@@ -5,8 +5,6 @@ import { NavigationRouteConfigMap, createAppContainer, createSwitchNavigator } f
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 
-
-
 import { setUpModulesAccess } from '~/app/modules';
 import AllModules from '~/app/modules';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
@@ -16,13 +14,10 @@ import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
 import Carousel from '~/ui/Carousel';
 import { IFrame } from '~/ui/IFrame';
 
-
-
 import LoginNavigator from './LoginNavigator';
 import NavigationService from './NavigationService';
 import { createMainTabNavigator } from './helpers/mainTabNavigator';
 import { getModules, getRoutes } from './helpers/navBuilder';
-
 
 /**
  * MAIN NAVIGATOR
@@ -50,6 +45,7 @@ function getMainRoutes(appsInfo: any[]) {
 
 /** Returns every route that are to be displayed in tab navigation.*/
 function getTabRoutes(appsInfo: IEntcoreApp[], widgetsInfo: IEntcoreWidget[]): NavigationRouteConfigMap<any, any> {
+  console.log('tabModules', tabModules.get());
   return new NavigableModuleArray(...tabModules.get().filterAvailables(appsInfo, widgetsInfo)).getRoutes();
 }
 
@@ -136,7 +132,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 const mapStateToProps = ({ user }) => ({
   apps: ['user', 'myapps', ...user.auth.apps],
   appsInfo: [{ name: 'user' }, { name: 'myapps' }, ...user.auth.appsInfo],
-  widgetsInfo: user.auth.widgets
+  widgetsInfo: user.auth.widgets,
 });
 
 export const MainNavigator = connect(mapStateToProps, null)(withLinkingAppWrapper(MainNavigatorHOC));

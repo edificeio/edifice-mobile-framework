@@ -161,7 +161,7 @@ export interface IContentCardHeaderProps {
 export interface IContentCardIconProps {
   userIds?: string | ImageSourcePropType | (string | ImageSourcePropType)[];
   source?: ImageSourcePropType;
-  badge?: { icon: string; color: ColorValue; style?: ViewStyle };
+  badge?: { icon: string | PictureProps; color: ColorValue; style?: ViewStyle };
 }
 /** A Header layout for ContentCard */
 export const ContentCardHeader = (props: IContentCardHeaderProps) => {

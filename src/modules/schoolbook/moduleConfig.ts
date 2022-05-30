@@ -10,5 +10,5 @@ export default new NavigableModuleConfig<'schoolbook', ISchoolbook_State>({
 
   displayI18n: 'schoolbook.tabName',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'Icon', name: 'chat3', color: theme.themeOpenEnt.green },
+  displayPicture: { type: 'NamedSvg', name: 'homeLiaisonDiary', fill: theme.themeOpenEnt.green },
 });
