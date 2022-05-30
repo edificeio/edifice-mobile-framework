@@ -6,8 +6,8 @@ import { bindActionCreators } from 'redux';
 
 import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Input } from '~/modules/zimbra/components/SearchFunction';
-import { Icon } from '~/ui/icons/Icon';
 
 import MailListContainer from './MailList';
 

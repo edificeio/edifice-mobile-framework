@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -17,8 +19,7 @@ import {
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
-import { Label, Text, TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
+import { Label } from '~/ui/Typography';
 
 const style = StyleSheet.create({
   safeAreaContainer: {

@@ -9,6 +9,8 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
@@ -29,8 +31,6 @@ import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { PageContainer } from '~/ui/ContainerContent';
 import { DropdownMenu } from '~/ui/DropdownMenu';
-import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 import { IInit } from './DrawerMenu';
 

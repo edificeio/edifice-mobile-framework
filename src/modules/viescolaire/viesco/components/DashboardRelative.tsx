@@ -5,6 +5,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { Icon } from '~/framework/components/picture/Icon';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { Text, TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomework, IHomeworkList, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
@@ -16,8 +18,6 @@ import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/Dashboard';
 import { INavigationProps } from '~/types';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Loading } from '~/ui/Loading';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -276,7 +276,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
           {this.renderNavigationGrid()}
           {authorizedViescoApps.diary && this.renderHomework(homeworks)}
           {authorizedViescoApps.competences &&
-            (evaluations && evaluations.isFetching ? <Loading /> : this.renderLastEval(evaluations, levels))}
+            (evaluations && evaluations.isFetching ? <LoadingIndicator /> : this.renderLastEval(evaluations, levels))}
         </ScrollView>
       </View>
     );

@@ -1,16 +1,16 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
-import { Loading } from '~/ui/Loading';
-import { TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
   refreshContainer: {
@@ -227,7 +227,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
         </View>
         {courses !== undefined &&
           (courses.isFetching || courses.isPristine ? (
-            <Loading />
+            <LoadingIndicator />
           ) : (
             <View style={style.calendarContainer}>
               <Calendar

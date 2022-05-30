@@ -5,6 +5,7 @@ import * as React from 'react';
 import { StyleSheet, Switch, View } from 'react-native';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { Text, TextBold } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
@@ -13,7 +14,6 @@ import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
 import { PageContainer } from '~/ui/ContainerContent';
 import Dropdown from '~/ui/Dropdown';
-import { Loading } from '~/ui/Loading';
 
 import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from './Item';
 
@@ -216,7 +216,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           <Text> - {I18n.t('viesco-average').toUpperCase()}</Text>
         </View>
         {devoirsMoyennesList.isFetching ? (
-          <Loading />
+          <LoadingIndicator />
         ) : devoirs !== undefined && devoirs.length > 0 ? (
           <GradesDevoirsMoyennes devoirs={devoirs} />
         ) : (
@@ -279,7 +279,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       <View style={styles.mainView}>
         {this.renderHeaderDevoirsList()}
         {devoirsList && devoirsList.isFetching ? (
-          <Loading />
+          <LoadingIndicator />
         ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data.devoirs ? (
           <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} levels={levels} />
         ) : (

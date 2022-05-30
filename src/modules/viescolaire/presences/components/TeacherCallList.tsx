@@ -4,9 +4,9 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
+import { LoadingIndicator } from '~/framework/components/loading';
+import { TextBold } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
-import { Loading } from '~/ui/Loading';
-import { TextBold } from '~/ui/Typography';
 
 import CourseComponent from './CourseComponent';
 
@@ -163,7 +163,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
         </TextBold>
         <View style={styles.renderContainer}>
           {isFetching ? (
-            <Loading />
+            <LoadingIndicator />
           ) : courseList.length === 0 ? (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />

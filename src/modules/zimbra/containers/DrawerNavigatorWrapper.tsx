@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 
 import { DEPRECATED_HeaderPrimaryAction, HeaderAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
 
 import DrawerMenuContainer from './DrawerMenu';
 import MailList from './MailList';

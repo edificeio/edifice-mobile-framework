@@ -4,10 +4,10 @@ import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 import { UI_SIZES } from '~/framework/components/constants';
+import { Text } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
-import { Text } from '~/ui/Typography';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({

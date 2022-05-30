@@ -6,6 +6,8 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { IInit } from '~/modules/zimbra/containers/DrawerMenu';
 import { DraftType } from '~/modules/zimbra/containers/NewMail';
@@ -13,9 +15,7 @@ import { IMail } from '~/modules/zimbra/state/mailContent';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, Header, LeftPanel, PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Loading } from '~/ui/Loading';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   fullView: {
@@ -259,7 +259,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           }}
           ListEmptyComponent={
             isFetching && firstFetch ? (
-              <Loading />
+              <LoadingIndicator />
             ) : (
               <View style={styles.fullView}>
                 <EmptyScreen

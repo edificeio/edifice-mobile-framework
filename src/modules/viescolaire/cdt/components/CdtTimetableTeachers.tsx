@@ -1,9 +1,12 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
@@ -12,9 +15,6 @@ import { ICourse } from '~/modules/viescolaire/viesco/state/courses';
 import Calendar from '~/ui/Calendar';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
-import { Loading } from '~/ui/Loading';
-import { TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
   refreshContainer: {
@@ -213,7 +213,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
             </View>
           </View>
           {courses.isFetching || courses.isPristine ? (
-            <Loading />
+            <LoadingIndicator />
           ) : (
             <View style={style.calendarContainer}>
               <Calendar

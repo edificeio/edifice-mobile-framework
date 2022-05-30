@@ -2,11 +2,11 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swipeable from 'react-native-swipeable';
 
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { INavigationProps } from '~/types';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   studentsList: {

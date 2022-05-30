@@ -3,12 +3,12 @@ import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { getUserSession } from '~/framework/util/session';
 import { DraftType } from '~/modules/zimbra/containers/NewMail';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { Loading } from '~/ui/Loading';
 
 import { FooterButton, HeaderMail, HeaderMailDetails, RenderPJs } from './MailContentItems';
 
@@ -186,7 +186,7 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
       <PageContainer>
         <SafeAreaView style={styles.fullContainer}>
           {this.props.isFetching ? (
-            <Loading />
+            <LoadingIndicator />
           ) : error || htmlError ? (
             this.renderError()
           ) : (

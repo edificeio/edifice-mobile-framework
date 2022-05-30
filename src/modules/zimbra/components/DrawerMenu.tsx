@@ -4,12 +4,12 @@ import { StyleSheet, View } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import CreateFolderModal from '~/modules/zimbra/containers/CreateFolderModal';
 import { IFolder, IQuota } from '~/modules/zimbra/state/initMails';
 import { IRootFolderList } from '~/modules/zimbra/state/rootFolders';
 import { PageContainer } from '~/ui/ContainerContent';
-import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 import DrawerOption from './DrawerOption';
 
