@@ -72,7 +72,7 @@ UserList.renderItem = <ItemType extends IUserListItem>({
       <TextAvatar
         text={info.item.name}
         textStyle={[
-          !selectedId || info.item.id === selectedId ? undefined : { color: theme.greyPalette.graphite },
+          !selectedId || info.item.id === selectedId ? undefined : { color: theme.palette.grey.graphite },
           horizontal ? { ...TextSizeStyle.Small } : undefined,
         ]}
         userId={info.item.avatarId ?? info.item.id}

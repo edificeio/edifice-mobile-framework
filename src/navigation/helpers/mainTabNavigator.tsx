@@ -4,14 +4,11 @@ import { View } from 'react-native';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { CommonStyles } from '~/styles/common/styles';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
-
 
 export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
   createBottomTabNavigator(routeConfigs, {
@@ -20,8 +17,8 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
     swipeEnabled: false,
     tabBarOptions: {
       // Colors
-      activeTintColor: CommonStyles.mainColorTheme,
-      inactiveTintColor: CommonStyles.mainColorTheme,
+      activeTintColor: theme.palette.primary.regular,
+      inactiveTintColor: theme.palette.primary.regular,
       // Label and icon
       showIcon: true,
       showLabel: true,
@@ -50,9 +47,9 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
     } else if (icon.type === 'Icon') {
       icon.size = 24;
       icon.style = { marginTop: -6 };
-    };
+    }
     return icon;
-  }
+  };
   if (!icon) {
     return {
       tabBarIcon: ({ focused }) => <View />,
@@ -68,25 +65,31 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
     iconFocus = computePicture(iconFocus ?? icon);
     if (icon.type === 'NamedSvg') {
       return {
-        tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} /> : <Picture {...icon} />),
+        tabBarIcon: ({ focused }) => (focused ? <Picture {...iconFocus} /> : <Picture {...icon} />),
         tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
       };
     } else if (icon.type === 'Image') {
       icon.style = { width: 24, height: 24, marginTop: -6 };
       return {
-        tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} /> : <Picture {...icon} />),
+        tabBarIcon: ({ focused }) => (focused ? <Picture {...iconFocus} /> : <Picture {...icon} />),
         tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
       };
     } else if (icon.type === 'Icon') {
       return {
-        // focused ? theme.color.secondary.regular : CommonStyles.iconColorOff
-        tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} color={theme.color.secondary.regular}/> : <Picture {...icon} color={theme.color.text.light}/>),
+        // focused ? theme.palette.primary.regular : CommonStyles.iconColorOff
+        tabBarIcon: ({ focused }) =>
+          focused ? (
+            <Picture {...iconFocus} color={theme.palette.primary.regular} />
+          ) : (
+            <Picture {...icon} color={theme.ui.text.light} />
+          ),
         tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
       };
-    } else return {
-      tabBarIcon: ({ focused }) => (focused ? <Picture {...(iconFocus)} /> : <Picture {...icon} />),
-      tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
-    };
+    } else
+      return {
+        tabBarIcon: ({ focused }) => (focused ? <Picture {...iconFocus} /> : <Picture {...icon} />),
+        tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
+      };
   }
 };
 
@@ -99,7 +102,7 @@ const MainTabNavigationLabel = styled.Text(
     marginTop: -12,
   },
   ({ focused }) => ({
-    color: focused ? theme.color.secondary.regular : CommonStyles.textTabBottomColor,
+    color: focused ? theme.palette.primary.regular : CommonStyles.textTabBottomColor,
   }),
 );
 

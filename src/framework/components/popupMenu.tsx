@@ -29,7 +29,7 @@ interface IPopupMenuState {
 
 export const getMenuShadow = () => ({
   elevation: 5,
-  shadowColor: theme.color.shadowColor,
+  shadowColor: theme.ui.shadowColor,
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.25,
   shadowRadius: 3.8,
@@ -99,7 +99,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
         contentContainerStyle={
           {
             borderRadius: 4,
-            backgroundColor: theme.color.background.card,
+            backgroundColor: theme.ui.background.card,
             width: 200,
             overflow: 'visible',
             ...getMenuShadow(),
@@ -127,14 +127,14 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
           mainNavNavigate(item.goTo.routeName, item.goTo);
         }}>
         <Icon
-          color={theme.color.text.heavy}
+          color={theme.ui.text.heavy}
           size={26}
           name={item.icon}
           style={{
             paddingHorizontal: 12,
           }}
         />
-        <Text numberOfLines={1} style={{ color: theme.color.text.heavy }}>
+        <Text numberOfLines={1} style={{ color: theme.ui.text.heavy }}>
           {I18n.t(item.i18n)}
         </Text>
       </Action>

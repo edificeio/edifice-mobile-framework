@@ -5,7 +5,7 @@ export default new FunctionalModuleConfig({
   name: 'workspace',
   apiName: 'Espace documentaire',
   displayName: 'workspace',
-  picture: { type: 'NamedSvg', name: 'files', fill: theme.themeOpenEnt.red },
+  picture: { type: 'NamedSvg', name: 'files', fill: theme.palette.complementary.red.regular },
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors

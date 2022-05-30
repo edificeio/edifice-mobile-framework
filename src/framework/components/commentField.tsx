@@ -115,12 +115,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
   return (
     <View
       style={{
-        backgroundColor: theme.color.background.card,
+        backgroundColor: theme.ui.background.card,
         padding: props.commentId ? UI_SIZES.spacing.large : undefined,
         borderTopWidth: props.commentId && isFirstComment ? 1 : 0,
         borderBottomWidth: props.commentId ? 1 : 0,
-        borderTopColor: theme.greyPalette.pearl,
-        borderBottomColor: theme.greyPalette.pearl,
+        borderTopColor: theme.palette.grey.pearl,
+        borderBottomColor: theme.palette.grey.pearl,
         alignItems: isIdleExistingComment ? undefined : 'flex-end',
         flexDirection: isIdleExistingComment ? 'column' : 'row',
       }}>
@@ -131,7 +131,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
             <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.medium, flexShrink: 1 }}>
               {props.commentAuthor}
             </TextSemiBold>
-            <TextItalic style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, color: theme.greyPalette.graphite }}>
+            <TextItalic style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, color: theme.palette.grey.graphite }}>
               {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
             </TextItalic>
           </>
@@ -140,9 +140,9 @@ const CommentField = (props: CommentFieldProps, ref) => {
       <View
         style={{
           flex: 1,
-          backgroundColor: theme.greyPalette.fog,
+          backgroundColor: theme.palette.grey.fog,
           borderWidth: isIdleExistingComment ? 0 : 1,
-          borderColor: theme.greyPalette.cloudy,
+          borderColor: theme.palette.grey.cloudy,
           borderRadius: UI_SIZES.radius.mediumPlus,
           marginLeft: UI_SIZES.spacing[isIdleExistingComment ? 'extraLargePlus' : 'smallPlus'],
           paddingHorizontal: UI_SIZES.spacing.medium,
@@ -153,7 +153,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <TextInput
           ref={inputRef}
           placeholder={I18n.t(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
-          placeholderTextColor={theme.greyPalette.graphite}
+          placeholderTextColor={theme.palette.grey.graphite}
           multiline
           scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
           editable={!(props.isPublishingComment || isIdleExistingComment)}
@@ -176,12 +176,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <TextSemiBold style={{ color: theme.color.secondary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
+              <TextSemiBold style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <TextSemiBold style={{ color: theme.color.secondary.regular, marginLeft: UI_SIZES.spacing.large }}>
+              <TextSemiBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.large }}>
                 {I18n.t('common.delete')}
               </TextSemiBold>
             </TouchableOpacity>

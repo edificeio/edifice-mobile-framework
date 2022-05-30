@@ -10,5 +10,5 @@ export default new NavigableModuleConfig<'blog', IBlog_State>({
 
   displayI18n: 'blog.tabName',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'blog', fill: theme.themeOpenEnt.indigo },
+  displayPicture: { type: 'NamedSvg', name: 'blog', fill: theme.palette.complementary.indigo.regular },
 });

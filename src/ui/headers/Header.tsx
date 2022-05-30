@@ -4,14 +4,11 @@ import { Platform, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { connect } from 'react-redux';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Icon } from '~/ui/icons/Icon';
-
 
 /**
  * DEPRECATED
@@ -25,7 +22,7 @@ const HeaderStyle = styled(SafeAreaView)({
   flexDirection: 'row',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  backgroundColor: CommonStyles.mainColorTheme,
+  backgroundColor: theme.palette.primary.regular,
   paddingTop: Platform.OS === 'ios' ? iosStatusBarHeight : 0,
   height: Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.elements.navbarHeight }),
 });
@@ -48,7 +45,7 @@ export const HeaderComponent = ({
     style={[
       {
         elevation: connectionTracker.visible ? 0 : 5,
-        backgroundColor: color ? color : theme.color.secondary.regular,
+        backgroundColor: color ? color : theme.palette.primary.regular,
       },
       customStyle,
     ]}>
@@ -128,7 +125,7 @@ export const HeaderAction = styled.Text(
   }),
 );
 
-export const Title = styled.Text<{smallSize?: boolean}>(
+export const Title = styled.Text<{ smallSize?: boolean }>(
   {
     color: 'white',
     fontFamily: CommonStyles.primaryFontFamily,

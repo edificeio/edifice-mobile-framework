@@ -54,14 +54,14 @@ export const FontStyle = Platform.select({
 
 type TextColorStyleKey = 'Action' | 'Important' | 'Error' | 'Warning' | 'Inverse' | 'Light' | 'Heavy' | 'Normal';
 export const TextColorStyle = {
-  Action: { color: theme.color.secondary.regular },
-  Important: { color: theme.color.primary.regular },
-  Error: { color: theme.color.failure },
-  Warning: { color: theme.color.warning },
-  Inverse: { color: theme.color.text.inverse },
-  Light: { color: theme.color.text.light },
-  Heavy: { color: theme.color.text.heavy },
-  Normal: { color: theme.color.text.regular },
+  Action: { color: theme.palette.primary.regular },
+  Important: { color: theme.palette.secondary.regular },
+  Error: { color: theme.palette.status.failure },
+  Warning: { color: theme.palette.status.warning },
+  Inverse: { color: theme.ui.text.inverse },
+  Light: { color: theme.ui.text.light },
+  Heavy: { color: theme.ui.text.heavy },
+  Normal: { color: theme.ui.text.regular },
 } as { [key in TextColorStyleKey]: TextStyle };
 
 export const rem = (value: number) => baseFontSize * value;

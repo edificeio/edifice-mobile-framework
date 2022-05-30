@@ -189,7 +189,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
           const { thumbnail, ...b } = bb;
           return {
             ...b,
-            color: (moduleConfig.displayPicture as NamedSVGProps).fill ?? theme.themeOpenEnt.indigo,
+            color: (moduleConfig.displayPicture as NamedSVGProps).fill ?? theme.palette.complementary.indigo.regular,
             date: moment.max(
               b.fetchPosts?.[0]?.firstPublishDate ??
                 b.fetchPosts?.[0]?.modified ??
@@ -205,7 +205,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
       const displayedFolders = finalFolders.map(f => ({
         ...f,
-        color: (moduleConfig.displayPicture as NamedSVGProps).fill ?? theme.themeOpenEnt.indigo,
+        color: (moduleConfig.displayPicture as NamedSVGProps).fill ?? theme.palette.complementary.indigo.regular,
       }));
       return { displayedblogs, displayedFolders };
     })();

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   titleText: {
-    color: theme.color.secondary.regular,
+    color: theme.palette.primary.regular,
     flexShrink: 1,
     marginRight: 5,
   },
@@ -69,7 +69,7 @@ interface SmallCardProps {
 
 export const IconButton: React.FunctionComponent<IconButtonProps> = (props: IconButtonProps) => (
   <TouchableOpacity onPress={props.onPress}>
-    <Icon size={props.size} color={props.color || theme.color.secondary.regular} name={props.icon} />
+    <Icon size={props.size} color={props.color || theme.palette.primary.regular} name={props.icon} />
   </TouchableOpacity>
 );
 

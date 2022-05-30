@@ -52,11 +52,11 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
           }}
           headerIndicator={
             <TouchableOpacity onPress={this.props.flashMessageAction}>
-              <Icon name="close" color={theme.color.text.inverse} style={{ paddingVertical: 5, paddingLeft: 8, marginRight: -3 }} />
+              <Icon name="close" color={theme.ui.text.inverse} style={{ paddingVertical: 5, paddingLeft: 8, marginRight: -3 }} />
             </TouchableOpacity>
           }
           style={{
-            backgroundColor: color ? theme.flashMessages[color] : customColor || theme.color.primary.regular,
+            backgroundColor: color ? theme.palette.flashMessages[color] : customColor || theme.palette.secondary.regular,
           }}
           header={
             <View
@@ -74,10 +74,10 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 html={flashMessageHtml}
                 opts={{
                   globalTextStyle: {
-                    color: theme.color.text.inverse,
+                    color: theme.ui.text.inverse,
                   },
                   boldTextStyle: {
-                    color: theme.color.text.inverse
+                    color: theme.ui.text.inverse,
                   },
                   textColor: false,
                   images: false,
@@ -102,11 +102,11 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
               <Text
                 style={{
                   fontWeight: 'bold',
-                  color: theme.color.text.inverse,
+                  color: theme.ui.text.inverse,
                 }}>
                 {I18n.t('seeMore')}
               </Text>
-              <Icon name="arrow_down" color={theme.color.text.inverse} style={{ marginLeft: 10, marginRight: -3, paddingTop: 2 }} />
+              <Icon name="arrow_down" color={theme.ui.text.inverse} style={{ marginLeft: 10, marginRight: -3, paddingTop: 2 }} />
             </View>
           ) : null}
         </TouchableContentCard>

@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
-
-
 import theme from '~/app/theme';
 import { Icon } from '~/ui/icons/Icon';
-
 
 export const IconButton = (props: {
   iconName: string;
@@ -19,7 +16,7 @@ export const IconButton = (props: {
     <View
       style={[
         {
-          backgroundColor: theme.color.secondary.regular,
+          backgroundColor: theme.palette.primary.regular,
           borderRadius: 15,
           height: 30,
           width: 30,
@@ -29,7 +26,12 @@ export const IconButton = (props: {
         },
         props.buttonStyle,
       ]}>
-      <Icon name={props.iconName} color={props.iconColor || '#FFFFFF'} size={props.iconSize || 13} style={props.iconStyle} />
+      <Icon
+        name={props.iconName}
+        color={props.iconColor || theme.ui.text.inverse}
+        size={props.iconSize || 13}
+        style={props.iconStyle}
+      />
     </View>
   );
 };

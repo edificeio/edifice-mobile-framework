@@ -58,12 +58,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     return StyleSheet.create({
       container: { alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 },
       help: { marginTop: 32, textAlign: 'center' },
-      safeView: { flex: 1, backgroundColor: theme.color.background.card },
-      select: { borderColor: theme.color.secondary.regular, borderWidth: 1 },
+      safeView: { flex: 1, backgroundColor: theme.ui.background.card },
+      select: { borderColor: theme.palette.primary.regular, borderWidth: 1 },
       selectBackDrop: { flex: 1 },
-      selectContainer: { borderColor: theme.color.secondary.regular, borderWidth: 1, maxHeight: 120 },
-      selectPlaceholder: { color: theme.color.neutral.regular },
-      selectText: { color: theme.color.neutral.regular },
+      selectContainer: { borderColor: theme.palette.primary.regular, borderWidth: 1, maxHeight: 120 },
+      selectPlaceholder: { color: theme.ui.text.light },
+      selectText: { color: theme.ui.text.light },
       text: { textAlign: 'center' },
       webview: { flex: 1 },
     });
@@ -156,7 +156,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         <View style={WAYFPage.STYLES.container}>
           <PFLogo />
           <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</Text>
-          <ActivityIndicator size="large" color={theme.color.secondary.regular} />
+          <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
     },

@@ -220,10 +220,10 @@ CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   },
   sectionWithBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: theme.greyPalette.cloudy,
+    borderBottomColor: theme.palette.grey.cloudy,
   },
   textDate: {
-    color: theme.greyPalette.graphite,
+    color: theme.palette.grey.graphite,
     ...TextSizeStyle.Small,
   },
   textDateMargin: {

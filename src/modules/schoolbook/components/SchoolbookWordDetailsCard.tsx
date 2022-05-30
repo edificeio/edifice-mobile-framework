@@ -106,9 +106,9 @@ const SchoolbookWordDetailsCard = (
       <ScrollView keyboardShouldPersistTaps="handled" ref={scrollViewRef} bottomInset={!isBottomSheetVisible}>
         <ResourceView
           style={{
-            backgroundColor: theme.color.background.card,
+            backgroundColor: theme.ui.background.card,
             borderBottomWidth: UI_SIZES.dimensions.width.tiny,
-            borderBottomColor: theme.greyPalette.pearl,
+            borderBottomColor: theme.palette.grey.pearl,
             paddingBottom: UI_SIZES.spacing.extraSmall,
           }}
           emphasizedHeader
@@ -117,7 +117,7 @@ const SchoolbookWordDetailsCard = (
           headerIndicator={
             isTeacher ? (
               <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
-                <TextSemiBold style={{ color: theme.color.secondary.regular }}>
+                <TextSemiBold style={{ color: theme.palette.primary.regular }}>
                   {acknowledgementsString(word.ackNumber, word.total)}
                 </TextSemiBold>
                 <Picture
@@ -125,7 +125,7 @@ const SchoolbookWordDetailsCard = (
                   name="pictos-arrow-right"
                   width={UI_SIZES.dimensions.width.large}
                   height={UI_SIZES.dimensions.height.large}
-                  fill={theme.color.secondary.regular}
+                  fill={theme.palette.primary.regular}
                   style={{ marginLeft: UI_SIZES.spacing.smallPlus }}
                 />
               </TouchableOpacity>
@@ -154,8 +154,7 @@ const SchoolbookWordDetailsCard = (
                     <TextSemiBold
                       style={{
                         ...TextSizeStyle.Small,
-                        color:
-                          !isTeacher || hasSingleRecipientForTeacher ? theme.color.text.regular : theme.color.secondary.regular,
+                        color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.primary.regular,
                       }}>
                       {isTeacher ? recipientsString(report) : word.ownerName}
                     </TextSemiBold>
@@ -173,10 +172,10 @@ const SchoolbookWordDetailsCard = (
                   name="pictos-answer"
                   width={UI_SIZES.dimensions.width.large}
                   height={UI_SIZES.dimensions.height.large}
-                  fill={theme.color.secondary.regular}
+                  fill={theme.palette.primary.regular}
                   style={{ marginRight: UI_SIZES.spacing.smallPlus }}
                 />
-                <TextSemiBold style={{ color: theme.color.secondary.regular }}>
+                <TextSemiBold style={{ color: theme.palette.primary.regular }}>
                   {responsesString(schoolbookWordResponsesNumber)}
                 </TextSemiBold>
               </TouchableOpacity>
@@ -191,7 +190,7 @@ const SchoolbookWordDetailsCard = (
               </Text>
             </View>
           ) : !isTeacher && !isWordAcknowledged ? (
-            <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.color.warning }}>
+            <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.palette.status.warning }}>
               {unacknowledgedString(userType)}
             </TextSemiBold>
           ) : null}
@@ -201,7 +200,7 @@ const SchoolbookWordDetailsCard = (
                 text={I18n.t(`schoolbook.categories.${word.category}`)}
                 imageName={`schoolbook-${word.category}`}
                 imageType={ImageType.svg}
-                color={theme.schoolbook.categories[word.category]}
+                color={theme.color.schoolbook.categories[word.category]}
               />
             </View>
           ) : null}
@@ -268,7 +267,7 @@ const SchoolbookWordDetailsCard = (
             <TextSemiBold style={{ ...TextSizeStyle.SlightBigPlus, marginBottom: UI_SIZES.spacing.extraSmall }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
             </TextSemiBold>
-            <Text style={{ marginBottom: UI_SIZES.spacing.large, color: theme.greyPalette.graphite }}>
+            <Text style={{ marginBottom: UI_SIZES.spacing.large, color: theme.palette.grey.graphite }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </Text>
             <UserList data={studentsForTeacher} avatarSize={24} />

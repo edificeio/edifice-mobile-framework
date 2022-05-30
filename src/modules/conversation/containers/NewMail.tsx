@@ -9,8 +9,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-
-
 import theme from '~/app/theme';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
@@ -24,13 +22,19 @@ import { pickFileError } from '~/infra/actions/pickFile';
 import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
-import { addAttachmentAction, deleteAttachmentAction, forwardMailAction, makeDraftMailAction, sendMailAction, updateDraftMailAction } from '~/modules/conversation/actions/newMail';
+import {
+  addAttachmentAction,
+  deleteAttachmentAction,
+  forwardMailAction,
+  makeDraftMailAction,
+  sendMailAction,
+  updateDraftMailAction,
+} from '~/modules/conversation/actions/newMail';
 import { fetchVisiblesAction } from '~/modules/conversation/actions/visibles';
 import NewMailComponent from '~/modules/conversation/components/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/modules/conversation/state/mailContent';
-
 
 export enum DraftType {
   NEW,
@@ -120,7 +124,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState(prevState => ({
         ...prevState,
         ...rest,
-        mail: { ...prevState.mail, ...mail as IMail },
+        mail: { ...prevState.mail, ...(mail as IMail) },
         isPrefilling: false,
       }));
     } else if (
@@ -651,7 +655,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         onBack={() => {
           navigation.getParam('getGoBack', navigation.goBack)();
         }}
-        style={{ backgroundColor: theme.color.background.card }}>
+        style={{ backgroundColor: theme.ui.background.card }}>
         <NewMailComponent
           isFetching={this.props.isFetching || !!isPrefilling}
           headers={headers}
@@ -677,7 +681,7 @@ const mapStateToProps = (state: any) => {
   return {
     mail: data,
     isFetching,
-    session: getUserSession()
+    session: getUserSession(),
   };
 };
 

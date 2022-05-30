@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
+import { StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import { TextField } from 'react-native-material-textfield';
 
@@ -43,8 +43,8 @@ export class TextInputLine extends React.Component<
       innerRef: r => inputRef(r),
       onBlur: () => onBlur && onBlur(),
       onFocus: () => onFocus && onFocus(),
-      placeholderTextColor: placeholderTextColor || theme.color.text.light,
-      textColor: textColor || theme.color.text.regular,
+      placeholderTextColor: placeholderTextColor || theme.ui.text.light,
+      textColor: textColor || theme.ui.text.regular,
       underlineColorAndroid: 'transparent',
       autoCapitalize: 'none',
       containerStyle: style,
@@ -52,9 +52,9 @@ export class TextInputLine extends React.Component<
       fontSize: fontSize || 16,
       lineWidth: hasError ? 2 : 1,
       activeLineWidth: 2,
-      baseColor: hasError ? theme.color.failure : theme.color.inputBorder,
-      tintColor: hasError ? theme.color.failure : theme.color.secondary.regular,
-      iconColor: theme.color.text.light,
+      baseColor: hasError ? theme.palette.status.failure : theme.ui.border.input,
+      tintColor: hasError ? theme.palette.status.failure : theme.palette.primary.regular,
+      iconColor: theme.ui.text.light,
       label: '',
       iconSize: 25,
       invertVisibilityIcon: true,

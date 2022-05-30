@@ -67,7 +67,7 @@ interface BigCardProps {
 
 const ActionButton: React.FunctionComponent<ActionButtonProps> = (props: ActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
-    <Icon size={20} color={props.color || theme.color.secondary.regular} name={props.icon} />
+    <Icon size={20} color={props.color || theme.palette.primary.regular} name={props.icon} />
     <Text style={styles.actionText}>{props.text}</Text>
   </TouchableOpacity>
 );

@@ -192,7 +192,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
               disabled={isDisabled}
               style={[
                 styles.registerButtonContainer,
-                { backgroundColor: isDisabled ? theme.color.neutral.regular : theme.color.primary.regular },
+                { backgroundColor: isDisabled ? theme.ui.text.light : theme.palette.secondary.regular },
               ]}>
               <Text style={styles.registerButtonText}>{I18n.t('support-ticket-register').toUpperCase()}</Text>
             </TouchableOpacity>

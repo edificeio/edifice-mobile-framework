@@ -6,8 +6,6 @@ import { NavigationFocusInjectedProps, NavigationInjectedProps, NavigationState,
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -18,7 +16,11 @@ import { PageView } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
 import { Text } from '~/framework/components/text';
-import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
+import {
+  dismissFlashMessageAction,
+  loadNotificationsPageAction,
+  startLoadNotificationsAction,
+} from '~/framework/modules/timelinev2/actions';
 import { TimelineFlashMessage } from '~/framework/modules/timelinev2/components/TimelineFlashMessage';
 import { TimelineNotification } from '~/framework/modules/timelinev2/components/TimelineNotification';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
@@ -28,10 +30,18 @@ import { INotifications_State } from '~/framework/modules/timelinev2/reducer/not
 import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
 import { notificationsService } from '~/framework/modules/timelinev2/service';
 import { getTimelineWorkflows } from '~/framework/modules/timelinev2/timelineModules';
-import { IAbstractNotification, IResourceUriNotification, ITimelineNotification, isResourceUriNotification } from '~/framework/util/notifications';
-import { NotifHandlerThunkAction, defaultNotificationActionStack, handleNotificationAction } from '~/framework/util/notifications/routing';
+import {
+  IAbstractNotification,
+  IResourceUriNotification,
+  ITimelineNotification,
+  isResourceUriNotification,
+} from '~/framework/util/notifications';
+import {
+  NotifHandlerThunkAction,
+  defaultNotificationActionStack,
+  handleNotificationAction,
+} from '~/framework/util/notifications/routing';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-
 
 // TYPES ==========================================================================================
 
@@ -192,8 +202,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                         },
                         'warning',
                         I18n.t('timeline.reportAction.button'),
-                        theme.color.warning,
-                        item.data.id
+                        theme.palette.status.warning,
+                        item.data.id,
                       )
                     : item.type === ITimelineItemType.FLASHMSG
                     ? renderSwipeButton(
@@ -203,8 +213,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                         },
                         'close',
                         I18n.t('common.close'),
-                        theme.color.failure,
-                        item.data.id
+                        theme.palette.status.failure,
+                        item.data.id,
                       )
                     : undefined,
                 ]

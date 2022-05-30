@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
 
@@ -15,20 +15,13 @@ export interface RoundButtonProps {
 }
 
 export const RoundButton = ({ iconName, action, disabled, loading }: RoundButtonProps) => {
-  const color = disabled ? theme.greyPalette.grey : theme.color.secondary.regular;
-  const backgroundColor = disabled ? theme.greyPalette.pearl : theme.palePalette.secondary;
+  const color = disabled ? theme.palette.grey.grey : theme.palette.primary.regular;
+  const backgroundColor = disabled ? theme.palette.grey.pearl : theme.palette.primary.pale;
   return (
     <TouchableOpacity
       onPress={action}
       disabled={disabled || loading}
-      style={{
-        width: UI_SIZES.dimensions.width.largePlus,
-        height: UI_SIZES.dimensions.height.largePlus,
-        borderRadius: UI_SIZES.radius.extraLarge,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor,
-      }}>
+      style={[RoundButton.styles.touchableOpacity, { backgroundColor }]}>
       {loading ? (
         <LoadingIndicator small customColor={color} />
       ) : (
@@ -43,3 +36,12 @@ export const RoundButton = ({ iconName, action, disabled, loading }: RoundButton
     </TouchableOpacity>
   );
 };
+RoundButton.styles = StyleSheet.create({
+  touchableOpacity: {
+    width: UI_SIZES.dimensions.width.largePlus,
+    height: UI_SIZES.dimensions.height.largePlus,
+    borderRadius: UI_SIZES.radius.extraLarge,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

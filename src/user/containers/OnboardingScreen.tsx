@@ -7,8 +7,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
@@ -19,7 +17,6 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { FlatButton } from '~/ui/FlatButton';
 import { selectPlatform } from '~/user/actions/platform';
-
 
 // TYPES ==========================================================================================
 
@@ -46,13 +43,13 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: theme.color.background.page,
+          backgroundColor: theme.ui.background.page,
           paddingVertical: 20,
         }}>
         <View style={{ flex: 4 }}>
           <H1
             style={{
-              color: theme.color.secondary.regular,
+              color: theme.palette.primary.regular,
               alignSelf: 'center',
               fontSize: 24,
               height: 80,
@@ -67,15 +64,15 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
               width: 16,
               height: 16,
               borderRadius: 8,
-              backgroundColor: theme.color.background.page,
-              borderColor: theme.color.secondary.regular,
+              backgroundColor: theme.ui.background.page,
+              borderColor: theme.palette.primary.regular,
               borderWidth: 1.5,
             }}
             activeDotStyle={{
               width: 16,
               height: 16,
               borderRadius: 8,
-              backgroundColor: theme.color.secondary.regular,
+              backgroundColor: theme.palette.primary.regular,
             }}>
             {(onboardingTexts as unknown as string[]).map((onboardingText, index) => (
               <View
@@ -98,7 +95,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
             <FlatButton
               title={I18n.t('user.onboardingScreen.joinMyNetwork')}
               customButtonStyle={{
-                backgroundColor: theme.color.secondary.regular,
+                backgroundColor: theme.palette.primary.regular,
                 width: 230,
                 alignItems: 'center',
               }}
@@ -115,10 +112,10 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
             {isPlatformIos && isOneOrNeo ? null : (
               <FlatButton
                 title={I18n.t('user.onboardingScreen.discover')}
-                customTextStyle={{ color: theme.color.secondary.regular }}
+                customTextStyle={{ color: theme.palette.primary.regular }}
                 customButtonStyle={{
-                  backgroundColor: theme.color.background.page,
-                  borderColor: theme.color.secondary.regular,
+                  backgroundColor: theme.ui.background.page,
+                  borderColor: theme.palette.primary.regular,
                   borderWidth: 1,
                   width: 230,
                   alignItems: 'center',

@@ -109,10 +109,10 @@ export const SchoolbookWordSummaryCard = ({
                 name="pictos-answer"
                 width={UI_SIZES.dimensions.width.large}
                 height={UI_SIZES.dimensions.height.large}
-                fill={theme.color.secondary.regular}
+                fill={theme.palette.primary.regular}
                 style={{ marginRight: UI_SIZES.spacing.smallPlus }}
               />
-              <TextSemiBold style={{ color: theme.color.secondary.regular }}>{responsesString(responsesNumber)}</TextSemiBold>
+              <TextSemiBold style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</TextSemiBold>
             </View>
           ) : undefined
         }>
@@ -123,17 +123,17 @@ export const SchoolbookWordSummaryCard = ({
               imageType={ImageType.svg}
               text={I18n.t(`schoolbook.categories.${category}`)}
               imageName={`schoolbook-${category}`}
-              color={theme.schoolbook.categories[category]}
+              color={theme.color.schoolbook.categories[category]}
             />
           ) : (
             <View />
           )}
-          <TextSemiBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.color.warning }}>
+          <TextSemiBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.palette.status.warning }}>
             {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
           </TextSemiBold>
         </View>
         {sendingDate ? (
-          <TextItalic style={{ color: theme.greyPalette.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.smallPlus }}>
+          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.smallPlus }}>
             {displayPastDate(sendingDate)}
           </TextItalic>
         ) : null}

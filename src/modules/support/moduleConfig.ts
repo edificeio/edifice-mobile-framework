@@ -10,5 +10,5 @@ export default new NavigableModuleConfig<'support', ISupport_State>({
 
   displayI18n: 'support',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'support', fill: theme.themeOpenEnt.pink },
+  displayPicture: { type: 'NamedSvg', name: 'support', fill: theme.palette.complementary.pink.regular },
 });

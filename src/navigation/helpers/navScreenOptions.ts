@@ -19,7 +19,7 @@ export const standardNavScreenOptions = (props, { state }) => {
     headerBackTitle: null,
     ...props,
     headerStyle: {
-      backgroundColor: theme.color.secondary.regular,
+      backgroundColor: theme.palette.primary.regular,
       elevation: 5,
       height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: UI_SIZES.elements.navbarHeight }),
       ...(props.headerStyle || {}),

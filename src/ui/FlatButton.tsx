@@ -2,18 +2,13 @@ import styled from '@emotion/native';
 import * as React from 'react';
 import { ActivityIndicator, TextStyle, View, ViewStyle } from 'react-native';
 
-
-
 import theme from '~/app/theme';
 import styles from '~/styles';
 import { CommonStyles } from '~/styles/common/styles';
 
-
-
 import { Row, RowProperties } from './Grid';
 import { Weight } from './Typography';
 import { Icon } from './icons/Icon';
-
 
 export interface ValidTextIconProps {
   disabled?: boolean;
@@ -48,7 +43,7 @@ export const FlatButton = ({
   customTextStyle,
 }: ValidTextIconProps) => {
   if (loading) {
-    return <ActivityIndicator size="large" color={theme.color.secondary.regular} />;
+    return <ActivityIndicator size="large" color={theme.palette.primary.regular} />;
   }
 
   return (
@@ -78,13 +73,13 @@ const ButtonStyleComponent = styled.TouchableOpacity(
     paddingVertical: 9,
   },
   ({ disabled }) => ({
-    backgroundColor: disabled ? 'transparent' : theme.color.secondary.regular,
-    borderColor: disabled ? theme.color.secondary.regular : CommonStyles.lightGrey,
+    backgroundColor: disabled ? 'transparent' : theme.palette.primary.regular,
+    borderColor: disabled ? theme.palette.primary.regular : CommonStyles.lightGrey,
     borderWidth: disabled ? 1 : 0,
   }),
 );
 
-const TextStyleComponent = styled.Text<{disabled: boolean}>(
+const TextStyleComponent = styled.Text<{ disabled: boolean }>(
   {
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 14,
@@ -92,6 +87,6 @@ const TextStyleComponent = styled.Text<{disabled: boolean}>(
     textAlignVertical: 'center',
   },
   ({ disabled }) => ({
-    color: disabled ? theme.color.secondary.regular : CommonStyles.inverseColor,
+    color: disabled ? theme.palette.primary.regular : CommonStyles.inverseColor,
   }),
 );

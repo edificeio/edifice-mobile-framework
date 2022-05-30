@@ -321,7 +321,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   renderSelectedTrashMailsHeader = () => {
     return (
       <>
-        <FakeHeader_Container style={{ backgroundColor: theme.color.primary.regular }}>
+        <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
           <FakeHeader_Row>
             <HeaderBackAction onPress={() => this.onUnselectListMails()} />
             <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
@@ -348,7 +348,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   renderSelectedMailsHeader = () => {
     return (
       <>
-        <FakeHeader_Container style={{ backgroundColor: theme.color.primary.regular }}>
+        <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
           <FakeHeader_Row>
             <HeaderBackAction onPress={() => this.onUnselectListMails()} />
             <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
@@ -406,7 +406,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             data={this.getMenuData(navigation.state.routeName)}
             isVisible={this.state.isDropdownMenuVisible}
             onTapOutside={this.hideMenu}
-            color={theme.color.primary.regular.toString()}
+            color={theme.palette.secondary.regular.toString()}
           />
         </PageContainer>
 

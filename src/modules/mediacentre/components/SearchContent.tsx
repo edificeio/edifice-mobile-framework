@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cancelButton: {
-    backgroundColor: theme.color.secondary.regular,
+    backgroundColor: theme.palette.primary.regular,
   },
   fieldsContainer: {
     flexDirection: 'row',

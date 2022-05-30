@@ -19,8 +19,8 @@ export interface IHomeworkCardProps {
 const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
-  const dayColor = theme.homeworkDays[dayOfTheWeek];
-  const arrowColor = isPastDate ? theme.greyPalette.stone : dayColor;
+  const dayColor = theme.color.homework.days[dayOfTheWeek].accent;
+  const arrowColor = isPastDate ? theme.palette.grey.stone : dayColor;
   const formattedContent = content && HtmlToText(content, false).render;
 
   return (
@@ -32,7 +32,7 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
         marginTop: UI_SIZES.spacing.medium,
         padding: UI_SIZES.spacing.large,
         marginLeft: UI_SIZES.spacing.largePlus,
-        backgroundColor: theme.color.background.card,
+        backgroundColor: theme.ui.background.card,
         elevation: 1,
         shadowColor: '#6B7C93',
         shadowOffset: { width: 0, height: 2 },
@@ -40,12 +40,12 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
       }}>
       <View style={{ flex: 1 }}>
         {title ? (
-          <TextBold style={{ ...TextSizeStyle.SlightBig, color: theme.color.text.regular }} numberOfLines={1}>
+          <TextBold style={{ ...TextSizeStyle.SlightBig, color: theme.ui.text.regular }} numberOfLines={1}>
             {title}
           </TextBold>
         ) : null}
         {formattedContent ? (
-          <Text style={{ color: theme.color.text.regular, marginTop: UI_SIZES.spacing.extraSmall }} numberOfLines={2}>
+          <Text style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.extraSmall }} numberOfLines={2}>
             {formattedContent}
           </Text>
         ) : null}

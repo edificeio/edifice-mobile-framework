@@ -55,7 +55,7 @@ export const DropdownMenu: React.FunctionComponent<DropdrownMenuProps> = (props:
       <View style={style.transparentContainer}>
         <FlatList
           data={data}
-          style={[style.menuContainer, { backgroundColor: color || theme.color.secondary.regular }]}
+          style={[style.menuContainer, { backgroundColor: color || theme.palette.primary.regular }]}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => {

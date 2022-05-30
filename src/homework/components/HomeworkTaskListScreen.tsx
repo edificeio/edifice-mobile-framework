@@ -174,15 +174,15 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                       marginTop: UI_SIZES.spacing.extraLarge,
                       marginBottom: UI_SIZES.spacing.mediumPlus,
                     }}>
-                    <Label color={theme.greyPalette.grey} text={I18n.t('homework.homeworkTaskListScreen.noFutureHomework')} />
+                    <Label color={theme.palette.grey.grey} text={I18n.t('homework.homeworkTaskListScreen.noFutureHomework')} />
                   </View>
                 </>
               );
             } else {
               const isPastDate = title.isBefore(today(), 'day');
               const dayOfTheWeek = getDayOfTheWeek(title);
-              const dayColor = theme.homeworkDays[dayOfTheWeek];
-              const timelineColor = isPastDate ? theme.greyPalette.cloudy : dayColor;
+              const dayColor = theme.color.homework.days[dayOfTheWeek].accent;
+              const timelineColor = isPastDate ? theme.palette.grey.cloudy : dayColor;
               return (
                 <View
                   style={{
@@ -230,7 +230,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             />
           }
           ListHeaderComponent={() => {
-            const labelColor = noRemainingPastHomework ? theme.greyPalette.grey : theme.greyPalette.black;
+            const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
             const labelText = I18n.t(
               `homework.homeworkTaskListScreen.${noRemainingPastHomework ? 'noMorePastHomework' : 'displayPastDays'}`,
             );
@@ -295,17 +295,17 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             flexDirection: 'row',
             borderWidth: UI_SIZES.dimensions.width.tiny,
             borderRadius: UI_SIZES.radius.medium,
-            borderColor: theme.greyPalette.cloudy,
+            borderColor: theme.palette.grey.cloudy,
             paddingVertical: UI_SIZES.spacing.large,
             paddingRight: UI_SIZES.spacing.extraLarge,
             paddingLeft: UI_SIZES.spacing.large,
             marginLeft: UI_SIZES.spacing.largePlus,
           }}>
           <View style={{ justifyContent: 'center', marginRight: UI_SIZES.spacing.large }}>
-            <Icon name="informations" color={theme.greyPalette.stone} size={TextSizeStyle.Huge.fontSize} />
+            <Icon name="informations" color={theme.palette.grey.stone} size={TextSizeStyle.Huge.fontSize} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: theme.greyPalette.graphite }}>
+            <Text style={{ color: theme.palette.grey.graphite }}>
               {I18n.t('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
             </Text>
           </View>

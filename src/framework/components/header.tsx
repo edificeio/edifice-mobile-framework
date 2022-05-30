@@ -17,16 +17,11 @@ import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, Vie
 import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
 
-
-
 import theme from '~/app/theme';
-
-
 
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
 import { FontWeightIOS, TextInverse, rem } from './text';
-
 
 /**
  * FakeHeader_Container
@@ -36,7 +31,7 @@ export const FakeHeader_Container = styled.View({
   flexDirection: 'row',
   alignItems: 'center',
   flex: 0,
-  backgroundColor: theme.color.secondary.regular,
+  backgroundColor: theme.palette.primary.regular,
   elevation: 5,
   minHeight: UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset,
   paddingTop: UI_SIZES.screen.topInset,
@@ -115,7 +110,7 @@ export const HeaderIcon = (props: {
         shadowOpacity: 0.2,
         shadowRadius: 4,
         borderRadius: 30,
-        backgroundColor: theme.color.secondary.regular,
+        backgroundColor: theme.palette.primary.regular,
         alignItems: 'center',
         justifyContent: 'center',
         ...props.style,
@@ -246,7 +241,7 @@ export interface ButtonIconProps {
 
 export const getButtonShadow = () => ({
   elevation: 5,
-  shadowColor: theme.color.shadowColor,
+  shadowColor: theme.ui.shadowColor,
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.25,
   shadowRadius: 3.8,
@@ -258,7 +253,7 @@ export const buttonStyle: ViewStyle = {
   width: 50,
   height: 50,
   borderRadius: 50 / 2,
-  backgroundColor: theme.color.primary.regular,
+  backgroundColor: theme.palette.secondary.regular,
   ...(getButtonShadow() as ViewStyle),
 };
 

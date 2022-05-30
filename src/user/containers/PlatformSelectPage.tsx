@@ -5,8 +5,6 @@ import * as React from 'react';
 import { Image, Platform, StatusBar, View } from 'react-native';
 import { connect } from 'react-redux';
 
-
-
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card';
@@ -19,7 +17,6 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { H1, Light, LightP } from '~/ui/Typography';
 import { selectPlatform } from '~/user/actions/platform';
 import { IUserAuthState } from '~/user/reducers/auth';
-
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -88,7 +85,7 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
         <PageView navigation={this.props.navigation}>
           {Platform.select({
             ios: <StatusBar barStyle="dark-content" />,
-            android: <StatusBar backgroundColor={theme.color.background.page} barStyle="dark-content" />,
+            android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
           })}
           <GridList
             data={appConf.platforms}

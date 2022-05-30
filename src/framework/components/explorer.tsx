@@ -20,9 +20,9 @@
  *      - overlay                        : Another component display on top of the image/background. Traditionally the icon of the entcore application
  *      - style                          : ViewStyle applied. Replaces entirely the default one. Use this if your style must be on a parent component to erase the default behaviour.
  */
-
-import * as React from 'react';
+import styled from '@emotion/native';
 import { Moment } from 'moment';
+import * as React from 'react';
 import {
   ColorValue,
   FlatList,
@@ -34,14 +34,13 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import styled from '@emotion/native';
 
-import { UI_SIZES } from './constants';
-
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
-import theme from '~/app/theme';
+
+import { UI_SIZES } from './constants';
 
 export interface IExplorerProps<FolderType extends {}, ResourceType extends {}>
   extends Omit<
@@ -134,7 +133,7 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
         explorerData.length === 0
           ? {}
           : {
-              backgroundColor: theme.color.background.card,
+              backgroundColor: theme.ui.background.card,
               padding: 16,
             },
         contentContainerStyle,
@@ -203,7 +202,7 @@ const commonItemTouchableStyle = {
 export const resourceItemTouchableStyle = {
   ...commonItemTouchableStyle,
   borderWidth: 1,
-  borderColor: theme.color.inputBorder,
+  borderColor: theme.ui.border.input,
 };
 export const folderItemTouchableStyle = { ...commonItemTouchableStyle };
 export const empyItemTouchableStyle = { ...commonItemTouchableStyle, opacity: 0 };

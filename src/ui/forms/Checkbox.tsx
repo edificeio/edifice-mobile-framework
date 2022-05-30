@@ -2,15 +2,12 @@ import styled from '@emotion/native';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-
-
 import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Icon } from '~/ui/icons/Icon';
 
-
-const TapCircle = styled(TouchableOpacity)<{checked: boolean}>(
+const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
   {
     alignItems: 'center',
     borderRadius: 14,
@@ -19,8 +16,8 @@ const TapCircle = styled(TouchableOpacity)<{checked: boolean}>(
     width: 25,
   },
   ({ checked = false }) => ({
-    backgroundColor: checked ? theme.color.secondary.regular : '#FFFFFF',
-    borderColor: checked ? CommonStyles.primary : '#DDDDDD',
+    backgroundColor: checked ? theme.palette.primary.regular : theme.ui.text.inverse,
+    borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
     borderWidth: checked ? 0 : 2,
   }),
 );

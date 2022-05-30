@@ -52,13 +52,13 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
             images: false,
             ignoreLineBreaks: true,
             globalTextStyle: {
-              color: theme.color.text.regular,
+              color: theme.ui.text.regular,
               fontSize: 12,
               fontWeight: '400',
             },
             linkTextStyle: {
               ...FontStyle.SemiBold,
-              color: theme.color.text.heavy,
+              color: theme.ui.text.heavy,
             },
           }}
         />

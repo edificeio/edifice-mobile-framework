@@ -43,7 +43,7 @@ export interface PageViewProps extends ViewProps {
 
 export const PageView_Style = styled.View({
   flex: 1,
-  backgroundColor: theme.color.background.page,
+  backgroundColor: theme.ui.background.page,
 });
 export const PageView = (props: PageViewProps) => {
   const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, ...viewProps } = props;
@@ -68,7 +68,7 @@ export const PageView = (props: PageViewProps) => {
 
   return (
     <PageView_Style {...viewProps}>
-      <StatusBar barStyle="light-content" backgroundColor={theme.color.secondary.regular} />
+      <StatusBar barStyle="light-content" backgroundColor={theme.palette.primary.regular} />
       {navBar ? <FakeHeader {...navBar} /> : null}
       {navBarWithBack ? (
         <FakeHeader

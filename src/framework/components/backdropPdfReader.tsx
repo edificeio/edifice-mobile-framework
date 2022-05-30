@@ -3,7 +3,6 @@ import { ColorValue } from 'react-native';
 import Pdf from 'react-native-pdf';
 
 import theme from '~/app/theme';
-import { CommonStyles } from '~/styles/common/styles';
 
 import { BackdropModal } from './backdropModal';
 import { EmptyContentScreen } from './emptyContentScreen';
@@ -42,11 +41,11 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
           ) : (
             <Pdf
               activityIndicatorProps={{
-                color: theme.color.neutral.regular,
-                progressTintColor: CommonStyles.mainColorTheme,
+                color: theme.ui.text.light,
+                progressTintColor: theme.palette.primary.regular,
               }}
               source={{ cache: true, uri }}
-              style={{ flex: 1, backgroundColor: theme.color.neutral.extraLight }}
+              style={{ flex: 1, backgroundColor: theme.legacy.neutral.extraLight }}
               onError={err => {
                 // Note: when the backdrop is dimissed, the "uri" prop becomes undefined and onError activates;
                 // therefore, we only use setState if the modal is displayed (the "visible" prop is true).

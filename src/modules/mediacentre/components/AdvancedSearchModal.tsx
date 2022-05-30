@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 2,
     borderRadius: 5,
-    borderColor: theme.color.secondary.regular,
+    borderColor: theme.palette.primary.regular,
   },
   sourceCheckBoxContainer: {
     flexDirection: 'row',
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     height: 50,
-    backgroundColor: theme.color.secondary.regular,
+    backgroundColor: theme.palette.primary.regular,
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   searchButton: {
-    backgroundColor: theme.color.secondary.regular,
+    backgroundColor: theme.palette.primary.regular,
   },
 });
 

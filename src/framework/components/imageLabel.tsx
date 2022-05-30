@@ -34,7 +34,7 @@ export const ImageLabel = ({ text, imageName, imageType, color, cachedSVG }: Ima
           backgroundColor: color,
         }}>
         {imageType === ImageType.icon ? (
-          <Icon name={imageName} color={theme.color.text.inverse} size={10} />
+          <Icon name={imageName} color={theme.ui.text.inverse} size={10} />
         ) : imageType === ImageType.svg ? (
           <NamedSVG
             width={UI_SIZES.dimensions.width.medium}

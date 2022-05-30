@@ -33,12 +33,12 @@ export const cardPaddingMerging: ViewStyle = { paddingHorizontal: cardPaddingH, 
 export const cardPaddingSmall: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: (cardPaddingV * 2) / 3 };
 
 const cardStyle: ViewStyle = {
-  backgroundColor: theme.color.background.card,
+  backgroundColor: theme.ui.background.card,
   borderRadius: 15,
 };
 
 const cardShadow: ViewStyle = {
-  shadowColor: theme.color.shadowColor,
+  shadowColor: theme.ui.shadowColor,
   shadowOffset: { width: 0, height: 1 },
   shadowOpacity: 0.3,
   shadowRadius: 1,
@@ -51,7 +51,7 @@ export const CardPaddingEqual = styled.View(cardStyle, cardPaddingEqual);
 export const TouchCard = styled.TouchableOpacity(cardStyle, cardPadding, cardShadow);
 export const TouchCardWithoutPadding = styled.TouchableOpacity(cardStyle, cardShadow);
 export const TouchCardPaddingEqual = styled.TouchableOpacity(cardStyle, cardPaddingEqual);
-export const InfoCard = styled.View(cardStyle, cardPadding, { backgroundColor: theme.color.secondary.light });
+export const InfoCard = styled.View(cardStyle, cardPadding, { backgroundColor: theme.palette.primary.light });
 
 export interface IContentCardProps extends ViewProps {
   header?: React.ReactElement;
@@ -72,7 +72,7 @@ interface IContentCardPropsBase extends IContentCardProps, ITouchableContentCard
 const FooterSeparator = styled.View({
   height: 1,
   width: '100%',
-  backgroundColor: theme.color.inputBorder,
+  backgroundColor: theme.ui.border.input,
 });
 const HeaderFlexView = styled.View({
   flexDirection: 'row',
@@ -103,8 +103,8 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
     withoutPadding && { paddingHorizontal: 0 },
     customHeaderStyle,
     emphasizedHeader && {
-      backgroundColor: theme.greyPalette.fog,
-      borderBottomColor: theme.greyPalette.pearl,
+      backgroundColor: theme.palette.grey.fog,
+      borderBottomColor: theme.palette.grey.pearl,
       borderBottomWidth: UI_SIZES.dimensions.width.tiny,
     },
   );
@@ -136,7 +136,7 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
   const realHeaderIndicator = headerIndicator ?? (
     <Icon
       name="arrow_right"
-      color={theme.color.secondary.regular}
+      color={theme.palette.primary.regular}
       style={{ paddingVertical: 6, paddingLeft: 8, marginRight: -3 }}
     />
   );
@@ -182,7 +182,7 @@ export const ContentCardHeader = (props: IContentCardHeaderProps) => {
           )
         ) : null}
         {props.date ? (
-          <TextItalic style={{ color: theme.greyPalette.graphite, ...TextSizeStyle.Small }}>
+          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
             {typeof props.date === 'string' ? props.date : displayPastDate(props.date)}
           </TextItalic>
         ) : null}
@@ -241,13 +241,13 @@ const ResourceCard_base = (props: IResourceCardProps_base) => {
                 images: false,
                 ignoreLineBreaks: true,
                 globalTextStyle: {
-                  color: theme.color.text.regular,
+                  color: theme.ui.text.regular,
                   fontSize: 12,
                   fontWeight: '400',
                 },
                 linkTextStyle: {
                   ...FontStyle.SemiBold,
-                  color: theme.color.text.heavy,
+                  color: theme.ui.text.heavy,
                 },
               }}
             />
@@ -355,7 +355,7 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
   const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;
   if (picture) {
     if (picture.type === 'Image') picture.resizeMode = 'contain';
-    if (picture.type === 'NamedSvg') picture.fill = theme.color.text.inverse;
+    if (picture.type === 'NamedSvg') picture.fill = theme.ui.text.inverse;
   }
   const CC = cardComponent ?? ContentCard;
   return (
@@ -397,7 +397,7 @@ OverviewCardBase.styles = StyleSheet.create({
   pictureWrapper: {
     width: 24,
     height: 24,
-    backgroundColor: theme.color.secondary.regular,
+    backgroundColor: theme.palette.primary.regular,
     borderRadius: 12,
     overflow: 'hidden',
     padding: 4,
@@ -417,7 +417,7 @@ export function TouchableOverviewCard(props: OverviewCardProps & TouchableOpacit
           width={UI_SIZES.dimensions.width.larger}
           height={UI_SIZES.dimensions.width.larger} // width again to ensure it's a square !
           name="ui-rafterRight"
-          fill={theme.color.secondary.regular}
+          fill={theme.palette.primary.regular}
           cached
         />
       }

@@ -1,14 +1,15 @@
-import * as React from "react";
-import { ColorValue, TouchableOpacity, ViewStyle } from "react-native";
+import * as React from 'react';
+import { ColorValue, TouchableOpacity, ViewStyle } from 'react-native';
 
-import theme from "~/app/theme";
-import { Icon } from "./icon";
+import theme from '~/app/theme';
+
+import { Icon } from './icon';
 
 export const Checkbox = ({
   checked,
   onPress,
   customContainerStyle,
-  customCheckboxColor
+  customCheckboxColor,
 }: {
   checked: boolean;
   onPress: () => void;
@@ -22,15 +23,14 @@ export const Checkbox = ({
         width: 25,
         height: 25,
         borderRadius: 14,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: checked ? theme.color.secondary.regular : theme.color.text.inverse,
-        borderColor: checked ? theme.color.secondary.regular : theme.color.text.light,
-        borderWidth: checked ? 0 : 2,  
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: checked ? theme.palette.primary.regular : theme.ui.text.inverse,
+        borderColor: checked ? theme.palette.primary.regular : theme.ui.text.light,
+        borderWidth: checked ? 0 : 2,
       },
-      customContainerStyle
-    ]}
-  >
-    <Icon size={15} name="checked" color={customCheckboxColor || theme.color.text.inverse}/>
+      customContainerStyle,
+    ]}>
+    <Icon size={15} name="checked" color={customCheckboxColor || theme.ui.text.inverse} />
   </TouchableOpacity>
 );

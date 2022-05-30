@@ -123,7 +123,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           value: item.value,
           labelStyle: item.labelStyle || {},
         };
-        const color = isItemSelected ? theme.color.primary.regular : theme.color.text.regular;
+        const color = isItemSelected ? theme.palette.secondary.regular : theme.ui.text.regular;
         formattedItem.labelStyle = { ...formattedItem.labelStyle, color };
         if (item.iconName) formattedItem.icon = () => <Icon size={25} name={item.iconName} color={color} />;
         if (item.depth) formattedItem.containerStyle = { marginLeft: item.depth * 25 };
@@ -167,9 +167,9 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           arrowIconPosition="LEFT"
           arrowIconContainerStyle={styles.arrowContainer}
           ArrowUpIconComponent={() => (
-            <Icon size={12} name="arrow_down" color={theme.color.primary.regular} style={styles.arrowUp} />
+            <Icon size={12} name="arrow_down" color={theme.palette.secondary.regular} style={styles.arrowUp} />
           )}
-          ArrowDownIconComponent={() => <Icon size={12} name="arrow_down" color={theme.color.primary.regular} />}
+          ArrowDownIconComponent={() => <Icon size={12} name="arrow_down" color={theme.palette.secondary.regular} />}
         />
         <TouchableWithoutFeedback onPress={() => this.toggle(drawerOpen)}>
           <Animated.View style={[styles.backdrop, { height: backdropHeight, opacity: backdropOpacity }]} />
@@ -193,25 +193,25 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     width: '100%',
-    elevation: 1
+    elevation: 1,
   },
   dropDownContainer: {
     borderRadius: LIST_RADIUS,
     borderWidth: undefined,
   },
   label: {
-    color: theme.color.primary.regular,
+    color: theme.palette.secondary.regular,
   },
   listItemContainer: {
     height: ITEM_HEIGHT,
     paddingLeft: 40,
   },
   placeholder: {
-    color: theme.color.primary.regular,
+    color: theme.palette.secondary.regular,
     fontStyle: 'italic',
   },
   style: {
-    borderBottomColor: theme.color.listItemBorder,
+    borderBottomColor: theme.ui.border.listItem,
     borderBottomWidth: 1,
     borderRadius: undefined,
     borderWidth: undefined,

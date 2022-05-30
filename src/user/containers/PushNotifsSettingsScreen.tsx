@@ -90,7 +90,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
             left: (
               <LoadingIndicator
                 small
-                customColor={theme.color.neutral.extraLight}
+                customColor={theme.legacy.neutral.extraLight}
                 customStyle={{ justifyContent: 'center', paddingHorizontal: 22 }}
               />
             ),
@@ -189,7 +189,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
               </TextAction>
               <Icon
                 name="arrow_down"
-                color={theme.color.secondary.regular}
+                color={theme.palette.primary.regular}
                 style={{ flex: 0, marginLeft: 20, transform: [{ rotate: '270deg' }] }}
               />
             </View>
@@ -233,10 +233,10 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
                 leftElement={<Text>{I18n.t('common.all')}</Text>}
                 rightElement={
                   <Checkbox
-                    customCheckboxColor={areAllChecked ? theme.color.text.light : undefined}
+                    customCheckboxColor={areAllChecked ? theme.ui.text.light : undefined}
                     customContainerStyle={{
-                      backgroundColor: theme.color.background.card,
-                      borderColor: theme.color.text.light,
+                      backgroundColor: theme.ui.background.card,
+                      borderColor: theme.ui.text.light,
                       borderWidth: 2,
                     }}
                     checked={areAllChecked}

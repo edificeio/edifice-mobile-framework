@@ -76,13 +76,13 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
           notifFilters.length < 2 ? null : (
             <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
               <ListItem
-                leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t('common.all')}</Text>}
+                leftElement={<Text style={{ color: theme.ui.text.heavy }}>{I18n.t('common.all')}</Text>}
                 rightElement={
                   <Checkbox
-                    customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
+                    customCheckboxColor={!someNotSet ? theme.ui.text.light : undefined}
                     customContainerStyle={{
-                      backgroundColor: theme.color.background.card,
-                      borderColor: theme.color.text.light,
+                      backgroundColor: theme.ui.background.card,
+                      borderColor: theme.ui.text.light,
                       borderWidth: 2,
                     }}
                     checked={!someNotSet}
@@ -103,7 +103,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     return (
       <TouchableOpacity onPress={() => this.doToggleFilter(item)}>
         <ListItem
-          leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t(item.i18n)}</Text>}
+          leftElement={<Text style={{ color: theme.ui.text.heavy }}>{I18n.t(item.i18n)}</Text>}
           rightElement={<Checkbox checked={selectedFilters[item.type]} onPress={() => this.doToggleFilter(item)} />}
         />
       </TouchableOpacity>

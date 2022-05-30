@@ -199,7 +199,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
         navBarWithBack={{
           title: I18n.t('PasswordChange'),
         }}>
-        <Pressable onPress={() => formModel.blur()} style={{flexGrow: 1}}>
+        <Pressable onPress={() => formModel.blur()} style={{ flexGrow: 1 }}>
           <FormContainer>
             <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
               {this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
@@ -218,15 +218,15 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
               {isIDF ? (
                 <View
                   style={{
-                    backgroundColor: theme.color.secondary.light,
+                    backgroundColor: theme.palette.primary.light,
                     paddingVertical: 6,
                     paddingHorizontal: 14,
-                    borderColor: theme.color.secondary.regular,
+                    borderColor: theme.palette.primary.regular,
                     borderWidth: 1,
                     borderRadius: 10,
                     flex: 0,
                   }}>
-                  <Text style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
+                  <Text style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
                     {I18n.t('common.idf.passwordRules')}
                   </Text>
                 </View>

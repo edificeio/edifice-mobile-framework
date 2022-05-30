@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderWidth: 2,
     borderRadius: 50,
-    borderColor: theme.color.secondary.regular,
+    borderColor: theme.palette.primary.regular,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -86,7 +86,7 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = forwardRef<Sea
 
 export const IconButtonText: React.FunctionComponent<IconButtonTextProps> = (props: IconButtonTextProps) => (
   <TouchableOpacity style={styles.buttonContainer} onPress={props.onPress}>
-    <Icon style={styles.buttonIcon} size={16} color={props.color ? props.color : theme.color.secondary.regular} name={props.icon} />
-    <Text style={{ color: theme.color.secondary.regular }}>{props.text}</Text>
+    <Icon style={styles.buttonIcon} size={16} color={props.color ? props.color : theme.palette.primary.regular} name={props.icon} />
+    <Text style={{ color: theme.palette.primary.regular }}>{props.text}</Text>
   </TouchableOpacity>
 );

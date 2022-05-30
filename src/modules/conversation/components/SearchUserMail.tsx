@@ -84,7 +84,7 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
 export const FoundList = ({ foundUserOrGroup, addUser }) => {
   const insets = useSafeAreaInsets();
   const absoluteListStyle = {
-    backgroundColor: theme.color.background.card,
+    backgroundColor: theme.ui.background.card,
     flex: 1,
     ...IOSShadowStyle,
   } as ViewStyle;

@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Animated, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
@@ -13,7 +12,7 @@ const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
     alignItems: 'center',
     width: 22,
     height: 22,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.ui.background.card,
     position: 'absolute',
     left: 0,
     top: 0,
@@ -21,7 +20,7 @@ const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
     elevation: 2,
   },
   ({ checked = false }) => ({
-    borderColor: checked ? theme.color.secondary.regular : '#DDDDDD',
+    borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
   }),
 );
 
@@ -38,8 +37,8 @@ const Container = styled(TouchableOpacity)<{ checked: boolean }>(
     top: 0,
   },
   ({ checked = false }) => ({
-    backgroundColor: checked ? theme.color.secondary.regular : '#efefef',
-    borderColor: checked ? CommonStyles.primary : '#DDDDDD',
+    backgroundColor: checked ? theme.palette.primary.regular : theme.palette.grey.cloudy,
+    borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.grey,
     borderWidth: checked ? 0 : 1,
   }),
 );

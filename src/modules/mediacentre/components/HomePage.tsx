@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   gridDisplayAllText: {
-    color: theme.color.secondary.regular,
+    color: theme.palette.primary.regular,
     textDecorationLine: 'underline',
   },
   mainContainer: {

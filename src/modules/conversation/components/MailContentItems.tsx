@@ -14,9 +14,9 @@ import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
 import { getProfileColor, getUserColor } from '~/modules/conversation/utils/userColor';
-import { Icon } from '~/ui/icons/Icon';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { Icon } from '~/ui/icons/Icon';
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor('Guest'));
@@ -131,7 +131,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   ) : (
                     <Text style={{ marginTop: 4, flex: 0, ...TextColorStyle.Normal, ...TextSizeStyle.Small }} numberOfLines={1}>
                       <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
-                      <NestedText style={{ color: theme.color.secondary.regular }}>
+                      <NestedText style={{ color: theme.palette.primary.regular }}>
                         {mailContacts.to[0][1]}
                         {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
                       </NestedText>
@@ -142,7 +142,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
               {/* Mail attachment indicator */}
               {mailInfos.attachments.length > 0 && (
                 <View style={styles.mailIndicator}>
-                  <Icon name="attachment" size={16} color={theme.color.text.regular} />
+                  <Icon name="attachment" size={16} color={theme.ui.text.regular} />
                 </View>
               )}
             </View>
@@ -161,8 +161,8 @@ export const FooterButton = ({ icon, text, onPress }) => {
         alignItems: 'center',
         justifyContent: 'space-evenly',
       }}>
-      <Icon name={icon} size={24} style={{ color: theme.color.neutral.regular }} />
-      <Text style={{ color: theme.color.neutral.regular, ...TextSizeStyle.Tiny }}>{text}</Text>
+      <Icon name={icon} size={24} style={{ color: theme.ui.text.light }} />
+      <Text style={{ color: theme.ui.text.light, ...TextSizeStyle.Tiny }}>{text}</Text>
     </TouchableOpacity>
   );
 };
@@ -237,7 +237,7 @@ export const RenderPJs = ({
 
 const styles = StyleSheet.create({
   containerMail: {
-    backgroundColor: theme.color.background.card,
+    backgroundColor: theme.ui.background.card,
   },
   gridButton: {
     flexDirection: 'row',

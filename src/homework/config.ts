@@ -13,7 +13,7 @@ export default new FunctionalModuleConfig({
   name: 'homework',
   apiName: 'Cahier de texte',
   displayName: 'Homework',
-  picture: { type: 'NamedSvg', name: pictureName, fill: theme.themeOpenEnt.green },
+  picture: { type: 'NamedSvg', name: pictureName, fill: theme.palette.complementary.green.regular },
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors

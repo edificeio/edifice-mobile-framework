@@ -15,7 +15,7 @@ export interface IBadgeProps {
 }
 
 const BadgeText = styled(TextBold)({
-  color: theme.color.text.inverse,
+  color: theme.ui.text.inverse,
   fontSize: 12,
 });
 
@@ -38,12 +38,12 @@ export const Badge = ({ content, color }: IBadgeProps) => {
     } else if (typeof content === 'number') {
       return <BadgeText>{content > 99 ? '99+' : content}</BadgeText>;
     } else if (typeof content === 'string') {
-      return <Icon size={12} color={theme.color.text.inverse} name={content} />;
+      return <Icon size={12} color={theme.ui.text.inverse} name={content} />;
     } else {
       if (content.type === 'Icon') {
-        return <Picture {...content} size={12} color={theme.color.text.inverse} />;
+        return <Picture {...content} size={12} color={theme.ui.text.inverse} />;
       } else if (content.type === 'NamedSvg') {
-        return <Picture fill={theme.color.text.inverse} {...content} style={[styles.badgePicture, content.style as object]} />;
+        return <Picture fill={theme.ui.text.inverse} {...content} style={[styles.badgePicture, content.style as object]} />;
       } else {
         return <Picture {...content} style={[styles.badgePicture, content.style as object]} />;
       }
@@ -52,5 +52,5 @@ export const Badge = ({ content, color }: IBadgeProps) => {
   if (!content) {
     return null;
   }
-  return <View style={[styles.badge, { backgroundColor: color || theme.color.neutral.regular }]}>{picture}</View>;
+  return <View style={[styles.badge, { backgroundColor: color || theme.ui.text.light }]}>{picture}</View>;
 };
