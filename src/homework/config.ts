@@ -7,7 +7,7 @@ import FunctionalModuleConfig from '~/infra/moduleTool';
 
 // Yeah, it's ugly. Sorry. We must port this module into frameworkV2 to make this happier.
 console.log('deviceInfoModule.getBundleId()', deviceInfoModule.getBundleId());
-const pictureName = deviceInfoModule.getBundleId() === 'com.ode.one' ? 'homework1D' : 'homework2D';
+export const pictureName = deviceInfoModule.getBundleId() === 'com.ode.one' ? 'homework1D' : 'homework2D';
 
 export default new FunctionalModuleConfig({
   name: 'homework',

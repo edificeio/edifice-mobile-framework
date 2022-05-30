@@ -41,6 +41,7 @@ import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/compo
 import { displayPastDate } from '~/framework/util/date';
 
 import { UI_SIZES } from './constants';
+import { Picture, PictureProps } from './picture';
 
 export interface IExplorerProps<FolderType extends {}, ResourceType extends {}>
   extends Omit<
@@ -96,7 +97,7 @@ export interface IExplorerResourceItemWithImage extends IExplorerResourceItemBas
   thumbnail: ImageSourcePropType;
 }
 export interface IExplorerResourceItemWithIcon extends IExplorerResourceItemBase {
-  icon: string;
+  icon: string | PictureProps;
 }
 
 export default <FolderType extends {}, ResourceType extends {}>(props: IExplorerProps<FolderType, ResourceType>) => {
@@ -179,11 +180,21 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
         showBgColor={item.type !== 'folder'}
         image={(item as IExplorerResourceItemWithImage).thumbnail}
         overlay={
-          <Icon
-            color={item.color}
-            size={item.type === 'folder' ? 88 : 48}
-            name={item.type === 'folder' ? 'folder1' : (item as IExplorerResourceItemWithIcon).icon}
-          />
+          (item as IExplorerResourceItemWithIcon).icon ? (
+            typeof (item as IExplorerResourceItemWithIcon).icon === 'string' ? (
+              <Icon
+                color={item.color}
+                size={item.type === 'folder' ? 88 : 48}
+                name={item.type === 'folder' ? 'folder1' : (item as IExplorerResourceItemWithIcon).icon}
+              />
+            ) : (
+              <Picture
+                {...((item as IExplorerResourceItemWithIcon).icon as PictureProps)}
+                width={item.type === 'folder' ? 88 : 48}
+                height={item.type === 'folder' ? 88 : 48}
+              />
+            )
+          ) : null
         }
         textStyle={isResourceWithDate ? {} : { textAlign: 'center' }}
         textProps={{ numberOfLines: isResourceWithDate ? 1 : 2 }}
