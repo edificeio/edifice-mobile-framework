@@ -14,6 +14,7 @@
   "pronote.carnetDeBord.vieScolaire.title": "Vie Scolaire",
   "pronote.carnetDeBord.vieScolaire.empty": "Pas d’évènements sur les 30 derniers jours",
   "pronote.carnetDeBord.vieScolaire.dateFromTo": "{{start}} – {{end}}",
+  "pronote.carnetDeBord.calendar.lastWeek": "dddd [dernier]",
   "common.redirect.browser.title": "Redirection sur le navigateur",
   "common.redirect.browser.message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
   "common.redirect.browser.error": "Erreur lors de la redirection.",
@@ -225,7 +226,7 @@
     "response": {
       "add": "Ajouter une réponse...",
       "confirmationUnsavedModification": "Vous allez annuler les changements de votre réponse. En êtes-vous sûr ?",
-      "confirmationUnsavedPublication": "Vous allez annuler l'ajout de votre réponse. En êtes-vous sûr ?"  
+      "confirmationUnsavedPublication": "Vous allez annuler l'ajout de votre réponse. En êtes-vous sûr ?"
     },
     "save": "Enregistrer",
     "send": "Envoyer",

@@ -186,18 +186,20 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
 };
 CarnetDeBordDetailsScreen.formatDate = (m: moment.Moment) =>
   m.calendar(null, {
-    sameDay: `[${I18n.t('common.date.today')}]`,
+    lastDay: `[${I18n.t('common.date.yesterday')}]`,
+    lastWeek: `${I18n.t('pronote.carnetDeBord.calendar.lastWeek')}`,
     nextDay: `[${I18n.t('common.date.tomorrow')}]`,
     nextWeek: 'dddd',
-    lastDay: `[${I18n.t('common.date.yesterday')}]`,
-    sameElse: 'DD MMM',
+    sameDay: `[${I18n.t('common.date.today')}]`,
+    sameElse: 'ddd DD',
   });
 CarnetDeBordDetailsScreen.formatDatePast = (m: moment.Moment) =>
   m.calendar(null, {
-    sameDay: `[${I18n.t('common.date.today')}]`,
+    lastDay: `[${I18n.t('common.date.yesterday')}]`,
+    lastWeek: `${I18n.t('pronote.carnetDeBord.calendar.lastWeek')}`,
     nextDay: `[${I18n.t('common.date.tomorrow')}]`,
     nextWeek: 'dddd',
-    lastDay: `[${I18n.t('common.date.yesterday')}]`,
+    sameDay: `[${I18n.t('common.date.today')}]`,
     sameElse: 'ddd DD MMM',
   });
 CarnetDeBordDetailsScreen.styles = StyleSheet.create({
