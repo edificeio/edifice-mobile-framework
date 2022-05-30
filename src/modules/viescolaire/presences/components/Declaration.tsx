@@ -14,6 +14,9 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
   switchContainer: {
     justifyContent: 'center',
     padding: 10,
@@ -107,7 +110,10 @@ const styles = StyleSheet.create({
     color: CommonStyles.primary,
   },
   iconAttMarginRight: { marginRight: 10 },
-  dialogButtonOk: { alignSelf: 'center' },
+  dialogButtonOk: {
+    alignSelf: 'center',
+    marginBottom: 10,
+  },
 });
 
 type DeclarationProps = {
@@ -234,48 +240,46 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     );
 
     return (
-      <SafeAreaView>
-        <KeyboardAvoidingView enabled={Platform.OS === 'ios'} behavior="position" keyboardVerticalOffset={60}>
-          <ScrollView bounces={false} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
-            <View style={[styles.row, styles.switchContainer]}>
-              <LeftSwitchComponent />
-              <RightSwitchComponent />
-            </View>
-
-            <View style={styles.row}>
-              <DatePickers />
-            </View>
-
-            <View style={styles.row}>
-              <TimePickerComponent title={I18n.t('viesco-from-hour')} time={startDate} onChange={updateStartDate} />
-              <TimePickerComponent title={I18n.t('viesco-to-hour')} time={endDate} onChange={updateEndDate} />
-            </View>
-
-            <View style={[styles.row, styles.inputContainer]}>
-              <TextBold style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</TextBold>
-              <TextInput
-                multiline
-                placeholder={I18n.t('viesco-enter-text')}
-                value={comment}
-                underlineColorAndroid="lightgrey"
-                onChangeText={updateComment}
-              />
-              <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
-                <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-                <Text>{I18n.t('viesco-attachment')}</Text>
-              </FilePicker>
-            </View>
-            {attachment && <RenderAttachment />}
-
-            <DialogButtonOk
-              style={styles.dialogButtonOk}
-              disabled={!this.props.validate()}
-              label={I18n.t('viesco-validate')}
-              onPress={submit}
+      <KeyboardAvoidingView
+        enabled={Platform.OS === 'ios'}
+        behavior="padding"
+        keyboardVerticalOffset={60}
+        style={styles.keyboardAvoidingContainer}>
+        <ScrollView>
+          <View style={[styles.row, styles.switchContainer]}>
+            <LeftSwitchComponent />
+            <RightSwitchComponent />
+          </View>
+          <View style={styles.row}>
+            <DatePickers />
+          </View>
+          <View style={styles.row}>
+            <TimePickerComponent title={I18n.t('viesco-from-hour')} time={startDate} onChange={updateStartDate} />
+            <TimePickerComponent title={I18n.t('viesco-to-hour')} time={endDate} onChange={updateEndDate} />
+          </View>
+          <View style={[styles.row, styles.inputContainer]}>
+            <TextBold style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</TextBold>
+            <TextInput
+              multiline
+              placeholder={I18n.t('viesco-enter-text')}
+              value={comment}
+              underlineColorAndroid="lightgrey"
+              onChangeText={updateComment}
             />
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+            <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
+              <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
+              <Text>{I18n.t('viesco-attachment')}</Text>
+            </FilePicker>
+          </View>
+          {attachment && <RenderAttachment />}
+          <DialogButtonOk
+            style={styles.dialogButtonOk}
+            disabled={!this.props.validate()}
+            label={I18n.t('viesco-validate')}
+            onPress={submit}
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }

@@ -58,6 +58,7 @@ const style = StyleSheet.create({
   },
   halfRoomLabelContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   courseStatus: {
     alignItems: 'flex-end',

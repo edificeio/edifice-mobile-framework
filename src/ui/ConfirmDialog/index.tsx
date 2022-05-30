@@ -123,7 +123,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
             <View
               style={{
                 maxHeight: layoutSize.LAYOUT_450,
-                height: layoutSize.LAYOUT_60 * selected.length,
+                height: layoutSize.LAYOUT_80 * selected.length,
                 marginTop: layoutSize.LAYOUT_10,
                 marginLeft: layoutSize.LAYOUT_16,
                 marginBottom: layoutSize.LAYOUT_10,
@@ -132,9 +132,6 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
                 flex: 0,
               }}>
               <FlatList
-                ItemSeparatorComponent={() => (
-                  <View style={{ backgroundColor: '#ffffff', width: '100%', height: 0, margin: 0, padding: 0 }} />
-                )}
                 data={selected}
                 keyExtractor={(item: IItem) => item.id}
                 renderItem={({ item }) => <Item item={item} simple onEvent={f => f} />}
