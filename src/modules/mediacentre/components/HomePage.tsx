@@ -1,19 +1,19 @@
 import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Text, TextBold } from '~/framework/components/text';
+import { ISignetsState } from '~/modules/mediacentre/state/signets';
 import { IResourcesState, Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
-import { ISignetsState } from '../state/signets';
-import { AdvancedSearchModal, Field, Sources } from './AdvancedSearchModal';
+import { AdvancedSearchModal, Field, SearchModalHandle, Sources } from './AdvancedSearchModal';
 import { FavoritesCarousel } from './FavoritesCarousel';
 import { SearchContent } from './SearchContent';
-import { IconButtonText, SearchBar } from './SearchItems';
+import { IconButtonText, SearchBar, SearchBarHandle } from './SearchItems';
 import { SmallCard } from './SmallCard';
 
 const styles = StyleSheet.create({
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   gridDisplayAllText: {
-    color: theme.color.secondary.regular,
+    color: theme.palette.primary.regular,
     textDecorationLine: 'underline',
   },
   mainContainer: {
@@ -74,8 +74,8 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePageProps) => {
-  const searchBarRef = useRef<TextInput>(null);
-  const searchModalRef = useRef(null);
+  const searchBarRef = useRef<SearchBarHandle>(null);
+  const searchModalRef = useRef<SearchModalHandle>(null);
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
@@ -160,7 +160,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   return (
     <View style={styles.mainContainer}>
       <View style={styles.searchContainer}>
-        <SearchBar onSubmitEditing={onSearch} inputRef={searchBarRef} />
+        <SearchBar onSubmitEditing={onSearch} ref={searchBarRef} />
         <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
       </View>
       {searchState !== SearchState.NONE ? (

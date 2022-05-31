@@ -1,7 +1,8 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, RefreshControl, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
@@ -92,30 +93,32 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
   const homeworkDataList = homeworkList as IHomeworkList;
   const homeworksArray = Object.values(homeworkDataList) as IHomework[];
   homeworksArray.sort((a, b) => moment(a.due_date).diff(moment(b.due_date)) || moment(a.created_date).diff(moment(b.created_date)));
+
   return (
-    <ScrollView style={style.mainView} refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}>
-      {homeworksArray.length === 0 ? (
-        <EmptyComponent title={I18n.t('viesco-homework-EmptyScreenText')} />
-      ) : (
-        homeworksArray.map((homework, index, list) => (
-          <View key={homework.id}>
-            {index === 0 || moment(homework.due_date).format('DD/MM/YY') !== moment(list[index - 1].due_date).format('DD/MM/YY') ? (
-              <TextBold>
-                {I18n.t('viesco-homework-fordate')} {moment(homework.due_date).format('dddd Do MMMM')}
-              </TextBold>
-            ) : null}
-            <HomeworkItem
-              onPress={() => onHomeworkTap(homework)}
-              disabled={getUserSession().user.type !== 'Student'}
-              checked={isHomeworkDone(homework)}
-              title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
-              subtitle={homework.type}
-              onChange={() => onHomeworkStatusUpdate(homework)}
-            />
-          </View>
-        ))
+    <FlatList
+      style={style.mainView}
+      refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}
+      data={homeworksArray}
+      renderItem={({ item, index }) => (
+        <View key={item.id}>
+          {index === 0 ||
+          moment(item.due_date).format('DD/MM/YY') !== moment(homeworksArray[index - 1].due_date).format('DD/MM/YY') ? (
+            <TextBold>
+              {I18n.t('viesco-homework-fordate')} {moment(item.due_date).format('dddd Do MMMM')}
+            </TextBold>
+          ) : null}
+          <HomeworkItem
+            onPress={() => onHomeworkTap(item)}
+            disabled={getUserSession().user.type !== 'Student'}
+            checked={isHomeworkDone(item)}
+            title={item.subject_id !== 'exceptional' ? item.subject.name : item.exceptional_label}
+            subtitle={item.type}
+            onChange={() => onHomeworkStatusUpdate(item)}
+          />
+        </View>
       )}
-    </ScrollView>
+      ListEmptyComponent={<EmptyComponent title={I18n.t('viesco-homework-EmptyScreenText')} />}
+    />
   );
 };
 
@@ -125,27 +128,30 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
   }, []);
 
   return (
-    <ScrollView style={style.mainView} refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshSessions} />}>
-      {sessionList.length === 0 ? (
-        <EmptyComponent title={I18n.t('viesco-session-EmptyScreenText')} />
-      ) : (
-        sessionList.map(
-          (session, index, list) =>
-            !hasEmptyDescription(session) && (
-              <View>
-                {index === 0 || moment(session.date).format('DD/MM/YY') !== moment(list[index - 1].date).format('DD/MM/YY') ? (
-                  <TextBold>{moment(session.date).format('DD/MM/YY')}</TextBold>
-                ) : null}
-                <SessionItem
-                  onPress={() => onSessionTap(session)}
-                  matiere={session.subject_id !== 'exceptional' ? session.subject.name : session.exceptional_label}
-                  author={getTeacherName(session.teacher_id, personnelList)}
-                />
-              </View>
-            ),
-        )
-      )}
-    </ScrollView>
+    <FlatList
+      style={style.mainView}
+      refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshSessions} />}
+      data={sessionList}
+      renderItem={({ item, index }) => {
+        if (!hasEmptyDescription(item)) {
+          return (
+            <View>
+              {index === 0 || moment(item.date).format('DD/MM/YY') !== moment(sessionList[index - 1].date).format('DD/MM/YY') ? (
+                <TextBold>{moment(item.date).format('DD/MM/YY')}</TextBold>
+              ) : null}
+              <SessionItem
+                onPress={() => onSessionTap(item)}
+                matiere={item.subject_id !== 'exceptional' ? item.subject.name : item.exceptional_label}
+                author={getTeacherName(item.teacher_id, personnelList)}
+              />
+            </View>
+          );
+        } else {
+          return null;
+        }
+      }}
+      ListEmptyComponent={<EmptyComponent title={I18n.t('viesco-session-EmptyScreenText')} />}
+    />
   );
 };
 

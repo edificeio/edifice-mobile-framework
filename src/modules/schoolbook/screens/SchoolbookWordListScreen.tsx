@@ -11,6 +11,7 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import UserList from '~/framework/components/UserList';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
@@ -291,7 +292,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     return (
       <UserList
         data={children}
-        renderBadge={user => ({ badgeContent: user.unacknowledgedWordsCount, badgeColor: theme.color.notificationBadge })}
+        style={{ margin: UI_SIZES.spacing.large }}
+        renderBadge={user => ({ badgeContent: user.unacknowledgedWordsCount, badgeColor: theme.ui.notificationBadge })}
         onSelect={id => setSelectedChildId(id)}
         selectedId={selectedChildId}
         horizontal

@@ -29,7 +29,7 @@ export enum Status {
 
 const SelectedView = styled(View)({
   position: 'absolute',
-  borderColor: theme.color.secondary.regular,
+  borderColor: theme.palette.primary.regular,
   borderWidth: 2,
 });
 

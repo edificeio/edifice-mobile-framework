@@ -3,9 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import { FlatList, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
-import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   overlayActions: {

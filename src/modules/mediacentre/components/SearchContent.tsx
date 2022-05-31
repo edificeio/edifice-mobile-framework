@@ -5,10 +5,10 @@ import { FlatList, Image, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
-import { Text, TextBold } from '~/ui/Typography';
 
 import { Field, Sources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cancelButton: {
-    backgroundColor: theme.color.secondary.regular,
+    backgroundColor: theme.palette.primary.regular,
   },
   fieldsContainer: {
     flexDirection: 'row',
@@ -110,9 +110,9 @@ const resourceMatchesFilters = (resource: Resource, filters: SearchFilters) => {
 const getSources = (resources: Resource[]) => {
   return {
     GAR: resources.some(resource => resource.source === Source.GAR),
-    Moodle: resources.some(resource => resource.source === Source.Moodle),
+    Moodle: resources.some(resource => resource.source === Source.MOODLE),
     PMB: resources.some(resource => resource.source === Source.PMB),
-    Signets: resources.some(resource => resource.source === Source.Signet),
+    Signet: resources.some(resource => resource.source === Source.SIGNET),
   };
 };
 
@@ -120,7 +120,7 @@ const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
       <TextBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</TextBold>
-      <Text numberOfLines={1}> {props.field.value}</Text>
+      <Text> {props.field.value}</Text>
     </View>
   ) : null;
 
@@ -131,7 +131,7 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
         {props.sources.GAR ? <Image source={require('ASSETS/images/logo-gar.png')} style={styles.sourceImage} /> : null}
         {props.sources.Moodle ? <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} /> : null}
         {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
-        {props.sources.Signets ? <Icon name="bookmark_outline" size={24} /> : null}
+        {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
       <DialogButtonOk style={styles.cancelButton} label={I18n.t('common.cancel')} onPress={props.onCancelSearch} />
     </View>
@@ -185,7 +185,7 @@ export const SearchContent: React.FunctionComponent<SearchContentProps> = (props
               <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
             ) : null
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-search')} />}
+          ListEmptyComponent={<EmptyScreen svgImage="empty-search" title={I18n.t('mediacentre.empty-search')} />}
         />
       )}
     </View>

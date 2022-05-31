@@ -3,18 +3,20 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { Dispatch, bindActionCreators } from 'redux';
+import { bindActionCreators } from 'redux';
 
-import { HeaderAction } from '~/framework/components/header';
+import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import pickFile, { pickFileError } from '~/infra/actions/pickFile';
+import { pickFileError } from '~/infra/actions/pickFile';
+import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/zimbra/actions/mailContent';
 import {
@@ -28,6 +30,7 @@ import {
 import { getSignatureAction } from '~/modules/zimbra/actions/signature';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import NewMailComponent from '~/modules/zimbra/components/NewMail';
+import moduleConfig from '~/modules/zimbra/moduleConfig';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
@@ -166,31 +169,28 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   navigationHeaderFunction = {
-    getAskForAttachment: (dispatch: Dispatch) => {
-      pickFile()
-        .then(contentUri => {
-          this.getAttachmentData(contentUri);
-        })
-        .catch(err => {
-          if (err.message === 'Error picking image' || err.message === 'Error picking document') {
-            this.props.onPickFileError('zimbra');
-          }
-        });
+    addGivenAttachment: async (file: Asset | DocumentPicked, sourceType: string) => {
+      const actionName =
+        'Rédaction mail - Insérer - Pièce jointe - ' +
+        ({
+          camera: 'Caméra',
+          gallery: 'Galerie',
+          document: 'Document',
+        }[sourceType] ?? 'Source inconnue');
+      try {
+        await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
+        Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
+      } catch (err) {
+        this.props.onPickFileError('conversation');
+        Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
+      }
     },
     getSendDraft: async () => {
       if (this.state.mail.to.length === 0) {
-        Toast.show(I18n.t('zimbra-missing-receiver'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
-        });
+        Toast.show(I18n.t('zimbra-missing-receiver'));
         return;
       } else if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
-        Toast.show(I18n.t('zimbra-send-attachment-progress'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
-        });
+        Toast.show(I18n.t('zimbra-send-attachment-progress'));
         return;
       }
 
@@ -199,11 +199,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
         this.props.sendMail(this.getMailData(), this.state.id!, this.state.replyTo!);
 
-        Toast.show(I18n.t('zimbra-send-mail'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
-        });
+        Toast.show(I18n.t('zimbra-send-mail'));
 
         const navParams = this.props.navigation.state;
         if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
@@ -231,11 +227,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getGoBack: () => {
       if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
-        Toast.show(I18n.t('zimbra-send-attachment-progress'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
-        });
+        Toast.show(I18n.t('zimbra-send-attachment-progress'));
         return;
       }
       this.saveDraft();
@@ -384,7 +376,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   getMailData = () => {
-    let { mail, prevBody } = this.state;
+    let { mail, prevBody, signature, isNewSignature } = this.state;
     const regexp = /(\r\n|\n|\r)/gm;
 
     mail.body = mail.body.replace(regexp, '<br>');
@@ -398,8 +390,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       if (key === 'to' || key === 'cc' || key === 'bcc') {
         ret[key] = value.map(user => user.id);
       } else if (key === 'body') {
-        if (this.state.signature.text !== '') {
-          const sign = '<div class="signature new-signature ng-scope">' + this.state.signature.text + '</div>\n\n';
+        if (signature.text !== '' && (signature.useGlobal || isNewSignature)) {
+          const sign = '<div class="signature new-signature ng-scope">' + signature.text + '</div>\n\n';
           ret[key] = value + sign + prevBody;
         } else {
           ret[key] = value + prevBody;
@@ -431,9 +423,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         tempAttachment: null,
       }));
     } catch (e) {
-      Toast.show(I18n.t('zimbra-attachment-error'), {
-        position: Toast.position.BOTTOM,
-      });
+      Toast.show(I18n.t('zimbra-attachment-error'));
       this.setState({ tempAttachment: null });
     }
   };
@@ -448,11 +438,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
 
     this.props.navigation.goBack();
-    Toast.show(I18n.t('zimbra-message-deleted'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t('zimbra-message-deleted'));
   };
 
   forwardDraft = async () => {
@@ -512,13 +498,17 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   navBarInfo() {
     const { navigation } = this.props;
-    const askForAttachment = navigation.getParam('getAskForAttachment');
+    const addGivenAttachment = navigation.getParam('addGivenAttachment');
     const sendDraft = navigation.getParam('getSendDraft');
     const showMenu = navigation.getParam('showHeaderMenu');
     return {
       right: (
         <View style={styles.row}>
-          {askForAttachment && <HeaderAction style={styles.navBarHeaders} onPress={askForAttachment} iconName="attachment" />}
+          {addGivenAttachment && (
+            <FilePicker multiple callback={addGivenAttachment}>
+              <HeaderIcon name="attachment" />
+            </FilePicker>
+          )}
           {sendDraft && <HeaderAction style={styles.navBarHeaders} onPress={sendDraft} iconName="outbox" />}
           {showMenu && <HeaderAction style={styles.navBarHeaders} onPress={showMenu} iconName="more_vert" />}
         </View>
@@ -550,12 +540,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           onDraftSave={this.saveDraft}
           onHeaderChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
           body={this.state.mail.body.replace(/<br>/gs, '\n')}
-          onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, newBody } }))}
+          onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: newBody } }))}
           attachments={
             this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
           }
           onAttachmentChange={newAttachments => {
-            return this.setState(prevState => ({ mail: { ...prevState.mail, newAttachments } }));
+            return this.setState(prevState => ({ mail: { ...prevState.mail, attachments: newAttachments } }));
           }}
           onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id!, attachmentId)}
           prevBody={this.state.prevBody}

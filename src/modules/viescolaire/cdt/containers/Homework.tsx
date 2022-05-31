@@ -12,6 +12,7 @@ class Homework extends React.PureComponent<any> {
     const diaryTitle = this.props.navigation.getParam('diaryTitle');
     const content =
       this.props.navigation.state.params.homework === undefined ? (
+        // Displayed when user is a teacher
         <DisplayListHomework
           {...this.props}
           subject={this.props.navigation.state.params.subject}

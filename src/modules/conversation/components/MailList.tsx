@@ -279,7 +279,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       iconName: 'create_new_folder',
       labelStyle: {
         fontSize: 12,
-        color: theme.color.text.light,
+        color: theme.ui.text.light,
         fontWeight: Weight.SemiBold,
       },
       closeAfterSelecting: false,

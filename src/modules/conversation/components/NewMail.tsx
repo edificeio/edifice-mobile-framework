@@ -12,11 +12,11 @@ import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers, IUser } from '~/modules/conversation/service/newMail';
 import { IVisibleGroup, IVisibleUser, IVisiblesState, searchVisibles } from '~/modules/conversation/state/visibles';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui/icons/Icon';
-import { Loading } from '~/ui/Loading';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { Loading } from '~/ui/Loading';
 import { Text } from '~/ui/Typography';
+import { Icon } from '~/ui/icons/Icon';
 
 import Attachment from './Attachment';
 import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';
@@ -135,7 +135,7 @@ const Fields = ({
   onBodyChange: (body: string) => void;
 }) => {
   const commonFields = (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.color.background.card }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
       <HeaderSubject
         title={I18n.t('conversation.subject')}
         value={headers.subject}
@@ -299,7 +299,7 @@ const MailContactField = connect(state => ({
       paddingHorizontal: 10,
       borderBottomColor: '#EEEEEE',
       borderBottomWidth: 2,
-      backgroundColor: theme.color.background.card,
+      backgroundColor: theme.ui.background.card,
       flex: 0,
     } as ViewStyle;
     return (
@@ -373,7 +373,7 @@ const HeaderSubject = ({
     paddingHorizontal: 10,
     borderBottomColor: '#EEEEEE',
     borderBottomWidth: 2,
-    backgroundColor: theme.color.background.card,
+    backgroundColor: theme.ui.background.card,
   } as ViewStyle;
 
   const inputStyle = {

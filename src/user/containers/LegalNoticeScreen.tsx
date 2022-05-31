@@ -62,7 +62,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
           rightElement={
             <Icon
               name="arrow_down"
-              color={theme.color.secondary.regular}
+              color={theme.palette.primary.regular}
               style={{ flex: 0, marginLeft: 20, transform: [{ rotate: '270deg' }] }}
             />
           }

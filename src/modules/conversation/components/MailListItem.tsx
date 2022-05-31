@@ -1,19 +1,19 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View, StyleSheet, ColorValue } from 'react-native';
+import { ColorValue, StyleSheet, View } from 'react-native';
 import Swipeable from 'react-native-swipeable';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import theme from '~/app/theme';
 import { ListItem } from '~/framework/components/listItem';
-import { Text, TextBold, TextSemiBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
-import { Icon } from '~/ui/icons/Icon';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { Icon } from '~/ui/icons/Icon';
 
 type MailListItemProps = {
   navigation: NavigationDrawerProp<any>;
@@ -41,13 +41,13 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
     };
     switch (currentFolder) {
       case 'trash':
-        leftButtonProperties.leftActionColor = theme.color.success;
+        leftButtonProperties.leftActionColor = theme.palette.status.success;
         leftButtonProperties.leftActionText = I18n.t('conversation.restore');
         leftButtonProperties.leftActionIcon = 'unarchive';
         leftButtonProperties.leftAction = restoreMail;
         break;
       default:
-        leftButtonProperties.leftActionColor = theme.color.info;
+        leftButtonProperties.leftActionColor = theme.palette.status.info;
         leftButtonProperties.leftActionText = I18n.t(`conversation.mark${unread ? 'Read' : 'Unread'}`);
         leftButtonProperties.leftActionIcon = `eye${unread ? '' : '-slash'}`;
         leftButtonProperties.leftAction = toggleRead;
@@ -59,8 +59,8 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
   swipeButtons = (style, action, actionIcon, actionText) => [
     <TouchableOpacity style={[styles.buttonContainer, style]} onPress={action}>
       <View style={styles.button}>
-        <Icon name={actionIcon} size={16} color={theme.color.text.inverse} />
-        <Text style={{ color: theme.color.text.inverse, marginLeft: 10 }}>{actionText}</Text>
+        <Icon name={actionIcon} size={16} color={theme.ui.text.inverse} />
+        <Text style={{ color: theme.ui.text.inverse, marginLeft: 10 }}>{actionText}</Text>
       </View>
     </TouchableOpacity>,
   ];
@@ -115,7 +115,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
               )
         }
         rightButtons={this.swipeButtons(
-          { backgroundColor: theme.color.failure },
+          { backgroundColor: theme.palette.status.failure },
           () => {
             this.swipeableRef?.recenter(); // ToDo
             onSwipeRecenter(mailId);
@@ -134,7 +134,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                   {(() => {
                     const TextContactComponent = isMailUnread ? TextBold : TextSemiBold;
-                    const textContactPrefixColor = isMailUnread ? theme.color.text.regular : theme.color.text.light;
+                    const textContactPrefixColor = isMailUnread ? theme.ui.text.regular : theme.ui.text.light;
                     return (
                       <>
                         {isFolderOutbox || isFolderDrafts ? (
@@ -158,7 +158,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                   <View style={{ flex: 1 }}>
                     {(() => {
                       const TextSubjectComponent = isMailUnread ? TextSemiBold : Text;
-                      const textSubjectColor = isMailUnread ? theme.color.text.heavy : theme.color.text.regular;
+                      const textSubjectColor = isMailUnread ? theme.ui.text.heavy : theme.ui.text.regular;
                       return (
                         <TextSubjectComponent
                           numberOfLines={1}
@@ -171,7 +171,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                   {/* Mail attachment indicator */}
                   {mailInfos.hasAttachment && (
                     <View style={styles.mailIndicator}>
-                      <Icon name="attachment" size={16} color={theme.color.text.light} />
+                      <Icon name="attachment" size={16} color={theme.ui.text.light} />
                     </View>
                   )}
                 </View>
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
   },
   containerMailUnread: {
-    backgroundColor: theme.color.secondary.extraLight,
+    backgroundColor: theme.palette.primary.pale,
     paddingVertical: 18,
   },
   mailInfos: {

@@ -373,9 +373,39 @@
   "createPost-submitAction": "Enviar",
   "createPost-submitSuccess": "Su entrada de blog se ha enviado correctamente y se publicará cuando el gestor del blog la valide.",
   "date": {
-    "abbr_day_names": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-    "abbr_month_names": [null, "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
-    "day_names": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+    "abbr_day_names": [
+      "Dom",
+      "Lun",
+      "Mar",
+      "Mié",
+      "Jue",
+      "Vie",
+      "Sáb"
+    ],
+    "abbr_month_names": [
+      null,
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic"
+    ],
+    "day_names": [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado"
+    ],
     "month_names": [
       null,
       "de enero",
@@ -605,6 +635,7 @@
   "shared": "Documentos compartidos",
   "structuresTitle": "Establecimiento(s) de incorporación y clase(s)",
   "support": "Asistencia EAV",
+  "support-add-attachments": "Añadir archivos adjuntos",
   "support-attachment-error": "Error al agregar el archivo adjunto",
   "support-mobile-only": "Solo para incidentes de aplicaciones móviles.",
   "support-report-incident": "Informar un incidente",
@@ -613,7 +644,7 @@
   "support-ticket-error-form-description-empty": "Se debe completar el campo \"Descripción\"",
   "support-ticket-error-form-subject-empty": "Se debe completar el campo \"Asunto\"",
   "support-ticket-error-form-subject-size": "El campo \"Asunto\" es demasiado largo",
-  "support-ticket-error-has-no-right": "No tiene derechos para crear una solicitud",
+  "support-ticket-error-has-no-right": "No tiene acceso a la creación de solicitudes",
   "support-ticket-establishment": "Establecimiento escolar",
   "support-ticket-failure": "Error al crear la solicitud.",
   "support-ticket-register": "Guardar",
@@ -815,7 +846,6 @@
       }
     }
   },
-
   "version-number": "Versión",
   "videoNotAvailable": "Lector de video no disponible",
   "viesco": "Vida escolar",
@@ -893,21 +923,21 @@
       "title": "No hay nada en su estantería personal"
     },
     "protected": {
-        "text": "Aquí están disponibles todas las fotos, videos y documentos que se han utilizado en la red educativa.",
-        "title": "No hay nada en la estantería"
-      },
-      "shared": {
-        "text": "Aquí están disponibles todos los documentos que ha compartido con otros y también los que se han compartido con usted.",
-        "title": "Ningún recurso compartido"
-      },
-      "subfolder": {
-        "text": "No hay ningún documento en esta carpeta.",
-        "title": "Esta carpeta está vacía"
-      },
-      "trashed": {
-        "text": "Aquí encontrará los documentos eliminados. Actualmente todo está limpio.",
-        "title": "La papelera está vacía"
-      }
+      "text": "Aquí están disponibles todas las fotos, videos y documentos que se han utilizado en la red educativa.",
+      "title": "No hay nada en la estantería"
+    },
+    "shared": {
+      "text": "Aquí están disponibles todos los documentos que ha compartido con otros y también los que se han compartido con usted.",
+      "title": "Ningún recurso compartido"
+    },
+    "subfolder": {
+      "text": "No hay ningún documento en esta carpeta.",
+      "title": "Esta carpeta está vacía"
+    },
+    "trashed": {
+      "text": "Aquí encontrará los documentos eliminados. Actualmente todo está limpio.",
+      "title": "La papelera está vacía"
+    }
   },
   "workspace-quota-overflowText": "El espacio de almacenamiento insuficiente para completar esta operación.",
   "workspace-quota-overflowTitle": "Espacio de almacenamiento completo",

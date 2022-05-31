@@ -8,7 +8,7 @@ import { DEPRECATED_getCurrentPlatform } from '../util/_legacy_appConf';
 import { openUrl } from '../util/linking';
 import { UI_SIZES } from './constants';
 import { Picture } from './picture';
-import { TextSemiBold } from './text';
+import { TextSemiBold, TextSizeStyle, rem, remlh } from './text';
 
 export interface ActionButtonProps {
   text: string;
@@ -24,26 +24,26 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
   const Component = disabled ? View : TouchableOpacity;
   const viewStyle = {
     primary: {
-      backgroundColor: disabled ? theme.color.neutral.regular : theme.color.secondary.regular,
+      backgroundColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
       opacity: disabled ? 0.5 : 1,
     },
     secondary: {
-      borderColor: disabled ? theme.color.neutral.regular : theme.color.secondary.regular,
+      borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
       borderWidth: 2,
       opacity: disabled ? 0.5 : 1,
     },
   };
   const textStyle = {
     primary: {
-      color: theme.color.text.inverse,
+      color: theme.ui.text.inverse,
     },
     secondary: {
-      color: disabled ? theme.color.neutral.regular : theme.color.secondary.regular,
+      color: disabled ? theme.ui.text.light : theme.palette.primary.regular,
     },
   };
   const pictureFill = {
-    primary: theme.color.text.inverse,
-    secondary: disabled ? theme.color.neutral.regular : theme.color.secondary.regular,
+    primary: theme.ui.text.inverse,
+    secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
   return (
     <Component
@@ -81,9 +81,6 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
     </Component>
   );
 };
-
-const lh = UI_SIZES.getResponsiveStyledLineHeight();
-
 ActionButton.Style = StyleSheet.create({
   viewCommon: {
     height: UI_SIZES.dimensions.height.largePlus,
@@ -96,8 +93,8 @@ ActionButton.Style = StyleSheet.create({
   },
   textCommon: {
     marginRight: UI_SIZES.spacing.smallPlus,
-    lineHeight: lh,
-    height: lh,
+    lineHeight: remlh(1),
+    height: remlh(1),
   },
   picture: {
     marginLeft: UI_SIZES.spacing.smallPlus,

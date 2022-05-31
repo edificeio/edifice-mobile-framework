@@ -6,13 +6,13 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
+import { Text } from '~/framework/components/text';
 import { removeAccents } from '~/framework/util/string';
 import { IUser } from '~/modules/zimbra/service/newMail';
 import { CommonStyles } from '~/styles/common/styles';

@@ -180,11 +180,11 @@ class Attachment extends React.PureComponent<
           <Pressable style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.onPressAttachment(notifierId)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
-                <ActivityIndicator size="small" color={theme.color.secondary.regular} style={{ marginRight: 4, height: 18 }} />
+                <ActivityIndicator size="small" color={theme.palette.primary.regular} style={{ marginRight: 4, height: 18 }} />
               ) : downloadState === DownloadState.Success ? (
-                <Icon color={CommonStyles.themeOpenEnt.green} size={16} name="checked" style={{ marginRight: 8 }} />
+                <Icon color={theme.palette.status.success} size={16} name="checked" style={{ marginRight: 8 }} />
               ) : !this.attId || downloadState === DownloadState.Error ? (
-                <Icon color={CommonStyles.errorColor} size={16} name="close" style={{ marginRight: 8 }} />
+                <Icon color={theme.palette.status.failure} size={16} name="close" style={{ marginRight: 8 }} />
               ) : (
                 <Icon
                   color={CommonStyles.textColor}

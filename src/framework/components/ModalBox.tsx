@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import NativeModal from 'react-native-modal';
 
 import theme from '~/app/theme';
@@ -22,32 +22,17 @@ export const ModalBox = ({ content }: ModalBoxProps, ref) => {
       useNativeDriverForBackdrop
       isVisible={showModal}
       onBackdropPress={() => setShowModal(false)}
-      style={{
-        marginHorizontal: UI_SIZES.spacing.large,
-        marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.large,
-        marginBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight + UI_SIZES.spacing.large,
-      }}>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: theme.color.background.card,
-          borderRadius: UI_SIZES.radius.extraLarge,
-          padding: UI_SIZES.spacing.extraLarge,
-        }}>
+      style={ModalBox.styles.nativeModal}>
+      <View style={ModalBox.styles.outerView}>
         {content}
-        <View
-          style={{
-            position: 'absolute',
-            top: UI_SIZES.spacing.large,
-            right: UI_SIZES.spacing.large,
-          }}>
+        <View style={ModalBox.styles.innerView}>
           <TouchableOpacity onPress={() => setShowModal(false)}>
             <Picture
               type="NamedSvg"
               name={'pictos-close'}
               width={UI_SIZES.dimensions.width.large}
               height={UI_SIZES.dimensions.height.large}
-              fill={theme.greyPalette.black}
+              fill={theme.palette.grey.black}
             />
           </TouchableOpacity>
         </View>
@@ -55,5 +40,23 @@ export const ModalBox = ({ content }: ModalBoxProps, ref) => {
     </NativeModal>
   );
 };
+ModalBox.styles = StyleSheet.create({
+  nativeModal: {
+    marginHorizontal: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
+    marginBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight,
+  },
+  outerView: {
+    flex: 1,
+    backgroundColor: theme.ui.background.card,
+    borderRadius: UI_SIZES.radius.extraLarge,
+    padding: UI_SIZES.spacing.extraLarge,
+  },
+  innerView: {
+    position: 'absolute',
+    top: UI_SIZES.spacing.large,
+    right: UI_SIZES.spacing.large,
+  },
+});
 
 export default React.forwardRef(ModalBox);

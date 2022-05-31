@@ -5,6 +5,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
@@ -15,7 +16,6 @@ import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { ButtonIcon } from '~/ui/ButtonIconText';
 import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
 
 import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from './MailItem';
 

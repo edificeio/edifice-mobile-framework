@@ -5,6 +5,8 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { NavigationActions } from 'react-navigation';
 
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
 import { TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
@@ -12,8 +14,6 @@ import { DenseDevoirList } from '~/modules/viescolaire/competences/components/It
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/cdt';
-import { Loading } from '~/ui/Loading';
-import { Icon } from '~/ui/icons/Icon';
 
 import { IHomeworkByDateList } from './DashboardRelative';
 
@@ -244,7 +244,8 @@ export default class Dashboard extends React.PureComponent<any> {
         {this.renderNavigationGrid()}
         <ScrollView>
           {authorizedViescoApps.diary && this.renderHomework(homeworks.data)}
-          {authorizedViescoApps.competences && (evaluations.isFetching ? <Loading /> : this.renderEvaluations(evaluations, levels))}
+          {authorizedViescoApps.competences &&
+            (evaluations.isFetching ? <LoadingIndicator /> : this.renderEvaluations(evaluations, levels))}
         </ScrollView>
       </View>
     );

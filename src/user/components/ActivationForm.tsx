@@ -85,7 +85,7 @@ export function InputLogin(props: { login: string; form: ActivationFormModel; on
       value={props.login}
       hasError={props.form.showLoginError(props.login)}
       editable={false}
-      textColor={theme.color.text.light}
+      textColor={theme.ui.text.light}
     />
   );
 }

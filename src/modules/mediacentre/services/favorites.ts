@@ -13,7 +13,7 @@ export const favoritesService = {
   },
   post: async (id: string, resource: Resource) => {
     const res: any = resource;
-    if (resource.source === Source.Signet) {
+    if (resource.source === Source.SIGNET) {
       res.id = Number(resource.id);
     }
     await fetchJSONWithCache(`/mediacentre/favorites?id=${id}`, {

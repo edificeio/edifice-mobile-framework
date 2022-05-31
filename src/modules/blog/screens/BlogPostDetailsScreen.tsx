@@ -230,7 +230,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           <FlatList
             ref={ref => (this.flatListRef = ref)}
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.color.background.page }}
+            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.ui.background.page }}
             data={blogPostComments}
             keyExtractor={(item: IBlogPostComment) => item.id.toString()}
             ListHeaderComponent={this.renderBlogPostDetails()}
@@ -242,7 +242,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             }
             renderItem={({ item, index }) => this.renderComment(item, index)}
             scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-            style={{ backgroundColor: theme.color.background.page, flex: 1 }}
+            style={{ backgroundColor: theme.ui.background.page, flex: 1 }}
             onLayout={() => {
               // Scroll to last comment if coming from blog spot comment notification
               this.flatListRef &&
@@ -306,7 +306,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const blogPostComments = blogPostData?.comments;
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
-      <View style={{ backgroundColor: theme.color.background.card }}>
+      <View style={{ backgroundColor: theme.ui.background.card }}>
         <View style={{ marginTop: 16 }}>
           <ResourceView
             header={
@@ -323,13 +323,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             {blogPostData?.state === 'SUBMITTED' ? (
               <Label
                 text={I18n.t('blog.post.needValidation')}
-                color={theme.color.warning}
+                color={theme.palette.status.warning}
                 labelStyle="outline"
                 labelSize="small"
                 style={{ marginTop: 4, marginBottom: 2 }}
               />
             ) : null}
-            <TextBold style={{ color: theme.color.text.light }}>{blogInfos?.title}</TextBold>
+            <TextBold style={{ color: theme.ui.text.light }}>{blogInfos?.title}</TextBold>
             <ViewportAwareTitle
               style={{ marginBottom: 16 }}
               onViewportEnter={() => this.updateVisible(true)}
@@ -357,11 +357,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               paddingVertical: 10,
               borderTopWidth: 1,
               borderBottomWidth: 1,
-              borderTopColor: theme.color.inputBorder,
-              borderBottomColor: theme.color.inputBorder,
+              borderTopColor: theme.ui.border.input,
+              borderBottomColor: theme.ui.border.input,
             }}>
-            <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-            <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>
+            <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.ui.text.regular} />
+            <TextSemiBold style={{ color: theme.ui.text.light, fontSize: 12 }}>
               {commentsString(blogPostComments?.length || 0)}
             </TextSemiBold>
           </View>

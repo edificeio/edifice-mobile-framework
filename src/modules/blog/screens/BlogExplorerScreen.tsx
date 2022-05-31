@@ -23,6 +23,7 @@ import Explorer, {
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { NamedSVGProps, PictureProps } from '~/framework/components/picture';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -188,7 +189,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
           const { thumbnail, ...b } = bb;
           return {
             ...b,
-            color: theme.themeOpenEnt.indigo,
+            color: (moduleConfig.displayPicture as NamedSVGProps).fill ?? theme.palette.complementary.indigo.regular,
             date: moment.max(
               b.fetchPosts?.[0]?.firstPublishDate ??
                 b.fetchPosts?.[0]?.modified ??
@@ -202,7 +203,10 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         })
         .sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
-      const displayedFolders = finalFolders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }));
+      const displayedFolders = finalFolders.map(f => ({
+        ...f,
+        color: (moduleConfig.displayPicture as NamedSVGProps).fill ?? theme.palette.complementary.indigo.regular,
+      }));
       return { displayedblogs, displayedFolders };
     })();
 

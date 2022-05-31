@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { Text, TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   item: {

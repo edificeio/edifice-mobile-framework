@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import theme from '~/app/theme';
 
@@ -11,6 +11,6 @@ interface LoadingProps {
 
 export const Loading = ({ small, customColor, customStyle }: LoadingProps) => (
   <View style={customStyle || { flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.color.secondary.regular} />
+    <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.palette.primary.regular} />
   </View>
 );

@@ -65,7 +65,12 @@ export const BlogPostResourceCard = ({
         title={
           <>
             {state === 'SUBMITTED' ? (
-              <Label text={I18n.t('blog.post.needValidation')} color={theme.color.warning} labelStyle="outline" labelSize="small" />
+              <Label
+                text={I18n.t('blog.post.needValidation')}
+                color={theme.palette.status.warning}
+                labelStyle="outline"
+                labelSize="small"
+              />
             ) : null}
             <ContentCardTitle style={{ ...FontStyle.Bold }}>{title}</ContentCardTitle>
           </>
@@ -77,14 +82,14 @@ export const BlogPostResourceCard = ({
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
-              <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString(comments)}</TextSemiBold>
+              <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.ui.text.regular} />
+              <TextSemiBold style={{ color: theme.ui.text.light, fontSize: 12 }}>{commentsString(comments)}</TextSemiBold>
             </View>
           ) : undefined
         }>
         {hasBlogPostText ? (
           <Text
-            style={{ color: theme.color.text.regular, marginBottom: blogPostMedia?.length ? 10 : undefined }}
+            style={{ color: theme.ui.text.regular, marginBottom: blogPostMedia?.length ? 10 : undefined }}
             numberOfLines={contentTextMaxLines}>
             {blogPostText}
           </Text>

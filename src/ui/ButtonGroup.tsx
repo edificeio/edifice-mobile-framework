@@ -29,13 +29,13 @@ export const ButtonGroup = (props: {
   containerStyle?: ViewStyle;
 }) => {
   return (
-    <View style={[style.mainContainer, props.containerStyle, { borderColor: theme.color.secondary.regular }]}>
+    <View style={[style.mainContainer, props.containerStyle, { borderColor: theme.palette.primary.regular }]}>
       {props.buttons.map((button, index) => (
         <TouchableOpacity
           onPress={() => props.onPress(index)}
-          style={[style.buttonContainer, index === props.selectedButton && { backgroundColor: theme.color.secondary.regular }]}
+          style={[style.buttonContainer, index === props.selectedButton && { backgroundColor: theme.palette.primary.regular }]}
           key={index}>
-          <TextBold style={[style.buttonText, index !== props.selectedButton && { color: theme.color.secondary.regular }]}>
+          <TextBold style={[style.buttonText, index !== props.selectedButton && { color: theme.palette.primary.regular }]}>
             {button}
           </TextBold>
         </TouchableOpacity>

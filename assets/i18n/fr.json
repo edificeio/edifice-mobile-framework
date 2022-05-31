@@ -14,6 +14,7 @@
   "pronote.carnetDeBord.vieScolaire.title": "Vie Scolaire",
   "pronote.carnetDeBord.vieScolaire.empty": "Pas d’évènements sur les 30 derniers jours",
   "pronote.carnetDeBord.vieScolaire.dateFromTo": "{{start}} – {{end}}",
+  "pronote.carnetDeBord.calendar.lastWeek": "dddd [dernier]",
   "common.redirect.browser.title": "Redirection sur le navigateur",
   "common.redirect.browser.message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
   "common.redirect.browser.error": "Erreur lors de la redirection.",
@@ -208,6 +209,7 @@
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "for": "Pour",
+    "forRecipients": "Pour :",
     "from": "De :",
     "idf": {
       "passwordRules": "Le nouveau mot de passe doit comporter 12 caractères minimum, incluant au minimum 1 majuscule, 1 minuscule et 1 chiffre ou 1 caractère spécial parmi les suivants : $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- ."
@@ -224,7 +226,7 @@
     "response": {
       "add": "Ajouter une réponse...",
       "confirmationUnsavedModification": "Vous allez annuler les changements de votre réponse. En êtes-vous sûr ?",
-      "confirmationUnsavedPublication": "Vous allez annuler l'ajout de votre réponse. En êtes-vous sûr ?"  
+      "confirmationUnsavedPublication": "Vous allez annuler l'ajout de votre réponse. En êtes-vous sûr ?"
     },
     "save": "Enregistrer",
     "send": "Envoyer",
@@ -681,7 +683,6 @@
       "unacknowledgements": "Non-lus"
     },
     "students": "Élèves",
-    "wordFollowUp": "Suivi du mot",
     "appName": "Carnet de liaison",
     "tabName": "Carnet de liaison"
   },
@@ -693,6 +694,7 @@
   "shared": "Documents partagés",
   "structuresTitle": "Établissement(s) de rattachement et classe(s)",
   "support": "Assistance ENT",
+  "support-add-attachments": "Ajouter des pièces jointes",
   "support-attachment-error": "Echec de l'ajout de la pièce jointe",
   "support-mobile-only": "Uniquement pour les incidents de l'application mobile.",
   "support-report-incident": "Remonter un incident",
@@ -701,7 +703,7 @@
   "support-ticket-error-form-description-empty": "Le champs 'Description' doit être renseigné",
   "support-ticket-error-form-subject-empty": "Le champs 'Sujet' doit être renseigné",
   "support-ticket-error-form-subject-size": "Le champs 'Sujet' est trop long",
-  "support-ticket-error-has-no-right": "Vous n'avez pas le droit de créer un ticket",
+  "support-ticket-error-has-no-right": "Vous n'avez pas accès à la création de ticket",
   "support-ticket-establishment": "Établissement",
   "support-ticket-failure": "Echec. La création de la demande a échoué.",
   "support-ticket-register": "Enregistrer",
@@ -954,7 +956,7 @@
   "viesco-memento": "Fiche élève",
   "viesco-memento-born-date": "né le :",
   "viesco-memento-relatives": "Responsables",
-  "viesco-no-register-today": "Il n'y a pas d'appels aujourd'hui",
+  "viesco-no-register-today": "Il n'y a pas d'appel aujourd'hui",
   "viesco-notifications": "Notifications",
   "viesco-pickChild": "Choisissez un enfant",
   "viesco-incidents-punishments-date": {

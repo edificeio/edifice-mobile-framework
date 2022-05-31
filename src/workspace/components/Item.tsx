@@ -46,10 +46,7 @@ export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any
         });
         onEvent(eventInfos);
       }}
-      style={[
-        style.itemListContainer,
-        { backgroundColor: selected ? theme.color.secondary.extraLight : theme.color.background.card },
-      ]}
+      style={[style.itemListContainer, { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card }]}
       borderBottomWidth={0}>
       <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>

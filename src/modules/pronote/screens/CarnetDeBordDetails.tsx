@@ -186,24 +186,26 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
 };
 CarnetDeBordDetailsScreen.formatDate = (m: moment.Moment) =>
   m.calendar(null, {
-    sameDay: `[${I18n.t('common.date.today')}]`,
+    lastDay: `[${I18n.t('common.date.yesterday')}]`,
+    lastWeek: `${I18n.t('pronote.carnetDeBord.calendar.lastWeek')}`,
     nextDay: `[${I18n.t('common.date.tomorrow')}]`,
     nextWeek: 'dddd',
-    lastDay: `[${I18n.t('common.date.yesterday')}]`,
-    sameElse: 'DD MMM',
+    sameDay: `[${I18n.t('common.date.today')}]`,
+    sameElse: 'ddd DD',
   });
 CarnetDeBordDetailsScreen.formatDatePast = (m: moment.Moment) =>
   m.calendar(null, {
-    sameDay: `[${I18n.t('common.date.today')}]`,
+    lastDay: `[${I18n.t('common.date.yesterday')}]`,
+    lastWeek: `${I18n.t('pronote.carnetDeBord.calendar.lastWeek')}`,
     nextDay: `[${I18n.t('common.date.tomorrow')}]`,
     nextWeek: 'dddd',
-    lastDay: `[${I18n.t('common.date.yesterday')}]`,
+    sameDay: `[${I18n.t('common.date.today')}]`,
     sameElse: 'ddd DD MMM',
   });
 CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   card: {
     marginHorizontal: UI_SIZES.spacing.large,
-    marginVertical: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.spacing.large,
   },
   section: {
     ...cardPadding,
@@ -220,17 +222,20 @@ CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   },
   sectionWithBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: theme.greyPalette.cloudy,
+    borderBottomColor: theme.palette.grey.cloudy,
   },
   textDate: {
-    color: theme.greyPalette.graphite,
+    color: theme.palette.grey.graphite,
     ...TextSizeStyle.Small,
   },
   textDateMargin: {
     marginBottom: UI_SIZES.spacing.extraSmall,
   },
   button: {
-    marginTop: UI_SIZES.spacing.extraLarge,
+    marginTop: UI_SIZES.spacing.extraLargePlus,
+    marginBottom: UI_SIZES.screen.bottomInset
+      ? UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.extraLarge - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.large,
   },
   message: {
     marginHorizontal: UI_SIZES.spacing.large,

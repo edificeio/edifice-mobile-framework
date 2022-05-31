@@ -9,6 +9,8 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
@@ -29,8 +31,6 @@ import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { PageContainer } from '~/ui/ContainerContent';
 import { DropdownMenu } from '~/ui/DropdownMenu';
-import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 import { IInit } from './DrawerMenu';
 
@@ -207,11 +207,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
     await this.props.restoreMails(mailsIds);
 
-    Toast.show(mailsIds.length > 1 ? I18n.t('zimbra-messages-restored') : I18n.t('zimbra-message-restored'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t(mailsIds.length > 1 ? 'zimbra-messages-restored' : 'zimbra-message-restored'));
     this.onUnselectListMails();
   };
 
@@ -224,11 +220,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
     }
 
-    Toast.show(mailsIds.length > 1 ? I18n.t('zimbra-messages-deleted') : I18n.t('zimbra-message-deleted'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t(mailsIds.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'));
     this.onUnselectListMails();
   };
 
@@ -252,11 +244,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   mailsMoved = () => {
     const listSelected = this.getListSelectedMails();
     this.onUnselectListMails();
-    Toast.show(listSelected.length > 1 ? I18n.t('zimbra-messages-moved') : I18n.t('zimbra-message-moved'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t(listSelected.length > 1 ? 'zimbra-messages-moved' : 'zimbra-message-moved'));
   };
 
   public showMoveModal = () => this.setState({ isShownMoveModal: true });
@@ -333,7 +321,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   renderSelectedTrashMailsHeader = () => {
     return (
       <>
-        <FakeHeader_Container style={{ backgroundColor: theme.color.primary.regular }}>
+        <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
           <FakeHeader_Row>
             <HeaderBackAction onPress={() => this.onUnselectListMails()} />
             <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
@@ -360,7 +348,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   renderSelectedMailsHeader = () => {
     return (
       <>
-        <FakeHeader_Container style={{ backgroundColor: theme.color.primary.regular }}>
+        <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
           <FakeHeader_Row>
             <HeaderBackAction onPress={() => this.onUnselectListMails()} />
             <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
@@ -418,7 +406,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             data={this.getMenuData(navigation.state.routeName)}
             isVisible={this.state.isDropdownMenuVisible}
             onTapOutside={this.hideMenu}
-            color={theme.color.primary.regular.toString()}
+            color={theme.palette.secondary.regular.toString()}
           />
         </PageContainer>
 

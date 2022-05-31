@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk, DialogContainer, DialogTitle } from '~/ui/ConfirmDialog';

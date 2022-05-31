@@ -20,9 +20,9 @@
  *      - overlay                        : Another component display on top of the image/background. Traditionally the icon of the entcore application
  *      - style                          : ViewStyle applied. Replaces entirely the default one. Use this if your style must be on a parent component to erase the default behaviour.
  */
-
-import * as React from 'react';
+import styled from '@emotion/native';
 import { Moment } from 'moment';
+import * as React from 'react';
 import {
   ColorValue,
   FlatList,
@@ -34,14 +34,14 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import styled from '@emotion/native';
 
-import { UI_SIZES } from './constants';
-
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
-import theme from '~/app/theme';
+
+import { UI_SIZES } from './constants';
+import { Picture, PictureProps } from './picture';
 
 export interface IExplorerProps<FolderType extends {}, ResourceType extends {}>
   extends Omit<
@@ -97,7 +97,7 @@ export interface IExplorerResourceItemWithImage extends IExplorerResourceItemBas
   thumbnail: ImageSourcePropType;
 }
 export interface IExplorerResourceItemWithIcon extends IExplorerResourceItemBase {
-  icon: string;
+  icon: string | PictureProps;
 }
 
 export default <FolderType extends {}, ResourceType extends {}>(props: IExplorerProps<FolderType, ResourceType>) => {
@@ -134,7 +134,7 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
         explorerData.length === 0
           ? {}
           : {
-              backgroundColor: theme.color.background.card,
+              backgroundColor: theme.ui.background.card,
               padding: 16,
             },
         contentContainerStyle,
@@ -180,11 +180,21 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
         showBgColor={item.type !== 'folder'}
         image={(item as IExplorerResourceItemWithImage).thumbnail}
         overlay={
-          <Icon
-            color={item.color}
-            size={item.type === 'folder' ? 88 : 48}
-            name={item.type === 'folder' ? 'folder1' : (item as IExplorerResourceItemWithIcon).icon}
-          />
+          (item as IExplorerResourceItemWithIcon).icon ? (
+            typeof (item as IExplorerResourceItemWithIcon).icon === 'string' ? (
+              <Icon
+                color={item.color}
+                size={item.type === 'folder' ? 88 : 48}
+                name={item.type === 'folder' ? 'folder1' : (item as IExplorerResourceItemWithIcon).icon}
+              />
+            ) : (
+              <Picture
+                {...((item as IExplorerResourceItemWithIcon).icon as PictureProps)}
+                width={item.type === 'folder' ? 88 : 48}
+                height={item.type === 'folder' ? 88 : 48}
+              />
+            )
+          ) : null
         }
         textStyle={isResourceWithDate ? {} : { textAlign: 'center' }}
         textProps={{ numberOfLines: isResourceWithDate ? 1 : 2 }}
@@ -203,7 +213,7 @@ const commonItemTouchableStyle = {
 export const resourceItemTouchableStyle = {
   ...commonItemTouchableStyle,
   borderWidth: 1,
-  borderColor: theme.color.inputBorder,
+  borderColor: theme.ui.border.input,
 };
 export const folderItemTouchableStyle = { ...commonItemTouchableStyle };
 export const empyItemTouchableStyle = { ...commonItemTouchableStyle, opacity: 0 };

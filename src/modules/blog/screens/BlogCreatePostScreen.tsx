@@ -90,7 +90,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
       right: this.state.sendLoadingState ? (
         <LoadingIndicator
           small
-          customColor={theme.color.neutral.extraLight}
+          customColor={theme.legacy.neutral.extraLight}
           customStyle={{ justifyContent: 'center', paddingHorizontal: 18 }}
         />
       ) : (
@@ -165,11 +165,11 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           style={{
             marginBottom: 20,
             padding: 10,
-            backgroundColor: theme.color.background.card,
-            borderColor: theme.color.inputBorder,
+            backgroundColor: theme.ui.background.card,
+            borderColor: theme.ui.border.input,
             borderWidth: 1,
             borderRadius: 5,
-            color: theme.color.text.regular,
+            color: theme.ui.text.regular,
           }}
         />
         <TextBold style={{ marginBottom: 10 }}>{I18n.t('blog.blogCreatePostScreen.postContent')}</TextBold>
@@ -180,12 +180,12 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           style={{
             marginBottom: 20,
             padding: 10,
-            backgroundColor: theme.color.background.card,
-            borderColor: theme.color.inputBorder,
+            backgroundColor: theme.ui.background.card,
+            borderColor: theme.ui.border.input,
             borderWidth: 1,
             borderRadius: 5,
             height: 140,
-            color: theme.color.text.regular,
+            color: theme.ui.text.regular,
           }}
           textAlignVertical="top"
           multiline
@@ -201,8 +201,8 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
       <View
         style={{
           padding: 10,
-          backgroundColor: theme.color.background.card,
-          borderColor: theme.color.inputBorder,
+          backgroundColor: theme.ui.background.card,
+          borderColor: theme.ui.border.input,
           borderWidth: 1,
           borderRadius: 5,
         }}>
@@ -223,7 +223,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             <TextAction style={{ width: 300, marginRight: imagesAdded ? 5 : 0, textAlign: 'center' }}>
               {I18n.t('createPost-create-mediaField')}
             </TextAction>
-            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.color.secondary.regular} />
+            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>
         </ImagePicker>
         <AttachmentPicker

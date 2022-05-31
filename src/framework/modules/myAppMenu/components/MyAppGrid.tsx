@@ -4,8 +4,6 @@ import { Platform, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
-
-
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card';
@@ -18,7 +16,6 @@ import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/modul
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
 import { FlatButton } from '~/ui/FlatButton';
-
 
 export interface MyAppGrid_Props extends NavigationInjectedProps {
   modules: NavigableModuleArray;
@@ -51,9 +48,7 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
                   size: 64,
                 }
           }
-          pictureStyle={
-            item.config.displayPicture?.type === 'Image' ? { height: 64, width: '100%' } : {}
-          }
+          pictureStyle={item.config.displayPicture?.type === 'Image' ? { height: 64, width: '100%' } : {}}
         />
       );
     };
@@ -80,8 +75,8 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
         <FlatButton
           title={I18n.t('myapp-accessWeb')}
           loading={false}
-          customButtonStyle={{ backgroundColor: undefined, borderColor: theme.color.secondary.regular, borderWidth: 1.5 }}
-          customTextStyle={{ color: theme.color.secondary.regular }}
+          customButtonStyle={{ backgroundColor: undefined, borderColor: theme.palette.primary.regular, borderWidth: 1.5 }}
+          customTextStyle={{ color: theme.palette.primary.regular }}
           onPress={() => {
             if (!DEPRECATED_getCurrentPlatform()) {
               return null;

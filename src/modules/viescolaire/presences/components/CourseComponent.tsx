@@ -1,12 +1,12 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, StyleSheet, View } from 'react-native';
 
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   itemContainer: { flex: 1, padding: 0 },

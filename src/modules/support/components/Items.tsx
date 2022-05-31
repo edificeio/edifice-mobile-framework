@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 
 import { IApp, IEstablishment } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   fullView: {
@@ -14,8 +13,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderRadius: 0,
     borderWidth: 0,
-    borderBottomWidth: 2,
-    borderBottomColor: CommonStyles.grey,
   },
 });
 
@@ -67,7 +64,7 @@ export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldC
   );
 };
 
-export const FormInputs = ({
+export const FormInput = ({
   fieldName,
   onChange,
   setResetter,
@@ -78,7 +75,6 @@ export const FormInputs = ({
 }) => {
   const textInputStyle = {
     flex: 1,
-    marginHorizontal: 10,
     color: CommonStyles.textColor,
     borderBottomColor: '#EEEEEE',
     borderBottomWidth: 2,
@@ -106,7 +102,7 @@ export const FormInputs = ({
   }, [currentValue]);
 
   return fieldName === 'subject' ? (
-    <TextInput style={textInputStyle} numberOfLines={1} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
+    <TextInput style={textInputStyle} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
   ) : (
     <TextInput
       style={[textInputStyle, textInputMultiline]}
@@ -114,13 +110,5 @@ export const FormInputs = ({
       value={currentValue}
       onChangeText={text => updateCurrentValue(text)}
     />
-  );
-};
-
-export const IconButton = ({ icon, color, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <Icon size={30} color={color} name={icon} />
-    </TouchableOpacity>
   );
 };

@@ -79,11 +79,11 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
               setOpen={() => this.setState({ openDropdown: !openDropdown })}
               setValue={callback => selectFolder(callback(selectedFolder))}
               placeholder={I18n.t('conversation.moveSelect')}
-              placeholderStyle={{ color: theme.color.neutral.regular }}
-              textStyle={{ color: theme.color.secondary.regular, fontWeight: 'bold' }}
-              style={{ borderColor: theme.color.secondary.regular, borderWidth: 1 }}
+              placeholderStyle={{ color: theme.ui.text.light }}
+              textStyle={{ color: theme.palette.primary.regular, fontWeight: 'bold' }}
+              style={{ borderColor: theme.palette.primary.regular, borderWidth: 1 }}
               dropDownContainerStyle={{
-                borderColor: theme.color.secondary.regular,
+                borderColor: theme.palette.primary.regular,
                 borderWidth: 1,
                 maxHeight: 120,
               }}
@@ -96,13 +96,13 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
                 closeModal();
               }}
               style={{
-                backgroundColor: theme.color.background.card,
-                borderColor: theme.color.secondary.regular,
+                backgroundColor: theme.ui.background.card,
+                borderColor: theme.palette.primary.regular,
                 borderWidth: 1,
                 borderRadius: 20,
                 width: 150,
               }}
-              textStyle={{ color: theme.color.secondary.regular, fontWeight: 'bold' }}
+              textStyle={{ color: theme.palette.primary.regular, fontWeight: 'bold' }}
             />
             <DialogButtonOk
               onPress={() => {
@@ -110,7 +110,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
                 confirm();
               }}
               style={{
-                backgroundColor: isMoveImpossible || !selectedFolder ? theme.color.neutral.regular : theme.color.secondary.regular,
+                backgroundColor: isMoveImpossible || !selectedFolder ? theme.ui.text.light : theme.palette.primary.regular,
                 borderRadius: 20,
                 width: 150,
               }}

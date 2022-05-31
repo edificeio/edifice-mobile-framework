@@ -6,11 +6,25 @@ import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { TextBold } from '~/framework/components/text';
 import { fetchRootFoldersAction, postFolderAction } from '~/modules/zimbra/actions/folders';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
-import { TextBold } from '~/ui/Typography';
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    width: 350,
+  },
+  directoryNameContainer: {
+    width: '100%',
+    marginBottom: 35,
+    paddingHorizontal: 20,
+  },
+  row: {
+    flexDirection: 'row',
+  },
+});
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -56,11 +70,7 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
     await this.props.fetchRootFolders();
     this.props.onClose();
 
-    Toast.show(I18n.t('zimbra-create-directory-confirm'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
-    });
+    Toast.show(I18n.t('zimbra-create-directory-confirm'));
     this.setState({ name: '' });
   };
 

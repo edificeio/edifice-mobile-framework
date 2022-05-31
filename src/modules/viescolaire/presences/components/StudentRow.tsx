@@ -2,11 +2,43 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swipeable from 'react-native-swipeable';
 
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { INavigationProps } from '~/types';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
+
+const styles = StyleSheet.create({
+  studentsList: {
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 5,
+    elevation: 2,
+    paddingRight: 10,
+    paddingVertical: 5,
+    backgroundColor: '#FFF',
+    flexWrap: 'wrap',
+  },
+  tick: {
+    borderStyle: 'solid',
+    height: 45,
+    borderRadius: 100,
+    width: 45,
+    marginLeft: 10,
+  },
+  alignRightContainer: { flexGrow: 1, flexDirection: 'row-reverse' },
+  dash: { height: 10, width: 30, borderRadius: 10 },
+  swipeButtons: { flexDirection: 'row-reverse', flexGrow: 1 },
+  swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
+  studentName: { marginLeft: 10, marginVertical: 15 },
+  iconsView: { flexDirection: 'row', marginLeft: 5 },
+  grey: { backgroundColor: 'grey' },
+  lightGrey: { backgroundColor: 'lightgrey' },
+  red: { backgroundColor: CommonStyles.themeOpenEnt.red },
+  blue: { backgroundColor: '#ed9ffd' },
+  purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },
+});
 
 const styles = StyleSheet.create({
   studentsList: {

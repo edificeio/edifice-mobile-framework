@@ -53,7 +53,7 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
     const notification = this.props.navigation.getParam('notification');
     if (!notification) return this.renderError();
     return (
-      <View style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 16, backgroundColor: theme.color.background.card }}>
+      <View style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 16, backgroundColor: theme.ui.background.card }}>
         <InfoBubble
           infoText={I18n.t('timeline.webViewScreen.infoBubbleText')}
           infoBubbleType="regular"
@@ -64,8 +64,8 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
         <View style={{ marginVertical: 10 }}>
           <FlatButton
             title={I18n.t('common.openInBrowser')}
-            customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
-            customTextStyle={{ color: theme.color.secondary.regular }}
+            customButtonStyle={{ backgroundColor: theme.legacy.neutral.extraLight }}
+            customTextStyle={{ color: theme.palette.primary.regular }}
             onPress={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
               if (!DEPRECATED_getCurrentPlatform()) {

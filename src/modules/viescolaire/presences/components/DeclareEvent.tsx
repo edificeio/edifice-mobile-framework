@@ -1,12 +1,14 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -17,15 +19,11 @@ import {
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
-import { Label, Text, TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
+import { Label } from '~/ui/Typography';
 
 const style = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    alignItems: 'stretch',
-    justifyContent: 'flex-end',
+  safeAreaContainer: {
+    flex: 1,
   },
   recapHeader: {
     marginTop: 10,
@@ -48,7 +46,6 @@ const style = StyleSheet.create({
   },
   inputContainer: {
     marginHorizontal: 30,
-    marginBottom: 20,
   },
   timeView: {
     margin: 40,
@@ -70,6 +67,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     flexWrap: 'nowrap',
+    marginVertical: 20,
   },
 });
 
@@ -198,45 +196,50 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
 
     return (
       <PageView navigation={this.props.navigation} navBarWithBack={navBarInfo}>
-        <KeyboardAvoidingView style={[style.container]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-          <LeftColoredItem color={mainColor} style={style.recapHeader}>
-            <View style={style.recapHeaderView}>
-              <Icon color="grey" size={12} name="access_time" />
-              <Text style={style.recapHeaderText}>
-                {startDateString} - {endDateString}
-              </Text>
-              <TextBold>{student.name}</TextBold>
-            </View>
-          </LeftColoredItem>
-          <Text style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Text>
-          <DateTimePicker
-            value={moment(date)}
-            mode="time"
-            onChange={this.onTimeChange}
-            renderDate={dateItem => (
-              <View style={[style.timeView, { borderColor: lightColor }]}>
-                <Text style={style.timeViewText}>{dateItem.format('HH : mm')}</Text>
+        <KeyboardAvoidingView
+          enabled={Platform.OS === 'ios'}
+          behavior="padding"
+          keyboardVerticalOffset={60}
+          style={style.safeAreaContainer}>
+          <ScrollView>
+            <LeftColoredItem color={mainColor} style={style.recapHeader}>
+              <View style={style.recapHeaderView}>
+                <Icon color="grey" size={12} name="access_time" />
+                <Text style={style.recapHeaderText}>
+                  {startDateString} - {endDateString}
+                </Text>
+                <TextBold>{student.name}</TextBold>
               </View>
-            )}
-          />
-
-          <View style={style.inputContainer}>
-            <Label style={style.inputLabel}>{inputLabel}</Label>
-            <TextInput
-              defaultValue={event === undefined ? '' : event.comment}
-              placeholder={I18n.t('viesco-enter-text')}
-              underlineColorAndroid="lightgrey"
-              onChangeText={this.onReasonChange}
+            </LeftColoredItem>
+            <Text style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Text>
+            <DateTimePicker
+              value={moment(date)}
+              mode="time"
+              onChange={this.onTimeChange}
+              renderDate={dateItem => (
+                <View style={[style.timeView, { borderColor: lightColor }]}>
+                  <Text style={style.timeViewText}>{dateItem.format('HH : mm')}</Text>
+                </View>
+              )}
             />
-          </View>
-          <View style={style.buttonOkContainer}>
-            {event !== undefined && <ButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
-            <ButtonOk
-              disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
-              label={I18n.t('viesco-confirm')}
-              onPress={this.onSubmit}
-            />
-          </View>
+            <View style={style.inputContainer}>
+              <Label style={style.inputLabel}>{inputLabel}</Label>
+              <TextInput
+                defaultValue={event === undefined ? '' : event.comment}
+                placeholder={I18n.t('viesco-enter-text')}
+                underlineColorAndroid="lightgrey"
+                onChangeText={this.onReasonChange}
+              />
+            </View>
+            <View style={style.buttonOkContainer}>
+              {event !== undefined && <ButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
+              <ButtonOk
+                disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
+                label={I18n.t('viesco-confirm')}
+                onPress={this.onSubmit}
+              />
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </PageView>
     );

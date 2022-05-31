@@ -4,9 +4,9 @@ import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationScreenProp } from 'react-navigation';
 
+import { LoadingIndicator } from '~/framework/components/loading';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import Dropdown from '~/ui/Dropdown';
-import { Loading } from '~/ui/Loading';
 
 import {
   DepartureCard,
@@ -68,7 +68,7 @@ class History extends React.PureComponent<HistoryProps> {
             />
           )}
           {this.props.isFetchingData || this.props.isPristineData ? (
-            <Loading />
+            <LoadingIndicator />
           ) : (
             <>
               <NoReasonCard elements={events.no_reason} />

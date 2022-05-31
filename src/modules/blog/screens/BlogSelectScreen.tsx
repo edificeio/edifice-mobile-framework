@@ -101,7 +101,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
         contentContainerStyle={{
           flexGrow: 1,
           paddingBottom: isEmpty ? undefined : 12,
-          backgroundColor: theme.color.background.card,
+          backgroundColor: theme.ui.background.card,
         }}
         ListEmptyComponent={this.renderEmpty()}
         refreshControl={

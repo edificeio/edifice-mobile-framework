@@ -2,22 +2,17 @@ import styled from '@emotion/native';
 import * as React from 'react';
 import { FlatList, Keyboard, StyleSheet, View } from 'react-native';
 
-
-
 import theme from '~/app/theme';
-import { UI_SIZES } from "~/framework/components/constants";
+import { UI_SIZES } from '~/framework/components/constants';
 import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { TextBold } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { IFloatingProps, IMenuItem } from '~/ui/types';
 
-
-
 import FloatingActionItem from './FloatingButton/FloatingActionItem';
 import { ISelected } from './Toolbar/Toolbar';
 import { Icon } from './icons/Icon';
-
 
 export interface ButtonTextIconProps {
   onPress: () => any;
@@ -66,12 +61,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const Container = styled.View(
-  {
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  }
-);
+const Container = styled.View({
+  alignItems: 'center',
+  justifyContent: 'space-evenly',
+});
 
 const TouchableOpacity = styled.TouchableOpacity({
   alignItems: 'center',
@@ -79,7 +72,7 @@ const TouchableOpacity = styled.TouchableOpacity({
   width: layoutSize.LAYOUT_50,
   height: layoutSize.LAYOUT_50,
   borderRadius: layoutSize.LAYOUT_25,
-  backgroundColor: theme.color.primary.regular,
+  backgroundColor: theme.palette.secondary.regular,
 });
 
 export const ButtonIconText = ({ style, children, colorText, ...rest }: ButtonTextIconProps) => {

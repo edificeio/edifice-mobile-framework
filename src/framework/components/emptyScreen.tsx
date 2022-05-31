@@ -54,7 +54,7 @@ export const EmptyScreen = ({
         style={{
           textAlign: 'center',
           fontSize: 18,
-          color: theme.color.secondary.regular,
+          color: theme.palette.primary.regular,
           marginTop: UI_SIZES.spacing.extraLargePlus,
         }}>
         {title}

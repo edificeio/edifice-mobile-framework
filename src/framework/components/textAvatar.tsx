@@ -5,7 +5,7 @@ import { Status } from '~/ui/avatars/Avatar';
 
 import { BadgeAvatar, BadgePosition } from './badgeAvatar';
 import { UI_SIZES } from './constants';
-import { Text, TextSizeStyle } from './text';
+import { Text } from './text';
 
 export interface BadgeAvatarProps {
   text: string;
@@ -62,7 +62,6 @@ export const TextAvatar = ({
         numberOfLines={1}
         style={[
           {
-            ...TextSizeStyle.Small,
             marginLeft: isHorizontal ? UI_SIZES.spacing.smallPlus : undefined,
             marginTop: isHorizontal ? undefined : UI_SIZES.spacing.tiny,
             flex: isHorizontal ? 1 : undefined,

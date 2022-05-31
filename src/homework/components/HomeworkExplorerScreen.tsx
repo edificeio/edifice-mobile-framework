@@ -95,8 +95,12 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
       const { thumbnail, ...b } = bb;
       return {
         ...b,
-        color: theme.themeOpenEnt.green,
-        ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'book-alt' }),
+        color: theme.palette.complementary.green.regular,
+        ...(thumbnail
+          ? { thumbnail: signURISource(transformedSrc(thumbnail)) }
+          : {
+              icon: config.displayPicture,
+            }),
       };
     });
 

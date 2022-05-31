@@ -3,9 +3,9 @@ import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { LoadingIndicator } from '~/framework/components/loading';
 import { NestedText, NestedTextBold, Text, TextBold } from '~/framework/components/text';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
-import { Loading } from '~/ui/Loading';
 import { ModalBox } from '~/ui/Modal';
 
 import { IChildArray } from '../../viesco/state/children';
@@ -125,7 +125,7 @@ export const NotificationRelativesModal = ({
   onClose: () => void;
 }) => {
   return childrenEvents?.isFetching && childrenEvents?.isPristine ? (
-    <Loading />
+    <LoadingIndicator />
   ) : (
     <ModalBox backdropOpacity={0.5} isVisible={visible}>
       <View style={styles.modalContainerView}>

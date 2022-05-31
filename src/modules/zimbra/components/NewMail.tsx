@@ -4,14 +4,14 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View
 import { hasNotch } from 'react-native-device-info';
 
 import { UI_SIZES } from '~/framework/components/constants';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import Notifier from '~/infra/notifier/container';
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { Loading } from '~/ui/Loading';
-import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 import { ISearchUsers } from '../service/newMail';
 import Attachment from './Attachment';
@@ -326,7 +326,7 @@ export default ({
         style={styles.fullView}
         keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined}>
         {isFetching ? (
-          <Loading />
+          <LoadingIndicator />
         ) : (
           <ScrollView contentContainerStyle={styles.fullGrowView} bounces={false} keyboardShouldPersistTaps="never">
             <Headers

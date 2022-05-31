@@ -1,19 +1,16 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { getAuthHeader } from '~/infra/oauth';
-import { SourceImage } from '~/modules/mediacentre/components/BigCard';
+import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
-
-import { getImageUri } from './FavoritesCarousel';
 
 const styles = StyleSheet.create({
   upperContentContainer: {
@@ -23,7 +20,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   titleText: {
-    color: theme.color.secondary.regular,
+    color: theme.palette.primary.regular,
     flexShrink: 1,
     marginRight: 5,
   },
@@ -72,7 +69,7 @@ interface SmallCardProps {
 
 export const IconButton: React.FunctionComponent<IconButtonProps> = (props: IconButtonProps) => (
   <TouchableOpacity onPress={props.onPress}>
-    <Icon size={props.size} color={props.color || theme.color.secondary.regular} name={props.icon} />
+    <Icon size={props.size} color={props.color || theme.palette.primary.regular} name={props.icon} />
   </TouchableOpacity>
 );
 
@@ -104,13 +101,13 @@ export const SmallCard: React.FunctionComponent<SmallCardProps> = (props: SmallC
         <TextBold numberOfLines={1} style={styles.titleText}>
           {props.resource.title}
         </TextBold>
-        {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={18} /> : null}
+        {props.resource.source !== Source.SIGNET ? <SourceImage source={props.resource.source} size={18} /> : null}
       </View>
       <View style={styles.lowerContentContainer}>
-        <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }} style={styles.imageContainer} />
+        <ResourceImage image={props.resource.image} style={styles.imageContainer} />
         <View style={styles.secondaryContainer}>
           <Text numberOfLines={2} style={styles.descriptionText}>
-            {props.resource.source === Source.Signet ? props.resource.authors : props.resource.editors}
+            {props.resource.source === Source.SIGNET ? props.resource.authors : props.resource.editors}
           </Text>
           <View style={styles.actionsContainer}>
             <FavoriteIcon {...props} />

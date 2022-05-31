@@ -3,8 +3,8 @@ import { FlatList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View 
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
   transparentContainer: {
@@ -22,13 +22,15 @@ const style = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   itemIcon: {
     marginRight: 8,
     color: 'white',
   },
   itemText: {
+    fontSize: 15,
     color: 'white',
   },
 });
@@ -53,11 +55,15 @@ export const DropdownMenu: React.FunctionComponent<DropdrownMenuProps> = (props:
       <View style={style.transparentContainer}>
         <FlatList
           data={data}
-          style={[style.menuContainer, { backgroundColor: color || theme.color.secondary.regular }]}
+          style={[style.menuContainer, { backgroundColor: color || theme.palette.primary.regular }]}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={item.onPress}>
+            <TouchableOpacity
+              onPress={() => {
+                item.onPress();
+                onTapOutside();
+              }}>
               <View style={style.itemContainer}>
-                <Icon name={item.icon} size={20} style={style.itemIcon} />
+                <Icon name={item.icon} size={24} style={style.itemIcon} />
                 <Text style={style.itemText}>{item.text}</Text>
               </View>
             </TouchableOpacity>

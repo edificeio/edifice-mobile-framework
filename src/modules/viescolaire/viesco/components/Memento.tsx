@@ -3,10 +3,10 @@ import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 import { CommonStyles } from '~/styles/common/styles';
-import { Text, TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   studentInfos: {

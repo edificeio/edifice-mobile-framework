@@ -4,7 +4,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
-import { UI_SIZES } from '~/framework/components/constants';
+import { remlh } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -40,8 +40,8 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const contentsHasAppLanguage = contents && contents.hasOwnProperty(appLanguage);
     const contentsLanguages = contents && Object.keys(contents);
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];
-    const maxLines = 4;
-    const maxHeight = UI_SIZES.getResponsiveStyledLineHeight() * maxLines;
+    const maxLines = 4,
+      maxHeight = remlh(maxLines);
 
     return contents && contentsLanguages.length > 0 ? (
       <ArticleContainer style={{ width: '100%', opacity: measuredText ? 1 : 0 }}>
@@ -52,11 +52,11 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
           }}
           headerIndicator={
             <TouchableOpacity onPress={this.props.flashMessageAction}>
-              <Icon name="close" color={theme.color.text.inverse} style={{ paddingVertical: 5, paddingLeft: 8, marginRight: -3 }} />
+              <Icon name="close" color={theme.ui.text.inverse} style={{ paddingVertical: 5, paddingLeft: 8, marginRight: -3 }} />
             </TouchableOpacity>
           }
           style={{
-            backgroundColor: color ? theme.flashMessages[color] : customColor || theme.color.primary.regular,
+            backgroundColor: color ? theme.palette.flashMessages[color] : customColor || theme.palette.secondary.regular,
           }}
           header={
             <View
@@ -65,7 +65,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                   ? {}
                   : longText
                   ? {
-                      maxHeight: UI_SIZES.getResponsiveStyledLineHeight(undefined) * (4 + 1),
+                      maxHeight: remlh(4 + 1),
                       overflow: 'hidden',
                     }
                   : {}
@@ -74,10 +74,10 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 html={flashMessageHtml}
                 opts={{
                   globalTextStyle: {
-                    color: theme.color.text.inverse,
+                    color: theme.ui.text.inverse,
                   },
                   boldTextStyle: {
-                    color: theme.color.text.inverse,
+                    color: theme.ui.text.inverse,
                   },
                   textColor: false,
                   images: false,
@@ -102,11 +102,11 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
               <Text
                 style={{
                   fontWeight: 'bold',
-                  color: theme.color.text.inverse,
+                  color: theme.ui.text.inverse,
                 }}>
                 {I18n.t('seeMore')}
               </Text>
-              <Icon name="arrow_down" color={theme.color.text.inverse} style={{ marginLeft: 10, marginRight: -3, paddingTop: 2 }} />
+              <Icon name="arrow_down" color={theme.ui.text.inverse} style={{ marginLeft: 10, marginRight: -3, paddingTop: 2 }} />
             </View>
           ) : null}
         </TouchableContentCard>

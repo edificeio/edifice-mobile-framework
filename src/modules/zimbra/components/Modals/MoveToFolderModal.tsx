@@ -4,12 +4,12 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import { IFolder } from '~/modules/zimbra/state/initMails';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
-import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   containerView: {

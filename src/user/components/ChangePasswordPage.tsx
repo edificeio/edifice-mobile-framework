@@ -9,7 +9,7 @@ import { Dispatch } from 'redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Text, TextSizeStyle, remlh } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { FlatButton } from '~/ui/FlatButton';
@@ -218,15 +218,15 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
               {isIDF ? (
                 <View
                   style={{
-                    backgroundColor: theme.color.secondary.light,
+                    backgroundColor: theme.palette.primary.light,
                     paddingVertical: 6,
                     paddingHorizontal: 14,
-                    borderColor: theme.color.secondary.regular,
+                    borderColor: theme.palette.primary.regular,
                     borderWidth: 1,
                     borderRadius: 10,
                     flex: 0,
                   }}>
-                  <Text style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
+                  <Text style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
                     {I18n.t('common.idf.passwordRules')}
                   </Text>
                 </View>
@@ -245,7 +245,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
               <MiniSpacer />
             </View>
             <View style={{ flexShrink: 0 }}>
-              <ErrorMessage style={{ marginTop: 0, minHeight: UI_SIZES.getResponsiveStyledLineHeight() * 3 }}>
+              <ErrorMessage style={{ marginTop: 0, minHeight: remlh(3) }}>
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}

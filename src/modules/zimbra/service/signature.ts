@@ -41,15 +41,9 @@ export const signatureService = {
         method: 'PUT',
         body: JSON.stringify(bodyData),
       });
-      Toast.show(I18n.t('zimbra-signature-added'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
-      });
+      Toast.show(I18n.t('zimbra-signature-added'));
     } catch (e) {
-      Toast.show(I18n.t('zimbra-signature-error'), {
-        position: Toast.position.BOTTOM,
-      });
+      Toast.show(I18n.t('zimbra-signature-error'));
     }
   },
 };

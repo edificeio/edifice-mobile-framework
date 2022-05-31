@@ -3,13 +3,15 @@ import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import { PageContainer } from '~/ui/ContainerContent';
-import { Text, TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
+
+import StudentRow from './StudentRow';
 
 import StudentRow from './StudentRow';
 

@@ -7,20 +7,16 @@ import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
-import Label from '~/framework/components/label';
 import { Picture } from '~/framework/components/picture';
-import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
-import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
+import { Text, TextColorStyle, TextItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { displayPastDate } from '~/framework/util/date';
 import { UserType } from '~/framework/util/session';
-import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import {
   IAcknowledgment,
-  IRecipient,
   IResponse,
-  getHasSingleRecipientForTeacher,
   getIsWordAcknowledgedForParent,
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
@@ -35,10 +31,6 @@ const responsesString = (responses: number) =>
   responses === 1
     ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
     : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
-const recipientsString = (recipients: IRecipient[]) =>
-  getHasSingleRecipientForTeacher(recipients)
-    ? recipients[0].displayName
-    : `${recipients.length} ${I18n.t('schoolbook.students').toLowerCase()}`;
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
@@ -50,10 +42,8 @@ export interface ISchoolbookWordSummaryCardProps {
   responses: IResponse[] | null;
   ackNumber: number;
   category: string;
-  recipients: IRecipient[];
   respNumber: number;
   sendingDate: Moment;
-  text: string;
   title: string;
   total: number;
 }
@@ -68,19 +58,12 @@ export const SchoolbookWordSummaryCard = ({
   responses,
   ackNumber,
   category,
-  recipients,
   respNumber,
   sendingDate,
-  text,
   title,
   total,
 }: ISchoolbookWordSummaryCardProps) => {
   const usersTextMaxLines = 1;
-  const contentTextMaxLines = 2;
-  const schoolbookWordText = extractTextFromHtml(text);
-  const schoolbookWordMedia = extractMediaFromHtml(text);
-  const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
-  const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
   const isParent = userType === UserType.Relative;
   const isTeacher = userType === UserType.Teacher;
   const isStudent = userType === UserType.Student;
@@ -91,7 +74,6 @@ export const SchoolbookWordSummaryCard = ({
     (isTeacher && isWordAcknowledgedForTeacher) ||
     (isStudent && isWordAcknowledgedForStudent) ||
     (isParent && isWordAcknowledgedForParent);
-  const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(recipients);
   const responsesNumber = isTeacher ? respNumber : getResponseNumberForStudentAndParent(responses);
 
   return (
@@ -99,80 +81,66 @@ export const SchoolbookWordSummaryCard = ({
       <TouchableResourceCard
         onPress={action}
         emphasizedHeader
-        customHeaderStyle={{ borderTopLeftRadius: 15, borderTopRightRadius: 15, paddingVertical: UI_SIZES.spacing.smallPlus }}
-        customHeaderIndicatorStyle={{ justifyContent: 'center' }}
-        headerIndicator={
-          <Label
-            text={isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
-            color={isWordAcknowledged ? theme.schoolbook.acknowledged : theme.schoolbook.acknowledge}
-            labelStyle="outline"
-          />
-        }
+        customHeaderStyle={{
+          paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.smallPlus,
+          borderTopLeftRadius: 15,
+          borderTopRightRadius: 15,
+        }}
+        headerIndicator={<View />}
         header={
-          <ContentCardHeader
-            icon={
-              <SingleAvatar
-                size={24}
-                userId={
-                  isTeacher
-                    ? hasSingleRecipientForTeacher
-                      ? recipients[0]?.userId
-                      : require('ASSETS/images/group-avatar.png')
-                    : owner
-                }
+          isTeacher ? undefined : (
+            <ContentCardHeader
+              icon={<SingleAvatar size={36} userId={owner} />}
+              text={
+                <Text style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+                  {`${I18n.t('common.from')} `}
+                  <TextSemiBold style={{ ...TextSizeStyle.Small }}>{ownerName}</TextSemiBold>
+                </Text>
+              }
+            />
+          )
+        }
+        footer={
+          responsesNumber ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Picture
+                cached
+                type="NamedSvg"
+                name="pictos-answer"
+                width={UI_SIZES.dimensions.width.large}
+                height={UI_SIZES.dimensions.height.large}
+                fill={theme.palette.primary.regular}
+                style={{ marginRight: UI_SIZES.spacing.smallPlus }}
               />
-            }
-            text={
-              <Text style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
-                {`${I18n.t(`common.${isTeacher ? 'to' : 'from'}`)} `}
-                <TextSemiBold style={{ ...TextSizeStyle.Small }}>
-                  {isTeacher ? recipientsString(recipients) : ownerName}
-                </TextSemiBold>
-              </Text>
-            }
-            date={sendingDate}
-          />
+              <TextSemiBold style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</TextSemiBold>
+            </View>
+          ) : undefined
         }>
-        {category ? (
-          <View style={{ marginTop: UI_SIZES.spacing.medium }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: UI_SIZES.spacing.smallPlus }}>
+          {category ? (
             <ImageLabel
               cachedSVG
+              imageType={ImageType.svg}
               text={I18n.t(`schoolbook.categories.${category}`)}
               imageName={`schoolbook-${category}`}
-              imageType={ImageType.svg}
-              color={theme.schoolbook.categories[category]}
+              color={theme.color.schoolbook.categories[category]}
             />
-          </View>
+          ) : (
+            <View />
+          )}
+          <TextSemiBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.palette.status.warning }}>
+            {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
+          </TextSemiBold>
+        </View>
+        {sendingDate ? (
+          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.smallPlus }}>
+            {displayPastDate(sendingDate)}
+          </TextItalic>
         ) : null}
-        {title ? <ContentCardTitle style={{ marginTop: UI_SIZES.spacing.smallPlus }}>{title}</ContentCardTitle> : null}
-        {hasSchoolbookWordText ? (
-          <Text style={{ marginTop: UI_SIZES.spacing.extraSmall }} numberOfLines={contentTextMaxLines}>
-            {schoolbookWordText}
-          </Text>
-        ) : null}
-        {hasSchoolbookWordMedia ? (
-          <View style={{ marginTop: UI_SIZES.spacing.extraSmall }}>{renderMediaPreview(schoolbookWordMedia)}</View>
-        ) : null}
-        {responsesNumber ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: UI_SIZES.spacing.medium,
-            }}>
-            <Picture
-              cached
-              type="NamedSvg"
-              name="pictos-answer"
-              width={UI_SIZES.dimensions.width.medium}
-              height={UI_SIZES.dimensions.height.medium}
-              fill={theme.color.secondary.regular}
-              style={{ marginRight: UI_SIZES.spacing.smallPlus }}
-            />
-            <TextSemiBold style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
-              {responsesString(responsesNumber)}
-            </TextSemiBold>
-          </View>
+        {title ? (
+          <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.extraSmall, ...TextColorStyle.Normal }}>
+            {title}
+          </ContentCardTitle>
         ) : null}
       </TouchableResourceCard>
     </ArticleContainer>

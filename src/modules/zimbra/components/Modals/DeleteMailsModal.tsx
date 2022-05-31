@@ -2,11 +2,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text, TextBold } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
-import { Text, TextBold } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 const styles = StyleSheet.create({
   deleteTitleContainer: {

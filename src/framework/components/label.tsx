@@ -42,7 +42,7 @@ export default (props: ILabelProps) => {
     text,
     icon,
     iconStyle,
-    color = theme.color.text.regular,
+    color = theme.ui.text.regular,
     labelStyle = 'plain',
     labelSize = 'normal',
     children,
@@ -69,7 +69,7 @@ export default (props: ILabelProps) => {
   const LabelTextWithColor = styled(LabelText)({
     ...(labelStyle === 'plain'
       ? {
-          color: theme.color.text.inverse,
+          color: theme.ui.text.inverse,
         }
       : {
           color,
@@ -90,7 +90,7 @@ export default (props: ILabelProps) => {
             <View>
               <Icon
                 name={icon}
-                color={labelStyle === 'plain' ? theme.color.text.inverse : color}
+                color={labelStyle === 'plain' ? theme.ui.text.inverse : color}
                 size={labelSize === 'small' ? TextSizeStyle.Small.fontSize : TextSizeStyle.Normal.fontSize}
                 style={{
                   marginRight: labelSize === 'large' ? UI_SIZES.spacing.smallPlus : undefined,

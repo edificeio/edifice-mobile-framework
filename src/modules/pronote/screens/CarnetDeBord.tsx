@@ -122,10 +122,15 @@ CarnetDeBordScreen.getRenderContent =
     return (
       <ScrollView refreshControl={refreshControl}>
         {isUserListShown ? (
-          <UserList horizontal data={users} selectedId={selectedId} onSelect={setSelected} bottomInset={false} />
-        ) : (
-          <View style={CarnetDeBordScreen.styles.card} /> // for top-page spacing
-        )}
+          <UserList
+            horizontal
+            data={users}
+            style={CarnetDeBordScreen.styles.card}
+            selectedId={selectedId}
+            onSelect={setSelected}
+            bottomInset={false}
+          />
+        ) : null}
         {isStructureShown ? (
           <Text style={[CarnetDeBordScreen.styles.card, FontStyle.Bold, TextSizeStyle.SlightBig]}>
             {structures.find(s => s.id === data?.structureId)?.name ?? ' '}
@@ -249,10 +254,13 @@ CarnetDeBordScreen.styles = StyleSheet.create({
   },
   card: {
     marginHorizontal: UI_SIZES.spacing.large,
-    marginBottom: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.spacing.large,
   },
   button: {
-    marginTop: UI_SIZES.spacing.extraLarge,
+    marginTop: UI_SIZES.spacing.extraLargePlus,
+    marginBottom: UI_SIZES.screen.bottomInset
+      ? UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.extraLarge - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.large,
   },
 });
 CarnetDeBordScreen.SectionContent = function (props: {

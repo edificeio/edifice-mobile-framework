@@ -13,7 +13,7 @@ export interface IHomeworkTimelineProps {
 const HomeworkTimeline = ({ leftPosition, topPosition, color }: IHomeworkTimelineProps) => (
   <View
     style={{
-      backgroundColor: color || theme.greyPalette.pearl,
+      backgroundColor: color || theme.palette.grey.pearl,
       left: leftPosition,
       top: topPosition,
       width: UI_SIZES.dimensions.width.small,

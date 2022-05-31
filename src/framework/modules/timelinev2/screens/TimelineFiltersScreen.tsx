@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { FlatList, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
+import FlatList from '~/framework/components/flatList';
 import { HeaderAction } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
@@ -70,17 +71,18 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
       <FlatList
         // data
         data={notifFilters}
+        initialNumToRender={15} // Items are thin, 15 renders ok on iPhone 13
         ListHeaderComponent={
           notifFilters.length < 2 ? null : (
             <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
               <ListItem
-                leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t('common.all')}</Text>}
+                leftElement={<Text style={{ color: theme.ui.text.heavy }}>{I18n.t('common.all')}</Text>}
                 rightElement={
                   <Checkbox
-                    customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
+                    customCheckboxColor={!someNotSet ? theme.ui.text.light : undefined}
                     customContainerStyle={{
-                      backgroundColor: theme.color.background.card,
-                      borderColor: theme.color.text.light,
+                      backgroundColor: theme.ui.background.card,
+                      borderColor: theme.ui.text.light,
                       borderWidth: 2,
                     }}
                     checked={!someNotSet}
@@ -101,7 +103,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     return (
       <TouchableOpacity onPress={() => this.doToggleFilter(item)}>
         <ListItem
-          leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t(item.i18n)}</Text>}
+          leftElement={<Text style={{ color: theme.ui.text.heavy }}>{I18n.t(item.i18n)}</Text>}
           rightElement={<Checkbox checked={selectedFilters[item.type]} onPress={() => this.doToggleFilter(item)} />}
         />
       </TouchableOpacity>

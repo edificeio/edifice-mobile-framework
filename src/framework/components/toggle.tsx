@@ -1,6 +1,7 @@
-import * as React from "react";
-import { Switch } from "react-native";
-import theme from "~/app/theme";
+import * as React from 'react';
+import { Switch } from 'react-native';
+
+import theme from '~/app/theme';
 
 export interface IToggleProps {
   checked: boolean;
@@ -11,6 +12,6 @@ export const Toggle = ({ checked, onCheckChange }: IToggleProps) => (
   <Switch
     value={checked}
     onValueChange={() => onCheckChange && onCheckChange()}
-    trackColor={{ false: theme.color.neutral.extraLight, true: theme.color.secondary.regular }}
+    trackColor={{ false: theme.legacy.neutral.extraLight, true: theme.palette.primary.regular }}
   />
 );

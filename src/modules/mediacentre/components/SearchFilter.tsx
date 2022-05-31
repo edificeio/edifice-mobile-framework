@@ -3,18 +3,18 @@ import React, { useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { Icon } from '~/framework/components/picture/Icon';
+import { Text } from '~/framework/components/text';
 import { Resource } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
-import { Text } from '~/ui/Typography';
 import { Checkbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({
   mainContainer: {
     padding: 10,
     borderColor: 'lightgrey',
-    backgroundColor: theme.color.background.card,
+    backgroundColor: theme.ui.background.card,
     borderRadius: 15,
-    shadowColor: theme.color.shadowColor,
+    shadowColor: theme.ui.shadowColor,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.3,
     shadowRadius: 1,

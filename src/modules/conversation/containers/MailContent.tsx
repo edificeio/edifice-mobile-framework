@@ -179,7 +179,7 @@ class MailContentContainer extends React.PureComponent<
     return (
       <>
         <PageView navigation={navigation} navBarWithBack={navBarInfo} onBack={this.goBack.bind(this)}>
-          <PageContainer style={{ backgroundColor: theme.color.background.page }}>
+          <PageContainer style={{ backgroundColor: theme.ui.background.page }}>
             {this.props.isFetching ? (
               <Loading />
             ) : error || htmlError ? (
@@ -190,7 +190,7 @@ class MailContentContainer extends React.PureComponent<
                   <ScrollView style={{ flex: 1 }} scrollEventThrottle={16}>
                     {this.props.mail.id && this.mailHeader()}
                     <ViewportAwareSubject
-                      style={{ marginHorizontal: 12, backgroundColor: theme.color.background.card }}
+                      style={{ marginHorizontal: 12, backgroundColor: theme.ui.background.card }}
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
@@ -280,7 +280,7 @@ class MailContentContainer extends React.PureComponent<
 
   private mailContent() {
     return (
-      <View style={{ flexGrow: 1, padding: 12, backgroundColor: theme.color.background.card }}>
+      <View style={{ flexGrow: 1, padding: 12, backgroundColor: theme.ui.background.card }}>
         {this.props.mail.body !== undefined && (
           <HtmlContentView
             onHtmlError={() => this.setState({ htmlError: true })}
@@ -362,8 +362,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
   },
   footerAreaView: {
-    backgroundColor: theme.color.background.card,
-    borderTopColor: theme.color.listItemBorder,
+    backgroundColor: theme.ui.background.card,
+    borderTopColor: theme.ui.border.listItem,
     borderTopWidth: 1,
   },
   containerFooter: {

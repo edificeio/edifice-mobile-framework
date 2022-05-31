@@ -1,18 +1,17 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { getAuthHeader } from '~/infra/oauth';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
-import { Icon } from '~/ui';
 
-import { getImageUri } from './FavoritesCarousel';
+import { ResourceImage, SourceImage } from './ResourceImage';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -42,9 +41,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 12,
   },
-  sourceImageContainer: {
-    alignSelf: 'flex-end',
-  },
 });
 
 interface ActionButtonProps {
@@ -62,11 +58,6 @@ interface FavoriteActionProps {
   removeFavorite: (id: string, source: Source) => any;
 }
 
-interface SourceImageProps {
-  size: number;
-  source: Source;
-}
-
 interface BigCardProps {
   resource: Resource;
 
@@ -76,7 +67,7 @@ interface BigCardProps {
 
 const ActionButton: React.FunctionComponent<ActionButtonProps> = (props: ActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
-    <Icon size={20} color={props.color || theme.color.secondary.regular} name={props.icon} />
+    <Icon size={20} color={props.color || theme.palette.primary.regular} name={props.icon} />
     <Text style={styles.actionText}>{props.text}</Text>
   </TouchableOpacity>
 );
@@ -97,27 +88,6 @@ const FavoriteAction: React.FunctionComponent<FavoriteActionProps> = (props: Fav
   );
 };
 
-export const SourceImage: React.FunctionComponent<SourceImageProps> = (props: SourceImageProps) => {
-  let image;
-  switch (props.source) {
-    case Source.GAR:
-      image = require('ASSETS/images/logo-gar.png');
-      break;
-    case Source.Moodle:
-      image = require('ASSETS/images/logo-moodle.png');
-      break;
-    case Source.PMB:
-      image = require('ASSETS/images/logo-pmb.png');
-      break;
-    default:
-      image = require('ASSETS/images/logo-gar.png');
-      break;
-  }
-  return (
-    <Image source={image} style={[styles.sourceImageContainer, { height: props.size, width: props.size }]} resizeMode="contain" />
-  );
-};
-
 export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardProps) => {
   const openURL = () => {
     openUrl(props.resource.link);
@@ -129,16 +99,12 @@ export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardPro
   return (
     <TouchableResourceCard title={props.resource.title} onPress={openURL} style={styles.mainContainer}>
       <View style={styles.contentContainer}>
-        <Image
-          source={{ headers: getAuthHeader(), uri: getImageUri(props.resource.image) }}
-          style={styles.cardImage}
-          resizeMode="contain"
-        />
+        <ResourceImage image={props.resource.image} style={styles.cardImage} resizeMode="contain" />
         <View style={styles.actionsContainer}>
           <FavoriteAction {...props} />
           <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
         </View>
-        {props.resource.source !== Source.Signet ? <SourceImage source={props.resource.source} size={25} /> : null}
+        {props.resource.source !== Source.SIGNET ? <SourceImage source={props.resource.source} size={25} /> : null}
       </View>
     </TouchableResourceCard>
   );

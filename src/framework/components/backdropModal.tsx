@@ -1,9 +1,10 @@
-import * as React from "react";
-import { ColorValue, StyleProp, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
-import Modal from "react-native-modal";
+import * as React from 'react';
+import { ColorValue, StyleProp, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
+import Modal from 'react-native-modal';
 
-import theme from "~/app/theme";
-import { TextBold } from "./text";
+import theme from '~/app/theme';
+
+import { TextBold } from './text';
 
 export interface IBackdropModalProps {
   content: JSX.Element;
@@ -37,24 +38,24 @@ export const BackdropModal = ({
     onSwipeStart={handleOpen}
     propagateSwipe={propagateSwipe}
     style={{
-      justifyContent: "flex-end",
+      justifyContent: 'flex-end',
       margin: 0,
     }}
-    swipeDirection={["down"]}
+    swipeDirection={['down']}
     useNativeDriverForBackdrop>
     <View style={[{}, contentStyle]}>
       <View
         style={{
-          alignItems: "center",
-          backgroundColor: headerColor || theme.color.neutral.extraLight,
+          alignItems: 'center',
+          backgroundColor: headerColor || theme.legacy.neutral.extraLight,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           height: 40,
-          justifyContent: "center",
+          justifyContent: 'center',
         }}>
         <View
           style={{
-            backgroundColor: indicatorColor || theme.color.neutral.regular,
+            backgroundColor: indicatorColor || theme.ui.text.light,
             borderRadius: 5,
             height: 5,
             width: 40,
@@ -64,10 +65,10 @@ export const BackdropModal = ({
       {title ? (
         <View
           style={{
-            alignItems: "center",
-            backgroundColor: headerColor || theme.color.neutral.extraLight,
+            alignItems: 'center',
+            backgroundColor: headerColor || theme.legacy.neutral.extraLight,
             height: 60,
-            justifyContent: "center",
+            justifyContent: 'center',
             paddingBottom: 20,
           }}>
           <TextBold>{title}</TextBold>

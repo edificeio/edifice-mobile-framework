@@ -114,7 +114,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
       <KeyboardPageView
         navigation={navigation}
         navBarWithBack={{ title: platformDisplayName }}
-        style={{ backgroundColor: theme.color.background.card }}>
+        style={{ backgroundColor: theme.ui.background.card }}>
         <VersionModal
           mandatory={versionMandatory}
           version={version}
@@ -160,14 +160,14 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 justifyContent: 'center',
                 alignItems: 'center',
                 padding: 5,
-                borderColor: theme.color.failure,
+                borderColor: theme.palette.status.failure,
                 borderWidth: 1,
                 borderRadius: 15,
                 width: '90%',
                 alignSelf: 'center',
                 position: 'absolute',
               }}>
-              <TextBold style={{ textAlign: 'center', color: theme.color.failure }}>
+              <TextBold style={{ textAlign: 'center', color: theme.palette.status.failure }}>
                 {I18n.t('common.sommeNumeriqueAlert_temp')}
               </TextBold>
             </View>
@@ -201,7 +201,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <ErrorMessage style={errtype === 'warning' ? { color: theme.color.warning } : {}}>
+            <ErrorMessage style={errtype === 'warning' ? { color: theme.palette.status.warning } : {}}>
               {this.state.typing
                 ? ''
                 : error &&
@@ -255,7 +255,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                       textDecorationLine: 'underline',
                       marginTop: 48,
                       textAlign: 'center',
-                      color: error ? CommonStyles.profileTypes.Student : theme.color.text.light,
+                      color: error ? CommonStyles.profileTypes.Student : theme.ui.text.light,
                     }}
                     onPress={() => {
                       navigate('FederatedAccount');

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { Text, TextBold } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { Text, TextBold } from '~/ui/Typography';
 
 const styles = StyleSheet.create({
   sessionLeftColoredItem: {

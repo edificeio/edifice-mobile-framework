@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
+import { Icon } from '~/framework/components/picture/Icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { DEPRECATED_signImageURISource } from '~/infra/oauth';
 import { DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';

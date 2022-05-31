@@ -103,7 +103,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
         renderItem={({ item }: { item: INewsComment }) => this.renderComment(item)}
         keyExtractor={(item: INewsComment) => item._id.toString()}
         ListHeaderComponent={this.renderNewsDetails()}
-        contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.color.background.card }}
+        contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.ui.background.card }}
         scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
         refreshControl={
           <RefreshControl
@@ -139,8 +139,8 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
             <View style={{ marginTop: 10 }}>
               <FlatButton
                 title={I18n.t('common.openInBrowser')}
-                customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
-                customTextStyle={{ color: theme.color.secondary.regular }}
+                customButtonStyle={{ backgroundColor: theme.legacy.neutral.extraLight }}
+                customTextStyle={{ color: theme.palette.primary.regular }}
                 onPress={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
                   if (!DEPRECATED_getCurrentPlatform()) {
@@ -158,7 +158,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           <ListItem
             style={{
               justifyContent: 'flex-start',
-              shadowColor: theme.color.shadowColor,
+              shadowColor: theme.ui.shadowColor,
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.2,
               elevation: 2,
@@ -167,7 +167,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
               marginTop: 10,
               marginBottom: 4,
             }}
-            leftElement={<Icon name="new_comment" color={theme.color.neutral.regular} size={16} style={{ marginRight: 5 }} />}
+            leftElement={<Icon name="new_comment" color={theme.ui.text.light} size={16} style={{ marginRight: 5 }} />}
             rightElement={
               <TextLight>
                 {newsComments!.length} {I18n.t(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
@@ -182,7 +182,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
   renderComment(newsComment: INewsComment) {
     return (
       <ListItem
-        style={{ justifyContent: 'flex-start', backgroundColor: theme.color.secondary.extraLight }}
+        style={{ justifyContent: 'flex-start', backgroundColor: theme.palette.primary.pale }}
         leftElement={
           <GridAvatars
             users={[newsComment.owner || require('ASSETS/images/resource-avatar.png')]}
