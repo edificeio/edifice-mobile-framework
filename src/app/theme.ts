@@ -312,7 +312,7 @@ export const defaultTheme: ThemeInitializer = {
         acknowledge: this.palette.status.warning,
         acknowledged: this.palette.status.success,
         categories: {
-          canteen: this.palette.complementary.orange.regular,
+          canteen: this.palette.complementary.blue.regular,
           event: this.palette.complementary.purple.regular,
           'last-minute': this.palette.complementary.red.regular,
           leisure: this.palette.complementary.yellow.regular,
