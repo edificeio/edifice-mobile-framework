@@ -190,6 +190,7 @@ export const RenderPJs = ({
         };
         return (
           <TouchableOpacity
+            key={item.id}
             style={{ flex: 0 }}
             onPress={async () => {
               const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;

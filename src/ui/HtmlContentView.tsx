@@ -9,19 +9,14 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewProps } from 'react-native';
 
-
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { Loading } from '~/ui/Loading';
 
-
-
 import { IRemoteAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 import { Italic } from './Typography';
-
 
 export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;
@@ -54,7 +49,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
       loading: false,
       done: false,
       error: false,
-      html: this.props.html || undefined,
+      html: this.props.html ?? undefined,
       attachments: [],
       jsx: undefined,
     };
@@ -103,7 +98,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
     if (done) return;
     this.setState({ loading: true });
 
-    if (!html) {
+    if (html === undefined) {
       // If there is no Html, try to load it
       if (!getContentFromResource || !source)
         throw new Error(
