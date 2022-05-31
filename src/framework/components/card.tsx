@@ -72,7 +72,7 @@ interface IContentCardPropsBase extends IContentCardProps, ITouchableContentCard
 const FooterSeparator = styled.View({
   height: 1,
   width: '100%',
-  backgroundColor: theme.ui.border.input,
+  backgroundColor: theme.palette.grey.pearl,
 });
 const HeaderFlexView = styled.View({
   flexDirection: 'row',
