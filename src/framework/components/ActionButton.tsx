@@ -8,7 +8,7 @@ import { DEPRECATED_getCurrentPlatform } from '../util/_legacy_appConf';
 import { openUrl } from '../util/linking';
 import { UI_SIZES } from './constants';
 import { Picture } from './picture';
-import { TextSemiBold, TextSizeStyle, rem, remlh } from './text';
+import { TextSemiBold } from './text';
 
 export interface ActionButtonProps {
   text: string;
@@ -81,6 +81,9 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
     </Component>
   );
 };
+
+const rlh = UI_SIZES.getResponsiveStyledLineHeight();
+
 ActionButton.Style = StyleSheet.create({
   viewCommon: {
     height: UI_SIZES.dimensions.height.largePlus,
@@ -93,8 +96,8 @@ ActionButton.Style = StyleSheet.create({
   },
   textCommon: {
     marginRight: UI_SIZES.spacing.smallPlus,
-    lineHeight: remlh(1),
-    height: remlh(1),
+    lineHeight: rlh,
+    height: rlh,
   },
   picture: {
     marginLeft: UI_SIZES.spacing.smallPlus,
