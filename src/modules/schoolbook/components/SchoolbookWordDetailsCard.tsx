@@ -165,7 +165,7 @@ const SchoolbookWordDetailsCard = (
             </TouchableOpacity>
           }
           footer={
-            schoolbookWordResponsesNumber ? (
+            isTeacher && schoolbookWordResponsesNumber ? (
               <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
                 <Picture
                   type="NamedSvg"
