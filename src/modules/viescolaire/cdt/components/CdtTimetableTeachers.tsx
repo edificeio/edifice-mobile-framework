@@ -27,11 +27,12 @@ const style = StyleSheet.create({
   },
   weekPickerView: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 0)',
-    borderWidth: 1,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  weekText: {
+    marginRight: 4,
   },
   courseView: {
     flexDirection: 'row',
@@ -118,9 +119,9 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const isEmpty = !homeworks.length;
     return (
       <View style={style.homeworksToDoContainer}>
-        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+        <TextBold style={{ fontSize: 16 }}>
           {I18n.t('viesco-homework')} {homeworks.length > 1 && '(' + homeworks.length + ')'}
-        </Text>
+        </TextBold>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))}
           disabled={isEmpty}>
@@ -183,12 +184,9 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
             <TextBold style={{ fontSize: 20 }} numberOfLines={1}>
               {className}
             </TextBold>
-          </View>
-          <View style={!isHalfCourse && style.infoView}>
             <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
           </View>
         </View>
-
         <View style={isHalfCourse ? style.buttonsViewHalf : style.buttonsView}>
           {this.renderSessionsIconButton(course)}
           {this.renderHomeworksIconButton(course)}
@@ -204,13 +202,11 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const slotEvents = adaptCourses(courses.data, homeworks.data, sessions.data);
 
     return (
-      <PageContainer style={{ marginTop: 5 }}>
+      <PageContainer>
         <View style={style.refreshContainer}>
           <View style={style.weekPickerView}>
-            <Text>{I18n.t('viesco-edt-week-of')}</Text>
-            <View>
-              <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#00AB6F" />
-            </View>
+            <Text style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Text>
+            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#00AB6F" />
           </View>
           {courses.isFetching || courses.isPristine ? (
             <LoadingIndicator />

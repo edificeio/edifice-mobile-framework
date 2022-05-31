@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';

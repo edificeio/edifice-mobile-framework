@@ -40,7 +40,6 @@ const style = StyleSheet.create({
     marginBottom: 15,
   },
   course: {
-    fontWeight: 'bold',
     textTransform: 'uppercase',
   },
 });
@@ -132,7 +131,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
                   </>
                 ) : null}
                 {sessionList && sessionList[indexSelectedSession]?.subject ? (
-                  <Text style={style.course}>&emsp;{sessionList[indexSelectedSession].subject}</Text>
+                  <TextBold style={style.course}>&emsp;{sessionList[indexSelectedSession].subject}</TextBold>
                 ) : null}
               </LeftColoredItem>
             </View>

@@ -12,9 +12,6 @@ import { IChildArray } from '../../viesco/state/children';
 import { colors } from './PresenceCard';
 
 const styles = StyleSheet.create({
-  bold: {
-    fontWeight: 'bold',
-  },
   modalTitle: {
     marginBottom: 10,
     fontSize: 18,
@@ -138,9 +135,9 @@ export const NotificationRelativesModal = ({
             childrenEvents?.data?.studentsEvents[child.id] &&
             !checkIsEmptyEvents(childrenEvents?.data?.studentsEvents[child.id].all) ? (
               <View>
-                <Text style={styles.bold}>
+                <TextBold>
                   {child.firstName} {child.lastName}
-                </Text>
+                </TextBold>
                 <View style={styles.modalSubsection}>
                   <>{renderEvents(childrenEvents?.data?.studentsEvents[child.id]?.all)}</>
                 </View>

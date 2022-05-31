@@ -30,7 +30,6 @@ const style = StyleSheet.create({
   homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
   title: { fontSize: 18 },
   subtitle: { color: '#AFAFAF' },
-  course: { fontWeight: 'bold', textTransform: 'uppercase' },
   grid: {
     marginTop: 10,
     flexDirection: 'row',

@@ -34,6 +34,7 @@ export type TimetableProps = {
   group: string;
   groupsIds: string[];
   teacherId: string;
+  userType: string;
   fetchChildInfos: () => void;
   fetchChildGroups: (classes: string, student: string) => void;
   fetchChildCourses: (
@@ -125,6 +126,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
           startDate={this.state.startDate}
           selectedDate={this.state.selectedDate}
           updateSelectedDate={this.updateSelectedDate}
+          userType={getUserSession().user.type}
         />
       </PageView>
     );
