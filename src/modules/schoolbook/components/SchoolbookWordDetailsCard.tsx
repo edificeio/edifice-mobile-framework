@@ -61,6 +61,8 @@ const SchoolbookWordDetailsCard = (
   const commentFieldRefs = React.useRef([]);
   const bottomEditorSheetRef: { current: any } = React.useRef();
   const [editedCommentId, setEditedCommentId] = React.useState<string>('');
+  const [contentHeight, setContentHeight] = React.useState(0);
+  const [viewHeight, setViewHeight] = React.useState(0);
 
   const usersTextMaxLines = 1;
   const word = schoolbookWord.word;
@@ -91,6 +93,7 @@ const SchoolbookWordDetailsCard = (
     (isParent && isWordAcknowledgedForParent);
   const responses = isStudent ? report[0]?.responses : isParent ? reportByStudentForParent?.responses : undefined;
   const isBottomSheetVisible = isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent));
+  const doesContentExceedView = contentHeight && viewHeight ? contentHeight >= viewHeight : undefined;
 
   const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
   const cardBottomEditorSheetRef = () => bottomEditorSheetRef?.current;
@@ -103,13 +106,20 @@ const SchoolbookWordDetailsCard = (
 
   return (
     <>
-      <ScrollView keyboardShouldPersistTaps="handled" ref={scrollViewRef} bottomInset={!isBottomSheetVisible}>
+      <ScrollView
+        ref={scrollViewRef}
+        onLayout={({ nativeEvent }) => setViewHeight(nativeEvent.layout.height)}
+        onContentSizeChange={(width, height) => setContentHeight(height)}
+        keyboardShouldPersistTaps="handled"
+        bottomInset={!isBottomSheetVisible}
+        scrollIndicatorInsets={{ right: 0.001, bottom: doesContentExceedView ? UI_SIZES.radius.mediumPlus : undefined }}
+        style={{ marginBottom: doesContentExceedView ? -UI_SIZES.radius.mediumPlus : undefined }}>
         <ResourceView
           style={{
             backgroundColor: theme.ui.background.card,
             borderBottomWidth: UI_SIZES.dimensions.width.tiny,
             borderBottomColor: theme.palette.grey.pearl,
-            paddingBottom: UI_SIZES.spacing.extraSmall,
+            paddingBottom: UI_SIZES.spacing.extraSmall + (doesContentExceedView ? UI_SIZES.radius.mediumPlus : 0),
           }}
           emphasizedHeader
           customHeaderStyle={{ paddingVertical: UI_SIZES.spacing.smallPlus }}
@@ -250,10 +260,11 @@ const SchoolbookWordDetailsCard = (
       </ScrollView>
       {isParent ? (
         !isWordAcknowledged ? (
-          <BottomButtonSheet text={I18n.t('schoolbook.acknowledge')} action={action} />
+          <BottomButtonSheet displayShadow={doesContentExceedView} text={I18n.t('schoolbook.acknowledge')} action={action} />
         ) : word.reply && !isWordRepliedToForParent ? (
           <BottomEditorSheet
             ref={bottomEditorSheetRef}
+            displayShadow={doesContentExceedView}
             isPublishingComment={isPublishingReply}
             onPublishComment={comment => onPublishReply(comment)}
             isResponse
