@@ -10,6 +10,7 @@ export enum CarnetDeBordSection {
 export type IPronoteConnectorInfo = {
   structureId: string;
   address: string;
+  idPronote: string;
 };
 
 export type IUserBasic = {
@@ -17,11 +18,10 @@ export type IUserBasic = {
   displayName: string;
   firstName: string;
   lastName: string;
-  idPronote: string;
 };
 
 export type ICarnetDeBord = IUserBasic &
-  IPronoteConnectorInfo & {
+  Partial<IPronoteConnectorInfo> & {
     PageCahierDeTextes?: {
       Titre: string;
       CahierDeTextes?: ICarnetDeBordCahierDeTextes[];

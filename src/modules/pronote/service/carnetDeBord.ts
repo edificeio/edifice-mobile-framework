@@ -360,7 +360,12 @@ function carnetDeBordAdapterParent(
 }
 
 function carnetDeBordAdapter(data: ICarnetDeBordBackend, children: IChildrenInfo): ICarnetDeBord[] {
-  const ret: ICarnetDeBord[] = [];
+  const retAsObject: { [id: string]: ICarnetDeBord } = {};
+  children.forEach(child => {
+    retAsObject[child.id] = {
+      ...child,
+    };
+  });
   data.forEach(cdb => {
     const parser = new XMLParser({
       allowBooleanAttributes: true,
@@ -376,26 +381,26 @@ function carnetDeBordAdapter(data: ICarnetDeBordBackend, children: IChildrenInfo
       for (const tag of root.Parent) {
         if (tag.hasOwnProperty('Eleve')) {
           const parsedEleve = carnetDeBordAdapterParent(tag.Eleve, cdb, children);
-          if (parsedEleve) ret.push(parsedEleve);
+          if (parsedEleve) retAsObject[parsedEleve.id] = parsedEleve;
         }
       }
     } else if (root.hasOwnProperty('Eleve')) {
       const parsedEleve = carnetDeBordAdapterEleve(root.Eleve, cdb);
       const session = getUserSession();
       if (parsedEleve)
-        (ret as ICarnetDeBord[]).push({
+        retAsObject[''] = {
           ...parsedEleve,
           displayName: session.user.displayName,
           firstName: session.user.firstName,
           lastName: session.user.lastName,
           id: session.user.id,
           idPronote: session.user.id, // Yes it's not really the Pronote ID but in this case we have to mock it.
-        });
+        };
     } else {
       throw new Error(`Malformed xml. Do not contain either Parent or Eleve tag.`);
     }
   });
-  return ret;
+  return Object.values(retAsObject);
 }
 
 export type IChildrenInfo = {
@@ -408,7 +413,6 @@ export type IChildrenInfo = {
 export default {
   get: async (session: IUserSession, children: IChildrenInfo) => {
     const api = `/sso/pronote`;
-    await new Promise(resolve => setTimeout(() => resolve(null), 1000));
     const data = (await fetchJSONWithCache(api)) as ICarnetDeBordBackend;
     // const data = [
     //   {
@@ -424,15 +428,6 @@ export default {
     //     address: 'https://WSEducation.index-education.net/pronote',
     //   },
     // ];
-    const users = [
-      ...children,
-      {
-        id: session.user.id,
-        displayName: session.user.displayName,
-        firstName: session.user.firstName,
-        lastName: session.user.lastName,
-      },
-    ];
-    return carnetDeBordAdapter(data, users);
+    return carnetDeBordAdapter(data, children);
   },
 };

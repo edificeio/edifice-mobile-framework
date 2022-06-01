@@ -10,7 +10,7 @@ import { IGlobalState } from '~/AppStore';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { PictureProps } from '~/framework/components/picture';
 import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
@@ -42,7 +42,7 @@ export type CarnetDeBordScreenProps = CarnetDeBordScreenDataProps & CarnetDeBord
 function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structures }: CarnetDeBordScreenProps) {
   // UserList info & selected user
   const getUsers = React.useCallback(
-    (_data: typeof data) => _data.map(cdb => ({ id: cdb.idPronote, avatarId: cdb.id, name: cdb.firstName })),
+    (_data: typeof data) => _data.map(cdb => ({ id: cdb.idPronote ?? cdb.id, avatarId: cdb.id, name: cdb.firstName })),
     [],
   );
   const users: UserListProps['data'] = React.useMemo(() => getUsers(data), [getUsers, data]);
@@ -59,17 +59,12 @@ function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structu
     () => /* session.user.type === UserType.Relative || */ users.length > 1,
     [/*session, */ users],
   );
-  const [isEmpty, setIsEmpty] = React.useState(false);
 
   // Data & content
   const loadData = React.useCallback(async () => {
-    try {
-      const [newData, savedSelectedId] = await Promise.all([handleLoadData(), getItemJson<string>(CarnetDeBordScreen.STORAGE_KEY)]);
-      usersRef.current = getUsers(newData);
-      await selectUser(savedSelectedId);
-    } catch (e) {
-      setIsEmpty(true);
-    }
+    const [newData, savedSelectedId] = await Promise.all([handleLoadData(), getItemJson<string>(CarnetDeBordScreen.STORAGE_KEY)]);
+    usersRef.current = getUsers(newData);
+    await selectUser(savedSelectedId);
   }, [selectUser, handleLoadData, getUsers]);
   const selectedCdbData = React.useMemo(() => {
     return data.find(d => d.idPronote === selectedId);
@@ -80,20 +75,18 @@ function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structu
   }, [data, selectedCdbData]);
   const renderContent = React.useMemo(
     () =>
-      isEmpty
-        ? () => <EmptyContentScreen />
-        : CarnetDeBordScreen.getRenderContent(
-            selectedCdbData!,
-            users,
-            selectedId,
-            selectUser,
-            isUserListShown,
-            isStructureShown,
-            navigation,
-            structures,
-            session,
-          ),
-    [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, isEmpty, structures, session],
+      CarnetDeBordScreen.getRenderContent(
+        selectedCdbData!,
+        users,
+        selectedId,
+        selectUser,
+        isUserListShown,
+        isStructureShown,
+        navigation,
+        structures,
+        session,
+      ),
+    [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, structures, session],
   );
 
   return (
@@ -136,7 +129,7 @@ CarnetDeBordScreen.getRenderContent =
             {structures.find(s => s.id === data?.structureId)?.name ?? ' '}
           </Text>
         ) : null}
-        {data ? (
+        {data && data.idPronote && data.address && data.structureId ? (
           <>
             <CarnetDeBordScreen.SectionContent
               title={I18n.t('pronote.carnetDeBord.cahierDeTextes.title')}
@@ -226,13 +219,19 @@ CarnetDeBordScreen.getRenderContent =
               style={CarnetDeBordScreen.styles.button}
               type="secondary"
               action={() => {
-                redirect(session, data.address);
+                redirect(session, data.address!);
               }}
               iconName="pictos-external-link"
               text={I18n.t('pronote.carnetDeBord.openInPronote')}
             />
           </>
-        ) : null}
+        ) : (
+          <EmptyScreen
+            svgImage="empty-timeline"
+            title={I18n.t('pronote.carnetDeBord.noData.title')}
+            text={I18n.t('pronote.carnetDeBord.noData.text')}
+          />
+        )}
       </ScrollView>
     );
   };
