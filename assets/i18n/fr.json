@@ -677,12 +677,12 @@
       "relativesDidNotAcknowledge": "Les responsables de ces élèves n'ont pas encore lu le mot.",
       "reminder": "Rappel",
       "reminderModal": {
-        "text": "Vous allez envoyer une notification de rappel à toutes les personnes qui n'ont pas encore comfirmé la lecture du mot.",
-        "title": "Envoie d'un rappel"
+        "text": "Vous allez envoyer une notification de rappel à toutes les personnes qui n'ont pas encore confirmé la lecture du mot.",
+        "title": "Envoi d'un rappel"
       },
       "reminderPossible": "Vous pouvez leur envoyer un rappel de lecture.",
       "reminderToast": {
-        "text": "Rappel envoyé aux personnes n'aillant pas confirmé la lecture du mot."
+        "text": "Rappel envoyé aux personnes n'ayant pas confirmé la lecture du mot."
       },
       "unacknowledgement": "Non-lu",
       "unacknowledgements": "Non-lus"
