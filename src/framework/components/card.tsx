@@ -31,12 +31,12 @@ const cardPaddingMerging: ViewStyle = { paddingHorizontal: cardPaddingH, padding
 const cardPaddingSmall: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: (cardPaddingV * 2) / 3 };
 
 const cardStyle: ViewStyle = {
-  backgroundColor: theme.color.background.card,
+  backgroundColor: theme.ui.background.card,
   borderRadius: 15,
 };
 
 const cardShadow: ViewStyle = {
-  shadowColor: theme.color.shadowColor,
+  shadowColor: theme.ui.shadowColor,
   shadowOffset: { width: 0, height: 1 },
   shadowOpacity: 0.3,
   shadowRadius: 1,
@@ -47,7 +47,7 @@ export const Card = styled.View(cardStyle, cardPadding, cardShadow);
 export const CardWithoutPadding = styled.View(cardStyle, cardShadow);
 export const TouchCard = styled.TouchableOpacity(cardStyle, cardPadding, cardShadow);
 export const TouchCardWithoutPadding = styled.TouchableOpacity(cardStyle, cardShadow);
-export const InfoCard = styled.View(cardStyle, cardPadding, { backgroundColor: theme.color.secondary.light });
+export const InfoCard = styled.View(cardStyle, cardPadding, { backgroundColor: theme.palette.primary.light });
 
 export interface IContentCardProps extends ViewProps {
   header?: React.ReactElement;
@@ -66,7 +66,7 @@ interface IContentCardProps_Base extends IContentCardProps, ITouchableContentCar
 const FooterSeparator = styled.View({
   height: 1,
   width: '100%',
-  backgroundColor: theme.color.inputBorder,
+  backgroundColor: theme.palette.grey.pearl,
 });
 const HeaderFlexView = styled.View({
   flexDirection: 'row',
@@ -130,7 +130,7 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
   const realHeaderIndicator = headerIndicator ?? (
     <Icon
       name="arrow_right"
-      color={theme.color.secondary.regular}
+      color={theme.palette.primary.regular}
       style={{ paddingVertical: 6, paddingLeft: 8, marginRight: -3 }}
     />
   );
@@ -176,7 +176,7 @@ export const ContentCardHeader = (props: IContentCardHeaderProps) => {
           )
         ) : null}
         {props.date ? (
-          <TextItalic style={{ color: theme.greyPalette.graphite, ...TextSizeStyle.Small }}>
+          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
             {typeof props.date === 'string' ? props.date : displayPastDate(props.date)}
           </TextItalic>
         ) : null}
@@ -235,13 +235,13 @@ const ResourceCard_base = (props: IResourceCardProps_base) => {
                 images: false,
                 ignoreLineBreaks: true,
                 globalTextStyle: {
-                  color: theme.color.text.regular,
+                  color: theme.ui.text.regular,
                   fontSize: 12,
                   fontWeight: '400',
                 },
                 linkTextStyle: {
                   ...FontStyle.SemiBold,
-                  color: theme.color.text.heavy,
+                  color: theme.ui.text.heavy,
                 },
               }}
             />

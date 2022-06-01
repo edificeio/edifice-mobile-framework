@@ -5,10 +5,10 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { Icon } from '~/ui/icons/Icon';
 
 interface ITimelineFlashMessageProps {
   flashMessage: IEntcoreFlashMessage;

@@ -2,15 +2,12 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-
-
+import { Icon } from '~/framework/components/picture/Icon';
 import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui/icons/Icon';
 import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
 import { IItem } from '~/workspace/types';
 import { IFile } from '~/workspace/types/states/items';
-
 
 type IProps = {
   data: ITreeItem[];

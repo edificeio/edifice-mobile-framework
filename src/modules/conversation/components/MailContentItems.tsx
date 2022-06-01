@@ -7,6 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { ListItem } from '~/framework/components/listItem';
+import { Icon } from '~/framework/components/picture/Icon';
 import { NestedText, Text, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -16,7 +17,6 @@ import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
 import { getProfileColor, getUserColor } from '~/modules/conversation/utils/userColor';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { Icon } from '~/ui/icons/Icon';
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor('Guest'));

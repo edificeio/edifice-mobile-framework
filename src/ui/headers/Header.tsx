@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
 
 /**
  * DEPRECATED

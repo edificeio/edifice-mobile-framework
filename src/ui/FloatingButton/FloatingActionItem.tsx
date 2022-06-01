@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '~/ui/icons/Icon';
-
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
-import { IEventProps, EVENT_TYPE } from '~/types';
+import { EVENT_TYPE, IEventProps } from '~/types';
 import { CenterPanel, LeftIconPanel } from '~/ui/ContainerContent';
 import { IMenuItem } from '~/ui/types';
 

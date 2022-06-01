@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
+import { Icon } from '~/framework/components/picture/Icon';
 
 import { NotifierState } from './state';
 

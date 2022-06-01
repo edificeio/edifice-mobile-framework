@@ -8,7 +8,6 @@ import { DEPRECATED_signImageURISource } from '~/infra/oauth';
 import { DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import ImageOptional from '~/ui/ImageOptional';
-import { Icon } from '~/ui/icons/Icon';
 import { IFile } from '~/workspace/types';
 import { FilterId } from '~/workspace/types/filters';
 import { filters } from '~/workspace/types/filters/helpers/filters';

@@ -169,10 +169,10 @@ export const SummaryCard = ({
               name="pictos-answer"
               width={UI_SIZES.dimensions.width.medium}
               height={UI_SIZES.dimensions.height.medium}
-              fill={theme.color.secondary.regular}
+              fill={theme.palette.primary.regular}
               style={{ marginRight: UI_SIZES.spacing.smallPlus }}
             />
-            <TextSemiBold style={{ color: theme.color.secondary.regular, ...TextSizeStyle.Small }}>
+            <TextSemiBold style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
               {responsesString(responsesNumber)}
             </TextSemiBold>
           </View>

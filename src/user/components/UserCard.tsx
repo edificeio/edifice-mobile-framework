@@ -3,13 +3,13 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
 import { CommonStyles } from '~/styles/common/styles';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
-import { Icon } from '~/ui/icons/Icon';
 
 export interface IUserCardProps {
   touchable?: boolean;

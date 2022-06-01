@@ -2,14 +2,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-
-
 import { FakeHeader_Row, HeaderTitle } from '~/framework/components/header';
+import { Icon } from '~/framework/components/picture/Icon';
 import { DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { EVENT_TYPE } from '~/types';
-import { Icon } from '~/ui/icons/Icon';
-
 
 const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
   const { writeAccess, icon, id, options = {} } = item;

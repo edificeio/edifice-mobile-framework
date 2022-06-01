@@ -7,13 +7,13 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import theme from '~/app/theme';
 import { ListItem } from '~/framework/components/listItem';
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { Icon } from '~/ui/icons/Icon';
 
 type MailListItemProps = {
   navigation: NavigationDrawerProp<any>;

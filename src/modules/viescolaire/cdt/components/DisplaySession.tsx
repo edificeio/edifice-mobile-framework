@@ -11,7 +11,6 @@ import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-import { Icon } from '~/ui/icons/Icon';
 
 const style = StyleSheet.create({
   mainView: {

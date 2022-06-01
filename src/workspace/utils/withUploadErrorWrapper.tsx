@@ -8,7 +8,6 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk, DialogContainer, DialogTitle } from '~/ui/ConfirmDialog';
-import { Icon } from '~/ui/icons/Icon';
 import { actionTypesUpload } from '~/workspace/actions/upload';
 import { resetError } from '~/workspace/reducers/items';
 

@@ -40,38 +40,6 @@ const styles = StyleSheet.create({
   purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },
 });
 
-const styles = StyleSheet.create({
-  studentsList: {
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 5,
-    elevation: 2,
-    paddingRight: 10,
-    paddingVertical: 5,
-    backgroundColor: '#FFF',
-    flexWrap: 'wrap',
-  },
-  tick: {
-    borderStyle: 'solid',
-    height: 45,
-    borderRadius: 100,
-    width: 45,
-    marginLeft: 10,
-  },
-  alignRightContainer: { flexGrow: 1, flexDirection: 'row-reverse' },
-  dash: { height: 10, width: 30, borderRadius: 10 },
-  swipeButtons: { flexDirection: 'row-reverse', flexGrow: 1 },
-  swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
-  studentName: { marginLeft: 10, marginVertical: 15 },
-  iconsView: { flexDirection: 'row', marginLeft: 5 },
-  grey: { backgroundColor: 'grey' },
-  lightGrey: { backgroundColor: 'lightgrey' },
-  red: { backgroundColor: CommonStyles.themeOpenEnt.red },
-  blue: { backgroundColor: '#ed9ffd' },
-  purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },
-});
-
 type Student = {
   birth_date: string;
   day_history: any[];

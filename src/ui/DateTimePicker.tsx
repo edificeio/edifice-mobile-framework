@@ -2,14 +2,14 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React, { useState } from 'react';
-import { View, Platform, ViewStyle } from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 
-import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
-import { Icon } from '~/ui/icons/Icon';
-import TouchableOpacity from './CustomTouchableOpacity';
-import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from './Modal';
-
+import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
+import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
+
+import TouchableOpacity from './CustomTouchableOpacity';
+import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
 
 const IconButton = ({
   icon,

@@ -13,8 +13,6 @@ import { PageContainer } from '~/ui/ContainerContent';
 
 import StudentRow from './StudentRow';
 
-import StudentRow from './StudentRow';
-
 const style = StyleSheet.create({
   validateButton: {
     alignSelf: 'center',

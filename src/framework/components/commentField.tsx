@@ -115,7 +115,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
   return (
     <View
       style={{
-        backgroundColor: theme.color.background.card,
+        backgroundColor: theme.ui.background.card,
         padding: props.commentId ? UI_SIZES.spacing.large : undefined,
         borderTopWidth: props.commentId && isFirstComment ? 1 : 0,
         borderBottomWidth: props.commentId ? 1 : 0,
@@ -176,12 +176,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <TextSemiBold style={{ color: theme.color.secondary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
+              <TextSemiBold style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <TextSemiBold style={{ color: theme.color.secondary.regular, marginLeft: UI_SIZES.spacing.large }}>
+              <TextSemiBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.large }}>
                 {I18n.t('common.delete')}
               </TextSemiBold>
             </TouchableOpacity>

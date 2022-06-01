@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
 import moduleConfig from '~/modules/conversation/moduleConfig';
@@ -16,7 +17,6 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 import Attachment from './Attachment';
 import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';

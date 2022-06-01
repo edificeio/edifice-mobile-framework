@@ -16,7 +16,7 @@ export const UrlButton = ({ text, url }: UrlButtonProps) => {
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: theme.color.secondary.regular,
+        backgroundColor: theme.palette.primary.regular,
         paddingVertical: UI_SIZES.spacing.smallPlus,
         paddingHorizontal: UI_SIZES.spacing.large,
         borderRadius: UI_SIZES.radius.extraLarge,

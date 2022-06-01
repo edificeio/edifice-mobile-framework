@@ -26,20 +26,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const styles = StyleSheet.create({
-  modalContainer: {
-    width: 350,
-  },
-  directoryNameContainer: {
-    width: '100%',
-    marginBottom: 35,
-    paddingHorizontal: 20,
-  },
-  row: {
-    flexDirection: 'row',
-  },
-});
-
 type CreateFolderModalProps = {
   show: boolean;
   onClose: () => void;

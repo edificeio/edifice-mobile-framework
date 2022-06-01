@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { Icon } from '~/ui/icons/Icon';
+import { Icon } from '~/framework/components/picture/Icon';
 
 export const IconButton = (props: {
   iconName: string;

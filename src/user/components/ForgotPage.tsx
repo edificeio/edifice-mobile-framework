@@ -4,18 +4,15 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
-
-
 import { PageView } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
 import { H1, Text, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
-import { Icon } from '~/ui/icons/Icon';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
-
 
 // TYPES ---------------------------------------------------------------------------
 

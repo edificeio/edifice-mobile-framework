@@ -3,9 +3,9 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
 
 const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
   {

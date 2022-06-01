@@ -3,17 +3,12 @@ import * as React from 'react';
 import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 
-
-
+import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/ui/icons/Icon';
-
-
 
 import Attachment, { IRemoteAttachment } from './Attachment';
 import { BubbleStyle } from './BubbleStyle';
 import { A, Bold } from './Typography';
-
 
 export class AttachmentGroup extends React.PureComponent<
   {

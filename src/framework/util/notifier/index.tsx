@@ -4,11 +4,16 @@ import { ActivityIndicator, Animated, LayoutEvent, Platform, Text, View } from '
 import { AnimatedValue } from 'react-navigation';
 import { connect } from 'react-redux';
 
+
+
+import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { Icon } from '~/ui/icons/Icon';
+
+
 
 import { NotifierState } from './reducer';
+
 
 const NotifierWrapper = styled(TouchableOpacity)({
   flex: 1,

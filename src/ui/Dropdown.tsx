@@ -2,15 +2,15 @@ import { Picker } from '@react-native-picker/picker';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { useState } from 'react';
-import { View, ViewStyle, Platform } from 'react-native';
+import { Platform, View, ViewStyle } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
-import { Icon } from '~/ui/icons/Icon';
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
-
+import { Icon } from '~/framework/components/picture/Icon';
 import { TextBold } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
+import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
+
+import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
 
 interface IDropdownProps {
   keyId?: string;
