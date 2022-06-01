@@ -21,10 +21,6 @@ const style = StyleSheet.create({
     height: '100%',
     zIndex: 0,
   },
-  calendarContainer: {
-    height: 1,
-    flexGrow: 1,
-  },
   weekPickerView: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -34,28 +30,32 @@ const style = StyleSheet.create({
   weekText: {
     marginRight: 4,
   },
+  calendarContainer: {
+    height: 1,
+    flexGrow: 1,
+  },
   courseView: {
     flexDirection: 'row',
-    padding: 5,
+    padding: 8,
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
-  subjectView: { maxWidth: '56%' },
-  infoView: {
-    paddingHorizontal: 5,
+  subjectView: {
+    flexShrink: 1,
   },
-  buttonsView: {
+  subjectPadding: {
+    paddingLeft: 4,
+  },
+  classText: {
+    fontSize: 20,
+    lineHeight: 22,
+  },
+  buttonsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
   },
-  buttonsViewHalf: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  homeworksToDoContainer: {
+  homeworksContainer: {
     backgroundColor: '#FFF1DB',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -63,6 +63,18 @@ const style = StyleSheet.create({
     height: 45,
     marginBottom: 15,
     paddingHorizontal: 10,
+  },
+  homeworksText: {
+    fontSize: 16,
+  },
+  halfSessionMargin: {
+    marginHorizontal: 8,
+  },
+  sessionMargin: {
+    marginHorizontal: 20,
+  },
+  homeworkMargin: {
+    marginRight: 4,
   },
 });
 
@@ -118,8 +130,8 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
   renderDaysHomeworks = (homeworks: IHomework[]) => {
     const isEmpty = !homeworks.length;
     return (
-      <View style={style.homeworksToDoContainer}>
-        <TextBold style={{ fontSize: 16 }}>
+      <View style={style.homeworksContainer}>
+        <TextBold style={style.homeworksText}>
           {I18n.t('viesco-homework')} {homeworks.length > 1 && '(' + homeworks.length + ')'}
         </TextBold>
         <TouchableOpacity
@@ -139,7 +151,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
   };
 
   /* Display Homeworks attached to a session or a course with a session */
-  renderHomeworksIconButton = course => {
+  renderHomeworksIconButton = (course, isHalfCourse: boolean = false) => {
     const isHomeworksInSession =
       course.session !== undefined && course.session.homeworks !== undefined && course.session.homeworks.length > 0;
     const isHomeworksInCourse = course.homeworks !== undefined && course.homeworks.length > 0;
@@ -153,20 +165,20 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
       );
     };
     return (
-      <TouchableOpacity onPress={navigateToHomeworks} disabled={!isHomeWorkPublished}>
+      <TouchableOpacity style={!isHalfCourse && style.homeworkMargin} onPress={navigateToHomeworks} disabled={!isHomeWorkPublished}>
         <Icon name="inbox" size={24} color={isHomeWorkPublished ? '#FF9700' : 'lightgrey'} />
       </TouchableOpacity>
     );
   };
 
   /* Display sessions : check if it is a course or a session */
-  renderSessionsIconButton = course => {
+  renderSessionsIconButton = (course, isHalfCourse: boolean = false) => {
     const { navigation } = this.props;
     const isSessionPublished =
       ((course.session && course.session.is_published) || course.calendarType === 'session') && !course.session.is_empty;
     return (
       <TouchableOpacity
-        style={{ paddingRight: 20 }}
+        style={isHalfCourse ? style.halfSessionMargin : style.sessionMargin}
         onPress={() => navigation.navigate('SessionPage', sessionListDetailsTeacherAdapter(course.session || course))}
         disabled={!isSessionPublished}>
         <Icon name="insert_drive_file1" size={24} color={isSessionPublished ? '#2BAB6F' : 'lightgrey'} />
@@ -179,17 +191,15 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
 
     return (
       <View style={style.courseView}>
-        <View style={style.subjectView}>
-          <View style={!isHalfCourse && style.infoView}>
-            <TextBold style={{ fontSize: 20 }} numberOfLines={1}>
-              {className}
-            </TextBold>
-            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
-          </View>
+        <View style={[style.subjectView, !isHalfCourse && style.subjectPadding]}>
+          <TextBold style={style.classText} numberOfLines={1}>
+            {className}
+          </TextBold>
+          <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
         </View>
-        <View style={isHalfCourse ? style.buttonsViewHalf : style.buttonsView}>
-          {this.renderSessionsIconButton(course)}
-          {this.renderHomeworksIconButton(course)}
+        <View style={style.buttonsContainer}>
+          {this.renderSessionsIconButton(course, isHalfCourse)}
+          {this.renderHomeworksIconButton(course, isHalfCourse)}
         </View>
       </View>
     );
