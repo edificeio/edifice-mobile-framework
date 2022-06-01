@@ -21,7 +21,7 @@ import moduleConfig from '~/modules/schoolbook/moduleConfig';
 
 import SchoolbookWordDetailsCard from '../components/SchoolbookWordDetailsCard';
 import { IWordReport } from '../reducer';
-import { getSchoolbookWorkflowInformation } from '../rights';
+import { hasDeleteRight } from '../rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '../service';
 
 // TYPES ==========================================================================================
@@ -41,7 +41,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
   const userType = session?.user?.type;
   const isTeacher = userType === UserType.Teacher;
   const isParent = userType === UserType.Relative;
-  const hasSchoolbookWordCreationRights = getSchoolbookWorkflowInformation(session).create;
   const menuData = [
     {
       text: I18n.t('common.delete'),
@@ -214,10 +213,13 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
   const [showMenu, setShowMenu] = React.useState(false);
   const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
+  const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };
+  const hasSchoolbookWordDeleteRights = hasDeleteRight(schoolbookWordResource, session);
+  const canDeleteSchoolbookWord = isUserSchoolbookWordOwner || hasSchoolbookWordDeleteRights;
   const navBarInfo = {
     title: I18n.t('schoolbook.appName'),
     right:
-      isSchoolbookWordRendered && hasSchoolbookWordCreationRights && isUserSchoolbookWordOwner ? (
+      isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
         <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <HeaderIcon name="more_vert" iconSize={24} />
         </TouchableOpacity>
