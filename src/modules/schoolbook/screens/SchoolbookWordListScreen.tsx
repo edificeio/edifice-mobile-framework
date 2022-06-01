@@ -3,7 +3,7 @@
  */
 import I18n from 'i18n-js';
 import moment from 'moment';
-import React from 'react';
+import React, { useRef } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -46,7 +46,6 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
   const isTeacher = userType === UserType.Teacher;
   const isParent = userType === UserType.Relative;
   const hasSchoolbookWordCreationRights = getSchoolbookWorkflowInformation(session).create;
-  let focusEventListener: NavigationEventSubscription;
 
   // LOADER =====================================================================================
 
@@ -97,16 +96,14 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     else refreshSilent();
   };
 
+  const focusEventListener = useRef<NavigationEventSubscription>();
   React.useEffect(() => {
     // Note: 'didFocus' does not work when navigating from a notification, so we use this condition instead
-    if (props.navigation.getParam('useNotification')) {
-      fetchOnNavigation();
-    }
-    focusEventListener = props.navigation.addListener('didFocus', () => {
+    focusEventListener.current = props.navigation.addListener('didFocus', () => {
       fetchOnNavigation();
     });
     return () => {
-      focusEventListener.remove();
+      focusEventListener.current?.remove();
     };
   }, []);
 

@@ -18,7 +18,6 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
     const route = computeRelativePath(`${moduleConfig.routeName}${isParent ? '' : '/details'}`, navState);
     mainNavNavigate(route, {
       notification,
-      useNotification: true,
     });
     return {
       managed: 1,
