@@ -7,11 +7,14 @@ const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
   Math.round(
     dimension *
-      Math.min(
-        type === 'height'
-          ? screenDimensions.height / standardScreenDimensions.height
-          : screenDimensions.width / standardScreenDimensions.width,
-        1.75,
+      Math.max(
+        Math.min(
+          type === 'height'
+            ? screenDimensions.height / standardScreenDimensions.height
+            : screenDimensions.width / standardScreenDimensions.width,
+          1.5,
+        ),
+        0.75,
       ),
   );
 
