@@ -2,10 +2,10 @@
   "major": 1,
   "minor": 8,
   "rev": 0,
-  "build": 8,
-  "alpha": 8,
+  "build": 7,
+  "alpha": 7,
   "rc": 0,
-  "last": "2022-06-02T20:08:29",
-  "notes": "chore(schoolbook): response zone click<br>fix(schoolbook): MB-602/MB-692, visual enhancements<br>remove console.log in theme<br>fix(schoolbook): MB-653 fix flatlist in nativeModal<br>chore(schoolbook): code enhancement<br>fix(blog, schoolbook): MB-672, auto-scroll on editing comments/responses<br>chore(build): Automatic changelog mistake fix<br>chore(build): Automatic change log<br>chore: Fix lint and change ScrollView<br>refactor: replaced fontSize with TextSizeStyle",
+  "last": "2022-06-01T23:24:53",
+  "notes": "bla bla bla...",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
