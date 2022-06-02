@@ -187,7 +187,14 @@ const SchoolbookWordDetailsCard = (
         }
         footer={
           isTeacher && schoolbookWordResponsesNumber ? (
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: UI_SIZES.spacing.smallPlus,
+                marginVertical: -UI_SIZES.spacing.smallPlus,
+              }}
+              onPress={action}>
               <Picture
                 type="NamedSvg"
                 name="pictos-answer"
