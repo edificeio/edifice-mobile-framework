@@ -74,6 +74,7 @@ export const UI_SIZES = {
     large: getScaleDimension(16, 'width'),
     largePlus: getScaleDimension(22, 'width'),
     extraLarge: getScaleDimension(24, 'width'),
+    extraLargeBig: getScaleDimension(32, 'width'),
     extraLargePlus: getScaleDimension(36, 'width'),
     huge: getScaleDimension(64, 'width'),
   },

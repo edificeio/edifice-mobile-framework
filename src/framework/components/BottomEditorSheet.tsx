@@ -2,10 +2,13 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { getUserSession } from '../util/session';
-import { BottomSheet } from './BottomSheet';
+import { BottomSheet, BottomSheetProps } from './BottomSheet';
 import CommentField, { CommentFieldProps } from './commentField';
 
-const BottomEditorSheet = ({ isResponse, isPublishingComment, onPublishComment }: CommentFieldProps, ref) => {
+const BottomEditorSheet = (
+  { isResponse, isPublishingComment, onPublishComment, displayShadow }: CommentFieldProps & Omit<BottomSheetProps, 'content'>,
+  ref,
+) => {
   const session = useSelector(() => getUserSession());
   const commentFieldRef: { current: any } = React.createRef();
   const clearCommentField = () => commentFieldRef?.current?.clearCommentField();
@@ -16,6 +19,7 @@ const BottomEditorSheet = ({ isResponse, isPublishingComment, onPublishComment }
   React.useImperativeHandle(ref, () => ({ clearCommentField, confirmDiscard, doesCommentExist }));
   return (
     <BottomSheet
+      displayShadow={displayShadow}
       content={
         <CommentField
           ref={commentFieldRef}

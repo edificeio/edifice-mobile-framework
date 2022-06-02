@@ -27,10 +27,14 @@ const style = StyleSheet.create({
   mainView: {
     flex: 1,
   },
-  homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
-  title: { fontSize: 18 },
-  subtitle: { color: '#AFAFAF' },
-  course: { fontWeight: 'bold', textTransform: 'uppercase' },
+  homeworkPart: {
+    flex: 1,
+    paddingBottom: 8,
+    paddingHorizontal: 15,
+  },
+  subtitle: {
+    color: '#AFAFAF',
+  },
   grid: {
     marginTop: 10,
     flexDirection: 'row',

@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text } from '~/framework/components/text';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
@@ -22,8 +22,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   titleText: {
-    fontSize: 18,
-    color: 'black',
+    ...TextSizeStyle.SlightBigPlus,
   },
   textZone: {
     marginHorizontal: 10,

@@ -115,6 +115,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   bottomEditorSheetRef: { current: any } = React.createRef();
   event: string | null = null;
   showSubscription: EmitterSubscription | undefined;
+  hideSubscription: EmitterSubscription | undefined;
 
   state: IBlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
@@ -434,11 +435,20 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     } else this.doInit();
 
     this.showSubscription = Keyboard.addListener('keyboardWillShow', () => {
-      const { editedCommentId } = this.state;
+      const { editedCommentId, blogPostData } = this.state;
       if (this.commentFieldRefs[editedCommentId]?.isCommentFieldFocused()) this.setState({ isCommentFieldFocused: true });
+      setTimeout(() => {
+        const commentIndex = blogPostData?.comments?.findIndex(c => c.id === editedCommentId);
+        if (commentIndex !== undefined && commentIndex > -1) {
+          this.flatListRef?.scrollToIndex({
+            index: commentIndex,
+            viewPosition: 1,
+          });
+        }
+      }, 100);
     });
 
-    this.showSubscription = Keyboard.addListener('keyboardWillHide', () => {
+    this.hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
       const { editedCommentId } = this.state;
       if (!this.commentFieldRefs[editedCommentId]?.isCommentFieldFocused()) this.setState({ isCommentFieldFocused: false });
     });
@@ -450,6 +460,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   componentWillUnmount() {
     this.showSubscription?.remove();
+    this.hideSubscription?.remove();
   }
 
   private updateVisible(isVisible: boolean) {

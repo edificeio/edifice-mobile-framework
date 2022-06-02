@@ -7,7 +7,7 @@ import Toast from 'react-native-tiny-toast';
 import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   descriptionText: {
-    fontSize: 12,
+    ...TextSizeStyle.Small,
   },
   actionsContainer: {
     flexDirection: 'row',

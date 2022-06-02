@@ -60,6 +60,7 @@ export interface IWord {
   ownerName: string;
   reply: boolean;
   sendingDate: Moment;
+  shared: ({ userId?: string; groupId?: string } & any)[] | [];
   text: string;
   title: string;
 }
@@ -97,8 +98,8 @@ export const getStudentsForTeacher = (recipients: IConcernedStudent[]) => {
 };
 
 export const getStudentsByAcknowledgementForTeacher = (recipients: IConcernedStudent[]) => {
-  const acknowledgedStudents = recipients?.filter(student => student.acknowledgments?.length > 0);
-  const unacknowledgedStudents = recipients?.filter(student => student.acknowledgments?.length === 0);
+  const acknowledgedStudents = recipients?.filter(student => student.acknowledgments);
+  const unacknowledgedStudents = recipients?.filter(student => !student.acknowledgments);
   return {
     acknowledged: acknowledgedStudents,
     unacknowledged: unacknowledgedStudents,

@@ -180,19 +180,15 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
         showBgColor={item.type !== 'folder'}
         image={(item as IExplorerResourceItemWithImage).thumbnail}
         overlay={
-          (item as IExplorerResourceItemWithIcon).icon ? (
-            typeof (item as IExplorerResourceItemWithIcon).icon === 'string' ? (
+          (item as IExplorerResourceItemWithIcon).icon || item.type === 'folder' ? (
+            typeof (item as IExplorerResourceItemWithIcon).icon === 'string' || item.type === 'folder' ? (
               <Icon
                 color={item.color}
                 size={item.type === 'folder' ? 88 : 48}
-                name={item.type === 'folder' ? 'folder1' : (item as IExplorerResourceItemWithIcon).icon}
+                name={item.type === 'folder' ? 'folder1' : ((item as IExplorerResourceItemWithIcon).icon as string)}
               />
             ) : (
-              <Picture
-                {...((item as IExplorerResourceItemWithIcon).icon as PictureProps)}
-                width={item.type === 'folder' ? 88 : 48}
-                height={item.type === 'folder' ? 88 : 48}
-              />
+              <Picture {...((item as IExplorerResourceItemWithIcon).icon as PictureProps)} width={48} height={48} />
             )
           ) : null
         }

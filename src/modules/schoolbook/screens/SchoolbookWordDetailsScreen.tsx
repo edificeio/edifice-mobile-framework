@@ -1,5 +1,5 @@
 /**
- * Schoolbook word list
+ * Schoolbook word details
  */
 import I18n from 'i18n-js';
 import React from 'react';
@@ -21,27 +21,26 @@ import moduleConfig from '~/modules/schoolbook/moduleConfig';
 
 import SchoolbookWordDetailsCard from '../components/SchoolbookWordDetailsCard';
 import { IWordReport } from '../reducer';
-import { getSchoolbookWorkflowInformation } from '../rights';
+import { hasDeleteRight } from '../rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '../service';
 
 // TYPES ==========================================================================================
 
-export interface ISchoolbookWordListScreen_DataProps {
+export interface ISchoolbookWordDetailsScreen_DataProps {
   initialLoadingState: AsyncPagedLoadingState;
   session: IUserSession;
 }
-export type ISchoolbookWordListScreen_Props = ISchoolbookWordListScreen_DataProps & NavigationInjectedProps;
+export type ISchoolbookWordDetailsScreen_Props = ISchoolbookWordDetailsScreen_DataProps & NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
 
-const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => {
+const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) => {
   const detailsCardRef: { current: any } = React.useRef();
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
   const isTeacher = userType === UserType.Teacher;
   const isParent = userType === UserType.Relative;
-  const hasSchoolbookWordCreationRights = getSchoolbookWorkflowInformation(session).create;
   const menuData = [
     {
       text: I18n.t('common.delete'),
@@ -117,7 +116,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
     const notification = props.navigation.getParam('notification');
     let ids;
     if (notification) {
-      const resourceUri = notification?.resource.uri;
+      const resourceUri = notification?.resource?.uri;
       if (!resourceUri) {
         throw new Error('failed to call api (resourceUri is undefined)');
       }
@@ -214,10 +213,13 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordListScreen_Props) => 
   const [showMenu, setShowMenu] = React.useState(false);
   const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
+  const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };
+  const hasSchoolbookWordDeleteRights = hasDeleteRight(schoolbookWordResource, session);
+  const canDeleteSchoolbookWord = isUserSchoolbookWordOwner || hasSchoolbookWordDeleteRights;
   const navBarInfo = {
     title: I18n.t('schoolbook.appName'),
     right:
-      isSchoolbookWordRendered && hasSchoolbookWordCreationRights && isUserSchoolbookWordOwner ? (
+      isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
         <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
           <HeaderIcon name="more_vert" iconSize={24} />
         </TouchableOpacity>

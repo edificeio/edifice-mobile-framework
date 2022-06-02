@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
@@ -29,14 +29,13 @@ const style = StyleSheet.create({
     paddingHorizontal: 15,
   },
   title: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBig,
   },
   subtitle: {
     color: '#AFAFAF',
     marginBottom: 15,
   },
   course: {
-    fontWeight: 'bold',
     textTransform: 'uppercase',
   },
 });
@@ -132,7 +131,7 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
                   </>
                 ) : null}
                 {homeworkList && homeworkList[indexSelectedHomework]?.subject ? (
-                  <Text style={style.course}>&emsp;{homeworkList[indexSelectedHomework].subject}</Text>
+                  <TextBold style={style.course}>&emsp;{homeworkList[indexSelectedHomework].subject}</TextBold>
                 ) : null}
               </LeftColoredItem>
             </View>

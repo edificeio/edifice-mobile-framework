@@ -4,7 +4,7 @@
  * Display a row of avatars and names that can handle touches.
  */
 import * as React from 'react';
-import { ListRenderItemInfo, TouchableOpacity } from 'react-native';
+import { ListRenderItemInfo, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -26,13 +26,26 @@ export interface UserListProps<ItemType extends IUserListItem = IUserListItem>
   onSelect?: (user: ItemType['id']) => void;
   renderBadge?: (user: ItemType, selectedId?: string) => Pick<BadgeAvatarProps, 'badgeContent' | 'badgeColor'>;
   avatarSize?: number;
+  customItemStyle?: ViewStyle;
+  withSeparator?: boolean;
 }
 
 export default function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserListProps<ItemType>) {
-  const { selectedId, onSelect, renderBadge, avatarSize, data, horizontal, ...otherProps } = props;
+  const { selectedId, onSelect, renderBadge, avatarSize, data, customItemStyle, withSeparator, horizontal, ...otherProps } = props;
   const renderItem: FlatListProps<ItemType>['renderItem'] = React.useCallback(
-    info => UserList.renderItem({ info, onSelect, renderBadge, avatarSize, selectedId, horizontal, data }),
-    [onSelect, renderBadge, avatarSize, selectedId, horizontal, data],
+    info =>
+      UserList.renderItem({
+        info,
+        onSelect,
+        renderBadge,
+        avatarSize,
+        selectedId,
+        horizontal,
+        data,
+        customItemStyle,
+        withSeparator,
+      }),
+    [onSelect, renderBadge, avatarSize, selectedId, horizontal, data, customItemStyle, withSeparator],
   );
   return (
     <FlatList
@@ -55,18 +68,25 @@ UserList.renderItem = <ItemType extends IUserListItem>({
   selectedId,
   horizontal,
   data,
+  customItemStyle,
+  withSeparator,
 }: { info: ListRenderItemInfo<ItemType> } & Pick<
   UserListProps<ItemType>,
-  'onSelect' | 'renderBadge' | 'avatarSize' | 'selectedId' | 'horizontal' | 'data'
+  'onSelect' | 'renderBadge' | 'avatarSize' | 'selectedId' | 'horizontal' | 'data' | 'customItemStyle' | 'withSeparator'
 >) => {
   const isLastItem = data && info.index === data.length - 1;
   return (
     <TouchableOpacity
-      style={
+      style={[
         horizontal
           ? { marginRight: isLastItem ? undefined : UI_SIZES.spacing.extraLarge }
-          : { marginBottom: isLastItem ? undefined : UI_SIZES.spacing.large }
-      }
+          : {
+              marginBottom: isLastItem ? undefined : UI_SIZES.spacing.large,
+              borderBottomWidth: !withSeparator || isLastItem ? 0 : 1,
+              borderBottomColor: theme.palette.grey.cloudy,
+            },
+        customItemStyle,
+      ]}
       onPress={() => onSelect?.(info.item.id)}
       disabled={!onSelect}>
       <TextAvatar

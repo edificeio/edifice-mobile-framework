@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   item: {
@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fc8500',
   },
   itemText: {
+    ...TextSizeStyle.SlightBigPlus,
     marginLeft: 10,
-    fontSize: 18,
     overflow: 'hidden',
     paddingRight: 40,
   },

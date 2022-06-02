@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
@@ -38,9 +38,8 @@ import { IInit } from './DrawerMenu';
 
 const styles = StyleSheet.create({
   selectedMailsNumberText: {
+    ...TextSizeStyle.SlightBigPlus,
     color: 'white',
-    fontSize: 16,
-    fontWeight: '400',
   },
   headerContainer: {
     flex: 1,

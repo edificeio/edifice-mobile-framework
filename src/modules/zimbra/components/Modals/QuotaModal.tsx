@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   text: {
-    fontSize: 16,
+    ...TextSizeStyle.SlightBig,
   },
   messageContainer: {
     width: '100%',

@@ -1,7 +1,8 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
@@ -14,13 +15,24 @@ import { PageContainer } from '~/ui/ContainerContent';
 import StudentRow from './StudentRow';
 
 const style = StyleSheet.create({
+  fullView: {
+    flex: 1,
+  },
   validateButton: {
     alignSelf: 'center',
     width: '40%',
+    height: 50,
     margin: 20,
   },
-  classesView: { justifyContent: 'flex-end', flexDirection: 'row', paddingBottom: 15 },
-  topItem: { justifyContent: 'flex-end', flexDirection: 'row' },
+  classesView: {
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    paddingBottom: 15,
+  },
+  topItem: {
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+  },
 });
 
 type MoveToFolderModalState = {
@@ -75,46 +87,51 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
     const { registerId } = this.props.course;
     const { postAbsentEvent, deleteEvent, navigation } = this.props;
     return (
-      <>
+      <View style={style.fullView}>
         {studentsList.length > 0 ? (
-          <ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshStudentsList} />}>
-            {studentsList.map(student => (
-              <StudentRow
-                student={student}
-                mementoNavigation={() => this.props.navigation.navigate('Memento', { studentId: student.id })}
-                lateCallback={event =>
-                  this.props.navigation.navigate('DeclareEvent', {
-                    type: 'late',
-                    registerId,
-                    student,
-                    startDate: this.state.callData.start_date,
-                    endDate: this.state.callData.end_date,
-                    event,
-                  })
-                }
-                leavingCallback={event =>
-                  this.props.navigation.navigate('DeclareEvent', {
-                    type: 'leaving',
-                    registerId,
-                    student,
-                    startDate: this.state.callData.start_date,
-                    endDate: this.state.callData.end_date,
-                    event,
-                  })
-                }
-                checkAbsent={() => {
-                  postAbsentEvent(
-                    student.id,
-                    registerId,
-                    moment(this.state.callData.start_date),
-                    moment(this.state.callData.end_date),
-                  );
-                }}
-                uncheckAbsent={event => {
-                  deleteEvent(event);
-                }}
-              />
-            ))}
+          <>
+            <FlatList
+              refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshStudentsList} />}
+              data={studentsList}
+              renderItem={({ item }) => (
+                <StudentRow
+                  student={item}
+                  mementoNavigation={() => this.props.navigation.navigate('Memento', { studentId: item.id })}
+                  lateCallback={event =>
+                    this.props.navigation.navigate('DeclareEvent', {
+                      type: 'late',
+                      registerId,
+                      item,
+                      startDate: this.state.callData.start_date,
+                      endDate: this.state.callData.end_date,
+                      event,
+                    })
+                  }
+                  leavingCallback={event =>
+                    this.props.navigation.navigate('DeclareEvent', {
+                      type: 'leaving',
+                      registerId,
+                      item,
+                      startDate: this.state.callData.start_date,
+                      endDate: this.state.callData.end_date,
+                      event,
+                    })
+                  }
+                  checkAbsent={() => {
+                    postAbsentEvent(
+                      item.id,
+                      registerId,
+                      moment(this.state.callData.start_date),
+                      moment(this.state.callData.end_date),
+                    );
+                  }}
+                  uncheckAbsent={event => {
+                    deleteEvent(event);
+                  }}
+                />
+              )}
+            />
+
             <View style={style.validateButton}>
               <ButtonOk
                 label={I18n.t('viesco-validate')}
@@ -124,9 +141,9 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                 }}
               />
             </View>
-          </ScrollView>
+          </>
         ) : null}
-      </>
+      </View>
     );
   }
 

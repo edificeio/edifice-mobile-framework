@@ -15,6 +15,8 @@
   "pronote.carnetDeBord.vieScolaire.empty": "Pas d’évènements sur les 30 derniers jours",
   "pronote.carnetDeBord.vieScolaire.dateFromTo": "{{start}} – {{end}}",
   "pronote.carnetDeBord.calendar.lastWeek": "dddd [dernier]",
+  "pronote.carnetDeBord.noData.title": "C’est désert ici …",
+  "pronote.carnetDeBord.noData.text": "Il semblerait qu’aucune donnée de Pronote ne remonte pour votre enfant.",
   "common.redirect.browser.title": "Redirection sur le navigateur",
   "common.redirect.browser.message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
   "common.redirect.browser.error": "Erreur lors de la redirection.",
@@ -674,12 +676,17 @@
     "schoolbookWordReportScreen": {
       "acknowledgedBy": "Lu par",
       "relativesDidAcknowledge": "Les responsables de ces élèves ont lu le mot.",
-      "relativesDidNotAcknowledge": "Les responsables de ces élèves n'ont pas encore lu le mot. Vous pouvez leur envoyer un rappel de lecture.",
+      "relativesDidNotAcknowledge": "Les responsables de ces élèves n'ont pas encore lu le mot.",
       "reminder": "Rappel",
       "reminderModal": {
-        "text": "Vous allez envoyer une notification de rappel à toutes les personnes qui n'ont pas encore comfirmé la lecture du mot.",
-        "title": "Envoie d'un rappel"
+        "text": "Vous allez envoyer une notification de rappel à toutes les personnes qui n'ont pas encore confirmé la lecture du mot.",
+        "title": "Envoi d'un rappel"
       },
+      "reminderPossible": "Vous pouvez leur envoyer un rappel de lecture.",
+      "reminderToast": {
+        "text": "Rappel envoyé aux personnes n'ayant pas confirmé la lecture du mot."
+      },
+      "unacknowledgement": "Non-lu",
       "unacknowledgements": "Non-lus"
     },
     "students": "Élèves",

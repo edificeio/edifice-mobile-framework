@@ -2,8 +2,7 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-
-import { TextBold } from './Typography';
+import { TextBold } from '~/framework/components/text';
 
 const style = StyleSheet.create({
   mainContainer: {

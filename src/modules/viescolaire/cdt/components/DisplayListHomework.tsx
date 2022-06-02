@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -29,22 +29,20 @@ const style = StyleSheet.create({
     paddingHorizontal: 15,
   },
   title: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBigPlus,
   },
   homeworksView: {
     marginBottom: 40,
   },
   homeworkType: {
+    ...TextSizeStyle.SlightBig,
     marginTop: 15,
-    fontWeight: 'bold',
-    fontSize: 16,
   },
   subtitle: {
     color: '#AFAFAF',
     marginBottom: 15,
   },
   course: {
-    fontWeight: 'bold',
     textTransform: 'uppercase',
   },
 });
@@ -72,7 +70,7 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
                   <Text>&emsp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</Text>
                 </>
               ) : null}
-              {subject ? <Text style={style.course}>&emsp;{subject}</Text> : null}
+              {subject ? <TextBold style={style.course}>&emsp;{subject}</TextBold> : null}
             </LeftColoredItem>
           </View>
 
@@ -82,7 +80,7 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
               data={homeworkList}
               renderItem={({ item }) => (
                 <View style={style.homeworksView}>
-                  {item?.type && <Text style={style.homeworkType}>{item?.type}</Text>}
+                  {item?.type && <TextBold style={style.homeworkType}>{item?.type}</TextBold>}
                   {item && item?.subject && (
                     <Text style={style.subtitle}>
                       {item.subject.charAt(0).toLocaleUpperCase() + item.subject.substring(1).toLocaleLowerCase()} -{' '}

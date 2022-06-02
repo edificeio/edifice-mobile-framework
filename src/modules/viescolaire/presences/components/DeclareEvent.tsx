@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { remStyle, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -19,7 +19,6 @@ import {
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
-import { Label } from '~/ui/Typography';
 
 const style = StyleSheet.create({
   safeAreaContainer: {
@@ -56,12 +55,12 @@ const style = StyleSheet.create({
     backgroundColor: 'white',
   },
   timeViewText: {
-    fontSize: 55,
+    ...remStyle(55 / 14),
     paddingVertical: 50,
     textDecorationLine: 'underline',
   },
-  inputLabel: {
-    fontSize: 12,
+  labelText: {
+    ...TextSizeStyle.Small,
   },
   buttonOkContainer: {
     flexDirection: 'row',
@@ -223,7 +222,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
               )}
             />
             <View style={style.inputContainer}>
-              <Label style={style.inputLabel}>{inputLabel}</Label>
+              <Text style={style.labelText}>{inputLabel}</Text>
               <TextInput
                 defaultValue={event === undefined ? '' : event.comment}
                 placeholder={I18n.t('viesco-enter-text')}

@@ -5,10 +5,11 @@ import { StyleSheet, View } from 'react-native';
 
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import styles from '~/styles';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -25,53 +26,47 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 0)',
-    borderWidth: 1,
-    paddingTop: 5,
+    marginTop: 10,
+  },
+  weekText: {
+    marginRight: 4,
   },
   courseView: {
     flexDirection: 'row',
-    padding: 5,
+    padding: 8,
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
-  halfCourseView: {
-    flexShrink: 1,
-    padding: 5,
-    height: '100%',
-    justifyContent: 'center',
-  },
   subjectView: {
     maxWidth: '56%',
   },
-  halfTextStyle: {
-    flex: 1,
-  },
-  halfSplitLineView: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  halfRoomLabelContainer: {
-    flexDirection: 'row',
-  },
-  courseStatus: {
-    alignItems: 'flex-end',
-    paddingHorizontal: 15,
+  classText: {
+    ...TextSizeStyle.SlightBigPlus,
   },
   roomView: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  infoView: {
-    paddingHorizontal: 15,
+  halfCourseView: {
+    flexShrink: 1,
+    padding: 8,
+    height: '100%',
+    justifyContent: 'center',
   },
-  teacherClassNameText: {
-    fontSize: 20,
+  halfSplitLineView: {
+    flexDirection: 'row',
+  },
+  halfTextStyle: {
+    flex: 1,
+  },
+  halfClassText: {
+    ...TextSizeStyle.SlightBig,
+  },
+  halfRoomLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   tagsLabel: {
     fontStyle: 'italic',
@@ -94,38 +89,7 @@ const adaptCourses = (courses, teachers) => {
 type TimetableComponentProps = TimetableProps & TimetableState & { updateSelectedDate: (newDate: moment.Moment) => void };
 
 export default class Timetable extends React.PureComponent<TimetableComponentProps> {
-  renderChildCourse = course => {
-    const isCourseWithTags = !!(
-      course.tags &&
-      course.tags !== undefined &&
-      course.tags.length > 0 &&
-      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
-    );
-
-    return (
-      <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
-        <View style={style.subjectView}>
-          <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
-          <Text numberOfLines={1}>{course.teacher}</Text>
-        </View>
-        <View style={style.courseStatus}>
-          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
-            <View style={style.roomView}>
-              <Icon name="pin_drop" size={16} />
-              <Text>
-                &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
-              </Text>
-            </View>
-          )}
-          {course.tags && course.tags !== undefined && course.tags.length > 0 && (
-            <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
-          )}
-        </View>
-      </View>
-    );
-  };
-
-  renderTeacherCourse = course => {
+  renderCourse = course => {
     const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
     const isCourseWithTags = !!(
       course.tags &&
@@ -133,54 +97,58 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
       course.tags.length > 0 &&
       course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
     );
+    const isTeacher = this.props.userType === 'Teacher';
+    const firstText = isTeacher ? className : course.subject?.name || course.exceptionnal;
+    const secondText = isTeacher ? course.subject?.name || course.exceptionnal : course.teacher;
 
     return (
       <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.subjectView}>
-          <View style={style.infoView}>
-            <TextBold style={style.teacherClassNameText}>{className}</TextBold>
-          </View>
-          <View style={style.infoView}>
-            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
-          </View>
+          <TextBold style={isTeacher && style.classText}>{firstText}</TextBold>
+          <Text numberOfLines={1}>{secondText}</Text>
         </View>
-        <View style={style.courseStatus}>
-          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
+        <View>
+          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 ? (
             <View style={style.roomView}>
               <Icon name="pin_drop" size={16} />
               <Text>
-                &ensp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
+                &nbsp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
               </Text>
             </View>
-          )}
-          {course.tags && course.tags !== undefined && course.tags.length > 0 && (
+          ) : null}
+          {course.tags && course.tags !== undefined && course.tags.length > 0 ? (
             <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
-          )}
+          ) : null}
         </View>
       </View>
     );
   };
 
-  renderHalfCourse = (course, firstJSX: JSX.Element, secondJSX: JSX.Element) => {
+  renderHalfCourse = (course, firstText: string, secondText: string) => {
     const isCourseWithTags = !!(course.tags && course.tags !== undefined && course.tags.length > 0);
     const isCourseTagNotUlis = !!(course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS');
     const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
+    const isTeacher = this.props.userType === 'Teacher';
 
     return (
       <View
         style={[style.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.halfSplitLineView}>
-          {firstJSX}
-          {isCourseWithRoomLabel && (
+          <TextBold style={[style.halfTextStyle, isTeacher && style.halfClassText]} numberOfLines={1}>
+            {firstText}
+          </TextBold>
+          {isCourseWithRoomLabel ? (
             <View style={style.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
-              <Text numberOfLines={1}>&ensp;{course.roomLabels && course.roomLabels[0]}</Text>
+              <Text numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</Text>
             </View>
-          )}
+          ) : null}
         </View>
         <View style={style.halfSplitLineView}>
-          {secondJSX}
-          {isCourseWithTags && <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>}
+          <Text style={style.halfTextStyle} numberOfLines={1}>
+            {secondText}
+          </Text>
+          {isCourseWithTags ? <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold> : null}
         </View>
       </View>
     );
@@ -188,42 +156,20 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
 
   renderHalf = course => {
     if (getUserSession().user.type === 'Teacher') {
-      const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
-      const classNameJSX = (
-        <TextBold style={style.halfTextStyle} numberOfLines={1}>
-          {className}
-        </TextBold>
-      );
-      const subjectNameJSX = (
-        <Text style={style.halfTextStyle} numberOfLines={1}>
-          {course.subject?.name || course.exceptionnal}
-        </Text>
-      );
-      return this.renderHalfCourse(course, classNameJSX, subjectNameJSX);
+      const mainText = course.classes.length > 0 ? course.classes[0] : course.groups[0];
+      return this.renderHalfCourse(course, mainText, course.subject?.name || course.exceptionnal);
     }
-    const teacherNameJSX = (
-      <Text style={style.halfTextStyle} numberOfLines={1}>
-        {course.teacher}
-      </Text>
-    );
-    const subjectNameJSX = (
-      <TextBold style={style.halfTextStyle} numberOfLines={1}>
-        {course.subject?.name || course.exceptionnal}
-      </TextBold>
-    );
-    return this.renderHalfCourse(course, subjectNameJSX, teacherNameJSX);
+    return this.renderHalfCourse(course, course.subject?.name || course.exceptionnal, course.teacher);
   };
 
   public render() {
-    const { startDate, selectedDate, courses, teachers, slots, updateSelectedDate } = this.props;
+    const { startDate, selectedDate, courses, teachers, slots, userType, updateSelectedDate } = this.props;
     return (
       <View style={style.refreshContainer}>
-        {getUserSession().user.type === 'Relative' && <ChildPicker />}
+        {userType === 'Relative' ? <ChildPicker /> : null}
         <View style={style.weekPickerView}>
-          <Text>{I18n.t('viesco-edt-week-of')}</Text>
-          <View>
-            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#162EAE" />
-          </View>
+          <Text style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Text>
+          <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#162EAE" />
         </View>
         {courses !== undefined &&
           (courses.isFetching || courses.isPristine ? (
@@ -233,7 +179,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
               <Calendar
                 startDate={startDate}
                 data={adaptCourses(courses.data, teachers.data)}
-                renderElement={getUserSession().user.type === 'Teacher' ? this.renderTeacherCourse : this.renderChildCourse}
+                renderElement={this.renderCourse}
                 renderHalf={this.renderHalf}
                 numberOfDays={6}
                 slotHeight={70}

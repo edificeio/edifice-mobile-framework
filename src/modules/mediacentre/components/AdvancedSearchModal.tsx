@@ -15,7 +15,7 @@ import {
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/utils/Resource';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -26,9 +26,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  criteriaText: {
-    fontSize: 14,
   },
   criteriaInput: {
     width: '75%',
@@ -60,7 +57,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   headerTitle: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBig,
     color: 'white',
   },
   contentContainer: {
@@ -161,7 +158,7 @@ const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: Crite
         <ButtonGroup buttons={buttons} selectedButton={props.field.operand} onPress={onChangeOperand} />
       ) : null}
       <View style={styles.criteriaContainer}>
-        <Text style={styles.criteriaText}>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Text>
+        <Text>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Text>
         <TextInput
           defaultValue={props.field.value}
           placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
@@ -247,7 +244,7 @@ export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalPro
             <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
           ))}
           <View style={styles.sourcesContainer}>
-            <Text style={styles.criteriaText}>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
+            <Text>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
             <View style={styles.sourcesContentContainer}>
               {props.availableSources.includes(Source.GAR) ? (
                 <SourceCheckbox

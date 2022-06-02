@@ -7,6 +7,83 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { IHomework } from '~/modules/viescolaire/types/homework';
 import { CommonStyles } from '~/styles/common/styles';
 
+/* STYLE */
+
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+  },
+  fullView: {
+    flex: 1,
+  },
+  daysHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 10,
+  },
+  topDay: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    borderRadius: 10,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    overflow: 'hidden',
+  },
+  whiteText: {
+    color: '#FFF',
+  },
+  blackText: {
+    color: '#000',
+  },
+  columnContainer: {},
+  slot: {
+    position: 'absolute',
+    left: '15%',
+    width: '85%',
+    borderRadius: 10,
+    borderBottomColor: 'rgba(0, 0, 0, 0)',
+    borderBottomWidth: 2,
+    borderStyle: 'solid',
+  },
+  slotBackground: {
+    backgroundColor: '#FFF',
+  },
+  lineSeparator: {
+    top: 10,
+    width: '100%',
+    borderColor: CommonStyles.missingGrey,
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderRadius: 1,
+  },
+  elementContainer: {
+    position: 'absolute',
+    borderStyle: 'solid',
+    borderRadius: 10,
+    borderColor: 'rgba(0, 0, 0, 0)',
+    overflow: 'hidden',
+  },
+  elementContainerFull: {
+    width: '85%',
+    left: '15%',
+  },
+  elementContainerLeft: {
+    width: '42%',
+    left: '15%',
+  },
+  elementContainerRight: {
+    width: '42%',
+    right: '0%',
+  },
+  slotDisplay: {
+    position: 'absolute',
+    width: '15%',
+    textAlign: 'center',
+  },
+});
+
+/* PRACTICAL FUNCTIONS */
+
 const minutes = (m: moment.Moment): number => {
   return m.minutes() + m.hours() * 60;
 };
@@ -55,8 +132,10 @@ const TopDay = ({ day, onPress, color = '#000', selected = false }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.topDay, { backgroundColor: selected ? color : undefined }]}>
-        <Text style={{ color: selected ? '#FFF' : CommonStyles.lightTextColor }}>{day.format('ddd').charAt(0).toUpperCase()}</Text>
-        <Text style={{ color: selected ? '#FFF' : '#000' }}>{day.format('DD')}</Text>
+        <Text style={selected ? styles.whiteText : { color: CommonStyles.lightTextColor }}>
+          {day.format('ddd').charAt(0).toUpperCase()}
+        </Text>
+        <Text style={selected ? styles.whiteText : styles.blackText}>{day.format('DD')}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -71,7 +150,7 @@ const EmptySlot = ({ height, top }) => {
 };
 
 const Slot = ({ height, top }) => {
-  return <View style={[styles.slot, { top, height, backgroundColor: '#FFF' }]} />;
+  return <View style={[styles.slot, styles.slotBackground, { top, height }]} />;
 };
 
 /* CALENDAR COMPONENT  */
@@ -387,7 +466,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
           ))}
         </View>
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
-          <View style={{ flex: 1 }}>
+          <View style={styles.fullView}>
             {daysHomeworks !== undefined && renderDaysHomeworks(this.findSelectedDayHomeworks())}
             {slots === undefined || slots.length === 0 ? this.renderScrollViewWithoutSlots() : this.renderScrollViewWithSlots()}
           </View>
@@ -396,64 +475,3 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-  },
-  daysHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 10,
-  },
-  topDay: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    borderRadius: 10,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    overflow: 'hidden',
-  },
-  columnContainer: {},
-  slot: {
-    position: 'absolute',
-    left: '15%',
-    width: '85%',
-    borderRadius: 10,
-    borderBottomColor: 'rgba(0, 0, 0, 0)',
-    borderBottomWidth: 2,
-    borderStyle: 'solid',
-  },
-  lineSeparator: {
-    top: 10,
-    width: '100%',
-    borderColor: CommonStyles.missingGrey,
-    borderStyle: 'dotted',
-    borderWidth: 1,
-    borderRadius: 1,
-  },
-  elementContainer: {
-    position: 'absolute',
-    borderStyle: 'solid',
-    borderRadius: 10,
-    borderColor: 'rgba(0, 0, 0, 0)',
-    overflow: 'hidden',
-  },
-  elementContainerFull: {
-    width: '85%',
-    left: '15%',
-  },
-  elementContainerLeft: {
-    width: '42%',
-    left: '15%',
-  },
-  elementContainerRight: {
-    width: '42%',
-    right: '0%',
-  },
-  slotDisplay: {
-    position: 'absolute',
-    width: '15%',
-    textAlign: 'center',
-  },
-});

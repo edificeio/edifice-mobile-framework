@@ -154,6 +154,7 @@ export const wordReportAdapter = (wordReport: IEntcoreWordReport) => {
       reply: word?.reply,
       respNumber: word?.resp_number,
       sendingDate: moment(word?.sending_date),
+      shared: word?.shared,
       text: word?.text,
       title: word?.title,
       total: word?.total,

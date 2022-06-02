@@ -101,6 +101,7 @@ const imports = {
   'schoolbook-leisure': import(`../../../../assets/images/schoolbook/leisure.svg`),
   'schoolbook-outing': import(`../../../../assets/images/schoolbook/outing.svg`),
   'schoolbook-various': import(`../../../../assets/images/schoolbook/various.svg`),
+  'textbook-default': import(`../../../../assets/images/textbook-default.svg`),
 };
 let importsCache = {};
 export const removeFromCache = (name: string) => {
