@@ -64,10 +64,10 @@ const SchoolbookWordDetailsCard = (
   const [viewHeight, setViewHeight] = React.useState(0);
 
   const usersTextMaxLines = 1;
-  const word = schoolbookWord.word;
-  const report = schoolbookWord.report;
-  const schoolbookWordText = extractTextFromHtml(word.text);
-  const schoolbookWordMedia = extractMediaFromHtml(word.text);
+  const word = schoolbookWord?.word;
+  const report = schoolbookWord?.report;
+  const schoolbookWordText = extractTextFromHtml(word?.text);
+  const schoolbookWordMedia = extractMediaFromHtml(word?.text);
   const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
   const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
   const schoolbookWordOwnerId = word?.ownerId;
@@ -79,20 +79,20 @@ const SchoolbookWordDetailsCard = (
   const isAuthorOtherTeacher = isTeacher && !isUserSchoolbookWordOwner;
   const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(report);
   const studentsForTeacher = getStudentsForTeacher(report)?.map(student => ({ id: student.owner, name: student.ownerName }));
-  const reportByStudentForParent = getReportByStudentForParent(studentId, schoolbookWord.report);
+  const reportByStudentForParent = getReportByStudentForParent(studentId, report);
   const isWordAcknowledgedForParent =
     reportByStudentForParent && getIsWordAcknowledgedForParent(userId, reportByStudentForParent?.acknowledgments);
   const isWordRepliedToForParent =
     reportByStudentForParent && getIsWordRepliedToForParent(userId, reportByStudentForParent?.responses);
-  const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(word.ackNumber, word.total);
+  const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(word?.ackNumber, word?.total);
   const isWordAcknowledgedForStudent = getIsWordAcknowledgedForStudent(report[0]?.acknowledgments);
   const isWordAcknowledged =
     (isTeacher && isWordAcknowledgedForTeacher) ||
     (isStudent && isWordAcknowledgedForStudent) ||
     (isParent && isWordAcknowledgedForParent);
   const responses = isStudent ? report[0]?.responses : isParent ? reportByStudentForParent?.responses : undefined;
-  const isBottomSheetVisible = isParent && (!isWordAcknowledged || (word.reply && !isWordRepliedToForParent));
-  const doesContentExceedView = contentHeight && viewHeight ? contentHeight >= viewHeight : undefined;
+  const isBottomSheetVisible = isParent && (!isWordAcknowledged || (word?.reply && !isWordRepliedToForParent));
+  const doesContentExceedView = contentHeight && viewHeight ? contentHeight > viewHeight : undefined;
 
   const scrollToEnd = () => flatListRef?.current?.scrollToEnd();
   const cardBottomEditorSheetRef = () => bottomEditorSheetRef?.current;
@@ -107,9 +107,9 @@ const SchoolbookWordDetailsCard = (
   React.useEffect(() => {
     showSubscriptionRef.current = Keyboard.addListener('keyboardWillShow', () => {
       setTimeout(() => {
-        const commentIndex = responses?.findIndex(r => r.id.toString() === editedCommentId);
+        const commentIndex = responses?.findIndex(r => r.id?.toString() === editedCommentId);
         if (commentIndex !== undefined && commentIndex > -1) {
-          flatListRef.current?.scrollToIndex({
+          flatListRef?.current?.scrollToIndex({
             index: commentIndex,
             viewPosition: 1,
             viewOffset: -UI_SIZES.spacing.large,
@@ -129,7 +129,8 @@ const SchoolbookWordDetailsCard = (
           backgroundColor: theme.ui.background.card,
           borderBottomWidth: UI_SIZES.dimensions.width.tiny,
           borderBottomColor: theme.palette.grey.pearl,
-          paddingBottom: UI_SIZES.spacing.extraSmall + (doesContentExceedView ? UI_SIZES.radius.mediumPlus : 0),
+          paddingBottom:
+            UI_SIZES.spacing.extraSmall + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : 0),
         }}
         emphasizedHeader
         customHeaderStyle={{ paddingVertical: UI_SIZES.spacing.smallPlus }}
@@ -138,7 +139,7 @@ const SchoolbookWordDetailsCard = (
           isTeacher ? (
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
               <TextSemiBold style={{ color: theme.palette.primary.regular }}>
-                {acknowledgementsString(word.ackNumber, word.total)}
+                {acknowledgementsString(word?.ackNumber, word?.total)}
               </TextSemiBold>
               <Picture
                 type="NamedSvg"
@@ -164,7 +165,7 @@ const SchoolbookWordDetailsCard = (
                       ? hasSingleRecipientForTeacher
                         ? report[0]?.owner
                         : require('ASSETS/images/group-avatar.png')
-                      : word.ownerId
+                      : word?.ownerId
                   }
                 />
               }
@@ -176,11 +177,11 @@ const SchoolbookWordDetailsCard = (
                       ...TextSizeStyle.Small,
                       color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.primary.regular,
                     }}>
-                    {isTeacher ? recipientsString(report) : word.ownerName}
+                    {isTeacher ? recipientsString(report) : word?.ownerName}
                   </TextSemiBold>
                 </Text>
               }
-              date={word.sendingDate}
+              date={word?.sendingDate}
             />
           </TouchableOpacity>
         }
@@ -203,10 +204,10 @@ const SchoolbookWordDetailsCard = (
         }>
         {isAuthorOtherTeacher ? (
           <View style={{ marginTop: UI_SIZES.spacing.large, flexDirection: 'row', alignItems: 'center' }}>
-            <SingleAvatar size={36} userId={word.ownerId} />
+            <SingleAvatar size={36} userId={word?.ownerId} />
             <Text style={{ flex: 1, marginLeft: UI_SIZES.spacing.smallPlus }} numberOfLines={usersTextMaxLines}>
               {`${I18n.t('common.from')} `}
-              <TextSemiBold>{word.ownerName}</TextSemiBold>
+              <TextSemiBold>{word?.ownerName}</TextSemiBold>
             </Text>
           </View>
         ) : !isTeacher && !isWordAcknowledged ? (
@@ -214,18 +215,18 @@ const SchoolbookWordDetailsCard = (
             {unacknowledgedString(userType)}
           </TextSemiBold>
         ) : null}
-        {word.category ? (
+        {word?.category ? (
           <View style={{ marginTop: UI_SIZES.spacing[isAuthorOtherTeacher ? 'medium' : 'large'] }}>
             <ImageLabel
-              text={I18n.t(`schoolbook.categories.${word.category}`)}
-              imageName={`schoolbook-${word.category}`}
+              text={I18n.t(`schoolbook.categories.${word?.category}`)}
+              imageName={`schoolbook-${word?.category}`}
               imageType={ImageType.svg}
-              color={theme.color.schoolbook.categories[word.category]}
+              color={theme.color.schoolbook.categories[word?.category]}
             />
           </View>
         ) : null}
-        {word.title ? (
-          <TextBold style={{ marginTop: UI_SIZES.spacing.medium, ...TextSizeStyle.SlightBigPlus }}>{word.title}</TextBold>
+        {word?.title ? (
+          <TextBold style={{ marginTop: UI_SIZES.spacing.medium, ...TextSizeStyle.SlightBigPlus }}>{word?.title}</TextBold>
         ) : null}
         {hasSchoolbookWordText ? (
           <Text style={{ marginTop: UI_SIZES.spacing.smallPlus, marginBottom: UI_SIZES.spacing.tiny, ...TextSizeStyle.SlightBig }}>
@@ -252,13 +253,13 @@ const SchoolbookWordDetailsCard = (
       schoolbookWordResponsesNumber,
       schoolbookWordText,
       userType,
-      word.ackNumber,
-      word.category,
-      word.ownerId,
-      word.ownerName,
-      word.sendingDate,
-      word.title,
-      word.total,
+      word?.ackNumber,
+      word?.category,
+      word?.ownerId,
+      word?.ownerName,
+      word?.sendingDate,
+      word?.title,
+      word?.total,
     ],
   );
 
@@ -266,14 +267,15 @@ const SchoolbookWordDetailsCard = (
     <>
       <FlatList
         ref={flatListRef}
-        onLayout={({ nativeEvent }) => setViewHeight(nativeEvent.layout.height)}
+        onLayout={({ nativeEvent }) => setViewHeight(nativeEvent?.layout?.height)}
         onContentSizeChange={(width, height) => setContentHeight(height)}
         keyboardShouldPersistTaps="handled"
         bottomInset={!isBottomSheetVisible}
-        scrollIndicatorInsets={{ right: 0.001, bottom: doesContentExceedView ? UI_SIZES.radius.mediumPlus : undefined }}
-        style={{
-          marginBottom: doesContentExceedView ? -UI_SIZES.radius.mediumPlus : undefined,
+        scrollIndicatorInsets={{
+          right: 0.001,
+          bottom: doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : undefined,
         }}
+        style={{ marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined }}
         ListHeaderComponent={resourceView}
         renderItem={({ item, index }) => (
           <CommentField
@@ -283,7 +285,7 @@ const SchoolbookWordDetailsCard = (
             onPublishComment={(comment, commentId) => onPublishReply(comment, commentId)}
             editCommentCallback={() => {
               const otherSchoolbookWordResponses = responses?.filter(response => response.id !== item.id);
-              setEditedCommentId(item.id.toString());
+              setEditedCommentId(item.id?.toString());
               otherSchoolbookWordResponses?.forEach(otherSchoolbookWordResponse => {
                 commentFieldRefs[otherSchoolbookWordResponse.id]?.setIsEditingFalse();
               });
@@ -296,8 +298,8 @@ const SchoolbookWordDetailsCard = (
             isResponse
           />
         )}
-        data={word.reply && responses ? responses : []}
-        keyExtractor={item => item.id.toString()}
+        data={word?.reply && responses ? responses : []}
+        keyExtractor={item => item.id?.toString()}
       />
       {isParent ? (
         !isWordAcknowledged ? (

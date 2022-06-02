@@ -116,7 +116,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
     const notification = props.navigation.getParam('notification');
     let ids;
     if (notification) {
-      const resourceUri = notification?.resource.uri;
+      const resourceUri = notification?.resource?.uri;
       if (!resourceUri) {
         throw new Error('failed to call api (resourceUri is undefined)');
       }

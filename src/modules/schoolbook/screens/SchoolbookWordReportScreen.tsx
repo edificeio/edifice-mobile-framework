@@ -113,7 +113,7 @@ const SchoolbookWordReportScreen = (props: ISchoolbookWordReportScreen_Props) =>
 
   const navBarInfo = {
     title: schoolbookWord?.word?.title ? (
-      <HeaderTitleAndSubtitle title={schoolbookWord?.word?.title} subtitle={I18n.t('schoolbook.appName')} />
+      <HeaderTitleAndSubtitle title={schoolbookWord.word.title} subtitle={I18n.t('schoolbook.appName')} />
     ) : (
       I18n.t('schoolbook.appName')
     ),

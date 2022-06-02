@@ -38,14 +38,14 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
   const modalBoxRef: { current: any } = React.createRef();
 
   const acknowledgedByTextMaxLines = 1;
-  const word = schoolbookWord.word;
-  const report = schoolbookWord.report;
+  const word = schoolbookWord?.word;
+  const report = schoolbookWord?.report;
   const studentsByAcknowledgementForTeacher = getStudentsByAcknowledgementForTeacher(report);
-  const unacknowledgedStudents = studentsByAcknowledgementForTeacher.unacknowledged?.map(student => ({
+  const unacknowledgedStudents = studentsByAcknowledgementForTeacher?.unacknowledged?.map(student => ({
     id: student.owner,
     name: student.ownerName,
   }));
-  const acknowledgedStudents = studentsByAcknowledgementForTeacher.acknowledged;
+  const acknowledgedStudents = studentsByAcknowledgementForTeacher?.acknowledged;
   const hasUnacknowledgedStudents = unacknowledgedStudents?.length;
   const hasAcknowledgedStudents = acknowledgedStudents?.length;
   const schoolbookWordResource = { shared: word?.shared, author: { userId: word?.ownerId } };
@@ -68,7 +68,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   marginTop: UI_SIZES.spacing.extraSmall,
                 }}>
                 <TextBold style={{ ...TextSizeStyle.SlightBigPlus }}>
-                  {unacknowledgementsString(word.ackNumber, word.total)}
+                  {unacknowledgementsString(word?.ackNumber, word?.total)}
                 </TextBold>
                 {hasSchoolbookWordResendRights ? (
                   <ActionButton
@@ -106,7 +106,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   marginTop: UI_SIZES.spacing[hasUnacknowledgedStudents ? 'extraLarge' : 'extraSmall'],
                   ...TextSizeStyle.SlightBigPlus,
                 }}>
-                {acknowledgementsString(word.ackNumber, word.total)}
+                {acknowledgementsString(word?.ackNumber, word?.total)}
               </TextBold>
               <Text style={{ marginTop: UI_SIZES.spacing.smallPlus }}>
                 {I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidAcknowledge')}
@@ -118,7 +118,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                 data={acknowledgedStudents}
                 keyExtractor={item => item.owner}
                 renderItem={({ item, index }) => {
-                  const isLastItem = index === acknowledgedStudents.length - 1;
+                  const isLastItem = index === acknowledgedStudents?.length - 1;
                   return (
                     <View
                       style={{

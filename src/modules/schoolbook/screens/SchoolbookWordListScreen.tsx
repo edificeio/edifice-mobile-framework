@@ -228,11 +228,11 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     const newestWordDates = childrenWordLists
       ?.map((childWordList, index) => ({
         index,
-        sendingDate: childWordList && childWordList[0]?.sendingDate,
+        sendingDate: childWordList[0]?.sendingDate,
       }))
       ?.filter(newestWordDate => newestWordDate.sendingDate);
     const sortedNewestWordDates = newestWordDates?.sort((a, b) => moment(a.sendingDate).diff(b.sendingDate));
-    const newestWordDate = sortedNewestWordDates && sortedNewestWordDates[sortedNewestWordDates?.length - 1];
+    const newestWordDate = sortedNewestWordDates && sortedNewestWordDates[sortedNewestWordDates.length - 1];
     const childWithNewestWord = children && newestWordDate && children[newestWordDate.index];
     const childIdWithNewestWord = childWithNewestWord?.id;
     return childIdWithNewestWord;
@@ -307,10 +307,10 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     return (
       <FlatList
         data={listData}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item.id?.toString()}
         renderItem={({ item }: { item: IStudentAndParentWord | ITeacherWord }) => (
           <SchoolbookWordSummaryCard
-            action={() => openSchoolbookWord(item.id.toString())}
+            action={() => openSchoolbookWord(item.id?.toString())}
             userType={userType}
             userId={userId}
             {...item}
