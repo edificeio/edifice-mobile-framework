@@ -19,6 +19,7 @@
 
 const execSync = require('child_process').execSync;
 const fs = require('fs');
+const moment = require('moment');
 
 const gradleFile = 'android/app/build.gradle';
 const packageFile = 'package.json';
@@ -53,6 +54,7 @@ try {
 
 //
 // Compute version && build number
+// Update release notes infos (last && notes) if needed
 //
 
 let buildNumber = null;
@@ -64,6 +66,11 @@ try {
     versionContent.build += 1;
     versionContent[buildType] += 1;
     buildType = `${buildType}.${versionContent[buildType]}`;
+    // Get git history && update release notes infos (last && notes)
+    versionContent.notes = execSync(`git log --pretty=format:"%s" --since=${versionContent.last}`)
+      .toString()
+      .replace(/(\n)/g, '<br>');
+    versionContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
   } else {
     switch (buildType) {
       case 'major':
@@ -239,9 +246,9 @@ try {
 // Commit && Push changes
 //
 try {
-  execSync(`git add -A`);
-  execSync(`git commit -m "release: ${fullVersion}"`);
-  execSync('git push');
+  //execSync(`git add -A`);
+  //execSync(`git commit -m "release: ${fullVersion}"`);
+  //execSync('git push');
 } catch (error) {
   console.error('!!! Unable to commit && push changes !!!');
   console.log(error);
