@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -29,14 +29,14 @@ const style = StyleSheet.create({
     paddingHorizontal: 15,
   },
   title: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBigPlus,
   },
   homeworksView: {
     marginBottom: 40,
   },
   homeworkType: {
+    ...TextSizeStyle.SlightBig,
     marginTop: 15,
-    fontSize: 16,
   },
   subtitle: {
     color: '#AFAFAF',

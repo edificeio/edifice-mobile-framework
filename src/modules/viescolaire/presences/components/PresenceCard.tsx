@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { NestedText, NestedTextBold, Text, TextBold } from '~/framework/components/text';
+import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle, remStyle } from '~/framework/components/text';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 
 import { IPunishment } from '../state/events';
@@ -28,17 +28,21 @@ interface PresenceCardProps {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 16,
+    ...TextSizeStyle.SlightBig,
     textTransform: 'uppercase',
     color: 'gray',
   },
   row: { flexDirection: 'row' },
   leftColumn: { width: '30%', alignItems: 'center' },
-  leftColumnText: { fontSize: 48 },
+  leftColumnText: {
+    ...remStyle(48 / 14),
+  },
   itemContainer: { flex: 1 },
   itemView: { flex: 1, justifyContent: 'center' },
   childText: { marginVertical: 2 },
-  childNestedText: { fontSize: 10 },
+  childNestedText: {
+    ...TextSizeStyle.Tiny,
+  },
   itemText: { alignSelf: 'center', color: 'grey' },
   itemMoretext: { alignSelf: 'flex-end' },
 });

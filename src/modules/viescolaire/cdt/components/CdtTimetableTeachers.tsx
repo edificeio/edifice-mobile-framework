@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
@@ -49,8 +49,7 @@ const style = StyleSheet.create({
     paddingLeft: 4,
   },
   classText: {
-    fontSize: 20,
-    lineHeight: 22,
+    ...TextSizeStyle.Big,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -65,7 +64,7 @@ const style = StyleSheet.create({
     paddingHorizontal: 10,
   },
   homeworksText: {
-    fontSize: 16,
+    ...TextSizeStyle.SlightBig,
   },
   halfSessionMargin: {
     marginHorizontal: 8,

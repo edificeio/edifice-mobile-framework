@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Session } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
@@ -33,7 +33,7 @@ const style = StyleSheet.create({
     textTransform: 'uppercase',
   },
   title: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBigPlus,
   },
   subtitle: {
     color: '#AFAFAF',

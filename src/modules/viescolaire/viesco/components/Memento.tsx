@@ -4,7 +4,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   studentName: {
-    fontSize: 15,
+    ...TextSizeStyle.SlightBig,
     marginBottom: 10,
   },
   studentGroups: {

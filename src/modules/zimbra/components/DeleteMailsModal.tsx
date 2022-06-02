@@ -3,14 +3,16 @@ import * as React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
   titleContainer: { alignSelf: 'flex-start' },
-  titleText: { fontSize: 16 },
+  titleText: {
+    ...TextSizeStyle.SlightBig,
+  },
   footerContainer: { alignSelf: 'flex-end' },
   contentBlock: { flexDirection: 'row' },
   messageContainer: {

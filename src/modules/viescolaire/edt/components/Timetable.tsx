@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
@@ -43,7 +43,7 @@ const style = StyleSheet.create({
     maxWidth: '56%',
   },
   classText: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBigPlus,
   },
   roomView: {
     flexDirection: 'row',
@@ -62,7 +62,7 @@ const style = StyleSheet.create({
     flex: 1,
   },
   halfClassText: {
-    fontSize: 16,
+    ...TextSizeStyle.SlightBig,
   },
   halfRoomLabelContainer: {
     flexDirection: 'row',

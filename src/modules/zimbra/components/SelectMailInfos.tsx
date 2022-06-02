@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
-import { Text } from '~/framework/components/text';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import { removeAccents } from '~/framework/util/string';
 import { IUser } from '~/modules/zimbra/service/newMail';
 import { CommonStyles } from '~/styles/common/styles';
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   userRoleDot: {
-    fontSize: 20,
+    ...TextSizeStyle.Big,
   },
   shadow: {
     backgroundColor: 'white',

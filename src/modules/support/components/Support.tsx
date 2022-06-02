@@ -5,7 +5,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacit
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/picture';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
@@ -25,12 +25,11 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   titleText: {
-    fontSize: 17,
+    ...TextSizeStyle.SlightBig,
     marginBottom: 4,
   },
   informationText: {
     color: 'grey',
-    fontSize: 15,
   },
   lineSeparator: {
     width: '100%',
@@ -45,7 +44,6 @@ const styles = StyleSheet.create({
   },
   selectionText: {
     width: '50%',
-    fontSize: 15,
   },
   inputContainer: {
     margin: 12,

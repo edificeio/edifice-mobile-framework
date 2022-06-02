@@ -5,7 +5,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import CreateFolderModal from '~/modules/zimbra/containers/CreateFolderModal';
 import { IFolder, IQuota } from '~/modules/zimbra/state/initMails';
 import { IRootFolderList } from '~/modules/zimbra/state/rootFolders';
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   labelText: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBigPlus,
     paddingLeft: 10,
   },
   container: {

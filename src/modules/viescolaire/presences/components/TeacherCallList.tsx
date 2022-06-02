@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
 import { LoadingIndicator } from '~/framework/components/loading';
-import { TextBold } from '~/framework/components/text';
+import { TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 
 import CourseComponent from './CourseComponent';
@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dateText: {
-    fontSize: 15,
     marginBottom: 10,
   },
   renderContainer: {
@@ -25,8 +24,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   noCallText: {
+    ...TextSizeStyle.SlightBig,
     alignSelf: 'center',
-    fontSize: 15,
     color: 'grey',
   },
   noCallChip: {

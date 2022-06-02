@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import { IFolder } from '~/modules/zimbra/state/initMails';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   textStyle: {
-    fontSize: 18,
+    ...TextSizeStyle.SlightBigPlus,
   },
   scrollViewContainer: {
     flexGrow: 1,
@@ -81,7 +81,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     const { selectedFolder, selectFolder } = this.props;
     const selected = selectedFolder === id;
     const touchableStyle = selected ? [styles.opacity, styles.selectedItem] : styles.opacity;
-    const textStyle = selected ? { color: 'white', fontSize: 18 } : { fontSize: 18 };
+    const textStyle = selected ? { color: 'white', ...TextSizeStyle.SlightBigPlus } : { ...TextSizeStyle.SlightBigPlus };
     const iconStyle = selected ? { color: 'white', margin: 10 } : { margin: 10 };
     return (
       <>

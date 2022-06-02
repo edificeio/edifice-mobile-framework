@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { LoadingIndicator } from '~/framework/components/loading';
-import { NestedText, NestedTextBold, Text, TextBold } from '~/framework/components/text';
+import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import { ModalBox } from '~/ui/Modal';
 
@@ -13,8 +13,8 @@ import { colors } from './PresenceCard';
 
 const styles = StyleSheet.create({
   modalTitle: {
+    ...TextSizeStyle.SlightBigPlus,
     marginBottom: 10,
-    fontSize: 18,
   },
   modalSubsection: {
     paddingLeft: 15,
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   eventNestedText: {
-    fontSize: 10,
+    ...TextSizeStyle.Tiny,
   },
   modalContainerView: {
     flex: 1,

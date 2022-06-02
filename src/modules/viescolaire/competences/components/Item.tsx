@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { FlexAlignType, StyleSheet, View } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
@@ -45,15 +45,15 @@ const styleConstant = StyleSheet.create({
     marginVertical: 8,
   },
   coloredSquareNoteText: {
-    fontSize: 20,
+    ...TextSizeStyle.Big,
     color: 'white',
   },
   gradeDevoirsNoteContainer: {
     justifyContent: 'center',
   },
   gradeDevoirsNoteText: {
+    ...TextSizeStyle.Big,
     alignSelf: 'center',
-    fontSize: 20,
     color: 'white',
   },
   competenceRoundContainer: {
@@ -74,9 +74,9 @@ const styleConstant = StyleSheet.create({
     justifyContent: 'center',
   },
   competenceRoundText: {
+    ...TextSizeStyle.Big,
     paddingTop: 5,
     textAlign: 'center',
-    fontSize: 20,
   },
   competenceRoundModalStyle: {
     width: '100%',
@@ -141,9 +141,9 @@ const styleConstant = StyleSheet.create({
     paddingRight: 10,
   },
   denseDevoirListNoteText: {
+    ...TextSizeStyle.SlightBigPlus,
     flexGrow: 1,
     textAlign: 'right',
-    fontSize: 18,
     paddingTop: 8,
   },
   denseDevoirListDiviseurText: {

@@ -4,7 +4,7 @@ import React from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 
@@ -24,7 +24,9 @@ const styles = StyleSheet.create({
   itemContent: { flex: 1, padding: 15, justifyContent: 'space-evenly' },
   itemRowStyle: { flexDirection: 'row' },
   iconMarginRight: { marginRight: 10 },
-  itemClassGroupText: { fontSize: 20 },
+  itemClassGroupText: {
+    ...TextSizeStyle.Big,
+  },
 });
 
 export default ({
