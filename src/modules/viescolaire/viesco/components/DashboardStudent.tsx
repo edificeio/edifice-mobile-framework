@@ -7,7 +7,7 @@ import { NavigationActions } from 'react-navigation';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { TextBold } from '~/framework/components/text';
+import { TextBold, TextSizeStyle } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
@@ -61,7 +61,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
   },
-  title: { fontSize: 18 },
+  title: {
+    ...TextSizeStyle.SlightBigPlus,
+  },
   subtitle: { color: '#AFAFAF' },
   homeworks: {},
   evaluations: {},

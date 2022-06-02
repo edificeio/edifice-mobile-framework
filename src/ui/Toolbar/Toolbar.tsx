@@ -78,7 +78,6 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
           contentContainerStyle={{
             ...styles.lastActions,
             backgroundColor: selected && selected.length ? theme.palette.secondary.regular : undefined,
-            width: selected && selected.length ? DEVICE_WIDTH() - layoutSize.LAYOUT_70 : layoutSize.LAYOUT_70,
           }}
           data={lastItems}
           scrollEnabled={false}

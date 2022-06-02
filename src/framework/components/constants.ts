@@ -71,6 +71,7 @@ export const UI_SIZES = {
     large: 16,
     largePlus: 22,
     extraLarge: 24,
+    extraLargeBig: 32,
     extraLargePlus: 36,
     huge: 64,
   },

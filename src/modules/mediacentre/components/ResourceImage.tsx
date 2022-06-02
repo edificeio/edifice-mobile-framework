@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, ImageResizeMode, ImageStyle, StyleProp, StyleSheet } from 'react-native';
 
+import { NamedSVG } from '~/framework/components/picture';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getAuthHeader } from '~/infra/oauth';
 import { Source } from '~/modules/mediacentre/utils/Resource';
@@ -31,8 +32,21 @@ const getImageUri = (value: string): string => {
 };
 
 export const ResourceImage: React.FunctionComponent<ResourceImageProps> = (props: ResourceImageProps) => {
+  const [loadingFailed, setLoadingFailed] = useState<boolean>(false);
+  const onError = () => {
+    setLoadingFailed(true);
+  };
+  if (loadingFailed) {
+    const style = StyleSheet.flatten(props.style);
+    return <NamedSVG name="textbook-default" width={style.width || 50} height={style.height || 70} />;
+  }
   return (
-    <Image source={{ headers: getAuthHeader(), uri: getImageUri(props.image) }} style={props.style} resizeMode={props.resizeMode} />
+    <Image
+      source={{ headers: getAuthHeader(), uri: getImageUri(props.image) }}
+      onError={onError}
+      style={props.style}
+      resizeMode={props.resizeMode}
+    />
   );
 };
 

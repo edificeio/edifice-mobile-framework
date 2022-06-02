@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
@@ -21,40 +21,40 @@ const style = StyleSheet.create({
     height: '100%',
     zIndex: 0,
   },
+  weekPickerView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  weekText: {
+    marginRight: 4,
+  },
   calendarContainer: {
     height: 1,
     flexGrow: 1,
   },
-  weekPickerView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderStyle: 'solid',
-    borderColor: 'rgba(0, 0, 0, 0)',
-    borderWidth: 1,
-  },
   courseView: {
     flexDirection: 'row',
-    padding: 5,
+    padding: 8,
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
-  subjectView: { maxWidth: '56%' },
-  infoView: {
-    paddingHorizontal: 5,
+  subjectView: {
+    flexShrink: 1,
   },
-  buttonsView: {
+  subjectPadding: {
+    paddingLeft: 4,
+  },
+  classText: {
+    ...TextSizeStyle.Big,
+  },
+  buttonsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
   },
-  buttonsViewHalf: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  homeworksToDoContainer: {
+  homeworksContainer: {
     backgroundColor: '#FFF1DB',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -62,6 +62,18 @@ const style = StyleSheet.create({
     height: 45,
     marginBottom: 15,
     paddingHorizontal: 10,
+  },
+  homeworksText: {
+    ...TextSizeStyle.SlightBig,
+  },
+  halfSessionMargin: {
+    marginHorizontal: 8,
+  },
+  sessionMargin: {
+    marginHorizontal: 20,
+  },
+  homeworkMargin: {
+    marginRight: 4,
   },
 });
 
@@ -117,10 +129,10 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
   renderDaysHomeworks = (homeworks: IHomework[]) => {
     const isEmpty = !homeworks.length;
     return (
-      <View style={style.homeworksToDoContainer}>
-        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>
+      <View style={style.homeworksContainer}>
+        <TextBold style={style.homeworksText}>
           {I18n.t('viesco-homework')} {homeworks.length > 1 && '(' + homeworks.length + ')'}
-        </Text>
+        </TextBold>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))}
           disabled={isEmpty}>
@@ -138,7 +150,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
   };
 
   /* Display Homeworks attached to a session or a course with a session */
-  renderHomeworksIconButton = course => {
+  renderHomeworksIconButton = (course, isHalfCourse: boolean = false) => {
     const isHomeworksInSession =
       course.session !== undefined && course.session.homeworks !== undefined && course.session.homeworks.length > 0;
     const isHomeworksInCourse = course.homeworks !== undefined && course.homeworks.length > 0;
@@ -152,20 +164,20 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
       );
     };
     return (
-      <TouchableOpacity onPress={navigateToHomeworks} disabled={!isHomeWorkPublished}>
+      <TouchableOpacity style={!isHalfCourse && style.homeworkMargin} onPress={navigateToHomeworks} disabled={!isHomeWorkPublished}>
         <Icon name="inbox" size={24} color={isHomeWorkPublished ? '#FF9700' : 'lightgrey'} />
       </TouchableOpacity>
     );
   };
 
   /* Display sessions : check if it is a course or a session */
-  renderSessionsIconButton = course => {
+  renderSessionsIconButton = (course, isHalfCourse: boolean = false) => {
     const { navigation } = this.props;
     const isSessionPublished =
       ((course.session && course.session.is_published) || course.calendarType === 'session') && !course.session.is_empty;
     return (
       <TouchableOpacity
-        style={{ paddingRight: 20 }}
+        style={isHalfCourse ? style.halfSessionMargin : style.sessionMargin}
         onPress={() => navigation.navigate('SessionPage', sessionListDetailsTeacherAdapter(course.session || course))}
         disabled={!isSessionPublished}>
         <Icon name="insert_drive_file1" size={24} color={isSessionPublished ? '#2BAB6F' : 'lightgrey'} />
@@ -178,20 +190,15 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
 
     return (
       <View style={style.courseView}>
-        <View style={style.subjectView}>
-          <View style={!isHalfCourse && style.infoView}>
-            <TextBold style={{ fontSize: 20 }} numberOfLines={1}>
-              {className}
-            </TextBold>
-          </View>
-          <View style={!isHalfCourse && style.infoView}>
-            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
-          </View>
+        <View style={[style.subjectView, !isHalfCourse && style.subjectPadding]}>
+          <TextBold style={style.classText} numberOfLines={1}>
+            {className}
+          </TextBold>
+          <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
         </View>
-
-        <View style={isHalfCourse ? style.buttonsViewHalf : style.buttonsView}>
-          {this.renderSessionsIconButton(course)}
-          {this.renderHomeworksIconButton(course)}
+        <View style={style.buttonsContainer}>
+          {this.renderSessionsIconButton(course, isHalfCourse)}
+          {this.renderHomeworksIconButton(course, isHalfCourse)}
         </View>
       </View>
     );
@@ -204,13 +211,11 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const slotEvents = adaptCourses(courses.data, homeworks.data, sessions.data);
 
     return (
-      <PageContainer style={{ marginTop: 5 }}>
+      <PageContainer>
         <View style={style.refreshContainer}>
           <View style={style.weekPickerView}>
-            <Text>{I18n.t('viesco-edt-week-of')}</Text>
-            <View>
-              <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#00AB6F" />
-            </View>
+            <Text style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Text>
+            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#00AB6F" />
           </View>
           {courses.isFetching || courses.isPristine ? (
             <LoadingIndicator />

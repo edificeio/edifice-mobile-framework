@@ -4,7 +4,7 @@ import { FlatList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/ui/Typography';
+import { Text } from '~/framework/components/text';
 
 const style = StyleSheet.create({
   transparentContainer: {

@@ -3,18 +3,13 @@ import moment from 'moment';
 import * as React from 'react';
 import { ViewStyle } from 'react-native';
 
-
-
 import { displayPastDate } from '~/framework/util/date';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 
-
-
 import { Paragraph } from './Typography';
 
-
-const ViewDate = styled.View<{min: boolean}>(
+const ViewDate = styled.View<{ min: boolean }>(
   {
     alignItems: 'center',
     height: 20,

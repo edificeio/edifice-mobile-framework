@@ -7,7 +7,7 @@ import { NavigationActions } from 'react-navigation';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomework, IHomeworkList, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
@@ -66,7 +66,9 @@ const styles = StyleSheet.create({
   gridButtonLineModules: {
     justifyContent: 'center',
   },
-  title: { fontSize: 18 },
+  title: {
+    ...TextSizeStyle.SlightBigPlus,
+  },
   subtitle: { color: '#AFAFAF' },
   declareAbsenceButton: {
     backgroundColor: '#FCB602',

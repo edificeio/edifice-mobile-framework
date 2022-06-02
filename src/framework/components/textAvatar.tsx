@@ -16,7 +16,7 @@ export interface BadgeAvatarProps {
         isGroup: boolean;
       };
   viewStyle?: ViewStyle;
-  textStyle: StyleProp<TextStyle>;
+  textStyle?: StyleProp<TextStyle>;
   badgeContent?: number | string;
   badgeColor?: string | ColorValue;
   badgePosition?: BadgePosition;
@@ -62,9 +62,10 @@ export const TextAvatar = ({
         numberOfLines={1}
         style={[
           {
-            marginLeft: isHorizontal ? UI_SIZES.spacing.smallPlus : undefined,
+            marginHorizontal: isHorizontal ? UI_SIZES.spacing.smallPlus : -UI_SIZES.spacing.smallPlus,
+            textAlign: isHorizontal ? 'auto' : 'center',
             marginTop: isHorizontal ? undefined : UI_SIZES.spacing.tiny,
-            flex: isHorizontal ? 1 : undefined,
+            flex: 1,
           },
           textStyle,
         ]}>

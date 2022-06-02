@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { LoadingIndicator } from '~/framework/components/loading';
-import { NestedText, NestedTextBold, Text, TextBold } from '~/framework/components/text';
+import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import { ModalBox } from '~/ui/Modal';
 
@@ -12,12 +12,9 @@ import { IChildArray } from '../../viesco/state/children';
 import { colors } from './PresenceCard';
 
 const styles = StyleSheet.create({
-  bold: {
-    fontWeight: 'bold',
-  },
   modalTitle: {
+    ...TextSizeStyle.SlightBigPlus,
     marginBottom: 10,
-    fontSize: 18,
   },
   modalSubsection: {
     paddingLeft: 15,
@@ -31,7 +28,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   eventNestedText: {
-    fontSize: 10,
+    ...TextSizeStyle.Tiny,
   },
   modalContainerView: {
     flex: 1,
@@ -138,9 +135,9 @@ export const NotificationRelativesModal = ({
             childrenEvents?.data?.studentsEvents[child.id] &&
             !checkIsEmptyEvents(childrenEvents?.data?.studentsEvents[child.id].all) ? (
               <View>
-                <Text style={styles.bold}>
+                <TextBold>
                   {child.firstName} {child.lastName}
-                </Text>
+                </TextBold>
                 <View style={styles.modalSubsection}>
                   <>{renderEvents(childrenEvents?.data?.studentsEvents[child.id]?.all)}</>
                 </View>

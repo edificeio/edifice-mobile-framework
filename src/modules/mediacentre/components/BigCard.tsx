@@ -7,7 +7,7 @@ import Toast from 'react-native-tiny-toast';
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
 
@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionText: {
+    ...TextSizeStyle.Small,
     marginLeft: 5,
-    fontSize: 12,
   },
 });
 

@@ -1,24 +1,22 @@
-import { IUserSession } from "./session";
+import { IUserSession } from './session';
+
+export interface IResource {
+  shared?: Array<{ userId?: string; groupId?: string; [key: string]: boolean | string | undefined }>;
+  author: { userId: string; username?: string; login?: string };
+}
 
 export const resourceRightFilter = (
   resources: Array<{
     shared?: Array<{ userId?: string; groupId?: string; [key: string]: boolean | string | undefined }>;
-    author: { userId: string; username: string; login: string; };
+    author: { userId: string; username: string; login: string };
   }>,
   key: string,
-  session: IUserSession
+  session: IUserSession,
 ) => {
   return resources.filter(resource => resourceHasRight(resource, key, session));
-}
+};
 
-export const resourceHasRight = (
-  resource: {
-    shared?: Array<{ userId?: string; groupId?: string;[key: string]: boolean | string | undefined }>;
-    author: { userId: string; username: string; login: string; };
-  },
-  key: string,
-  session: IUserSession
-) => {
+export const resourceHasRight = (resource: IResource, key: string, session: IUserSession) => {
   if (resource.author.userId === session.user.id) return true;
   let hasRight = false;
   resource.shared?.forEach(sharedEntry => {
@@ -29,6 +27,6 @@ export const resourceHasRight = (
         if (k === key && rights[k] === true) hasRight = true;
       }
     }
-  })
+  });
   return hasRight;
-}
+};
