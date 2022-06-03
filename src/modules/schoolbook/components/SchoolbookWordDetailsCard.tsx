@@ -142,6 +142,7 @@ const SchoolbookWordDetailsCard = (
                 {acknowledgementsString(word?.ackNumber, word?.total)}
               </TextSemiBold>
               <Picture
+                cached
                 type="NamedSvg"
                 name="pictos-arrow-right"
                 width={UI_SIZES.dimensions.width.large}
@@ -196,6 +197,7 @@ const SchoolbookWordDetailsCard = (
               }}
               onPress={action}>
               <Picture
+                cached
                 type="NamedSvg"
                 name="pictos-answer"
                 width={UI_SIZES.dimensions.width.large}
@@ -225,6 +227,7 @@ const SchoolbookWordDetailsCard = (
         {word?.category ? (
           <View style={{ marginTop: UI_SIZES.spacing[isAuthorOtherTeacher ? 'medium' : 'large'] }}>
             <ImageLabel
+              cachedSVG
               text={I18n.t(`schoolbook.categories.${word?.category}`)}
               imageName={`schoolbook-${word?.category}`}
               imageType={ImageType.svg}
