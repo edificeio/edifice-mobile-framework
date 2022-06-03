@@ -6,6 +6,6 @@
   "alpha": 8,
   "rc": 0,
   "last": "2022-06-02T21:07:53",
-  "notes": "release: 1.8.0-alpha.8(1080008)\r\nchore(schoolbook): response zone click\r\nfix(schoolbook): MB-602/MB-692, visual enhancements\r\nremove console.log in theme\r\nfix(schoolbook): MB-653 fix flatlist in nativeModal\r\nchore(schoolbook): code enhancement\r\nfix(blog, schoolbook): MB-672, auto-scroll on editing comments/responses\r\nchore(build): Automatic changelog mistake fix\r\nchore(build): Automatic change log\r\nchore: Fix lint and change ScrollView\r\nrefactor: replaced fontSize with TextSizeStyle",
+  "notes": "release: 1.8.0-alpha.8(1080008)\\r\\nchore(schoolbook): response zone click\\r\\nfix(schoolbook): MB-602/MB-692, visual enhancements\\r\\nremove console.log in theme\\r\\nfix(schoolbook): MB-653 fix flatlist in nativeModal\\r\\nchore(schoolbook): code enhancement\\r\\nfix(blog, schoolbook): MB-672, auto-scroll on editing comments/responses\\r\\nchore(build): Automatic changelog mistake fix\\r\\nchore(build): Automatic change log\\r\\nchore: Fix lint and change ScrollView\\r\\nrefactor: replaced fontSize with TextSizeStyle",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
