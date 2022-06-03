@@ -75,7 +75,7 @@ export const relativesNotificationService = {
       student_ids: childrenIds,
       types: eventsTypes,
     };
-    const result = await fetchJSONWithCache(`/presences/structures/${structureId}/students/events?structure_id=${structureId}`, {
+    const result = await fetchJSONWithCache(`/presences/structures/${structureId}/students/events`, {
       method: 'POST',
       body: JSON.stringify(bodyData),
     });

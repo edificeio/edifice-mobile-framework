@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   },
   fullGrowView: {
     flexGrow: 1,
+    paddingVertical: 5,
   },
   containerMail: {
     marginTop: 5,

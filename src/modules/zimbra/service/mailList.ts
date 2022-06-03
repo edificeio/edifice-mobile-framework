@@ -43,6 +43,7 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
     displayNames: item.displayNames,
     attachments: item.attachments,
     from: item.from,
+    isChecked: false,
   }));
   return result;
 };
