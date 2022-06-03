@@ -69,7 +69,7 @@ try {
     // Get git history && update release notes infos (last && notes)
     versionContent.notes = execSync(`git log --pretty=format:"%s" --since=${versionContent.last}`)
       .toString()
-      .replace(/(\n)/g, '\r\n');
+      .replace(/(\n)/g, '<br />');
     versionContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
   } else {
     switch (buildType) {
