@@ -15,6 +15,7 @@ import { PageView } from '~/framework/components/page';
 import { PictureProps } from '~/framework/components/picture';
 import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
+import { displayDate } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
@@ -143,9 +144,7 @@ CarnetDeBordScreen.getRenderContent =
                 const cdt = data.PageCahierDeTextes?.CahierDeTextes?.find(c => c.TravailAFaire && c.TravailAFaire.length > 0);
                 return cdt?.TravailAFaire?.[0]?.PourLe
                   ? I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
-                      date:
-                        cdt?.TravailAFaire?.[0]?.PourLe &&
-                        CarnetDeBordDetailsScreen.formatDatePast(cdt?.TravailAFaire?.[0]?.PourLe),
+                      date: cdt?.TravailAFaire?.[0]?.PourLe && displayDate(cdt?.TravailAFaire?.[0]?.PourLe, 'short'),
                     })
                   : I18n.t('pronote.carnetDeBord.noInfo');
               })()}
@@ -205,8 +204,8 @@ CarnetDeBordScreen.getRenderContent =
                   ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.isSame(data.PageVieScolaire.VieScolaire?.[0].DateFin, 'day')
                     ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.fromNow()
                     : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
-                        start: CarnetDeBordDetailsScreen.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateDebut),
-                        end: CarnetDeBordDetailsScreen.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateFin),
+                        start: displayDate(data.PageVieScolaire.VieScolaire?.[0].DateDebut, 'short'),
+                        end: displayDate(data.PageVieScolaire.VieScolaire?.[0].DateFin, 'short'),
                       })
                   : data.PageVieScolaire.VieScolaire?.[0].Date.fromNow(false))
               }

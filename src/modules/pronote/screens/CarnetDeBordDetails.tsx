@@ -1,5 +1,4 @@
 import I18n from 'i18n-js';
-import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
@@ -16,6 +15,7 @@ import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { TextSizeStyle } from '~/framework/components/text';
+import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { splitWords } from '~/framework/util/string';
@@ -99,7 +99,7 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
         title: pageTitleComponent,
       }}>
       <ScrollView alwaysBounceVertical={false}>
-        {type === CarnetDeBordSection.NOTES && data.PageReleveDeNotes.Message ? (
+        {type === CarnetDeBordSection.NOTES && data.PageReleveDeNotes?.Message ? (
           <Text style={CarnetDeBordDetailsScreen.styles.message}>{data.PageReleveDeNotes.Message}</Text>
         ) : null}
         <CardWithoutPadding style={CarnetDeBordDetailsScreen.styles.card}>{items}</CardWithoutPadding>
@@ -107,7 +107,7 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
           style={CarnetDeBordDetailsScreen.styles.button}
           type="secondary"
           action={() => {
-            redirect(props.session, data.address, pageId);
+            if (data.address) redirect(props.session, data.address, pageId);
           }}
           iconName="pictos-external-link"
           text={I18n.t('pronote.carnetDeBord.openInPronote')}
@@ -126,13 +126,13 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
   switch (type) {
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
       const tafs: { date: string; label?: string; description: string }[] = [];
-      if (data.PageCahierDeTextes.CahierDeTextes)
+      if (data.PageCahierDeTextes?.CahierDeTextes)
         for (const item of data.PageCahierDeTextes.CahierDeTextes) {
           if (item.TravailAFaire)
             for (const taf of item.TravailAFaire) {
               tafs.push({
                 date: I18n.t('pronote.carnetDeBord.cahierDeTextes.PourDate', {
-                  date: CarnetDeBordDetailsScreen.formatDatePast(taf.PourLe),
+                  date: displayDate(taf.PourLe),
                 }),
                 label: item.Matiere,
                 description: taf.Descriptif || `<p>${I18n.t('pronote.carnetDeBord.noInfo')}</p>`,
@@ -142,9 +142,9 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
       return tafs;
     }
     case CarnetDeBordSection.NOTES: {
-      return data.PageReleveDeNotes.Devoir?.map(item => ({
+      return data.PageReleveDeNotes?.Devoir?.map(item => ({
         title: item.Matiere,
-        date: CarnetDeBordDetailsScreen.formatDate(item.Date),
+        date: displayDate(item.Date),
         value: item.Bareme
           ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
               note: item.Note,
@@ -154,24 +154,24 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
       }));
     }
     case CarnetDeBordSection.COMPETENCES: {
-      return data.PageCompetences.Competences?.map(item => ({
+      return data.PageCompetences?.Competences?.map(item => ({
         title: item.Matiere,
-        date: CarnetDeBordDetailsScreen.formatDate(item.Date),
+        date: displayDate(item.Date),
         value: splitWords(item.NiveauDAcquisition.Libelle, 2),
       }));
     }
     case CarnetDeBordSection.VIE_SCOLAIRE: {
-      return data.PageVieScolaire.VieScolaire?.map(item => ({
+      return data.PageVieScolaire?.VieScolaire?.map(item => ({
         label: item.type.toLocaleUpperCase(),
         date:
           item.type === 'Absence'
             ? item.DateDebut.isSame(item.DateFin, 'day')
-              ? CarnetDeBordDetailsScreen.formatDate(item.DateDebut)
+              ? displayDate(item.DateDebut)
               : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
-                  start: CarnetDeBordDetailsScreen.formatDate(item.DateDebut),
-                  end: CarnetDeBordDetailsScreen.formatDate(item.DateFin),
+                  start: displayDate(item.DateDebut),
+                  end: displayDate(item.DateFin),
                 })
-            : CarnetDeBordDetailsScreen.formatDate(item.Date),
+            : displayDate(item.Date),
         description:
           item.type === 'Absence' || item.type === 'Retard'
             ? item.Motif
@@ -184,24 +184,6 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
     }
   }
 };
-CarnetDeBordDetailsScreen.formatDate = (m: moment.Moment) =>
-  m.calendar(null, {
-    lastDay: `[${I18n.t('common.date.yesterday')}]`,
-    lastWeek: `${I18n.t('pronote.carnetDeBord.calendar.lastWeek')}`,
-    nextDay: `[${I18n.t('common.date.tomorrow')}]`,
-    nextWeek: 'dddd',
-    sameDay: `[${I18n.t('common.date.today')}]`,
-    sameElse: 'ddd DD',
-  });
-CarnetDeBordDetailsScreen.formatDatePast = (m: moment.Moment) =>
-  m.calendar(null, {
-    lastDay: `[${I18n.t('common.date.yesterday')}]`,
-    lastWeek: `${I18n.t('pronote.carnetDeBord.calendar.lastWeek')}`,
-    nextDay: `[${I18n.t('common.date.tomorrow')}]`,
-    nextWeek: 'dddd',
-    sameDay: `[${I18n.t('common.date.today')}]`,
-    sameElse: 'ddd DD MMM',
-  });
 CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   card: {
     marginHorizontal: UI_SIZES.spacing.large,
