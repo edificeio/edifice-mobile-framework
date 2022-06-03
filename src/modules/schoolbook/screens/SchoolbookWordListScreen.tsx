@@ -228,7 +228,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     const newestWordDates = childrenWordLists
       ?.map((childWordList, index) => ({
         index,
-        sendingDate: childWordList[0]?.sendingDate,
+        sendingDate: childWordList && childWordList[0]?.sendingDate,
       }))
       ?.filter(newestWordDate => newestWordDate.sendingDate);
     const sortedNewestWordDates = newestWordDates?.sort((a, b) => moment(a.sendingDate).diff(b.sendingDate));
