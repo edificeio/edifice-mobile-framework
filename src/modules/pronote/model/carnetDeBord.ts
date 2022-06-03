@@ -117,7 +117,7 @@ export function parseCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | n
           note,
           bareme,
         })
-      : note;
+      : note.toString();
 }
 
 export type ICarnetDeBordVieScolaireAbsence = {

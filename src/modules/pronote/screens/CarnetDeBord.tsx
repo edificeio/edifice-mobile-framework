@@ -139,7 +139,7 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-calendar',
                 cached: true,
               }}
-              textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere || I18n.t('pronote.carnetDeBord.noInfo')}
+              textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere}
               valueLabel={(() => {
                 const cdt = data.PageCahierDeTextes?.CahierDeTextes?.find(c => c.TravailAFaire && c.TravailAFaire.length > 0);
                 return cdt?.TravailAFaire?.[0]?.PourLe
@@ -160,7 +160,7 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-success',
                 cached: true,
               }}
-              textLabel={data.PageReleveDeNotes?.Devoir?.[0]?.Matiere || I18n.t('pronote.carnetDeBord.noInfo')}
+              textLabel={data.PageReleveDeNotes?.Devoir?.[0]?.Matiere}
               valueLabel={
                 data.PageReleveDeNotes?.Devoir?.[0]
                   ? parseCarnetDeBordReleveDeNotesDevoirNoteBareme(
@@ -181,7 +181,7 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-skills',
                 cached: true,
               }}
-              textLabel={data.PageCompetences?.Competences?.[0]?.Matiere || I18n.t('pronote.carnetDeBord.noInfo')}
+              textLabel={data.PageCompetences?.Competences?.[0]?.Matiere}
               valueLabel={
                 data.PageCompetences?.Competences?.[0] && data.PageCompetences?.Competences?.[0].NiveauDAcquisition?.Libelle
                   ? `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
@@ -288,9 +288,9 @@ CarnetDeBordScreen.SectionContent = function (props: {
       {isNotEmpty ? (
         <View style={CarnetDeBordScreen.styles.textRow}>
           <TextBold numberOfLines={1} style={CarnetDeBordScreen.styles.textLabel}>
-            {props.textLabel}
+            {props.textLabel || I18n.t('pronote.carnetDeBord.noInfo')}
           </TextBold>
-          <Text numberOfLines={1}>{props.valueLabel}</Text>
+          <Text numberOfLines={1}>{props.valueLabel || I18n.t('pronote.carnetDeBord.noInfo')}</Text>
         </View>
       ) : (
         <View style={CarnetDeBordScreen.styles.emptyRow}>
