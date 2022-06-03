@@ -8,7 +8,6 @@ import { Icon } from '~/framework/components/picture';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
-import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
 
 import Attachment from './Attachment';
@@ -22,7 +21,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   textsContainer: {
-    padding: 12,
+    marginHorizontal: 12,
+    marginVertical: 16,
   },
   titleText: {
     ...TextSizeStyle.SlightBig,
@@ -31,22 +31,19 @@ const styles = StyleSheet.create({
   informationText: {
     color: 'grey',
   },
-  lineSeparator: {
-    width: '100%',
-    borderBottomWidth: 1,
-    borderBottomColor: CommonStyles.extraLightGrey,
-  },
   selectionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: 12,
+    marginVertical: 4,
   },
   selectionText: {
     width: '50%',
   },
   inputContainer: {
-    margin: 12,
+    marginHorizontal: 12,
+    marginVertical: 16,
   },
   mandatoryFieldText: {
     color: 'red',
@@ -54,15 +51,17 @@ const styles = StyleSheet.create({
   attachmentsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingBottom: 12,
+    marginHorizontal: 12,
+    marginTop: 4,
+    marginBottom: 16,
   },
   attachmentsIcon: {
     marginRight: 4,
   },
   registerButtonContainer: {
     borderRadius: 5,
-    margin: 12,
+    marginHorizontal: 12,
+    marginVertical: 16,
   },
   registerButtonText: {
     color: 'white',
@@ -112,15 +111,13 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   renderFormSelect = (fieldTranslation, fieldName, list) => {
     const { onFieldChange, ticket } = this.props;
     return (
-      <View style={styles.lineSeparator}>
-        <View style={styles.selectionContainer}>
-          <TextBold style={styles.selectionText}>{I18n.t(fieldTranslation)}</TextBold>
-          {fieldName === 'category' ? (
-            <CategoryPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, category: field })} />
-          ) : (
-            <EstablishmentPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, school_id: field })} />
-          )}
-        </View>
+      <View style={styles.selectionContainer}>
+        <TextBold style={styles.selectionText}>{I18n.t(fieldTranslation)}</TextBold>
+        {fieldName === 'category' ? (
+          <CategoryPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, category: field })} />
+        ) : (
+          <EstablishmentPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, school_id: field })} />
+        )}
       </View>
     );
   };
@@ -128,18 +125,16 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   renderFormInput = (fieldTranslation, fieldName) => {
     const { onFieldChange, ticket } = this.props;
     return (
-      <View style={fieldName !== 'description' ? styles.lineSeparator : undefined}>
-        <View style={styles.inputContainer}>
-          <TextBold style={styles.selectionText}>
-            <TextBold style={styles.mandatoryFieldText}>* </TextBold>
-            {I18n.t(fieldTranslation)}
-          </TextBold>
-          <FormInput
-            fieldName={fieldName}
-            setResetter={resetter => this.reset.push(resetter)}
-            onChange={field => onFieldChange({ ...ticket, [fieldName]: field })}
-          />
-        </View>
+      <View style={styles.inputContainer}>
+        <TextBold style={styles.selectionText}>
+          <TextBold style={styles.mandatoryFieldText}>* </TextBold>
+          {I18n.t(fieldTranslation)}
+        </TextBold>
+        <FormInput
+          fieldName={fieldName}
+          setResetter={resetter => this.reset.push(resetter)}
+          onChange={field => onFieldChange({ ...ticket, [fieldName]: field })}
+        />
       </View>
     );
   };
@@ -173,18 +168,16 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           keyboardVerticalOffset={60}
           style={styles.safeAreaContainer}>
           <ScrollView contentContainerStyle={styles.scrollStyle}>
-            <View style={[styles.textsContainer, styles.lineSeparator]}>
+            <View style={styles.textsContainer}>
               <TextBold style={styles.titleText}>{I18n.t('support-report-incident')}</TextBold>
               <Text style={styles.informationText}>{I18n.t('support-mobile-only')}</Text>
             </View>
             {this.renderForm()}
-            <View style={styles.lineSeparator}>
-              <FilePicker multiple callback={this.props.uploadAttachment} style={styles.attachmentsContainer}>
-                <Icon name="attachment" size={16} style={styles.attachmentsIcon} />
-                <Text>{I18n.t('support-add-attachments')}</Text>
-              </FilePicker>
-              {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
-            </View>
+            <FilePicker multiple callback={this.props.uploadAttachment} style={styles.attachmentsContainer}>
+              <Icon name="attachment" size={16} style={styles.attachmentsIcon} />
+              <Text>{I18n.t('support-add-attachments')}</Text>
+            </FilePicker>
+            {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
             <TouchableOpacity
               onPress={sendTicket}
               disabled={isDisabled}
