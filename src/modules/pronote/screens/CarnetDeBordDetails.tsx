@@ -157,7 +157,9 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
       return data.PageCompetences?.Competences?.map(item => ({
         title: item.Matiere,
         date: displayDate(item.Date),
-        value: splitWords(item.NiveauDAcquisition.Libelle, 2),
+        value: item.NiveauDAcquisition?.Libelle
+          ? splitWords(item.NiveauDAcquisition.Libelle, 2)
+          : I18n.t('pronote.carnetDeBord.noInfo'),
       }));
     }
     case CarnetDeBordSection.VIE_SCOLAIRE: {

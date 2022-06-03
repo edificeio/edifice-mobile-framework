@@ -49,7 +49,12 @@ const parseCompetencesItem = (itemTag, item) => {
         (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition']).Libelle = ndaTag.Libelle[0]?.['#text'];
       }
     }
-    (item as ICarnetDeBordCompetencesItem).NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
+    if (
+      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>).Genre !== undefined &&
+      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>).Libelle !== undefined
+    ) {
+      (item as ICarnetDeBordCompetencesItem).NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
+    }
   }
 };
 

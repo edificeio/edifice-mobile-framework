@@ -78,9 +78,9 @@ export type ICarnetDeBordCompetencesItem = {
   Competence?: string;
   Intitule?: string;
   Matiere?: string;
-  NiveauDAcquisition: {
-    Genre: number;
-    Libelle: string;
+  NiveauDAcquisition?: {
+    Genre?: number;
+    Libelle?: string;
   };
   Date: moment.Moment;
   DateString: string;
@@ -93,7 +93,7 @@ export type ICarnetDeBordCompetencesDomaine = Omit<ICarnetDeBordCompetencesItem,
 
 export type ICarnetDeBordReleveDeNotesDevoir = {
   Note: string;
-  Bareme: string;
+  Bareme?: string;
   Matiere?: string;
   Date: moment.Moment;
   DateString: string;
@@ -105,8 +105,8 @@ export type ICarnetDeBordVieScolaireAbsence = {
   DateDebutString: string;
   DateFin: moment.Moment;
   DateFinString: string;
-  EstOuverte: boolean;
-  Justifie: boolean;
+  EstOuverte?: boolean;
+  Justifie?: boolean;
   Motif?: string;
 };
 export type ICarnetDeBordVieScolaireRetard = {

@@ -183,7 +183,9 @@ CarnetDeBordScreen.getRenderContent =
               }}
               textLabel={data.PageCompetences?.Competences?.[0]?.Matiere}
               valueLabel={
-                data.PageCompetences?.Competences?.[0] && `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
+                data.PageCompetences?.Competences?.[0] && data.PageCompetences?.Competences?.[0].NiveauDAcquisition?.Libelle
+                  ? `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
+                  : I18n.t('pronote.carnetDeBord.noInfo')
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.competences.empty')}
               navigation={navigation}

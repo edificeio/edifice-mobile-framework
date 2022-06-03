@@ -35,8 +35,8 @@ export const displayDate = (date: Moment, format?: 'short' | 'extraShort') => {
   const now = moment();
   const isShortFormat = format === 'short';
   const isExtraShortFormat = format === 'extraShort';
-  const thisYearFormat = isShortFormat ? 'dddd D MMM' : isExtraShortFormat ? 'DD/MM' : 'dddd D MMMM';
-  const otherYearFormat = isShortFormat ? 'dddd D MMM Y' : isExtraShortFormat ? 'DD/MM/YY' : 'dddd D MMMM Y';
+  const thisYearFormat = isShortFormat ? 'ddd D MMM' : isExtraShortFormat ? 'DD/MM' : 'dddd D MMMM';
+  const otherYearFormat = isShortFormat ? 'ddd D MMM Y' : isExtraShortFormat ? 'DD/MM/YY' : 'dddd D MMMM Y';
 
   if (!date || !date.isValid()) {
     return I18n.t('common.date.invalid');
