@@ -21,7 +21,7 @@ import { IUserSession, getUserSession } from '~/framework/util/session';
 import { splitWords } from '~/framework/util/string';
 import { TextBold, TextSemiBold } from '~/ui/Typography';
 
-import { CarnetDeBordSection, ICarnetDeBord } from '../model/carnetDeBord';
+import { CarnetDeBordSection, ICarnetDeBord, parseCarnetDeBordReleveDeNotesDevoirNoteBareme } from '../model/carnetDeBord';
 import redirect from '../service/redirect';
 
 export interface CarnetDeBordDetailsScreenDataProps {
@@ -134,7 +134,7 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
                 date: I18n.t('pronote.carnetDeBord.cahierDeTextes.PourDate', {
                   date: displayDate(taf.PourLe),
                 }),
-                label: item.Matiere,
+                label: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
                 description: taf.Descriptif || `<p>${I18n.t('pronote.carnetDeBord.noInfo')}</p>`,
               });
             }
@@ -143,19 +143,14 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
     }
     case CarnetDeBordSection.NOTES: {
       return data.PageReleveDeNotes?.Devoir?.map(item => ({
-        title: item.Matiere,
+        title: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
         date: displayDate(item.Date),
-        value: item.Bareme
-          ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
-              note: item.Note,
-              bareme: item.Bareme,
-            })
-          : item.Note,
+        value: parseCarnetDeBordReleveDeNotesDevoirNoteBareme(item.Note, item.Bareme),
       }));
     }
     case CarnetDeBordSection.COMPETENCES: {
       return data.PageCompetences?.Competences?.map(item => ({
-        title: item.Matiere,
+        title: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
         date: displayDate(item.Date),
         value: item.NiveauDAcquisition?.Libelle
           ? splitWords(item.NiveauDAcquisition.Libelle, 2)
@@ -164,7 +159,7 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
     }
     case CarnetDeBordSection.VIE_SCOLAIRE: {
       return data.PageVieScolaire?.VieScolaire?.map(item => ({
-        label: item.type.toLocaleUpperCase(),
+        label: item.type.toLocaleUpperCase() || I18n.t('pronote.carnetDeBord.noInfo'),
         date:
           item.type === 'Absence'
             ? item.DateDebut.isSame(item.DateFin, 'day')
@@ -176,11 +171,11 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
             : displayDate(item.Date),
         description:
           item.type === 'Absence' || item.type === 'Retard'
-            ? item.Motif
+            ? item.Motif || I18n.t('pronote.carnetDeBord.noInfo')
             : item.type === 'Punition' || item.type === 'Sanction'
-            ? item.Nature
+            ? item.Nature || I18n.t('pronote.carnetDeBord.noInfo')
             : item.type === 'Observation'
-            ? item.Observation
+            ? item.Observation || I18n.t('pronote.carnetDeBord.noInfo')
             : I18n.t('pronote.carnetDeBord.noInfo'),
       }));
     }

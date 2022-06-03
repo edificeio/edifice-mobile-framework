@@ -1,3 +1,4 @@
+import I18n from 'i18n-js';
 import moment from 'moment';
 
 export enum CarnetDeBordSection {
@@ -98,6 +99,26 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   Date: moment.Moment;
   DateString: string;
 };
+const carnetDeBordReleveDeNotesDevoirSpecialValue = {
+  abs: I18n.t('pronote.carnetDeBord.releveDeNotes.value.abs'),
+  disp: I18n.t('pronote.carnetDeBord.releveDeNotes.value.disp'),
+  'n.not': I18n.t('pronote.carnetDeBord.releveDeNotes.value.nnot'),
+  inap: I18n.t('pronote.carnetDeBord.releveDeNotes.value.inap'),
+  'n.rdu': I18n.t('pronote.carnetDeBord.releveDeNotes.value.nrdu'),
+};
+export function parseCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
+  if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
+  const noteLowerCase = note.toString().toLowerCase();
+  if (carnetDeBordReleveDeNotesDevoirSpecialValue.hasOwnProperty(noteLowerCase)) {
+    return carnetDeBordReleveDeNotesDevoirSpecialValue[noteLowerCase];
+  } else
+    return bareme
+      ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
+          note,
+          bareme,
+        })
+      : note;
+}
 
 export type ICarnetDeBordVieScolaireAbsence = {
   type: 'Absence';
