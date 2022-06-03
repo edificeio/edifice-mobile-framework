@@ -99,18 +99,18 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   Date: moment.Moment;
   DateString: string;
 };
-const carnetDeBordReleveDeNotesDevoirSpecialValue = {
-  abs: I18n.t('pronote.carnetDeBord.releveDeNotes.value.abs'),
-  disp: I18n.t('pronote.carnetDeBord.releveDeNotes.value.disp'),
-  'n.not': I18n.t('pronote.carnetDeBord.releveDeNotes.value.nnot'),
-  inap: I18n.t('pronote.carnetDeBord.releveDeNotes.value.inap'),
-  'n.rdu': I18n.t('pronote.carnetDeBord.releveDeNotes.value.nrdu'),
+const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
+  abs: 'pronote.carnetDeBord.releveDeNotes.value.abs',
+  disp: 'pronote.carnetDeBord.releveDeNotes.value.disp',
+  'n.not': 'pronote.carnetDeBord.releveDeNotes.value.nnot',
+  inap: 'pronote.carnetDeBord.releveDeNotes.value.inap',
+  'n.rdu': 'pronote.carnetDeBord.releveDeNotes.value.nrdu',
 };
 export function parseCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
   if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
   const noteLowerCase = note.toString().toLowerCase();
-  if (carnetDeBordReleveDeNotesDevoirSpecialValue.hasOwnProperty(noteLowerCase)) {
-    return carnetDeBordReleveDeNotesDevoirSpecialValue[noteLowerCase];
+  if (carnetDeBordReleveDeNotesDevoirSpecialValueI18n.hasOwnProperty(noteLowerCase)) {
+    return I18n.t(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
   } else
     return bareme
       ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
