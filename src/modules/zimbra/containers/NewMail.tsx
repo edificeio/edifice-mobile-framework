@@ -356,7 +356,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       case DraftType.DRAFT: {
         let prevbody = '';
         if (this.props.mail.body.length > 0) {
-          prevbody += '<br><br>' + this.props.mail.body.split('<br><br>').slice(1).join('<br><br>');
+          prevbody = this.props.mail.body.split('<br><br>').slice(1).join('<br><br>');
+          if (prevbody !== '') {
+            prevbody.concat('<br><br>', prevbody);
+          }
         }
         const currentBody = this.props.mail.body.split('<br><br>')[0];
 
@@ -380,6 +383,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const regexp = /(\r\n|\n|\r)/gm;
 
     mail.body = mail.body.replace(regexp, '<br>');
+    prevBody = prevBody?.replace(/(<br>|<br \/>)/gs, '\n');
     if (prevBody === undefined) {
       prevBody = '';
     }
@@ -391,8 +395,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         ret[key] = value.map(user => user.id);
       } else if (key === 'body') {
         if (signature.text !== '' && (signature.useGlobal || isNewSignature)) {
-          const sign = '<div class="signature new-signature ng-scope">' + signature.text + '</div>\n\n';
-          ret[key] = value + sign + prevBody;
+          const draftType = this.props.navigation.getParam('type');
+          if (draftType === DraftType.DRAFT) {
+            ret[key] = value + prevBody;
+          } else {
+            const sign = '<br><div class="signature new-signature ng-scope">' + signature.text + '</div>\n\n';
+            ret[key] = value + sign + prevBody;
+          }
         } else {
           ret[key] = value + prevBody;
         }
@@ -539,7 +548,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           headers={headers}
           onDraftSave={this.saveDraft}
           onHeaderChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
-          body={this.state.mail.body.replace(/<br>/gs, '\n')}
+          body={this.state.mail.body.replace(/(<br>|<br \/>)/gs, '\n')}
           onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: newBody } }))}
           attachments={
             this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments

@@ -253,25 +253,21 @@ const Body = ({ style, value, onChange, onSave }) => {
   );
 };
 
-const PrevBody = ({ prevBody }) => {
-  return (
-    <View style={[styles.mailPart, styles.fullGrowView]}>
-      <View style={styles.lineSeparator} />
-      <HtmlContentView html={prevBody} />
-    </View>
-  );
-};
+const PrevBody = ({ prevBody }) => (
+  <View style={[styles.mailPart, styles.fullGrowView]}>
+    <View style={styles.lineSeparator} />
+    <HtmlContentView html={prevBody} />
+  </View>
+);
 
-const Signature = ({ signatureText }: { signatureText: string }) => {
-  return (
-    <View style={styles.signatureZone}>
-      <View style={styles.lineSeparator} />
-      <ScrollView style={styles.signatureZone} contentContainerStyle={styles.signatureZoneContainer}>
-        <Text>{signatureText}</Text>
-      </ScrollView>
-    </View>
-  );
-};
+const Signature = ({ signatureText }: { signatureText: string }) => (
+  <View style={styles.signatureZone}>
+    <View style={styles.lineSeparator} />
+    <ScrollView style={styles.signatureZone} contentContainerStyle={styles.signatureZoneContainer}>
+      <Text>{signatureText}</Text>
+    </ScrollView>
+  </View>
+);
 
 // TYPES & INTERFACES
 
@@ -344,7 +340,7 @@ export default ({
               onSave={onDraftSave}
             />
             <Body style={styles.newMailBody} value={body} onChange={onBodyChange} onSave={onDraftSave} />
-            {!!prevBody && <PrevBody prevBody={prevBody} />}
+            {!!prevBody && prevBody !== '' && <PrevBody prevBody={prevBody} />}
             {!!signature && (signature.useGlobal || isNewSignature) && signature.text !== '' && (
               <Signature signatureText={signature.text} />
             )}

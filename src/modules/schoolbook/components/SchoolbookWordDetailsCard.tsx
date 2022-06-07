@@ -130,18 +130,19 @@ const SchoolbookWordDetailsCard = (
           borderBottomWidth: UI_SIZES.dimensions.width.tiny,
           borderBottomColor: theme.palette.grey.pearl,
           paddingBottom:
-            UI_SIZES.spacing.extraSmall + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : 0),
+            UI_SIZES.spacing.extraSmall + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus * 2 : 0),
         }}
         emphasizedHeader
         customHeaderStyle={{ paddingVertical: UI_SIZES.spacing.smallPlus }}
         customHeaderIndicatorStyle={{ justifyContent: 'center' }}
         headerIndicator={
           isTeacher ? (
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
+            <TouchableOpacity style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }} onPress={action}>
               <TextSemiBold style={{ color: theme.palette.primary.regular }}>
                 {acknowledgementsString(word?.ackNumber, word?.total)}
               </TextSemiBold>
               <Picture
+                cached
                 type="NamedSvg"
                 name="pictos-arrow-right"
                 width={UI_SIZES.dimensions.width.large}
@@ -187,8 +188,16 @@ const SchoolbookWordDetailsCard = (
         }
         footer={
           isTeacher && schoolbookWordResponsesNumber ? (
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={action}>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: UI_SIZES.spacing.smallPlus,
+                marginVertical: -UI_SIZES.spacing.smallPlus,
+              }}
+              onPress={action}>
               <Picture
+                cached
                 type="NamedSvg"
                 name="pictos-answer"
                 width={UI_SIZES.dimensions.width.large}
@@ -218,6 +227,7 @@ const SchoolbookWordDetailsCard = (
         {word?.category ? (
           <View style={{ marginTop: UI_SIZES.spacing[isAuthorOtherTeacher ? 'medium' : 'large'] }}>
             <ImageLabel
+              cachedSVG
               text={I18n.t(`schoolbook.categories.${word?.category}`)}
               imageName={`schoolbook-${word?.category}`}
               imageType={ImageType.svg}
@@ -267,39 +277,44 @@ const SchoolbookWordDetailsCard = (
     <>
       <FlatList
         ref={flatListRef}
+        data={word?.reply && responses ? responses : []}
+        renderItem={({ item, index }) => {
+          const isFirstItem = index === 0;
+          return (
+            <View style={{ marginTop: isFirstItem ? UI_SIZES.spacing.large : undefined }}>
+              <CommentField
+                ref={element => (commentFieldRefs[item.id] = element)}
+                index={index}
+                isPublishingComment={isPublishingReply}
+                onPublishComment={(comment, commentId) => onPublishReply(comment, commentId)}
+                editCommentCallback={() => {
+                  const otherSchoolbookWordResponses = responses?.filter(response => response.id !== item.id);
+                  setEditedCommentId(item.id?.toString());
+                  otherSchoolbookWordResponses?.forEach(otherSchoolbookWordResponse => {
+                    commentFieldRefs[otherSchoolbookWordResponse.id]?.setIsEditingFalse();
+                  });
+                }}
+                comment={item.comment}
+                commentId={item.id}
+                commentAuthorId={item.owner}
+                commentAuthor={item.parentName}
+                commentDate={item.modified}
+                isResponse
+              />
+            </View>
+          );
+        }}
+        keyExtractor={item => item.id?.toString()}
+        ListHeaderComponent={resourceView}
         onLayout={({ nativeEvent }) => setViewHeight(nativeEvent?.layout?.height)}
         onContentSizeChange={(width, height) => setContentHeight(height)}
         keyboardShouldPersistTaps="handled"
         bottomInset={!isBottomSheetVisible}
+        style={{ marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined }}
         scrollIndicatorInsets={{
           right: 0.001,
           bottom: doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : undefined,
         }}
-        style={{ marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined }}
-        ListHeaderComponent={resourceView}
-        renderItem={({ item, index }) => (
-          <CommentField
-            ref={element => (commentFieldRefs[item.id] = element)}
-            index={index}
-            isPublishingComment={isPublishingReply}
-            onPublishComment={(comment, commentId) => onPublishReply(comment, commentId)}
-            editCommentCallback={() => {
-              const otherSchoolbookWordResponses = responses?.filter(response => response.id !== item.id);
-              setEditedCommentId(item.id?.toString());
-              otherSchoolbookWordResponses?.forEach(otherSchoolbookWordResponse => {
-                commentFieldRefs[otherSchoolbookWordResponse.id]?.setIsEditingFalse();
-              });
-            }}
-            comment={item.comment}
-            commentId={item.id}
-            commentAuthorId={item.owner}
-            commentAuthor={item.parentName}
-            commentDate={item.modified}
-            isResponse
-          />
-        )}
-        data={word?.reply && responses ? responses : []}
-        keyExtractor={item => item.id?.toString()}
       />
       {isParent ? (
         !isWordAcknowledged ? (
@@ -317,14 +332,25 @@ const SchoolbookWordDetailsCard = (
       <ModalBox
         ref={modalBoxRef}
         content={
-          <View style={{ flex: 1 }}>
+          <View style={{ flexGrow: 1, flexShrink: 1 }}>
             <TextSemiBold style={{ ...TextSizeStyle.SlightBigPlus, marginBottom: UI_SIZES.spacing.extraSmall }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
             </TextSemiBold>
             <Text style={{ marginBottom: UI_SIZES.spacing.large, color: theme.palette.grey.graphite }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </Text>
-            <UserList data={studentsForTeacher} avatarSize={24} />
+            <UserList
+              data={studentsForTeacher}
+              avatarSize={24}
+              contentContainerStyle={{ flexGrow: 1 }}
+              initialNumToRender={15}
+              viewabilityConfig={{
+                waitForInteraction: false,
+                viewAreaCoveragePercentThreshold: 0,
+                minimumViewTime: -1,
+              }}
+              alwaysBounceVertical={false}
+            />
           </View>
         }
       />

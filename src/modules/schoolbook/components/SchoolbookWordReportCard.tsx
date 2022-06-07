@@ -58,53 +58,12 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
     <>
       <ScrollView>
         <ResourceView>
-          {hasUnacknowledgedStudents ? (
-            <>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginTop: UI_SIZES.spacing.extraSmall,
-                }}>
-                <TextBold style={{ ...TextSizeStyle.SlightBigPlus }}>
-                  {unacknowledgementsString(word?.ackNumber, word?.total)}
-                </TextBold>
-                {hasSchoolbookWordResendRights ? (
-                  <ActionButton
-                    type="secondary"
-                    text={I18n.t('schoolbook.schoolbookWordReportScreen.reminder')}
-                    iconName="pictos-send"
-                    leftIcon
-                    action={() => modalBoxRef?.current?.doShowModal()}
-                  />
-                ) : null}
-              </View>
-              <Text style={{ marginTop: UI_SIZES.spacing.smallPlus }}>
-                {`${I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidNotAcknowledge')}${
-                  hasSchoolbookWordResendRights ? ' ' + I18n.t('schoolbook.schoolbookWordReportScreen.reminderPossible') : ''
-                }`}
-              </Text>
-              <UserList
-                withSeparator
-                data={unacknowledgedStudents}
-                avatarSize={24}
-                style={SchoolbookWordReportCard.Style.list}
-                contentContainerStyle={{ backgroundColor: theme.ui.background.card, borderRadius: UI_SIZES.radius.medium }}
-                customItemStyle={{
-                  marginBottom: undefined,
-                  paddingVertical: UI_SIZES.spacing.medium,
-                  paddingHorizontal: UI_SIZES.spacing.large,
-                }}
-              />
-            </>
-          ) : null}
           {hasAcknowledgedStudents ? (
             <>
               <TextBold
                 style={{
-                  marginTop: UI_SIZES.spacing[hasUnacknowledgedStudents ? 'extraLarge' : 'extraSmall'],
                   ...TextSizeStyle.SlightBigPlus,
+                  marginTop: UI_SIZES.spacing.extraSmall,
                 }}>
                 {acknowledgementsString(word?.ackNumber, word?.total)}
               </TextBold>
@@ -159,6 +118,47 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                       </View>
                     </View>
                   );
+                }}
+              />
+            </>
+          ) : null}
+          {hasUnacknowledgedStudents ? (
+            <>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: UI_SIZES.spacing[hasAcknowledgedStudents ? 'extraLarge' : 'extraSmall'],
+                }}>
+                <TextBold style={{ ...TextSizeStyle.SlightBigPlus }}>
+                  {unacknowledgementsString(word?.ackNumber, word?.total)}
+                </TextBold>
+                {hasSchoolbookWordResendRights ? (
+                  <ActionButton
+                    type="secondary"
+                    text={I18n.t('schoolbook.schoolbookWordReportScreen.reminder')}
+                    iconName="pictos-send"
+                    leftIcon
+                    action={() => modalBoxRef?.current?.doShowModal()}
+                  />
+                ) : null}
+              </View>
+              <Text style={{ marginTop: UI_SIZES.spacing.smallPlus }}>
+                {`${I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidNotAcknowledge')}${
+                  hasSchoolbookWordResendRights ? ' ' + I18n.t('schoolbook.schoolbookWordReportScreen.reminderPossible') : ''
+                }`}
+              </Text>
+              <UserList
+                withSeparator
+                data={unacknowledgedStudents}
+                avatarSize={24}
+                style={SchoolbookWordReportCard.Style.list}
+                contentContainerStyle={{ backgroundColor: theme.ui.background.card, borderRadius: UI_SIZES.radius.medium }}
+                customItemStyle={{
+                  marginBottom: undefined,
+                  paddingVertical: UI_SIZES.spacing.medium,
+                  paddingHorizontal: UI_SIZES.spacing.large,
                 }}
               />
             </>

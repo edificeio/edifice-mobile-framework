@@ -166,6 +166,8 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         (!this.state.fetchRequested &&
           (folderName !== prevProps.navigation.getParam('folderName') || this.props.searchString !== prevProps.searchString)))
     ) {
+      this.setState({ isHeaderSelectVisible: false });
+      this.props.navigation.setParams({ selectedMails: false });
       this.fetchMails();
     }
 
@@ -182,7 +184,10 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   }
 
   onGoBack = (goBack = false) => {
-    this.setState({ isHeaderSelectVisible: false });
+    const { mails } = this.state;
+    const newMails = mails.map(mail => (mail.isChecked = false));
+
+    this.setState({ mails: newMails, isHeaderSelectVisible: false });
     if (this.props.isSearch) this.props.setSearchHeaderVisibility(false);
     this.props.navigation.setParams({ selectedMails: false });
     if (!goBack) this.fetchMails(0);
@@ -424,13 +429,6 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
 const mapStateToProps: (state: any) => any = state => {
   const { isPristine, isFetching, data } = getMailListState(state);
-
-  if (data !== undefined && data.length > 0) {
-    for (let i = 0; i <= data.length - 1; i++) {
-      data[i]['isChecked'] = false;
-    }
-  }
-
   const folders = getInitMailListState(state).data.folders;
   const storage = getQuotaState(state);
 

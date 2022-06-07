@@ -159,7 +159,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           editable={!(props.isPublishingComment || isIdleExistingComment)}
           onChangeText={text => setComment(text)}
           value={comment}
-          style={{ paddingTop: 0 }}
+          style={{ paddingTop: 0, color: theme.palette.grey.black }}
         />
       </View>
       {!isIdleExistingComment ? (

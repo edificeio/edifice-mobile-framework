@@ -48,7 +48,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
       onPress: () => showDeleteSchoolbookWordAlert(),
     },
   ];
-  let focusEventListener: NavigationEventSubscription;
 
   // LOADER =====================================================================================
 
@@ -95,16 +94,13 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
     else refreshSilent();
   };
 
+  const focusEventListener = React.useRef<NavigationEventSubscription>();
   React.useEffect(() => {
-    // Note: 'didFocus' does not work when navigating from a notification, so we use this condition instead
-    if (props.navigation.getParam('useNotification')) {
-      fetchOnNavigation();
-    }
-    focusEventListener = props.navigation.addListener('didFocus', () => {
+    focusEventListener.current = props.navigation.addListener('didFocus', () => {
       fetchOnNavigation();
     });
     return () => {
-      focusEventListener.remove();
+      focusEventListener.current?.remove();
     };
   }, []);
 

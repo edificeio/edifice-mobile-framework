@@ -3,7 +3,7 @@
  */
 import I18n from 'i18n-js';
 import moment from 'moment';
-import React, { useRef } from 'react';
+import React from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -96,9 +96,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     else refreshSilent();
   };
 
-  const focusEventListener = useRef<NavigationEventSubscription>();
+  const focusEventListener = React.useRef<NavigationEventSubscription>();
   React.useEffect(() => {
-    // Note: 'didFocus' does not work when navigating from a notification, so we use this condition instead
     focusEventListener.current = props.navigation.addListener('didFocus', () => {
       fetchOnNavigation();
     });
@@ -228,7 +227,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     const newestWordDates = childrenWordLists
       ?.map((childWordList, index) => ({
         index,
-        sendingDate: childWordList[0]?.sendingDate,
+        sendingDate: childWordList && childWordList[0]?.sendingDate,
       }))
       ?.filter(newestWordDate => newestWordDate.sendingDate);
     const sortedNewestWordDates = newestWordDates?.sort((a, b) => moment(a.sendingDate).diff(b.sendingDate));

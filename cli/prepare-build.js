@@ -14,7 +14,7 @@
 //   - ios/appe/Info.plist'
 //
 
-// As this iss a cli tool, we disable some rules
+// As this is a cli tool, we disable some rules
 /* eslint-disable no-console */
 
 const execSync = require('child_process').execSync;
@@ -67,9 +67,8 @@ try {
     versionContent[buildType] += 1;
     buildType = `${buildType}.${versionContent[buildType]}`;
     // Get git history && update release notes infos (last && notes)
-    versionContent.notes = execSync(`git log --pretty=format:"%s" --since=${versionContent.last}`)
-      .toString()
-      .replace(/(\n)/g, '<br>');
+    versionContent.notes = execSync(`git log --pretty=format:"%s" --since=${versionContent.last}`).toString();
+    //.replace(/(\n)/g, '<br />');
     versionContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
   } else {
     switch (buildType) {
@@ -153,6 +152,7 @@ try {
 //
 // Write Info.plist
 //
+
 try {
   fs.writeFileSync(plistFile, plistContent, 'utf-8');
   console.info('==> Info.plist file updated');
@@ -194,6 +194,7 @@ try {
 //
 // Write build.gradle
 //
+
 try {
   fs.writeFileSync(gradleFile, gradleContent, 'utf-8');
   console.info('==> build.gradle file updated');
@@ -245,6 +246,7 @@ try {
 //
 // Commit && Push changes
 //
+
 try {
   execSync(`git add -A`);
   execSync(`git commit -m "release: ${fullVersion}"`);

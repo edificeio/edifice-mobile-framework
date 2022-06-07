@@ -49,12 +49,13 @@ export default function UserList<ItemType extends IUserListItem = IUserListItem>
   );
   return (
     <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={UserList.keyExtractor}
+      horizontal={horizontal}
+      showsHorizontalScrollIndicator={!horizontal}
       bottomInset={false}
       alwaysBounceHorizontal={false}
-      data={data}
-      keyExtractor={UserList.keyExtractor}
-      renderItem={renderItem}
-      horizontal={horizontal}
       {...otherProps}
     />
   );

@@ -101,7 +101,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                     this.props.navigation.navigate('DeclareEvent', {
                       type: 'late',
                       registerId,
-                      item,
+                      student: item,
                       startDate: this.state.callData.start_date,
                       endDate: this.state.callData.end_date,
                       event,
@@ -111,7 +111,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                     this.props.navigation.navigate('DeclareEvent', {
                       type: 'leaving',
                       registerId,
-                      item,
+                      student: item,
                       startDate: this.state.callData.start_date,
                       endDate: this.state.callData.end_date,
                       event,

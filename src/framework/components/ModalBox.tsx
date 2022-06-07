@@ -30,7 +30,7 @@ export const ModalBox = ({ content }: ModalBoxProps, ref) => {
           <TouchableOpacity onPress={doDismissModal}>
             <Picture
               type="NamedSvg"
-              name={'pictos-close'}
+              name="pictos-close"
               width={UI_SIZES.dimensions.width.large}
               height={UI_SIZES.dimensions.height.large}
               fill={theme.palette.grey.black}
@@ -43,15 +43,21 @@ export const ModalBox = ({ content }: ModalBoxProps, ref) => {
 };
 ModalBox.styles = StyleSheet.create({
   nativeModal: {
-    marginHorizontal: UI_SIZES.spacing.large,
-    marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
-    marginBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight,
+    width: '100%',
+    height: '100%',
+    margin: 0,
+    padding: 0,
+    paddingVertical: 43, // Some magic number here. A negative margin of this value seems to be applied automatically by NativeModal.
+    flex: 0,
   },
   outerView: {
-    flex: 1,
+    flexGrow: 0,
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.extraLarge,
     padding: UI_SIZES.spacing.extraLarge,
+    marginHorizontal: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset,
+    marginBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight,
   },
   innerView: {
     position: 'absolute',

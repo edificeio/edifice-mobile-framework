@@ -44,12 +44,17 @@ const parseCompetencesItem = (itemTag, item) => {
     const nda = {};
     for (const ndaTag of itemTag.NiveauDAcquisition) {
       if (ndaTag.hasOwnProperty('Genre')) {
-        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition']).Genre = ndaTag.Genre[0]?.['#text'];
+        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'])!.Genre = ndaTag.Genre[0]?.['#text'];
       } else if (ndaTag.hasOwnProperty('Libelle')) {
-        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition']).Libelle = ndaTag.Libelle[0]?.['#text'];
+        (nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'])!.Libelle = ndaTag.Libelle[0]?.['#text'];
       }
     }
-    (item as ICarnetDeBordCompetencesItem).NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
+    if (
+      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>)!.Genre !== undefined &&
+      (nda as Partial<ICarnetDeBordCompetencesItem['NiveauDAcquisition']>)!.Libelle !== undefined
+    ) {
+      (item as ICarnetDeBordCompetencesItem).NiveauDAcquisition = nda as ICarnetDeBordCompetencesItem['NiveauDAcquisition'];
+    }
   }
 };
 

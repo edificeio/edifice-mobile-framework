@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { remStyle, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle, remStyle } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,

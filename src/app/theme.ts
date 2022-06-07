@@ -348,6 +348,4 @@ const totalTheme: ITheme = {
 
 if (init) init.call(totalTheme);
 
-console.log('theme', totalTheme);
-
 export default totalTheme;
