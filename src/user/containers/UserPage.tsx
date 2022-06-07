@@ -7,14 +7,12 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
-import { getUserSession, IUserSession, UserType } from '~/framework/util/session';
+import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
@@ -30,10 +28,7 @@ import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
 
-
-
 import { IUserInfoState } from '../state/info';
-
 
 const uploadAvatarError = () => {
   return dispatch => {
@@ -249,7 +244,7 @@ export class UserPage extends React.PureComponent<
           <ContainerView>
             <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
               {I18n.t('version-number')} {DeviceInfo.getVersion()}
-              {showVersionType ? `-${versionType}-${versionOverride}` : ''}
+              {showVersionType ? `-(${DeviceInfo.getBuildNumber()})-${versionType}-${versionOverride}` : ''}
             </Label>
           </ContainerView>
           <ContainerSpacer />
@@ -273,7 +268,7 @@ const UserPageConnected = connect(
   (state: any) => {
     const ret = {
       userinfo: state.user.info,
-      session: getUserSession()
+      session: getUserSession(),
     };
     return ret;
   },

@@ -36,8 +36,8 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1090000
-        versionName "1.9.0"
+        versionCode 1080100
+        versionName "1.8.1"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
         buildConfigField "String", "BundleVersionType", "\"\""
         manifestPlaceholders = [ applicationName: APPNAME ]
