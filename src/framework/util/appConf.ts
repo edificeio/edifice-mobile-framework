@@ -2,10 +2,11 @@
  * AppConfTool
  * AppConf Loader
  */
-
 import { ImageStyle } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
+
+import { PictureProps } from '../components/picture';
 
 // Platforms ======================================================================================
 
@@ -15,6 +16,7 @@ export type IPlatformAccessDeclaration = {
   hidden?: true; // Hidden platform access is not displayed on the main screen
   logo: any; // require() logo asset
   logoStyle?: ImageStyle; // Additionnal style option to display the logo in some places
+  logoType?: PictureProps['type']; // The logo type
   name: string; // unique name of the access point
   oauth: [string, string]; // oAuth2 configuration as [clientId, clientSecret]
   url: string; // Access url WITHOUT trailing slash and WITH protocol
@@ -29,6 +31,7 @@ export class Platform {
   hidden: IPlatformAccessDeclaration['hidden'];
   logo: IPlatformAccessDeclaration['logo'];
   logoStyle: IPlatformAccessDeclaration['logoStyle'];
+  logoType: Required<IPlatformAccessDeclaration>['logoType'];
   name!: IPlatformAccessDeclaration['name'];
   _oauth!: IPlatformAccessDeclaration['oauth'];
   url!: IPlatformAccessDeclaration['url'];
@@ -42,6 +45,7 @@ export class Platform {
     this.hidden = pf.hidden;
     this.logo = pf.logo;
     this.logoStyle = pf.logoStyle;
+    this.logoType = pf.logoType ?? 'Image';
     this.name = pf.name;
     this._oauth = pf.oauth;
     this.url = pf.url;

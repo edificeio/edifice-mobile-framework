@@ -2,22 +2,13 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  Image,
-  KeyboardAvoidingView,
-  Linking,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import { Linking, ScrollView, TextInput, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { KeyboardPageView } from '~/framework/components/page';
+import { Picture } from '~/framework/components/picture';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -134,7 +125,13 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     }
     return (
       <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
-        <Image resizeMode="contain" style={logoStyle} source={DEPRECATED_getCurrentPlatform()!.logo} />
+        <Picture
+          type={DEPRECATED_getCurrentPlatform()!.logoType}
+          source={DEPRECATED_getCurrentPlatform()!.logo}
+          name={DEPRECATED_getCurrentPlatform()!.logo}
+          style={logoStyle}
+          resizeMode="contain"
+        />
       </View>
     );
   };

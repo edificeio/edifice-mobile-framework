@@ -10,6 +10,8 @@ import React, { useEffect, useRef } from 'react';
 import { SvgProps } from 'react-native-svg';
 
 const imports = {
+  // Platform logos
+  'logo-moncollege': import(`../../../../assets/platforms/logo-moncollege.svg`),
   // UI Icons
   'ui-answer': import(`../../../../assets/icons/uiIcons/answer.svg`),
   'ui-arrowDown': import(`../../../../assets/icons/uiIcons/arrowDown.svg`),
