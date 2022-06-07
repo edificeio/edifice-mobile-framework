@@ -350,7 +350,6 @@ function carnetDeBordAdapterParent(
   }
   const correspondsTo = children.find(c => c.firstName === found.firstName && c.lastName === found.lastName);
   if (!correspondsTo) {
-    console.warn(`children ${found.firstName} ${found.lastName} not found`);
     return undefined;
   }
   const ret = {

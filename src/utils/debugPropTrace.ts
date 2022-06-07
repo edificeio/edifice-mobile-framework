@@ -31,9 +31,9 @@ export function useTraceUpdate(props: {}) {
       }
       return ps;
     }, {});
-    if (Object.keys(changedProps).length > 0) {
+    /*if (Object.keys(changedProps).length > 0) {
       console.debug('Changed props:', changedProps);
-    }
+    }*/
     prev.current = props;
   });
 }

@@ -191,7 +191,7 @@ class UserService {
         const json = await res.json();
         appStoreId = json.resultCount > 0 ? json.results[0].trackId : null;
       } else {
-        console.debug('[UserService] redirectToTheStore:could not found appstoreid for ', url);
+        // console.debug('[UserService] redirectToTheStore:could not found appstoreid for ', url);
       }
     }
     try {
@@ -207,7 +207,7 @@ class UserService {
       )) as IEntcoreParentChildrenByStructureList;
       return parentChildrenByStructureList;
     } catch (e) {
-      console.warn('[UserService] getUserChildren: could not get children data', e);
+      // console.warn('[UserService] getUserChildren: could not get children data', e);
     }
   }
 }

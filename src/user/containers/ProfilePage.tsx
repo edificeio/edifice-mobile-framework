@@ -7,12 +7,10 @@ import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IUserSession, getUserSession, UserType } from '~/framework/util/session';
+import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
 import { signURISource } from '~/infra/oauth';
@@ -26,7 +24,6 @@ import { UserCard } from '~/user/components/UserCard';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
-
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -203,9 +200,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     const label = <ContainerLabel>{title}</ContainerLabel>;
     let box: JSX.Element | null = null;
 
-    if (editable && !setter) {
+    /*if (editable && !setter) {
       console.debug(`rendering editable Profil page item "${title}", but no specified setter.`);
-    }
+    }*/
 
     if (isEditMode) {
       box = editable ? (
@@ -314,7 +311,7 @@ const ProfilePageConnected = connect(
     const ret = {
       userauth: state.user.auth,
       userinfo: state.user.info,
-      session: getUserSession()
+      session: getUserSession(),
     };
     return ret;
   },

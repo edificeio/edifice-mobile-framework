@@ -139,9 +139,9 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
   private handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
       Trackers.trackDebugEvent('Application', 'DISPLAY');
-    } else if (nextAppState === 'background') {
+    } /*else if (nextAppState === 'background') {
       console.debug('[App State] now in background mode');
-    }
+    }*/
   };
 
   private handleFCMTokenModified = (fcmToken: any) => {

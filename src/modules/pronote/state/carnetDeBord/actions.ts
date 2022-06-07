@@ -35,7 +35,6 @@ export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState:
     dispatch(carnetDeBordAsyncActions.receipt(data));
     return data;
   } catch (e) {
-    console.warn(e);
     dispatch(carnetDeBordAsyncActions.error(e as Error));
     throw e;
   }

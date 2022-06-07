@@ -13,7 +13,6 @@ const profileMap = {
 };
 
 const getRedirectUrl = (session: IUserSession, connectorAddress: string, pageId?: string) => {
-  console.log('getRedirectUrl', connectorAddress, pageId);
   const getSlash = (link: string) => {
     const service = decodeURIComponent(link);
     return service.charAt(service.length - 1) === '/' ? '' : '%2F';
@@ -39,7 +38,6 @@ export default async (session: IUserSession, connectorAddress: string, pageId?: 
       {
         text: I18n.t('common.continue'),
         onPress: async () => {
-          console.log('redirectUrl', getRedirectUrl(session, connectorAddress, pageId));
           const intermediateResponse = await signedFetch(getRedirectUrl(session, connectorAddress, pageId));
           const finalUrl = intermediateResponse.headers.get('location');
           if (!finalUrl) {

@@ -1,4 +1,5 @@
 import I18n from 'i18n-js';
+import { Platform } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -43,24 +44,33 @@ const WorkspaceNavigator = createStackNavigator(
         toolbarSelectedItems: [
           {
             filter: FilterId.root,
-            items: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu(), downloadMenu()],
+            items: Platform.select({
+              ios: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu()],
+              default: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu(), downloadMenu()],
+            }),
           },
           {
             filter: FilterId.owner,
-            items: [
-              backMenu(),
-              nbSelectedMenu(),
-              separatorMenu(),
-              renameMenu(),
-              trashMenu(),
-              copyMenu(),
-              moveMenu(),
-              downloadMenu(),
-            ],
+            items: Platform.select({
+              ios: [backMenu(), nbSelectedMenu(), separatorMenu(), renameMenu(), trashMenu(), copyMenu(), moveMenu()],
+              default: [
+                backMenu(),
+                nbSelectedMenu(),
+                separatorMenu(),
+                renameMenu(),
+                trashMenu(),
+                copyMenu(),
+                moveMenu(),
+                downloadMenu(),
+              ],
+            }),
           },
           {
             filter: FilterId.trash,
-            items: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), restoreMenu(), downloadMenu()],
+            items: Platform.select({
+              ios: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), restoreMenu()],
+              default: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), restoreMenu(), downloadMenu()],
+            }),
           },
         ],
       },

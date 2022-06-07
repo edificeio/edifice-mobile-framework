@@ -302,7 +302,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       return this.token!;
     } catch (err) {
       const error = err as Error;
-      // tslint:disable-next-line:no-console
       error.name = '[oAuth] getToken failed: ' + error.name;
       throw error;
     }
@@ -361,7 +360,6 @@ export class OAuth2RessourceOwnerPasswordClient {
     try {
       await AsyncStorage.setItem('token', JSON.stringify(this.token));
     } catch (err) {
-      // tslint:disable-next-line:no-console
       throw err;
     }
   }
@@ -409,7 +407,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
-      // tslint:disable-next-line:no-console
       throw err;
     }
   }
@@ -456,7 +453,6 @@ export class OAuth2RessourceOwnerPasswordClient {
       await AsyncStorage.removeItem('token');
       this.token = null;
     } catch (err) {
-      // tslint:disable-next-line:no-console
       throw err;
     }
   }

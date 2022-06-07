@@ -49,9 +49,9 @@ export const newDownloadAction =
                 getUserSession(),
                 convertIFileToIDistantFile(sel),
                 {},
-                {
+                /*{
                   onProgress: res => console.debug('progress', res.bytesWritten / res.contentLength),
-                },
+                },*/
               )
               .then(callback),
           );
