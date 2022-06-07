@@ -66,7 +66,7 @@ export const TextColorStyle = {
 
 type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'Big' | 'Huge';
 
-const responsiveStyle = (value: number) => ({
+export const responsiveStyle = (value: number) => ({
   fontSize: UI_SIZES.getResponsiveFontSize(value),
   lineHeight: UI_SIZES.getResponsiveLineHeight(value),
 });

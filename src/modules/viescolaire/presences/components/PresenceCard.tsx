@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle, remStyle } from '~/framework/components/text';
+import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 
 import { IPunishment } from '../state/events';
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row' },
   leftColumn: { width: '30%', alignItems: 'center' },
   leftColumnText: {
-    ...remStyle(48 / 14),
+    ...responsiveStyle(48),
   },
   itemContainer: { flex: 1 },
   itemView: { flex: 1, justifyContent: 'center' },

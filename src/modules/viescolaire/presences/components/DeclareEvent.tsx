@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle, remStyle } from '~/framework/components/text';
+import { Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -55,7 +55,7 @@ const style = StyleSheet.create({
     backgroundColor: 'white',
   },
   timeViewText: {
-    ...remStyle(55 / 14),
+    ...responsiveStyle(55),
     paddingVertical: 50,
     textDecorationLine: 'underline',
   },

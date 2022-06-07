@@ -5,7 +5,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, remStyle } from '~/framework/components/text';
+import { Text, TextBold, responsiveStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { CommonStyles } from '~/styles/common/styles';
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   timePickerDate: {
-    ...remStyle(24 / 14),
+    ...responsiveStyle(24),
     padding: 10,
   },
   timeContainer: {
