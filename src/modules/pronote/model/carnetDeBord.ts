@@ -1,3 +1,4 @@
+import I18n from 'i18n-js';
 import moment from 'moment';
 
 export enum CarnetDeBordSection {
@@ -78,9 +79,9 @@ export type ICarnetDeBordCompetencesItem = {
   Competence?: string;
   Intitule?: string;
   Matiere?: string;
-  NiveauDAcquisition: {
-    Genre: number;
-    Libelle: string;
+  NiveauDAcquisition?: {
+    Genre?: number;
+    Libelle?: string;
   };
   Date: moment.Moment;
   DateString: string;
@@ -93,11 +94,31 @@ export type ICarnetDeBordCompetencesDomaine = Omit<ICarnetDeBordCompetencesItem,
 
 export type ICarnetDeBordReleveDeNotesDevoir = {
   Note: string;
-  Bareme: string;
+  Bareme?: string;
   Matiere?: string;
   Date: moment.Moment;
   DateString: string;
 };
+const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
+  abs: 'pronote.carnetDeBord.releveDeNotes.value.abs',
+  disp: 'pronote.carnetDeBord.releveDeNotes.value.disp',
+  'n.not': 'pronote.carnetDeBord.releveDeNotes.value.nnot',
+  inap: 'pronote.carnetDeBord.releveDeNotes.value.inap',
+  'n.rdu': 'pronote.carnetDeBord.releveDeNotes.value.nrdu',
+};
+export function parseCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
+  if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
+  const noteLowerCase = note.toString().toLowerCase();
+  if (carnetDeBordReleveDeNotesDevoirSpecialValueI18n.hasOwnProperty(noteLowerCase)) {
+    return I18n.t(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
+  } else
+    return bareme
+      ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
+          note,
+          bareme,
+        })
+      : note.toString();
+}
 
 export type ICarnetDeBordVieScolaireAbsence = {
   type: 'Absence';
@@ -105,8 +126,8 @@ export type ICarnetDeBordVieScolaireAbsence = {
   DateDebutString: string;
   DateFin: moment.Moment;
   DateFinString: string;
-  EstOuverte: boolean;
-  Justifie: boolean;
+  EstOuverte?: boolean;
+  Justifie?: boolean;
   Motif?: string;
 };
 export type ICarnetDeBordVieScolaireRetard = {

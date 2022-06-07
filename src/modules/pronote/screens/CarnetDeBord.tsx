@@ -15,6 +15,7 @@ import { PageView } from '~/framework/components/page';
 import { PictureProps } from '~/framework/components/picture';
 import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
+import { displayDate } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
@@ -22,7 +23,7 @@ import { TextBold } from '~/ui/Typography';
 import { IUserInfoState } from '~/user/state/info';
 
 import UserList, { IUserListItem, UserListProps } from '../../../framework/components/UserList';
-import { CarnetDeBordSection, ICarnetDeBord } from '../model/carnetDeBord';
+import { CarnetDeBordSection, ICarnetDeBord, parseCarnetDeBordReleveDeNotesDevoirNoteBareme } from '../model/carnetDeBord';
 import moduleConfig from '../moduleConfig';
 import redirect from '../service/redirect';
 import { loadCarnetDeBordAction } from '../state/carnetDeBord/actions';
@@ -143,9 +144,7 @@ CarnetDeBordScreen.getRenderContent =
                 const cdt = data.PageCahierDeTextes?.CahierDeTextes?.find(c => c.TravailAFaire && c.TravailAFaire.length > 0);
                 return cdt?.TravailAFaire?.[0]?.PourLe
                   ? I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
-                      date:
-                        cdt?.TravailAFaire?.[0]?.PourLe &&
-                        CarnetDeBordDetailsScreen.formatDatePast(cdt?.TravailAFaire?.[0]?.PourLe),
+                      date: cdt?.TravailAFaire?.[0]?.PourLe && displayDate(cdt?.TravailAFaire?.[0]?.PourLe, 'short'),
                     })
                   : I18n.t('pronote.carnetDeBord.noInfo');
               })()}
@@ -163,12 +162,12 @@ CarnetDeBordScreen.getRenderContent =
               }}
               textLabel={data.PageReleveDeNotes?.Devoir?.[0]?.Matiere}
               valueLabel={
-                data.PageReleveDeNotes?.Devoir?.[0] && data.PageReleveDeNotes.Devoir?.[0].Bareme
-                  ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
-                      note: data.PageReleveDeNotes.Devoir?.[0].Note,
-                      bareme: data.PageReleveDeNotes.Devoir?.[0].Bareme,
-                    })
-                  : data.PageReleveDeNotes?.Devoir?.[0].Note
+                data.PageReleveDeNotes?.Devoir?.[0]
+                  ? parseCarnetDeBordReleveDeNotesDevoirNoteBareme(
+                      data.PageReleveDeNotes.Devoir?.[0].Note,
+                      data.PageReleveDeNotes.Devoir?.[0].Bareme,
+                    )
+                  : I18n.t('pronote.carnetDeBord.noInfo')
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.releveDeNotes.empty')}
               navigation={navigation}
@@ -184,7 +183,9 @@ CarnetDeBordScreen.getRenderContent =
               }}
               textLabel={data.PageCompetences?.Competences?.[0]?.Matiere}
               valueLabel={
-                data.PageCompetences?.Competences?.[0] && `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
+                data.PageCompetences?.Competences?.[0] && data.PageCompetences?.Competences?.[0].NiveauDAcquisition?.Libelle
+                  ? `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
+                  : I18n.t('pronote.carnetDeBord.noInfo')
               }
               emptyLabel={I18n.t('pronote.carnetDeBord.competences.empty')}
               navigation={navigation}
@@ -198,15 +199,18 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-flag',
                 cached: true,
               }}
-              textLabel={data.PageVieScolaire?.VieScolaire?.[0] && data.PageVieScolaire.VieScolaire?.[0]?.type.toLocaleUpperCase()}
+              textLabel={
+                (data.PageVieScolaire?.VieScolaire?.[0] && data.PageVieScolaire.VieScolaire?.[0]?.type.toLocaleUpperCase()) ||
+                I18n.t('pronote.carnetDeBord.noInfo')
+              }
               valueLabel={
                 data.PageVieScolaire?.VieScolaire?.[0] &&
                 (data.PageVieScolaire.VieScolaire?.[0].type === 'Absence'
                   ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.isSame(data.PageVieScolaire.VieScolaire?.[0].DateFin, 'day')
                     ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.fromNow()
                     : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
-                        start: CarnetDeBordDetailsScreen.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateDebut),
-                        end: CarnetDeBordDetailsScreen.formatDate(data.PageVieScolaire.VieScolaire?.[0].DateFin),
+                        start: displayDate(data.PageVieScolaire.VieScolaire?.[0].DateDebut, 'short'),
+                        end: displayDate(data.PageVieScolaire.VieScolaire?.[0].DateFin, 'short'),
                       })
                   : data.PageVieScolaire.VieScolaire?.[0].Date.fromNow(false))
               }
@@ -284,9 +288,9 @@ CarnetDeBordScreen.SectionContent = function (props: {
       {isNotEmpty ? (
         <View style={CarnetDeBordScreen.styles.textRow}>
           <TextBold numberOfLines={1} style={CarnetDeBordScreen.styles.textLabel}>
-            {props.textLabel}
+            {props.textLabel || I18n.t('pronote.carnetDeBord.noInfo')}
           </TextBold>
-          <Text numberOfLines={1}>{props.valueLabel}</Text>
+          <Text numberOfLines={1}>{props.valueLabel || I18n.t('pronote.carnetDeBord.noInfo')}</Text>
         </View>
       ) : (
         <View style={CarnetDeBordScreen.styles.emptyRow}>

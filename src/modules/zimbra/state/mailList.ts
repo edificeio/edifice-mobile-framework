@@ -22,6 +22,7 @@ export interface IMail {
   displayNames: [];
   attachments: [];
   from: string;
+  isChecked: boolean;
 }
 
 export type IMailList = IMail[];

@@ -3,8 +3,7 @@ import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { NestedText, Text } from '~/framework/components/text';
-import { layoutSize } from '~/styles/common/layoutSize';
+import { NestedText, Text, TextSizeStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
@@ -15,17 +14,15 @@ const style = StyleSheet.create({
   itemListContainer: { margin: 0 },
   centerPanel: {
     alignItems: 'stretch',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   fileName: {
     color: CommonStyles.shadowColor,
-    fontSize: layoutSize.LAYOUT_15,
   },
-  fileNameSimple: {
-    color: CommonStyles.shadowColor,
-    fontSize: layoutSize.LAYOUT_14,
+  dateContainer: {
+    flexDirection: 'row',
+    marginTop: 4,
   },
-  dateContainer: { flexDirection: 'row' },
   date: { flex: 1, alignItems: 'flex-start' },
   author: { flex: 3, alignItems: 'flex-end' },
 });
@@ -65,7 +62,7 @@ export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={{
-                  fontSize: layoutSize.LAYOUT_10,
+                  ...TextSizeStyle.Small,
                   color: CommonStyles.lightTextColor,
                 }}>
                 {longOwnerName}
