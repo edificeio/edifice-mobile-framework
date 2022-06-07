@@ -57,29 +57,6 @@ const PlatformButton = styled(TouchableOpacity)({
 
 export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageProps, object> {
   public render() {
-    const pfComponents = [] as React.ReactElement[];
-    for (const pf of appConf.platforms) {
-      if (!pf.hidden) {
-        pfComponents.push(
-          <View
-            key={pf.name}
-            style={{
-              flexBasis: '50%',
-              padding: 12,
-            }}>
-            <PlatformButton
-              onPress={() => this.handleSelectPlatform(pf.name)}
-              style={{
-                alignItems: 'center',
-              }}>
-              <Image resizeMode="contain" style={{ height: 40, width: '100%', marginBottom: 20 }} source={pf.logo} />
-              <Light>{pf.displayName}</Light>
-            </PlatformButton>
-          </View>,
-        );
-      }
-    }
-
     return (
       <>
         <PageView navigation={this.props.navigation}>
