@@ -75,7 +75,6 @@ const styleConstant = StyleSheet.create({
   },
   competenceRoundText: {
     ...TextSizeStyle.Big,
-    paddingTop: 5,
     textAlign: 'center',
   },
   competenceRoundModalStyle: {
@@ -144,7 +143,7 @@ const styleConstant = StyleSheet.create({
     ...TextSizeStyle.SlightBigPlus,
     flexGrow: 1,
     textAlign: 'right',
-    paddingTop: 8,
+    paddingTop: 4,
   },
   denseDevoirListDiviseurText: {
     paddingTop: 8,
