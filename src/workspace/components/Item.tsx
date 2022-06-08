@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { NestedText, Text, TextSizeStyle } from '~/framework/components/text';
+import { Text, TextSizeStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
@@ -11,20 +11,23 @@ import { EVENT_TYPE, IEventProps } from '~/workspace/types';
 import { renderIcon } from '~/workspace/utils/image';
 
 const style = StyleSheet.create({
-  itemListContainer: { margin: 0 },
   centerPanel: {
     alignItems: 'stretch',
     justifyContent: 'center',
   },
-  fileName: {
-    color: CommonStyles.shadowColor,
-  },
   dateContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 4,
   },
-  date: { flex: 1, alignItems: 'flex-start' },
-  author: { flex: 3, alignItems: 'flex-end' },
+  dateText: {
+    width: '50%',
+  },
+  authorText: {
+    ...TextSizeStyle.Small,
+    color: CommonStyles.lightTextColor,
+    width: '50%',
+  }
 });
 
 export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any) => {
@@ -43,32 +46,22 @@ export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any
         });
         onEvent(eventInfos);
       }}
-      style={[style.itemListContainer, { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card }]}
+      style={{ backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card }}
       borderBottomWidth={0}>
       <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>
-        <Text numberOfLines={1} style={style.fileName}>
-          {name}
-        </Text>
+        <Text numberOfLines={1}>{name}</Text>
         <View style={style.dateContainer}>
-          {!!date && (
-            <View style={style.date}>
+          {date ? (
+            <View style={style.dateText}>
               <DateView min date={date} />
             </View>
-          )}
-          {ownerName.length > 0 && (
-            <View style={style.author}>
-              <NestedText
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  ...TextSizeStyle.Small,
-                  color: CommonStyles.lightTextColor,
-                }}>
-                {longOwnerName}
-              </NestedText>
-            </View>
-          )}
+          ) : null}
+          {ownerName.length > 0 ? (
+            <Text numberOfLines={1} style={style.authorText}>
+              {longOwnerName}
+            </Text>
+          ) : null}
         </View>
       </CenterPanel>
     </ListItem>
