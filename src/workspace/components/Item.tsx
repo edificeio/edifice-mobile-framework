@@ -21,13 +21,13 @@ const style = StyleSheet.create({
     marginTop: 4,
   },
   dateText: {
-    width: '50%',
+    maxWidth: '50%',
   },
   authorText: {
     ...TextSizeStyle.Small,
     color: CommonStyles.lightTextColor,
-    width: '50%',
-  }
+    maxWidth: '50%',
+  },
 });
 
 export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any) => {

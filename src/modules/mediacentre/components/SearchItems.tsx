@@ -29,16 +29,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export interface SearchBarHandle {
+export interface ISearchBarHandle {
   blur: () => void;
   clear: () => void;
 }
 
-interface SearchBarProps {
+interface ISearchBarProps {
   onSubmitEditing: (query: string) => void;
 }
 
-interface IconButtonTextProps {
+interface IIconButtonTextProps {
   color?: string;
   icon: string;
   text: string;
@@ -46,8 +46,8 @@ interface IconButtonTextProps {
   onPress: () => void;
 }
 
-export const SearchBar: React.FunctionComponent<SearchBarProps> = forwardRef<SearchBarHandle, SearchBarProps>(
-  (props: SearchBarProps, ref) => {
+export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<ISearchBarHandle, ISearchBarProps>(
+  (props: ISearchBarProps, ref) => {
     const [value, setValue] = useState<string>('');
     const inputRef = useRef<TextInput>(null);
     const onSearch = () => {
@@ -84,7 +84,7 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = forwardRef<Sea
   },
 );
 
-export const IconButtonText: React.FunctionComponent<IconButtonTextProps> = (props: IconButtonTextProps) => (
+export const IconButtonText: React.FunctionComponent<IIconButtonTextProps> = (props: IIconButtonTextProps) => (
   <TouchableOpacity style={styles.buttonContainer} onPress={props.onPress}>
     <Icon style={styles.buttonIcon} size={16} color={props.color ? props.color : theme.palette.primary.regular} name={props.icon} />
     <Text style={{ color: theme.palette.primary.regular }}>{props.text}</Text>

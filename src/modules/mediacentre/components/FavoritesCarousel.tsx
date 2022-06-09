@@ -10,7 +10,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextBold } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { FavoriteIcon, IconButton } from '~/modules/mediacentre/components/SmallCard';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
 import { ResourceImage } from './ResourceImage';
 
@@ -41,6 +41,9 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 14,
     borderBottomRightRadius: 14,
   },
+  cardTitleText: {
+    alignSelf: 'center',
+  },
   imageContainer: {
     width: 90,
     height: 60,
@@ -53,18 +56,18 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CardProps {
+interface ICardProps {
   color: string;
-  resource: Resource;
+  resource: IResource;
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
-interface FavoritesCarouselProps {
-  resources: Resource[];
+interface IFavoritesCarouselProps {
+  resources: IResource[];
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   onDisplayAll: () => void;
   removeFavorite: (id: string, source: Source) => any;
 }
@@ -79,7 +82,7 @@ const getCardColors = (length: number): string[] => {
   return cardColors;
 };
 
-const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
+const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
   const openURL = () => {
     openUrl(props.resource.link);
   };
@@ -90,7 +93,9 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
   return (
     <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
       <View style={styles.contentContainer}>
-        <TextBold numberOfLines={1}>{props.resource.title}</TextBold>
+        <TextBold numberOfLines={1} style={styles.cardTitleText}>
+          {props.resource.title}
+        </TextBold>
         <ResourceImage image={props.resource.image} style={styles.imageContainer} resizeMode="contain" />
         <View style={styles.actionsContainer}>
           <FavoriteIcon {...props} />
@@ -101,7 +106,7 @@ const Card: React.FunctionComponent<CardProps> = (props: CardProps) => {
   );
 };
 
-export const FavoritesCarousel: React.FunctionComponent<FavoritesCarouselProps> = (props: FavoritesCarouselProps) => {
+export const FavoritesCarousel: React.FunctionComponent<IFavoritesCarouselProps> = (props: IFavoritesCarouselProps) => {
   const [cardColors, setCardColors] = useState<string[]>(getCardColors(props.resources.length));
   const { width } = UI_SIZES.screen;
   const renderFavorite = ({ index, item }) => {

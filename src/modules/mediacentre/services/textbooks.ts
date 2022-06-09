@@ -1,5 +1,5 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
 // Data type of what is given by the backend.
 
@@ -25,7 +25,7 @@ export type IResourceBackend = {
   owner_name?: string;
 }[];
 
-export function compareResources(a: Resource, b: Resource) {
+export function compareResources(a: IResource, b: IResource) {
   return a.title.localeCompare(b.title);
 }
 
@@ -34,8 +34,8 @@ export function transformArray(array: string[]) {
   return array;
 }
 
-export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => {
-  const resources = [] as Resource[];
+export const resourcesAdapter: (data: IResourceBackend) => IResource[] = data => {
+  const resources = [] as IResource[];
   if (!data || !Array.isArray(data)) {
     return [];
   }
@@ -58,7 +58,7 @@ export const resourcesAdapter: (data: IResourceBackend) => Resource[] = data => 
       structure_uai: resource.structure_uai,
       orientation: resource.orientation,
       owner_id: resource.owner_id,
-    } as Resource;
+    } as IResource;
     resources.push(res);
   }
   return resources.sort(compareResources);

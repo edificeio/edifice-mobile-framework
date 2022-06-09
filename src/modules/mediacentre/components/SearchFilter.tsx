@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
-import { Resource } from '~/modules/mediacentre/utils/Resource';
+import { IResource } from '~/modules/mediacentre/utils/Resource';
 import { Checkbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({
@@ -51,23 +51,23 @@ const styles = StyleSheet.create({
   },
 });
 
-interface FilterItemProps {
+interface IFilterItemProps {
   item: { value: string; active: boolean };
   sectionTitle: string;
 
   onChange: (title: string, item: string, active: boolean) => void;
 }
 
-interface FilterSectionProps {
+interface IFilterSectionProps {
   items: any[];
   title: string;
 
   onChange: (title: string, item: string, active: boolean) => void;
 }
 
-interface SearchFilterProps {
+interface ISearchFilterProps {
   containerStyle?: ViewStyle;
-  resources: Resource[];
+  resources: IResource[];
 
   onChange: (title: string, item: string, active: boolean) => void;
 }
@@ -76,7 +76,7 @@ const compareFilters = (a: { value: string; active: boolean }, b: { value: strin
   return a.value.toLowerCase() > b.value.toLowerCase() ? 1 : -1;
 };
 
-const getFilters = (resources: Resource[]) => {
+const getFilters = (resources: IResource[]) => {
   const types: { value: string; active: boolean }[] = [];
   const sources: { value: string; active: boolean }[] = [];
   const levels: { value: string; active: boolean }[] = [];
@@ -103,7 +103,7 @@ const getFilters = (resources: Resource[]) => {
   ];
 };
 
-const FilterItem: React.FunctionComponent<FilterItemProps> = (props: FilterItemProps) => {
+const FilterItem: React.FunctionComponent<IFilterItemProps> = (props: IFilterItemProps) => {
   const check = () => {
     props.onChange(props.sectionTitle, props.item.value, !props.item.active);
   };
@@ -117,7 +117,7 @@ const FilterItem: React.FunctionComponent<FilterItemProps> = (props: FilterItemP
   );
 };
 
-const FilterSection: React.FunctionComponent<FilterSectionProps> = (props: FilterSectionProps) => {
+const FilterSection: React.FunctionComponent<IFilterSectionProps> = (props: IFilterSectionProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const iconName = expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
   const expandSection = () => {
@@ -137,7 +137,7 @@ const FilterSection: React.FunctionComponent<FilterSectionProps> = (props: Filte
   );
 };
 
-export const SearchFilter: React.FunctionComponent<SearchFilterProps> = (props: SearchFilterProps) => {
+export const SearchFilter: React.FunctionComponent<ISearchFilterProps> = (props: ISearchFilterProps) => {
   const [filters, setFilters] = useState(getFilters(props.resources));
   const [expanded, setExpanded] = useState<boolean>(false);
   const expand = () => {

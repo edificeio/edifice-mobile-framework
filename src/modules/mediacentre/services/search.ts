@@ -1,5 +1,5 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { Field, Sources } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { IField, ISources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
 const concatResources = (response: any) => {
@@ -12,7 +12,7 @@ const concatResources = (response: any) => {
   return resources;
 };
 
-const addFieldWhenFilled = (field: Field) => {
+const addFieldWhenFilled = (field: IField) => {
   return { value: field.value, comparator: field.operand ? '$and' : '$or' };
 };
 
@@ -37,7 +37,7 @@ export const searchService = {
     });
     return resourcesAdapter(concatResources(response));
   },
-  getAdvanced: async (fields: Field[], checkedSources: Sources) => {
+  getAdvanced: async (fields: IField[], checkedSources: ISources) => {
     const sources: string[] = [];
     const jsondata = {
       event: 'search',

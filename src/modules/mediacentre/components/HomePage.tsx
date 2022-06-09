@@ -1,37 +1,19 @@
 import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
-import GridList from '~/framework/components/GridList';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { Text, TextBold } from '~/framework/components/text';
-import { ISignetsState } from '~/modules/mediacentre/state/signets';
-import { IResourcesState, Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { ISignets } from '~/modules/mediacentre/state/signets';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
-import { AdvancedSearchModal, Field, SearchModalHandle, Sources } from './AdvancedSearchModal';
+import { AdvancedSearchModal, IField, ISearchModalHandle, ISources } from './AdvancedSearchModal';
 import { FavoritesCarousel } from './FavoritesCarousel';
+import { ResourceGrid } from './ResourceGrid';
 import { SearchContent } from './SearchContent';
-import { IconButtonText, SearchBar, SearchBarHandle } from './SearchItems';
-import { SmallCard } from './SmallCard';
+import { ISearchBarHandle, IconButtonText, SearchBar } from './SearchItems';
 
 const styles = StyleSheet.create({
-  gridMainContainer: {
-    marginBottom: 25,
-  },
-  gridHeaderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 10,
-  },
-  gridTitleText: {
-    flexShrink: 1,
-  },
-  gridDisplayAllText: {
-    color: theme.palette.primary.regular,
-    textDecorationLine: 'underline',
-  },
   mainContainer: {
     flex: 1,
   },
@@ -50,46 +32,40 @@ export enum SearchState {
   ADVANCED = 2,
 }
 
-interface ResourcesGridProps {
-  resources: Resource[];
-  title: string;
-
-  addFavorite: (id: string, resource: Resource) => any;
-  removeFavorite: (id: string, source: Source) => any;
-}
-
-interface HomePageProps {
-  externals: IResourcesState;
-  favorites: IResourcesState;
+interface IHomePageProps {
+  externals: IResource[];
+  favorites: IResource[];
+  isFetchingSearch: boolean;
+  isFetchingSections: boolean;
   navigation: any;
-  search: IResourcesState;
-  signets: ISignetsState;
+  search: IResource[];
+  signets: ISignets;
   sources: string[];
-  textbooks: IResourcesState;
+  textbooks: IResource[];
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   removeFavorite: (id: string, source: Source) => any;
   searchResources: (sources: string[], query: string) => any;
-  searchResourcesAdvanced: (fields: Field[], sources: Sources) => any;
+  searchResourcesAdvanced: (fields: IField[], sources: ISources) => any;
 }
 
-export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePageProps) => {
-  const searchBarRef = useRef<SearchBarHandle>(null);
-  const searchModalRef = useRef<SearchModalHandle>(null);
-  const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
+export const HomePage: React.FunctionComponent<IHomePageProps> = (props: IHomePageProps) => {
+  const searchBarRef = useRef<ISearchBarHandle>(null);
+  const searchModalRef = useRef<ISearchModalHandle>(null);
+  const [searchedResources, setSearchedResources] = useState<IResource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
-  const [searchFields, setSearchFields] = useState<Field[]>([]);
+  const [searchFields, setSearchFields] = useState<IField[]>([]);
   const sections = [
-    { title: 'mediacentre.external-resources', resources: props.externals.data },
-    { title: 'mediacentre.my-textbooks', resources: props.textbooks.data },
-    { title: 'mediacentre.my-signets', resources: props.signets.data.sharedSignets },
-    { title: 'mediacentre.orientation-signets', resources: props.signets.data.orientationSignets },
+    { title: 'mediacentre.external-resources', resources: props.externals },
+    { title: 'mediacentre.my-textbooks', resources: props.textbooks },
+    { title: 'mediacentre.my-signets', resources: props.signets.sharedSignets },
+    { title: 'mediacentre.orientation-signets', resources: props.signets.orientationSignets },
   ].filter(section => section.resources.length > 0);
 
   useEffect(() => {
-    setSearchedResources(props.search.data);
-  }, [props.search.data]);
+    setSearchedResources(props.search);
+  }, [props.search]);
 
   function onSearch(query: string) {
     props.searchResources(props.sources, query);
@@ -108,7 +84,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
   }
 
   function showFavorites() {
-    setSearchedResources(props.favorites.data);
+    setSearchedResources(props.favorites);
     setSearchState(SearchState.SIMPLE);
   }
 
@@ -123,39 +99,17 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
     setSearchModalVisible(false);
   }
 
-  function onAdvancedSearch(fields: Field[], sources: Sources) {
+  function onAdvancedSearch(fields: IField[], sources: ISources) {
     props.searchResourcesAdvanced(fields, sources);
     setSearchModalVisible(false);
     setSearchState(SearchState.ADVANCED);
     setSearchFields(fields);
   }
 
-  const ResourcesGrid: React.FunctionComponent<ResourcesGridProps> = (gridProps: ResourcesGridProps) => {
-    const maxSize = sections.length > 1 ? 4 : 8;
-    const showResources = () => {
-      setSearchedResources(gridProps.resources);
-      setSearchState(SearchState.SIMPLE);
-    };
-    return (
-      <View style={styles.gridMainContainer}>
-        <View style={styles.gridHeaderContainer}>
-          <TextBold style={styles.gridTitleText}>{gridProps.title.toLocaleUpperCase()}</TextBold>
-          {gridProps.resources.length > maxSize ? (
-            <TouchableOpacity onPress={showResources}>
-              <Text style={styles.gridDisplayAllText}>{I18n.t('mediacentre.display-all')}</Text>
-            </TouchableOpacity>
-          ) : null}
-        </View>
-        <GridList
-          data={gridProps.resources.slice(0, maxSize)}
-          renderItem={({ item }) => <SmallCard {...gridProps} resource={item} />}
-          keyExtractor={item => item.uid || item.id}
-          gap={10}
-          gapOutside={10}
-        />
-      </View>
-    );
-  };
+  function showResources(resources: IResource[]) {
+    setSearchedResources(resources);
+    setSearchState(SearchState.SIMPLE);
+  }
 
   return (
     <View style={styles.mainContainer}>
@@ -169,21 +123,29 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props: HomePage
           resources={searchedResources}
           searchState={searchState}
           fields={searchFields}
-          isFetching={props.search.isFetching}
+          isFetching={props.isFetchingSearch}
           onCancelSearch={onCancelSearch}
         />
       ) : (
         <FlatList
           data={sections}
-          renderItem={({ item }) => <ResourcesGrid {...props} title={I18n.t(item.title)} resources={item.resources} />}
+          renderItem={({ item }) => (
+            <ResourceGrid
+              {...props}
+              title={I18n.t(item.title)}
+              resources={item.resources}
+              onShowAll={showResources}
+              size={sections.length > 1 ? 4 : 8}
+            />
+          )}
           keyExtractor={item => item.title}
           ListHeaderComponent={
-            props.favorites.data.length > 0 ? (
-              <FavoritesCarousel {...props} resources={props.favorites.data} onDisplayAll={showFavorites} />
+            props.favorites.length > 0 ? (
+              <FavoritesCarousel {...props} resources={props.favorites} onDisplayAll={showFavorites} />
             ) : null
           }
           ListEmptyComponent={
-            props.externals.isFetching ? (
+            props.isFetchingSections ? (
               <LoadingIndicator customStyle={styles.loadingIndicator} />
             ) : (
               <EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />

@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { Field, Sources } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { IField, ISources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { searchService } from '~/modules/mediacentre/services/search';
 import { signetsService } from '~/modules/mediacentre/services/signets';
 import { compareResources } from '~/modules/mediacentre/services/textbooks';
@@ -35,7 +35,7 @@ export function searchResourcesAction(sources: string[], query: string) {
   };
 }
 
-export function searchResourcesAdvancedAction(fields: Field[], sources: Sources) {
+export function searchResourcesAdvancedAction(fields: IField[], sources: ISources) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());

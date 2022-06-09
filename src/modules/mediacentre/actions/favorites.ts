@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { favoritesService } from '~/modules/mediacentre/services/favorites';
 import { IFavorites, actionTypes } from '~/modules/mediacentre/state/favorites';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ export function fetchFavoritesAction() {
   };
 }
 
-export function addFavoriteAction(resourceId: string, resource: Resource) {
+export function addFavoriteAction(resourceId: string, resource: IResource) {
   return async (dispatch: Dispatch) => {
     try {
       await favoritesService.post(resourceId, resource);

@@ -1,11 +1,11 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import HomeContainer from './containers/HomeContainer';
+import HomeScreen from './screens/HomeScreen';
 
 export default () =>
   createStackNavigator(
     {
-      Mediacentre: HomeContainer,
+      Mediacentre: HomeScreen,
     },
     {
       headerMode: 'none',

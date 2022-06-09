@@ -7,7 +7,7 @@ export enum Source {
   SIGNET = 'fr.openent.mediacentre.source.Signet',
 }
 
-export interface Resource {
+export interface IResource {
   id: string;
   uid?: string;
   title: string;
@@ -27,4 +27,4 @@ export interface Resource {
   owner_id?: string;
 }
 
-export type IResourcesState = AsyncState<Resource[]>;
+export type IResourcesState = AsyncState<IResource[]>;

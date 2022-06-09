@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import Toast from 'react-native-tiny-toast';
-import { withNavigationFocus } from 'react-navigation';
+import { NavigationInjectedProps, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -16,52 +16,51 @@ import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~
 import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
 import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
 import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
-import { Field, Sources } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { IField, ISources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { HomePage } from '~/modules/mediacentre/components/HomePage';
-import { IExternalsState, getExternalsState } from '~/modules/mediacentre/state/externals';
-import { IFavoritesState, getFavoritesState } from '~/modules/mediacentre/state/favorites';
-import { ISearchState, getSearchState } from '~/modules/mediacentre/state/search';
-import { ISignetsState, getSignetsState } from '~/modules/mediacentre/state/signets';
-import { ITextbooksState, getTextbooksState } from '~/modules/mediacentre/state/textbooks';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IExternals, getExternalsState } from '~/modules/mediacentre/state/externals';
+import { IFavorites, getFavoritesState } from '~/modules/mediacentre/state/favorites';
+import { ISearch, getSearchState } from '~/modules/mediacentre/state/search';
+import { ISignets, getSignetsState } from '~/modules/mediacentre/state/signets';
+import { ITextbooks, getTextbooksState } from '~/modules/mediacentre/state/textbooks';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 
-type IHomePageProps = {
-  externals: IExternalsState;
-  favorites: IFavoritesState;
+type IHomeScreenProps = {
+  externals: IExternals;
+  favorites: IFavorites;
+  isFetchingSearch: boolean;
+  isFetchingSections: boolean;
   navigation: { navigate };
-  search: ISearchState;
-  signets: ISignetsState;
-  textbooks: ITextbooksState;
+  search: ISearch;
+  signets: ISignets;
+  textbooks: ITextbooks;
   userId: string;
 
-  postAddFavorite: (id: string, resource: Resource) => any;
+  postAddFavorite: (id: string, resource: IResource) => any;
   fetchExternals: (sources: string[]) => any;
   fetchFavorites: () => any;
   fetchSignets: (userId: string) => any;
   fetchTextbooks: () => any;
   postRemoveFavorite: (id: string, source: Source) => any;
   searchResources: (sources: string[], query: string) => any;
-  searchResourcesAdvanced: (fields: Field[], sources: Sources) => any;
-};
+  searchResourcesAdvanced: (fields: IField[], sources: ISources) => any;
+} & NavigationInjectedProps;
 
-type IHomePageState = {
+interface IHomeScreenState {
   isFetchingSources: boolean;
   sources: string[];
-};
+}
 
-export class HomeContainer extends React.PureComponent<IHomePageProps, IHomePageState> {
-  constructor(props: IHomePageProps) {
+export class HomeScreen extends React.PureComponent<IHomeScreenProps, IHomeScreenState> {
+  constructor(props: IHomeScreenProps) {
     super(props);
     this.state = {
       isFetchingSources: true,
       sources: [],
     };
     this.fetchSources();
-  }
-
-  componentDidMount() {
     this.props.fetchFavorites();
     this.props.fetchTextbooks();
     this.props.fetchSignets(this.props.userId);
@@ -91,7 +90,7 @@ export class HomeContainer extends React.PureComponent<IHomePageProps, IHomePage
     this.props.fetchExternals(sources);
   };
 
-  addFavorite = async (resourceId: string, resource: Resource) => {
+  addFavorite = async (resourceId: string, resource: IResource) => {
     try {
       await this.props.postAddFavorite(resourceId, resource);
       Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
@@ -126,13 +125,18 @@ export class HomeContainer extends React.PureComponent<IHomePageProps, IHomePage
 
   public render() {
     return (
-      <PageView navigation={this.props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.mediacentre') }}>
+      <PageView navigation={this.props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.tabName') }}>
         <PageContainer>
           <ConnectionTrackingBar />
           {!this.state.sources.length ? (
             this.renderEmptyState()
           ) : (
-            <HomePage {...this.props} {...this.state} addFavorite={this.addFavorite} removeFavorite={this.removeFavorite} />
+            <HomePage
+              {...this.props}
+              sources={this.state.sources}
+              addFavorite={this.addFavorite}
+              removeFavorite={this.removeFavorite}
+            />
           )}
         </PageContainer>
       </PageView>
@@ -140,7 +144,7 @@ export class HomeContainer extends React.PureComponent<IHomePageProps, IHomePage
   }
 }
 
-const setFavorites = (resources: Resource[], favorites: string[]) => {
+const setFavorites = (resources: IResource[], favorites: string[]) => {
   for (const resource of resources) {
     resource.favorite = favorites.includes(String(resource.id));
   }
@@ -162,11 +166,14 @@ const mapStateToProps: (state: any) => any = state => {
   setFavorites(textbooks.data, favIds);
 
   return {
-    externals,
-    favorites,
-    search,
-    signets,
-    textbooks,
+    externals: externals.data,
+    favorites: favorites.data,
+    isFetchingSearch: search.isFetching,
+    isFetchingSections:
+      externals.isFetching || favorites.isFetching || search.isFetching || signets.isFetching || textbooks.isFetching,
+    search: search.data,
+    signets: signets.data,
+    textbooks: textbooks.data,
     userId,
   };
 };
@@ -187,4 +194,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default withViewTracking('mediacentre')(connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(HomeContainer)));
+export default withViewTracking('mediacentre')(connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(HomeScreen)));
