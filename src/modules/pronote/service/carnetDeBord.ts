@@ -10,8 +10,6 @@ import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 import {
   ICarnetDeBord,
-  ICarnetDeBordCahierDeTextes,
-  ICarnetDeBordCahierDeTextesContenuDeCours,
   ICarnetDeBordCahierDeTextesTravailAFaire,
   ICarnetDeBordCompetencesDomaine,
   ICarnetDeBordCompetencesEvaluation,
@@ -24,6 +22,7 @@ import {
   ICarnetDeBordVieScolaireRetard,
   ICarnetDeBordVieScolaireSanction,
   IPronoteConnectorInfo,
+  sortCarnetDeBordItems,
 } from '../model/carnetDeBord';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
@@ -32,8 +31,10 @@ export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
 
 const parseCompetencesItem = (itemTag, item) => {
   if (itemTag.hasOwnProperty('Date')) {
-    (item as ICarnetDeBordCompetencesItem).DateString = itemTag.Date[0]?.['#text'];
-    (item as ICarnetDeBordCompetencesItem).Date = moment(itemTag.Date[0]?.['#text']);
+    (item as ICarnetDeBordCompetencesItem).DateString = itemTag.Date[0]?.['#text'].toString();
+    (item as ICarnetDeBordCompetencesItem).Date = (item as ICarnetDeBordCompetencesItem).DateString
+      ? moment(itemTag.Date[0]?.['#text'].toString())
+      : undefined;
   } else if (itemTag.hasOwnProperty('Competence')) {
     (item as ICarnetDeBordCompetencesItem).Competence = itemTag.Competence[0]?.['#text'];
   } else if (itemTag.hasOwnProperty('Intitule')) {
@@ -59,6 +60,7 @@ const parseCompetencesItem = (itemTag, item) => {
 };
 
 function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): ICarnetDeBord {
+  const now = moment();
   const ret = {
     structureId: connector.structureId,
     address: connector.address,
@@ -68,259 +70,264 @@ function carnetDeBordAdapterEleve(data: any, connector: IPronoteConnectorInfo): 
     // CahierDeTextes
 
     if (tag.hasOwnProperty('PageCahierDeTextes')) {
-      const PageCahierDeTextes = {};
+      const PageCahierDeTextes: Partial<ICarnetDeBord['PageCahierDeTextes']> = {};
+      if (!PageCahierDeTextes?.TravailAFairePast) PageCahierDeTextes.TravailAFairePast = [];
+      if (!PageCahierDeTextes?.TravailAFaireFuture) PageCahierDeTextes.TravailAFaireFuture = [];
       for (const cdtTag of tag.PageCahierDeTextes) {
-        if (!(PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes'])?.CahierDeTextes)
-          (PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes']).CahierDeTextes = [];
         if (cdtTag.hasOwnProperty('Titre')) {
-          (PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes']).Titre = cdtTag.Titre[0]?.['#text'];
+          PageCahierDeTextes.Titre = cdtTag.Titre[0]?.['#text'];
         } else if (cdtTag.hasOwnProperty('CahierDeTextes')) {
-          const cdt = {};
+          let matiere: ICarnetDeBordCahierDeTextesTravailAFaire['Matiere'];
           for (const cdtItemTag of cdtTag.CahierDeTextes) {
-            if (cdtItemTag.hasOwnProperty('Date')) {
-              (cdt as ICarnetDeBordCahierDeTextes).DateString = cdtItemTag.Date[0]?.['#text'];
-              (cdt as ICarnetDeBordCahierDeTextes).Date = moment(cdtItemTag.Date[0]?.['#text']);
-            } else if (cdtItemTag.hasOwnProperty('Matiere')) {
-              (cdt as ICarnetDeBordCahierDeTextes).Matiere = cdtItemTag.Matiere[0]?.['#text'];
-            } else if (cdtItemTag.hasOwnProperty('ContenuDeCours')) {
-              const cdc = {};
-              if (!(cdt as ICarnetDeBordCahierDeTextes).ContenuDeCours) {
-                (cdt as ICarnetDeBordCahierDeTextes).ContenuDeCours = [];
-              }
-              for (const cdctag of cdtItemTag.ContenuDeCours) {
-                if (cdctag.hasOwnProperty('Titre')) {
-                  (cdc as ICarnetDeBordCahierDeTextesContenuDeCours).Titre = cdctag.Titre[0]?.['#text'];
-                } else if (cdctag.hasOwnProperty('Categorie')) {
-                  (cdc as ICarnetDeBordCahierDeTextesContenuDeCours).Categorie = cdctag.Categorie[0]?.['#text'];
-                } else if (cdctag.hasOwnProperty('Descriptif')) {
-                  (cdc as ICarnetDeBordCahierDeTextesContenuDeCours).Descriptif = cdctag.Descriptif[0]?.['#text'];
-                } else if (cdctag.hasOwnProperty('PieceJointe')) {
-                  if (!(cdc as ICarnetDeBordCahierDeTextesContenuDeCours).PieceJointe) {
-                    (cdc as ICarnetDeBordCahierDeTextesContenuDeCours).PieceJointe = [];
-                  }
-                  (cdc as ICarnetDeBordCahierDeTextesContenuDeCours).PieceJointe?.push(cdctag.PieceJointe[0]?.['#text']);
-                } else if (cdctag.hasOwnProperty('SiteInternet')) {
-                  if (!(cdc as ICarnetDeBordCahierDeTextesContenuDeCours).SiteInternet) {
-                    (cdc as ICarnetDeBordCahierDeTextesContenuDeCours).SiteInternet = [];
-                  }
-                  (cdc as ICarnetDeBordCahierDeTextesContenuDeCours).SiteInternet?.push(cdctag.SiteInternet[0]?.['#text']);
-                }
-              }
-              (cdt as ICarnetDeBordCahierDeTextes).ContenuDeCours?.push(cdc as ICarnetDeBordCahierDeTextesContenuDeCours);
+            if (cdtItemTag.hasOwnProperty('Matiere')) {
+              matiere = cdtItemTag.Matiere[0]?.['#text'];
             } else if (cdtItemTag.hasOwnProperty('TravailAFaire')) {
-              const taf = {};
-              if (!(cdt as ICarnetDeBordCahierDeTextes).TravailAFaire) {
-                (cdt as ICarnetDeBordCahierDeTextes).TravailAFaire = [];
-              }
+              const taf: Partial<ICarnetDeBordCahierDeTextesTravailAFaire> = {};
               for (const taftag of cdtItemTag.TravailAFaire) {
                 if (taftag.hasOwnProperty('PourLe')) {
-                  (taf as ICarnetDeBordCahierDeTextesTravailAFaire).PourLeString = taftag.PourLe[0]?.['#text'];
-                  (taf as ICarnetDeBordCahierDeTextesTravailAFaire).PourLe = moment(taftag.PourLe[0]?.['#text']);
+                  taf.PourLeString = taftag.PourLe[0]?.['#text'].toString();
+                  taf.PourLe = taf.PourLeString ? moment(taftag.PourLe[0]?.['#text'].toString()) : undefined;
                 } else if (taftag.hasOwnProperty('Descriptif')) {
-                  (taf as ICarnetDeBordCahierDeTextesTravailAFaire).Descriptif = taftag.Descriptif[0]?.['#text'];
+                  taf.Descriptif = taftag.Descriptif[0]?.['#text'];
                 } else if (taftag.hasOwnProperty('PieceJointe')) {
-                  if (!(taf as ICarnetDeBordCahierDeTextesTravailAFaire).PieceJointe) {
-                    (taf as ICarnetDeBordCahierDeTextesTravailAFaire).PieceJointe = [];
+                  if (!taf.PieceJointe) {
+                    taf.PieceJointe = [];
                   }
-                  (taf as ICarnetDeBordCahierDeTextesTravailAFaire).PieceJointe?.push(taftag.PieceJointe[0]?.['#text']);
+                  taf.PieceJointe?.push(taftag.PieceJointe[0]?.['#text']);
                 } else if (taftag.hasOwnProperty('SiteInternet')) {
-                  if (!(taf as ICarnetDeBordCahierDeTextesTravailAFaire).SiteInternet) {
-                    (taf as ICarnetDeBordCahierDeTextesTravailAFaire).SiteInternet = [];
+                  if (!taf.SiteInternet) {
+                    taf.SiteInternet = [];
                   }
-                  (taf as ICarnetDeBordCahierDeTextesTravailAFaire).SiteInternet?.push(taftag.SiteInternet[0]?.['#text']);
+                  taf.SiteInternet?.push(taftag.SiteInternet[0]?.['#text']);
                 }
+                taf.Matiere = matiere;
               }
-              (cdt as ICarnetDeBordCahierDeTextes).TravailAFaire?.push(taf as ICarnetDeBordCahierDeTextesTravailAFaire);
+              if (taf.PourLe && taf.PourLe.diff(now) < 0) {
+                PageCahierDeTextes.TravailAFairePast.push(taf);
+              } else {
+                PageCahierDeTextes.TravailAFaireFuture.push(taf);
+              }
             }
           }
-          (PageCahierDeTextes as Required<ICarnetDeBord>['PageCahierDeTextes']).CahierDeTextes?.push(
-            cdt as ICarnetDeBordCahierDeTextes,
-          );
         }
       }
+
+      PageCahierDeTextes!.TravailAFairePast = sortCarnetDeBordItems(PageCahierDeTextes!.TravailAFairePast!);
+      PageCahierDeTextes!.TravailAFaireFuture = sortCarnetDeBordItems(PageCahierDeTextes!.TravailAFaireFuture!);
+
       (ret as ICarnetDeBord).PageCahierDeTextes = PageCahierDeTextes as ICarnetDeBord['PageCahierDeTextes'];
     }
 
     // Competences
     else if (tag.hasOwnProperty('PageCompetences')) {
-      const PageCompetences = {};
+      const PageCompetences: Partial<ICarnetDeBord['PageCompetences']> = {};
+      if (!PageCompetences.CompetencesPast) PageCompetences.CompetencesPast = [];
+      if (!PageCompetences.CompetencesFuture) PageCompetences.CompetencesFuture = [];
       for (const pageTag of tag.PageCompetences) {
-        if (!(PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences)
-          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences = [];
         if (pageTag.hasOwnProperty('Titre')) {
-          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Titre = pageTag.Titre[0]?.['#text'];
+          PageCompetences.Titre = pageTag.Titre[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Item')) {
-          const item = { type: 'Item' };
+          const item: Partial<ICarnetDeBordCompetencesItem> = { type: 'Item' };
           for (const itemTag of pageTag.Item) {
             parseCompetencesItem(itemTag, item);
           }
-          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences?.push(item as ICarnetDeBordCompetencesItem);
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageCompetences.CompetencesPast?.push(item as ICarnetDeBordCompetencesItem);
+          } else {
+            PageCompetences.CompetencesFuture?.push(item as ICarnetDeBordCompetencesItem);
+          }
         } else if (pageTag.hasOwnProperty('Domaine')) {
-          const item = { type: 'Domaine' };
+          const item: Partial<ICarnetDeBordCompetencesDomaine> = { type: 'Domaine' };
           for (const itemTag of pageTag.Domaine) {
             parseCompetencesItem(itemTag, item);
           }
-          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences?.push(
-            item as ICarnetDeBordCompetencesDomaine,
-          );
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageCompetences.CompetencesPast?.push(item as ICarnetDeBordCompetencesDomaine);
+          } else {
+            PageCompetences.CompetencesFuture?.push(item as ICarnetDeBordCompetencesDomaine);
+          }
         } else if (pageTag.hasOwnProperty('Evaluation')) {
-          const item = { type: 'Evaluation' };
+          const item: Partial<ICarnetDeBordCompetencesEvaluation> = { type: 'Evaluation' };
           for (const itemTag of pageTag.Evaluation) {
             parseCompetencesItem(itemTag, item);
             if (itemTag.hasOwnProperty('Item')) {
-              (item as ICarnetDeBordCompetencesEvaluation).Item = itemTag.Item[0]?.['#text'];
+              item.Item = itemTag.Item[0]?.['#text'];
             }
           }
-          (PageCompetences as Required<ICarnetDeBord>['PageCompetences']).Competences?.push(
-            item as ICarnetDeBordCompetencesEvaluation,
-          );
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageCompetences.CompetencesPast?.push(item as ICarnetDeBordCompetencesEvaluation);
+          } else {
+            PageCompetences.CompetencesFuture?.push(item as ICarnetDeBordCompetencesEvaluation);
+          }
         }
 
+        PageCompetences!.CompetencesPast = sortCarnetDeBordItems(PageCompetences!.CompetencesPast!);
+        PageCompetences!.CompetencesFuture = sortCarnetDeBordItems(PageCompetences!.CompetencesFuture!);
         (ret as ICarnetDeBord).PageCompetences = PageCompetences as ICarnetDeBord['PageCompetences'];
       }
     }
 
     // ReleveDeNotes
     else if (tag.hasOwnProperty('PageReleveDeNotes')) {
-      const PageReleveDeNotes = {};
+      const PageReleveDeNotes: Partial<ICarnetDeBord['PageReleveDeNotes']> = {};
+      if (!PageReleveDeNotes.DevoirsPast) PageReleveDeNotes.DevoirsPast = [];
+      if (!PageReleveDeNotes.DevoirsFuture) PageReleveDeNotes.DevoirsFuture = [];
       for (const pageTag of tag.PageReleveDeNotes) {
         if (pageTag.hasOwnProperty('Titre')) {
-          (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Titre = pageTag.Titre[0]?.['#text'];
+          PageReleveDeNotes.Titre = pageTag.Titre[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Message')) {
-          (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Message = pageTag.Message[0]?.['#text'];
+          PageReleveDeNotes.Message = pageTag.Message[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Devoir')) {
-          if (!(PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Devoir)
-            (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Devoir = [];
-          const devoir = {};
+          const devoir: Partial<ICarnetDeBordReleveDeNotesDevoir> = {};
           for (const dTag of pageTag.Devoir) {
             if (dTag.hasOwnProperty('Note')) {
-              (devoir as ICarnetDeBordReleveDeNotesDevoir).Note = dTag.Note[0]?.['#text'];
+              devoir.Note = dTag.Note[0]?.['#text'];
             } else if (dTag.hasOwnProperty('Bareme')) {
-              (devoir as ICarnetDeBordReleveDeNotesDevoir).Bareme = dTag.Bareme[0]?.['#text'];
+              devoir.Bareme = dTag.Bareme[0]?.['#text'];
             } else if (dTag.hasOwnProperty('Matiere')) {
-              (devoir as ICarnetDeBordReleveDeNotesDevoir).Matiere = dTag.Matiere[0]?.['#text'];
+              devoir.Matiere = dTag.Matiere[0]?.['#text'];
             } else if (dTag.hasOwnProperty('Date')) {
-              (devoir as ICarnetDeBordReleveDeNotesDevoir).DateString = dTag.Date[0]?.['#text'];
-              (devoir as ICarnetDeBordReleveDeNotesDevoir).Date = moment(dTag.Date[0]?.['#text']);
+              devoir.DateString = dTag.Date[0]?.['#text'].toString();
+              devoir.Date = devoir.DateString ? moment(dTag.Date[0]?.['#text'].toString()) : undefined;
             }
           }
-          (PageReleveDeNotes as Required<ICarnetDeBord>['PageReleveDeNotes']).Devoir?.push(
-            devoir as ICarnetDeBordReleveDeNotesDevoir,
-          );
+          if (devoir.Date && devoir.Date.diff(now) < 0) {
+            PageReleveDeNotes.DevoirsPast?.push(devoir as ICarnetDeBordReleveDeNotesDevoir);
+          } else {
+            PageReleveDeNotes.DevoirsFuture?.push(devoir as ICarnetDeBordReleveDeNotesDevoir);
+          }
         }
       }
+      PageReleveDeNotes!.DevoirsPast = sortCarnetDeBordItems(PageReleveDeNotes!.DevoirsPast!);
+      PageReleveDeNotes!.DevoirsFuture = sortCarnetDeBordItems(PageReleveDeNotes!.DevoirsFuture!);
       (ret as ICarnetDeBord).PageReleveDeNotes = PageReleveDeNotes as ICarnetDeBord['PageReleveDeNotes'];
     }
 
     // VieScolaire
     else if (tag.hasOwnProperty('PageVieScolaire')) {
-      const PageVieScolaire = {};
-      if (!(PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire)
-        (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire = [];
+      const PageVieScolaire: Partial<ICarnetDeBord['PageVieScolaire']> = {};
+      if (!PageVieScolaire.VieScolairePast) PageVieScolaire.VieScolairePast = [];
+      if (!PageVieScolaire.VieScolaireFuture) PageVieScolaire.VieScolaireFuture = [];
       for (const pageTag of tag.PageVieScolaire) {
         if (pageTag.hasOwnProperty('Titre')) {
-          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).Titre = pageTag.Titre[0]?.['#text'];
+          PageVieScolaire.Titre = pageTag.Titre[0]?.['#text'];
         } else if (pageTag.hasOwnProperty('Absence')) {
-          const item = { type: 'Absence' };
+          const item: Partial<ICarnetDeBordVieScolaireAbsence> = { type: 'Absence' };
           for (const iTag of pageTag.Absence) {
             if (iTag.hasOwnProperty('DateDebut')) {
-              (item as ICarnetDeBordVieScolaireAbsence).DateDebutString = iTag.DateDebut[0]?.['#text'];
-              (item as ICarnetDeBordVieScolaireAbsence).DateDebut = moment(iTag.DateDebut[0]?.['#text']);
+              item.DateDebutString = iTag.DateDebut[0]?.['#text'].toString();
+              item.DateDebut = item.DateDebutString ? moment(iTag.DateDebut[0]?.['#text'].toString()) : undefined;
             } else if (iTag.hasOwnProperty('DateFin')) {
-              (item as ICarnetDeBordVieScolaireAbsence).DateFinString = iTag.DateFin[0]?.['#text'];
-              (item as ICarnetDeBordVieScolaireAbsence).DateFin = moment(iTag.DateFin[0]?.['#text']);
+              item.DateFinString = iTag.DateFin[0]?.['#text'].toString();
+              item.DateFin = item.DateFinString ? moment(iTag.DateFin[0]?.['#text'].toString()) : undefined;
             } else if (iTag.hasOwnProperty('EstOuverte')) {
-              (item as ICarnetDeBordVieScolaireAbsence).EstOuverte = iTag.EstOuverte[0]?.['#text'];
+              item.EstOuverte = iTag.EstOuverte[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Justifie')) {
-              (item as ICarnetDeBordVieScolaireAbsence).Justifie = iTag.Justifie[0]?.['#text'];
+              item.Justifie = iTag.Justifie[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Motif')) {
-              (item as ICarnetDeBordVieScolaireAbsence).Motif = iTag.Motif[0]?.['#text'];
+              item.Motif = iTag.Motif[0]?.['#text'];
             }
           }
-          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
-            item as ICarnetDeBordVieScolaireAbsence,
-          );
+          if (item.DateDebut && item.DateDebut.diff(now) < 0) {
+            PageVieScolaire.VieScolairePast?.push(item as ICarnetDeBordVieScolaireAbsence);
+          } else {
+            PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolaireAbsence);
+          }
         } else if (pageTag.hasOwnProperty('Retard')) {
-          const item = { type: 'Retard' };
+          const item: Partial<ICarnetDeBordVieScolaireRetard> = { type: 'Retard' };
           for (const iTag of pageTag.Retard) {
             if (iTag.hasOwnProperty('Date')) {
-              (item as ICarnetDeBordVieScolaireRetard).DateString = iTag.Date[0]?.['#text'];
-              (item as ICarnetDeBordVieScolaireRetard).Date = moment(iTag.Date[0]?.['#text']);
+              item.DateString = iTag.Date[0]?.['#text'].toString();
+              item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
             } else if (iTag.hasOwnProperty('Justifie')) {
-              (item as ICarnetDeBordVieScolaireRetard).Justifie = iTag.Justifie[0]?.['#text'];
+              item.Justifie = iTag.Justifie[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Motif')) {
-              (item as ICarnetDeBordVieScolaireRetard).Motif = iTag.Motif[0]?.['#text'];
+              item.Motif = iTag.Motif[0]?.['#text'];
             }
           }
-          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(item as ICarnetDeBordVieScolaireRetard);
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageVieScolaire.VieScolairePast?.push(item as ICarnetDeBordVieScolaireRetard);
+          } else {
+            PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolaireRetard);
+          }
         } else if (pageTag.hasOwnProperty('PassageInfirmerie')) {
-          const item = { type: 'PassageInfirmerie' };
+          const item: Partial<ICarnetDeBordVieScolairePassageInfirmerie> = { type: 'PassageInfirmerie' };
           for (const iTag of pageTag.PassageInfirmerie) {
             if (iTag.hasOwnProperty('Date')) {
-              (item as ICarnetDeBordVieScolairePassageInfirmerie).DateString = iTag.Date[0]?.['#text'];
-              (item as ICarnetDeBordVieScolairePassageInfirmerie).Date = moment(iTag.Date[0]?.['#text']);
+              item.DateString = iTag.Date[0]?.['#text'].toString();
+              item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
             }
           }
-          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
-            item as ICarnetDeBordVieScolairePassageInfirmerie,
-          );
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageVieScolaire.VieScolairePast?.push(item as ICarnetDeBordVieScolairePassageInfirmerie);
+          } else {
+            PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolairePassageInfirmerie);
+          }
         } else if (pageTag.hasOwnProperty('Punition')) {
-          const item = { type: 'Punition' };
+          const item: Partial<ICarnetDeBordVieScolairePunition> = { type: 'Punition' };
           for (const iTag of pageTag.Punition) {
             if (iTag.hasOwnProperty('Date')) {
-              (item as ICarnetDeBordVieScolairePunition).DateString = iTag.Date[0]?.['#text'];
-              (item as ICarnetDeBordVieScolairePunition).Date = moment(iTag.Date[0]?.['#text']);
+              item.DateString = iTag.Date[0]?.['#text'].toString();
+              item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
             } else if (iTag.hasOwnProperty('Nature')) {
-              (item as ICarnetDeBordVieScolairePunition).Nature = iTag.Nature[0]?.['#text'];
+              item.Nature = iTag.Nature[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Matiere')) {
-              (item as ICarnetDeBordVieScolairePunition).Matiere = iTag.Matiere[0]?.['#text'];
+              item.Matiere = iTag.Matiere[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Motif')) {
-              (item as ICarnetDeBordVieScolairePunition).Motif = iTag.Motif[0]?.['#text'];
+              item.Motif = iTag.Motif[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Circonstances')) {
-              (item as ICarnetDeBordVieScolairePunition).Circonstances = iTag.Circonstances[0]?.['#text'];
+              item.Circonstances = iTag.Circonstances[0]?.['#text'];
             }
           }
-          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
-            item as ICarnetDeBordVieScolairePunition,
-          );
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageVieScolaire.VieScolairePast?.push(item as ICarnetDeBordVieScolairePunition);
+          } else {
+            PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolairePunition);
+          }
         } else if (pageTag.hasOwnProperty('Sanction')) {
-          const item = { type: 'Sanction' };
+          const item: Partial<ICarnetDeBordVieScolaireSanction> = { type: 'Sanction' };
           for (const iTag of pageTag.Sanction) {
             if (iTag.hasOwnProperty('Date')) {
-              (item as ICarnetDeBordVieScolaireSanction).DateString = iTag.Date[0]?.['#text'];
-              (item as ICarnetDeBordVieScolaireSanction).Date = moment(iTag.Date[0]?.['#text']);
+              item.DateString = iTag.Date[0]?.['#text'].toString();
+              item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
             } else if (iTag.hasOwnProperty('Nature')) {
-              (item as ICarnetDeBordVieScolaireSanction).Nature = iTag.Nature[0]?.['#text'];
+              item.Nature = iTag.Nature[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Motif')) {
-              (item as ICarnetDeBordVieScolaireSanction).Motif = iTag.Motif[0]?.['#text'];
+              item.Motif = iTag.Motif[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Circonstances')) {
-              (item as ICarnetDeBordVieScolaireSanction).Circonstances = iTag.Circonstances[0]?.['#text'];
+              item.Circonstances = iTag.Circonstances[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Duree')) {
-              (item as ICarnetDeBordVieScolaireSanction).Duree = iTag.Duree[0]?.['#text'];
+              item.Duree = iTag.Duree[0]?.['#text'];
             }
           }
-          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
-            item as ICarnetDeBordVieScolaireSanction,
-          );
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageVieScolaire.VieScolairePast?.push(item as ICarnetDeBordVieScolaireSanction);
+          } else {
+            PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolaireSanction);
+          }
         } else if (pageTag.hasOwnProperty('Observation')) {
-          const item = { type: 'Observation' };
+          const item: Partial<ICarnetDeBordVieScolaireObservation> = { type: 'Observation' };
           for (const iTag of pageTag.Observation) {
             if (iTag.hasOwnProperty('Date')) {
-              (item as ICarnetDeBordVieScolaireObservation).DateString = iTag.Date[0]?.['#text'];
-              (item as ICarnetDeBordVieScolaireObservation).Date = moment(iTag.Date[0]?.['#text']);
+              item.DateString = iTag.Date[0]?.['#text'].toString();
+              item.Date = item.DateString ? moment(iTag.Date[0]?.['#text'].toString()) : undefined;
             } else if (iTag.hasOwnProperty('Demandeur')) {
-              (item as ICarnetDeBordVieScolaireObservation).Demandeur = iTag.Demandeur[0]?.['#text'];
+              item.Demandeur = iTag.Demandeur[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Matiere')) {
-              (item as ICarnetDeBordVieScolaireObservation).Matiere = iTag.Matiere[0]?.['#text'];
+              item.Matiere = iTag.Matiere[0]?.['#text'];
             } else if (iTag.hasOwnProperty('Observation')) {
-              (item as ICarnetDeBordVieScolaireObservation).Observation = iTag.Observation[0]?.['#text'];
+              item.Observation = iTag.Observation[0]?.['#text'];
             }
           }
-          (PageVieScolaire as Required<ICarnetDeBord>['PageVieScolaire']).VieScolaire?.push(
-            item as ICarnetDeBordVieScolaireObservation,
-          );
+          if (item.Date && item.Date.diff(now) < 0) {
+            PageVieScolaire.VieScolairePast?.push(item as ICarnetDeBordVieScolaireObservation);
+          } else {
+            PageVieScolaire.VieScolaireFuture?.push(item as ICarnetDeBordVieScolaireObservation);
+          }
         }
       }
+      PageVieScolaire!.VieScolairePast = sortCarnetDeBordItems(PageVieScolaire!.VieScolairePast!);
+      PageVieScolaire!.VieScolaireFuture = sortCarnetDeBordItems(PageVieScolaire!.VieScolaireFuture!);
       (ret as ICarnetDeBord).PageVieScolaire = PageVieScolaire as ICarnetDeBord['PageVieScolaire'];
     } else if (tag.hasOwnProperty('PagePronote')) {
       if (!(ret as ICarnetDeBord).PagePronote) (ret as ICarnetDeBord).PagePronote = {};
