@@ -65,7 +65,6 @@ interface IContentCardPropsBase extends IContentCardProps, ITouchableContentCard
   cardComponent?: React.ComponentType;
   withoutPadding?: boolean;
   customHeaderStyle?: ViewStyle;
-  emphasizedHeader?: boolean;
   customHeaderIndicatorStyle?: ViewStyle;
 }
 
@@ -94,7 +93,6 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
     cardComponent,
     withoutPadding,
     customHeaderStyle,
-    emphasizedHeader,
     customHeaderIndicatorStyle,
     ...viewProps
   } = props;
@@ -102,11 +100,6 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
     cardPadding,
     withoutPadding && { paddingHorizontal: 0 },
     customHeaderStyle,
-    emphasizedHeader && {
-      backgroundColor: theme.palette.grey.fog,
-      borderBottomColor: theme.palette.grey.pearl,
-      borderBottomWidth: UI_SIZES.dimensions.width.tiny,
-    },
   );
   const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
   const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });

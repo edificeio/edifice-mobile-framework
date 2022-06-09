@@ -127,8 +127,12 @@ const SchoolbookWordDetailsCard = (
           paddingBottom:
             UI_SIZES.spacing.extraSmall + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus * 2 : 0),
         }}
-        emphasizedHeader
-        customHeaderStyle={{ paddingVertical: UI_SIZES.spacing.smallPlus }}
+        customHeaderStyle={{
+          backgroundColor: theme.palette.grey.fog,
+          paddingVertical: UI_SIZES.spacing.smallPlus,
+          borderBottomColor: theme.palette.grey.pearl,
+          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
+        }}
         customHeaderIndicatorStyle={{ justifyContent: 'center' }}
         headerIndicator={
           isTeacher ? (

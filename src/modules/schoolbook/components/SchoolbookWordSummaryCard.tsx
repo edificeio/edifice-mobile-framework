@@ -80,11 +80,13 @@ export const SchoolbookWordSummaryCard = ({
     <ArticleContainer>
       <TouchableResourceCard
         onPress={action}
-        emphasizedHeader
         customHeaderStyle={{
           paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.smallPlus,
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
+          backgroundColor: theme.palette.grey.fog,
+          borderBottomColor: theme.palette.grey.pearl,
+          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
         }}
         headerIndicator={<View />}
         header={
