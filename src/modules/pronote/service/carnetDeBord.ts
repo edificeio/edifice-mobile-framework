@@ -42,6 +42,7 @@ const parseCompetencesItem = (itemTag, item) => {
   } else if (itemTag.hasOwnProperty('Matiere')) {
     (item as ICarnetDeBordCompetencesItem).Matiere = itemTag.Matiere[0]?.['#text'];
   } else if (itemTag.hasOwnProperty('NiveauDAcquisition')) {
+    console.log('encounter NiveauDAcquisition', itemTag.NiveauDAcquisition);
     const nda = {};
     for (const ndaTag of itemTag.NiveauDAcquisition) {
       if (ndaTag.hasOwnProperty('Genre')) {

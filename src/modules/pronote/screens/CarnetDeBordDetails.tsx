@@ -24,6 +24,7 @@ import { TextBold, TextSemiBold } from '~/ui/Typography';
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
+  formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
 } from '../model/carnetDeBord';
@@ -128,6 +129,7 @@ CarnetDeBordDetailsScreen.pageTiteI18n = {
   [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote.carnetDeBord.vieScolaire.title',
 };
 CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) => {
+  console.log('type', type, data);
   switch (type) {
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
       return [...(data.PageCahierDeTextes?.TravailAFairePast ?? []), ...(data.PageCahierDeTextes?.TravailAFaireFuture ?? [])].map(
@@ -151,8 +153,8 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
       return [...(data.PageCompetences?.CompetencesPast ?? []), ...(data.PageCompetences?.CompetencesFuture ?? [])].map(item => ({
         label: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
         date: item.Date ? displayDate(item.Date) : I18n.t('pronote.carnetDeBord.noInfo'),
-        value: item.NiveauDAcquisition?.Libelle
-          ? splitWords(item.NiveauDAcquisition.Libelle, 2)
+        value: item.NiveauDAcquisition?.Genre
+          ? splitWords(formatCarnetDeBordCompetencesValue(item.NiveauDAcquisition.Genre), 2)
           : I18n.t('pronote.carnetDeBord.noInfo'),
       }));
     }

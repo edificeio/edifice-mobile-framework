@@ -26,6 +26,7 @@ import UserList, { IUserListItem, UserListProps } from '../../../framework/compo
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
+  formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   getSummaryItem,
@@ -200,7 +201,7 @@ CarnetDeBordScreen.getRenderContent =
                 return (
                   comp && {
                     textLabel: comp?.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
-                    valueLabel: comp?.NiveauDAcquisition?.Libelle || I18n.t('pronote.carnetDeBord.noInfo'),
+                    valueLabel: formatCarnetDeBordCompetencesValue(comp.NiveauDAcquisition?.Genre),
                   }
                 );
               })()}

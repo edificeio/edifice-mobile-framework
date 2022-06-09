@@ -194,7 +194,7 @@ export function sortCarnetDeBordItems<T extends { Date?: moment.Moment; DateDebu
   });
 }
 
-export function getSummaryItem(itemsPast?: any[], itemsFuture?: any[]) {
+export function getSummaryItem<T>(itemsPast?: T[], itemsFuture?: T[]) {
   return itemsFuture !== undefined && itemsFuture.length > 0
     ? itemsFuture[0]
     : itemsPast !== undefined && itemsPast.length > 0
@@ -214,5 +214,20 @@ const carnetDeBordVieScolaireTypeI18n = {
 export function formatCarnetDeBordVieScolaireType(type?: string) {
   return type && carnetDeBordVieScolaireTypeI18n.hasOwnProperty(type)
     ? I18n.t(carnetDeBordVieScolaireTypeI18n[type])
+    : I18n.t('pronote.carnetDeBord.noInfo');
+}
+const carnetDeBordCompetencesValueI18n = {
+  1: 'pronote.carnetDeBord.competences.value.1',
+  2: 'pronote.carnetDeBord.competences.value.2',
+  3: 'pronote.carnetDeBord.competences.value.3',
+  4: 'pronote.carnetDeBord.competences.value.4',
+  5: 'pronote.carnetDeBord.competences.value.5',
+  6: 'pronote.carnetDeBord.competences.value.6',
+  7: 'pronote.carnetDeBord.competences.value.7',
+  8: 'pronote.carnetDeBord.competences.value.8',
+};
+export function formatCarnetDeBordCompetencesValue(value?: number) {
+  return value && carnetDeBordCompetencesValueI18n.hasOwnProperty(value)
+    ? I18n.t(carnetDeBordCompetencesValueI18n[value])
     : I18n.t('pronote.carnetDeBord.noInfo');
 }
