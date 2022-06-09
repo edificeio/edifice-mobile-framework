@@ -101,7 +101,6 @@ export interface IBlogPostDetailsScreenState {
   showHeaderTitle: boolean;
   showMenu: boolean;
   isCommentFieldFocused: boolean;
-  editedCommentId: string;
 }
 
 // COMPONENT ======================================================================================
@@ -112,6 +111,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   _titleRef?: React.Ref<any> = undefined;
   flatListRef: FlatList | null = null;
   commentFieldRefs = [];
+  editedCommentId?: string = undefined;
   bottomEditorSheetRef: { current: any } = React.createRef();
   event: string | null = null;
   showSubscription: EmitterSubscription | undefined;
@@ -127,14 +127,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     showHeaderTitle: false,
     showMenu: false,
     isCommentFieldFocused: false,
-    editedCommentId: '',
   };
 
   // RENDER =======================================================================================
 
   render() {
     const { navigation, session } = this.props;
-    const { loadingState, errorState, showMenu, blogPostData, blogInfos, editedCommentId } = this.state;
+    const { loadingState, errorState, showMenu, blogPostData, blogInfos } = this.state;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const isBottomSheetVisible =
       (blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight) || blogPostData?.state === 'SUBMITTED';
@@ -169,9 +168,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           onBack={() => {
             this.bottomEditorSheetRef?.current?.doesCommentExist()
               ? this.bottomEditorSheetRef?.current?.confirmDiscard(() => navigation.dispatch(NavigationActions.back()))
-              : this.commentFieldRefs[editedCommentId]?.doesCommentExist() &&
-                !this.commentFieldRefs[editedCommentId]?.isCommentUnchanged()
-              ? this.commentFieldRefs[editedCommentId]?.confirmDiscard(() => navigation.dispatch(NavigationActions.back()))
+              : this.editedCommentId &&
+                this.commentFieldRefs[this.editedCommentId]?.doesCommentExist() &&
+                !this.commentFieldRefs[this.editedCommentId]?.isCommentUnchanged()
+              ? this.commentFieldRefs[this.editedCommentId]?.confirmDiscard(() => navigation.dispatch(NavigationActions.back()))
               : navigation.dispatch(NavigationActions.back());
           }}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
@@ -405,7 +405,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         editCommentCallback={() => {
           const blogPostComments = blogPostData?.comments;
           const otherBlogPostComments = blogPostComments?.filter(comment => comment.id !== blogPostComment.id);
-          this.setState({ editedCommentId: blogPostComment.id });
+          this.editedCommentId = blogPostComment.id;
           otherBlogPostComments?.forEach(otherBlogPostComment => {
             this.commentFieldRefs[otherBlogPostComment.id]?.setIsEditingFalse();
           });
@@ -435,10 +435,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     } else this.doInit();
 
     this.showSubscription = Keyboard.addListener('keyboardWillShow', () => {
-      const { editedCommentId, blogPostData } = this.state;
-      if (this.commentFieldRefs[editedCommentId]?.isCommentFieldFocused()) this.setState({ isCommentFieldFocused: true });
+      const { blogPostData } = this.state;
+      if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
+        this.setState({ isCommentFieldFocused: true });
       setTimeout(() => {
-        const commentIndex = blogPostData?.comments?.findIndex(c => c.id === editedCommentId);
+        if (!this.editedCommentId) return;
+        const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
         if (commentIndex !== undefined && commentIndex > -1) {
           this.flatListRef?.scrollToIndex({
             index: commentIndex,
@@ -449,8 +451,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     });
 
     this.hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
-      const { editedCommentId } = this.state;
-      if (!this.commentFieldRefs[editedCommentId]?.isCommentFieldFocused()) this.setState({ isCommentFieldFocused: false });
+      if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
+        this.setState({ isCommentFieldFocused: false });
     });
 
     // Update notification event if any
