@@ -1,7 +1,7 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { GestureResponderEvent, Platform, TouchableOpacityProps, TouchableOpacity } from 'react-native';
+import { GestureResponderEvent, Platform, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 import DocumentPicker, {
   DocumentPickerOptions,
   DocumentPickerResponse,
@@ -47,11 +47,7 @@ export class FilePicker extends React.PureComponent<
           };
           callback(imgFormatted as ImagePicked);
         }
-      } catch (error) {
-        throw error;
-      } finally {
-        this.setState({ enabled: true, showModal: false });
-      }
+      } catch (error) {}
     };
 
     const documentCallback = async (files: DocumentPickerResponse[], sourceType: string) => {
@@ -63,11 +59,7 @@ export class FilePicker extends React.PureComponent<
           });
           callback({ fileName: file.name, fileSize: file.size!, uri: file.uri, type: file.type }, sourceType);
         }
-      } catch (error) {
-        throw error;
-      } finally {
-        this.setState({ enabled: true, showModal: false });
-      }
+      } catch (error) {}
     };
 
     const menuActions = [
@@ -77,9 +69,7 @@ export class FilePicker extends React.PureComponent<
         action: async (sourceType: string) => {
           LocalFile.pick({ source: 'camera' })
             .then(lf => imageCallback(lf, sourceType))
-            .catch(() => {
-              this.setState({ enabled: true });
-            });
+            .finally(() => this.setState({ enabled: true, showModal: false }));
         },
       },
       {
@@ -88,9 +78,7 @@ export class FilePicker extends React.PureComponent<
         action: async (sourceType: string) => {
           LocalFile.pick({ source: 'galery', multiple })
             .then(lf => imageCallback(lf, sourceType))
-            .catch(() => {
-              this.setState({ enabled: true });
-            });
+            .finally(() => this.setState({ enabled: true, showModal: false }));
         },
       },
       {
@@ -105,9 +93,7 @@ export class FilePicker extends React.PureComponent<
             ...options,
           })
             .then(file => documentCallback(file, sourceType))
-            .catch(() => {
-              this.setState({ enabled: true });
-            });
+            .finally(() => this.setState({ enabled: true, showModal: false }));
         },
       },
       {
