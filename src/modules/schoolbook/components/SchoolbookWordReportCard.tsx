@@ -75,6 +75,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                 style={SchoolbookWordReportCard.Style.list}
                 contentContainerStyle={{ backgroundColor: theme.ui.background.card, borderRadius: UI_SIZES.radius.medium }}
                 data={acknowledgedStudents}
+                initialNumToRender={acknowledgedStudents.length}
                 keyExtractor={item => item.owner}
                 renderItem={({ item, index }) => {
                   const isLastItem = index === acknowledgedStudents?.length - 1;
@@ -150,8 +151,8 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                 }`}
               </Text>
               <UserList
-                withSeparator
                 data={unacknowledgedStudents}
+                initialNumToRender={unacknowledgedStudents.length}
                 avatarSize={24}
                 style={SchoolbookWordReportCard.Style.list}
                 contentContainerStyle={{ backgroundColor: theme.ui.background.card, borderRadius: UI_SIZES.radius.medium }}
@@ -160,6 +161,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   paddingVertical: UI_SIZES.spacing.medium,
                   paddingHorizontal: UI_SIZES.spacing.large,
                 }}
+                withSeparator
               />
             </>
           ) : null}

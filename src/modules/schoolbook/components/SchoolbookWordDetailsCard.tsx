@@ -14,9 +14,8 @@ import FlatList from '~/framework/components/flatList';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
 import { Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
-import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { UserType } from '~/framework/util/session';
-import { isStringEmpty } from '~/framework/util/string';
+import { HtmlContentView } from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import {
@@ -66,10 +65,6 @@ const SchoolbookWordDetailsCard = (
   const usersTextMaxLines = 1;
   const word = schoolbookWord?.word;
   const report = schoolbookWord?.report;
-  const schoolbookWordText = extractTextFromHtml(word?.text);
-  const schoolbookWordMedia = extractMediaFromHtml(word?.text);
-  const hasSchoolbookWordText = schoolbookWordText && !isStringEmpty(schoolbookWordText);
-  const hasSchoolbookWordMedia = schoolbookWordMedia?.length;
   const schoolbookWordOwnerId = word?.ownerId;
   const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
@@ -238,30 +233,23 @@ const SchoolbookWordDetailsCard = (
         {word?.title ? (
           <TextBold style={{ marginTop: UI_SIZES.spacing.medium, ...TextSizeStyle.SlightBigPlus }}>{word?.title}</TextBold>
         ) : null}
-        {hasSchoolbookWordText ? (
-          <Text style={{ marginTop: UI_SIZES.spacing.smallPlus, marginBottom: UI_SIZES.spacing.tiny, ...TextSizeStyle.SlightBig }}>
-            {schoolbookWordText}
-          </Text>
-        ) : null}
-        {hasSchoolbookWordMedia ? (
-          <View style={{ marginVertical: UI_SIZES.spacing.tiny }}>{renderMediaPreview(schoolbookWordMedia)}</View>
+        {word?.text ? (
+          <View style={{ marginTop: UI_SIZES.spacing.smallPlus, marginBottom: UI_SIZES.spacing.tiny }}>
+            <HtmlContentView html={word?.text} opts={{ globalTextStyle: { ...TextSizeStyle.SlightBig } }} />
+          </View>
         ) : null}
       </ResourceView>
     ),
     [
       action,
       doesContentExceedView,
-      hasSchoolbookWordMedia,
-      hasSchoolbookWordText,
       hasSingleRecipientForTeacher,
       isAuthorOtherTeacher,
       isTeacher,
       isWordAcknowledged,
       modalBoxRef,
       report,
-      schoolbookWordMedia,
       schoolbookWordResponsesNumber,
-      schoolbookWordText,
       userType,
       word?.ackNumber,
       word?.category,

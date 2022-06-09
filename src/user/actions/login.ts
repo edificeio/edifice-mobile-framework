@@ -4,8 +4,6 @@ import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import AppConf from '~/framework/util/appConf';
 import { Trackers } from '~/framework/util/tracker';
@@ -17,13 +15,17 @@ import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { userService } from '~/user/service';
 
-
-
-import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoggedOut, actionTypeLoginCancel, actionTypeLoginError, actionTypeRequestLogin } from './actionTypes/login';
+import {
+  actionTypeLoggedIn,
+  actionTypeLoggedInPartial,
+  actionTypeLoggedOut,
+  actionTypeLoginCancel,
+  actionTypeLoginError,
+  actionTypeRequestLogin,
+} from './actionTypes/login';
 // eslint-disable-next-line import/order
 import { initActivationAccount as initActivationAccountAction } from './initActivation';
 import { PLATFORM_STORAGE_KEY } from './platform';
-
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -171,8 +173,6 @@ export function loginAction(
         const authorizationStatus = await messaging().requestPermission();
         if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
           await userService.registerFCMToken();
-        } else {
-          console.debug('[login] Push-notifications unauthorized by the user.');
         }
       } catch (err) {
         throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err);
@@ -251,8 +251,6 @@ export function loginAction(
                 );
                 return; // End error handling if activation match is a success
               }
-            } else {
-              console.debug('[Login] activation code match fail with error code: ', res.status, res.statusText);
             }
           }
         } catch (activationErr) {
@@ -362,7 +360,6 @@ export function refreshToken(newToken: string) {
       //
       await userService.registerFCMToken(newToken as any);
     } catch (e) {
-      // tslint:disable-next-line:no-console
       // TODO: Manage error
     }
   };

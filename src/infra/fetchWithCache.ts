@@ -16,18 +16,15 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
   try {
     if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
     if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
-      // tslint:disable-next-line:no-console
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
         navigate(getLoginRouteName());
       }
     }
-    // tslint:disable-next-line:no-console
     const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
     return fetch(req);
   } catch (err) {
-    // tslint:disable-next-line:no-console
     throw err;
   }
 }
@@ -44,7 +41,6 @@ export async function signedFetchJson(url: string | Request, init?: RequestInit)
     // TODO check if response is OK
     return response.json();
   } catch (err) {
-    // tslint:disable-next-line:no-console
     throw err;
   }
 }

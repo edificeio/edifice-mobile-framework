@@ -123,7 +123,6 @@ export function splitWords(
   }
   const lineSize = input.length / nbLines;
   const words = input.split(regex);
-  console.log('words', words);
   let output = '';
   let curLine = 0;
   let nbReturns = 0;

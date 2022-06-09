@@ -45,10 +45,10 @@ export const absenceDeclarationService = {
         res => {
           return undefined!; // No use of distant file. But, it's a bad practice.
         },
-        {
+        /*{
           onBegin: res => console.debug(res.jobId),
           onProgress: res => console.debug(res.totalBytesSent + '/' + res.totalBytesExpectedToSend),
-        },
+        },*/
       );
     } catch (e) {
       // TODO: Manage error

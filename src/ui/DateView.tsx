@@ -8,10 +8,6 @@ import { displayPastDate } from '~/framework/util/date';
 import { CommonStyles } from '~/styles/common/styles';
 
 const ViewDate = styled.View<{ min: boolean }>(
-  {
-    alignItems: 'center',
-    height: 20,
-  },
   ({ min }): ViewStyle => ({
     marginBottom: min ? -2 : 4,
   }),
@@ -19,7 +15,9 @@ const ViewDate = styled.View<{ min: boolean }>(
 
 export const DateView = ({ date, min = false, strong = false }) => (
   <ViewDate min={min}>
-    <Text style={[{ color: strong ? CommonStyles.textColor : CommonStyles.lightTextColor }, !strong && { ...TextSizeStyle.Small }]}>
+    <Text
+      numberOfLines={1}
+      style={[{ color: strong ? CommonStyles.textColor : CommonStyles.lightTextColor }, !strong && { ...TextSizeStyle.Small }]}>
       {displayPastDate(moment(date))}
     </Text>
   </ViewDate>

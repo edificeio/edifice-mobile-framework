@@ -8,7 +8,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
+import { ModalBox, ModalContent, ModalContentBlock } from './Modal';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -25,10 +25,21 @@ const styles = StyleSheet.create({
   modalContentContainer: {
     width: 350,
   },
-  iosPickerContainer: {
+  pickerContainer: {
     width: '100%',
+    flexDirection: 'row',
     paddingHorizontal: 20,
     marginBottom: 35,
+    alignItems: 'center',
+  },
+  textPicker: {
+    justifyContent: 'flex-end',
+    width: '60%',
+    paddingLeft: 20,
+  },
+  iosPickerContainer: {
+    justifyContent: 'flex-start',
+    width: '40%',
   },
 });
 
@@ -86,24 +97,24 @@ const DateTimePickerIOS: React.FunctionComponent<IDateTimePickerProps> = ({
       )}
       <ModalBox isVisible={isModalVisible} onDismiss={() => setModalVisible(false)}>
         <ModalContent style={styles.modalContentContainer}>
-          <ModalContentBlock>
-            <ModalContentText>{I18n.t(mode === 'time' ? 'pick-hour' : 'pick-date')}</ModalContentText>
-          </ModalContentBlock>
-          <DateTimePicker
-            mode={mode}
-            locale="fr-FR"
-            maximumDate={maximumDate && maximumDate.toDate()}
-            minimumDate={minimumDate && minimumDate.toDate()}
-            value={tempTime.toDate()}
-            style={styles.iosPickerContainer}
-            onChange={(event, newDate) => {
-              if (event.type === 'dismissed') {
-                setModalVisible(false);
-              } else {
-                setTempTime(moment(newDate));
-              }
-            }}
-          />
+          <View style={styles.pickerContainer}>
+            <Text style={styles.textPicker}>{I18n.t(mode === 'time' ? 'pick-hour' : 'pick-date')} :</Text>
+            <DateTimePicker
+              mode={mode}
+              locale="fr-FR"
+              maximumDate={maximumDate && maximumDate.toDate()}
+              minimumDate={minimumDate && minimumDate.toDate()}
+              value={tempTime.toDate()}
+              style={styles.iosPickerContainer}
+              onChange={(event, newDate) => {
+                if (event.type === 'dismissed') {
+                  setModalVisible(false);
+                } else {
+                  setTempTime(moment(newDate));
+                }
+              }}
+            />
+          </View>
           <ModalContentBlock>
             <ButtonsOkCancel
               onCancel={() => {

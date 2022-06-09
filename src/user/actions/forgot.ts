@@ -74,7 +74,6 @@ export function action_forgotSubmit(userInfo: IForgotModel, forgotId?: boolean) 
       dispatch(actionCreateForgotReceive(response));
     } catch (err) {
       dispatch(actionCreateForgotReceive({ error: '', ok: false }));
-      // tslint:disable-next-line:no-console
     }
   };
 }

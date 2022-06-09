@@ -30,7 +30,6 @@ function ConnectorRedirectScreen(props: IConnectorRedirectScreenProps) {
 
   // Not in useEffet => normal, we want to execute this at first time.
   redirect(session, connector.address, pageId).catch(e => {
-    console.warn(e);
     Alert.alert('Error' + e);
   });
   props.navigation.goBack(null);

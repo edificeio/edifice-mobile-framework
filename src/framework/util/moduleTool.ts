@@ -494,7 +494,7 @@ export class NavigableModule<
     this.#root = this.getRoot(matchingApps, matchingWidgets);
     this.#route = this.createModuleRoute(matchingApps, matchingWidgets);
     if (this.config.displayBadges) {
-      console.log('UPDATE APP BADGES', this.config.displayBadges);
+      // console.log('UPDATE APP BADGES', this.config.displayBadges);
       updateAppBadges(this.config.displayBadges);
     }
   }
@@ -649,27 +649,27 @@ export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(mo
     // 1. Load module in the map
     const module = Array.isArray(moduleInc) ? moduleInc[0] : moduleInc;
     if (typeof module === 'object') {
-      if (moduleMap.hasOwnProperty(module.config.name)) {
+      /*if (moduleMap.hasOwnProperty(module.config.name)) {
         console.debug(`[ModuleTool] Duplicate module identifier "${module.config.name}".`);
-      }
+      }*/
       moduleMap[module.config.name] = module;
     } else if (typeof module === 'string') {
       // Do nothing
     } else {
-      console.debug(`[ModuleTool] Unknown module identifier type "${module}".`);
+      // console.debug(`[ModuleTool] Unknown module identifier type "${module}".`);
     }
     // 2. Load custom configuration if provided
     if (Array.isArray(moduleInc) && moduleInc[1]) {
       if (typeof module === 'object') {
         module.config.assignValues(moduleInc[1]); // Also MUTATES the config imported from moduleConfig.ts
-        console.debug(`[ModuleTool] Update config of module "${module.config.name}".`);
+        // console.debug(`[ModuleTool] Update config of module "${module.config.name}".`);
       } else if (typeof module === 'string') {
         const modToUpdate = moduleMap[module]; // Module must have already loaded.
         if (modToUpdate) {
-          console.debug(`[ModuleTool] Update config of module "${module}".`);
+          // console.debug(`[ModuleTool] Update config of module "${module}".`);
           modToUpdate.config.assignValues(moduleInc[1]); // Also MUTATES the config imported from moduleConfig.ts
         } else {
-          console.debug(`[ModuleTool] Cannot Update config of module "${module}".`);
+          // console.debug(`[ModuleTool] Cannot Update config of module "${module}".`);
         }
       }
     }
