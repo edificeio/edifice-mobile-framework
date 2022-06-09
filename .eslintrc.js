@@ -4,8 +4,11 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-  plugins: ['@typescript-eslint', 'prettier', 'import', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native'],
   rules: {
     '@typescript-eslint/naming-convention': ['error'],
     'import/extensions': [
@@ -30,6 +33,12 @@ module.exports = {
     ],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
+    'react-native/no-unused-styles': 2,
+    'react-native/split-platform-components': 2,
+    'react-native/no-inline-styles': 2,
+    'react-native/no-color-literals': 2,
+    'react-native/no-raw-text': 2,
+    'react-native/no-single-element-style-arrays': 2,
   },
   settings: {
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
