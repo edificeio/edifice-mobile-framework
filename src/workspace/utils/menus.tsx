@@ -21,7 +21,7 @@ export const addMenu = () => {
     icon: 'file-plus',
     id: 'addDocument',
     // onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
-    wrapper: ({ children, dispatch, parentId }) => (
+    wrapper: ({ children, dispatch, parentId, filter }) => (
       <FilePicker
         multiple
         callback={async file => {
@@ -32,7 +32,15 @@ export const addMenu = () => {
             path: file.uri,
           };
           await dispatch(uploadAction(parentId, convertedFile));
-          await dispatch(listAction(parentId ? { parentId } : { filter: FilterId.owner, parentId: FilterId.owner }));
+          await dispatch(
+            listAction(
+              parentId && filter
+                ? { parentId, filter }
+                : parentId
+                ? { parentId }
+                : { filter: FilterId.owner, parentId: FilterId.owner },
+            ),
+          );
         }}>
         {children}
       </FilePicker>
