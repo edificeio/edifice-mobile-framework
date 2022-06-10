@@ -604,6 +604,9 @@
   "readMore": "leer más",
   "rename": "Rename",
   "restore-successful": "Restauración finalizada",
+  "schoolbook": {
+    "acknowledgementNeededStudent": "Un padre debe confirmar la lectura."
+  },
   "seeDetails": "Ver detalles",
   "seeLess": "Ver menos",
   "seeMore": "Ver más",

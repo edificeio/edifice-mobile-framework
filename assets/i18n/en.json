@@ -604,6 +604,9 @@
   "readMore": "read more",
   "rename": "Rename",
   "restore-successful": "Restore successful",
+  "schoolbook": {
+    "acknowledgementNeededStudent": "A parent must confirm the reading."
+  },
   "seeDetails": "See details",
   "seeLess": "See less",
   "seeMore": "See more",
