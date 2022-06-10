@@ -30,7 +30,7 @@ export interface UserListProps<ItemType extends IUserListItem = IUserListItem>
   withSeparator?: boolean;
 }
 
-export default function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserListProps<ItemType>) {
+function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserListProps<ItemType>, ref) {
   const { selectedId, onSelect, renderBadge, avatarSize, data, customItemStyle, withSeparator, horizontal, ...otherProps } = props;
   const renderItem: FlatListProps<ItemType>['renderItem'] = React.useCallback(
     info =>
@@ -49,6 +49,7 @@ export default function UserList<ItemType extends IUserListItem = IUserListItem>
   );
   return (
     <FlatList
+      ref={ref}
       data={data}
       renderItem={renderItem}
       keyExtractor={UserList.keyExtractor}
@@ -105,3 +106,5 @@ UserList.renderItem = <ItemType extends IUserListItem>({
     </TouchableOpacity>
   );
 };
+
+export default React.forwardRef(UserList);

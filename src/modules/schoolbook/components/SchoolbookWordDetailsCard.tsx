@@ -55,6 +55,7 @@ const SchoolbookWordDetailsCard = (
   ref,
 ) => {
   const flatListRef = React.useRef<typeof FlatList>();
+  const flatListModalRef = React.useRef<typeof FlatList>();
   const modalBoxRef: { current: any } = React.createRef();
   const commentFieldRefs = React.useRef([]);
   const bottomEditorSheetRef: { current: any } = React.useRef();
@@ -155,7 +156,13 @@ const SchoolbookWordDetailsCard = (
         header={
           <TouchableOpacity
             disabled={!isTeacher || hasSingleRecipientForTeacher}
-            onPress={() => modalBoxRef?.current?.doShowModal()}>
+            onPress={() => {
+              modalBoxRef?.current?.doShowModal();
+              setTimeout(() => {
+                console.log(flatListModalRef?.current);
+                flatListModalRef?.current?.flashScrollIndicators();
+              });
+            }}>
             <ContentCardHeader
               icon={
                 <SingleAvatar
@@ -332,6 +339,7 @@ const SchoolbookWordDetailsCard = (
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </Text>
             <UserList
+              ref={flatListModalRef}
               data={studentsForTeacher}
               avatarSize={24}
               contentContainerStyle={{ flexGrow: 1 }}
@@ -342,6 +350,8 @@ const SchoolbookWordDetailsCard = (
                 minimumViewTime: -1,
               }}
               alwaysBounceVertical={false}
+              persistentScrollbar
+              showsVerticalScrollIndicator
             />
           </View>
         }
