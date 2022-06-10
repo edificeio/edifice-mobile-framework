@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { FlexAlignType, StyleSheet, View } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
@@ -17,15 +18,13 @@ import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 // STYLE
 
 const styleConstant = StyleSheet.create({
-  dash: { height: 15, width: 30, borderRadius: 10, marginTop: 2 },
-  container: { borderRadius: 5 },
-  coloredSquareText: { color: 'white' },
+  coloredSquareText: { color: theme.palette.grey.white },
   devoirsList: {
     width: '100%',
     justifyContent: 'space-between',
     flexDirection: 'row',
     borderRadius: 5,
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.grey.white,
     marginBottom: 10,
   },
   competencesList: {
@@ -41,12 +40,12 @@ const styleConstant = StyleSheet.create({
   },
   coloredSquareNoteTextContainer: {
     alignSelf: 'center',
-    color: 'white',
+    color: theme.palette.grey.white,
     marginVertical: 8,
   },
   coloredSquareNoteText: {
     ...TextSizeStyle.Big,
-    color: 'white',
+    color: theme.palette.grey.white,
   },
   gradeDevoirsNoteContainer: {
     justifyContent: 'center',
@@ -54,7 +53,7 @@ const styleConstant = StyleSheet.create({
   gradeDevoirsNoteText: {
     ...TextSizeStyle.Big,
     alignSelf: 'center',
-    color: 'white',
+    color: theme.palette.grey.white,
   },
   competenceRoundContainer: {
     width: '25%',
@@ -70,7 +69,7 @@ const styleConstant = StyleSheet.create({
     borderRadius: 45,
     minWidth: 60,
     minHeight: 60,
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     justifyContent: 'center',
   },
   competenceRoundText: {
@@ -140,10 +139,10 @@ const styleConstant = StyleSheet.create({
     paddingRight: 10,
   },
   denseDevoirListNoteText: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
     flexGrow: 1,
     textAlign: 'right',
-    paddingTop: 4,
+    paddingTop: 6,
   },
   denseDevoirListDiviseurText: {
     paddingTop: 8,

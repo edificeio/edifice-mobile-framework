@@ -4,6 +4,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, Switch, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Text, TextBold } from '~/framework/components/text';
@@ -18,7 +19,7 @@ import Dropdown from '~/ui/Dropdown';
 import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from './Item';
 
 const styles = StyleSheet.create({
-  subtitle: { color: '#AFAFAF', paddingVertical: 8 },
+  subtitle: { color: theme.palette.grey.stone, paddingVertical: 8 },
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 },
   containerDropdowns: {
     flexDirection: 'row',
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     maxWidth: '50%',
   },
   headerSelectedPeriodText: {
-    color: '#AFAFAF',
+    color: theme.palette.grey.stone,
   },
   headerColorSwitchContainer: {
     marginBottom: 10,

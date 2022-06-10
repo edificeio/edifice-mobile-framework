@@ -1,15 +1,52 @@
-import React from "react";
-import { FlatList, Keyboard, StyleSheet, View } from "react-native";
-import FloatingActionItem from "./FloatingActionItem";
-import { layoutSize } from "~/styles/common/layoutSize";
-import { CommonStyles } from "~/styles/common/styles";
-import { IFloatingProps, IMenuItem } from "~/ui/types";
-import { ISelected } from '~/ui/Toolbar/Toolbar';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { getMenuShadow } from '~/ui/ButtonIconText';
-import { UI_SIZES } from "~/framework/components/constants";
-import { DEPRECATED_HeaderPrimaryAction } from "~/framework/components/header";
+import React from 'react';
+import { FlatList, Keyboard, StyleSheet, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
+import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
+import { layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import { getMenuShadow } from '~/ui/ButtonIconText';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { ISelected } from '~/ui/Toolbar/Toolbar';
+import { IFloatingProps, IMenuItem } from '~/ui/types';
+
+import FloatingActionItem from './FloatingActionItem';
+
+const styles = StyleSheet.create({
+  actions: {
+    borderRadius: layoutSize.LAYOUT_4,
+    overflow: 'visible',
+    backgroundColor: '#ffffff',
+    position: 'absolute',
+    right: 12,
+    top: 78,
+    width: layoutSize.LAYOUT_200,
+    zIndex: 10,
+    ...getMenuShadow(),
+  },
+  button: {
+    position: 'absolute',
+    right: 20,
+    top: UI_SIZES.screen.topInset,
+    zIndex: 10,
+  },
+  overlayActions: {
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: UI_SIZES.screen.topInset,
+  },
+  separator: {
+    borderBottomColor: CommonStyles.borderColorVeryLighter,
+    borderBottomWidth: 1,
+    width: '100%',
+  },
+});
+
+interface IState {
+  active: boolean;
+}
 export default class FloatingAction extends React.Component<IFloatingProps & ISelected, IState> {
   state = {
     active: false,
@@ -48,18 +85,13 @@ export default class FloatingAction extends React.Component<IFloatingProps & ISe
 
   renderMainButton() {
     const { menuItems } = this.props;
-    const iconName = this.state.active ? "close" : "add";
+    const iconName = this.state.active ? 'close' : 'add';
 
     if (!menuItems || menuItems.length === 0) {
       return null;
     }
 
-    return (
-      <DEPRECATED_HeaderPrimaryAction
-        iconName={iconName}
-        onPress={this.animateButton}
-      />
-    );
+    return <DEPRECATED_HeaderPrimaryAction iconName={iconName} onPress={this.animateButton} />;
   }
 
   renderActions() {
@@ -76,7 +108,9 @@ export default class FloatingAction extends React.Component<IFloatingProps & ISe
         data={menuItems}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         keyExtractor={(item: IMenuItem) => item.id}
-        renderItem={({ item }) => <FloatingActionItem eventHandleData={this.props.eventHandleData} item={item} onEvent={this.handleEvent.bind(this)} />}
+        renderItem={({ item }) => (
+          <FloatingActionItem eventHandleData={this.props.eventHandleData} item={item} onEvent={this.handleEvent.bind(this)} />
+        )}
       />
     );
   }
@@ -109,39 +143,3 @@ export default class FloatingAction extends React.Component<IFloatingProps & ISe
     return null;
   }
 }
-
-interface IState {
-  active: boolean;
-}
-
-const styles = StyleSheet.create({
-  actions: {
-    borderRadius: layoutSize.LAYOUT_4,
-    overflow: 'visible',
-    backgroundColor: '#ffffff',
-    position: 'absolute',
-    right: 12,
-    top: 78,
-    width: layoutSize.LAYOUT_200,
-    zIndex: 10,
-    ...getMenuShadow(),
-  },
-  button: {
-    position: 'absolute',
-    right: 20,
-    top: UI_SIZES.screen.topInset,
-    zIndex: 10,
-  },
-  overlayActions: {
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: UI_SIZES.screen.topInset,
-  },
-  separator: {
-    borderBottomColor: CommonStyles.borderColorVeryLighter,
-    borderBottomWidth: 1,
-    width: '100%',
-  },
-});

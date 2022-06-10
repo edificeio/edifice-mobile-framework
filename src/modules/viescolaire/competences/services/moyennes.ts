@@ -1,10 +1,7 @@
 import querystring from 'querystring';
 
-
-
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
-
 
 export type IMoyenneListBackend = {
   matiere: string;

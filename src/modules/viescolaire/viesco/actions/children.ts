@@ -4,8 +4,6 @@ import { dataActions as homeworkActions } from '~/modules/viescolaire/cdt/action
 import { dataActions as sessionActions } from '~/modules/viescolaire/cdt/actions/sessions';
 import { dataActions as competencesDevoirsActions } from '~/modules/viescolaire/competences/actions/devoirs';
 import { dataActions as competencesMoyennesActions } from '~/modules/viescolaire/competences/actions/moyennes';
-import { dataActions as servicesMatieresAction } from '~/modules/viescolaire/competences/actions/servicesMatieres';
-import { dataActions as structureMatieresAction } from '~/modules/viescolaire/competences/actions/structureMatieres';
 import { dataActions as slotsActions } from '~/modules/viescolaire/edt/actions/slots';
 import { studentEventsActions as historyActions } from '~/modules/viescolaire/presences/actions/events';
 import { dataActions as CoursesActions } from '~/modules/viescolaire/viesco/actions/courses';
@@ -35,8 +33,8 @@ export function selectChildAction(child: string) {
     // Competences
     dispatch(competencesDevoirsActions.clear());
     dispatch(competencesMoyennesActions.clear());
-    dispatch(servicesMatieresAction.clear());
-    dispatch(structureMatieresAction.clear());
+    // dispatch(servicesMatieresAction.clear());
+    // dispatch(structureMatieresAction.clear());
 
     dispatch(selectChild(child));
   };
