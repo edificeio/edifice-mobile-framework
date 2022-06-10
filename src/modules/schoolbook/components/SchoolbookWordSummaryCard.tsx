@@ -20,7 +20,6 @@ import {
   getIsWordAcknowledgedForParent,
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
-  getResponseNumberForStudentAndParent,
 } from '../reducer';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
@@ -74,7 +73,7 @@ export const SchoolbookWordSummaryCard = ({
     (isTeacher && isWordAcknowledgedForTeacher) ||
     (isStudent && isWordAcknowledgedForStudent) ||
     (isParent && isWordAcknowledgedForParent);
-  const responsesNumber = isTeacher ? respNumber : getResponseNumberForStudentAndParent(responses);
+  const responsesNumber = isTeacher ? respNumber : responses?.length;
 
   return (
     <ArticleContainer>

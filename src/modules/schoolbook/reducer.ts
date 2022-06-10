@@ -129,7 +129,3 @@ export const getIsWordAcknowledgedForParent = (parentId: string, acknowledgments
 export const getIsWordRepliedToForParent = (parentId: string, responses: IResponse[] | null) => {
   return responses?.some(response => response.owner === parentId);
 };
-
-export const getResponseNumberForStudentAndParent = (responses: IResponse[] | null) => {
-  return responses?.length;
-};
