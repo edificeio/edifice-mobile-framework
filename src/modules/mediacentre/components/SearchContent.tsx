@@ -12,7 +12,6 @@ import { DialogButtonOk } from '~/ui/ConfirmDialog';
 
 import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
-import { SearchState } from './HomePage';
 import { SearchFilter } from './SearchFilter';
 
 const styles = StyleSheet.create({
@@ -56,6 +55,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 });
+
+export enum SearchState {
+  NONE = 0,
+  SIMPLE = 1,
+  ADVANCED = 2,
+}
 
 interface ISearchFilters {
   level: string[];

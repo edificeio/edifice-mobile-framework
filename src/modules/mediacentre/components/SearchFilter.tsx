@@ -11,7 +11,6 @@ import { Checkbox } from '~/ui/forms/Checkbox';
 const styles = StyleSheet.create({
   mainContainer: {
     padding: 10,
-    borderColor: 'lightgrey',
     backgroundColor: theme.ui.background.card,
     borderRadius: 15,
     shadowColor: theme.ui.shadowColor,
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
   },
   sectionUnderlineView: {
     height: 1,
-    backgroundColor: '#e2e2e299',
+    backgroundColor: theme.palette.grey.pearl,
   },
 });
 

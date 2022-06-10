@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import Toast from 'react-native-tiny-toast';
 
+import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextBold } from '~/framework/components/text';
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     marginLeft: 12,
     padding: 10,
-    backgroundColor: 'white',
+    backgroundColor: theme.ui.background.card,
     borderTopRightRadius: 14,
     borderBottomRightRadius: 14,
   },
@@ -68,7 +69,6 @@ interface IFavoritesCarouselProps {
   resources: IResource[];
 
   addFavorite: (id: string, resource: IResource) => any;
-  onDisplayAll: () => void;
   removeFavorite: (id: string, source: Source) => any;
 }
 
@@ -122,7 +122,7 @@ export const FavoritesCarousel: React.FunctionComponent<IFavoritesCarouselProps>
       const colors = cardColors.concat(getCardColors(difference));
       setCardColors(colors);
     }
-  }, [props.resources.length]);
+  }, [props.resources.length, cardColors]);
   return (
     <View style={styles.mainContainer}>
       <TextBold style={styles.titleText}>{I18n.t('mediacentre.favorites').toUpperCase()}</TextBold>
