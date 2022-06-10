@@ -7,13 +7,15 @@ import FunctionalModuleConfig from '~/infra/moduleTool';
 
 // Yeah, it's ugly. Sorry. We must port this module into frameworkV2 to make this happier.
 // console.log('deviceInfoModule.getBundleId()', deviceInfoModule.getBundleId());
-export const pictureName = deviceInfoModule.getBundleId() === 'com.ode.one' ? 'homework1D' : 'homework2D';
+const isAppOne = deviceInfoModule.getBundleId() === 'com.ode.one';
+export const pictureName = `homework${isAppOne ? '1D' : '2D'}`;
+export const fillName = theme.palette.complementary[isAppOne ? 'blue' : 'green'].regular;
 
 export default new FunctionalModuleConfig({
   name: 'homework',
   apiName: 'Cahier de texte',
   displayName: 'Homework',
-  picture: { type: 'NamedSvg', name: pictureName, fill: theme.palette.complementary.blue.regular },
+  picture: { type: 'NamedSvg', name: pictureName, fill: fillName },
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors
