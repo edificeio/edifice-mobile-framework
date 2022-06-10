@@ -4,6 +4,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
@@ -40,7 +41,7 @@ const style = StyleSheet.create({
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.grey.white,
   },
   subjectView: {
     flexShrink: 1,
@@ -81,6 +82,7 @@ type ISessionModifiedList = ISession & {
   startDate?: moment.Moment;
   endDate?: moment.Moment;
   classes?: string[];
+  calendarType?: string;
 };
 
 const adaptCourses = (courses: ICourse[], homeworks: IHomeworkList, sessions: ISessionModifiedList[]) => {
@@ -96,15 +98,15 @@ const adaptCourses = (courses: ICourse[], homeworks: IHomeworkList, sessions: IS
     .sort((a, b) => moment(a.date).diff(moment(b.date)))
     .map(s => {
       let isSessionPlaced = false as boolean;
-      s['startDate'] = moment(s.date.format('YYYY-MM-DD ') + s.start_time);
-      s['endDate'] = moment(s.date.format('YYYY-MM-DD ') + s.end_time);
-      s['classes'] = [s.audience.name];
+      s.startDate = moment(s.date.format('YYYY-MM-DD ') + s.start_time);
+      s.endDate = moment(s.date.format('YYYY-MM-DD ') + s.end_time);
+      s.classes = [s.audience.name];
       courses.map((c, index) => {
         if (s.course_id === c.id && s.startDate?.isSame(c.startDate) && s.endDate?.isSame(c.endDate)) {
           calendarList[index] = { ...c, session: s };
           isSessionPlaced = true;
         } else if (!isSessionPlaced && index === courses.length - 1 && s !== undefined && s.is_published) {
-          s['calendarType'] = 'session';
+          s.calendarType = 'session';
           calendarList.push(s);
         }
       });

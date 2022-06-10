@@ -4,6 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Session } from '~/modules/viescolaire/utils/cdt';
@@ -29,15 +30,11 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   pageTitle: {
-    color: '#AFAFAF',
+    color: theme.palette.grey.stone,
     textTransform: 'uppercase',
   },
   title: {
-    ...TextSizeStyle.SlightBigPlus,
-  },
-  subtitle: {
-    color: '#AFAFAF',
-    marginBottom: 15,
+    ...TextSizeStyle.SlightBig,
   },
   course: {
     textTransform: 'uppercase',
@@ -137,7 +134,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
             </View>
 
             <ScrollView>
-              <View style={[style.sessionPart]}>
+              <View style={style.sessionPart}>
                 <Text style={style.pageTitle}>{I18n.t('viesco-session')}</Text>
                 {sessionList && sessionList[indexSelectedSession]?.title && (
                   <TextBold style={style.title}>{sessionList[indexSelectedSession].title}</TextBold>

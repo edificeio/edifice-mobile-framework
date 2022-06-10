@@ -32,9 +32,6 @@ const style = StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 15,
   },
-  subtitle: {
-    color: '#AFAFAF',
-  },
   grid: {
     marginTop: 10,
     flexDirection: 'row',

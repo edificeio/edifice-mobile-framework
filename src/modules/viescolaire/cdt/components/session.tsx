@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { Text, TextBold } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   authorText: {
-    color: '#AFAFAF',
+    color: theme.palette.grey.stone,
   },
 });
 

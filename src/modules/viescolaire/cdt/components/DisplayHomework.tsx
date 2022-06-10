@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
@@ -32,7 +33,7 @@ const style = StyleSheet.create({
     ...TextSizeStyle.SlightBig,
   },
   subtitle: {
-    color: '#AFAFAF',
+    color: theme.palette.grey.stone,
     marginBottom: 15,
   },
   course: {
@@ -137,7 +138,7 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
             </View>
 
             <ScrollView>
-              <View style={[style.homeworkPart]}>
+              <View style={style.homeworkPart}>
                 <TextBold style={style.title}>{I18n.t('viesco-homework-home')}</TextBold>
                 {homeworkList && homeworkList[indexSelectedHomework]?.due_date && (
                   <Text style={style.subtitle}>

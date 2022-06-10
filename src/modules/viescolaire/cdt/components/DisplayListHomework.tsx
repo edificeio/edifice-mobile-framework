@@ -4,6 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
@@ -29,7 +30,7 @@ const style = StyleSheet.create({
     paddingHorizontal: 15,
   },
   title: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
   },
   homeworksView: {
     marginBottom: 40,
@@ -39,7 +40,7 @@ const style = StyleSheet.create({
     marginTop: 15,
   },
   subtitle: {
-    color: '#AFAFAF',
+    color: theme.palette.grey.stone,
     marginBottom: 15,
   },
   course: {
