@@ -2,10 +2,10 @@
   "major": 1,
   "minor": 8,
   "rev": 0,
-  "build": 10,
+  "build": 11,
   "alpha": 10,
-  "rc": 0,
-  "last": "2022-06-09T19:21:09",
-  "notes": "chore(schoolbook): remove unused getters\nfix(mediacentre): AMV2-301, performance improvements\nfix(pronote): competences i18n\nfix(blog): MB-673, comment field focus\nfix: Close popup after action selection when picing file or image\nfix(pronote), MB-694, MB-690, MB-701, MB-702, MB-703 refine carnetDeBord\nchore: remove emphasized header prop\nchore(linter): Styles && Colors rules addition\nfix(schoolbook): MB-708, display all students in report card\nfix(schoolbook): MB-706, html content view in details page\nchore: MB-669, new moncollege logo\nfix(workspace): AMV2-122, item style\nfix(workspace): MB-707, Remove download button from navbar for iOS.\nfix(viesco): AMV2-323, AMV2-320, Fix css\nchore(refactor): Dead code removal\nrelease: 1.8.0-alpha.9(1080009)",
+  "rc": 1,
+  "last": "2022-06-10T22:55:17",
+  "notes": "fix(schoolbook): MB-653 scrollbar permanent on recipients modal\nchore(schoolbook): removed getter\nchore: MB-648, add MonEcole logo\nfix(workspace): AMV2-132, Add files in shared folders\nchore(homework): module color condition\nchore(schoolbook): acknowledgementNeededStudent wording\nchore(build): Align iOS Ino.plist\nchore(homework): MB-709, blue homework app color\nrefactor(mediacentre): MO-129, deleted homepage component\nrelease: 1.8.0-alpha.10(1080010)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
