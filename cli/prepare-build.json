@@ -5,7 +5,5 @@
   "build": 0,
   "alpha": 0,
   "rc": 0,
-  "last": "2022-06-03T19:46:13",
-  "notes": "fix(viesco): AMV2-324, presence undefined student\nfix(pronote): empty values misdisplyed\nfix(pronote) MB-693 fix pronote translation\nfix(support): AMV2-299, style\nfix(pronote): MB-693 fix display values\nchore(generic): commentfield text color\nchore(build): Finally leave \\n as is\nfix(zimbra): AMVS-296, Fix drafts body display\nchore(build): Try release notes with <br /> insstead of \\n\nfix(pronote): MB-694, MB-696 fix date displaying + fix crash\nchore(schoolbook): improved navigation\nchore(build): Try release notes with \\ inssteead of \\n\nfix(pronote): MB-694 fix date displaying\nfix(schoolbook): MB-700, newestWordDates algorithm\nchore(build): Try release notes with \\\\r\\\\\\n inssteead of \\r\\\\n\nfix(zimbra): AMV2-317, selected mails header hide\nfeat(schoolbook): MB-691, report card layout\nfeat(schoolbook): MB-698, hide horizontal scrollbar in userlist\nchore(build): Try release notes with \\rr\\n inssteead of <br>\nchore(build): Change \\n with \\r\\n in release notes\nrelease: 1.8.0-alpha.8(1080008)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
