@@ -3,12 +3,12 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
+import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSizeStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
-import { SquareCheckbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({
   containerView: {
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   textZone: {
     marginHorizontal: 10,
     borderBottomWidth: 0.5,
-    borderColor: 'lightgrey',
+    borderColor: theme.palette.grey.cloudy,
     maxHeight: UI_SIZES.screen.height / 4,
   },
   infosView: {
@@ -77,11 +77,7 @@ export default class SignatureModal extends React.Component<SignatureModalProps>
               onChangeText={(text: string) => this.props.setSignature(text)}
             />
             <View style={styles.infosView}>
-              <SquareCheckbox
-                value={this.props.isGlobalSignature}
-                color={CommonStyles.primary}
-                onChange={this.props.toggleGlobal}
-              />
+              <Checkbox checked={this.props.isGlobalSignature} onPress={this.props.toggleGlobal} />
               <Text style={styles.useSignatureText}>{I18n.t('zimbra-signature-use')}</Text>
             </View>
             <View style={styles.actionsButtonsContainer}>

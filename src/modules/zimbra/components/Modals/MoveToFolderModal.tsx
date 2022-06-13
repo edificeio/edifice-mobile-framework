@@ -3,11 +3,11 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { IFolder } from '~/modules/zimbra/state/initMails';
-import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
 
@@ -33,10 +33,10 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   messagesContainer: {
-    backgroundColor: '#eef7fb',
+    backgroundColor: theme.palette.primary.light,
   },
   directoriesContainer: {
-    backgroundColor: 'lightblue',
+    backgroundColor: theme.palette.primary.light,
   },
   actionsButtonsContainer: {
     flexDirection: 'row-reverse',
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     paddingRight: 90,
   },
   separator: {
-    borderBottomColor: CommonStyles.borderColorVeryLighter,
+    borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 4,
     width: '100%',
   },
@@ -60,10 +60,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   selectedItem: {
-    backgroundColor: '#fc8500',
-  },
-  itemTextSelected: {
-    color: 'white',
+    backgroundColor: theme.palette.secondary.regular,
   },
 });
 

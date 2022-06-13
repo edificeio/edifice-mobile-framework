@@ -2,9 +2,9 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
@@ -14,9 +14,11 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   text: {
     ...TextSizeStyle.SlightBig,
+    marginLeft: 8,
   },
   messageContainer: {
     width: '100%',
@@ -33,22 +35,16 @@ export const ModalStorageWarning = ({ isVisible, closeModal }: { isVisible: bool
     <ModalContent style={{ width: useWindowDimensions().width - 60 }}>
       <View style={styles.titleContainer}>
         <ModalContentBlock style={styles.row}>
-          <Icon size={18} name="warning" color={CommonStyles.secondary} />
-          <TextBold style={styles.text}>&emsp;{I18n.t('zimbra-quota-overflowTitle')}</TextBold>
+          <Icon size={18} name="warning" color={theme.palette.secondary.regular} />
+          <TextBold style={styles.text}>{I18n.t('zimbra-quota-overflowTitle')}</TextBold>
         </ModalContentBlock>
       </View>
-
       <View style={styles.messageContainer}>
         <Text>{I18n.t('zimbra-quota-overflowText')}</Text>
       </View>
-
       <View style={styles.actionsButtonsContainer}>
         <ModalContentBlock style={styles.row}>
-          <DialogButtonOk
-            style={{ backgroundColor: CommonStyles.secondary }}
-            label={I18n.t('common.ok')}
-            onPress={() => closeModal()}
-          />
+          <DialogButtonOk label={I18n.t('common.ok')} onPress={() => closeModal()} />
         </ModalContentBlock>
       </View>
     </ModalContent>

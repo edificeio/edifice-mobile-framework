@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 
@@ -9,11 +10,11 @@ const styles = StyleSheet.create({
   item: {
     padding: 10,
     paddingVertical: 12,
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     flexDirection: 'row',
   },
   selectedItem: {
-    backgroundColor: '#fc8500',
+    backgroundColor: theme.palette.secondary.regular,
   },
   itemText: {
     ...TextSizeStyle.SlightBigPlus,
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     paddingRight: 40,
   },
   itemTextSelected: {
-    color: 'white',
+    color: theme.palette.grey.white,
   },
   itemIcon: {
     alignSelf: 'center',

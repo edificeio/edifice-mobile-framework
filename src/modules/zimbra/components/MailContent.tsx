@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { getUserSession } from '~/framework/util/session';
@@ -25,12 +26,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 0,
     flexDirection: 'column-reverse',
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
   },
   scrollContainer: {
     flexGrow: 1,
-    backgroundColor: '#FFF',
-    shadowColor: '#000',
+    backgroundColor: theme.palette.grey.white,
     shadowOffset: {
       width: 0,
       height: 5,

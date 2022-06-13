@@ -21,6 +21,7 @@ import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { DropdownMenu } from '~/ui/DropdownMenu';
 
 type MailContentContainerProps = {
+  isFetching: boolean;
   mail: any;
   storage: IQuota;
   fetchMailContentAction: (mailId: string) => void;

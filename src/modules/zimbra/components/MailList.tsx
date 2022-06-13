@@ -4,6 +4,7 @@ import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -30,21 +31,25 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     maxWidth: UI_SIZES.screen.width - 16,
     padding: 10,
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
   },
   containerMailSelected: {
-    backgroundColor: '#C5E6F2',
+    backgroundColor: theme.palette.primary.light,
   },
   mailInfos: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'flex-end',
   },
-  mailInfoSender: { flex: 1 },
-  greyColor: { color: '#AFAFAF' },
+  mailInfoSender: {
+    flex: 1,
+  },
+  greyColor: {
+    color: theme.palette.grey.stone,
+  },
   subjectText: {
     flex: 1,
-    color: '#AFAFAF',
+    color: theme.palette.grey.stone,
   },
   attachmentIcon: {
     alignSelf: 'flex-end',
@@ -186,7 +191,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         onLongPress={() => this.selectItem(mailInfos)}>
         <Header style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
-            {mailInfos.unread && <Icon name="mail" size={18} color="#FC8500" />}
+            {mailInfos.unread && <Icon name="mail" size={18} color={theme.palette.secondary.regular} />}
             <SingleAvatar userId={mailInfos.from} />
           </LeftPanel>
           <CenterPanel>

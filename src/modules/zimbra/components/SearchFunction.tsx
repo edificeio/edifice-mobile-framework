@@ -3,10 +3,12 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
+
 const styles = StyleSheet.create({
   textInput: {
     flex: 1,
-    color: '#FFF',
+    color: theme.palette.grey.white,
     fontSize: 16,
   },
 });
@@ -28,7 +30,7 @@ export const Input = ({ value, onChange }: { value: string; onChange: (text: str
     <TextInput
       style={styles.textInput}
       placeholder={I18n.t('Search')}
-      placeholderTextColor="#FFF"
+      placeholderTextColor={theme.palette.grey.white}
       numberOfLines={1}
       defaultValue={currentValue}
       onChangeText={text => updateCurrentValue(text)}

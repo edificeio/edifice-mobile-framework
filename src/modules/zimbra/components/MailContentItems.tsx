@@ -5,6 +5,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -24,11 +25,11 @@ import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from '
 const styles = StyleSheet.create({
   containerMail: {
     padding: 15,
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
   },
   containerMailDetails: {
     padding: 15,
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     position: 'absolute',
     zIndex: 9,
     top: 12,
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   gridButtonText: {
-    color: '#2A9CC8',
+    color: theme.palette.primary.regular,
     marginRight: 5,
   },
   gridViewStyle: {
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
   },
   gridButtonTextPJnames: {
     flex: 2,
-    color: '#2A9CC8',
+    color: theme.palette.primary.regular,
     marginLeft: 5,
   },
   dotReceiverColor: {
@@ -62,10 +63,11 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginRight: 5,
   },
-  greyColor: { color: '#AFAFAF' },
+  greyColor: {
+    color: theme.palette.grey.stone,
+  },
   shadow: {
     elevation: 5,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.8,
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   attachmentListText: {
-    color: '#2A9CC8',
+    color: theme.palette.primary.regular,
   },
   attachmentEmpty: {
     width: 25,
@@ -104,13 +106,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   footerButton: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
   },
   row: {
     flexDirection: 'row',
   },
   fullView: {
     flex: 1,
+    marginLeft: 4,
   },
   headerLeftPanel: {
     justifyContent: 'flex-start',
@@ -129,7 +132,7 @@ const styles = StyleSheet.create({
   },
   userContainer: {
     flexDirection: 'row',
-    marginLeft: 5,
+    marginLeft: 4,
   },
 });
 
@@ -225,7 +228,7 @@ const HeaderMailInfos = ({
         <IconButton
           onPress={setDetailsVisibility}
           text={I18n.t('zimbra-see_detail')}
-          color="#2A9CC8"
+          color={theme.palette.primary.regular}
           icon={!isDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
         />
       </CenterPanel>
@@ -263,7 +266,7 @@ export const HeaderMailDetails = ({
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={styles.row}>
           <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
-          <TextBold style={styles.fullView}> {mailInfos.subject}</TextBold>
+          <TextBold style={styles.fullView}>{mailInfos.subject}</TextBold>
         </View>
       ) : (
         <View />
@@ -280,7 +283,7 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={styles.row}>
           <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
-          <TextBold style={styles.fullView}> {mailInfos.subject}</TextBold>
+          <TextBold style={styles.fullView}>{mailInfos.subject}</TextBold>
         </View>
       ) : (
         <View />
@@ -292,7 +295,7 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
 export const FooterButton = ({ icon, text, onPress }) => {
   return (
     <View style={styles.footerButtonContainer}>
-      <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color="black" colorText="#F4F7F9" />
+      <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color="black" />
       <Text>{text}</Text>
     </View>
   );
@@ -329,7 +332,7 @@ export const RenderPJs = ({
             }}>
             <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
               <View style={[styles.gridViewStyle, styles.attachmentGridViewChild]}>
-                <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
+                <Icon size={25} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} />
                 <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
                   {item.filename}
                 </Text>
@@ -348,7 +351,7 @@ export const RenderPJs = ({
                       }
                     }}
                     style={styles.attachmentDownloadButton}>
-                    <Icon name="download" size={18} color="#2A9CC8" />
+                    <Icon name="download" size={18} color={theme.palette.primary.regular} />
                   </TouchableOpacity>
                 ) : null}
                 {index === 0 ? (

@@ -3,6 +3,7 @@ import React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -27,12 +28,12 @@ const styles = StyleSheet.create({
   },
   mailPart: {
     padding: 5,
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
   },
   lineSeparator: {
     marginLeft: 15,
     width: '50%',
-    borderColor: CommonStyles.grey,
+    borderColor: theme.palette.grey.grey,
     borderBottomWidth: 1,
     borderRadius: 1,
   },
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   signatureZone: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     minHeight: 40,
     maxHeight: UI_SIZES.screen.height / 3,
     paddingHorizontal: 10,
@@ -125,7 +126,7 @@ const HeaderSubject = ({
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 2,
   } as ViewStyle;
 
@@ -161,7 +162,7 @@ const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails
   return (
     <View style={[styles.mailPart, style]}>
       <HeaderUsers
-        style={style.headerContainer}
+        style={styles.headerContainer}
         value={headers.to}
         onChange={to => onChange({ ...headers, to })}
         onSave={() => onSave()}
