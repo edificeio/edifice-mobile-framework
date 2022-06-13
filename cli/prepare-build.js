@@ -59,7 +59,7 @@ try {
 
 try {
   if (['alpha', 'rc'].includes(buildType)) {
-    lastContent.notes = execSync(`git log --pretty=format:"%s" --since=${versionContent.last}`).toString();
+    lastContent.notes = execSync(`git log --pretty=format:"%s" --since=${lastContent.last}`).toString();
     //.replace(/(\n)/g, '<br />');
     lastContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
   }
