@@ -1,9 +1,10 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
+import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text } from '~/framework/components/text';
 import { newMailService } from '~/modules/zimbra/service/newMail';
@@ -33,7 +34,7 @@ const Input = ({ value, onChangeText, onSubmit, onBlur }) => {
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 2,
   } as ViewStyle;
 
@@ -66,22 +67,15 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
   } as ViewStyle;
 
   const FoundUserOrGroup = ({ profile, displayName, onPress }) => {
-    const [color, setColor] = React.useState(CommonStyles.lightGrey);
+    const [color, setColor] = React.useState(theme.palette.grey.fog);
     React.useEffect(() => {
       setColor(getProfileColor(profile));
     }, [profile]);
 
     return (
       <TouchableOpacity style={styles.foundListButton} onPress={onPress}>
-        <Text numberOfLines={1} lineHeight={30} ellipsizeMode="tail">
-          <Text
-            style={{
-              color,
-            }}>
-            {'\u25CF '}
-          </Text>
-          {displayName}
-        </Text>
+        <Text style={{ color }}>{'\u25CF '}</Text>
+        <Text numberOfLines={1}>{displayName}</Text>
       </TouchableOpacity>
     );
   };
@@ -104,13 +98,13 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
 const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
   const SelectedUserOrGroup = ({ onClick, displayName }) => {
     const itemStyle = {
-      backgroundColor: CommonStyles.primaryLight,
+      backgroundColor: theme.palette.primary.pale,
       borderRadius: 3,
       padding: 5,
       margin: 2,
     } as ViewStyle;
 
-    const userLabel = { color: CommonStyles.primary, textAlignVertical: 'center' } as ViewStyle;
+    const userLabel = { color: theme.palette.primary.regular, textAlignVertical: 'center' } as ViewStyle;
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>

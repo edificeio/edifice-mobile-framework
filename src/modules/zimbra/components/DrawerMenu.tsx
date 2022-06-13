@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import CreateFolderModal from '~/modules/zimbra/containers/CreateFolderModal';
@@ -15,7 +16,7 @@ import DrawerOption from './DrawerOption';
 
 const styles = StyleSheet.create({
   labelContainer: {
-    backgroundColor: '#eef7fb',
+    backgroundColor: theme.palette.primary.pale,
     paddingHorizontal: 5,
     paddingVertical: 10,
     flexDirection: 'row',
@@ -26,30 +27,29 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   container: {
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.grey.white,
   },
   folderCreationButton: {
     marginBottom: 2,
   },
   folderCreationText: {
     justifyContent: 'center',
-    marginBottom: 2,
   },
   storageText: {
     justifyContent: 'center',
   },
   loadBar: {
-    backgroundColor: 'lightgrey',
+    backgroundColor: theme.palette.grey.cloudy,
     width: '100%',
     height: 20,
   },
   loadBarPercent: {
-    backgroundColor: '#444',
+    backgroundColor: theme.palette.grey.black,
     height: '100%',
   },
   loadBarText: {
     textAlign: 'center',
-    color: 'white',
+    color: theme.palette.grey.white,
   },
   drawerBottom: {
     flexGrow: 1,

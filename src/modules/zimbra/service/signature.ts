@@ -29,13 +29,11 @@ export const signatureService = {
     const data = SignatureAdapter(await fetchJSONWithCache(`/zimbra/signature`));
     return data;
   },
-  putSignature: async (signatureData: string, isGlobalSignature: boolean) => {
+  putSignature: async (signature: string, isGlobalSignature: boolean) => {
     const bodyData = {
+      ...(signature !== '' && { signature }),
       useSignature: isGlobalSignature,
     };
-    if (signatureData !== '') {
-      bodyData['signature'] = signatureData;
-    }
     try {
       await fetchJSONWithCache(`/zimbra/signature`, {
         method: 'PUT',

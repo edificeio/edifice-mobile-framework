@@ -6,6 +6,7 @@ import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import theme from '~/app/theme';
 import { TextBold } from '~/framework/components/text';
 import { fetchRootFoldersAction, postFolderAction } from '~/modules/zimbra/actions/folders';
 import { CommonStyles } from '~/styles/common/styles';
@@ -66,7 +67,7 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
     const textInputStyle = {
       color: CommonStyles.textColor,
       borderBottomWidth: 0.5,
-      borderColor: 'lightgrey',
+      borderColor: theme.palette.grey.cloudy,
     } as ViewStyle;
     return (
       <ModalBox isVisible={show} backdropOpacity={0.5}>
