@@ -22,6 +22,7 @@ const fs = require('fs');
 const moment = require('moment');
 
 const gradleFile = 'android/app/build.gradle';
+const lastFile = 'cli/last-build.json';
 const packageFile = 'package.json';
 const plistFile = 'ios/appe/Info.plist';
 const versionFile = 'cli/prepare-build.json';
@@ -54,7 +55,6 @@ try {
 
 //
 // Compute version && build number
-// Update release notes infos (last && notes) if needed
 //
 
 let buildNumber = null;
@@ -66,10 +66,6 @@ try {
     versionContent.build += 1;
     versionContent[buildType] += 1;
     buildType = `${buildType}.${versionContent[buildType]}`;
-    // Get git history && update release notes infos (last && notes)
-    versionContent.notes = execSync(`git log --pretty=format:"%s" --since=${versionContent.last}`).toString();
-    //.replace(/(\n)/g, '<br />');
-    versionContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
   } else {
     switch (buildType) {
       case 'major':
@@ -121,6 +117,49 @@ try {
 }
 
 //
+// Read last-build.json
+//
+
+let lastContent = null;
+
+try {
+  lastContent = JSON.parse(fs.readFileSync(lastFile, 'utf-8'));
+} catch (error) {
+  console.error('!!! Unable to read last-build.json !!!');
+  console.log(error);
+  process.exit(5);
+}
+
+//
+// Update release notes infos (last && notes) if needed
+//
+
+try {
+  if (['alpha', 'rc'].includes(buildType)) {
+    lastContent.notes = execSync(`git log --pretty=format:"%s" --since=${versionContent.last}`).toString();
+    //.replace(/(\n)/g, '<br />');
+    lastContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
+  }
+} catch (error) {
+  console.error('!!! Unable to compute last build !!!');
+  console.log(error);
+  process.exit(7);
+}
+
+//
+// Write new content to last-build.json
+//
+
+try {
+  fs.writeFileSync(lastFile, JSON.stringify(lastContent, null, 2), 'utf-8');
+  console.info('==> last-build.json file updated');
+} catch (error) {
+  console.error('!!! Unable to write last-build.json !!!');
+  console.log(error);
+  process.exit(8);
+}
+
+//
 // Read Info.plist
 //
 
@@ -131,7 +170,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to read Info.plist !!!');
   console.log(error);
-  process.exit(5);
+  process.exit(9);
 }
 
 //
@@ -146,7 +185,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to update Info.plist !!!');
   console.log(error);
-  process.exit(6);
+  process.exit(10);
 }
 
 //
@@ -159,7 +198,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to write Info.plist !!!');
   console.log(error);
-  process.exit(7);
+  process.exit(11);
 }
 
 //
@@ -173,7 +212,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to read build.gradle !!!');
   console.log(error);
-  process.exit(8);
+  process.exit(12);
 }
 
 //
@@ -188,7 +227,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to update build.gradle !!!');
   console.log(error);
-  process.exit(9);
+  process.exit(13);
 }
 
 //
@@ -201,7 +240,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to write build.gradle !!!');
   console.log(error);
-  process.exit(10);
+  process.exit(14);
 }
 
 //
@@ -215,7 +254,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to read package.json !!!');
   console.log(error);
-  process.exit(11);
+  process.exit(15);
 }
 
 //
@@ -227,7 +266,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to update package.json !!!');
   console.log(error);
-  process.exit(12);
+  process.exit(16);
 }
 
 //
@@ -240,7 +279,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to write package.json !!!');
   console.log(error);
-  process.exit(13);
+  process.exit(17);
 }
 
 //
@@ -254,5 +293,5 @@ try {
 } catch (error) {
   console.error('!!! Unable to commit && push changes !!!');
   console.log(error);
-  process.exit(11);
+  process.exit(18);
 }
