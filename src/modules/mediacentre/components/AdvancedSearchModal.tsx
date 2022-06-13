@@ -88,20 +88,20 @@ export enum Operand {
   AND = 1,
 }
 
-export interface Field {
+export interface IField {
   name: string;
   operand: Operand;
   value: string;
 }
 
-export interface Sources {
+export interface ISources {
   GAR: boolean;
   Moodle: boolean;
   PMB: boolean;
   Signet: boolean;
 }
 
-const defaultFields: Field[] = [
+const defaultFields: IField[] = [
   { name: 'title', value: '', operand: Operand.OR },
   { name: 'authors', value: '', operand: Operand.OR },
   { name: 'editors', value: '', operand: Operand.OR },
@@ -116,33 +116,33 @@ const defaultSources = {
   Signet: false,
 };
 
-type CriteriaInputProps = {
-  field: Field;
+interface ICriteriaInputProps {
+  field: IField;
 
-  onChange: (field: Field) => void;
-};
+  onChange: (field: IField) => void;
+}
 
-type SourceCheckboxProps = {
+interface ISourceCheckboxProps {
   checked: boolean;
   iconName?: string;
   source?: ImageSourcePropType;
 
   onChange: (value: boolean) => void;
-};
+}
 
-export interface SearchModalHandle {
+export interface ISearchModalHandle {
   resetParams: () => void;
 }
 
-type AdvancedSearchModalProps = {
+interface IAdvancedSearchModalProps {
   availableSources: string[];
   isVisible: boolean;
 
   closeModal: () => void;
-  onSearch: (fields: Field[], sources: Sources) => void;
-};
+  onSearch: (fields: IField[], sources: ISources) => void;
+}
 
-const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: CriteriaInputProps) => {
+const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICriteriaInputProps) => {
   const buttons = [I18n.t('mediacentre.advancedSearch.or'), I18n.t('mediacentre.advancedSearch.and')];
   const onChangeOperand = (value: number) => {
     props.field.operand = value;
@@ -172,7 +172,7 @@ const CriteriaInput: React.FunctionComponent<CriteriaInputProps> = (props: Crite
   );
 };
 
-const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: SourceCheckboxProps) => {
+const SourceCheckbox: React.FunctionComponent<ISourceCheckboxProps> = (props: ISourceCheckboxProps) => {
   const onCheck = () => {
     props.onChange(true);
   };
@@ -191,14 +191,14 @@ const SourceCheckbox: React.FunctionComponent<SourceCheckboxProps> = (props: Sou
   );
 };
 
-export const AdvancedSearchModal: React.FunctionComponent<AdvancedSearchModalProps> = forwardRef<
-  SearchModalHandle,
-  AdvancedSearchModalProps
->((props: AdvancedSearchModalProps, ref) => {
-  const [fields, setFields] = useState<Field[]>(defaultFields);
-  const [sources, setSources] = useState<Sources>(defaultSources);
+export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalProps> = forwardRef<
+  ISearchModalHandle,
+  IAdvancedSearchModalProps
+>((props: IAdvancedSearchModalProps, ref) => {
+  const [fields, setFields] = useState<IField[]>(defaultFields);
+  const [sources, setSources] = useState<ISources>(defaultSources);
   const areFieldsEmpty = !fields.some(field => field.value !== '');
-  const updateField = (index: number, field: Field) => {
+  const updateField = (index: number, field: IField) => {
     const newFields = [...fields];
     newFields[index] = field;
     setFields(newFields);

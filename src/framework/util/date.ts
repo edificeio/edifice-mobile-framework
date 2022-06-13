@@ -31,7 +31,7 @@ export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
   } /*before this year*/ else return pastDate.format('D MMM YYYY');
 };
 
-export const displayDate = (date: Moment, format?: 'short' | 'extraShort') => {
+export const displayDate = (date: Moment, format?: 'short' | 'extraShort', showHours?: boolean) => {
   const now = moment();
   const isShortFormat = format === 'short';
   const isExtraShortFormat = format === 'extraShort';

@@ -7,12 +7,11 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 
-import { Field, Sources } from './AdvancedSearchModal';
+import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
-import { SearchState } from './HomePage';
 import { SearchFilter } from './SearchFilter';
 
 const styles = StyleSheet.create({
@@ -57,36 +56,42 @@ const styles = StyleSheet.create({
   },
 });
 
-interface SearchFilters {
+export enum SearchState {
+  NONE = 0,
+  SIMPLE = 1,
+  ADVANCED = 2,
+}
+
+interface ISearchFilters {
   level: string[];
   'resource-type': string[];
   source: string[];
 }
 
-interface AdvancedSearchFieldProps {
-  field: Field;
+interface IAdvancedSearchFieldProps {
+  field: IField;
 }
 
-interface SearchParamsProps {
-  fields: Field[];
+interface ISearchParamsProps {
+  fields: IField[];
   searchState: SearchState;
-  sources: Sources;
+  sources: ISources;
 
   onCancelSearch: () => void;
 }
 
-interface SearchContentProps {
-  fields: Field[];
+interface ISearchContentProps {
+  fields: IField[];
   isFetching: boolean;
-  resources: Resource[];
+  resources: IResource[];
   searchState: SearchState;
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   onCancelSearch: () => void;
   removeFavorite: (id: string, source: Source) => any;
 }
 
-const resourceMatchesFilters = (resource: Resource, filters: SearchFilters) => {
+const resourceMatchesFilters = (resource: IResource, filters: ISearchFilters) => {
   let typeMatches = filters['resource-type'].length === 0;
   let sourceMatches = filters.source.length === 0;
   let levelMatches = filters.level.length === 0;
@@ -107,7 +112,7 @@ const resourceMatchesFilters = (resource: Resource, filters: SearchFilters) => {
   return typeMatches && sourceMatches && levelMatches;
 };
 
-const getSources = (resources: Resource[]) => {
+const getSources = (resources: IResource[]) => {
   return {
     GAR: resources.some(resource => resource.source === Source.GAR),
     Moodle: resources.some(resource => resource.source === Source.MOODLE),
@@ -116,7 +121,7 @@ const getSources = (resources: Resource[]) => {
   };
 };
 
-const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (props: AdvancedSearchFieldProps) =>
+const AdvancedSearchField: React.FunctionComponent<IAdvancedSearchFieldProps> = (props: IAdvancedSearchFieldProps) =>
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
       <TextBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</TextBold>
@@ -124,7 +129,7 @@ const AdvancedSearchField: React.FunctionComponent<AdvancedSearchFieldProps> = (
     </View>
   ) : null;
 
-const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchParamsProps) => (
+const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearchParamsProps) => (
   <View style={styles.parametersContainer}>
     <View style={styles.upperContainer}>
       <View style={styles.sourcesContainer}>
@@ -145,14 +150,14 @@ const SearchParams: React.FunctionComponent<SearchParamsProps> = (props: SearchP
   </View>
 );
 
-export const SearchContent: React.FunctionComponent<SearchContentProps> = (props: SearchContentProps) => {
-  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
-  const [activeFilters, setActiveFilters] = useState<SearchFilters>({ 'resource-type': [], source: [], level: [] });
+export const SearchContent: React.FunctionComponent<ISearchContentProps> = (props: ISearchContentProps) => {
+  const [filteredResources, setFilteredResources] = useState<IResource[]>([]);
+  const [activeFilters, setActiveFilters] = useState<ISearchFilters>({ 'resource-type': [], source: [], level: [] });
   const isFiltering =
     activeFilters['resource-type'].length > 0 || activeFilters.source.length > 0 || activeFilters.level.length > 0;
   const sources = getSources(isFiltering ? filteredResources : props.resources);
   const filterResources = () => {
-    const filtered: Resource[] = [];
+    const filtered: IResource[] = [];
     for (const resource of props.resources) {
       if (resourceMatchesFilters(resource, activeFilters)) {
         filtered.push(resource);

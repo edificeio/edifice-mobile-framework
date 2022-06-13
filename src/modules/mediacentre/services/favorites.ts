@@ -1,6 +1,6 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
 export const favoritesService = {
   get: async () => {
@@ -11,7 +11,7 @@ export const favoritesService = {
     }
     return favorites;
   },
-  post: async (id: string, resource: Resource) => {
+  post: async (id: string, resource: IResource) => {
     const res: any = resource;
     if (resource.source === Source.SIGNET) {
       res.id = Number(resource.id);

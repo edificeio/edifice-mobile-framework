@@ -10,7 +10,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
 const styles = StyleSheet.create({
   upperContentContainer: {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface IconButtonProps {
+interface IIconButtonProps {
   color?: string;
   icon: string;
   size: number;
@@ -53,27 +53,27 @@ interface IconButtonProps {
   onPress: () => void;
 }
 
-interface FavoriteIconProps {
-  resource: Resource;
+interface IFavoriteIconProps {
+  resource: IResource;
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
-interface SmallCardProps {
-  resource: Resource;
+interface ISmallCardProps {
+  resource: IResource;
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
-export const IconButton: React.FunctionComponent<IconButtonProps> = (props: IconButtonProps) => (
+export const IconButton: React.FunctionComponent<IIconButtonProps> = (props: IIconButtonProps) => (
   <TouchableOpacity onPress={props.onPress}>
     <Icon size={props.size} color={props.color || theme.palette.primary.regular} name={props.icon} />
   </TouchableOpacity>
 );
 
-export const FavoriteIcon: React.FunctionComponent<FavoriteIconProps> = (props: FavoriteIconProps) => {
+export const FavoriteIcon: React.FunctionComponent<IFavoriteIconProps> = (props: IFavoriteIconProps) => {
   const removeFavorite = () => {
     props.removeFavorite(props.resource.id, props.resource.source);
   };
@@ -87,34 +87,39 @@ export const FavoriteIcon: React.FunctionComponent<FavoriteIconProps> = (props: 
   );
 };
 
-export const SmallCard: React.FunctionComponent<SmallCardProps> = (props: SmallCardProps) => {
-  const openURL = () => {
-    openUrl(props.resource.link);
+export class SmallCard extends React.PureComponent<ISmallCardProps> {
+  openURL = () => {
+    openUrl(this.props.resource.link);
   };
-  const copyToClipboard = () => {
-    Clipboard.setString(props.resource.link);
+
+  copyToClipboard = () => {
+    Clipboard.setString(this.props.resource.link);
     Toast.show(I18n.t('mediacentre.link-copied'));
   };
-  return (
-    <TouchCard onPress={openURL}>
-      <View style={styles.upperContentContainer}>
-        <TextBold numberOfLines={1} style={styles.titleText}>
-          {props.resource.title}
-        </TextBold>
-        {props.resource.source !== Source.SIGNET ? <SourceImage source={props.resource.source} size={18} /> : null}
-      </View>
-      <View style={styles.lowerContentContainer}>
-        <ResourceImage image={props.resource.image} style={styles.imageContainer} />
-        <View style={styles.secondaryContainer}>
-          <Text numberOfLines={2} style={styles.descriptionText}>
-            {props.resource.source === Source.SIGNET ? props.resource.authors : props.resource.editors}
-          </Text>
-          <View style={styles.actionsContainer}>
-            <FavoriteIcon {...props} />
-            <IconButton icon="link" size={20} onPress={copyToClipboard} />
+
+  public render() {
+    const { resource } = this.props;
+    return (
+      <TouchCard onPress={this.openURL}>
+        <View style={styles.upperContentContainer}>
+          <TextBold numberOfLines={1} style={styles.titleText}>
+            {resource.title}
+          </TextBold>
+          {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={18} /> : null}
+        </View>
+        <View style={styles.lowerContentContainer}>
+          <ResourceImage image={resource.image} style={styles.imageContainer} />
+          <View style={styles.secondaryContainer}>
+            <Text numberOfLines={2} style={styles.descriptionText}>
+              {resource.source === Source.SIGNET ? resource.authors : resource.editors}
+            </Text>
+            <View style={styles.actionsContainer}>
+              <FavoriteIcon {...this.props} />
+              <IconButton icon="link" size={20} onPress={this.copyToClipboard} />
+            </View>
           </View>
         </View>
-      </View>
-    </TouchCard>
-  );
-};
+      </TouchCard>
+    );
+  }
+}

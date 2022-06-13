@@ -170,18 +170,21 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
             navigation={navigation}
             onEvent={this.handleEvent.bind(this)}
           />
-          <FloatingAction
-            menuItems={popupMenuItems}
-            onEvent={this.handleEvent.bind(this)}
-            selected={selectedArrayItems}
-            eventHandleData={{
-              dispatch,
-              filterId,
-              navigation,
-              parentId: navigation.getParam('parentId'),
-              selected: selectedItems,
-            }}
-          />
+          {parentId !== 'shared' ? (
+            <FloatingAction
+              menuItems={popupMenuItems}
+              onEvent={this.handleEvent.bind(this)}
+              selected={selectedArrayItems}
+              eventHandleData={{
+                dispatch,
+                filterId,
+                navigation,
+                parentId: navigation.getParam('parentId'),
+                filter: navigation.getParam('filter'),
+                selected: selectedItems,
+              }}
+            />
+          ) : null}
         </View>
       );
     }

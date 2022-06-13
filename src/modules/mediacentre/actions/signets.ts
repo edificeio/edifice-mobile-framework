@@ -1,5 +1,6 @@
 import { Dispatch } from 'redux';
 
+import { getUserSession } from '~/framework/util/session';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { signetsService } from '~/modules/mediacentre/services/signets';
 import { ISignets, actionTypes } from '~/modules/mediacentre/state/signets';
@@ -10,11 +11,12 @@ const dataActions = createAsyncActionCreators<ISignets>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchSignetsAction(userId: string) {
+export function fetchSignetsAction() {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const sharedSignets = await signetsService.get(userId);
+      const session = getUserSession();
+      const sharedSignets = await signetsService.get(session.user.id);
       const orientationSignets = await signetsService.getOrientation();
       dispatch(dataActions.receipt({ orientationSignets, sharedSignets }));
     } catch (errmsg) {

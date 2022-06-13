@@ -8,6 +8,45 @@ import { DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { EVENT_TYPE } from '~/types';
 
+const styles = StyleSheet.create({
+  headerTitleStyle: {
+    color: '#ffffff',
+    fontFamily: CommonStyles.primaryFontFamily,
+    fontSize: layoutSize.LAYOUT_15,
+    fontWeight: '400',
+    textAlign: 'center',
+  },
+  nbSelected: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    width: layoutSize.LAYOUT_42,
+  },
+  nbSelectedText: {
+    color: '#ffffff',
+    fontSize: layoutSize.LAYOUT_16,
+    fontWeight: 'bold',
+  },
+  separator: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexGrow: 1,
+    flexShrink: 1,
+  },
+  textWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    width: DEVICE_WIDTH() - layoutSize.LAYOUT_140,
+  },
+  touchPanel: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: layoutSize.LAYOUT_58,
+  },
+});
+
 const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
   const { writeAccess, icon, id, options = {} } = item;
   let disable = (options.monoselection && selected && selected.length !== 1) || (readonly && writeAccess);
@@ -49,42 +88,3 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
 };
 
 export default Item;
-
-const styles = StyleSheet.create({
-  headerTitleStyle: {
-    color: '#ffffff',
-    fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: layoutSize.LAYOUT_15,
-    fontWeight: '400',
-    textAlign: 'center',
-  },
-  nbSelected: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    width: layoutSize.LAYOUT_42,
-  },
-  nbSelectedText: {
-    color: '#ffffff',
-    fontSize: layoutSize.LAYOUT_16,
-    fontWeight: 'bold',
-  },
-  separator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-  textWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    width: DEVICE_WIDTH() - layoutSize.LAYOUT_140,
-  },
-  touchPanel: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: layoutSize.LAYOUT_58,
-  },
-});

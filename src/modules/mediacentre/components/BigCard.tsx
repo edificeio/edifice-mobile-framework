@@ -9,7 +9,7 @@ import { TouchableResourceCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { Resource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
 import { ResourceImage, SourceImage } from './ResourceImage';
 
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface ActionButtonProps {
+interface IActionButtonProps {
   color?: string;
   icon: string;
   text: string;
@@ -51,28 +51,28 @@ interface ActionButtonProps {
   onPress: () => void;
 }
 
-interface FavoriteActionProps {
-  resource: Resource;
+interface IFavoriteActionProps {
+  resource: IResource;
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
-interface BigCardProps {
-  resource: Resource;
+interface IBigCardProps {
+  resource: IResource;
 
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (id: string, resource: IResource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
-const ActionButton: React.FunctionComponent<ActionButtonProps> = (props: ActionButtonProps) => (
+const ActionButton: React.FunctionComponent<IActionButtonProps> = (props: IActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
     <Icon size={20} color={props.color || theme.palette.primary.regular} name={props.icon} />
     <Text style={styles.actionText}>{props.text}</Text>
   </TouchableOpacity>
 );
 
-const FavoriteAction: React.FunctionComponent<FavoriteActionProps> = (props: FavoriteActionProps) => {
+const FavoriteAction: React.FunctionComponent<IFavoriteActionProps> = (props: IFavoriteActionProps) => {
   const removeFavorite = () => {
     props.removeFavorite(props.resource.id, props.resource.source);
     props.resource.favorite = false;
@@ -88,24 +88,29 @@ const FavoriteAction: React.FunctionComponent<FavoriteActionProps> = (props: Fav
   );
 };
 
-export const BigCard: React.FunctionComponent<BigCardProps> = (props: BigCardProps) => {
-  const openURL = () => {
-    openUrl(props.resource.link);
+export class BigCard extends React.PureComponent<IBigCardProps> {
+  openURL = () => {
+    openUrl(this.props.resource.link);
   };
-  const copyToClipboard = () => {
-    Clipboard.setString(props.resource.link);
+
+  copyToClipboard = () => {
+    Clipboard.setString(this.props.resource.link);
     Toast.show(I18n.t('mediacentre.link-copied'));
   };
-  return (
-    <TouchableResourceCard title={props.resource.title} onPress={openURL} style={styles.mainContainer}>
-      <View style={styles.contentContainer}>
-        <ResourceImage image={props.resource.image} style={styles.cardImage} resizeMode="contain" />
-        <View style={styles.actionsContainer}>
-          <FavoriteAction {...props} />
-          <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={copyToClipboard} />
+
+  public render() {
+    const { resource } = this.props;
+    return (
+      <TouchableResourceCard title={resource.title} onPress={this.openURL} style={styles.mainContainer}>
+        <View style={styles.contentContainer}>
+          <ResourceImage image={resource.image} style={styles.cardImage} resizeMode="contain" />
+          <View style={styles.actionsContainer}>
+            <FavoriteAction {...this.props} />
+            <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={this.copyToClipboard} />
+          </View>
+          {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={25} /> : null}
         </View>
-        {props.resource.source !== Source.SIGNET ? <SourceImage source={props.resource.source} size={25} /> : null}
-      </View>
-    </TouchableResourceCard>
-  );
-};
+      </TouchableResourceCard>
+    );
+  }
+}

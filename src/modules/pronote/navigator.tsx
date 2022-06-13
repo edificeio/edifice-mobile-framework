@@ -1,6 +1,7 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { addViewTrackingToStackRoutes } from '~/framework/util/tracker/withViewTracking';
 
 import moduleConfig from './moduleConfig';
 import CarnetDeBordScreen from './screens/CarnetDeBord';
@@ -42,7 +43,7 @@ export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) 
   };
 
   // Return stack navigator
-  return createStackNavigator(routes, {
+  return createStackNavigator(addViewTrackingToStackRoutes(routes), {
     headerMode: 'none',
   });
 };

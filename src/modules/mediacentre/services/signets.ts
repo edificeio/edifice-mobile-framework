@@ -1,5 +1,5 @@
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { Field } from '~/modules/mediacentre/components/AdvancedSearchModal';
+import { IField } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { compareResources, resourcesAdapter } from '~/modules/mediacentre/services/textbooks';
 
 export const signetsService = {
@@ -38,7 +38,7 @@ export const signetsService = {
     });
     return resourcesAdapter(response);
   },
-  searchAdvanced: async (fields: Field[]) => {
+  searchAdvanced: async (fields: IField[]) => {
     const body = {};
     for (const field of fields) {
       body[field.name] = { value: field.value, comparator: field.operand ? '$and' : '$or' };

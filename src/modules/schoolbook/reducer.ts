@@ -114,11 +114,6 @@ export const getHasSingleRecipientForTeacher = (recipients: IConcernedStudent[])
   return recipients?.length === 1;
 };
 
-export const getAcknowledgementNamesForStudent = (studentId: string, wordReport: IWordReport) => {
-  const concernedStudent = wordReport.report?.find(concernedStudent => concernedStudent.owner === studentId);
-  return concernedStudent?.acknowledgments.map(acknowledgment => acknowledgment.parentName);
-};
-
 export const getIsWordAcknowledgedForStudent = (acknowledgments: IAcknowledgment[]) => {
   return acknowledgments?.length > 0;
 };
@@ -133,12 +128,4 @@ export const getIsWordAcknowledgedForParent = (parentId: string, acknowledgments
 
 export const getIsWordRepliedToForParent = (parentId: string, responses: IResponse[] | null) => {
   return responses?.some(response => response.owner === parentId);
-};
-
-export const getResponsesForParent = (parentId: string, responses: IResponse[]) => {
-  return responses?.filter(response => response.owner === parentId);
-};
-
-export const getResponseNumberForStudentAndParent = (responses: IResponse[] | null) => {
-  return responses?.length;
 };

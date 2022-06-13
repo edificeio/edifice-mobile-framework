@@ -48,20 +48,23 @@ export class ImagePicker extends React.PureComponent<
         };
         callback(imgFormatted as ImagePicked);
       }
-      this.setState({ showModal: false });
     };
 
     const actions = {
       camera: async () => {
         try {
-          LocalFile.pick({ source: 'camera' }, cameraOptions, undefined).then(realCallback);
+          LocalFile.pick({ source: 'camera' }, cameraOptions, undefined)
+            .then(realCallback)
+            .finally(() => this.setState({ showModal: false }));
         } catch (error) {
           //TODO: Manage error
         }
       },
       gallery: async () => {
         try {
-          LocalFile.pick({ source: 'galery', multiple }, undefined, galeryOptions).then(realCallback);
+          LocalFile.pick({ source: 'galery', multiple }, undefined, galeryOptions)
+            .then(realCallback)
+            .finally(() => this.setState({ showModal: false }));
         } catch (error) {
           //TODO: Manage error
         }

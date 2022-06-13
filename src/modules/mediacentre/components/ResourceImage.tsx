@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, ImageResizeMode, ImageStyle, StyleProp, StyleSheet } from 'react-native';
+import { Image, ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 'react-native';
 
 import { NamedSVG } from '~/framework/components/picture';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -12,13 +12,13 @@ const styles = StyleSheet.create({
   },
 });
 
-interface ResourceImageProps {
+interface IResourceImageProps {
   image: string;
   resizeMode?: ImageResizeMode;
   style?: StyleProp<ImageStyle>;
 }
 
-interface SourceImageProps {
+interface ISourceImageProps {
   size: number;
   source: string;
 }
@@ -31,14 +31,18 @@ const getImageUri = (value: string): string => {
   return value;
 };
 
-export const ResourceImage: React.FunctionComponent<ResourceImageProps> = (props: ResourceImageProps) => {
+export const ResourceImage: React.FunctionComponent<IResourceImageProps> = (props: IResourceImageProps) => {
   const [loadingFailed, setLoadingFailed] = useState<boolean>(false);
   const onError = () => {
     setLoadingFailed(true);
   };
   if (loadingFailed) {
     const style = StyleSheet.flatten(props.style);
-    return <NamedSVG name="textbook-default" width={style.width || 50} height={style.height || 70} />;
+    return (
+      <View style={props.style}>
+        <NamedSVG name="textbook-default" width={style.width || 50} height={style.height || 70} />
+      </View>
+    );
   }
   return (
     <Image
@@ -50,7 +54,7 @@ export const ResourceImage: React.FunctionComponent<ResourceImageProps> = (props
   );
 };
 
-export const SourceImage: React.FunctionComponent<SourceImageProps> = (props: SourceImageProps) => {
+export const SourceImage: React.FunctionComponent<ISourceImageProps> = (props: ISourceImageProps) => {
   let image;
   switch (props.source) {
     case Source.GAR:

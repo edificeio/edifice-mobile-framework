@@ -34,6 +34,10 @@ const WorkspaceNavigator = createStackNavigator(
             filter: FilterId.owner,
             items: [addMenu(), createMenu()],
           },
+          {
+            filter: FilterId.shared,
+            items: [addMenu()],
+          },
         ],
         toolbarItems: [
           {

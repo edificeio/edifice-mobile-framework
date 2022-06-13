@@ -55,6 +55,7 @@ const SchoolbookWordDetailsCard = (
   ref,
 ) => {
   const flatListRef = React.useRef<typeof FlatList>();
+  const flatListModalRef = React.useRef<typeof FlatList>();
   const modalBoxRef: { current: any } = React.createRef();
   const commentFieldRefs = React.useRef([]);
   const bottomEditorSheetRef: { current: any } = React.useRef();
@@ -127,8 +128,12 @@ const SchoolbookWordDetailsCard = (
           paddingBottom:
             UI_SIZES.spacing.extraSmall + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus * 2 : 0),
         }}
-        emphasizedHeader
-        customHeaderStyle={{ paddingVertical: UI_SIZES.spacing.smallPlus }}
+        customHeaderStyle={{
+          backgroundColor: theme.palette.grey.fog,
+          paddingVertical: UI_SIZES.spacing.smallPlus,
+          borderBottomColor: theme.palette.grey.pearl,
+          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
+        }}
         customHeaderIndicatorStyle={{ justifyContent: 'center' }}
         headerIndicator={
           isTeacher ? (
@@ -151,7 +156,13 @@ const SchoolbookWordDetailsCard = (
         header={
           <TouchableOpacity
             disabled={!isTeacher || hasSingleRecipientForTeacher}
-            onPress={() => modalBoxRef?.current?.doShowModal()}>
+            onPress={() => {
+              modalBoxRef?.current?.doShowModal();
+              setTimeout(() => {
+                console.log(flatListModalRef?.current);
+                flatListModalRef?.current?.flashScrollIndicators();
+              });
+            }}>
             <ContentCardHeader
               icon={
                 <SingleAvatar
@@ -328,6 +339,7 @@ const SchoolbookWordDetailsCard = (
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </Text>
             <UserList
+              ref={flatListModalRef}
               data={studentsForTeacher}
               avatarSize={24}
               contentContainerStyle={{ flexGrow: 1 }}
@@ -338,6 +350,8 @@ const SchoolbookWordDetailsCard = (
                 minimumViewTime: -1,
               }}
               alwaysBounceVertical={false}
+              persistentScrollbar
+              showsVerticalScrollIndicator
             />
           </View>
         }

@@ -23,12 +23,18 @@ import { TextBold } from '~/ui/Typography';
 import { IUserInfoState } from '~/user/state/info';
 
 import UserList, { IUserListItem, UserListProps } from '../../../framework/components/UserList';
-import { CarnetDeBordSection, ICarnetDeBord, parseCarnetDeBordReleveDeNotesDevoirNoteBareme } from '../model/carnetDeBord';
+import {
+  CarnetDeBordSection,
+  ICarnetDeBord,
+  formatCarnetDeBordCompetencesValue,
+  formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
+  formatCarnetDeBordVieScolaireType,
+  getSummaryItem,
+} from '../model/carnetDeBord';
 import moduleConfig from '../moduleConfig';
 import redirect from '../service/redirect';
 import { loadCarnetDeBordAction } from '../state/carnetDeBord/actions';
 import { ICarnetDeBordStateData } from '../state/carnetDeBord/reducer';
-import CarnetDeBordDetailsScreen from './CarnetDeBordDetails';
 
 export interface CarnetDeBordScreenDataProps {
   session: IUserSession;
@@ -139,14 +145,21 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-calendar',
                 cached: true,
               }}
-              textLabel={data.PageCahierDeTextes?.CahierDeTextes?.[0]?.Matiere}
-              valueLabel={(() => {
-                const cdt = data.PageCahierDeTextes?.CahierDeTextes?.find(c => c.TravailAFaire && c.TravailAFaire.length > 0);
-                return cdt?.TravailAFaire?.[0]?.PourLe
-                  ? I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
-                      date: cdt?.TravailAFaire?.[0]?.PourLe && displayDate(cdt?.TravailAFaire?.[0]?.PourLe, 'short'),
-                    })
-                  : I18n.t('pronote.carnetDeBord.noInfo');
+              {...(() => {
+                const taf = getSummaryItem(
+                  data.PageCahierDeTextes?.TravailAFairePast,
+                  data.PageCahierDeTextes?.TravailAFaireFuture,
+                );
+                return taf
+                  ? {
+                      textLabel: taf.Matiere ?? I18n.t('pronote.carnetDeBord.noInfo'),
+                      valueLabel: taf.PourLe
+                        ? I18n.t('pronote.carnetDeBord.cahierDeTextes.pourDate', {
+                            date: displayDate(taf.PourLe, 'short'),
+                          })
+                        : I18n.t('pronote.carnetDeBord.noInfo'),
+                    }
+                  : {};
               })()}
               emptyLabel={I18n.t('pronote.carnetDeBord.cahierDeTextes.empty')}
               navigation={navigation}
@@ -160,15 +173,17 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-success',
                 cached: true,
               }}
-              textLabel={data.PageReleveDeNotes?.Devoir?.[0]?.Matiere}
-              valueLabel={
-                data.PageReleveDeNotes?.Devoir?.[0]
-                  ? parseCarnetDeBordReleveDeNotesDevoirNoteBareme(
-                      data.PageReleveDeNotes.Devoir?.[0].Note,
-                      data.PageReleveDeNotes.Devoir?.[0].Bareme,
-                    )
-                  : I18n.t('pronote.carnetDeBord.noInfo')
-              }
+              {...(() => {
+                const note = getSummaryItem(data.PageReleveDeNotes?.DevoirsPast, data.PageReleveDeNotes?.DevoirsFuture);
+                return (
+                  note && {
+                    textLabel: note?.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
+                    valueLabel: note?.Note
+                      ? formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note.Note, note.Bareme)
+                      : I18n.t('pronote.carnetDeBord.noInfo'),
+                  }
+                );
+              })()}
               emptyLabel={I18n.t('pronote.carnetDeBord.releveDeNotes.empty')}
               navigation={navigation}
               type={CarnetDeBordSection.NOTES}
@@ -181,12 +196,15 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-skills',
                 cached: true,
               }}
-              textLabel={data.PageCompetences?.Competences?.[0]?.Matiere}
-              valueLabel={
-                data.PageCompetences?.Competences?.[0] && data.PageCompetences?.Competences?.[0].NiveauDAcquisition?.Libelle
-                  ? `${data.PageCompetences.Competences?.[0]?.NiveauDAcquisition.Libelle}`
-                  : I18n.t('pronote.carnetDeBord.noInfo')
-              }
+              {...(() => {
+                const comp = getSummaryItem(data.PageCompetences?.CompetencesPast, data.PageCompetences?.CompetencesFuture);
+                return (
+                  comp && {
+                    textLabel: comp?.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
+                    valueLabel: formatCarnetDeBordCompetencesValue(comp.NiveauDAcquisition?.Genre),
+                  }
+                );
+              })()}
               emptyLabel={I18n.t('pronote.carnetDeBord.competences.empty')}
               navigation={navigation}
               type={CarnetDeBordSection.COMPETENCES}
@@ -199,21 +217,36 @@ CarnetDeBordScreen.getRenderContent =
                 name: 'ui-flag',
                 cached: true,
               }}
-              textLabel={
-                (data.PageVieScolaire?.VieScolaire?.[0] && data.PageVieScolaire.VieScolaire?.[0]?.type.toLocaleUpperCase()) ||
-                I18n.t('pronote.carnetDeBord.noInfo')
-              }
-              valueLabel={
-                data.PageVieScolaire?.VieScolaire?.[0] &&
-                (data.PageVieScolaire.VieScolaire?.[0].type === 'Absence'
-                  ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.isSame(data.PageVieScolaire.VieScolaire?.[0].DateFin, 'day')
-                    ? data.PageVieScolaire.VieScolaire?.[0].DateDebut.fromNow()
-                    : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
-                        start: displayDate(data.PageVieScolaire.VieScolaire?.[0].DateDebut, 'short'),
-                        end: displayDate(data.PageVieScolaire.VieScolaire?.[0].DateFin, 'short'),
-                      })
-                  : data.PageVieScolaire.VieScolaire?.[0].Date.fromNow(false))
-              }
+              {...(() => {
+                const vsco = getSummaryItem(data.PageVieScolaire?.VieScolairePast, data.PageVieScolaire?.VieScolaireFuture);
+                return (
+                  vsco && {
+                    textLabel: formatCarnetDeBordVieScolaireType(vsco?.type),
+                    valueLabel:
+                      vsco.type === 'Absence'
+                        ? vsco.DateDebut && vsco.DateFin
+                          ? vsco.DateDebut.isSame(vsco.DateFin, 'day')
+                            ? vsco.DateDebut.isSame(vsco.DateFin, 'minute')
+                              ? displayDate(vsco.DateDebut, 'short')
+                              : displayDate(vsco.DateDebut, 'short') +
+                                I18n.t('common.space') +
+                                I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                                  start: vsco.DateDebut.format('LT'),
+                                  end: vsco.DateFin.format('LT'),
+                                })
+                            : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                                start: displayDate(vsco.DateDebut, 'short'),
+                                end: displayDate(vsco.DateFin, 'short'),
+                              })
+                          : I18n.t('pronote.carnetDeBord.noInfo')
+                        : vsco.Date
+                        ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
+                          ? displayDate(vsco.Date, 'short') + I18n.t('common.space') + vsco.Date.format('LT')
+                          : displayDate(vsco.Date, 'short')
+                        : I18n.t('pronote.carnetDeBord.noInfo'),
+                  }
+                );
+              })()}
               emptyLabel={I18n.t('pronote.carnetDeBord.vieScolaire.empty')}
               navigation={navigation}
               type={CarnetDeBordSection.VIE_SCOLAIRE}

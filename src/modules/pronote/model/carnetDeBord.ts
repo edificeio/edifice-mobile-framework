@@ -25,20 +25,32 @@ export type ICarnetDeBord = IUserBasic &
   Partial<IPronoteConnectorInfo> & {
     PageCahierDeTextes?: {
       Titre: string;
-      CahierDeTextes?: ICarnetDeBordCahierDeTextes[];
+      // CahierDeTextes?: ICarnetDeBordCahierDeTextes[]; // Not used in our front.
+      TravailAFairePast: ICarnetDeBordCahierDeTextesTravailAFaire[];
+      TravailAFaireFuture: ICarnetDeBordCahierDeTextesTravailAFaire[];
     };
     PageCompetences?: {
       Titre: string;
-      Competences?: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
+      CompetencesPast: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
+      CompetencesFuture: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
     };
     PageReleveDeNotes?: {
       Titre: string;
       Message?: string;
-      Devoir?: ICarnetDeBordReleveDeNotesDevoir[];
+      DevoirsPast: ICarnetDeBordReleveDeNotesDevoir[];
+      DevoirsFuture: ICarnetDeBordReleveDeNotesDevoir[];
     };
     PageVieScolaire?: {
       Titre: string;
-      VieScolaire?: (
+      VieScolairePast?: (
+        | ICarnetDeBordVieScolaireAbsence
+        | ICarnetDeBordVieScolaireRetard
+        | ICarnetDeBordVieScolairePassageInfirmerie
+        | ICarnetDeBordVieScolairePunition
+        | ICarnetDeBordVieScolaireSanction
+        | ICarnetDeBordVieScolaireObservation
+      )[];
+      VieScolaireFuture?: (
         | ICarnetDeBordVieScolaireAbsence
         | ICarnetDeBordVieScolaireRetard
         | ICarnetDeBordVieScolairePassageInfirmerie
@@ -53,26 +65,26 @@ export type ICarnetDeBord = IUserBasic &
   };
 
 export type ICarnetDeBordCahierDeTextes = {
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Matiere?: string;
   TravailAFaire?: ICarnetDeBordCahierDeTextesTravailAFaire[];
   ContenuDeCours?: ICarnetDeBordCahierDeTextesContenuDeCours[];
 };
 export type ICarnetDeBordCahierDeTextesTravailAFaire = {
   Descriptif?: string;
-  PourLeString: string;
-  PourLe: moment.Moment;
+  PourLeString?: string;
+  PourLe?: moment.Moment;
   PieceJointe?: string[];
   SiteInternet?: string[];
-};
+} & Pick<ICarnetDeBordCahierDeTextes, 'Matiere'>;
 export type ICarnetDeBordCahierDeTextesContenuDeCours = {
   Titre?: string;
   Descriptif?: string;
   Categorie?: string;
   PieceJointe?: string[];
   SiteInternet?: string[];
-};
+} & Pick<ICarnetDeBordCahierDeTextes, 'Matiere'>;
 
 export type ICarnetDeBordCompetencesItem = {
   type: 'Item';
@@ -83,8 +95,8 @@ export type ICarnetDeBordCompetencesItem = {
     Genre?: number;
     Libelle?: string;
   };
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
 };
 export type ICarnetDeBordCompetencesEvaluation = Omit<ICarnetDeBordCompetencesItem, 'type'> & {
   type: 'Evaluation';
@@ -96,8 +108,8 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   Note: string;
   Bareme?: string;
   Matiere?: string;
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
 };
 const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
   abs: 'pronote.carnetDeBord.releveDeNotes.value.abs',
@@ -106,7 +118,7 @@ const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
   inap: 'pronote.carnetDeBord.releveDeNotes.value.inap',
   'n.rdu': 'pronote.carnetDeBord.releveDeNotes.value.nrdu',
 };
-export function parseCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
+export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
   if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
   const noteLowerCase = note.toString().toLowerCase();
   if (carnetDeBordReleveDeNotesDevoirSpecialValueI18n.hasOwnProperty(noteLowerCase)) {
@@ -122,30 +134,30 @@ export function parseCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | n
 
 export type ICarnetDeBordVieScolaireAbsence = {
   type: 'Absence';
-  DateDebut: moment.Moment;
-  DateDebutString: string;
-  DateFin: moment.Moment;
-  DateFinString: string;
+  DateDebut?: moment.Moment;
+  DateDebutString?: string;
+  DateFin?: moment.Moment;
+  DateFinString?: string;
   EstOuverte?: boolean;
   Justifie?: boolean;
   Motif?: string;
 };
 export type ICarnetDeBordVieScolaireRetard = {
   type: 'Retard';
-  Date: moment.Moment;
-  DateString: string;
-  Justifie: boolean;
+  Date?: moment.Moment;
+  DateString?: string;
+  Justifie?: boolean;
   Motif?: string;
 };
 export type ICarnetDeBordVieScolairePassageInfirmerie = {
   type: 'PassageInfirmerie';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
 };
 export type ICarnetDeBordVieScolairePunition = {
   type: 'Punition';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Nature?: string;
   Matiere?: string;
   Motif?: string;
@@ -153,8 +165,8 @@ export type ICarnetDeBordVieScolairePunition = {
 };
 export type ICarnetDeBordVieScolaireSanction = {
   type: 'Sanction';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Nature?: string;
   Motif?: string;
   Circonstances?: string;
@@ -162,9 +174,60 @@ export type ICarnetDeBordVieScolaireSanction = {
 };
 export type ICarnetDeBordVieScolaireObservation = {
   type: 'Observation';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Demandeur?: string;
   Matiere?: string;
   Observation?: string;
 };
+
+export function sortCarnetDeBordItems<T extends { Date?: moment.Moment; DateDebut?: moment.Moment; PourLe?: moment.Moment }>(
+  items: T[],
+  reverse?: boolean,
+) {
+  return items.sort((a, b) => {
+    const aDate = a.Date ?? a.DateDebut ?? a.PourLe;
+    const bDate = b.Date ?? b.DateDebut ?? b.PourLe;
+    if (aDate === undefined) return reverse ? -1 : 1;
+    if (bDate === undefined) return reverse ? 1 : -1;
+    return reverse ? bDate.diff(aDate) : aDate.diff(bDate);
+  });
+}
+
+export function getSummaryItem<T>(itemsPast?: T[], itemsFuture?: T[]) {
+  return itemsFuture !== undefined && itemsFuture.length > 0
+    ? itemsFuture[0]
+    : itemsPast !== undefined && itemsPast.length > 0
+    ? itemsPast[itemsPast.length - 1]
+    : undefined;
+}
+
+const carnetDeBordVieScolaireTypeI18n = {
+  Absence: 'pronote.carnetDeBord.vieScolaire.type.Absence',
+  Retard: 'pronote.carnetDeBord.vieScolaire.type.Retard',
+  PassageInfirmerie: 'pronote.carnetDeBord.vieScolaire.type.PassageInfirmerie',
+  Punition: 'pronote.carnetDeBord.vieScolaire.type.Punition',
+  Sanction: 'pronote.carnetDeBord.vieScolaire.type.Sanction',
+  Observation: 'pronote.carnetDeBord.vieScolaire.type.Observation',
+};
+
+export function formatCarnetDeBordVieScolaireType(type?: string) {
+  return type && carnetDeBordVieScolaireTypeI18n.hasOwnProperty(type)
+    ? I18n.t(carnetDeBordVieScolaireTypeI18n[type])
+    : I18n.t('pronote.carnetDeBord.noInfo');
+}
+const carnetDeBordCompetencesValueI18n = {
+  1: 'pronote.carnetDeBord.competences.value.1',
+  2: 'pronote.carnetDeBord.competences.value.2',
+  3: 'pronote.carnetDeBord.competences.value.3',
+  4: 'pronote.carnetDeBord.competences.value.4',
+  5: 'pronote.carnetDeBord.competences.value.5',
+  6: 'pronote.carnetDeBord.competences.value.6',
+  7: 'pronote.carnetDeBord.competences.value.7',
+  8: 'pronote.carnetDeBord.competences.value.8',
+};
+export function formatCarnetDeBordCompetencesValue(value?: number) {
+  return value && carnetDeBordCompetencesValueI18n.hasOwnProperty(value)
+    ? I18n.t(carnetDeBordCompetencesValueI18n[value])
+    : I18n.t('pronote.carnetDeBord.noInfo');
+}

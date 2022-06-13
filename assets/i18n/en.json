@@ -68,6 +68,7 @@
   "auth-error-firebase_error": "Unable to log in: error initializing notifications on your device.",
   "auth-error-invalid_client": "This version of the application ({{version}}) is obsolete, please update it.",
   "auth-error-invalid_grant": "This version of the application ({{version}}) is obsolete, please update it.",
+  "auth-error-must_log_again": "Please log in again with your new password.",
   "auth-error-network_error": "Unable to log in, try again or check your internet connection.",
   "auth-error-not_initilized": "Unable to log in ({{errorcode}}). Please try again or contact support.",
   "auth-error-not_premium": "You cannot log in because your school subscription plan does not include the application.",
@@ -79,15 +80,9 @@
   "auth-error-too_many_tries": "For security reasons, your account has been temporarily blocked due to too many sign-in attempts. Please try again later.",
   "auth-error-unknown_denied": "Unable to log in. Incorrect server response ({{errorcode}}). Please try again or contact support.",
   "auth-error-unknown_response": "Unable to log in. Incorrect server response ({{errorcode}}). Please try again or contact support.",
-  "auth-error-must_log_again": "Please log in again with your new password.",
   "back": "Back",
   "blog": {
-    "blogsEmptyScreen": {
-      "button": "Create a blog online",
-      "text": "Put on your reporter hat and write your first blog!",
-      "textNoCreationRights": "Suggest blog ideas for your school (classroom rules, field trips, presentations, etc.)",
-      "title": "No Blogs in sight"
-    },
+    "appName": "Blog",
     "blogCreatePostScreen": {
       "confirmationUnsavedPublication": "If you leave this page, your post will be lost.",
       "createAction": "Save",
@@ -124,12 +119,17 @@
       "sharedToNbPersons": "Shared with {{nb}} people",
       "title": "Choose a blog"
     },
+    "blogsEmptyScreen": {
+      "button": "Create a blog online",
+      "text": "Put on your reporter hat and write your first blog!",
+      "textNoCreationRights": "Suggest blog ideas for your school (classroom rules, field trips, presentations, etc.)",
+      "title": "No Blogs in sight"
+    },
     "post": {
       "needValidation": "Post pending approval",
       "publishAction": "Publish post",
       "waitingValidation": "Post ready for approval"
     },
-    "appName": "Blog",
     "resourceName": "Blog post",
     "tabName": "Blog"
   },
@@ -141,9 +141,9 @@
   "blog-selectPublishableBlog": "Choose a blog",
   "blog-sharedToNbPersons": "Shared with {{nb}} people",
   "change-password-errorLoading": "We were not able to upload the data needed to change your password. Please try again later.",
+  "changePassword-errorConfirm": "The passwords must be the same.",
   "changePassword-errorFields": "The form contains errors",
   "changePassword-errorRegex": "The new password does not meet the security criteria.",
-  "changePassword-errorConfirm": "The passwords must be the same.",
   "changePassword-errorSubmit": "Error while resetting password",
   "common": {
     "all": "All",
@@ -152,7 +152,8 @@
     "cancel": "Cancel",
     "close": "Close",
     "comment": {
-      "add": "Add a comment...",
+      "add": "Add comment...",
+      "addComment": "Add comment...",
       "comment": "Comment",
       "comments": "Comments",
       "confirmationDelete": "This action is permanent. Are you sure you want to delete the comment?",
@@ -160,6 +161,8 @@
       "confirmationUnsavedPublication": "You are going to unsave your comment. Do you want to proceed?",
       "noComments": "No comments"
     },
+    "confirmationUnsavedModification": "Change not saved",
+    "confirmationUnsavedPublication": "Publication not saved",
     "continue": "Continue",
     "date": {
       "invalid": "",
@@ -186,12 +189,10 @@
     "errorLoadingResource": "This content is inaccessible.",
     "for": "For",
     "idf": {
-      "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|’<>_.\/^*(){}%µ!£- ."
+      "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|’<>_./^*(){}%µ!£- ."
     },
     "infoBubble-doNotShow": "Do not show this message",
     "infoBubble-understood": "Understood",
-    "confirmationUnsavedModification": "Change not saved",
-    "confirmationUnsavedPublication": "Publication not saved",
     "modified": "(edited)",
     "modify": "Edit",
     "ok": "OK",
@@ -208,7 +209,6 @@
       "userCharter": "/assets/cgu/ODE_User_Charter.pdf"
     }
   },
-  "common.search": "Search",
   "common-ErrorLoadingResource": "This content is inaccessible.",
   "common-ErrorNetwork": "Network errors",
   "common-ErrorStorageAccess": "An error occurred when adding the document. The application does not have access to your device's data storage. Please check your security settings before trying again.",
@@ -233,12 +233,14 @@
   "common-picker-document": "Add a document",
   "common-picker-image": "Add an image",
   "common-picker-title": "Select file type",
+  "common.search": "Search",
   "connector-connectFailed": "Impossible to open the link!",
   "conversation": {
     "appName": "Mailbox",
     "attachmentError": "Attachment upload failure",
     "bcc": "Bcc",
     "bccPrefix": "Bcc :",
+    "cancelModifications": "Cancel edits",
     "cc": "Cc",
     "ccPrefix": "Cc :",
     "create": "Create",
@@ -248,11 +250,12 @@
       "folderExists": "This folder already exists"
     },
     "delete": "Delete",
+    "deleteDraft": "Delete draft",
     "directories": "Directories",
     "directoryName": "Directory name",
     "downloadAll": "Download all attachments",
-    "drafts": "Drafts",
     "draft": "Draft",
+    "drafts": "Drafts",
     "emptyScreen": {
       "drafts": {
         "text": "Not enough time to finish your messages? No worries! You can save them as drafts. ",
@@ -293,12 +296,10 @@
     "replySubject": "RE: ",
     "restore": "Restore",
     "restoreTo": "Restore to",
-    "saveDraftMessage": "Would you like to save your message as a draft and finish it later?",
     "saveAgainDraftMessage": "Would you like to save the changes you made to the draft?",
+    "saveDraftMessage": "Would you like to save your message as a draft and finish it later?",
     "saveDraftTitle": "Draft",
     "saveModifications": "Save changes",
-    "cancelModifications": "Cancel edits",
-    "deleteDraft": "Delete draft",
     "seeDetail": "See details",
     "selectDirectory": "Select folder",
     "sendAttachmentProgress": "Please wait until the attachment has been added",
@@ -508,6 +509,7 @@
     }
   },
   "me-indicator": "(me)",
+  "mediaNotAvailable": "Media not available",
   "mediacentre.add-favorite": "Add to favorites",
   "mediacentre.advanced-search": "Advanced search",
   "mediacentre.advancedSearch.and": "AND",
@@ -516,13 +518,13 @@
   "mediacentre.advancedSearch.editors": "Editor:",
   "mediacentre.advancedSearch.levels": "Level:",
   "mediacentre.advancedSearch.or": "OR",
-  "mediacentre.advancedSearch.sources": "Sources:",
-  "mediacentre.advancedSearch.title": "Title:",
   "mediacentre.advancedSearch.search-authors": "Find an author",
   "mediacentre.advancedSearch.search-disciplines": "Find a subject",
   "mediacentre.advancedSearch.search-editors": "Find an editor",
   "mediacentre.advancedSearch.search-levels": "Find a level",
   "mediacentre.advancedSearch.search-title": "Find a title",
+  "mediacentre.advancedSearch.sources": "Sources:",
+  "mediacentre.advancedSearch.title": "Title:",
   "mediacentre.copy-link": "Copy link",
   "mediacentre.display-all": "Show all",
   "mediacentre.download-textbooks": "Your textbooks will appear in a few moments...",
@@ -537,14 +539,14 @@
   "mediacentre.home": "Home",
   "mediacentre.level": "Level",
   "mediacentre.link-copied": "Link copied",
-  "mediacentre.mediacentre": "Mediacentre",
+  "mediacentre.mediacentre": "Media Center",
   "mediacentre.my-signets": "My bookmarks",
   "mediacentre.my-textbooks": "My textbooks",
   "mediacentre.orientation-signets": "Job fair",
   "mediacentre.remove-favorite": "Delete from favorites",
   "mediacentre.resource-type": "Resource type",
   "mediacentre.source": "Source",
-  "mediaNotAvailable": "Media not available",
+  "mediacentre.tabName": "Media Center",
   "modify": "Modify",
   "modules-names": {
     "actualites": "News",
@@ -600,10 +602,44 @@
     "Student": "Student",
     "Teacher": "Teacher"
   },
+  "pronote.carnetDeBord.competences.value.1": "Expert",
+  "pronote.carnetDeBord.competences.value.2": "Acquired",
+  "pronote.carnetDeBord.competences.value.3": "Almost acquired",
+  "pronote.carnetDeBord.competences.value.4": "In process of acquisition",
+  "pronote.carnetDeBord.competences.value.5": "Start of acquisition",
+  "pronote.carnetDeBord.competences.value.6": "Not acquired",
+  "pronote.carnetDeBord.competences.value.7": "Absent",
+  "pronote.carnetDeBord.competences.value.8": "Not rated",
+  "pronote.carnetDeBord.releveDeNotes.value.abs": "absent",
+  "pronote.carnetDeBord.releveDeNotes.value.disp": "exempt",
+  "pronote.carnetDeBord.releveDeNotes.value.inap": "unfit",
+  "pronote.carnetDeBord.releveDeNotes.value.nnot": "not rated",
+  "pronote.carnetDeBord.releveDeNotes.value.nrdu": "unreturned",
+  "pronote.carnetDeBord.vieScolaire.type.Absence": "ABSENCE",
+  "pronote.carnetDeBord.vieScolaire.type.Observation": "OBSERVATION",
+  "pronote.carnetDeBord.vieScolaire.type.PassageInfirmerie": "VISIT TO THE INFIRMARY",
+  "pronote.carnetDeBord.vieScolaire.type.Punition": "PUNISHMENT",
+  "pronote.carnetDeBord.vieScolaire.type.Retard": "LATE",
+  "pronote.carnetDeBord.vieScolaire.type.Sanction": "PENALTY",
   "protected": "Documents added in the apps",
   "readMore": "read more",
   "rename": "Rename",
   "restore-successful": "Restore successful",
+  "schoolbook": {
+    "acknowledgementNeededStudent": "A parent must confirm the reading.",
+    "schoolbookWordDetailsScreen": {
+      "acknowledge": "Confirm reading",
+      "alreadyConfirmed": "You have confirmed the reading of this message",
+      "backWithoutAck": "Exit",
+      "backWithoutAckConfirm": "Would you like to leave this screen without confirming the message?",
+      "mustRead": "A parent must read this message!",
+      "readBy": "Read by",
+      "readByNumberRelative": "Read by {{nb}} parent",
+      "readByNumberRelatives": "Read by {{nb}} parents",
+      "readBySeparator": ", ",
+      "title": "Schoolbook"
+    }
+  },
   "seeDetails": "See details",
   "seeLess": "See less",
   "seeMore": "See more",
@@ -827,7 +863,7 @@
   "videoNotAvailable": "Video player not available",
   "viesco": "Student Services",
   "viesco-absence-declaration": "Absence declaration",
-  "viesco-absence-declared": "Successfully declared absence",
+  "viesco-absence-declared": "Absence successfully reported",
   "viesco-absence-motive": "Absence motive",
   "viesco-arrived": "Arrived at",
   "viesco-arrived-motive": "Reason",
@@ -874,7 +910,7 @@
   "viesco-memento": "Student record",
   "viesco-memento-born-date": "Date of birth:",
   "viesco-memento-relatives": "Relatives",
-  "viesco-no-register-today": "There is no register today",
+  "viesco-no-register-today": "There is no appeal today",
   "viesco-notifications": "Notifications",
   "viesco-pickChild": "Pick a child",
   "viesco-register": "Register",
@@ -894,6 +930,10 @@
   "viesco-year": "Year",
   "welcome": "Welcome",
   "workspace": "Workspace",
+  "workspace-quota-overflowText": "Your storage space is full. You cannot upload more files.",
+  "workspace-quota-overflowTitle": "Quota reached",
+  "workspace-uploadFailed": "Error importing document",
+  "workspace-uploadSuccessful": "The document has been successfully imported",
   "workspaceEmptyScreen": {
     "owner": {
       "text": "This is where you can store your personal documents, including photos, videos, audio recordings, PDFs, and more.",
@@ -916,10 +956,6 @@
       "title": "The trash can is empty"
     }
   },
-  "workspace-quota-overflowText": "Your storage space is full. You cannot upload more files.",
-  "workspace-quota-overflowTitle": "Quota reached",
-  "workspace-uploadFailed": "Error importing document",
-  "workspace-uploadSuccessful": "The document has been successfully imported",
   "zimbra-add": "Add",
   "zimbra-all": "All",
   "zimbra-attachment-error": "Attachment upload failure",

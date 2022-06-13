@@ -1,10 +1,10 @@
 import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 import mediacentreConfig from '~/modules/mediacentre/moduleConfig';
-import { Resource } from '~/modules/mediacentre/utils/Resource';
+import { IResource } from '~/modules/mediacentre/utils/Resource';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
-export type IFavorites = Resource[];
+export type IFavorites = IResource[];
 
 // THE STATE --------------------------------------------------------------------------------------
 

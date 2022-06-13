@@ -8,32 +8,6 @@ import { EVENT_TYPE, IEventProps } from '~/types';
 import { CenterPanel, LeftIconPanel } from '~/ui/ContainerContent';
 import { IMenuItem } from '~/ui/types';
 
-const Item = ({ onEvent, item, eventHandleData }: IEventProps & any) => {
-  const { icon, text } = item as IMenuItem;
-
-  const view = (
-    <View style={style.touchPanel}>
-      <LeftIconPanel style={style.leftPanel}>
-        <Icon color="#000000" size={layoutSize.LAYOUT_28} name={icon} />
-      </LeftIconPanel>
-      <CenterPanel style={style.centerPanel}>
-        <Text numberOfLines={1} style={style.fileName}>
-          {text}
-        </Text>
-      </CenterPanel>
-    </View>
-  );
-
-  if (item.wrapper) {
-    const ItemWrapper = item.wrapper;
-    return <ItemWrapper {...eventHandleData}>{view}</ItemWrapper>;
-  } else {
-    return <TouchableOpacity onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}>{view}</TouchableOpacity>;
-  }
-};
-
-export default Item;
-
 const style = StyleSheet.create({
   centerPanel: {
     alignItems: 'center',
@@ -67,3 +41,29 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+const Item = ({ onEvent, item, eventHandleData }: IEventProps & any) => {
+  const { icon, text } = item as IMenuItem;
+
+  const view = (
+    <View style={style.touchPanel}>
+      <LeftIconPanel style={style.leftPanel}>
+        <Icon color="#000000" size={layoutSize.LAYOUT_28} name={icon} />
+      </LeftIconPanel>
+      <CenterPanel style={style.centerPanel}>
+        <Text numberOfLines={1} style={style.fileName}>
+          {text}
+        </Text>
+      </CenterPanel>
+    </View>
+  );
+
+  if (item.wrapper) {
+    const ItemWrapper = item.wrapper;
+    return <ItemWrapper {...eventHandleData}>{view}</ItemWrapper>;
+  } else {
+    return <TouchableOpacity onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}>{view}</TouchableOpacity>;
+  }
+};
+
+export default Item;

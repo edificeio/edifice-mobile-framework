@@ -20,7 +20,6 @@ import {
   getIsWordAcknowledgedForParent,
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
-  getResponseNumberForStudentAndParent,
 } from '../reducer';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
@@ -74,17 +73,19 @@ export const SchoolbookWordSummaryCard = ({
     (isTeacher && isWordAcknowledgedForTeacher) ||
     (isStudent && isWordAcknowledgedForStudent) ||
     (isParent && isWordAcknowledgedForParent);
-  const responsesNumber = isTeacher ? respNumber : getResponseNumberForStudentAndParent(responses);
+  const responsesNumber = isTeacher ? respNumber : responses?.length;
 
   return (
     <ArticleContainer>
       <TouchableResourceCard
         onPress={action}
-        emphasizedHeader
         customHeaderStyle={{
           paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.smallPlus,
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
+          backgroundColor: theme.palette.grey.fog,
+          borderBottomColor: theme.palette.grey.pearl,
+          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
         }}
         headerIndicator={<View />}
         header={

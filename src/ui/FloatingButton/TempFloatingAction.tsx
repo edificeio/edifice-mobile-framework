@@ -1,17 +1,46 @@
 import React, { Component } from 'react';
 import { FlatList, Keyboard, StyleSheet, View } from 'react-native';
 
-import FloatingActionItem from './FloatingActionItem';
-
+import { UI_SIZES } from '~/framework/components/constants';
+import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { getMenuShadow } from '~/ui/ButtonIconText';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { ISelected } from '~/ui/Toolbar/Toolbar';
 import { IFloatingProps, IMenuItem } from '~/ui/types';
-import { UI_SIZES } from '~/framework/components/constants';
-import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 
+import FloatingActionItem from './FloatingActionItem';
+
+const styles = StyleSheet.create({
+  actions: {
+    borderRadius: layoutSize.LAYOUT_4,
+    overflow: 'visible',
+    backgroundColor: '#ffffff',
+    position: 'absolute',
+    right: 12,
+    top: 81,
+    width: layoutSize.LAYOUT_200,
+    zIndex: 10,
+    ...getMenuShadow(),
+  },
+  overlayActions: {
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: UI_SIZES.screen.topInset,
+  },
+  separator: {
+    borderBottomColor: CommonStyles.borderColorVeryLighter,
+    borderBottomWidth: 1,
+    width: '100%',
+  },
+});
+
+interface IState {
+  active: boolean;
+}
 class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
     active: false,
@@ -110,40 +139,5 @@ class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
     return null;
   }
 }
-
-interface IState {
-  active: boolean;
-}
-
-const styles = StyleSheet.create({
-  actions: {
-    borderRadius: layoutSize.LAYOUT_4,
-    overflow: 'visible',
-    backgroundColor: '#ffffff',
-    position: 'absolute',
-    right: 12,
-    top: 81,
-    width: layoutSize.LAYOUT_200,
-    zIndex: 10,
-    ...getMenuShadow(),
-  },
-  button: {
-    position: 'absolute',
-    right: 20,
-    top: UI_SIZES.screen.topInset,
-  },
-  overlayActions: {
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: UI_SIZES.screen.topInset,
-  },
-  separator: {
-    borderBottomColor: CommonStyles.borderColorVeryLighter,
-    borderBottomWidth: 1,
-    width: '100%',
-  },
-});
 
 export default TempFloatingAction;

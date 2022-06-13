@@ -5,9 +5,9 @@ import { IMediacentre_State } from './reducer';
 export default new NavigableModuleConfig<'Mediacentre', IMediacentre_State>({
   name: 'Mediacentre',
   entcoreScope: ['mediacentre'],
-  matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('MEDIACENTRE'),
+  matchEntcoreApp: '/mediacentre',
 
-  displayI18n: 'mediacentre.mediacentre',
+  displayI18n: 'mediacentre.tabName',
   displayAs: 'myAppsModule',
   displayPicture: {
     type: 'NamedSvg',

@@ -21,7 +21,13 @@ import { IUserSession, getUserSession } from '~/framework/util/session';
 import { splitWords } from '~/framework/util/string';
 import { TextBold, TextSemiBold } from '~/ui/Typography';
 
-import { CarnetDeBordSection, ICarnetDeBord, parseCarnetDeBordReleveDeNotesDevoirNoteBareme } from '../model/carnetDeBord';
+import {
+  CarnetDeBordSection,
+  ICarnetDeBord,
+  formatCarnetDeBordCompetencesValue,
+  formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
+  formatCarnetDeBordVieScolaireType,
+} from '../model/carnetDeBord';
 import redirect from '../service/redirect';
 
 export interface CarnetDeBordDetailsScreenDataProps {
@@ -123,52 +129,60 @@ CarnetDeBordDetailsScreen.pageTiteI18n = {
   [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote.carnetDeBord.vieScolaire.title',
 };
 CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) => {
+  console.log('type', type, data);
   switch (type) {
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
-      const tafs: { date: string; label?: string; description: string }[] = [];
-      if (data.PageCahierDeTextes?.CahierDeTextes)
-        for (const item of data.PageCahierDeTextes.CahierDeTextes) {
-          if (item.TravailAFaire)
-            for (const taf of item.TravailAFaire) {
-              tafs.push({
-                date: I18n.t('pronote.carnetDeBord.cahierDeTextes.PourDate', {
-                  date: displayDate(taf.PourLe),
-                }),
-                label: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
-                description: taf.Descriptif || `<p>${I18n.t('pronote.carnetDeBord.noInfo')}</p>`,
-              });
-            }
-        }
-      return tafs;
+      return [...(data.PageCahierDeTextes?.TravailAFairePast ?? []), ...(data.PageCahierDeTextes?.TravailAFaireFuture ?? [])].map(
+        taf => ({
+          date: I18n.t('pronote.carnetDeBord.cahierDeTextes.PourDate', {
+            date: taf.PourLe ? displayDate(taf.PourLe) : I18n.t('pronote.carnetDeBord.noInfo'),
+          }),
+          label: taf.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
+          description: taf.Descriptif || `<p>${I18n.t('pronote.carnetDeBord.noInfo')}</p>`,
+        }),
+      );
     }
     case CarnetDeBordSection.NOTES: {
-      return data.PageReleveDeNotes?.Devoir?.map(item => ({
-        title: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
-        date: displayDate(item.Date),
-        value: parseCarnetDeBordReleveDeNotesDevoirNoteBareme(item.Note, item.Bareme),
+      return [...(data.PageReleveDeNotes?.DevoirsPast ?? []), ...(data.PageReleveDeNotes?.DevoirsFuture ?? [])].map(item => ({
+        label: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
+        date: item.Date ? displayDate(item.Date) : I18n.t('pronote.carnetDeBord.noInfo'),
+        value: formatCarnetDeBordReleveDeNotesDevoirNoteBareme(item.Note, item.Bareme),
       }));
     }
     case CarnetDeBordSection.COMPETENCES: {
-      return data.PageCompetences?.Competences?.map(item => ({
-        title: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
-        date: displayDate(item.Date),
-        value: item.NiveauDAcquisition?.Libelle
-          ? splitWords(item.NiveauDAcquisition.Libelle, 2)
+      return [...(data.PageCompetences?.CompetencesPast ?? []), ...(data.PageCompetences?.CompetencesFuture ?? [])].map(item => ({
+        label: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
+        date: item.Date ? displayDate(item.Date) : I18n.t('pronote.carnetDeBord.noInfo'),
+        value: item.NiveauDAcquisition?.Genre
+          ? splitWords(formatCarnetDeBordCompetencesValue(item.NiveauDAcquisition.Genre), 2)
           : I18n.t('pronote.carnetDeBord.noInfo'),
       }));
     }
     case CarnetDeBordSection.VIE_SCOLAIRE: {
-      return data.PageVieScolaire?.VieScolaire?.map(item => ({
-        label: item.type.toLocaleUpperCase() || I18n.t('pronote.carnetDeBord.noInfo'),
+      return [...(data.PageVieScolaire?.VieScolairePast ?? []), ...(data.PageVieScolaire?.VieScolaireFuture ?? [])].map(item => ({
+        label: formatCarnetDeBordVieScolaireType(item?.type),
         date:
           item.type === 'Absence'
-            ? item.DateDebut.isSame(item.DateFin, 'day')
-              ? displayDate(item.DateDebut)
-              : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
-                  start: displayDate(item.DateDebut),
-                  end: displayDate(item.DateFin),
-                })
-            : displayDate(item.Date),
+            ? item.DateDebut && item.DateFin
+              ? item.DateDebut.isSame(item.DateFin, 'day')
+                ? item.DateDebut.isSame(item.DateFin, 'minute')
+                  ? displayDate(item.DateDebut) + I18n.t('common.space') + item.DateDebut.format('LT')
+                  : displayDate(item.DateDebut) +
+                    I18n.t('common.space') +
+                    I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                      start: item.DateDebut.format('LT'),
+                      end: item.DateFin.format('LT'),
+                    })
+                : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                    start: displayDate(item.DateDebut),
+                    end: displayDate(item.DateFin),
+                  })
+              : I18n.t('pronote.carnetDeBord.noInfo')
+            : item.Date
+            ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
+              ? displayDate(item.Date) + I18n.t('common.space') + item.Date.format('LT')
+              : displayDate(item.Date)
+            : I18n.t('pronote.carnetDeBord.noInfo'),
         description:
           item.type === 'Absence' || item.type === 'Retard'
             ? item.Motif || I18n.t('pronote.carnetDeBord.noInfo')
