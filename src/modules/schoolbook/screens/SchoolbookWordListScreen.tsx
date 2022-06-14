@@ -11,12 +11,17 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import UserList from '~/framework/components/UserList';
+import ActionsMenu from '~/framework/components/actionsMenu';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
+import { HeaderAction } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { PictureProps } from '~/framework/components/picture';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
@@ -245,9 +250,43 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 
   // HEADER =====================================================================================
 
-  const navBarInfo = {
-    title: I18n.t('schoolbook.appName'),
-  };
+  const [isMenuShown, setIsMenuShown] = React.useState<boolean>(false);
+  const toggleMenu = React.useCallback(() => {
+    setIsMenuShown(!isMenuShown);
+  }, [isMenuShown]);
+  const menuItems = React.useMemo(
+    () =>
+      hasSchoolbookWordCreationRights
+        ? [
+            {
+              text: I18n.t('schoolbook.word.create'),
+              icon: { type: 'NamedSvg', name: 'ui-externalLink' } as PictureProps,
+              onPress: () => {
+                //TODO: create generic function inside oauth (use in myapps, etc.)
+                if (!DEPRECATED_getCurrentPlatform()) {
+                  return null;
+                }
+                const url = `${DEPRECATED_getCurrentPlatform()!.url}/schoolbook#/list`;
+                openUrl(url);
+                setIsMenuShown(false);
+              },
+            },
+          ]
+        : [],
+    [hasSchoolbookWordCreationRights],
+  );
+
+  const computeNavBarInfo = React.useCallback(
+    () => ({
+      title: I18n.t('schoolbook.appName'),
+      right:
+        hasSchoolbookWordCreationRights &&
+        (loadingState === AsyncPagedLoadingState.DONE || loadingState === AsyncPagedLoadingState.REFRESH) ? (
+          <HeaderAction iconName="more_vert" iconSize={24} onPress={toggleMenu} />
+        ) : undefined,
+    }),
+    [hasSchoolbookWordCreationRights, loadingState, toggleMenu],
+  );
 
   // EMPTY SCREEN =================================================================================
 
@@ -263,7 +302,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
         )}
         {...(hasSchoolbookWordCreationRights
           ? {
-              buttonText: I18n.t('schoolbook.schoolbookWordListScreen.emptyScreen.button'),
+              buttonText: I18n.t('schoolbook.word.create'),
               buttonUrl: '/schoolbook#/list',
             }
           : {})}
@@ -346,10 +385,20 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     }
   };
 
+  const navBarInfo = React.useMemo(() => computeNavBarInfo(), [computeNavBarInfo]);
+
+  const navBarMenu = React.useMemo(
+    () => <ActionsMenu onClickOutside={toggleMenu} show={isMenuShown} data={menuItems} />,
+    [isMenuShown, menuItems, toggleMenu],
+  );
+
   return (
-    <PageView navigation={props.navigation} navBarWithBack={navBarInfo}>
-      {renderPage()}
-    </PageView>
+    <>
+      <PageView navigation={props.navigation} navBarWithBack={navBarInfo}>
+        {renderPage()}
+      </PageView>
+      {navBarMenu}
+    </>
   );
 };
 
