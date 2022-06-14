@@ -1,6 +1,7 @@
 {
   "Activate": "Activar mi cuenta",
   "Actualites": "Noticias",
+  "AutoLogin": "Reconectar automáticamente",
   "Birthdate": "Fecha de nacimiento",
   "Cancel": "Cancelar",
   "CarnetDeBord": "Diario de a bordo Pronote",
@@ -188,6 +189,8 @@
     },
     "errorLoadingResource": "Este contenido es inaccesible.",
     "for": "Para",
+    "forRecipients": "Para:",
+    "from": "De:",
     "idf": {
       "passwordRules": "La nueva contraseña debe tener al menos 12 caracteres, incluyendo al menos 1 mayúscula, 1 minúscula y 1 número o carácter especial de los siguientes: $&+,~:;=?@#|’<>_./^*(){}%µ!£- ."
     },
@@ -200,8 +203,15 @@
     "publish": "Publicar",
     "quit": "Salir",
     "readMore": "leer más",
+    "response": {
+      "add": "Agregar respuesta",
+      "confirmationUnsavedModification": "Está a punto de cancelar los cambios realizados en su respuesta. ¿Está seguro?",
+      "confirmationUnsavedPublication": "Está a punto de eliminar su respuesta. ¿Está seguro?"
+    },
     "save": "Guardar",
+    "send": "Enviar",
     "sommeNumeriqueAlert_temp": "A partir de septiembre 2021, la plataforma \"Somme Numérique\" ya no estará disponible. Será entonces necesario ingresar a través de la opción \"ENT Hauts-de-France\" disponible en la lista de redes sociales educativas.",
+    "to": "A:",
     "url": {
       "cgu": "/assets/cgu/ODE_Terms_of_use.pdf",
       "cookies": "/assets/cgu/notice_cookies_EN.pdf",
@@ -233,6 +243,9 @@
   "common-picker-document": "Agregar documento",
   "common-picker-image": "Agregar imagen",
   "common-picker-title": "Selecciona tipo de documento",
+  "common.redirect.browser.error": "Error de redirección.",
+  "common.redirect.browser.message": "Será redirigido a un sitio externo en su navegador.",
+  "common.redirect.browser.title": "Redirección del navegador",
   "common.search": "Buscar",
   "connector-connectFailed": "No se puede abrir el vínculo !",
   "conversation": {
@@ -602,6 +615,13 @@
     "Student": "Alumno",
     "Teacher": "Profesor"
   },
+  "pronote.carnetDeBord.cahierDeTextes.PourDate": "Para {{date}}",
+  "pronote.carnetDeBord.cahierDeTextes.empty": "Ningún trabajo durante los próximos 7 días",
+  "pronote.carnetDeBord.cahierDeTextes.pourDate": "para {{date}}",
+  "pronote.carnetDeBord.cahierDeTextes.title": "Cuaderno semanal",
+  "pronote.carnetDeBord.calendar.lastWeek": "dddd [último]",
+  "pronote.carnetDeBord.competences.empty": "No hay competencias reportadas",
+  "pronote.carnetDeBord.competences.title": "Competencias",
   "pronote.carnetDeBord.competences.value.1": "Experto",
   "pronote.carnetDeBord.competences.value.2": "Adquirido",
   "pronote.carnetDeBord.competences.value.3": "Casi un hecho",
@@ -610,35 +630,99 @@
   "pronote.carnetDeBord.competences.value.6": "No se adquirió",
   "pronote.carnetDeBord.competences.value.7": "Ausente",
   "pronote.carnetDeBord.competences.value.8": "No calificado",
+  "pronote.carnetDeBord.noData.text": "Parece que no hay datos de Pronote disponibles con respecto a su hijo/a.",
+  "pronote.carnetDeBord.noData.title": "Nada qué ver aquí...",
+  "pronote.carnetDeBord.noInfo": " –– ",
+  "pronote.carnetDeBord.openInPronote": "Abrir con Pronote",
+  "pronote.carnetDeBord.releveDeNotes.empty": "No hay notas reportadas",
+  "pronote.carnetDeBord.releveDeNotes.note": "{{note}} / {{bareme}}",
+  "pronote.carnetDeBord.releveDeNotes.title": "Notas",
   "pronote.carnetDeBord.releveDeNotes.value.abs": "ausente",
   "pronote.carnetDeBord.releveDeNotes.value.disp": "exento",
   "pronote.carnetDeBord.releveDeNotes.value.inap": "no apto",
   "pronote.carnetDeBord.releveDeNotes.value.nnot": "no anotado",
   "pronote.carnetDeBord.releveDeNotes.value.nrdu": "no devuelto",
+  "pronote.carnetDeBord.vieScolaire.dateFromTo": "{{start}} – {{end}}",
+  "pronote.carnetDeBord.vieScolaire.empty": "No hay ningún evento en los últimos 30 días",
+  "pronote.carnetDeBord.vieScolaire.title": "Comportamiento escolar",
   "pronote.carnetDeBord.vieScolaire.type.Absence": "AUSENCIA",
   "pronote.carnetDeBord.vieScolaire.type.Observation": "OBSERVACIÓN",
   "pronote.carnetDeBord.vieScolaire.type.PassageInfirmerie": "VISITA A LA ENFERMERÍA",
   "pronote.carnetDeBord.vieScolaire.type.Punition": "CASTIGO",
   "pronote.carnetDeBord.vieScolaire.type.Retard": "DELAY",
   "pronote.carnetDeBord.vieScolaire.type.Sanction": "PENALIDAD",
+  "pronote.selector.action": "Abrir Pronote",
+  "pronote.selector.placeholder": "Seleccionar escuela",
+  "pronote.selector.title": "Su cuenta está vinculada a varios establecimientos escolares.\nSeleccione el establecimiento con el que desee conectarse.",
   "protected": "Documentos agregados en las aplicaciones",
   "readMore": "leer más",
   "rename": "Rename",
   "restore-successful": "Restauración finalizada",
   "schoolbook": {
+    "acknowledge": "Confirmar lectura",
+    "acknowledged": "Leído",
+    "acknowledgement": "Leído",
+    "acknowledgementNeededRelative": "Debe confirmar la lectura del mensaje.",
     "acknowledgementNeededStudent": "Un padre debe confirmar la lectura.",
+    "acknowledgements": "Leídos",
+    "appName": "Cuaderno de correspondencia",
+    "categories": {
+      "canteen": "Cafetería",
+      "event": "Eventos",
+      "last-minute": "Última hora",
+      "leisure": "Ocio",
+      "outing": "Salidas",
+      "various": "Diversos"
+    },
+    "response": "Respuesta",
+    "responses": "Respuestas",
     "schoolbookWordDetailsScreen": {
       "acknowledge": "Confirmar la lectura",
       "alreadyConfirmed": "Ha confirmado la lectura de esta nota",
       "backWithoutAck": "Salir",
       "backWithoutAckConfirm": "¿Quiere salir de esta pantalla sin confirmar la palabra?",
+      "deleteAlert": {
+        "text": "¿Está seguro de que quieres eliminar este mensaje? Los padres y los alumnos ya no tendrán acceso.",
+        "title": "Eliminar el mensaje"
+      },
       "mustRead": "Un padre debe leer el mensaje",
       "readBy": "Leído por",
       "readByNumberRelative": "Leído por {{nb}} padre",
       "readByNumberRelatives": "Leído por {{nb}} padres",
       "readBySeparator": ", ",
+      "recipientsModal": {
+        "text": "El mensaje se envía a los siguientes alumnos y a sus responsables.",
+        "title": "Lista de destinatarios"
+      },
       "title": "Cuaderno de correspondencia"
-    }
+    },
+    "schoolbookWordListScreen": {
+      "emptyScreen": {
+        "button": "Escribir mensaje",
+        "text": "¿Necesita comunicarse con los padres de los alumnos? ¡Envíe los mensajes mediante el cuaderno de correspondencia digital!",
+        "textNoCreationRights": "Los profesores pueden compartir información esencial. Los padres deben confirmar que han leído los mensajes.",
+        "title": "¡Es hora de escribir el primer mensaje!",
+        "titleNoCreationRights": "De momento no hay ningún mensaje en el cuaderno..."
+      }
+    },
+    "schoolbookWordReportScreen": {
+      "acknowledgedBy": "Leído por",
+      "relativesDidAcknowledge": "Los responsables de estos alumnos han leído el mensaje.",
+      "relativesDidNotAcknowledge": "Los responsables de estos alumnos todavía no han leído el mensaje.",
+      "reminder": "Recordatorio",
+      "reminderModal": {
+        "text": "Enviará una notificación de recordatorio a todas las personas que aún no hayan confirmado la lectura del mensaje.",
+        "title": "Enviar recordatorio"
+      },
+      "reminderPossible": "Puede enviarles un mensaje de recordatorio.",
+      "reminderToast": {
+        "text": "Notificación de recordatorio enviada a las personas que no hayan confirmado la lectura del mensaje."
+      },
+      "unacknowledgement": "Sin leer",
+      "unacknowledgements": "Sin leer"
+    },
+    "students": "Alumnos",
+    "tabName": "Cuaderno de correspondencia"
   },
   "seeDetails": "Ver detalles",
   "seeLess": "Ver menos",
@@ -901,6 +985,12 @@
   "viesco-homework-fordate": "Para el",
   "viesco-homework-fortomorrow": "Para mañana",
   "viesco-homework-home": "Trabajo para hacer en casa",
+  "viesco-incidents-punishments-date": {
+    "created-on": "Creado el",
+    "for-the": "Para el",
+    "from": "Del",
+    "to": "al"
+  },
   "viesco-last-grades": "Últimas notas",
   "viesco-lasteval": "Últimas evaluaciones",
   "viesco-lateness": "Retraso",
