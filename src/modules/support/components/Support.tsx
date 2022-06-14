@@ -8,9 +8,9 @@ import { Icon } from '~/framework/components/picture';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
+import Attachment from '~/modules/zimbra/components/Attachment';
 import { PageContainer } from '~/ui/ContainerContent';
 
-import Attachment from './Attachment';
 import { CategoryPicker, EstablishmentPicker, FormInput } from './Items';
 
 const styles = StyleSheet.create({
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   informationText: {
-    color: 'grey',
+    color: theme.palette.grey.graphite,
   },
   selectionContainer: {
     flexDirection: 'row',
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   mandatoryFieldText: {
-    color: 'red',
+    color: theme.palette.complementary.red.regular,
   },
   attachmentsContainer: {
     flexDirection: 'row',
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   registerButtonText: {
-    color: 'white',
+    color: theme.palette.grey.white,
     textAlign: 'center',
     margin: 12,
   },
@@ -96,18 +96,6 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     }
   }
 
-  renderAttachments = () => {
-    return this.props.attachments.map(att => (
-      <Attachment
-        id={att.id || att.filename}
-        uploadSuccess={!!att.id}
-        fileType={att.contentType}
-        fileName={att.name || att.filename}
-        onRemove={() => this.props.removeAttachment(att.id)}
-      />
-    ));
-  };
-
   renderFormSelect = (fieldTranslation, fieldName, list) => {
     const { onFieldChange, ticket } = this.props;
     return (
@@ -124,10 +112,11 @@ export default class Support extends React.PureComponent<SupportProps, any> {
 
   renderFormInput = (fieldTranslation, fieldName) => {
     const { onFieldChange, ticket } = this.props;
+    const mandatory = '* ';
     return (
       <View style={styles.inputContainer}>
         <TextBold style={styles.selectionText}>
-          <TextBold style={styles.mandatoryFieldText}>* </TextBold>
+          <TextBold style={styles.mandatoryFieldText}>{mandatory}</TextBold>
           {I18n.t(fieldTranslation)}
         </TextBold>
         <FormInput
@@ -149,6 +138,18 @@ export default class Support extends React.PureComponent<SupportProps, any> {
         {this.renderFormInput('support-ticket-description', 'description')}
       </View>
     );
+  };
+
+  renderAttachments = () => {
+    return this.props.attachments.map(att => (
+      <Attachment
+        key={att.id || att.filename}
+        name={att.name || att.filename}
+        type={att.contentType}
+        uploadSuccess={!!att.id}
+        onRemove={() => this.props.removeAttachment(att.id)}
+      />
+    ));
   };
 
   public render() {
@@ -183,7 +184,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
               disabled={isDisabled}
               style={[
                 styles.registerButtonContainer,
-                { backgroundColor: isDisabled ? theme.ui.text.light : theme.palette.secondary.regular },
+                { backgroundColor: isDisabled ? theme.palette.grey.stone : theme.palette.secondary.regular },
               ]}>
               <Text style={styles.registerButtonText}>{I18n.t('support-ticket-register').toUpperCase()}</Text>
             </TouchableOpacity>

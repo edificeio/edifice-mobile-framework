@@ -1,49 +1,60 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { getFileIcon } from '~/modules/zimbra/utils/fileIcon';
-import { CommonStyles } from '~/styles/common/styles';
 
 const styles = StyleSheet.create({
-  attachementUploadBar: {
-    backgroundColor: CommonStyles.primaryLight,
-    right: undefined,
+  mainContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  attachmentUploadStatus: {
-    width: '100%',
+  backgroundView: {
+    position: 'absolute',
+    height: '100%',
+    backgroundColor: theme.palette.primary.pale,
   },
-  iconMargin: { marginRight: 10 },
-  fileNameText: {
-    flex: 1,
-    color: CommonStyles.primary,
+  iconMargin: {
+    marginHorizontal: 12,
+    marginVertical: 8,
+  },
+  nameText: {
+    color: theme.palette.primary.regular,
+    flexShrink: 1,
   },
 });
 
-const attachmentStyle = {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-} as ViewStyle;
+interface IAttachmentProps {
+  name: string;
+  type: string;
+  uploadSuccess: boolean;
+  uploadProgress?: number;
+  onRemove: () => void;
+}
 
-const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemove }) => {
+const Attachment = ({ name, type, uploadSuccess, uploadProgress, onRemove }: IAttachmentProps) => {
+  const width = uploadSuccess ? '100%' : `${uploadProgress}%`;
+  const iconName = getFileIcon(type);
   return (
-    <View style={attachmentStyle}>
+    <TouchableOpacity style={styles.mainContainer} onPress={onRemove}>
       <View
         style={[
-          StyleSheet.absoluteFill,
-          styles.attachementUploadBar,
-          uploadSuccess ? styles.attachmentUploadStatus : { width: `${uploadProgress}%` },
+          styles.backgroundView,
+          {
+            width,
+          },
         ]}
       />
-      <Icon size={25} style={styles.iconMargin} color={CommonStyles.primary} name={getFileIcon(fileType)} />
-      <Text style={styles.fileNameText}>{fileName}</Text>
-      <TouchableOpacity onPress={onRemove}>
-        <Icon name="close" style={styles.iconMargin} color="red" />
-      </TouchableOpacity>
-    </View>
+      <Icon name={iconName} size={25} color={theme.palette.primary.regular} style={styles.iconMargin} />
+      <Text numberOfLines={2} style={styles.nameText}>
+        {name}
+      </Text>
+      <Icon name="close" size={14} color={theme.palette.complementary.red.regular} style={styles.iconMargin} />
+    </TouchableOpacity>
   );
 };
 

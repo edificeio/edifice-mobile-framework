@@ -215,9 +215,9 @@ const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
     <View style={[styles.mailPart, style, styles.attachmentView]}>
       {attachments.map(att => (
         <Attachment
+          name={att.filename}
+          type={att.filetype}
           uploadSuccess={!!att.url && onSave()}
-          fileType={att.filetype}
-          fileName={att.filename}
           onRemove={() => removeAttachment(att.id)}
         />
       ))}
