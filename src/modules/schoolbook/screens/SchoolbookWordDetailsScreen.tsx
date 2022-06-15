@@ -3,7 +3,7 @@
  */
 import I18n from 'i18n-js';
 import React from 'react';
-import { Alert, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, Platform, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -13,7 +13,7 @@ import ActionsMenu from '~/framework/components/actionsMenu';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { KeyboardPageView } from '~/framework/components/page';
+import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
@@ -267,9 +267,11 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
     }
   };
 
+  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+
   return (
     <>
-      <KeyboardPageView
+      <PageComponent
         safeArea={false}
         navigation={props.navigation}
         navBarWithBack={navBarInfo}
@@ -286,7 +288,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
             : props.navigation.dispatch(NavigationActions.back());
         }}>
         {renderPage()}
-      </KeyboardPageView>
+      </PageComponent>
       <ActionsMenu onClickOutside={() => setShowMenu(!showMenu)} show={showMenu} data={menuData} />
     </>
   );
