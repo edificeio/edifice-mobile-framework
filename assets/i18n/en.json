@@ -1,6 +1,7 @@
 {
   "Activate": "Activate account",
   "Actualites": "News",
+  "AutoLogin": "Reconnect automatically",
   "Birthdate": "Date of birth",
   "Cancel": "Cancel",
   "CarnetDeBord": "Pronote Logbook",
@@ -188,6 +189,8 @@
     },
     "errorLoadingResource": "This content is inaccessible.",
     "for": "For",
+    "forRecipients": "To:",
+    "from": "From:",
     "idf": {
       "passwordRules": "The new password must be at least 12 characters long, including at least 1 upper case, 1 lower case and 1 number or special character from the following: $&+,~:;=?@#|’<>_./^*(){}%µ!£- ."
     },
@@ -200,8 +203,15 @@
     "publish": "Publish",
     "quit": "Exit",
     "readMore": "read more",
+    "response": {
+      "add": "Respond...",
+      "confirmationUnsavedModification": "You are about to cancel the edits you made to your response. Are you sure?",
+      "confirmationUnsavedPublication": "You are about to delete your response. Are you sure?"
+    },
     "save": "Save",
+    "send": "Send",
     "sommeNumeriqueAlert_temp": "The \"Somme Numérique\" platform will not be available starting September 2021. You will have to use the \"ENT Hauts-de-France\" access in the educational social networks list.",
+    "to": "To:",
     "url": {
       "cgu": "/assets/cgu/ODE_Terms_of_use.pdf",
       "cookies": "/assets/cgu/notice_cookies_EN.pdf",
@@ -233,6 +243,9 @@
   "common-picker-document": "Add a document",
   "common-picker-image": "Add an image",
   "common-picker-title": "Select file type",
+  "common.redirect.browser.error": "Redirect error.",
+  "common.redirect.browser.message": "You will be redirected to an external website in your browser.",
+  "common.redirect.browser.title": "Browser redirection",
   "common.search": "Search",
   "connector-connectFailed": "Impossible to open the link!",
   "conversation": {
@@ -602,6 +615,13 @@
     "Student": "Student",
     "Teacher": "Teacher"
   },
+  "pronote.carnetDeBord.cahierDeTextes.PourDate": "For {{date}}",
+  "pronote.carnetDeBord.cahierDeTextes.empty": "No work for the next 7 days",
+  "pronote.carnetDeBord.cahierDeTextes.pourDate": "for {{date}}",
+  "pronote.carnetDeBord.cahierDeTextes.title": "Homework Notebook",
+  "pronote.carnetDeBord.calendar.lastWeek": "[last] dddd",
+  "pronote.carnetDeBord.competences.empty": "No reported skills",
+  "pronote.carnetDeBord.competences.title": "Skills",
   "pronote.carnetDeBord.competences.value.1": "Expert",
   "pronote.carnetDeBord.competences.value.2": "Acquired",
   "pronote.carnetDeBord.competences.value.3": "Almost acquired",
@@ -610,35 +630,99 @@
   "pronote.carnetDeBord.competences.value.6": "Not acquired",
   "pronote.carnetDeBord.competences.value.7": "Absent",
   "pronote.carnetDeBord.competences.value.8": "Not rated",
+  "pronote.carnetDeBord.noData.text": "It seems there is no available Pronote data regarding your child.",
+  "pronote.carnetDeBord.noData.title": "Nothing to see here...",
+  "pronote.carnetDeBord.noInfo": " –– ",
+  "pronote.carnetDeBord.openInPronote": "Open with Pronote",
+  "pronote.carnetDeBord.releveDeNotes.empty": "No grades reported",
+  "pronote.carnetDeBord.releveDeNotes.note": "{{note}} / {{bareme}}",
+  "pronote.carnetDeBord.releveDeNotes.title": "Grades",
   "pronote.carnetDeBord.releveDeNotes.value.abs": "absent",
   "pronote.carnetDeBord.releveDeNotes.value.disp": "exempt",
   "pronote.carnetDeBord.releveDeNotes.value.inap": "unfit",
   "pronote.carnetDeBord.releveDeNotes.value.nnot": "not rated",
   "pronote.carnetDeBord.releveDeNotes.value.nrdu": "unreturned",
+  "pronote.carnetDeBord.vieScolaire.dateFromTo": "{{start}} – {{end}}",
+  "pronote.carnetDeBord.vieScolaire.empty": "No events over the past 30 days",
+  "pronote.carnetDeBord.vieScolaire.title": "School Conduct",
   "pronote.carnetDeBord.vieScolaire.type.Absence": "ABSENCE",
   "pronote.carnetDeBord.vieScolaire.type.Observation": "OBSERVATION",
   "pronote.carnetDeBord.vieScolaire.type.PassageInfirmerie": "VISIT TO THE INFIRMARY",
   "pronote.carnetDeBord.vieScolaire.type.Punition": "PUNISHMENT",
   "pronote.carnetDeBord.vieScolaire.type.Retard": "LATE",
   "pronote.carnetDeBord.vieScolaire.type.Sanction": "PENALTY",
+  "pronote.selector.action": "Open Pronote",
+  "pronote.selector.placeholder": "Select your school",
+  "pronote.selector.title": "Your account is connected to several schools.\nSelect the school you would like to connect to.",
   "protected": "Documents added in the apps",
   "readMore": "read more",
   "rename": "Rename",
   "restore-successful": "Restore successful",
   "schoolbook": {
+    "acknowledge": "Return a read receipt",
+    "acknowledged": "Read",
+    "acknowledgement": "Read",
+    "acknowledgementNeededRelative": "You must confirm you have read the note.",
     "acknowledgementNeededStudent": "A parent must confirm the reading.",
+    "acknowledgements": "Read",
+    "appName": "Schoolbook",
+    "categories": {
+      "canteen": "Cafeteria",
+      "event": "Events",
+      "last-minute": "Latest News",
+      "leisure": "Recreation",
+      "outing": "Field Trips",
+      "various": "Miscellaneous"
+    },
+    "response": "Response",
+    "responses": "Responses",
     "schoolbookWordDetailsScreen": {
       "acknowledge": "Confirm reading",
       "alreadyConfirmed": "You have confirmed the reading of this message",
       "backWithoutAck": "Exit",
       "backWithoutAckConfirm": "Would you like to leave this screen without confirming the message?",
+      "deleteAlert": {
+        "text": "Are you sure you want to delete this message? Parents and students will no longer be able to access it.",
+        "title": "Delete the note"
+      },
       "mustRead": "A parent must read this message!",
       "readBy": "Read by",
       "readByNumberRelative": "Read by {{nb}} parent",
       "readByNumberRelatives": "Read by {{nb}} parents",
       "readBySeparator": ", ",
+      "recipientsModal": {
+        "text": "The note is sent to the following students and their parents and/or guardians.",
+        "title": "List of recipients"
+      },
       "title": "Schoolbook"
-    }
+    },
+    "schoolbookWordListScreen": {
+      "emptyScreen": {
+        "button": "Write a note",
+        "text": "Need to reach out to students' parents? Send messages through the digital Schoolbook!",
+        "textNoCreationRights": "Teachers can share essential information. Parents must confirm they have read the messages.",
+        "title": "Time to write your first note!",
+        "titleNoCreationRights": "There are no notes in your Schoolbook yet..."
+      }
+    },
+    "schoolbookWordReportScreen": {
+      "acknowledgedBy": "Read by",
+      "relativesDidAcknowledge": "The parents or guardians of these students have read the note.",
+      "relativesDidNotAcknowledge": "The parents or guardians of these students have not yet read the note.",
+      "reminder": "Reminder",
+      "reminderModal": {
+        "text": "You are going to send a message reminder to everyone who has not yet returned a read receipt.",
+        "title": "Send a reminder"
+      },
+      "reminderPossible": "You can send them a message reminder.",
+      "reminderToast": {
+        "text": "Reminder sent to recipients who have not yet returned a read receipt."
+      },
+      "unacknowledgement": "Unread",
+      "unacknowledgements": "Unread"
+    },
+    "students": "Students",
+    "tabName": "Schoolbook"
   },
   "seeDetails": "See details",
   "seeLess": "See less",
@@ -901,6 +985,12 @@
   "viesco-homework-fordate": "For",
   "viesco-homework-fortomorrow": "For tomorrow",
   "viesco-homework-home": "Homework",
+  "viesco-incidents-punishments-date": {
+    "created-on": "Written on",
+    "for-the": "For",
+    "from": "From",
+    "to": " to"
+  },
   "viesco-last-grades": "Last grades",
   "viesco-lasteval": "Latest evaluations",
   "viesco-lateness": "Late",
