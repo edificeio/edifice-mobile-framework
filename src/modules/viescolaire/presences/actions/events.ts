@@ -1,4 +1,6 @@
+import I18n from 'i18n-js';
 import moment from 'moment';
+import Toast from 'react-native-tiny-toast';
 import { Dispatch } from 'redux';
 
 import { eventsService } from '~/modules/viescolaire/presences/services/events';
@@ -30,6 +32,7 @@ export function postLateEvent(
     try {
       const result = await eventsService.postLate(studentId, date, comment, registerId, courseStart);
       eventsService.updateRegisterStatus(registerId, 2);
+      Toast.showSuccess(I18n.t('viesco-latenesses-added'));
       dispatch(callEventsActions.post(result));
     } catch (errmsg) {
       dispatch(callEventsActions.error(errmsg));
@@ -49,6 +52,7 @@ export function updateLateEvent(
     try {
       await eventsService.putLate(student_id, date, comment, id, register_id, course_start);
       eventsService.updateRegisterStatus(register_id, 2);
+      Toast.showSuccess(I18n.t('viesco-latenesses-updated'));
       dispatch(callEventsActions.put({ id, student_id, comment, register_id, course_start, course_end: date }));
     } catch (errmsg) {
       dispatch(callEventsActions.error(errmsg));
@@ -79,6 +83,7 @@ export function postLeavingEvent(
     try {
       const result = await eventsService.postLeaving(studentId, date, comment, registerId, courseEnd);
       eventsService.updateRegisterStatus(registerId, 2);
+      Toast.showSuccess(I18n.t('viesco-leaving-added'));
       dispatch(callEventsActions.post(result));
     } catch (errmsg) {
       dispatch(callEventsActions.error(errmsg));
@@ -98,6 +103,7 @@ export function updateLeavingEvent(
     try {
       await eventsService.putLeaving(student_id, date, comment, id, register_id, course_end);
       eventsService.updateRegisterStatus(register_id, 2);
+      Toast.showSuccess(I18n.t('viesco-leaving-updated'));
       dispatch(callEventsActions.put({ id, student_id, comment, register_id, course_start: date, course_end }));
     } catch (errmsg) {
       dispatch(callEventsActions.error(errmsg));
@@ -121,6 +127,7 @@ export function validateRegisterAction(registerId: number) {
   return async (dispatch: Dispatch) => {
     try {
       eventsService.updateRegisterStatus(registerId, 3);
+      Toast.showSuccess(I18n.t('viesco-register-validated'));
     } catch (errmsg) {
       dispatch(callEventsActions.error(errmsg));
     }

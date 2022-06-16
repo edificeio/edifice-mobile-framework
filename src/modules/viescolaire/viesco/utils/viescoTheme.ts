@@ -1,6 +1,4 @@
 export const viescoTheme = {
-  // Magenta color indicated non-defined values
-
   palette: {
     competences: '#F95303',
     diary: '#2BAB6F',

@@ -9,9 +9,10 @@ import { Text, TextBold } from '~/framework/components/text';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
+import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { PageContainer } from '~/ui/ContainerContent';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 import StudentRow from './StudentRow';
 
 const style = StyleSheet.create({
@@ -139,7 +140,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
             />
 
             <View style={style.validateButton}>
-              <ButtonOk
+              <DialogButtonOk
                 label={I18n.t('viesco-validate')}
                 onPress={() => {
                   this.props.validateRegister(registerId);
@@ -156,7 +157,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
   private ClassesInfos() {
     return (
       <View style={style.classesView}>
-        <LeftColoredItem shadow style={style.topItem} color="#FFB600">
+        <LeftColoredItem shadow style={style.topItem} color={viescoTheme.palette.presences}>
           <Text>
             {moment(this.state.callData.start_date).format('LT')} - {moment(this.state.callData.end_date).format('LT')}
           </Text>
