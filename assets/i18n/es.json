@@ -243,6 +243,8 @@
   "common-picker-document": "Agregar documento",
   "common-picker-image": "Agregar imagen",
   "common-picker-title": "Selecciona tipo de documento",
+  "common.confirmationLeaveAlert.message": "Los cambios que ha realizado no se guardarán. ¿Desea abandonar esta página?",
+  "common.confirmationLeaveAlert.title": "¿Estás seguro de que quieres salir?",
   "common.redirect.browser.error": "Error de redirección.",
   "common.redirect.browser.message": "Será redirigido a un sitio externo en su navegador.",
   "common.redirect.browser.title": "Redirección del navegador",

@@ -243,6 +243,8 @@
   "common-picker-document": "Add a document",
   "common-picker-image": "Add an image",
   "common-picker-title": "Select file type",
+  "common.confirmationLeaveAlert.message": "The changes you have made will not be saved. Do you want to leave this page?",
+  "common.confirmationLeaveAlert.title": "Are you sure you want to leave?",
   "common.redirect.browser.error": "Redirect error.",
   "common.redirect.browser.message": "You will be redirected to an external website in your browser.",
   "common.redirect.browser.title": "Browser redirection",

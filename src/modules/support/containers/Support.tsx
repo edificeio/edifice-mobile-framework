@@ -1,8 +1,9 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { Alert } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -137,13 +138,34 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
     }
   };
 
+  handleGoBack = () => {
+    const { navigation } = this.props;
+    const { ticket } = this.state;
+    if (ticket.subject !== '' || ticket.description !== '') {
+      Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+        {
+          text: I18n.t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: I18n.t('common.quit'),
+          style: 'destructive',
+          onPress: () => navigation.dispatch(NavigationActions.back()),
+        },
+      ]);
+    } else {
+      return true;
+    }
+  };
+
   public render() {
     return (
       <PageView
         navigation={this.props.navigation}
         navBarWithBack={{
           title: I18n.t('support'),
-        }}>
+        }}
+        onBack={this.handleGoBack}>
         <Support
           {...this.props}
           ticket={this.state.ticket}
