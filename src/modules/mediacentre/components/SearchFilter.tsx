@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { Checkbox } from '~/framework/components/checkbox';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { IResource } from '~/modules/mediacentre/utils/Resource';
-import { Checkbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -103,13 +103,13 @@ const getFilters = (resources: IResource[]) => {
 };
 
 const FilterItem: React.FunctionComponent<IFilterItemProps> = (props: IFilterItemProps) => {
-  const check = () => {
+  const onCheck = () => {
     props.onChange(props.sectionTitle, props.item.value, !props.item.active);
   };
   return (
     <View style={styles.itemContainer}>
-      <Checkbox checked={props.item.active} onCheck={check} onUncheck={check} />
-      <TouchableOpacity onPress={check} style={styles.itemTextContainer}>
+      <Checkbox checked={props.item.active} onPress={onCheck} />
+      <TouchableOpacity onPress={onCheck} style={styles.itemTextContainer}>
         <Text>{props.item.value}</Text>
       </TouchableOpacity>
     </View>

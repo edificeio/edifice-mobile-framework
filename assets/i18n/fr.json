@@ -367,7 +367,6 @@
   "conversation-transfer-backMessage": "Message transféré :",
   "copy": "Copier",
   "copy-documents": "Copier documents vers",
-  "copy-success": "Copie faite",
   "create": "Créer",
   "create-folder": "Créer un dossier",
   "createPost-create-contentField": "Contenu du billet",
@@ -584,7 +583,6 @@
   },
   "move": "Déplacer",
   "move-documents": "Déplacer documents dans:",
-  "move-success": "Déplacement fait",
   "myapp-accessWeb": "Accéder à la version web",
   "myapp-emptyScreenText": "Il semblerait que vous n'ayez accès à aucune application ...",
   "myapp-emptyScreenTitle": "Aucune application !",
@@ -657,7 +655,6 @@
   "protected": "Documents ajoutés dans les applis",
   "readMore": "lire plus",
   "rename": "Renommer",
-  "restore-successful": "Restoration terminée",
   "schoolbook": {
     "acknowledge": "Confirmer la lecture",
     "acknowledged": "Lu",
@@ -1019,6 +1016,13 @@
   "workspace-quota-overflowTitle": "Quota atteint",
   "workspace-uploadFailed": "L'import du document a échoué",
   "workspace-uploadSuccessful": "Le document a bien été importé",
+  "workspace.file-added": "Fichier ajouté",
+  "workspace.folder-created": "Folder created",
+  "workspace.successfully-copied": "Copie effectuée",
+  "workspace.successfully-deleted": "Suppression effectuée",
+  "workspace.successfully-edited": "Modification effectuée",
+  "workspace.successfully-moved": "Déplacement effectué",
+  "workspace.successfully-restored": "Restauration effectuée",
   "workspaceEmptyScreen": {
     "owner": {
       "text": "Stockez ici vos documents personnels : photos, vidéos, audio, fichiers PDF, ...",

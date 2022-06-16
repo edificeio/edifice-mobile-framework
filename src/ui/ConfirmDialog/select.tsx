@@ -1,9 +1,9 @@
 import React from 'react';
 
-import TreeSelect from './treeSelect';
-
 import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
 import { IFile } from '~/workspace/types/states/items';
+
+import TreeSelect from './treeSelect';
 
 type IProps = {
   defaultSelectedId?: string[];
@@ -14,6 +14,7 @@ type IProps = {
 
 export default class Select extends React.PureComponent<IProps> {
   static displayName = 'DialogSelect';
+
   state = {
     defaultSelectedId: this.props.defaultSelectedId ? this.props.defaultSelectedId : ['owner'],
   };

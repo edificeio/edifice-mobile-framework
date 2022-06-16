@@ -367,7 +367,6 @@
   "conversation-transfer-backMessage": "Message forwarded:",
   "copy": "Copy",
   "copy-documents": "Copy documents to",
-  "copy-success": "Copy success",
   "create": "Create",
   "create-folder": "Create folder",
   "createPost-create-contentField": "Post content",
@@ -585,7 +584,6 @@
   },
   "move": "Move",
   "move-documents": "Move documents to",
-  "move-success": "Move success",
   "myapp-accessWeb": "Access the web version",
   "myapp-emptyScreenText": "It looks like you do not have access to any apps...",
   "myapp-emptyScreenTitle": "No apps!",
@@ -659,7 +657,6 @@
   "protected": "Documents added in the apps",
   "readMore": "read more",
   "rename": "Rename",
-  "restore-successful": "Restore successful",
   "schoolbook": {
     "acknowledge": "Return a read receipt",
     "acknowledged": "Read",
@@ -1031,6 +1028,13 @@
   "workspace-quota-overflowTitle": "Quota reached",
   "workspace-uploadFailed": "Error importing document",
   "workspace-uploadSuccessful": "The document has been successfully imported",
+  "workspace.file-added": "File added",
+  "workspace.folder-created": "Folder created",
+  "workspace.successfully-copied": "Successfully copied",
+  "workspace.successfully-deleted": "Successfully deleted",
+  "workspace.successfully-edited": "Successfully edited",
+  "workspace.successfully-moved": "Successfully moved",
+  "workspace.successfully-restored": "Successfully restored",
   "workspaceEmptyScreen": {
     "owner": {
       "text": "This is where you can store your personal documents, including photos, videos, audio recordings, PDFs, and more.",

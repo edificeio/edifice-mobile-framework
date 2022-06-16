@@ -9,7 +9,6 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { Text } from '~/ui/Typography';
-import { Icon } from '~/ui/icons/Icon';
 
 import { Picture, PictureProps } from './picture';
 

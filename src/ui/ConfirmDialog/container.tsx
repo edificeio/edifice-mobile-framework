@@ -2,7 +2,43 @@ import React from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import AnimatedModal from 'react-native-modal';
 
+import theme from '~/app/theme';
 import { layoutSize } from '~/styles/common/layoutSize';
+
+const styles = StyleSheet.create({
+  modal: {
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content: {
+    flexDirection: 'column',
+    borderRadius: 3,
+    paddingHorizontal: layoutSize.LAYOUT_12,
+    paddingVertical: layoutSize.LAYOUT_8,
+    marginVertical: layoutSize.LAYOUT_0,
+    marginHorizontal: layoutSize.LAYOUT_12,
+    backgroundColor: theme.palette.grey.white,
+    overflow: 'hidden',
+    elevation: 4,
+    minWidth: 300,
+  },
+  header: {
+    margin: layoutSize.LAYOUT_4,
+  },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 4,
+    padding: layoutSize.LAYOUT_8,
+  },
+});
 
 type IProps = {
   visible: boolean;
@@ -24,7 +60,7 @@ export default class DialogContainer extends React.PureComponent<IProps> {
       }
       if (child.type.name === 'DialogTitle' || child.type.displayName === 'DialogTitle') {
         titleChildrens.push(child as never);
-      } else if (child.type.name === 'DialogButton' || child.type.displayName === 'DialogButton') {
+      } else if (String(child.type.name).startsWith('DialogButton')) {
         buttonChildrens.push(child as never);
       } else {
         otherChildrens.push(child as never);
@@ -51,51 +87,3 @@ export default class DialogContainer extends React.PureComponent<IProps> {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  modal: {
-    marginLeft: 0,
-    marginRight: 0,
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  blur: {
-    position: 'absolute',
-    backgroundColor: 'rgb(255,255,255)',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
-  content: {
-    flexDirection: 'column',
-    borderRadius: 3,
-    paddingHorizontal: layoutSize.LAYOUT_12,
-    paddingVertical: layoutSize.LAYOUT_8,
-    marginVertical: layoutSize.LAYOUT_0,
-    marginHorizontal: layoutSize.LAYOUT_12,
-    backgroundColor: 'white',
-    overflow: 'hidden',
-    elevation: 4,
-    minWidth: 300,
-  },
-  header: {
-    margin: layoutSize.LAYOUT_4,
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginTop: 4,
-    padding: layoutSize.LAYOUT_8,
-  },
-  buttonSeparator: {
-    height: '100%',
-    backgroundColor: '#A9ADAE',
-    width: StyleSheet.hairlineWidth,
-  },
-});

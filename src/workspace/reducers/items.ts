@@ -62,32 +62,37 @@ export const resetError = () => (dispatch: Dispatch) => {
 
 export default (state: IState = stateDefault, action: IAction<IItems<IItem | string>>) => {
   switch (action.type) {
-    case actionTypesDelete.requested:
-    case actionTypesDelete.received:
-      return pushData(state, action, actionTypesDelete);
     case actionTypesUpload.received:
+      Toast.showSuccess(I18n.t('workspace.file-added'));
+    case actionTypesUpload.requested:
       return pushData(state, action, actionTypesUpload);
-    case actionTypesCreateFolder.requested:
     case actionTypesCreateFolder.received:
+      Toast.showSuccess(I18n.t('workspace.folder-created'));
+    case actionTypesCreateFolder.requested:
       return pushData(state, action, actionTypesCreateFolder);
     case actionTypesPast.received:
-      Toast.showSuccess(I18n.t('copy-success'));
+      Toast.showSuccess(I18n.t('workspace.successfully-copied'));
     case actionTypesPast.requested:
       return pushData(state, action, actionTypesPast);
+    case actionTypesDelete.received:
+      Toast.showSuccess(I18n.t('workspace.successfully-deleted'));
+    case actionTypesDelete.requested:
+      return pushData(state, action, actionTypesDelete);
+    case actionTypesRename.received:
+      Toast.showSuccess(I18n.t('workspace.successfully-edited'));
+    case actionTypesRename.requested:
+      return pushData(state, action, actionTypesRename);
     case actionTypesMove.received:
-      Toast.showSuccess(I18n.t('move-success'));
+      Toast.showSuccess(I18n.t('workspace.successfully-moved'));
     case actionTypesMove.requested:
       return pushData(state, action, actionTypesMove);
     case actionTypesRestore.received:
-      Toast.showSuccess(I18n.t('restore-successful'));
+      Toast.showSuccess(I18n.t('workspace.successfully-restored'));
     case actionTypesRestore.requested:
       return pushData(state, action, actionTypesRestore);
     case actionTypesList.requested:
     case actionTypesList.received:
       return pushData(state, action, actionTypesList);
-    case actionTypesRename.requested:
-    case actionTypesRename.received:
-      return pushData(state, action, actionTypesRename);
     case actionTypesRename.fetchError:
     case actionTypesList.fetchError:
     case actionTypesMove.fetchError:

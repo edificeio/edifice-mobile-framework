@@ -14,12 +14,12 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
+import { Checkbox } from '~/framework/components/checkbox';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/utils/Resource';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
-import { Checkbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({
   criteriaContainer: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...TextSizeStyle.SlightBig,
-    color: 'white',
+    color: theme.palette.grey.white,
   },
   contentContainer: {
     flexGrow: 1,
@@ -174,10 +174,7 @@ const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICri
 
 const SourceCheckbox: React.FunctionComponent<ISourceCheckboxProps> = (props: ISourceCheckboxProps) => {
   const onCheck = () => {
-    props.onChange(true);
-  };
-  const onUncheck = () => {
-    props.onChange(false);
+    props.onChange(!props.checked);
   };
   return (
     <View style={styles.sourceCheckBoxContainer}>
@@ -186,7 +183,7 @@ const SourceCheckbox: React.FunctionComponent<ISourceCheckboxProps> = (props: IS
       ) : (
         props.iconName && <Icon name={props.iconName} size={30} />
       )}
-      <Checkbox checked={props.checked} onCheck={onCheck} onUncheck={onUncheck} />
+      <Checkbox checked={props.checked} onPress={onCheck} />
     </View>
   );
 };
