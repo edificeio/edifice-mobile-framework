@@ -6,6 +6,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
@@ -19,6 +20,8 @@ import {
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
+
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const style = StyleSheet.create({
   safeAreaContainer: {
@@ -52,7 +55,7 @@ const style = StyleSheet.create({
     borderWidth: 2,
     borderStyle: 'solid',
     borderRadius: 3,
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
   },
   timeViewText: {
     ...responsiveStyle(55),
@@ -162,15 +165,15 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     };
     switch (type) {
       case 'late':
-        result.mainColor = '#9c2cb4';
+        result.mainColor = viescoTheme.palette.presencesEvents.lateness;
         result.lightColor = 'rgb(179, 0, 179)';
         result.title = I18n.t('viesco-lateness');
         result.mainText = I18n.t('viesco-arrived');
         result.inputLabel = I18n.t('viesco-arrived-motive');
         break;
       case 'leaving':
-        result.mainColor = '#ed9ffd';
-        result.lightColor = '#ed9ffd';
+        result.mainColor = viescoTheme.palette.presencesEvents.departure;
+        result.lightColor = viescoTheme.palette.presencesEvents.departure;
         result.title = I18n.t('viesco-leaving');
         result.mainText = I18n.t('viesco-left');
         result.inputLabel = I18n.t('viesco-left-motive');

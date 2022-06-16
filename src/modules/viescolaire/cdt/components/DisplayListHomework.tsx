@@ -45,6 +45,7 @@ const style = StyleSheet.create({
   },
   course: {
     textTransform: 'uppercase',
+    marginLeft: 8,
   },
 });
 
@@ -71,7 +72,7 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
                   <Text>&emsp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</Text>
                 </>
               ) : null}
-              {subject ? <TextBold style={style.course}>&emsp;{subject}</TextBold> : null}
+              {subject ? <TextBold style={style.course}>{subject}</TextBold> : null}
             </LeftColoredItem>
           </View>
 

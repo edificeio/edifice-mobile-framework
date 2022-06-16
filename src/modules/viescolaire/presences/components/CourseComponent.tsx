@@ -8,6 +8,8 @@ import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 const styles = StyleSheet.create({
   itemContainer: { flex: 1, padding: 0 },
   itemContainerOpacityFull: { opacity: 1 },
@@ -45,7 +47,7 @@ export default ({
     disabled={!isCourseEditable}
     onPress={onPress}
     style={[styles.itemContainer, isCourseNow ? styles.itemContainerOpacityFull : styles.itemContainerOpacityScaledDown]}
-    color={isCourseEditable ? '#FFB600' : 'dimgrey'}>
+    color={isCourseEditable ? viescoTheme.palette.presences : 'dimgrey'}>
     <ImageBackground
       source={isCourseEditable ? require('ASSETS/viesco/presences.png') : require('ASSETS/viesco/presence_gris.png')}
       style={styles.imageBackgroundContainer}

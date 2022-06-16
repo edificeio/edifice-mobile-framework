@@ -4,6 +4,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { NavigationActions } from 'react-navigation';
 
+import theme from '~/app/theme';
 import { Text } from '~/framework/components/text';
 import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
@@ -11,10 +12,12 @@ import StructurePicker from '~/modules/viescolaire/viesco/containers/StructurePi
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
 
+import { viescoTheme } from '../utils/viescoTheme';
+
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
   coursesPart: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     elevation: CommonStyles.elevation,
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
   gridButton: {
     alignItems: 'center',
     flexDirection: 'column',
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.grey.white,
   },
   gridButtonEnabled: {
     opacity: 1,
@@ -104,7 +107,7 @@ export default props => {
               <ImageButtonModule
                 onPress={() => props.navigation.navigate('Timetable')}
                 text={I18n.t('viesco-timetable')}
-                color="#162EAE"
+                color={viescoTheme.palette.timetable}
                 imageSrc={require('ASSETS/viesco/edt.png')}
               />
             )}
@@ -120,7 +123,7 @@ export default props => {
                   )
                 }
                 text={I18n.t('Homework')}
-                color="#2BAB6F"
+                color={viescoTheme.palette.diary}
                 imageSrc={require('ASSETS/viesco/cdt.png')}
               />
             )}

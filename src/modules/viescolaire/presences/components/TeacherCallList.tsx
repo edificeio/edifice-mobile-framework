@@ -4,10 +4,12 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
+import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 import CourseComponent from './CourseComponent';
 
 const styles = StyleSheet.create({
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
   noCallText: {
     ...TextSizeStyle.SlightBig,
     alignSelf: 'center',
-    color: 'grey',
+    color: theme.palette.grey.grey,
   },
   noCallChip: {
     alignSelf: 'center',
@@ -34,8 +36,8 @@ const styles = StyleSheet.create({
     width: 60,
     borderRadius: 10,
   },
-  absentColor: { backgroundColor: '#E61610' },
-  presentColor: { backgroundColor: '#FFB600' },
+  absentColor: { backgroundColor: viescoTheme.palette.presencesEvents.no_reason },
+  presentColor: { backgroundColor: viescoTheme.palette.presences },
   carouselContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
     height: 80,
   },
   carouselDot: {
-    backgroundColor: 'rgba(0,0,0,.1)',
+    backgroundColor: theme.palette.grey.cloudy,
     width: 10,
     height: 10,
     borderRadius: 4,
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#FFB600',
+    backgroundColor: viescoTheme.palette.presences,
   },
 });
 

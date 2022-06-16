@@ -9,6 +9,8 @@ import { fetchMementoAction } from '~/modules/viescolaire/viesco/actions/memento
 import { RelativesInfos, StudentInfos } from '~/modules/viescolaire/viesco/components/Memento';
 import { IMementoState, getMementoState } from '~/modules/viescolaire/viesco/state/memento';
 
+import { viescoTheme } from '../utils/viescoTheme';
+
 export type IMementoContainerProps = {
   memento: IMementoState;
   fetchMemento: (studentId: string) => void;
@@ -28,7 +30,7 @@ class Memento extends React.PureComponent<IMementoContainerProps> {
         navBarWithBack={{
           title: I18n.t('viesco-memento'),
           style: {
-            backgroundColor: '#FCB602',
+            backgroundColor: viescoTheme.palette.presences,
           },
         }}>
         <StudentInfos memento={memento?.data} />

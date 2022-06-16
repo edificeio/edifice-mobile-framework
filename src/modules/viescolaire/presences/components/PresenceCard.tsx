@@ -2,21 +2,12 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 import { IPunishment } from '../state/events';
-
-export const colors = {
-  no_reason: '#E61610',
-  unregularized: '#FA8A85',
-  regularized: '#72bb53',
-  lateness: '#9C29B7',
-  departure: '#eD9FFD',
-  forgotNotebook: '#B0EAD5',
-  incident: '#D6D6D6',
-  punishment: '#FCB602',
-};
 
 interface PresenceCardProps {
   color: string;
@@ -30,7 +21,7 @@ const styles = StyleSheet.create({
   title: {
     ...TextSizeStyle.SlightBig,
     textTransform: 'uppercase',
-    color: 'gray',
+    color: theme.palette.grey.graphite,
   },
   row: { flexDirection: 'row' },
   leftColumn: { width: '30%', alignItems: 'center' },
@@ -43,7 +34,10 @@ const styles = StyleSheet.create({
   childNestedText: {
     ...TextSizeStyle.Tiny,
   },
-  itemText: { alignSelf: 'center', color: 'grey' },
+  itemText: {
+    alignSelf: 'center',
+    color: theme.palette.grey.grey,
+  },
   itemMoretext: { alignSelf: 'flex-end' },
 });
 
@@ -66,11 +60,13 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
     <Text onPress={() => setExpanded(!expanded)} style={styles.itemMoretext}>
       {expanded ? (
         <>
-          {I18n.t('seeLess')} <TextBold>-</TextBold>
+          {I18n.t('seeLess') + ' '}
+          <TextBold>-</TextBold>
         </>
       ) : (
         <>
-          {I18n.t('seeMore')} <TextBold>+</TextBold>
+          {I18n.t('seeMore') + ' '}
+          <TextBold>+</TextBold>
         </>
       )}
     </Text>
@@ -102,25 +98,30 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
 export const NoReasonCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
-      <NestedTextBold> {event.start_date.format('DD/MM/YY')} - </NestedTextBold>
-      {event.start_date.format('H:mm')} - {event.end_date.format('H:mm')}
+      <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
+      {event.start_date.format('H:mm') + ' - ' + event.end_date.format('H:mm')}
     </Text>
   );
   return (
-    <PresenceCard color={colors.no_reason} title={I18n.t('viesco-history-noreason')} renderItem={renderItem} elements={elements} />
+    <PresenceCard
+      color={viescoTheme.palette.presencesEvents.no_reason}
+      title={I18n.t('viesco-history-noreason')}
+      renderItem={renderItem}
+      elements={elements}
+    />
   );
 };
 
 export const UnregularizedCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
-      <NestedTextBold> {event.start_date.format('DD/MM/YY')} - </NestedTextBold>
-      {event.start_date.format('H:mm')} - {event.end_date.format('H:mm')}
+      <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
+      {event.start_date.format('H:mm') + ' - ' + event.end_date.format('H:mm')}
     </Text>
   );
   return (
     <PresenceCard
-      color={colors.unregularized}
+      color={viescoTheme.palette.presencesEvents.unregularized}
       title={I18n.t('viesco-history-unregularized')}
       renderItem={renderItem}
       elements={elements}
@@ -131,13 +132,13 @@ export const UnregularizedCard = ({ elements }) => {
 export const RegularizedCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
-      <NestedTextBold> {event.start_date.format('DD/MM/YY')} - </NestedTextBold>
-      {event.start_date.format('H:mm')} - {event.end_date.format('H:mm')}
+      <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
+      {event.start_date.format('H:mm') + ' - ' + event.end_date.format('H:mm')}
     </Text>
   );
   return (
     <PresenceCard
-      color={colors.regularized}
+      color={viescoTheme.palette.presencesEvents.regularized}
       title={I18n.t('viesco-history-regularized')}
       renderItem={renderItem}
       elements={elements}
@@ -148,27 +149,32 @@ export const RegularizedCard = ({ elements }) => {
 export const LatenessCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
-      <NestedTextBold> {event.start_date.format('DD/MM/YY')} - </NestedTextBold>
+      <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
       {event.end_date.format('H:mm')}
-      <NestedTextBold> - {event.end_date.diff(event.start_date, 'minutes')}mn</NestedTextBold>
+      <NestedTextBold>{' - ' + event.end_date.diff(event.start_date, 'minutes') + 'mn'}</NestedTextBold>
     </Text>
   );
   return (
-    <PresenceCard color={colors.lateness} title={I18n.t('viesco-history-latenesses')} renderItem={renderItem} elements={elements} />
+    <PresenceCard
+      color={viescoTheme.palette.presencesEvents.lateness}
+      title={I18n.t('viesco-history-latenesses')}
+      renderItem={renderItem}
+      elements={elements}
+    />
   );
 };
 
 export const DepartureCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
-      <NestedTextBold> {event.start_date.format('DD/MM/YY')} - </NestedTextBold>
+      <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
       {event.start_date.format('H:mm')}
-      <NestedTextBold> - {Math.abs(event.start_date.diff(event.end_date, 'minutes'))}mn</NestedTextBold>
+      <NestedTextBold>{' - ' + Math.abs(event.start_date.diff(event.end_date, 'minutes')) + 'mn'}</NestedTextBold>
     </Text>
   );
   return (
     <PresenceCard
-      color={colors.departure}
+      color={viescoTheme.palette.presencesEvents.departure}
       title={I18n.t('viesco-history-departures')}
       renderItem={renderItem}
       elements={elements}
@@ -177,10 +183,10 @@ export const DepartureCard = ({ elements }) => {
 };
 
 export const ForgotNotebookCard = ({ elements }) => {
-  const renderItem = event => <TextBold> {event.date.format('DD/MM/YY')}</TextBold>;
+  const renderItem = event => <TextBold>{' ' + event.date.format('DD/MM/YY')}</TextBold>;
   return (
     <PresenceCard
-      color={colors.forgotNotebook}
+      color={viescoTheme.palette.presencesEvents.forgotNotebook}
       title={I18n.t('viesco-history-forgotten-notebooks')}
       renderItem={renderItem}
       elements={elements}
@@ -191,12 +197,19 @@ export const ForgotNotebookCard = ({ elements }) => {
 export const IncidentCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
-      <NestedText> {event.label}</NestedText> - <NestedTextBold>{event.date.format('DD/MM/YY H:mm')}</NestedTextBold> -{' '}
-      {event.protagonist.label}
+      <NestedText>{' ' + event.label}</NestedText>
+      <Text> - </Text>
+      <NestedTextBold>{event.date.format('DD/MM/YY H:mm')}</NestedTextBold>
+      {' - ' + event.protagonist.label}
     </Text>
   );
   return (
-    <PresenceCard color={colors.incident} title={I18n.t('viesco-history-incidents')} renderItem={renderItem} elements={elements} />
+    <PresenceCard
+      color={viescoTheme.palette.presencesEvents.incident}
+      title={I18n.t('viesco-history-incidents')}
+      renderItem={renderItem}
+      elements={elements}
+    />
   );
 };
 
@@ -253,14 +266,14 @@ export const PunishmentCard = ({ elements }) => {
 
   const renderItem = (event: IPunishment) => (
     <Text>
-      <NestedTextBold> {event.label} - </NestedTextBold>
+      <NestedTextBold>{' ' + event.label + ' - '}</NestedTextBold>
       {getPunishmentDate(event)}
     </Text>
   );
 
   return (
     <PresenceCard
-      color={colors.punishment}
+      color={viescoTheme.palette.presencesEvents.punishment}
       title={I18n.t('viesco-history-punishments')}
       renderItem={renderItem}
       elements={elements}

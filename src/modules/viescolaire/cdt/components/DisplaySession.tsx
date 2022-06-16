@@ -38,6 +38,7 @@ const style = StyleSheet.create({
   },
   course: {
     textTransform: 'uppercase',
+    marginLeft: 8,
   },
 });
 
@@ -128,7 +129,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
                   </>
                 ) : null}
                 {sessionList && sessionList[indexSelectedSession]?.subject ? (
-                  <TextBold style={style.course}>&emsp;{sessionList[indexSelectedSession].subject}</TextBold>
+                  <TextBold style={style.course}>{sessionList[indexSelectedSession].subject}</TextBold>
                 ) : null}
               </LeftColoredItem>
             </View>

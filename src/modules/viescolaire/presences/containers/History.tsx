@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -134,7 +135,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
     if (prevProps.events.error !== events.error)
       Toast.show(I18n.t('viesco-history-load-error'), {
         position: Toast.position.CENTER,
-        containerStyle: { padding: 30, backgroundColor: '#8a0000' },
+        containerStyle: { padding: 30, backgroundColor: theme.palette.status.failure },
         textStyle: {},
       });
 

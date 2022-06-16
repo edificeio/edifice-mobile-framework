@@ -38,6 +38,7 @@ const style = StyleSheet.create({
   },
   course: {
     textTransform: 'uppercase',
+    marginLeft: 8,
   },
 });
 
@@ -132,7 +133,7 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
                   </>
                 ) : null}
                 {homeworkList && homeworkList[indexSelectedHomework]?.subject ? (
-                  <TextBold style={style.course}>&emsp;{homeworkList[indexSelectedHomework].subject}</TextBold>
+                  <TextBold style={style.course}>{homeworkList[indexSelectedHomework].subject}</TextBold>
                 ) : null}
               </LeftColoredItem>
             </View>

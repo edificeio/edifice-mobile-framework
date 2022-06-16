@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
+import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -19,12 +20,14 @@ import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/D
 import { INavigationProps } from '~/types';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
+import { viescoTheme } from '../utils/viescoTheme';
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
   declareAbscenceText: {
-    color: '#FFFFFF',
+    color: theme.palette.grey.white,
   },
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
   gridAllModules: {
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
   },
   gridButtonText: {
     marginLeft: 10,
-    color: '#FFFFFF',
+    color: theme.palette.grey.white,
     textAlign: 'center',
   },
   gridButtonTextWidthFull: {
@@ -58,7 +61,7 @@ const styles = StyleSheet.create({
     width: '50%',
   },
   gridButtonDefaultColor: {
-    backgroundColor: '#858FA9',
+    backgroundColor: theme.legacy.neutral.regular,
   },
   gridButtonAllModules: {
     justifyContent: 'flex-start',
@@ -67,11 +70,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
   },
-  subtitle: { color: '#AFAFAF' },
+  subtitle: {
+    color: theme.palette.grey.stone,
+  },
   declareAbsenceButton: {
-    backgroundColor: '#FCB602',
+    backgroundColor: viescoTheme.palette.presences,
     paddingHorizontal: 5,
     justifyContent: 'center',
     alignSelf: 'stretch',
@@ -137,7 +142,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
               )
             }
             text={I18n.t('viesco-history')}
-            color="#FCB602"
+            color={viescoTheme.palette.presences}
             icon="access_time"
             nbModules={nbModules}
           />
@@ -146,7 +151,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate('Timetable')}
             text={I18n.t('viesco-timetable')}
-            color="#162EAE"
+            color={viescoTheme.palette.timetable}
             icon="calendar_today"
             nbModules={nbModules}
           />
@@ -155,7 +160,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate('HomeworkList')}
             text={I18n.t('Homework')}
-            color="#2BAB6F"
+            color={viescoTheme.palette.diary}
             icon="checkbox-multiple-marked"
             nbModules={nbModules}
           />
@@ -164,7 +169,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate('EvaluationList')}
             text={I18n.t('viesco-tests')}
-            color="#F95303"
+            color={viescoTheme.palette.competences}
             icon="equalizer"
             nbModules={nbModules}
           />

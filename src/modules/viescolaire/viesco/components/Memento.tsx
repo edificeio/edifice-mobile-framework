@@ -3,6 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   shadow: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     elevation: 4,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
@@ -64,11 +65,7 @@ export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
         props.relatives.map(relative => {
           return (
             <View style={styles.relativesContainer}>
-              {relative.name ? (
-                <TextBold style={styles.relativesIdentity}>
-                  {relative.title} {relative.name}
-                </TextBold>
-              ) : null}
+              {relative.name ? <TextBold style={styles.relativesIdentity}>{relative.title + ' ' + relative.name}</TextBold> : null}
 
               <View style={styles.infoLine}>
                 <Icon style={styles.iconDisplay} size={20} name="email" />

@@ -3,17 +3,18 @@ import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
 import { ModalBox } from '~/ui/Modal';
 
 import { IChildArray } from '../../viesco/state/children';
-import { colors } from './PresenceCard';
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   modalTitle: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
     marginBottom: 10,
   },
   modalSubsection: {
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
   },
   eventTitle: {
     textTransform: 'uppercase',
-    color: 'grey',
+    color: theme.palette.grey.grey,
   },
   eventTextContainer: {
     marginVertical: 2,
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContentView: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     borderRadius: 5,
     padding: 25,
     alignItems: 'stretch',
@@ -51,25 +52,25 @@ const renderChild = (key: string, event) => {
   switch (key) {
     case 'DEPARTURE':
       title = I18n.t('viesco-history-departures');
-      color = colors.departure;
+      color = viescoTheme.palette.presencesEvents.departure;
       duration = Math.abs(moment(event.start_date).diff(moment(event.end_date), 'minutes'));
       break;
     case 'LATENESS':
       title = I18n.t('viesco-history-latenesses');
-      color = colors.lateness;
+      color = viescoTheme.palette.presencesEvents.lateness;
       duration = moment(event.end_date).diff(moment(event.start_date), 'minutes');
       break;
     case 'NO_REASON':
       title = I18n.t('viesco-history-noreason');
-      color = colors.no_reason;
+      color = viescoTheme.palette.presencesEvents.no_reason;
       break;
     case 'UNREGULARIZED':
       title = I18n.t('viesco-history-unregularized');
-      color = colors.unregularized;
+      color = viescoTheme.palette.presencesEvents.unregularized;
       break;
     case 'REGULARIZED':
       title = I18n.t('viesco-history-regularized');
-      color = colors.regularized;
+      color = viescoTheme.palette.presencesEvents.regularized;
       break;
     default:
   }
@@ -78,10 +79,11 @@ const renderChild = (key: string, event) => {
       <Text style={styles.eventTitle}>{title}</Text>
       <Text style={styles.eventTextContainer}>
         <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
-        <TextBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</TextBold> -{' '}
+        <TextBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</TextBold>
+        <Text>{' - '}</Text>
         <Text style={{ color }}>{moment(event.start_date).format('hh:mm')}</Text>
         <Text style={{ color }}> - {moment(event.end_date).format('hh:mm')}</Text>
-        {duration > 0 ? <NestedTextBold style={{ color }}> - {duration}mn</NestedTextBold> : null}
+        {duration > 0 ? <NestedTextBold style={{ color }}>{' - ' + duration + 'mn'}</NestedTextBold> : null}
       </Text>
     </>
   );
@@ -135,9 +137,7 @@ export const NotificationRelativesModal = ({
             childrenEvents?.data?.studentsEvents[child.id] &&
             !checkIsEmptyEvents(childrenEvents?.data?.studentsEvents[child.id].all) ? (
               <View>
-                <TextBold>
-                  {child.firstName} {child.lastName}
-                </TextBold>
+                <TextBold>{child.firstName + ' ' + child.lastName}</TextBold>
                 <View style={styles.modalSubsection}>
                   <>{renderEvents(childrenEvents?.data?.studentsEvents[child.id]?.all)}</>
                 </View>

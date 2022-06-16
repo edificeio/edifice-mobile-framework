@@ -1,7 +1,6 @@
 /**
  * Vie Scolaire Reducer
  */
-
 import { combineReducers } from 'redux';
 
 import { ICdt_State } from './cdt/reducer';
@@ -20,8 +19,6 @@ import { IMementoState } from './viesco/state/memento';
 import { IPeriodsListState, IYearState } from './viesco/state/periods';
 import { IPersonnelListState } from './viesco/state/personnel';
 import { ISubjectListState } from './viesco/state/subjects';
-
-// State
 
 export interface IViesco_State {
   viesco: {
@@ -42,8 +39,4 @@ export interface IViesco_State {
   competences: ICompetences_State;
 }
 
-// Reducer
-
 export default combineReducers({ viesco, cdt, edt, presences, competences });
-
-// Getters

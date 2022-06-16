@@ -4,6 +4,7 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, responsiveStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -12,6 +13,8 @@ import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import DateTimePicker from '~/ui/DateTimePicker';
+
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   keyboardAvoidingContainer: {
@@ -25,7 +28,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: 'lightgrey',
+    borderColor: theme.palette.grey.cloudy,
     padding: 15,
     justifyContent: 'center',
   },
@@ -40,7 +43,7 @@ const styles = StyleSheet.create({
   rightSwitchSingle: { flexDirection: 'row' },
   rightSwitchSingleText: { marginHorizontal: 10 },
   selected: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     elevation: CommonStyles.elevation,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
@@ -52,42 +55,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexDirection: 'row',
   },
-  column: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 15,
-    flexGrow: 1,
-    flexBasis: 0,
-  },
   timePickerContainer: {
     flex: 1,
     justifyContent: 'space-evenly',
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     alignItems: 'center',
     margin: 10,
   },
   timePickerRender: {
     borderStyle: 'solid',
     borderBottomWidth: 2,
-    borderColor: '#FCB602',
+    borderColor: viescoTheme.palette.presences,
     padding: 10,
   },
   timePickerTitleText: {
-    color: '#FCB602',
+    color: viescoTheme.palette.presences,
     textTransform: 'uppercase',
   },
   timePickerDate: {
     ...responsiveStyle(24),
     padding: 10,
   },
-  timeContainer: {
-    backgroundColor: 'white',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: 30,
-  },
   inputContainer: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.grey.white,
     flexDirection: 'column',
     paddingHorizontal: 25,
     paddingTop: 25,
@@ -97,7 +87,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
   },
-  iconPickerMarginRight: { marginRight: 5 },
   attachment: {
     flexDirection: 'row',
     justifyContent: 'space-between',

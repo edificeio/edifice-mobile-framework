@@ -56,7 +56,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   homeworksContainer: {
-    backgroundColor: '#FFF1DB',
+    backgroundColor: theme.palette.complementary.orange.pale,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -133,7 +133,8 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     return (
       <View style={style.homeworksContainer}>
         <TextBold style={style.homeworksText}>
-          {I18n.t('viesco-homework')} {homeworks.length > 1 && '(' + homeworks.length + ')'}
+          {I18n.t('viesco-homework')}
+          {homeworks.length > 1 && ' (' + homeworks.length + ')'}
         </TextBold>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))}

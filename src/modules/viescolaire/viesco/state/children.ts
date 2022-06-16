@@ -2,7 +2,6 @@ import { getSessionInfo } from '~/App';
 import viescoConfig from '~/modules/viescolaire/moduleConfig';
 import userConfig from '~/user/config';
 
-
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IChild {

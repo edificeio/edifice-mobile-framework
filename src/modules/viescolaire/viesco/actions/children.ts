@@ -33,8 +33,6 @@ export function selectChildAction(child: string) {
     // Competences
     dispatch(competencesDevoirsActions.clear());
     dispatch(competencesMoyennesActions.clear());
-    // dispatch(servicesMatieresAction.clear());
-    // dispatch(structureMatieresAction.clear());
 
     dispatch(selectChild(child));
   };

@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { IChild, IChildArray } from '~/modules/viescolaire/viesco/state/children';
 import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
   container: {
     borderBottomRightRadius: 30,
     borderBottomLeftRadius: 30,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.palette.grey.white,
     zIndex: 100,
   },
   innerContainer: {

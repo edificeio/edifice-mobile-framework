@@ -3,13 +3,13 @@ import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import styles from '~/styles';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -37,13 +37,13 @@ const style = StyleSheet.create({
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.grey.white,
   },
   subjectView: {
     maxWidth: '56%',
   },
   classText: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
   },
   roomView: {
     flexDirection: 'row',
@@ -72,10 +72,10 @@ const style = StyleSheet.create({
     fontStyle: 'italic',
   },
   greyishBackground: {
-    backgroundColor: '#E8E8E8',
+    backgroundColor: theme.palette.grey.fog,
   },
   whiteBackground: {
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.grey.white,
   },
 });
 

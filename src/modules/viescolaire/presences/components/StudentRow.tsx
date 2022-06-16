@@ -2,11 +2,14 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swipeable from 'react-native-swipeable';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { INavigationProps } from '~/types';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   studentsList: {
@@ -17,7 +20,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     paddingRight: 10,
     paddingVertical: 5,
-    backgroundColor: '#FFF',
+    backgroundColor: theme.palette.grey.white,
     flexWrap: 'wrap',
   },
   tick: {
@@ -33,10 +36,14 @@ const styles = StyleSheet.create({
   swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
   studentName: { marginLeft: 10, marginVertical: 15 },
   iconsView: { flexDirection: 'row', marginLeft: 5 },
-  grey: { backgroundColor: 'grey' },
-  lightGrey: { backgroundColor: 'lightgrey' },
+  grey: {
+    backgroundColor: theme.palette.grey.grey,
+  },
+  lightGrey: { backgroundColor: theme.palette.grey.cloudy },
   red: { backgroundColor: CommonStyles.themeOpenEnt.red },
-  blue: { backgroundColor: '#ed9ffd' },
+  blue: {
+    backgroundColor: viescoTheme.palette.presencesEvents.departure,
+  },
   purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },
 });
 

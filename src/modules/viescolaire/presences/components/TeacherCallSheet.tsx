@@ -33,6 +33,12 @@ const style = StyleSheet.create({
     justifyContent: 'flex-end',
     flexDirection: 'row',
   },
+  classroomText: {
+    marginLeft: 8,
+  },
+  gradeText: {
+    marginLeft: 8,
+  },
 });
 
 type MoveToFolderModalState = {
@@ -155,13 +161,12 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
             {moment(this.state.callData.start_date).format('LT')} - {moment(this.state.callData.end_date).format('LT')}
           </Text>
           {this.state.course.classroom !== '' && (
-            <Text>
-              &emsp;
+            <Text style={style.classroomText}>
               <Icon name="pin_drop" size={18} />
-              {I18n.t('viesco-room')} {this.state.course.classroom}
+              {I18n.t('viesco-room') + ' ' + this.state.course.classroom}
             </Text>
           )}
-          <TextBold>&emsp;{this.state.course.grade}</TextBold>
+          <TextBold style={style.gradeText}>{this.state.course.grade}</TextBold>
         </LeftColoredItem>
       </View>
     );

@@ -11,6 +11,8 @@ import TeacherCallSheet from '~/modules/viescolaire/presences/components/Teacher
 import { getClassesCallListState } from '~/modules/viescolaire/presences/state/teacherClassesCall';
 import { getCoursesListState } from '~/modules/viescolaire/presences/state/teacherCourses';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 class CallSheet extends React.PureComponent<any> {
   public render() {
     const courseInfos = this.props.navigation.state.params.courseInfos;
@@ -22,7 +24,7 @@ class CallSheet extends React.PureComponent<any> {
         navBarWithBack={{
           title: I18n.t('viesco-register'),
           style: {
-            backgroundColor: '#ffb600',
+            backgroundColor: viescoTheme.palette.presences,
           },
         }}>
         <TeacherCallSheet {...this.props} course={course} />

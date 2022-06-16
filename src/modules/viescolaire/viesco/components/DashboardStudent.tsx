@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
+import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -15,6 +16,7 @@ import { ILevelsList } from '~/modules/viescolaire/competences/state/competences
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/cdt';
 
+import { viescoTheme } from '../utils/viescoTheme';
 import { IHomeworkByDateList } from './DashboardRelative';
 
 const styles = StyleSheet.create({
@@ -43,7 +45,7 @@ const styles = StyleSheet.create({
     width: '50%',
   },
   gridButtonDefaultColor: {
-    backgroundColor: '#858FA9',
+    backgroundColor: theme.legacy.neutral.regular,
   },
   gridButtonAllModules: {
     justifyContent: 'flex-start',
@@ -58,15 +60,13 @@ const styles = StyleSheet.create({
   },
   gridButtonText: {
     marginLeft: 10,
-    color: '#FFFFFF',
+    color: theme.palette.grey.white,
     textAlign: 'center',
   },
   title: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
   },
-  subtitle: { color: '#AFAFAF' },
-  homeworks: {},
-  evaluations: {},
+  subtitle: { color: theme.palette.grey.stone },
 });
 
 interface IIconButtonProps {
@@ -113,7 +113,7 @@ export default class Dashboard extends React.PureComponent<any> {
               )
             }
             text={I18n.t('viesco-history')}
-            color="#FCB602"
+            color={viescoTheme.palette.presences}
             icon="access_time"
             nbModules={nbModules}
           />
@@ -122,7 +122,7 @@ export default class Dashboard extends React.PureComponent<any> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate('Timetable')}
             text={I18n.t('viesco-timetable')}
-            color="#162EAE"
+            color={viescoTheme.palette.timetable}
             icon="calendar_today"
             nbModules={nbModules}
           />
@@ -131,7 +131,7 @@ export default class Dashboard extends React.PureComponent<any> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate('HomeworkList')}
             text={I18n.t('Homework')}
-            color="#2BAB6F"
+            color={viescoTheme.palette.diary}
             icon="checkbox-multiple-marked"
             nbModules={nbModules}
           />
@@ -140,7 +140,7 @@ export default class Dashboard extends React.PureComponent<any> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate('EvaluationList')}
             text={I18n.t('viesco-tests')}
-            color="#F95303"
+            color={viescoTheme.palette.competences}
             icon="equalizer"
             nbModules={nbModules}
           />
