@@ -1,42 +1,33 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
+import { Text } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
 
-type IProps = {
-  onPress: (any) => void;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-};
-
-export default class DialogButton extends React.PureComponent<IProps> {
-  static displayName = 'DialogButton';
-
-  render() {
-    const { onPress, style, textStyle } = this.props;
-
-    return (
-      <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
-        <Text style={[styles.text, textStyle]}>{I18n.t('Cancel')}</Text>
-      </TouchableOpacity>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
-  button: {
+  buttonContainer: {
     borderRadius: 2,
-    backgroundColor: '#C0C0C0',
+    backgroundColor: theme.palette.grey.grey,
     paddingHorizontal: layoutSize.LAYOUT_16,
     paddingVertical: layoutSize.LAYOUT_8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    color: 'white',
-    textAlign: 'center',
-    backgroundColor: 'transparent',
-    fontSize: layoutSize.LAYOUT_14,
+    color: theme.palette.grey.white,
   },
 });
+
+interface IDialogButtonCancelProps {
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+  onPress: () => void;
+}
+
+export const DialogButtonCancel = ({ style, textStyle, onPress }: IDialogButtonCancelProps) => (
+  <TouchableOpacity style={[styles.buttonContainer, style]} onPress={onPress}>
+    <Text style={[styles.text, textStyle]}>{I18n.t('Cancel')}</Text>
+  </TouchableOpacity>
+);

@@ -17,28 +17,28 @@ const style = StyleSheet.create({
     padding: 5,
   },
   buttonText: {
-    color: 'white',
+    color: theme.palette.grey.white,
   },
 });
 
-export const ButtonGroup = (props: {
+interface IButtonGroupProps {
   buttons: string[];
   selectedButton: number;
-  onPress: (index: number) => void;
   containerStyle?: ViewStyle;
-}) => {
-  return (
-    <View style={[style.mainContainer, props.containerStyle, { borderColor: theme.palette.primary.regular }]}>
-      {props.buttons.map((button, index) => (
-        <TouchableOpacity
-          onPress={() => props.onPress(index)}
-          style={[style.buttonContainer, index === props.selectedButton && { backgroundColor: theme.palette.primary.regular }]}
-          key={index}>
-          <TextBold style={[style.buttonText, index !== props.selectedButton && { color: theme.palette.primary.regular }]}>
-            {button}
-          </TextBold>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-};
+  onPress: (index: number) => void;
+}
+
+export const ButtonGroup = ({ buttons, selectedButton, onPress, containerStyle }: IButtonGroupProps) => (
+  <View style={[style.mainContainer, containerStyle, { borderColor: theme.palette.primary.regular }]}>
+    {buttons.map((button, index) => (
+      <TouchableOpacity
+        onPress={() => onPress(index)}
+        style={[style.buttonContainer, index === selectedButton && { backgroundColor: theme.palette.primary.regular }]}
+        key={index}>
+        <TextBold style={[style.buttonText, index !== selectedButton && { color: theme.palette.primary.regular }]}>
+          {button}
+        </TextBold>
+      </TouchableOpacity>
+    ))}
+  </View>
+);

@@ -1,38 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
+import { Text } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
-import { CommonStyles } from '~/styles/common/styles';
-
-type IProps = {
-  label: string;
-  disabled: boolean;
-  onPress: (any) => void;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-};
-
-export default class DialogButton extends React.PureComponent<IProps> {
-  static defaultProps = {
-    disabled: false,
-  };
-
-  static displayName = 'DialogButton';
-
-  render() {
-    const { onPress, disabled, label, style, textStyle } = this.props;
-
-    return (
-      <TouchableOpacity style={[styles.button, style, disabled ? styles.disabled : {}]} onPress={onPress} disabled={disabled}>
-        <Text style={[styles.text, textStyle]}>{label}</Text>
-      </TouchableOpacity>
-    );
-  }
-}
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: CommonStyles.orangeColorTheme,
+  buttonContainer: {
+    backgroundColor: theme.palette.secondary.regular,
     borderRadius: 2,
     marginLeft: layoutSize.LAYOUT_16,
     paddingHorizontal: layoutSize.LAYOUT_16,
@@ -40,13 +15,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  disabled: {
+  disabledOpacity: {
     opacity: 0.5,
   },
   text: {
-    color: 'white',
-    textAlign: 'center',
-    backgroundColor: 'transparent',
-    fontSize: layoutSize.LAYOUT_14,
+    color: theme.palette.grey.white,
   },
 });
+
+interface IDialogButtonOkProps {
+  label: string;
+  disabled?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+  onPress: () => void;
+}
+
+export const DialogButtonOk = ({ label, disabled, style, textStyle, onPress }: IDialogButtonOkProps) => (
+  <TouchableOpacity
+    onPress={onPress}
+    disabled={disabled}
+    style={[styles.buttonContainer, style, disabled && styles.disabledOpacity]}>
+    <Text style={[styles.text, textStyle]}>{label}</Text>
+  </TouchableOpacity>
+);

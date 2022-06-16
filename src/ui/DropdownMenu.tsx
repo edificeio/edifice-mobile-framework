@@ -16,40 +16,37 @@ const style = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
-    backgroundColor: 'red',
+    paddingVertical: 4,
     borderBottomLeftRadius: 15,
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
   itemIcon: {
     marginRight: 8,
-    color: 'white',
+    color: theme.palette.grey.white,
   },
   itemText: {
     fontSize: 15,
-    color: 'white',
+    color: theme.palette.grey.white,
   },
 });
 
-type DropdrownMenuProps = {
-  color?: string;
+interface IDropdrownMenuProps {
   data: {
     icon: string;
     text: string;
-
     onPress: () => any;
   }[];
   isVisible: boolean;
-
+  color?: string;
   onTapOutside: () => any;
-};
+}
 
-export const DropdownMenu: React.FunctionComponent<DropdrownMenuProps> = (props: DropdrownMenuProps) => {
-  const { color, data, isVisible, onTapOutside } = props;
+export const DropdownMenu = ({ data, isVisible, color, onTapOutside }: IDropdrownMenuProps) => {
   return isVisible ? (
     <TouchableWithoutFeedback onPress={onTapOutside}>
       <View style={style.transparentContainer}>

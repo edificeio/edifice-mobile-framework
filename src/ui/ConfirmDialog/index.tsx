@@ -2,17 +2,17 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, View } from 'react-native';
 
-import DialogButtonCancel from './buttonCancel';
-import DialogButtonOk from './buttonOk';
-import DialogContainer from './container';
-import DialogInput from './input';
-import DialogSelect from './select';
-import DialogTitle from './title';
-
 import { layoutSize } from '~/styles/common/layoutSize';
 import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
 import { Item } from '~/workspace/components';
 import { IFile, IItem } from '~/workspace/types/states/items';
+
+import { DialogButtonCancel } from './buttonCancel';
+import { DialogButtonOk } from './buttonOk';
+import DialogContainer from './container';
+import DialogInput from './input';
+import DialogSelect from './select';
+import DialogTitle from './title';
 
 type IProps = {
   filterId: string;
