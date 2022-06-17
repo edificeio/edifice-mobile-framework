@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-13T15:27:25",
-  "notes": "chore(build): last-build.json update crash fix\nchore(build): last-build.json not updaed fix\nRevert \"release: 1.8.0-rc.2(1080012)\"\nrelease: 1.8.0-rc.2(1080012)\nchore(build): Cut prepare-build.json to facilitate merge/rebase\nchore: MB-546 i18n episode II\nfix(homework): MB-709, wrong background color in explorer\nrelease: 1.8.0-rc.1(1080011)",
+  "last": "2022-06-17T18:53:36",
+  "notes": "chore(config): MB-721, Change MonEcole && MonCollege logos\nchore(config): MB-721, Change MonEcole && MonCollege logos\nfix(schoolbook): MB-673 input focus issue in editing response\nfix(blog, schoolbook): MB-673 fix keyboard & input management on Android\nfix(news): MB-719 fix notifHandler\nchre: MB-546 first i18n were not integrated\nfeat(schoolbook): MB-716 show create word in list screen\nchore(debug): Unused Flipper plugins removal\nrelease: 1.8.0-rc.2(1080012)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
