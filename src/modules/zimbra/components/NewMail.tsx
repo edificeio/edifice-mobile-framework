@@ -9,12 +9,12 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import Notifier from '~/infra/notifier/container';
+import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
-import { ISearchUsers } from '../service/newMail';
 import Attachment from './Attachment';
 import SearchUserMail from './SearchUserMail';
 

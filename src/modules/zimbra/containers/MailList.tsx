@@ -228,7 +228,10 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     this.onUnselectListMails();
   };
 
-  public closeDeleteModal = () => this.onUnselectListMails();
+  public closeDeleteModal = () => {
+    this.onUnselectListMails();
+    this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
+  };
 
   deleteSelectedMails = async () => {
     const listSelected = this.getListSelectedMails();
