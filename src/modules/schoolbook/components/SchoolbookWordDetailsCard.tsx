@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { EmitterSubscription, Keyboard, TouchableOpacity, View } from 'react-native';
+import { EmitterSubscription, Keyboard, Platform, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
@@ -101,17 +102,19 @@ const SchoolbookWordDetailsCard = (
 
   const showSubscriptionRef = React.useRef<EmitterSubscription>();
   React.useEffect(() => {
-    showSubscriptionRef.current = Keyboard.addListener('keyboardWillShow', () => {
+    showSubscriptionRef.current = Keyboard.addListener('keyboardDidShow', () => {
       setTimeout(() => {
         const commentIndex = responses?.findIndex(r => r.id?.toString() === editedCommentId);
         if (commentIndex !== undefined && commentIndex > -1) {
-          flatListRef?.current?.scrollToIndex({
-            index: commentIndex,
-            viewPosition: 1,
-            viewOffset: -UI_SIZES.spacing.large,
-          });
+          if (Platform.OS === 'ios') {
+            flatListRef?.current?.scrollToIndex({
+              index: commentIndex,
+              viewPosition: 1,
+              viewOffset: -UI_SIZES.spacing.large,
+            });
+          }
         }
-      }, 100);
+      }, 50);
     });
     return () => {
       showSubscriptionRef.current?.remove();
@@ -272,10 +275,16 @@ const SchoolbookWordDetailsCard = (
     ],
   );
 
+  const ListComponent = Platform.select<typeof FlatList | typeof KeyboardAvoidingFlatList>({
+    ios: FlatList,
+    android: KeyboardAvoidingFlatList,
+  })!;
+
   return (
     <>
-      <FlatList
-        ref={flatListRef}
+      <ListComponent
+        {...Platform.select({ ios: { ref: flatListRef }, android: {} })}
+        removeClippedSubviews={false}
         data={word?.reply && responses ? responses : []}
         renderItem={({ item, index }) => {
           const isFirstItem = index === 0;

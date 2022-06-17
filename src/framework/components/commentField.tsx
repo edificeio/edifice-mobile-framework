@@ -108,7 +108,10 @@ const CommentField = (props: CommentFieldProps, ref) => {
 
   React.useEffect(() => {
     if (isEditing) {
-      inputRef.current && inputRef.current.focus();
+      setTimeout(() => {
+        // Kinda a hack, but works...
+        inputRef.current && inputRef.current.focus();
+      });
     }
   }, [isEditing]);
 

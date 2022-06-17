@@ -1,7 +1,8 @@
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, EmitterSubscription, FlatList, Keyboard, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -19,7 +20,7 @@ import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/heade
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { KeyboardPageView } from '~/framework/components/page';
+import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -159,10 +160,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       },
     ];
 
+    const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+
     return (
       <>
-        <KeyboardPageView
-          safeArea={!isBottomSheetVisible}
+        <PageComponent
+          {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}
           navigation={navigation}
           navBarWithBack={this.navBarInfo()}
           onBack={() => {
@@ -181,7 +184,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           ) : (
             this.renderContent()
           )}
-        </KeyboardPageView>
+        </PageComponent>
         <ActionsMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
@@ -220,21 +223,28 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   renderContent() {
     const { session } = this.props;
-    const { loadingState, publishCommentLoadingState, blogPostData, blogInfos, isCommentFieldFocused } = this.state;
+    const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
     const blogPostComments = blogPostData?.comments;
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const hasPublishBlogPostRight = blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
+    const ListComponent = Platform.select<typeof FlatList | typeof KeyboardAvoidingFlatList>({
+      ios: FlatList,
+      android: KeyboardAvoidingFlatList,
+    })!;
+    const footer = this.renderFooter(isPublishingComment, hasCommentBlogPostRight ?? false, hasPublishBlogPostRight ?? false);
+
     return (
       <>
         <Viewport.Tracker>
-          <FlatList
-            ref={ref => (this.flatListRef = ref)}
+          <ListComponent
+            {...Platform.select({ ios: { ref: ref => (this.flatListRef = ref) }, android: {} })}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.ui.background.page }}
             data={blogPostComments}
             keyExtractor={(item: IBlogPostComment) => item.id.toString()}
             ListHeaderComponent={this.renderBlogPostDetails()}
+            removeClippedSubviews={false}
             refreshControl={
               <RefreshControl
                 refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
@@ -253,52 +263,59 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                   this.event = null;
                 }, 0);
             }}
+            {...Platform.select({ ios: {}, android: { stickyFooter: footer } })}
           />
         </Viewport.Tracker>
-        {blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight ? (
-          <View style={{ display: isCommentFieldFocused ? 'none' : 'flex' }}>
-            <BottomEditorSheet
-              ref={this.bottomEditorSheetRef}
-              onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
-              isPublishingComment={isPublishingComment}
-            />
-          </View>
-        ) : null}
-        {blogPostData?.state === 'SUBMITTED' ? (
-          hasPublishBlogPostRight ? (
-            <BottomButtonSheet
-              text={I18n.t('blog.post.publishAction')}
-              action={async () => {
-                try {
-                  await this.props.handlePublishBlogPost({ blogId: blogInfos.id, postId: blogPostData._id });
-                  const newBlogPostData = await this.props.handleGetBlogPostDetails({
-                    blogId: blogInfos.id,
-                    postId: blogPostData._id,
-                  });
-                  newBlogPostData && this.setState({ blogPostData: newBlogPostData });
-                  newBlogPostData &&
-                    this.props.navigation.setParams({
-                      blogPost: newBlogPostData,
-                    });
-                } catch {
-                  this.props.dispatch(
-                    notifierShowAction({
-                      type: 'error',
-                      id: `${moduleConfig.routeName}/details`,
-                      text: I18n.t('common.error.text'),
-                    }),
-                  );
-                }
-              }}
-            />
-          ) : (
-            <BottomSheet
-              content={<TextBold style={{ ...TextColorStyle.Important }}>{I18n.t('blog.post.waitingValidation')}</TextBold>}
-            />
-          )
-        ) : null}
+        {Platform.select({ ios: footer, android: null })}
       </>
     );
+  }
+
+  renderFooter(isPublishingComment: boolean, hasCommentBlogPostRight: boolean, hasPublishBlogPostRight: boolean) {
+    const { blogPostData, blogInfos, isCommentFieldFocused } = this.state;
+    return blogPostData?.state === 'PUBLISHED' ? (
+      hasCommentBlogPostRight && !isCommentFieldFocused ? (
+        <BottomEditorSheet
+          ref={this.bottomEditorSheetRef}
+          onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
+          isPublishingComment={isPublishingComment}
+        />
+      ) : (
+        <View style={{ height: 0 }} />
+      )
+    ) : blogPostData?.state === 'SUBMITTED' ? (
+      hasPublishBlogPostRight ? (
+        <BottomButtonSheet
+          text={I18n.t('blog.post.publishAction')}
+          action={async () => {
+            try {
+              await this.props.handlePublishBlogPost({ blogId: blogInfos.id, postId: blogPostData._id });
+              const newBlogPostData = await this.props.handleGetBlogPostDetails({
+                blogId: blogInfos.id,
+                postId: blogPostData._id,
+              });
+              newBlogPostData && this.setState({ blogPostData: newBlogPostData });
+              newBlogPostData &&
+                this.props.navigation.setParams({
+                  blogPost: newBlogPostData,
+                });
+            } catch {
+              this.props.dispatch(
+                notifierShowAction({
+                  type: 'error',
+                  id: `${moduleConfig.routeName}/details`,
+                  text: I18n.t('common.error.text'),
+                }),
+              );
+            }
+          }}
+        />
+      ) : (
+        <BottomSheet
+          content={<TextBold style={{ ...TextColorStyle.Important }}>{I18n.t('blog.post.waitingValidation')}</TextBold>}
+        />
+      )
+    ) : null;
   }
 
   renderBlogPostDetails() {
@@ -434,7 +451,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       });
     } else this.doInit();
 
-    this.showSubscription = Keyboard.addListener('keyboardWillShow', () => {
+    this.showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!, () => {
       const { blogPostData } = this.state;
       if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
         this.setState({ isCommentFieldFocused: true });
@@ -442,15 +459,17 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         if (!this.editedCommentId) return;
         const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
         if (commentIndex !== undefined && commentIndex > -1) {
-          this.flatListRef?.scrollToIndex({
-            index: commentIndex,
-            viewPosition: 1,
-          });
+          if (Platform.OS === 'ios') {
+            this.flatListRef?.scrollToIndex({
+              index: commentIndex,
+              viewPosition: 1,
+            });
+          }
         }
-      }, 100);
+      }, 50);
     });
 
-    this.hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
+    this.hideSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
       if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
         this.setState({ isCommentFieldFocused: false });
     });
