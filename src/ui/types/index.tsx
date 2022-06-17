@@ -34,10 +34,10 @@ export const initialMenuItem = {
 };
 
 export type IFloatingProps = {
-  iconName: string;
+  eventHandleData: any;
+  buttonStyle?: ViewStyle;
+  iconName?: string;
   iconSize?: number;
   menuItems?: IMenuItem[];
   onEvent: (event: IEvent) => void;
-  eventHandleData: any;
-  buttonStyle?: ViewStyle;
 };

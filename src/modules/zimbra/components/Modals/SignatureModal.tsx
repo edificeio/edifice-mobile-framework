@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   titleText: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
   },
   textZone: {
     marginHorizontal: 10,

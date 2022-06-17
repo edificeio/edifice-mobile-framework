@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   textStyle: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
   },
   scrollViewContainer: {
     flexGrow: 1,
@@ -78,7 +78,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     const { selectedFolder, selectFolder } = this.props;
     const selected = selectedFolder === id;
     const touchableStyle = selected ? [styles.opacity, styles.selectedItem] : styles.opacity;
-    const textStyle = selected ? { color: 'white', ...TextSizeStyle.SlightBigPlus } : { ...TextSizeStyle.SlightBigPlus };
+    const textStyle = selected ? { color: 'white', ...TextSizeStyle.SlightBig } : { ...TextSizeStyle.SlightBig };
     const iconStyle = selected ? { color: 'white', margin: 10 } : { margin: 10 };
     return (
       <>

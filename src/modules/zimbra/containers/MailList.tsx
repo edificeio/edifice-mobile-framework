@@ -38,7 +38,7 @@ import { IInit } from './DrawerMenu';
 
 const styles = StyleSheet.create({
   selectedMailsNumberText: {
-    ...TextSizeStyle.SlightBigPlus,
+    ...TextSizeStyle.SlightBig,
     color: theme.palette.grey.white,
   },
   headerContainer: {

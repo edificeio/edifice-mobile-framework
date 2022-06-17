@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { FakeHeader_Container, FakeHeader_Row } from '~/framework/components/header';
 import { EVENT_TYPE, IEvent } from '~/types/ievents';
 import { ConfirmDialog } from '~/ui/ConfirmDialog';
-import FloatingAction from '~/ui/FloatingButton/FloatingAction';
+import { FloatingAction } from '~/ui/FloatingButton/FloatingAction';
 import ProgressBar from '~/ui/ProgressBar';
 import { ToolbarAction } from '~/ui/Toolbar';
 import { IMenuItem, initialMenuItem } from '~/ui/types';
@@ -170,11 +170,10 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
             navigation={navigation}
             onEvent={this.handleEvent.bind(this)}
           />
-          {parentId !== 'shared' ? (
+          {parentId !== 'shared' && !selectedArrayItems.length && popupMenuItems.length ? (
             <FloatingAction
               menuItems={popupMenuItems}
               onEvent={this.handleEvent.bind(this)}
-              selected={selectedArrayItems}
               eventHandleData={{
                 dispatch,
                 filterId,

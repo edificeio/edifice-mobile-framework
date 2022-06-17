@@ -4,30 +4,26 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   item: {
-    padding: 10,
-    paddingVertical: 12,
-    backgroundColor: theme.palette.grey.white,
     flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: theme.palette.grey.white,
   },
   selectedItem: {
     backgroundColor: theme.palette.secondary.regular,
   },
   itemText: {
-    ...TextSizeStyle.SlightBigPlus,
-    marginLeft: 10,
+    ...TextSizeStyle.SlightBig,
+    marginLeft: 12,
     overflow: 'hidden',
     paddingRight: 40,
   },
   itemTextSelected: {
     color: theme.palette.grey.white,
-  },
-  itemIcon: {
-    alignSelf: 'center',
-    marginHorizontal: 4,
   },
 });
 
@@ -47,15 +43,15 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
     const countString = count ? ` (${count})` : '';
     return (
       <TouchableOpacity style={touchableStyle} onPress={navigate} disabled={selected}>
-        <Icon size={22} name={iconName} style={styles.itemIcon} color={iconColor} />
+        <Icon size={22} name={iconName} color={iconColor} />
         {selected ? (
           <TextBold numberOfLines={1} style={[styles.itemTextSelected, styles.itemText]}>
             {label + countString}
           </TextBold>
         ) : count ? (
-          <TextBold numberOfLines={1} style={styles.itemText}>
+          <TextSemiBold numberOfLines={1} style={styles.itemText}>
             {label + countString}
-          </TextBold>
+          </TextSemiBold>
         ) : (
           <Text numberOfLines={1} style={styles.itemText}>
             {label}

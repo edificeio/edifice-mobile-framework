@@ -8,22 +8,19 @@ import { EVENT_TYPE, IEventProps } from '~/types';
 import { CenterPanel, LeftIconPanel } from '~/ui/ContainerContent';
 import { IMenuItem } from '~/ui/types';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   centerPanel: {
     alignItems: 'center',
-    backgroundColor: 'transparent',
     flexDirection: 'row',
     flexGrow: 3,
     justifyContent: 'flex-start',
     margin: 2,
     marginLeft: -20,
   },
-  fileName: {
-    color: '#000000',
-    fontSize: layoutSize.LAYOUT_14,
+  text: {
+    color: 'black',
   },
   leftPanel: {
-    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -33,7 +30,6 @@ const style = StyleSheet.create({
     padding: 2,
   },
   touchPanel: {
-    backgroundColor: 'transparent',
     flexDirection: 'row',
     flex: 1,
     paddingLeft: 5,
@@ -46,12 +42,12 @@ const Item = ({ onEvent, item, eventHandleData }: IEventProps & any) => {
   const { icon, text } = item as IMenuItem;
 
   const view = (
-    <View style={style.touchPanel}>
-      <LeftIconPanel style={style.leftPanel}>
+    <View style={styles.touchPanel}>
+      <LeftIconPanel style={styles.leftPanel}>
         <Icon color="#000000" size={layoutSize.LAYOUT_28} name={icon} />
       </LeftIconPanel>
-      <CenterPanel style={style.centerPanel}>
-        <Text numberOfLines={1} style={style.fileName}>
+      <CenterPanel style={styles.centerPanel}>
+        <Text numberOfLines={1} style={styles.text}>
           {text}
         </Text>
       </CenterPanel>

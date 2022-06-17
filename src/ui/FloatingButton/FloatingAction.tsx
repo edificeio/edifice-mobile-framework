@@ -1,13 +1,12 @@
-import React from 'react';
-import { FlatList, Keyboard, StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, Keyboard, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { getMenuShadow } from '~/ui/ButtonIconText';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { ISelected } from '~/ui/Toolbar/Toolbar';
 import { IFloatingProps, IMenuItem } from '~/ui/types';
 
 import FloatingActionItem from './FloatingActionItem';
@@ -16,19 +15,13 @@ const styles = StyleSheet.create({
   actions: {
     borderRadius: layoutSize.LAYOUT_4,
     overflow: 'visible',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.palette.grey.white,
     position: 'absolute',
     right: 12,
     top: 78,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
     ...getMenuShadow(),
-  },
-  button: {
-    position: 'absolute',
-    right: 20,
-    top: UI_SIZES.screen.topInset,
-    zIndex: 10,
   },
   overlayActions: {
     bottom: 0,
@@ -44,102 +37,37 @@ const styles = StyleSheet.create({
   },
 });
 
-interface IState {
-  active: boolean;
-}
-export default class FloatingAction extends React.Component<IFloatingProps & ISelected, IState> {
-  state = {
-    active: false,
-  };
+export const FloatingAction = (props: IFloatingProps) => {
+  const [isActive, setActive] = useState<boolean>(false);
 
-  visible = true;
-
-  reset = () => {
-    this.setState({
-      active: false,
-    });
-  };
-
-  animateButton = () => {
-    const { active } = this.state;
-
+  const showActions = () => {
     Keyboard.dismiss();
+    setActive(!isActive);
+  };
 
-    if (!active) {
-      this.setState({
-        active: true,
-      });
-    } else {
-      this.reset();
+  const handleEvent = (event: any): void => {
+    setActive(false);
+    if (props.onEvent) {
+      props.onEvent(event);
     }
   };
 
-  handleEvent = (event: any): void => {
-    const { onEvent } = this.props;
-
-    if (onEvent) {
-      onEvent(event);
-    }
-    this.reset();
-  };
-
-  renderMainButton() {
-    const { menuItems } = this.props;
-    const iconName = this.state.active ? 'close' : 'add';
-
-    if (!menuItems || menuItems.length === 0) {
-      return null;
-    }
-
-    return <DEPRECATED_HeaderPrimaryAction iconName={iconName} onPress={this.animateButton} />;
-  }
-
-  renderActions() {
-    const { menuItems } = this.props;
-    const { active } = this.state;
-
-    if (!active || !menuItems || menuItems.length === 0) {
-      return undefined;
-    }
-
-    return (
-      <FlatList
-        contentContainerStyle={styles.actions}
-        data={menuItems}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        keyExtractor={(item: IMenuItem) => item.id}
-        renderItem={({ item }) => (
-          <FloatingActionItem eventHandleData={this.props.eventHandleData} item={item} onEvent={this.handleEvent.bind(this)} />
-        )}
-      />
-    );
-  }
-
-  render() {
-    const { selected } = this.props;
-
-    if (selected?.length) {
-      return null;
-    }
-
-    const { menuItems } = this.props;
-    const { active } = this.state;
-
-    if (active) {
-      return (
-        <>
-          {this.renderMainButton()}
-          <TouchableOpacity onPress={this.animateButton} style={styles.overlayActions}>
-            {this.renderActions()}
-          </TouchableOpacity>
-        </>
-      );
-    }
-
-    if (!active || (menuItems && menuItems.length === 0)) {
-      return this.renderMainButton();
-    }
-
-    return null;
-  }
-}
+  return (
+    <>
+      <DEPRECATED_HeaderPrimaryAction iconName={isActive ? 'close' : 'add'} onPress={showActions} />
+      {isActive ? (
+        <TouchableOpacity activeOpacity={1} onPress={showActions} style={styles.overlayActions}>
+          <FlatList
+            contentContainerStyle={styles.actions}
+            data={props.menuItems}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            keyExtractor={(item: IMenuItem) => item.id}
+            renderItem={({ item }) => (
+              <FloatingActionItem eventHandleData={props.eventHandleData} item={item} onEvent={handleEvent} />
+            )}
+          />
+        </TouchableOpacity>
+      ) : null}
+    </>
+  );
+};
