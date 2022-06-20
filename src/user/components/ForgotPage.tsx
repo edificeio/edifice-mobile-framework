@@ -148,6 +148,9 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         returnKeyLabel={I18n.t('forgot-submit')}
                         returnKeyType="done"
                         onSubmitEditing={() => this.handleSubmit()}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        spellCheck={false}
                       />
                     ) : null}
                     {(hasStructures && !isSuccess) || (isError && !editing) ? <ErrorMessage>{errorText}</ErrorMessage> : null}

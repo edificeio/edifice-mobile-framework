@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-10T22:55:17",
-  "notes": "fix(schoolbook): MB-653 scrollbar permanent on recipients modal\nchore(schoolbook): removed getter\nchore: MB-648, add MonEcole logo\nfix(workspace): AMV2-132, Add files in shared folders\nchore(homework): module color condition\nchore(schoolbook): acknowledgementNeededStudent wording\nchore(build): Align iOS Ino.plist\nchore(homework): MB-709, blue homework app color\nrefactor(mediacentre): MO-129, deleted homepage component\nrelease: 1.8.0-alpha.10(1080010)",
+  "last": "2022-06-17T18:53:36",
+  "notes": "chore(config): MB-721, Change MonEcole && MonCollege logos\nchore(config): MB-721, Change MonEcole && MonCollege logos\nfix(schoolbook): MB-673 input focus issue in editing response\nfix(blog, schoolbook): MB-673 fix keyboard & input management on Android\nfix(news): MB-719 fix notifHandler\nchre: MB-546 first i18n were not integrated\nfeat(schoolbook): MB-716 show create word in list screen\nchore(debug): Unused Flipper plugins removal\nrelease: 1.8.0-rc.2(1080012)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
