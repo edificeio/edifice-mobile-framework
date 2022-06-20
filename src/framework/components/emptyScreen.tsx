@@ -39,6 +39,7 @@ export const EmptyScreen = ({
     <PageView_Style
       style={[
         {
+          backgroundColor: theme.ui.background.empty,
           paddingTop: UI_SIZES.spacing.huge,
           paddingHorizontal: UI_SIZES.spacing.extraLarge,
         },

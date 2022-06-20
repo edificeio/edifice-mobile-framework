@@ -69,6 +69,7 @@ export interface ITheme {
     shadowColor: ColorValue;
     background: {
       card: ColorValue;
+      empty: ColorValue;
       page: ColorValue;
     };
     border: {
@@ -265,6 +266,7 @@ export const defaultTheme: ThemeInitializer = {
       shadowColor: '#000',
       background: {
         card: this.palette.grey.white,
+        empty: this.palette.grey.white,
         page: this.palette.grey.fog,
       },
       border: {
