@@ -45,7 +45,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const opacity = 80;
     const bannerColor = `${dayColor}${opacity}`;
     return (
-      <PageView navigation={navigation} navBarWithBack={{}}>
+      <PageView navigation={navigation} navBarWithBack={{}} style={styles.page}>
         <View style={[styles.banner, { backgroundColor: bannerColor }]}>
           <View>
             <HomeworkDayCheckpoint date={date} />
@@ -71,6 +71,9 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
 }
 
 const styles = StyleSheet.create({
+  page: {
+    backgroundColor: theme.ui.background.card,
+  },
   banner: {
     flexDirection: 'row',
     justifyContent: 'space-between',
