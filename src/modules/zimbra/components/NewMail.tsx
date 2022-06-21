@@ -15,7 +15,7 @@ import { PageContainer } from '~/ui/ContainerContent';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
-import Attachment from './Attachment';
+import { Attachment } from './Attachment';
 import SearchUserMail from './SearchUserMail';
 
 // STYLES

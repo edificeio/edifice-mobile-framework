@@ -106,9 +106,6 @@ export const newMailService = {
         // This API is fucked up : every attachment id changes when a new attachement is uplaoded.
         // We'll need to manuelly restore attachments data outside this function
       },
-      {
-        onProgress: res => handleProgession((res.totalBytesSent / res.totalBytesExpectedToSend) * 100),
-      },
     );
     return dataJson;
   },

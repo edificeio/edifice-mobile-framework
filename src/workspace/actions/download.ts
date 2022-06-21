@@ -43,18 +43,7 @@ export const newDownloadAction =
           } else {
             Trackers.trackEvent('Workspace', 'DOWNLOAD', getExtension(sel.filename));
           }
-          ret.push(
-            fileTransferService
-              .downloadFile(
-                getUserSession(),
-                convertIFileToIDistantFile(sel),
-                {},
-                /*{
-                  onProgress: res => console.debug('progress', res.bytesWritten / res.contentLength),
-                },*/
-              )
-              .then(callback),
-          );
+          ret.push(fileTransferService.downloadFile(getUserSession(), convertIFileToIDistantFile(sel), {}).then(callback));
         }
         return ret;
       }),

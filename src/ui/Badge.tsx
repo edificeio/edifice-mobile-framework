@@ -2,15 +2,11 @@ import styled from '@emotion/native';
 import * as React from 'react';
 import { ColorValue } from 'react-native';
 
-
-
+import theme from '~/app/theme';
+import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
 
-
-
 import { Weight } from './Typography';
-import { Icon } from './icons/Icon';
-
 
 export interface BadgeProps {
   content: number | string;
@@ -25,11 +21,9 @@ const ViewBadge = styled.View(
     height: 18,
     width: 18,
     borderRadius: 10,
-    marginBottom: 1,
-    marginRight: 4,
   },
   (props: Pick<BadgeProps, 'color'>) => ({
-    backgroundColor: props.color || CommonStyles.secondary,
+    backgroundColor: props.color || theme.palette.secondary.regular,
   }),
 );
 

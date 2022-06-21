@@ -1,7 +1,8 @@
-import * as React from "react";
-import { View, ImageURISource, ViewStyle } from "react-native";
-import { Badge } from "./Badge";
-import { GridAvatars } from "./avatars/GridAvatars";
+import * as React from 'react';
+import { ImageURISource, View, ViewStyle } from 'react-native';
+
+import { Badge } from './Badge';
+import { GridAvatars } from './avatars/GridAvatars';
 
 export interface BadgeAvatarProps {
   avatars: Array<string | ImageURISource>;
@@ -14,9 +15,9 @@ export const BadgeAvatar = ({ avatars, badgeContent, badgeColor, customStyle }: 
   return (
     <View>
       <GridAvatars users={avatars} />
-      <View style={[{ position: "absolute", bottom: 0, left: 0 }, customStyle]}>
+      <View style={[{ position: 'absolute', bottom: 0, left: 0 }, customStyle]}>
         <Badge content={badgeContent} color={badgeColor} />
       </View>
     </View>
-  );
+  )
 };

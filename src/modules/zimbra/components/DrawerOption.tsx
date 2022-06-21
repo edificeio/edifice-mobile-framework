@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -18,9 +17,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     ...TextSizeStyle.SlightBig,
-    marginLeft: 12,
-    overflow: 'hidden',
-    paddingRight: 40,
+    marginHorizontal: 12,
   },
   itemTextSelected: {
     color: theme.palette.grey.white,

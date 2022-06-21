@@ -21,14 +21,7 @@ export const supportService = {
   },
   addAttachment: async (file: LocalFile, handleProgession, session: IUserSession) => {
     try {
-      const distantFile = await workspaceService.uploadFile(
-        session,
-        file,
-        { parent: 'protected' },
-        {
-          onProgress: progress => handleProgession((progress.totalBytesSent / progress.totalBytesExpectedToSend) * 100),
-        },
-      );
+      const distantFile = await workspaceService.uploadFile(session, file, { parent: 'protected' });
 
       return Promise.resolve({
         id: distantFile.df.id,

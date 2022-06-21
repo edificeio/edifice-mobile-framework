@@ -8,7 +8,7 @@ import { Icon } from '~/framework/components/picture';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
-import Attachment from '~/modules/zimbra/components/Attachment';
+import { Attachment } from '~/modules/zimbra/components/Attachment';
 import { PageContainer } from '~/ui/ContainerContent';
 
 import { CategoryPicker, EstablishmentPicker, FormInput } from './Items';

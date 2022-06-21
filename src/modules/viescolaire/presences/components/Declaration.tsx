@@ -9,6 +9,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, responsiveStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
+import { Attachment } from '~/modules/zimbra/components/Attachment';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -87,21 +88,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
   },
-  attachment: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
-    marginLeft: 20,
-  },
-  attachmentNameText: {
-    flex: 1,
-    color: CommonStyles.primary,
-  },
   iconAttMarginRight: { marginRight: 10 },
   dialogButtonOk: {
     alignSelf: 'center',
-    marginBottom: 10,
+    marginVertical: 10,
   },
 });
 
@@ -218,16 +208,6 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
       </>
     );
 
-    const RenderAttachment = () => (
-      <View style={styles.attachment}>
-        <Icon size={20} style={styles.iconAttMarginRight} color={CommonStyles.primary} name="attachment" />
-        <Text style={styles.attachmentNameText}>{this.props.attachment.filename}</Text>
-        <TouchableOpacity onPress={() => this.props.removeAttachment()}>
-          <Icon name="close" style={styles.iconAttMarginRight} color="red" />
-        </TouchableOpacity>
-      </View>
-    );
-
     return (
       <KeyboardAvoidingView
         enabled={Platform.OS === 'ios'}
@@ -260,7 +240,14 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               <Text>{I18n.t('viesco-attachment')}</Text>
             </FilePicker>
           </View>
-          {attachment && <RenderAttachment />}
+          {attachment ? (
+            <Attachment
+              name={attachment.filename}
+              type={attachment.filetype}
+              uploadSuccess
+              onRemove={this.props.removeAttachment}
+            />
+          ) : null}
           <DialogButtonOk
             style={styles.dialogButtonOk}
             disabled={!this.props.validate()}

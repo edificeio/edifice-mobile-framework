@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { connect } from 'react-redux';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -12,19 +11,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  backgroundView: {
-    position: 'absolute',
-    height: '100%',
     backgroundColor: theme.palette.primary.pale,
   },
-  iconMargin: {
-    marginHorizontal: 12,
-    marginVertical: 8,
+  leftContainer: {
+    width: 48,
+    alignItems: 'center',
   },
   nameText: {
     color: theme.palette.primary.regular,
     flexShrink: 1,
+    marginVertical: 4,
+  },
+  iconMargin: {
+    marginHorizontal: 12,
+    marginVertical: 8,
   },
 });
 
@@ -32,24 +32,20 @@ interface IAttachmentProps {
   name: string;
   type: string;
   uploadSuccess: boolean;
-  uploadProgress?: number;
   onRemove: () => void;
 }
 
-const Attachment = ({ name, type, uploadSuccess, uploadProgress, onRemove }: IAttachmentProps) => {
-  const width = uploadSuccess ? '100%' : `${uploadProgress}%`;
+export const Attachment = ({ name, type, uploadSuccess, onRemove }: IAttachmentProps) => {
   const iconName = getFileIcon(type);
   return (
     <TouchableOpacity style={styles.mainContainer} onPress={onRemove}>
-      <View
-        style={[
-          styles.backgroundView,
-          {
-            width,
-          },
-        ]}
-      />
-      <Icon name={iconName} size={25} color={theme.palette.primary.regular} style={styles.iconMargin} />
+      <View style={styles.leftContainer}>
+        {uploadSuccess ? (
+          <Icon name={iconName} size={25} color={theme.palette.primary.regular} />
+        ) : (
+          <ActivityIndicator color={theme.palette.primary.regular} />
+        )}
+      </View>
       <Text numberOfLines={2} style={styles.nameText}>
         {name}
       </Text>
@@ -57,9 +53,3 @@ const Attachment = ({ name, type, uploadSuccess, uploadProgress, onRemove }: IAt
     </TouchableOpacity>
   );
 };
-
-const mapStateToProps = (state: any) => ({
-  uploadProgress: [state.progress.value],
-});
-
-export default connect(mapStateToProps)(Attachment);
