@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import theme from '~/app/theme';
 import { IHomework } from '~/modules/viescolaire/types/homework';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -30,10 +31,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   whiteText: {
-    color: '#FFF',
+    color: theme.ui.text.inverse,
   },
   blackText: {
-    color: '#000',
+    color: theme.ui.text.heavy,
   },
   columnContainer: {},
   slot: {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
   },
   slotBackground: {
-    backgroundColor: '#FFF',
+    backgroundColor: theme.ui.background.card,
   },
   lineSeparator: {
     top: 10,

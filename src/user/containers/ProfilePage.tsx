@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import theme from '~/app/theme';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -76,7 +77,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
       <PageContainer>
         <Notifier id="profileTwo" />
         <KeyboardAvoidingView
-          style={{ flex: 1, backgroundColor: '#ffffff' }}
+          style={{ flex: 1, backgroundColor: theme.ui.background.card }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}>
           <ScrollView alwaysBounceVertical={false} overScrollMode="never">

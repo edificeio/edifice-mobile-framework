@@ -3,8 +3,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
-
-
+import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
 import { PageView } from '~/framework/components/page';
@@ -18,10 +17,15 @@ import { ErrorMessage } from '~/ui/Typography';
 import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 
-
-
-import { ActivationFormModel, InputEmail, InputLogin, InputPassword, InputPasswordConfirm, InputPhone, ValueChangeArgs } from './ActivationForm';
-
+import {
+  ActivationFormModel,
+  InputEmail,
+  InputLogin,
+  InputPassword,
+  InputPasswordConfirm,
+  InputPhone,
+  ValueChangeArgs,
+} from './ActivationForm';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -125,9 +129,9 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
         navBarWithBack={{
           title: I18n.t('activation-title'),
         }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
           <KeyboardAvoidingView
-            style={{ flex: 1, backgroundColor: '#ffffff' }}
+            style={{ flex: 1, backgroundColor: theme.ui.background.card }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
             <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
               <FormTouchable onPress={() => formModel.blur()}>
@@ -186,7 +190,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
 }
 
 const FormPage = styled.View({
-  backgroundColor: '#ffffff',
+  backgroundColor: theme.ui.background.card,
   flex: 1,
 });
 const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
@@ -204,7 +208,7 @@ const LogoWrapper = styled.View({
   alignItems: 'center',
   justifyContent: 'center',
 });
-const ButtonWrapper = styled.View<{error: any; typing: boolean}>(
+const ButtonWrapper = styled.View<{ error: any; typing: boolean }>(
   {
     alignItems: 'center',
     flexGrow: 2,

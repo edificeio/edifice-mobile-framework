@@ -1,15 +1,13 @@
 import styled from '@emotion/native';
 
-
-
+import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Weight } from '~/ui/Typography';
 
-
 export const ListItem = styled.View(
   {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.palette.grey.white,
     paddingHorizontal: 10,
     paddingVertical: 12,
     borderBottomColor: CommonStyles.borderBottomItem,
@@ -18,7 +16,7 @@ export const ListItem = styled.View(
     justifyContent: 'center',
   },
   ({ highlighted = false }: { highlighted?: boolean }) => ({
-    backgroundColor: highlighted ? CommonStyles.nonLue : '#FFFFFF',
+    backgroundColor: highlighted ? CommonStyles.nonLue : theme.palette.grey.white,
   }),
 );
 

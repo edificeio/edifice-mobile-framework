@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
-import { CommonStyles } from './common/styles';
-import { layoutSize } from './common/layoutSize';
-
 import { UI_SIZES } from '~/framework/components/constants';
+
+import { layoutSize } from './common/layoutSize';
+import { CommonStyles } from './common/styles';
 
 export const deviceWidth = UI_SIZES.screen.width;
 

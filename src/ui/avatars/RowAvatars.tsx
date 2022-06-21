@@ -3,6 +3,7 @@ import * as React from 'react';
 import { ImageURISource, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -15,7 +16,7 @@ const SkippedContainer = styled.View({
   alignItems: 'center',
   justifyContent: 'center',
   marginLeft: -4,
-  backgroundColor: '#FFFFFF',
+  backgroundColor: theme.ui.background.card,
 });
 
 const Skipped = styled.Text({

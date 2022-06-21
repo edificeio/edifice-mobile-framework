@@ -297,7 +297,7 @@ const MailContactField = connect(state => ({
       flexDirection: 'row',
       alignItems: 'flex-start',
       paddingHorizontal: 10,
-      borderBottomColor: '#EEEEEE',
+      borderBottomColor: theme.palette.grey.cloudy,
       borderBottomWidth: 2,
       backgroundColor: theme.ui.background.card,
       flex: 0,
@@ -348,7 +348,7 @@ const HeaderUsers = ({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 2,
   } as ViewStyle;
 
@@ -371,7 +371,7 @@ const HeaderSubject = ({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 2,
     backgroundColor: theme.ui.background.card,
   } as ViewStyle;

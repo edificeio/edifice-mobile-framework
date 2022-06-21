@@ -1,21 +1,17 @@
 import styled from '@emotion/native';
 
-
-
+import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
-
-
 
 import TouchableOpacity from './CustomTouchableOpacity';
 
-
 export const TouchCard = styled(TouchableOpacity)({
-  backgroundColor: '#FFFFFF',
+  backgroundColor: theme.ui.background.card,
   paddingHorizontal: 16,
   paddingVertical: 12,
   borderRadius: 15,
   borderBottomColor: CommonStyles.borderBottomItem,
-  shadowColor: '#000',
+  shadowColor: theme.ui.shadowColor,
   shadowOffset: { width: 0, height: 1 },
   shadowOpacity: 0.3,
   shadowRadius: 1,
@@ -24,11 +20,11 @@ export const TouchCard = styled(TouchableOpacity)({
 });
 
 export const Card = styled.View({
-  backgroundColor: '#FFFFFF',
+  backgroundColor: theme.ui.background.card,
   paddingHorizontal: 16,
   paddingVertical: 12,
   borderBottomColor: CommonStyles.borderBottomItem,
-  shadowColor: '#000',
+  shadowColor: theme.ui.shadowColor,
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.4,
   shadowRadius: 2,

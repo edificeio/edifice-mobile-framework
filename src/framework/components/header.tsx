@@ -129,7 +129,7 @@ export const HeaderIcon = (props: {
       <Icon
         size={props.iconSize || (props.name ? iconSpecificSizes[props.name as string] : iconDefaultSize) || iconDefaultSize}
         name={props.name}
-        color={props.hidden ? 'transparent' : '#FFFFFF'}
+        color={props.hidden ? 'transparent' : theme.ui.text.inverse}
       />
     </HeaderIconView>
   );

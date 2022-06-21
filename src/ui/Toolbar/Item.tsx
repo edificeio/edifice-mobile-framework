@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { FakeHeader_Row, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/picture/Icon';
 import { DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
@@ -10,7 +11,7 @@ import { EVENT_TYPE } from '~/types';
 
 const styles = StyleSheet.create({
   headerTitleStyle: {
-    color: '#ffffff',
+    color: theme.ui.text.inverse,
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: layoutSize.LAYOUT_15,
     fontWeight: '400',
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     width: layoutSize.LAYOUT_42,
   },
   nbSelectedText: {
-    color: '#ffffff',
+    color: theme.ui.text.inverse,
     fontSize: layoutSize.LAYOUT_16,
     fontWeight: 'bold',
   },
@@ -82,7 +83,7 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
     <TouchableOpacity
       style={styles.touchPanel}
       onPress={() => (disable ? null : onEvent && onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item }))}>
-      <Icon color={disable ? '#77777750' : '#ffffff'} size={layoutSize.LAYOUT_24} name={icon} />
+      <Icon color={disable ? '#77777750' : theme.ui.text.inverse} size={layoutSize.LAYOUT_24} name={icon} />
     </TouchableOpacity>
   );
 };

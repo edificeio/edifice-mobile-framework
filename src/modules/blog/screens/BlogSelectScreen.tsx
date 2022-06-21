@@ -155,7 +155,9 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
               </View>
             </View>
           }
-          rightElement={<Icon name="arrow_down" color="#868CA0" style={{ transform: [{ rotate: '270deg' }] }} />}
+          rightElement={
+            <Icon name="arrow_down" color={theme.palette.grey.graphite} style={{ transform: [{ rotate: '270deg' }] }} />
+          }
         />
       </TouchableOpacity>
     );

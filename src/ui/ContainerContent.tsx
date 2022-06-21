@@ -1,25 +1,23 @@
 import styled from '@emotion/native';
 
-
-
+import theme from '~/app/theme';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
-
-
 import { Weight } from './Typography';
 
-
 export const ArticleContainer = styled.View({
-  padding: 5
+  padding: 5,
 });
 
 export const ListItem = styled(TouchableOpacity)<{
-  borderBottomWidth: number; full: boolean; nb: number;
+  borderBottomWidth: number;
+  full: boolean;
+  nb: number;
 }>(
   {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.ui.background.card,
     paddingHorizontal: layoutSize.LAYOUT_10,
     paddingVertical: layoutSize.LAYOUT_12,
     borderBottomColor: CommonStyles.borderBottomItem,
@@ -28,7 +26,7 @@ export const ListItem = styled(TouchableOpacity)<{
   ({ borderBottomWidth = 1, full = false, nb = 0 }) => ({
     borderLeftWidth: full ? 4 : 0,
     borderLeftColor: full ? CommonStyles.hightlightColor : 'transparent',
-    backgroundColor: nb > 0 ? CommonStyles.nonLue : '#FFFFFF',
+    backgroundColor: nb > 0 ? CommonStyles.nonLue : theme.ui.background.card,
     borderBottomWidth,
   }),
 );
@@ -81,7 +79,7 @@ export const RightPanel = styled.View({
   width: layoutSize.LAYOUT_50,
 });
 
-export const Content = styled.Text<{nb: number}>(
+export const Content = styled.Text<{ nb: number }>(
   {
     color: CommonStyles.iconColorOff,
     fontFamily: CommonStyles.primaryFontFamily,
@@ -96,6 +94,6 @@ export const Content = styled.Text<{nb: number}>(
 );
 
 export const PageContainer = styled.View({
-  backgroundColor: CommonStyles.lightGrey,
+  backgroundColor: theme.ui.background.page,
   flex: 1,
 });

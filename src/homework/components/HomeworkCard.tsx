@@ -33,10 +33,11 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
         padding: UI_SIZES.spacing.large,
         marginLeft: UI_SIZES.spacing.largePlus,
         backgroundColor: theme.ui.background.card,
-        elevation: 1,
-        shadowColor: '#6B7C93',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        elevation: 7,
+        shadowColor: theme.ui.shadowColor,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 5,
       }}>
       <View style={{ flex: 1 }}>
         {title ? (

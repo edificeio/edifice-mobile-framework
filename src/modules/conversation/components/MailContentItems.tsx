@@ -197,7 +197,7 @@ export const RenderPJs = ({
               await sf.open();
             }}>
             <View style={{ flexDirection: 'row', flex: 0, alignItems: 'center', borderRadius: 6 }}>
-              <Icon size={24} color="#2A9CC8" name={getFileIcon(item.contentType)} style={{ flex: 0 }} />
+              <Icon size={24} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} style={{ flex: 0 }} />
               <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
                 {item.filename}
               </Text>
@@ -223,7 +223,7 @@ export const RenderPJs = ({
                     }
                   }}
                   style={{ paddingHorizontal: 12 }}>
-                  <Icon name="download" size={18} color="#2A9CC8" />
+                  <Icon name="download" size={18} color={theme.palette.primary.regular} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -247,17 +247,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   gridButtonText: {
-    color: '#2A9CC8',
+    color: theme.palette.primary.regular,
     marginRight: 5,
   },
   gridButtonTextPJnb: {
-    color: '#2A9CC8',
+    color: theme.palette.primary.regular,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     textAlign: 'right',
   },
   gridButtonTextPJnames: {
-    color: '#2A9CC8',
+    color: theme.palette.primary.regular,
     marginLeft: 5,
     flex: 1,
   },
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   greyColor: {
-    color: '#AFAFAF',
+    color: theme.palette.grey.graphite,
     ...TextSizeStyle.Small,
   },
   mailInfos: {

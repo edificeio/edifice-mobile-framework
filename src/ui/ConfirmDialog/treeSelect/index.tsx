@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
@@ -184,7 +185,7 @@ export default function TreeSelect({
   };
 
   const _renderRow = ({ item }) => {
-    const backgroundColor = '#ffffff',
+    const backgroundColor = theme.ui.background.card,
       fontSize = layoutSize.LAYOUT_14,
       color = '#000000',
       selectedFontSize = layoutSize.LAYOUT_14,
@@ -236,7 +237,7 @@ export default function TreeSelect({
         <View
           style={{
             flexDirection: 'row',
-            backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || '#fff',
+            backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || theme.ui.background.card,
             marginBottom: 2,
             height: 30,
             alignItems: 'center',
@@ -322,11 +323,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 0,
-    backgroundColor: '#fff',
+    backgroundColor: theme.ui.background.card,
   },
   contentContainer: {
     paddingBottom: layoutSize.LAYOUT_18,
-    backgroundColor: 'white',
+    backgroundColor: theme.ui.background.card,
   },
   flatList: {
     flexGrow: 0,

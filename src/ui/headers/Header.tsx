@@ -82,7 +82,7 @@ export const HeaderIcon = ({
   iconSize?: number;
 }) => (
   <TouchableOpacity style={sensitiveStylePanel} onPress={() => onPress && onPress()}>
-    <Icon size={iconSize || iconsDeltaSizes[name] || 20} name={name} color={hidden ? 'transparent' : '#FFFFFF'} />
+    <Icon size={iconSize || iconsDeltaSizes[name] || 20} name={name} color={hidden ? 'transparent' : theme.ui.background.card} />
   </TouchableOpacity>
 );
 

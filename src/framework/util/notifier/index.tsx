@@ -4,16 +4,12 @@ import { ActivityIndicator, Animated, LayoutEvent, Platform, Text, View } from '
 import { AnimatedValue } from 'react-navigation';
 import { connect } from 'react-redux';
 
-
-
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
-
-
 import { NotifierState } from './reducer';
-
 
 const NotifierWrapper = styled(TouchableOpacity)({
   flex: 1,
@@ -125,7 +121,7 @@ class Notifier extends React.Component<
         style={{
           ...style,
           width: '100%',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: theme.palette.grey.white,
           elevation: 6,
           opacity: fadeAnim,
           height: slideAnim,
@@ -137,7 +133,7 @@ class Notifier extends React.Component<
                 onTextLayout={this.measureText}
                 style={{
                   flex: 1,
-                  color: '#FFFFFF',
+                  color: theme.ui.text.inverse,
                   textAlign: longText ? 'left' : 'center',
                   alignSelf: 'center',
                   height,
@@ -149,9 +145,9 @@ class Notifier extends React.Component<
               </Text>
             ) : null}
             {loading ? (
-              <ActivityIndicator size="small" color="#FFFFFF" style={{ marginRight: 20 }} />
+              <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: 20 }} />
             ) : icon ? (
-              <Icon name={icon} size={18} style={{ marginRight: 20 }} color="#FFFFFF" />
+              <Icon name={icon} size={18} style={{ marginRight: 20 }} color={theme.ui.text.inverse} />
             ) : null}
           </View>
         </NotifierWrapper>

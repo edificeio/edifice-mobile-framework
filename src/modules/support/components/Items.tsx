@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
 import { IApp, IEstablishment } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
@@ -76,7 +77,7 @@ export const FormInput = ({
   const textInputStyle = {
     flex: 1,
     color: CommonStyles.textColor,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 2,
   } as ViewStyle;
   const textInputMultiline = {

@@ -248,7 +248,11 @@ class Attachment extends React.PureComponent<
                     });
                   }}
                   style={{ paddingLeft: 12 }}>
-                  <IconButton iconName="download" iconColor="#000000" buttonStyle={{ backgroundColor: CommonStyles.lightGrey }} />
+                  <IconButton
+                    iconName="download"
+                    iconColor={theme.palette.grey.black}
+                    buttonStyle={{ backgroundColor: CommonStyles.lightGrey }}
+                  />
                 </RNGHTouchableOpacity>
               ) : null}
             </View>

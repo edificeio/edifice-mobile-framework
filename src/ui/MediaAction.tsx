@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 
@@ -29,6 +30,6 @@ export const MediaAction = ({ iconName, action, customStyle, customIconSize, cus
       },
       customStyle,
     ]}>
-    <Icon size={customIconSize || 16} color={customIconColor || '#ffffff'} name={iconName} />
+    <Icon size={customIconSize || 16} color={customIconColor || theme.ui.text.inverse} name={iconName} />
   </TouchableOpacity>
 );

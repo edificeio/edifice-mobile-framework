@@ -49,7 +49,7 @@ export const Badge = ({ content, color }: BadgeProps) => {
       {typeof content === 'number' ? (
         <Text>{content > 99 ? '99+' : content}</Text>
       ) : typeof content === 'string' ? (
-        <Icon size={10} color="#ffffff" name={content} />
+        <Icon size={10} color={theme.ui.text.inverse} name={content} />
       ) : (
         <ViewEmpty />
       )}

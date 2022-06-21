@@ -200,7 +200,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     return (
       <View
         style={{
-          padding: 10,
           backgroundColor: theme.ui.background.card,
           borderColor: theme.ui.border.input,
           borderWidth: 1,
@@ -216,7 +215,8 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
               alignItems: 'center',
               justifyContent: 'center',
               flexDirection: imagesAdded ? 'row' : 'column',
-              marginVertical: 10,
+              marginTop: 20,
+              marginBottom: imagesAdded ? 10 : 20,
             }}
             // onPress={() => this.attachmentPickerRef.onPickAttachment()}
           >

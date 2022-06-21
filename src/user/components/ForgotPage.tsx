@@ -4,6 +4,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { H1, Text, TextColorStyle } from '~/framework/components/text';
@@ -116,10 +117,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
         navBarWithBack={{
           title: I18n.t(`forgot-${forgotId ? 'id' : 'password'}`),
         }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
           <FormPage>
             <KeyboardAvoidingView
-              style={{ flex: 1, backgroundColor: '#ffffff' }}
+              style={{ flex: 1, backgroundColor: theme.ui.background.card }}
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
               <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
                 <FormWrapper>
@@ -255,7 +256,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
 }
 
 const FormPage = styled.View({
-  backgroundColor: '#ffffff',
+  backgroundColor: theme.ui.background.card,
   flex: 1,
 });
 const FormWrapper = styled.View({ flex: 1 });

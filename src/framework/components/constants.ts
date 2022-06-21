@@ -31,21 +31,28 @@ export const UI_ANIMATIONS = {
 
 export const UI_SIZES = {
   aspectRatios: {
-    card: 15 / 14,
     thumbnail: 7 / 5,
   },
   dimensions: {
     height: {
+      tiny: 1,
+      small: 2,
       medium: 18,
+      mediumPlus: 20,
       large: 22,
-      largePlus: 38,
+      larger: 24,
+      largePlus: 36,
+      huge: 38,
     },
     width: {
       tiny: 1,
       small: 2,
       medium: 18,
+      mediumPlus: 20,
       large: 22,
-      largePlus: 38,
+      larger: 24,
+      largePlus: 36,
+      huge: 38,
     },
   },
   elements: {
@@ -53,12 +60,14 @@ export const UI_SIZES = {
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
+    textFieldMaxHeight: 105,
   },
   radius: {
+    small: 4,
     medium: 8,
+    mediumPlus: 16,
     large: 21,
     extraLarge: 24,
-    small: 4,
   },
   screen: {
     bottomInset: initialWindowMetrics?.insets?.bottom || 0,

@@ -3,16 +3,12 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
 
-
-
+import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
-
-
 
 import { Line } from './Grid';
 import { SingleAvatar } from './avatars/SingleAvatar';
 import { Checkbox } from './forms/Checkbox';
-
 
 export type IUser = { id: string; name: string; displayName: string; isGroup: boolean; checked: boolean };
 const UserName = styled.Text({
@@ -55,7 +51,7 @@ export default function UserList(props: {
         elevation: 1,
         backgroundColor: CommonStyles.tabBottomColor,
         flex: 1,
-        borderTopColor: '#EEEEEE',
+        borderTopColor: theme.palette.grey.cloudy,
         borderTopWidth: 1,
       }}
       data={props.users}
@@ -93,7 +89,7 @@ export function UserListGroupped(props: {
   return (
     <FlatList
       keyboardShouldPersistTaps="always"
-      style={{ flex: 1, borderTopColor: '#EEEEEE', borderTopWidth: 1 }}
+      style={{ flex: 1, borderTopColor: theme.palette.grey.cloudy, borderTopWidth: 1 }}
       data={rows}
       keyExtractor={u => 'UserListGroupped_' + childIndex++} //increment in next line
       renderItem={el => {

@@ -67,7 +67,7 @@ const AlignedContainer = styled.View(
     marginRight: -4,
     marginLeft: -4,
     width: 29,
-    backgroundColor: '#EEEEEE',
+    backgroundColor: theme.palette.grey.pearl,
   },
   ({ index }) => ({
     zIndex: 100 - index,
@@ -80,14 +80,14 @@ const VLContainer = styled.View({
   height: 71,
   width: 71,
   margin: 0,
-  backgroundColor: '#EEEEEE',
+  backgroundColor: theme.palette.grey.pearl,
 });
 
 const LargeContainer = styled.View({
   borderRadius: 24,
   height: 45,
   width: 45,
-  backgroundColor: '#EEEEEE',
+  backgroundColor: theme.palette.grey.pearl,
 });
 
 const alignedImageStyle = {
@@ -179,7 +179,7 @@ const SmallImage = props => {
 const SmallContainer = styled.View<{ count: number; index: number }>(
   {
     position: 'absolute',
-    backgroundColor: '#EEEEEE',
+    backgroundColor: theme.palette.grey.pearl,
   },
   ({ count, index }) => ({
     borderRadius: count === 1 ? 22 : count === 2 ? 15 : 10,

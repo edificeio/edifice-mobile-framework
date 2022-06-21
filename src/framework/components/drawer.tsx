@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '180deg' }],
   },
   backdrop: {
-    backgroundColor: '#000000',
+    backgroundColor: theme.ui.shadowColor,
     marginTop: ITEM_HEIGHT,
   },
   container: {

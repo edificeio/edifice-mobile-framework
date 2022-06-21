@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { View, TouchableOpacity, FlatList, Image } from 'react-native';
+import { FlatList, Image, TouchableOpacity, View } from 'react-native';
 
-import { IconButton } from './IconButton';
-
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { CommonStyles } from '~/styles/common/styles';
 import { ContentUri } from '~/types/contentUri';
+
+import { IconButton } from './IconButton';
 
 export class AttachmentGroupImages extends React.PureComponent<{
   attachments: ContentUri[];
@@ -21,9 +23,14 @@ export class AttachmentGroupImages extends React.PureComponent<{
         data={attachments}
         horizontal
         persistentScrollbar
+        contentContainerStyle={{ padding: UI_SIZES.spacing.medium }}
         renderItem={({ item, index }) => {
           return (
-            <View style={{ paddingTop: 20 }}>
+            <View
+              style={{
+                marginTop: UI_SIZES.spacing.small,
+                marginRight: index === attachments.length - 1 ? UI_SIZES.spacing.medium : UI_SIZES.spacing.largePlus,
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   mainNavNavigate('carouselModal', { images: carouselImages, startIndex: index });
@@ -31,16 +38,16 @@ export class AttachmentGroupImages extends React.PureComponent<{
                   //FIXME: ugly code here  (module name (1st argument) must be obtained dynamically)
                 }}
                 style={{
-                  shadowColor: '#6B7C93',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.8,
-                  elevation: 10,
+                  shadowColor: theme.ui.shadowColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.15,
+                  elevation: 7,
                   backgroundColor: 'white',
-                  marginRight: index === attachments.length - 1 ? 15 : 30,
+                  borderRadius: 3,
                 }}>
                 <Image source={{ uri: item.uri }} style={{ width: 110, height: 110, borderRadius: 3 }} resizeMode="cover" />
               </TouchableOpacity>
-              <View style={{ position: 'absolute', left: 85, top: -7, elevation: 10 }}>
+              <View style={{ position: 'absolute', right: -25, top: -25, elevation: 10 }}>
                 <TouchableOpacity
                   onPress={() => onRemove(index)}
                   style={{
@@ -51,9 +58,15 @@ export class AttachmentGroupImages extends React.PureComponent<{
                   }}>
                   <IconButton
                     iconName="close"
-                    iconColor="#000000"
+                    iconColor={theme.palette.grey.black}
                     iconSize={18}
-                    buttonStyle={{ backgroundColor: CommonStyles.lightGrey }}
+                    buttonStyle={{
+                      backgroundColor: CommonStyles.lightGrey,
+                      shadowColor: theme.ui.shadowColor,
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.15,
+                      elevation: 7,
+                    }}
                   />
                 </TouchableOpacity>
               </View>

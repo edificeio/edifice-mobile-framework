@@ -5,21 +5,17 @@ import { ImageProps, ImageSourcePropType, ImageURISource, View, ViewStyle } from
 import FastImage from 'react-native-fast-image';
 import { withNavigation } from 'react-navigation';
 
-
-
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
-
-
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
 import ImageOptional from './ImageOptional';
 import { Italic } from './Typography';
 
-
 const BubbleText = styled.Text({
-  color: '#FFFFFF',
+  color: theme.ui.text.inverse,
   marginHorizontal: -10,
   textAlign: 'center',
 });
@@ -27,12 +23,12 @@ const BubbleText = styled.Text({
 const ContainerImage = styled.View({});
 
 const SoloImage = styled(TouchableOpacity)({
-  backgroundColor: '#eeeeee',
+  backgroundColor: theme.palette.grey.pearl,
   width: '100%',
 });
 
 const QuarterImage = styled(TouchableOpacity)({
-  backgroundColor: '#eeeeee',
+  backgroundColor: theme.palette.grey.pearl,
   width: '100%',
 });
 

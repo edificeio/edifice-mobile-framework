@@ -3,13 +3,14 @@ import * as React from 'react';
 import { SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import theme from '~/app/theme';
+import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { FlatButton } from '~/ui/FlatButton';
-import { PageView } from '~/framework/components/page';
 
 export interface ILoginWAYFPageProps {
   navigation?: any;
@@ -33,7 +34,7 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
         navBarWithBack={{
           title: this.pfConf.displayName,
         }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
           <View
             style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 }}>
             <PFLogo />

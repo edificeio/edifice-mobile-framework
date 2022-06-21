@@ -52,7 +52,7 @@ const PlatformButton = styled(TouchableOpacity)({
   paddingHorizontal: 16,
   paddingVertical: 32,
 
-  backgroundColor: '#FFFFFF',
+  backgroundColor: theme.ui.background.card,
 });
 
 export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageProps, object> {

@@ -3,13 +3,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { SafeAreaView, ScrollView, View } from 'react-native';
 
-
-
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
 import { FlatButton } from '~/ui/FlatButton';
-
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -30,7 +28,7 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
         navBarWithBack={{
           title: I18n.t('federatedAccount-title'),
         }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
           <FormPage>
             <FormWrapper>
               <ScrollView
@@ -67,7 +65,7 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
 }
 
 const FormPage = styled.View({
-  backgroundColor: '#ffffff',
+  backgroundColor: theme.ui.background.card,
   flex: 1,
 });
 const FormWrapper = styled.View({ flex: 1 });

@@ -2,18 +2,14 @@ import I18n from 'i18n-js';
 import React from 'react';
 import { Platform, SafeAreaView, StatusBar, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-
-
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { Loading } from '~/ui/Loading';
 
-
-
 import { MediaAction } from './MediaAction';
 import { Italic } from './Typography';
 import { SafeWebView } from './Webview';
-
 
 export class IFrame extends React.Component<
   {
@@ -47,7 +43,7 @@ export class IFrame extends React.Component<
           activeOpacity={1}
           style={{
             flex: 1,
-            backgroundColor: '#eeeeee',
+            backgroundColor: theme.palette.grey.pearl,
             aspectRatio: fullScreenSource ? undefined : isEducationApp ? 4 / 3 : 16 / 9,
             justifyContent: httpError ? 'center' : undefined,
             alignItems: httpError ? 'center' : undefined,
@@ -61,7 +57,7 @@ export class IFrame extends React.Component<
               renderLoading={() => (
                 <View
                   style={{
-                    backgroundColor: '#eeeeee',
+                    backgroundColor: theme.palette.grey.pearl,
                     height: '100%',
                     width: '100%',
                   }}>

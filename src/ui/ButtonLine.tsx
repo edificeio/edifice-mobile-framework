@@ -3,22 +3,18 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { ColorValue } from 'react-native';
 
-
-
+import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
-
-
 import { Icon } from './icons/Icon';
-
 
 const Container = styled(TouchableOpacity)({
   alignItems: 'center',
   flexDirection: 'row',
   backgroundColor: 'white',
   borderBottomWidth: 1,
-  borderColor: '#ddd',
+  borderColor: theme.palette.grey.cloudy,
   height: 46,
   justifyContent: 'flex-start',
   // marginTop: 20,
@@ -48,7 +44,7 @@ export const ContainerView = styled.View({
   flexDirection: 'row',
   backgroundColor: 'white',
   borderBottomWidth: 1,
-  borderColor: '#ddd',
+  borderColor: theme.palette.grey.cloudy,
   height: 46,
   justifyContent: 'flex-start',
   // marginTop: 20,
@@ -60,14 +56,14 @@ export const ContainerTextInput = styled.TextInput({
   flexDirection: 'row',
   backgroundColor: 'white',
   borderBottomWidth: 1,
-  borderColor: '#ddd',
+  borderColor: theme.palette.grey.cloudy,
   height: 46,
   justifyContent: 'flex-start',
   // marginTop: 20,
   paddingHorizontal: 15,
 });
 
-const LinkStyle = styled.Text<{color: ColorValue}>(
+const LinkStyle = styled.Text<{ color: ColorValue }>(
   {
     fontSize: 14,
     flex: 1,
