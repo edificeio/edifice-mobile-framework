@@ -1,7 +1,5 @@
-import I18n from 'i18n-js';
-import { Alert, Linking } from 'react-native';
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { IUserSession } from '~/framework/util/session';
 import { signedFetch } from '~/infra/fetchWithCache';
 
@@ -27,35 +25,7 @@ const getRedirectUrl = (session: IUserSession, connectorAddress: string, pageId?
 };
 
 export default async (session: IUserSession, connectorAddress: string, pageId?: string) => {
-  Alert.alert(
-    I18n.t('common.redirect.browser.title'),
-    I18n.t('common.redirect.browser.message'),
-    [
-      {
-        text: I18n.t('common.cancel'),
-        style: 'cancel',
-      },
-      {
-        text: I18n.t('common.continue'),
-        onPress: async () => {
-          const intermediateResponse = await signedFetch(getRedirectUrl(session, connectorAddress, pageId));
-          const finalUrl = intermediateResponse.headers.get('location');
-          if (!finalUrl) {
-            Alert.alert(I18n.t('common.redirect.browser.error'));
-            return;
-          }
-          const isSupported = await Linking.canOpenURL(finalUrl);
-          if (isSupported === true) {
-            await Linking.openURL(finalUrl);
-          } else {
-            Alert.alert(I18n.t('common.redirect.browser.error'));
-          }
-        },
-        style: 'default',
-      },
-    ],
-    {
-      cancelable: true,
-    },
-  );
+  const intermediateResponse = await signedFetch(getRedirectUrl(session, connectorAddress, pageId));
+  const finalUrl = intermediateResponse.headers.get('location');
+  openUrl(finalUrl ?? undefined);
 };

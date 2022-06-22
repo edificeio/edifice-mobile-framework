@@ -8,6 +8,7 @@ import { ImageURISource } from 'react-native';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
+import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 export const AllModulesBackup = {
@@ -28,6 +29,13 @@ export interface IOAuthToken {
 export interface IOAuthCustomToken {
   structureName: string;
   key: string;
+}
+
+export interface IOAuthQueryParamToken {
+  token_type: 'QueryParam';
+  access_token: string;
+  expires_in: number;
+  expires_at: Date;
 }
 
 export type OAuthCustomTokens = IOAuthCustomToken[];
@@ -467,6 +475,49 @@ export class OAuth2RessourceOwnerPasswordClient {
     this.uniqueSessionIdentifier = Math.random().toString(36).substring(7);
     return this.uniqueSessionIdentifier;
   }
+
+  /**
+   * QueryParam token management (for loginless redirection)
+   */
+  private currentQueryParamToken?: IOAuthQueryParamToken;
+
+  private static QUERY_PARAM_TOKEN_EXPIRATION_DELTA = 60;
+
+  private static QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY = 'auth.queryParamToken';
+  // CAUTION : storage in AsyncStorage is not encrypted.
+
+  public async getQueryParamToken() {
+    try {
+      const nowDate = new Date();
+      nowDate.setSeconds(nowDate.getSeconds() + OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_EXPIRATION_DELTA);
+      // if (!this.currentQueryParamToken) {
+      //   const loadedToken = await getItemJson<IOAuthQueryParamToken>(
+      //     OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY,
+      //   );
+      //   if (loadedToken) {
+      //     loadedToken.expires_at = new Date(loadedToken.expires_at);
+      //     this.currentQueryParamToken = loadedToken;
+      //     console.debug('loaded jwt token', loadedToken);
+      //   }
+      // }
+      if (!this.currentQueryParamToken || nowDate > this.currentQueryParamToken.expires_at) {
+        const url = `${DEPRECATED_getCurrentPlatform()!.url}/auth/oauth2/token?type=queryparam`;
+        const data = await this.request(url, {
+          headers: getAuthHeader(),
+        });
+        const tokenInfo = {
+          ...data,
+          expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
+        };
+        console.debug('got jwt token', tokenInfo);
+        this.currentQueryParamToken = tokenInfo;
+        await setItemJson(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY, this.currentQueryParamToken);
+      }
+      return this.currentQueryParamToken!.access_token;
+    } catch (e) {
+      throw new Error('getQueryParamToken failed: ' + e.toString());
+    }
+  }
 }
 
 /**
@@ -494,7 +545,9 @@ export const scopes = `infra
  edt
  support`.split('\n '); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
-export const createAppScopes = () => AllModulesBackup.value!.getScopes();
+export const createAppScopes = () => {
+  return [...AllModulesBackup.value!.getScopes(), 'auth'];
+};
 export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ...scopes])];
 
 /**

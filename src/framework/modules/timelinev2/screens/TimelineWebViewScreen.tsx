@@ -74,6 +74,7 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
               const url = `${DEPRECATED_getCurrentPlatform()!.url}${notification?.resource.uri}`;
               openUrl(url);
             }}
+            rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
           />
         </View>
       </View>

@@ -75,7 +75,13 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
         <FlatButton
           title={I18n.t('myapp-accessWeb')}
           loading={false}
-          customButtonStyle={{ backgroundColor: undefined, borderColor: theme.palette.primary.regular, borderWidth: 1.5 }}
+          customButtonStyle={{
+            backgroundColor: undefined,
+            borderColor: theme.palette.primary.regular,
+            borderWidth: 1.5,
+            paddingHorizontal: UI_SIZES.spacing.large,
+            paddingVertical: 6,
+          }}
           customTextStyle={{ color: theme.palette.primary.regular }}
           onPress={() => {
             if (!DEPRECATED_getCurrentPlatform()) {
@@ -84,6 +90,7 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
             const url = `${DEPRECATED_getCurrentPlatform()!.url}/welcome`;
             openUrl(url);
           }}
+          rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
         />
         <InfoBubble
           infoText={I18n.t('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}

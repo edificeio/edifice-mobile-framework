@@ -89,7 +89,7 @@ const FavoriteAction: React.FunctionComponent<IFavoriteActionProps> = (props: IF
 };
 
 export class BigCard extends React.PureComponent<IBigCardProps> {
-  openURL = () => {
+  openUrlCallback = () => {
     openUrl(this.props.resource.link);
   };
 
@@ -101,7 +101,7 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
   public render() {
     const { resource } = this.props;
     return (
-      <TouchableResourceCard title={resource.title} onPress={this.openURL} style={styles.mainContainer}>
+      <TouchableResourceCard title={resource.title} onPress={this.openUrlCallback} style={styles.mainContainer}>
         <View style={styles.contentContainer}>
           <ResourceImage image={resource.image} style={styles.cardImage} resizeMode="contain" />
           <View style={styles.actionsContainer}>

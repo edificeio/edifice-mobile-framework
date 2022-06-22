@@ -14,7 +14,6 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { TextLight, TextSemiBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { getAuthHeader } from '~/infra/oauth';

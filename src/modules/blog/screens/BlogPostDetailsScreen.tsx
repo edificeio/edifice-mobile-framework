@@ -147,7 +147,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const menuData = [
       {
         text: I18n.t('common.openInBrowser'),
-        icon: 'arrow-right',
+        icon: { type: 'NamedSvg', name: 'ui-externalLink' },
         onPress: () => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
           if (!DEPRECATED_getCurrentPlatform()) {

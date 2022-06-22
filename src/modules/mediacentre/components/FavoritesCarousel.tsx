@@ -83,7 +83,7 @@ const getCardColors = (length: number): string[] => {
 };
 
 const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
-  const openURL = () => {
+  const openUrlCallback = () => {
     openUrl(props.resource.link);
   };
   const copyToClipboard = () => {
@@ -91,7 +91,7 @@ const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
     Toast.show(I18n.t('mediacentre.link-copied'));
   };
   return (
-    <TouchCardWithoutPadding onPress={openURL} style={[styles.cardContainer, { backgroundColor: props.color }]}>
+    <TouchCardWithoutPadding onPress={openUrlCallback} style={[styles.cardContainer, { backgroundColor: props.color }]}>
       <View style={styles.contentContainer}>
         <TextBold numberOfLines={1} style={styles.cardTitleText}>
           {props.resource.title}

@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { RefreshControl, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -9,6 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import FlatList from '~/framework/components/flatList';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
@@ -104,7 +105,6 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
         keyExtractor={(item: INewsComment) => item._id.toString()}
         ListHeaderComponent={this.renderNewsDetails()}
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.ui.background.card }}
-        scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
         refreshControl={
           <RefreshControl
             refreshing={[NewsDetailsLoadingState.REFRESH, NewsDetailsLoadingState.INIT].includes(loadingState)}
@@ -150,6 +150,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
                   openUrl(url);
                   Trackers.trackEvent('News', 'GO TO', 'View in Browser');
                 }}
+                rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
               />
             </View>
           ) : null}

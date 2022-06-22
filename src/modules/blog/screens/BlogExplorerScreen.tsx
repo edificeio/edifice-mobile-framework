@@ -24,8 +24,6 @@ import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps, PictureProps } from '~/framework/components/picture';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { IUserSession, getUserSession } from '~/framework/util/session';

@@ -1,8 +1,11 @@
 import styled from '@emotion/native';
+import { PickerProps } from '@react-native-picker/picker';
 import * as React from 'react';
 import { ActivityIndicator, TextStyle, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Picture, PictureProps } from '~/framework/components/picture';
 import styles from '~/styles';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -15,7 +18,7 @@ export interface ValidTextIconProps {
   fontSize?: number;
   leftName?: string;
   onPress?: any;
-  rightName?: string;
+  rightName?: string | PictureProps;
   style?: any;
   title?: string;
   whiteSpace?: string;
@@ -35,7 +38,7 @@ export const FlatButton = ({
   disabled = false,
   leftName = '',
   onPress,
-  rightName = '',
+  rightName = undefined,
   title = '',
   whiteSpace = ' ',
   loading = false,
@@ -48,14 +51,27 @@ export const FlatButton = ({
 
   return (
     <ValidStyle disabled={disabled}>
-      <ButtonStyleComponent onPress={() => onPress()} disabled={disabled} style={customButtonStyle}>
+      <ButtonStyleComponent
+        onPress={() => onPress()}
+        disabled={disabled}
+        style={[customButtonStyle, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
         <TextStyleComponent disabled={disabled} style={customTextStyle}>
           {leftName.length > 0 && <Icon name={leftName} />}
           {whiteSpace}
           {title}
           {whiteSpace}
-          {rightName.length > 0 && <Icon name={rightName} />}
+          {rightName !== undefined && typeof rightName === 'string' ? <Icon name={rightName} /> : null}
         </TextStyleComponent>
+        {rightName !== undefined && typeof rightName !== 'string' ? (
+          <Picture
+            fill={customTextStyle?.color ?? disabled ? theme.palette.primary.regular : CommonStyles.inverseColor}
+            {...rightName}
+            style={{ marginHorizontal: UI_SIZES.spacing.small }}
+            width={22}
+            height={22}
+            size={22}
+          />
+        ) : null}
       </ButtonStyleComponent>
       {disabled && <Disable />}
     </ValidStyle>

@@ -52,7 +52,11 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                       justifyContent: 'center',
                       marginTop: 40,
                     }}>
-                    <FlatButton onPress={() => onLink()} title={I18n.t('federatedAccount-openLink')} />
+                    <FlatButton
+                      onPress={() => onLink()}
+                      title={I18n.t('federatedAccount-openLink')}
+                      rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+                    />
                   </View>
                 </FormContainer>
               </ScrollView>

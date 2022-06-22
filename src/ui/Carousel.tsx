@@ -1,12 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Animated, Image, ImageURISource, Linking, StatusBar, Text, View } from 'react-native';
+import { Animated, Image, ImageURISource, StatusBar, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { PanGestureHandler, PinchGestureHandler, State } from 'react-native-gesture-handler';
 import RNCarousel from 'react-native-snap-carousel';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 
 import { UI_SIZES } from '~/framework/components/constants';
+import { NamedSVG } from '~/framework/components/picture';
+import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -332,17 +334,19 @@ class Carousel extends React.Component<
                     width: '100%',
                   }}>
                   <TouchableOpacity
-                    onPress={() => Linking.openURL(item.linkTo)}
+                    onPress={() => openUrl(item.linkTo)}
                     style={{
                       backgroundColor: 'rgba(0, 0, 0, 0.6)',
                       padding: 10,
                       width: '100%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}>
                     <Text
                       style={{
                         color: CommonStyles.lightGrey,
                         textAlign: 'center',
-                        width: '100%',
                       }}>
                       {I18n.t('linkTo')}{' '}
                       <A>
@@ -355,6 +359,13 @@ class Carousel extends React.Component<
                         })()}
                       </A>
                     </Text>
+                    <NamedSVG
+                      name="ui-externalLink"
+                      width={16}
+                      height={16}
+                      fill={CommonStyles.lightGrey}
+                      style={{ marginLeft: UI_SIZES.spacing.small }}
+                    />
                   </TouchableOpacity>
                 </View>
               )}

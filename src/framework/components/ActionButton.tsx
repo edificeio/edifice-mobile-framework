@@ -4,7 +4,6 @@ import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-
 import theme from '~/app/theme';
 import { transformedSrc } from '~/infra/oauth';
 
-import { DEPRECATED_getCurrentPlatform } from '../util/_legacy_appConf';
 import { openUrl } from '../util/linking';
 import { UI_SIZES } from './constants';
 import { Picture } from './picture';
@@ -55,12 +54,7 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
                 action();
               }
               if (url) {
-                //TODO: create generic function inside oauth (use in myapps, etc.)
-                if (!DEPRECATED_getCurrentPlatform()) {
-                  return null;
-                }
-                const fullUrl = transformedSrc(url);
-                openUrl(fullUrl);
+                openUrl(transformedSrc(url));
               }
             },
           }

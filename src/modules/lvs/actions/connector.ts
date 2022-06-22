@@ -2,8 +2,7 @@
  * Connector list actions
  * Build actions to be dispatched to the Connector reducer.
  */
-import { Linking } from 'react-native';
-
+import { openUrl } from '~/framework/util/linking';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import lvsConfig from '~/modules/lvs/moduleConfig';
 
@@ -36,14 +35,9 @@ export function openConnector(connectorAddress: string, successCallback: Functio
     dispatch(connectorConnecting());
     try {
       const intermediateResponse = await signedFetchJson(connectorAddress);
-      const isSupported = await Linking.canOpenURL(intermediateResponse.link);
-      if (isSupported === true) {
-        await Linking.openURL(intermediateResponse.link);
-        dispatch(connectorConnected());
-        successCallback();
-      } else {
-        dispatch(connectorError('Not supported'));
-      }
+      await openUrl(intermediateResponse.link, undefined, true);
+      dispatch(connectorConnected());
+      successCallback();
     } catch (errmsg) {
       dispatch(connectorError(errmsg));
     }

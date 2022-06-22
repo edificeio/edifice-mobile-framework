@@ -88,7 +88,7 @@ export const FavoriteIcon: React.FunctionComponent<IFavoriteIconProps> = (props:
 };
 
 export class SmallCard extends React.PureComponent<ISmallCardProps> {
-  openURL = () => {
+  openUrlCallback = () => {
     openUrl(this.props.resource.link);
   };
 
@@ -100,7 +100,7 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
   public render() {
     const { resource } = this.props;
     return (
-      <TouchCard onPress={this.openURL}>
+      <TouchCard onPress={this.openUrlCallback}>
         <View style={styles.upperContentContainer}>
           <TextBold numberOfLines={1} style={styles.titleText}>
             {resource.title}

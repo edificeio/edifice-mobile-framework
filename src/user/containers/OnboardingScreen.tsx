@@ -7,8 +7,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
@@ -19,7 +17,6 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { FlatButton } from '~/ui/FlatButton';
 import { selectPlatform } from '~/user/actions/platform';
-
 
 // TYPES ==========================================================================================
 
@@ -127,6 +124,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                   const url = I18n.t('user.onboardingScreen.discoverLink');
                   openUrl(url);
                 }}
+                rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
               />
             )}
           </View>

@@ -7,8 +7,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import Explorer from '~/framework/components/explorer';
 import { PageView } from '~/framework/components/page';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';

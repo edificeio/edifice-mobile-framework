@@ -3,7 +3,7 @@
  * The aim is to render a React Native Element from INugget array.
  */
 import * as React from 'react';
-import { Image, ImageURISource, Linking, TextStyle, View, ViewStyle } from 'react-native';
+import { Image, ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
 
 import {
   NestedText,
@@ -16,6 +16,7 @@ import {
   TextColorStyle,
   TextItalic,
 } from '~/framework/components/text';
+import { openUrl } from '~/framework/util/linking';
 import { DEPRECATED_signImageURISource, DEPRECATED_signImagesUrls, signURISource, transformedSrc } from '~/infra/oauth';
 import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
@@ -240,7 +241,7 @@ function renderParseText(
           {...((nugget as ILinkTextNugget).url
             ? {
                 onPress: () => {
-                  (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
+                  (nugget as ILinkTextNugget).url && openUrl((nugget as ILinkTextNugget).url);
                 },
               }
             : {})}

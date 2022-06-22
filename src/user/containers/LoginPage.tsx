@@ -2,7 +2,7 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Linking, ScrollView, TextInput, View } from 'react-native';
+import { ScrollView, TextInput, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
@@ -11,6 +11,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
 import { CommonStyles } from '~/styles/common/styles';
@@ -217,7 +218,13 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 marginTop: error && !typing ? 10 : 20,
               }}>
               {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
-                <FlatButton onPress={() => this.handleGoToWeb()} disabled={false} title={I18n.t('LoginWeb')} loading={false} />
+                <FlatButton
+                  onPress={() => this.handleGoToWeb()}
+                  disabled={false}
+                  title={I18n.t('LoginWeb')}
+                  loading={false}
+                  rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+                />
               ) : (
                 <FlatButton
                   onPress={() => this.handleLogin()}
@@ -280,7 +287,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   }
 
   protected handleGoToWeb() {
-    Linking.openURL(DEPRECATED_getCurrentPlatform()!.url);
+    openUrl(DEPRECATED_getCurrentPlatform()!.url);
   }
 
   // Other public methods

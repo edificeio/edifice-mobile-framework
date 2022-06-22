@@ -1,7 +1,7 @@
-import { Linking } from 'react-native';
 import { connect } from 'react-redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { FederatedAccountPage, IFederatedAccountPageEventProps } from '~/user/components/FederatedAccount';
@@ -14,7 +14,7 @@ const mapDispatchToProps: (dispatch) => IFederatedAccountPageEventProps = dispat
     dispatch,
     onLink() {
       Trackers.trackEvent('Auth', 'GO TO', 'OTP Generation');
-      return Linking.openURL(fedeUrl);
+      return openUrl(fedeUrl);
     },
   };
 };
