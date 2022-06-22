@@ -722,7 +722,8 @@
       "unacknowledgements": "Sin leer"
     },
     "students": "Alumnos",
-    "tabName": "Cuaderno de correspondencia"
+    "tabName": "Cuaderno de correspondencia",
+    "word.create": "Crear un mesaje"
   },
   "seeDetails": "Ver detalles",
   "seeLess": "Ver menos",

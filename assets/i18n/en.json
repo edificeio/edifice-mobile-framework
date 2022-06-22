@@ -722,7 +722,8 @@
       "unacknowledgements": "Unread"
     },
     "students": "Students",
-    "tabName": "Schoolbook"
+    "tabName": "Schoolbook",
+    "word.create": "Create a message"
   },
   "seeDetails": "See details",
   "seeLess": "See less",
