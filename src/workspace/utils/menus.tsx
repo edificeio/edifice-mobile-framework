@@ -66,7 +66,11 @@ export const createMenu = () => ({
   },
   onEvent: ({ dispatch, parentId, value }) => {
     Trackers.trackEvent('Workspace', 'CREATE', 'Folder');
-    parentId === 'owner' ? dispatch(createFolderAction(value)) : dispatch(createFolderAction(value, parentId));
+    if (parentId === 'owner') {
+      dispatch(createFolderAction(value));
+    } else {
+      dispatch(createFolderAction(value, parentId));
+    }
   },
 });
 
@@ -137,10 +141,6 @@ export const moveMenu = () => ({
   onEvent: params => moveDocuments(params),
 });
 
-export const nbSelectedMenu = () => ({
-  id: 'nbSelected',
-});
-
 export const renameMenu = () => ({
   text: I18n.t('Edit'),
   icon: 'pencil',
@@ -152,16 +152,4 @@ export const renameMenu = () => ({
     okLabel: I18n.t('modify'),
   },
   onEvent: ({ dispatch, parentId, selected, value }) => dispatch(renameAction(parentId, selected, value)),
-});
-
-export const separatorMenu = () => ({
-  id: 'separator',
-});
-
-export const titleMenu = () => ({
-  id: 'title',
-});
-
-export const emptyMenu = () => ({
-  id: 'empty',
 });

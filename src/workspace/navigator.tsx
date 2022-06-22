@@ -9,18 +9,13 @@ import ContainerItems from './containers/Items';
 import { FilterId } from './types';
 import {
   addMenu,
-  backMenu,
   copyMenu,
   createMenu,
   deleteMenu,
   downloadMenu,
-  emptyMenu,
   moveMenu,
-  nbSelectedMenu,
   renameMenu,
   restoreMenu,
-  separatorMenu,
-  titleMenu,
   trashMenu,
 } from './utils/menus';
 
@@ -39,41 +34,26 @@ const WorkspaceNavigator = createStackNavigator(
             items: [addMenu()],
           },
         ],
-        toolbarItems: [
-          {
-            filter: FilterId.root,
-            items: [backMenu(), titleMenu(), emptyMenu()],
-          },
-        ],
-        toolbarSelectedItems: [
+        toolbarActions: [
           {
             filter: FilterId.root,
             items: Platform.select({
-              ios: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu()],
-              default: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu(), downloadMenu()],
+              ios: [copyMenu()],
+              default: [copyMenu(), downloadMenu()],
             }),
           },
           {
             filter: FilterId.owner,
             items: Platform.select({
-              ios: [backMenu(), nbSelectedMenu(), separatorMenu(), renameMenu(), trashMenu(), copyMenu(), moveMenu()],
-              default: [
-                backMenu(),
-                nbSelectedMenu(),
-                separatorMenu(),
-                renameMenu(),
-                trashMenu(),
-                copyMenu(),
-                moveMenu(),
-                downloadMenu(),
-              ],
+              ios: [renameMenu(), trashMenu(), copyMenu(), moveMenu()],
+              default: [renameMenu(), trashMenu(), copyMenu(), moveMenu(), downloadMenu()],
             }),
           },
           {
             filter: FilterId.trash,
             items: Platform.select({
-              ios: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), restoreMenu()],
-              default: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), restoreMenu(), downloadMenu()],
+              ios: [deleteMenu(), restoreMenu()],
+              default: [deleteMenu(), restoreMenu(), downloadMenu()],
             }),
           },
         ],
@@ -81,14 +61,6 @@ const WorkspaceNavigator = createStackNavigator(
     },
     WorkspaceDetails: {
       screen: Details,
-      params: {
-        toolbarItems: [
-          {
-            filter: FilterId.root,
-            items: [backMenu(), titleMenu(), emptyMenu()],
-          },
-        ],
-      },
     },
   },
   {
