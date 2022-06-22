@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
-import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
+import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { ModalBox } from '~/ui/Modal';
 
 import { IChildArray } from '../../viesco/state/children';
@@ -144,7 +144,7 @@ export const NotificationRelativesModal = ({
               </View>
             ) : null,
           )}
-          <ButtonOk label={I18n.t('common-ok')} onPress={onClose} />
+          <DialogButtonOk label={I18n.t('common-ok')} onPress={onClose} />
         </View>
       </View>
     </ModalBox>

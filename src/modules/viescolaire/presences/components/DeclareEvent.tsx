@@ -18,7 +18,7 @@ import {
   updateLeavingEvent,
 } from '~/modules/viescolaire/presences/actions/events';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import ButtonOk from '~/ui/ConfirmDialog/buttonOk';
+import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import { viescoTheme } from '../../viesco/utils/viescoTheme';
@@ -234,8 +234,8 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
               />
             </View>
             <View style={style.buttonOkContainer}>
-              {event !== undefined && <ButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
-              <ButtonOk
+              {event !== undefined && <DialogButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
+              <DialogButtonOk
                 disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
                 label={I18n.t('viesco-confirm')}
                 onPress={this.onSubmit}
