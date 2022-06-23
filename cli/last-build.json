@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-23T14:27:58",
-  "notes": "fix(zimbra): attachment upload success\nfeat: MB-364, MB-314, MB-345, MB-412 handle external links\nfix(viesco): imports errors\nfix(workspace): MO-124, refactored header\nMerge branch 'dev/1.8.0' into dev/1.8.1\nchore(ii18n): Unused PT language removal\nfix(trannslate): Missing translation addition\nchore: MB-567, fix merge crashes + remove hard-coded bg colors\nfix(zimbra): AMV2-342, removed attachments onProgress\nfix: MB-724, EmptyScreen background color must bee white\nfix(homework): MB-723 wrong backgroundColor in detail page\nMerge branch 'dev/1.8.0' into dev/1.8.1\nfix(auth): MB-367 forgot pwd field used auto-correct\nrelease: 1.8.0-rc.3(1080013)",
+  "last": "2022-06-23T14:31:01",
+  "notes": "release: 1.8.1-alpha.1(1080101)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
