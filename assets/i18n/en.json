@@ -1071,6 +1071,8 @@
   "zimbra-directory-name": "Directory name",
   "zimbra-download-all": "Download all attachments",
   "zimbra-drafts": "Drafts",
+  "zimbra-draft-created": "Draft created",
+  "zimbra-draft-updated": "Draft updated",
   "zimbra-empty-mailbox-text": "With Mailbox, you can start communicating with the other members of your network right now.",
   "zimbra-empty-mailbox-title": "No messages in sight...",
   "zimbra-external-mail-right-error": "You are not authorized to send external emails",

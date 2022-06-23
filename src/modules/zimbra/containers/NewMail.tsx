@@ -109,6 +109,7 @@ interface ICreateMailState {
   replyTo?: string;
   deleteModal: { isShown: boolean; mailsIds: string[] };
   isShownHeaderMenu: boolean;
+  settingId: boolean;
   signature: { text: string; useGlobal: boolean };
   isShownSignatureModal: boolean;
   isNewSignature: boolean;
@@ -124,6 +125,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       prevBody: '',
       deleteModal: { isShown: false, mailsIds: [] },
       isShownHeaderMenu: false,
+      settingId: false,
       signature: { text: '', useGlobal: false },
       isShownSignatureModal: false,
       isNewSignature: false,
@@ -178,6 +180,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           document: 'Document',
         }[sourceType] ?? 'Source inconnue');
       try {
+        await this.saveDraft(true);
         await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
       } catch (err) {
@@ -226,16 +229,44 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState({ isShownHeaderMenu: !isShownHeaderMenu });
     },
     getGoBack: () => {
+      const draftType = this.props.navigation.getParam('type');
       if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
         Toast.show(I18n.t('zimbra-send-attachment-progress'));
         return;
       }
-      this.saveDraft();
+      if (!this.checkIsMailEmpty()) {
+        this.saveDraft();
+        if (draftType === DraftType.DRAFT) {
+          Toast.showSuccess(I18n.t('zimbra-draft-updated'));
+        } else {
+          Toast.showSuccess(I18n.t('zimbra-draft-created'));
+        }
+      }
 
       const navParams = this.props.navigation.state;
       if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       this.props.navigation.goBack();
     },
+  };
+
+  checkIsMailEmpty = () => {
+    const draftType = this.props.navigation.getParam('type');
+    const { mail } = this.state;
+
+    if (draftType !== DraftType.NEW && draftType !== DraftType.DRAFT) {
+      return false;
+    }
+    for (const key in mail) {
+      const value = mail[key];
+      if (
+        ((key === 'to' || key === 'cc' || key === 'bcc' || key === 'attachments') && value.length > 0) ||
+        ((key === 'subject' || key === 'body') && value !== '') ||
+        (this.state.tempAttachment !== null && this.state.tempAttachment !== undefined)
+      ) {
+        return false;
+      }
+    }
+    return true;
   };
 
   getPrefilledMail = () => {
@@ -458,16 +489,19 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
-  saveDraft = async () => {
-    if (this.state.id === undefined) {
-      const inReplyTo = this.props.mail.id;
-      const isForward = this.props.navigation.getParam('type') === DraftType.FORWARD;
-      const idDraft = await this.props.makeDraft(this.getMailData(), inReplyTo, isForward);
+  saveDraft = async (addedAttachments: boolean = false) => {
+    if (!this.checkIsMailEmpty() || addedAttachments) {
+      if (this.state.id === undefined && !this.state.settingId) {
+        this.setState({ settingId: true });
+        const inReplyTo = this.props.mail.id;
+        const isForward = this.props.navigation.getParam('type') === DraftType.FORWARD;
+        const idDraft = await this.props.makeDraft(this.getMailData(), inReplyTo, isForward);
 
-      this.setState({ id: idDraft });
-      if (isForward) this.forwardDraft();
-    } else {
-      this.props.updateDraft(this.state.id, this.getMailData());
+        this.setState({ id: idDraft, settingId: false });
+        if (isForward) this.forwardDraft();
+      } else {
+        this.props.updateDraft(this.state.id, this.getMailData());
+      }
     }
   };
 

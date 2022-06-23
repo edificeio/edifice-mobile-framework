@@ -1058,6 +1058,8 @@
   "zimbra-directory-name": "Nom du dossier",
   "zimbra-download-all": "Télécharger pièces jointes",
   "zimbra-drafts": "Brouillons",
+  "zimbra-draft-created": "Brouillon créé",
+  "zimbra-draft-updated": "Brouillon mis à jour",
   "zimbra-empty-mailbox-text": "Avec la Messagerie, commencez dès maintenant à communiquer avec les membres de votre réseau.",
   "zimbra-empty-mailbox-title": "Pas l'ombre d'un message...",
   "zimbra-external-mail-right-error": "Vous n'êtes pas autorisé à envoyer des mails vers l'extérieur",

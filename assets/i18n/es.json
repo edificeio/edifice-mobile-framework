@@ -1071,6 +1071,8 @@
   "zimbra-directory-name": "Nombre de la carpeta",
   "zimbra-download-all": "Descargar archivos adjuntos",
   "zimbra-drafts": "Borradores",
+  "zimbra-draft-created": "Borrador creado",
+  "zimbra-draft-updated": "Borrador actualizado",
   "zimbra-empty-mailbox-text": "Gracias a la aplicación Correo electrónico, ya puede empezar a comunicarse con los miembros de su red.",
   "zimbra-empty-mailbox-title": "Ningún mensaje a la vista...",
   "zimbra-external-mail-right-error": "No está autorizado a enviar correos electrónicos externos",
