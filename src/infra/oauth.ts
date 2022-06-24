@@ -8,7 +8,7 @@ import { ImageURISource } from 'react-native';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 export const AllModulesBackup = {
@@ -306,6 +306,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       };
       // 4: Save token if asked
       saveToken && (await this.saveToken());
+      await this.deleteQueryParamToken(); // Delete current queryParamToken here to ensure we'll not have previous one form another accounts.
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
@@ -459,6 +460,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   public async eraseToken() {
     try {
       await AsyncStorage.removeItem('token');
+      await this.deleteQueryParamToken();
       this.token = null;
     } catch (err) {
       throw err;
@@ -479,8 +481,6 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * QueryParam token management (for loginless redirection)
    */
-  private currentQueryParamToken?: IOAuthQueryParamToken;
-
   private static QUERY_PARAM_TOKEN_EXPIRATION_DELTA = 60;
 
   private static QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY = 'auth.queryParamToken';
@@ -489,34 +489,30 @@ export class OAuth2RessourceOwnerPasswordClient {
   public async getQueryParamToken() {
     try {
       const nowDate = new Date();
+      // We apply a 60secs margin to the duration of the token to ensure validitiy will not be expired during the process.
       nowDate.setSeconds(nowDate.getSeconds() + OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_EXPIRATION_DELTA);
-      // if (!this.currentQueryParamToken) {
-      //   const loadedToken = await getItemJson<IOAuthQueryParamToken>(
-      //     OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY,
-      //   );
-      //   if (loadedToken) {
-      //     loadedToken.expires_at = new Date(loadedToken.expires_at);
-      //     this.currentQueryParamToken = loadedToken;
-      //     console.debug('loaded jwt token', loadedToken);
-      //   }
-      // }
-      if (!this.currentQueryParamToken || nowDate > this.currentQueryParamToken.expires_at) {
+      let currentQueryParamToken = await getItemJson<IOAuthQueryParamToken>(
+        OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY,
+      );
+      if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
         const url = `${DEPRECATED_getCurrentPlatform()!.url}/auth/oauth2/token?type=queryparam`;
         const data = await this.request(url, {
           headers: getAuthHeader(),
         });
-        const tokenInfo = {
+        currentQueryParamToken = {
           ...data,
           expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
         };
-        console.debug('got jwt token', tokenInfo);
-        this.currentQueryParamToken = tokenInfo;
-        await setItemJson(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY, this.currentQueryParamToken);
+        await setItemJson(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY, currentQueryParamToken);
       }
-      return this.currentQueryParamToken!.access_token;
+      return currentQueryParamToken?.access_token;
     } catch (e) {
       throw new Error('getQueryParamToken failed: ' + e.toString());
     }
+  }
+
+  public async deleteQueryParamToken() {
+    await removeItemJson<IOAuthQueryParamToken>(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY);
   }
 }
 

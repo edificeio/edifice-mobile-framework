@@ -44,9 +44,12 @@ export async function openUrl(
     // 1. compute url redirection if function provided
     if (getIsUrlSignable(url)) {
       const customToken = await session.oauth.getQueryParamToken();
-      const urlObj = new URL(url);
-      urlObj.searchParams.append('queryparam_token', customToken);
-      url = urlObj.href;
+      if (customToken) {
+        // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
+        const urlObj = new URL(url);
+        urlObj.searchParams.append('queryparam_token', customToken);
+        url = urlObj.href;
+      }
     }
     const finalUrl: string = url;
     // 2. Show confirmation
@@ -63,7 +66,6 @@ export async function openUrl(
           onPress: async () => {
             const isSupported = await Linking.canOpenURL(finalUrl);
             if (isSupported === true) {
-              console.debug('open url', finalUrl);
               await Linking.openURL(finalUrl);
             } else {
               throw new Error('openUrl : url provided is not supported');

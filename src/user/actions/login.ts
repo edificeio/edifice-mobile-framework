@@ -341,7 +341,6 @@ export function logout() {
 
       // === 3: Tracking
       Trackers.trackEvent('Auth', 'LOGOUT');
-
     } catch (err) {
       const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
       reset(getLoginStackToDisplay(platformId));
