@@ -6,16 +6,15 @@ import FunctionalModuleConfig from '~/infra/moduleTool';
 // tslint:disable:object-literal-sort-keys
 
 // Yeah, it's ugly. Sorry. We must port this module into frameworkV2 to make this happier.
-// console.log('deviceInfoModule.getBundleId()', deviceInfoModule.getBundleId());
+console.log('deviceInfoModule.getBundleId()', deviceInfoModule.getBundleId());
 const isAppOne = deviceInfoModule.getBundleId() === 'com.ode.one';
-export const pictureName = `homework${isAppOne ? '1D' : '2D'}`;
 export const fillName = theme.palette.complementary[isAppOne ? 'blue' : 'green'].regular;
 
 export default new FunctionalModuleConfig({
   name: 'homework',
   apiName: 'Cahier de texte',
   displayName: 'Homework',
-  picture: { type: 'NamedSvg', name: pictureName, fill: fillName },
+  picture: { type: 'NamedSvg', name: 'homework1D', fill: fillName },
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors
