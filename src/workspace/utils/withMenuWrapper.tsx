@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -174,6 +174,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
       return (
         <View style={styles.mainContainer}>
+          <StatusBar barStyle="light-content" backgroundColor={headerColor} />
           <FakeHeader_Container style={{ backgroundColor: headerColor }}>
             <FakeHeader_Row>
               <HeaderBackAction onPress={onGoBack} />

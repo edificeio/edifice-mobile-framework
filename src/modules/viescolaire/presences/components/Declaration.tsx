@@ -81,12 +81,17 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     flexDirection: 'column',
     paddingHorizontal: 25,
-    paddingTop: 25,
+    paddingTop: 16,
   },
-  inputContainerText: { marginBottom: 10 },
+  inputContainerText: { marginBottom: 8 },
+  motiveTextInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.cloudy,
+    paddingVertical: 4,
+  },
   filePickerStyle: {
     flexDirection: 'row',
-    paddingVertical: 10,
+    paddingVertical: 16,
   },
   iconAttMarginRight: { marginRight: 10 },
   dialogButtonOk: {
@@ -232,7 +237,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               multiline
               placeholder={I18n.t('viesco-enter-text')}
               value={comment}
-              underlineColorAndroid="lightgrey"
+              style={styles.motiveTextInput}
               onChangeText={updateComment}
             />
             <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>

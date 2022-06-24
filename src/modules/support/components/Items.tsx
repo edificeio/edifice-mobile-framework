@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { IApp, IEstablishment } from '~/modules/support/containers/Support';
@@ -11,9 +11,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dropdown: {
-    backgroundColor: 'transparent',
     borderRadius: 0,
     borderWidth: 0,
+  },
+  textInputStyle: {
+    flex: 1,
+    color: CommonStyles.textColor,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.cloudy,
+    paddingVertical: 4,
+  },
+  textInputMultiline: {
+    maxHeight: 115,
   },
 });
 
@@ -74,15 +83,6 @@ export const FormInput = ({
   onChange: (field: string) => void;
   setResetter: (resetter: () => void) => void;
 }) => {
-  const textInputStyle = {
-    flex: 1,
-    color: CommonStyles.textColor,
-    borderBottomColor: theme.palette.grey.cloudy,
-    borderBottomWidth: 2,
-  } as ViewStyle;
-  const textInputMultiline = {
-    maxHeight: 115,
-  } as ViewStyle;
   const textUpdateTimeout = React.useRef();
   const [currentValue, updateCurrentValue] = React.useState<string>('');
   const notFirstRender = React.useRef(false);
@@ -103,10 +103,10 @@ export const FormInput = ({
   }, [currentValue]);
 
   return fieldName === 'subject' ? (
-    <TextInput style={textInputStyle} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
+    <TextInput style={styles.textInputStyle} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
   ) : (
     <TextInput
-      style={[textInputStyle, textInputMultiline]}
+      style={[styles.textInputStyle, styles.textInputMultiline]}
       multiline
       value={currentValue}
       onChangeText={text => updateCurrentValue(text)}

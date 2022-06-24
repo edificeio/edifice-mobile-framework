@@ -64,6 +64,12 @@ const style = StyleSheet.create({
   },
   labelText: {
     ...TextSizeStyle.Small,
+    marginBottom: 4,
+  },
+  reasonTextInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.cloudy,
+    paddingVertical: 4,
   },
   buttonOkContainer: {
     flexDirection: 'row',
@@ -229,7 +235,8 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
               <TextInput
                 defaultValue={event === undefined ? '' : event.comment}
                 placeholder={I18n.t('viesco-enter-text')}
-                underlineColorAndroid="lightgrey"
+                style={style.reasonTextInput}
+                multiline
                 onChangeText={this.onReasonChange}
               />
             </View>
