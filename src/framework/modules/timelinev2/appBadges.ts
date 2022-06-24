@@ -16,7 +16,7 @@ export let APPBADGES: {
   COMMUNITY: { icon: { type: 'NamedSvg', name: 'community' }, color: theme.palette.complementary.purple.regular },
   EXERCIZER: { icon: { type: 'NamedSvg', name: 'exercices' }, color: theme.palette.complementary.purple.regular },
   FORUM: { icon: { type: 'NamedSvg', name: 'forum' }, color: theme.palette.complementary.blue.regular },
-  HOMEWORKS: { icon: { type: 'NamedSvg', name: 'homework2D' }, color: theme.palette.complementary.green.regular },
+  HOMEWORKS: { icon: { type: 'NamedSvg', name: 'homework1D' }, color: theme.palette.complementary.green.regular },
   MESSAGERIE: { icon: { type: 'NamedSvg', name: 'messages' }, color: theme.palette.complementary.yellow.regular },
   MINDMAP: { icon: { type: 'NamedSvg', name: 'siteMap' }, color: theme.palette.complementary.blue.regular },
   NEWS: { icon: { type: 'NamedSvg', name: 'newsFeed' }, color: theme.palette.complementary.blue.regular },
