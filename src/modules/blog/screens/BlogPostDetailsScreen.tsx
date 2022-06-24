@@ -110,7 +110,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   // DECLARATIONS =================================================================================
 
   _titleRef?: React.Ref<any> = undefined;
-  flatListRef: FlatList | null = null;
+  flatListRef = React.createRef<FlatList | KeyboardAvoidingFlatList>();
   commentFieldRefs = [];
   editedCommentId?: string = undefined;
   bottomEditorSheetRef: { current: any } = React.createRef();
@@ -221,6 +221,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return <EmptyContentScreen />;
   }
 
+  listHeight = 0;
+
   renderContent() {
     const { session } = this.props;
     const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
@@ -238,7 +240,19 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       <>
         <Viewport.Tracker>
           <ListComponent
-            {...Platform.select({ ios: { ref: ref => (this.flatListRef = ref) }, android: {} })}
+            {...Platform.select({
+              ios: {
+                ref: ref => {
+                  this.flatListRef.current = ref;
+                },
+              },
+              android: {
+                ref: ref => {
+                  this.flatListRef.current = ref;
+                },
+              },
+            })}
+            initialNumToRender={blogPostComments?.length}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.ui.background.page }}
             data={blogPostComments}
@@ -254,14 +268,16 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             renderItem={({ item, index }) => this.renderComment(item, index)}
             scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
             style={{ backgroundColor: theme.ui.background.page, flex: 1 }}
+            onContentSizeChange={(width, height) => {
+              this.listHeight = height;
+            }}
             onLayout={() => {
               // Scroll to last comment if coming from blog spot comment notification
-              this.flatListRef &&
-                this.event === 'PUBLISH-COMMENT' &&
+              if (this.flatListRef.current && this.event === 'PUBLISH-COMMENT')
                 setTimeout(() => {
-                  this.flatListRef?.scrollToEnd();
+                  this.flatListRef.current?.scrollToEnd();
                   this.event = null;
-                }, 0);
+                }, 50);
             }}
             {...Platform.select({ ios: {}, android: { stickyFooter: footer } })}
           />
@@ -460,7 +476,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
         if (commentIndex !== undefined && commentIndex > -1) {
           if (Platform.OS === 'ios') {
-            this.flatListRef?.scrollToIndex({
+            this.flatListRef.current?.scrollToIndex({
               index: commentIndex,
               viewPosition: 1,
             });
@@ -529,7 +545,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       // Note #2: scrollToEnd seems to become less precise once there is lots of data.
       if (!commentId) {
         this.bottomEditorSheetRef?.current?.clearCommentField();
-        setTimeout(() => this.flatListRef?.scrollToEnd(), 1000);
+        setTimeout(() => {
+          this.flatListRef.current?.scrollToOffset({
+            offset: this.listHeight,
+          });
+        }, 50);
       } else this.commentFieldRefs[commentId]?.setIsEditingFalse();
     } finally {
       commentId
