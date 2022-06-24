@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-17T18:53:36",
-  "notes": "chore(config): MB-721, Change MonEcole && MonCollege logos\nchore(config): MB-721, Change MonEcole && MonCollege logos\nfix(schoolbook): MB-673 input focus issue in editing response\nfix(blog, schoolbook): MB-673 fix keyboard & input management on Android\nfix(news): MB-719 fix notifHandler\nchre: MB-546 first i18n were not integrated\nfeat(schoolbook): MB-716 show create word in list screen\nchore(debug): Unused Flipper plugins removal\nrelease: 1.8.0-rc.2(1080012)",
+  "last": "2022-06-24T20:02:29",
+  "notes": "fix: MB-727 keyboard auto-scrolling issue\nfix(homeworks): MB-728 fix homework icon in 1D & 2D\nfix(trannslate): Missing translation addition\nfix(auth): MB-367 forgot pwd field used auto-correct\nrelease: 1.8.0-rc.3(1080013)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
