@@ -133,24 +133,18 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
       style={style.mainView}
       refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshSessions} />}
       data={sessionList}
-      renderItem={({ item, index }) => {
-        if (!hasEmptyDescription(item)) {
-          return (
-            <View>
-              {index === 0 || moment(item.date).format('DD/MM/YY') !== moment(sessionList[index - 1].date).format('DD/MM/YY') ? (
-                <TextBold>{moment(item.date).format('DD/MM/YY')}</TextBold>
-              ) : null}
-              <SessionItem
-                onPress={() => onSessionTap(item)}
-                matiere={item.subject_id !== 'exceptional' ? item.subject.name : item.exceptional_label}
-                author={getTeacherName(item.teacher_id, personnelList)}
-              />
-            </View>
-          );
-        } else {
-          return null;
-        }
-      }}
+      renderItem={({ item, index }) => (
+        <View>
+          {index === 0 || moment(item.date).format('DD/MM/YY') !== moment(sessionList[index - 1].date).format('DD/MM/YY') ? (
+            <TextBold>{moment(item.date).format('DD/MM/YY')}</TextBold>
+          ) : null}
+          <SessionItem
+            onPress={() => onSessionTap(item)}
+            matiere={item.subject_id !== 'exceptional' ? item.subject.name : item.exceptional_label}
+            author={getTeacherName(item.teacher_id, personnelList)}
+          />
+        </View>
+      )}
       ListEmptyComponent={<EmptyComponent title={I18n.t('viesco-session-EmptyScreenText')} />}
     />
   );
@@ -255,7 +249,7 @@ export default (props: HomeworkListProps) => {
           <SessionList
             isFetching={isFetchingSession}
             onRefreshSessions={onRefreshSessions}
-            sessionList={props.sessions}
+            sessionList={props.sessions.filter(session => !hasEmptyDescription(session))}
             onSessionTap={session =>
               props.navigation.navigate('SessionPage', sessionListDetailsAdapter(session, props.personnel, props.sessions))
             }
