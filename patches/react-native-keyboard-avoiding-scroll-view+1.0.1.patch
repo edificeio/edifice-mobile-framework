@@ -12,7 +12,7 @@ index fadc258..fc833de 100644
 +        scrollViewRef.current = ref;
 +        if (typeof forwardedRef === 'function') {
 +            forwardedRef(ref);
-+        } else {
++        } else if (typeof forwardedRef === 'object' && forwardedRef !== null) {
 +            forwardedRef.current = ref;
 +        }
 +    }, []);
