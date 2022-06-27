@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-24T20:02:29",
-  "notes": "fix: MB-727 keyboard auto-scrolling issue\nfix(homeworks): MB-728 fix homework icon in 1D & 2D\nfix(trannslate): Missing translation addition\nfix(auth): MB-367 forgot pwd field used auto-correct\nrelease: 1.8.0-rc.3(1080013)",
+  "last": "2022-06-27T12:41:00",
+  "notes": "fix: MB-727 crash on rn-kb-avoiding-scrollview when ref isn't provided\nrelease: 1.8.0-rc.4(1080014)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
