@@ -240,18 +240,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       <>
         <Viewport.Tracker>
           <ListComponent
-            {...Platform.select({
-              ios: {
-                ref: ref => {
-                  this.flatListRef.current = ref;
-                },
-              },
-              android: {
-                ref: ref => {
-                  this.flatListRef.current = ref;
-                },
-              },
-            })}
+            ref={ref => {
+              this.flatListRef.current = ref;
+            }}
             initialNumToRender={blogPostComments?.length}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.ui.background.page }}

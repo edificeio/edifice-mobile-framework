@@ -91,7 +91,13 @@ const SchoolbookWordDetailsCard = (
   const isBottomSheetVisible = isParent && (!isWordAcknowledged || (word?.reply && !isWordRepliedToForParent));
   const doesContentExceedView = contentHeight && viewHeight ? contentHeight > viewHeight : undefined;
 
-  const scrollToEnd = () => flatListRef?.current?.scrollToEnd();
+  const scrollToEnd = () => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToOffset({
+        offset: contentHeight,
+      });
+    }, 50);
+  };
   const cardBottomEditorSheetRef = () => bottomEditorSheetRef?.current;
   const cardSelectedCommentFieldRef = () => commentFieldRefs[editedCommentId];
   React.useImperativeHandle(ref, () => ({
@@ -283,7 +289,12 @@ const SchoolbookWordDetailsCard = (
   return (
     <>
       <ListComponent
-        {...Platform.select({ ios: { ref: flatListRef }, android: {} })}
+        ref={ref => {
+          flatListRef.current = ref;
+        }}
+        onContentSizeChange={(width, height) => {
+          setContentHeight(height);
+        }}
         removeClippedSubviews={false}
         data={word?.reply && responses ? responses : []}
         renderItem={({ item, index }) => {
@@ -315,7 +326,6 @@ const SchoolbookWordDetailsCard = (
         keyExtractor={item => item.id?.toString()}
         ListHeaderComponent={resourceView}
         onLayout={({ nativeEvent }) => setViewHeight(nativeEvent?.layout?.height)}
-        onContentSizeChange={(width, height) => setContentHeight(height)}
         keyboardShouldPersistTaps="handled"
         bottomInset={!isBottomSheetVisible}
         style={{ marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined }}
