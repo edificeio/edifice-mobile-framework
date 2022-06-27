@@ -32,7 +32,7 @@ export const EmptyScreen = ({
   buttonAction?: () => void;
   customStyle?: ViewStyle;
 }) => {
-  const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.extraLarge;
+  const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.big;
   const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
@@ -41,11 +41,11 @@ export const EmptyScreen = ({
         {
           backgroundColor: theme.ui.background.empty,
           paddingTop: UI_SIZES.spacing.huge,
-          paddingHorizontal: UI_SIZES.spacing.extraLarge,
+          paddingHorizontal: UI_SIZES.spacing.big,
         },
         customStyle,
       ]}>
-      <View style={{ paddingHorizontal: UI_SIZES.spacing.extraLarge }}>
+      <View style={{ paddingHorizontal: UI_SIZES.spacing.big }}>
         <View style={{ height: imageHeight }}>
           <NamedSVG name={svgImage} width={imageWidth} height={imageHeight} />
         </View>
@@ -56,7 +56,7 @@ export const EmptyScreen = ({
           textAlign: 'center',
           fontSize: 18,
           color: theme.palette.primary.regular,
-          marginTop: UI_SIZES.spacing.extraLargePlus,
+          marginTop: UI_SIZES.spacing.large,
         }}>
         {title}
       </TextSemiBold>
@@ -65,13 +65,13 @@ export const EmptyScreen = ({
           numberOfLines={3}
           style={{
             textAlign: 'center',
-            marginTop: UI_SIZES.spacing.medium,
+            marginTop: UI_SIZES.spacing.small,
           }}>
           {text}
         </Text>
       ) : null}
       {hasButton ? (
-        <View style={{ marginTop: UI_SIZES.spacing.extraLargePlus }}>
+        <View style={{ marginTop: UI_SIZES.spacing.large }}>
           <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} />
         </View>
       ) : null}

@@ -105,13 +105,13 @@ DropdownSelectorTemplate.styles = StyleSheet.create({
   },
   help: { marginTop: 32, textAlign: 'center' },
   safeView: { flex: 1, backgroundColor: theme.ui.background.card },
-  select: { borderColor: theme.palette.primary.regular, borderWidth: 1, marginVertical: UI_SIZES.spacing.extraLargePlus },
+  select: { borderColor: theme.palette.primary.regular, borderWidth: 1, marginVertical: UI_SIZES.spacing.large },
   selectBackDrop: { flex: 1 },
   selectContainer: {
     borderColor: theme.palette.primary.regular,
     borderWidth: 1,
     maxHeight: 120,
-    marginVertical: UI_SIZES.spacing.extraLargePlus,
+    marginVertical: UI_SIZES.spacing.large,
   },
   selectPlaceholder: { color: theme.ui.text.light },
   selectText: { color: theme.ui.text.light },
@@ -119,6 +119,6 @@ DropdownSelectorTemplate.styles = StyleSheet.create({
     textAlign: 'center',
     color: theme.palette.grey.black,
     ...TextSizeStyle.SlightBig,
-    marginVertical: UI_SIZES.spacing.extraLargePlus,
+    marginVertical: UI_SIZES.spacing.large,
   },
 });

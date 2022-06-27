@@ -81,19 +81,19 @@ const rlh = UI_SIZES.getResponsiveStyledLineHeight();
 ActionButton.Style = StyleSheet.create({
   viewCommon: {
     height: UI_SIZES.dimensions.height.largePlus,
-    paddingVertical: UI_SIZES.spacing.smallPlus,
-    paddingHorizontal: UI_SIZES.spacing.large,
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
     borderRadius: UI_SIZES.radius.extraLarge,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'center',
   },
   textCommon: {
-    marginRight: UI_SIZES.spacing.smallPlus,
+    marginRight: UI_SIZES.spacing.minor,
     lineHeight: rlh,
     height: rlh,
   },
   picture: {
-    marginLeft: UI_SIZES.spacing.smallPlus,
+    marginLeft: UI_SIZES.spacing.minor,
   },
 });

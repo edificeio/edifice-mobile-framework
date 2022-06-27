@@ -130,7 +130,7 @@ export const SummaryCard = ({
           />
         }>
         {category ? (
-          <View style={{ marginTop: UI_SIZES.spacing.medium }}>
+          <View style={{ marginTop: UI_SIZES.spacing.small }}>
             <ImageLabel
               text={I18n.t(`schoolbook.categories.${category}`)}
               imageName={`schoolbook-${category}`}
@@ -139,9 +139,9 @@ export const SummaryCard = ({
             />
           </View>
         ) : null}
-        {title ? <ContentCardTitle style={{ marginTop: UI_SIZES.spacing.smallPlus }}>{title}</ContentCardTitle> : null}
+        {title ? <ContentCardTitle style={{ marginTop: UI_SIZES.spacing.minor }}>{title}</ContentCardTitle> : null}
         {hasSchoolbookWordText ? (
-          <View style={{ marginTop: UI_SIZES.spacing.extraSmall }}>
+          <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
             <Text
               numberOfLines={contentTextMaxLines}
               onTextLayout={({ nativeEvent: { lines } }) => {
@@ -155,14 +155,14 @@ export const SummaryCard = ({
           </View>
         ) : null}
         {hasSchoolbookWordMedia ? (
-          <View style={{ marginTop: UI_SIZES.spacing.extraSmall }}>{renderMediaPreview(schoolbookWordMedia)}</View>
+          <View style={{ marginTop: UI_SIZES.spacing.tiny }}>{renderMediaPreview(schoolbookWordMedia)}</View>
         ) : null}
         {responsesNumber ? (
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginTop: UI_SIZES.spacing.medium,
+              marginTop: UI_SIZES.spacing.small,
             }}>
             <Picture
               type="NamedSvg"
@@ -170,7 +170,7 @@ export const SummaryCard = ({
               width={UI_SIZES.dimensions.width.medium}
               height={UI_SIZES.dimensions.height.medium}
               fill={theme.palette.primary.regular}
-              style={{ marginRight: UI_SIZES.spacing.smallPlus }}
+              style={{ marginRight: UI_SIZES.spacing.minor }}
             />
             <TextSemiBold style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
               {responsesString(responsesNumber)}

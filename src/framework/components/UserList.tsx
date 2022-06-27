@@ -81,9 +81,9 @@ UserList.renderItem = <ItemType extends IUserListItem>({
     <TouchableOpacity
       style={[
         horizontal
-          ? { marginRight: isLastItem ? undefined : UI_SIZES.spacing.extraLarge }
+          ? { marginRight: isLastItem ? undefined : UI_SIZES.spacing.big }
           : {
-              marginBottom: isLastItem ? undefined : UI_SIZES.spacing.large,
+              marginBottom: isLastItem ? undefined : UI_SIZES.spacing.medium,
               borderBottomWidth: !withSeparator || isLastItem ? 0 : 1,
               borderBottomColor: theme.palette.grey.cloudy,
             },

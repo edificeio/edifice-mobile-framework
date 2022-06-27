@@ -44,7 +44,7 @@ export const ImageLabel = ({ text, imageName, imageType, color, cachedSVG }: Ima
           />
         ) : null}
       </View>
-      <TextSemiBold numberOfLines={1} style={{ marginLeft: UI_SIZES.spacing.extraSmall, color }}>
+      <TextSemiBold numberOfLines={1} style={{ marginLeft: UI_SIZES.spacing.tiny, color }}>
         {text}
       </TextSemiBold>
     </View>

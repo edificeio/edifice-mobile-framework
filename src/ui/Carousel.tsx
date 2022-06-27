@@ -364,7 +364,7 @@ class Carousel extends React.Component<
                       width={16}
                       height={16}
                       fill={CommonStyles.lightGrey}
-                      style={{ marginLeft: UI_SIZES.spacing.small }}
+                      style={{ marginLeft: UI_SIZES.spacing._LEGACY_small }}
                     />
                   </TouchableOpacity>
                 </View>

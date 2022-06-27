@@ -58,10 +58,10 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
         data={allModules}
         renderItem={renderGridItem}
         keyExtractor={item => item.config.name}
-        gap={UI_SIZES.spacing.extraLarge}
-        gapOutside={UI_SIZES.spacing.extraLarge}
+        gap={UI_SIZES.spacing.big}
+        gapOutside={UI_SIZES.spacing.big}
         ListFooterComponent={this.renderFooter()}
-        ListFooterComponentStyle={{ flexGrow: 1, justifyContent: 'flex-end', marginVertical: UI_SIZES.spacing.extraLarge }}
+        ListFooterComponentStyle={{ flexGrow: 1, justifyContent: 'flex-end', marginVertical: UI_SIZES.spacing.big }}
         alwaysBounceVertical={false}
         overScrollMode="never"
         contentContainerStyle={{ flexGrow: 1 }}
@@ -79,7 +79,7 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
             backgroundColor: undefined,
             borderColor: theme.palette.primary.regular,
             borderWidth: 1.5,
-            paddingHorizontal: UI_SIZES.spacing.large,
+            paddingHorizontal: UI_SIZES.spacing.medium,
             paddingVertical: 6,
           }}
           customTextStyle={{ color: theme.palette.primary.regular }}

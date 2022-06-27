@@ -78,16 +78,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    paddingHorizontal: UI_SIZES.spacing.large,
-    paddingVertical: UI_SIZES.spacing.smallPlus,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
     aspectRatio: 3,
   },
   content: {
     ...TextSizeStyle.SlightBig,
-    marginTop: UI_SIZES.spacing.mediumPlus,
+    marginTop: UI_SIZES.spacing.medium,
   },
   contentContainer: {
-    padding: UI_SIZES.spacing.large,
+    padding: UI_SIZES.spacing.medium,
   },
   dayImage: {
     height: '100%',

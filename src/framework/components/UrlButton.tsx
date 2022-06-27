@@ -17,14 +17,14 @@ export const UrlButton = ({ text, url }: UrlButtonProps) => {
     <TouchableOpacity
       style={{
         backgroundColor: theme.palette.primary.regular,
-        paddingVertical: UI_SIZES.spacing.smallPlus,
-        paddingHorizontal: UI_SIZES.spacing.large,
+        paddingVertical: UI_SIZES.spacing.minor,
+        paddingHorizontal: UI_SIZES.spacing.medium,
         borderRadius: UI_SIZES.radius.extraLarge,
         flexDirection: 'row',
         alignItems: 'center',
       }}
       onPress={() => console.log(url)}>
-      <TextSemiBold style={{ color: theme.color.text.inverse, marginRight: UI_SIZES.spacing.smallPlus }}>{text}</TextSemiBold>
+      <TextSemiBold style={{ color: theme.color.text.inverse, marginRight: UI_SIZES.spacing.minor }}>{text}</TextSemiBold>
       <Icon name="warning" color={theme.color.text.inverse} size={TextSizeStyle.Normal.fontSize} />
     </TouchableOpacity>
   );

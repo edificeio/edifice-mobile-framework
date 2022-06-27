@@ -327,7 +327,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     return (
       <UserList
         data={children}
-        style={{ margin: UI_SIZES.spacing.large }}
+        style={{ margin: UI_SIZES.spacing.medium }}
         renderBadge={user => ({ badgeContent: user.unacknowledgedWordsCount, badgeColor: theme.ui.notificationBadge })}
         onSelect={id => setSelectedChildId(id)}
         selectedId={selectedChildId}

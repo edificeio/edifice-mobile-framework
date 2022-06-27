@@ -116,7 +116,7 @@ const SchoolbookWordDetailsCard = (
             flatListRef?.current?.scrollToIndex({
               index: commentIndex,
               viewPosition: 1,
-              viewOffset: -UI_SIZES.spacing.large,
+              viewOffset: -UI_SIZES.spacing.medium,
             });
           }
         }
@@ -135,11 +135,11 @@ const SchoolbookWordDetailsCard = (
           borderBottomWidth: UI_SIZES.dimensions.width.tiny,
           borderBottomColor: theme.palette.grey.pearl,
           paddingBottom:
-            UI_SIZES.spacing.extraSmall + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus * 2 : 0),
+            UI_SIZES.spacing.tiny + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus * 2 : 0),
         }}
         customHeaderStyle={{
           backgroundColor: theme.palette.grey.fog,
-          paddingVertical: UI_SIZES.spacing.smallPlus,
+          paddingVertical: UI_SIZES.spacing.minor,
           borderBottomColor: theme.palette.grey.pearl,
           borderBottomWidth: UI_SIZES.dimensions.width.tiny,
         }}
@@ -157,7 +157,7 @@ const SchoolbookWordDetailsCard = (
                 width={UI_SIZES.dimensions.width.large}
                 height={UI_SIZES.dimensions.height.large}
                 fill={theme.palette.primary.regular}
-                style={{ marginLeft: UI_SIZES.spacing.smallPlus }}
+                style={{ marginLeft: UI_SIZES.spacing.minor }}
               />
             </TouchableOpacity>
           ) : null
@@ -207,8 +207,8 @@ const SchoolbookWordDetailsCard = (
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingVertical: UI_SIZES.spacing.smallPlus,
-                marginVertical: -UI_SIZES.spacing.smallPlus,
+                paddingVertical: UI_SIZES.spacing.minor,
+                marginVertical: -UI_SIZES.spacing.minor,
               }}
               onPress={action}>
               <Picture
@@ -218,7 +218,7 @@ const SchoolbookWordDetailsCard = (
                 width={UI_SIZES.dimensions.width.large}
                 height={UI_SIZES.dimensions.height.large}
                 fill={theme.palette.primary.regular}
-                style={{ marginRight: UI_SIZES.spacing.smallPlus }}
+                style={{ marginRight: UI_SIZES.spacing.minor }}
               />
               <TextSemiBold style={{ color: theme.palette.primary.regular }}>
                 {responsesString(schoolbookWordResponsesNumber)}
@@ -227,20 +227,23 @@ const SchoolbookWordDetailsCard = (
           ) : undefined
         }>
         {isAuthorOtherTeacher ? (
-          <View style={{ marginTop: UI_SIZES.spacing.large, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ marginTop: UI_SIZES.spacing.medium, flexDirection: 'row', alignItems: 'center' }}>
             <SingleAvatar size={36} userId={word?.ownerId} />
-            <Text style={{ flex: 1, marginLeft: UI_SIZES.spacing.smallPlus }} numberOfLines={usersTextMaxLines}>
+            <Text style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }} numberOfLines={usersTextMaxLines}>
               {`${I18n.t('common.from')} `}
               <TextSemiBold>{word?.ownerName}</TextSemiBold>
             </Text>
           </View>
         ) : !isTeacher && !isWordAcknowledged ? (
-          <TextSemiBold style={{ marginTop: UI_SIZES.spacing.medium, alignSelf: 'center', color: theme.palette.status.warning }}>
+          <TextSemiBold style={{ marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning }}>
             {unacknowledgedString(userType)}
           </TextSemiBold>
         ) : null}
         {word?.category ? (
-          <View style={{ marginTop: UI_SIZES.spacing[isAuthorOtherTeacher ? 'medium' : 'large'] }}>
+          <View
+            style={{
+              marginTop: isAuthorOtherTeacher ? UI_SIZES.spacing.medium : UI_SIZES.spacing.large,
+            }}>
             <ImageLabel
               cachedSVG
               text={I18n.t(`schoolbook.categories.${word?.category}`)}
@@ -251,10 +254,10 @@ const SchoolbookWordDetailsCard = (
           </View>
         ) : null}
         {word?.title ? (
-          <TextBold style={{ marginTop: UI_SIZES.spacing.medium, ...TextSizeStyle.SlightBigPlus }}>{word?.title}</TextBold>
+          <TextBold style={{ marginTop: UI_SIZES.spacing.small, ...TextSizeStyle.SlightBigPlus }}>{word?.title}</TextBold>
         ) : null}
         {word?.text ? (
-          <View style={{ marginTop: UI_SIZES.spacing.smallPlus, marginBottom: UI_SIZES.spacing.tiny }}>
+          <View style={{ marginTop: UI_SIZES.spacing.minor, marginBottom: UI_SIZES.spacing.small }}>
             <HtmlContentView html={word?.text} opts={{ globalTextStyle: { ...TextSizeStyle.SlightBig } }} />
           </View>
         ) : null}
@@ -300,7 +303,7 @@ const SchoolbookWordDetailsCard = (
         renderItem={({ item, index }) => {
           const isFirstItem = index === 0;
           return (
-            <View style={{ marginTop: isFirstItem ? UI_SIZES.spacing.large : undefined }}>
+            <View style={{ marginTop: isFirstItem ? UI_SIZES.spacing.medium : undefined }}>
               <CommentField
                 ref={element => (commentFieldRefs[item.id] = element)}
                 index={index}
@@ -351,10 +354,10 @@ const SchoolbookWordDetailsCard = (
         ref={modalBoxRef}
         content={
           <View style={{ flexGrow: 1, flexShrink: 1 }}>
-            <TextSemiBold style={{ ...TextSizeStyle.SlightBigPlus, marginBottom: UI_SIZES.spacing.extraSmall }}>
+            <TextSemiBold style={{ ...TextSizeStyle.SlightBigPlus, marginBottom: UI_SIZES.spacing.tiny }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
             </TextSemiBold>
-            <Text style={{ marginBottom: UI_SIZES.spacing.large, color: theme.palette.grey.graphite }}>
+            <Text style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </Text>
             <UserList

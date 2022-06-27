@@ -66,7 +66,7 @@ export const FlatButton = ({
           <Picture
             fill={customTextStyle?.color ?? disabled ? theme.palette.primary.regular : CommonStyles.inverseColor}
             {...rightName}
-            style={{ marginHorizontal: UI_SIZES.spacing.small }}
+            style={{ marginHorizontal: UI_SIZES.spacing._LEGACY_small }}
             width={22}
             height={22}
             size={22}

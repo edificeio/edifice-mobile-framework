@@ -28,8 +28,8 @@ export interface ILabelProps extends React.PropsWithChildren<{}>, ViewProps {
 export const LabelView = styled.View({
   alignSelf: 'baseline',
   borderRadius: UI_SIZES.radius.large,
-  paddingVertical: UI_SIZES.spacing.small,
-  paddingHorizontal: UI_SIZES.spacing.medium,
+  paddingVertical: UI_SIZES.spacing._LEGACY_small,
+  paddingHorizontal: UI_SIZES.spacing.small,
 });
 export const LabelText = styled(TextBold)({
   // No common style except bold
@@ -51,9 +51,13 @@ export default (props: ILabelProps) => {
   } = props;
   const LabelViewWithPadding = styled(LabelView)({
     paddingVertical:
-      labelSize === 'small' ? UI_SIZES.spacing.tiny : labelSize === 'large' ? UI_SIZES.spacing.smallPlus : UI_SIZES.spacing.small,
+      labelSize === 'small'
+        ? UI_SIZES.spacing._LEGACY_tiny
+        : labelSize === 'large'
+        ? UI_SIZES.spacing.minor
+        : UI_SIZES.spacing._LEGACY_small,
     paddingHorizontal:
-      labelSize === 'small' ? UI_SIZES.spacing.smallPlus : labelSize === 'large' ? UI_SIZES.spacing.large : UI_SIZES.spacing.medium,
+      labelSize === 'small' ? UI_SIZES.spacing.minor : labelSize === 'large' ? UI_SIZES.spacing.medium : UI_SIZES.spacing.small,
     borderRadius: labelSize === 'large' ? UI_SIZES.radius.extraLarge : UI_SIZES.radius.large,
   });
   const LabelViewWithColor = styled(LabelViewWithPadding)({
@@ -93,7 +97,7 @@ export default (props: ILabelProps) => {
                 color={labelStyle === 'plain' ? theme.ui.text.inverse : color}
                 size={labelSize === 'small' ? TextSizeStyle.Small.fontSize : TextSizeStyle.Normal.fontSize}
                 style={{
-                  marginRight: labelSize === 'large' ? UI_SIZES.spacing.smallPlus : undefined,
+                  marginRight: labelSize === 'large' ? UI_SIZES.spacing.minor : undefined,
                   ...iconStyle,
                 }}
               />

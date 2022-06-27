@@ -295,7 +295,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: UI_SIZES.spacing.smallPlus,
+              marginTop: UI_SIZES.spacing.minor,
               height: UI_SIZES.getResponsiveStyledLineHeight() * 2,
             }}>
             <Text
@@ -330,7 +330,7 @@ function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: Re
   picture['resizeMode'] = 'contain';
   return (
     <PictureCard
-      style={[{ paddingVertical: UI_SIZES.spacing.large, paddingHorizontal: UI_SIZES.spacing.large }, style]}
+      style={[{ paddingVertical: UI_SIZES.spacing.medium, paddingHorizontal: UI_SIZES.spacing.medium }, style]}
       picture={picture}
       {...rest}
     />

@@ -197,8 +197,8 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
 };
 CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   card: {
-    marginHorizontal: UI_SIZES.spacing.large,
-    marginTop: UI_SIZES.spacing.large,
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.medium,
   },
   section: {
     ...cardPadding,
@@ -211,7 +211,7 @@ CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   sectionRight: {
     flex: 0,
     textAlign: 'right',
-    marginLeft: UI_SIZES.spacing.medium,
+    marginLeft: UI_SIZES.spacing.small,
   },
   sectionWithBorder: {
     borderBottomWidth: 1,
@@ -222,18 +222,18 @@ CarnetDeBordDetailsScreen.styles = StyleSheet.create({
     ...TextSizeStyle.Small,
   },
   textDateMargin: {
-    marginBottom: UI_SIZES.spacing.extraSmall,
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   button: {
-    marginTop: UI_SIZES.spacing.extraLargePlus,
+    marginTop: UI_SIZES.spacing.large,
     marginBottom: UI_SIZES.screen.bottomInset
-      ? UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.extraLarge - UI_SIZES.screen.bottomInset
-      : UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.large,
+      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
   },
   message: {
-    marginHorizontal: UI_SIZES.spacing.large,
-    marginTop: UI_SIZES.spacing.extraLarge,
-    marginBottom: UI_SIZES.spacing.extraLarge - UI_SIZES.spacing.large,
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.big - UI_SIZES.spacing.medium,
   },
 });
 

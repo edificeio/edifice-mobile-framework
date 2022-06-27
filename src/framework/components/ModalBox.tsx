@@ -54,15 +54,15 @@ ModalBox.styles = StyleSheet.create({
     flexGrow: 0,
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.extraLarge,
-    padding: UI_SIZES.spacing.extraLarge,
-    marginHorizontal: UI_SIZES.spacing.large,
+    padding: UI_SIZES.spacing.big,
+    marginHorizontal: UI_SIZES.spacing.medium,
     marginTop: UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset,
     marginBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight,
   },
   innerView: {
     position: 'absolute',
-    top: UI_SIZES.spacing.large,
-    right: UI_SIZES.spacing.large,
+    top: UI_SIZES.spacing.medium,
+    right: UI_SIZES.spacing.medium,
   },
 });
 

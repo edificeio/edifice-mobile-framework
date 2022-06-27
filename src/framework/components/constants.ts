@@ -4,6 +4,9 @@ import { initialWindowMetrics } from 'react-native-safe-area-context';
 const screenDimensions = Dimensions.get('window');
 const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 
+const SCALE_DIMENSION_MAX = 1.5;
+const SCALE_DIMENSION_MIN = 0.75;
+
 const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
   Math.round(
     dimension *
@@ -12,9 +15,9 @@ const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font')
           type === 'height'
             ? screenDimensions.height / standardScreenDimensions.height
             : screenDimensions.width / standardScreenDimensions.width,
-          1.5,
+          SCALE_DIMENSION_MAX,
         ),
-        0.75,
+        SCALE_DIMENSION_MIN,
       ),
   );
 
@@ -77,17 +80,15 @@ export const UI_SIZES = {
     width: screenDimensions.width,
   },
   spacing: {
-    tiny: getScaleDimension(2, 'width'),
-    extraSmall: getScaleDimension(4, 'width'),
-    small: getScaleDimension(6, 'width'),
-    smallPlus: getScaleDimension(8, 'width'),
-    medium: getScaleDimension(12, 'width'),
-    mediumPlus: getScaleDimension(14, 'width'),
-    large: getScaleDimension(16, 'width'),
-    largePlus: getScaleDimension(22, 'width'),
-    extraLarge: getScaleDimension(24, 'width'),
-    extraLargeBig: getScaleDimension(32, 'width'),
-    extraLargePlus: getScaleDimension(36, 'width'),
+    _LEGACY_tiny: getScaleDimension(2, 'width'),
+    tiny: getScaleDimension(4, 'width'),
+    _LEGACY_small: getScaleDimension(6, 'width'),
+    minor: getScaleDimension(8, 'width'),
+    small: getScaleDimension(12, 'width'),
+    medium: getScaleDimension(16, 'width'),
+    big: getScaleDimension(24, 'width'),
+    large: getScaleDimension(36, 'width'),
+    major: getScaleDimension(48, 'width'),
     huge: getScaleDimension(64, 'width'),
   },
   getResponsiveFontSize: (dimension: number) => getScaleDimension(dimension, 'font'),

@@ -119,7 +119,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
     <View
       style={{
         backgroundColor: theme.ui.background.card,
-        padding: props.commentId ? UI_SIZES.spacing.large : undefined,
+        padding: props.commentId ? UI_SIZES.spacing.medium : undefined,
         borderTopWidth: props.commentId && isFirstComment ? 1 : 0,
         borderBottomWidth: props.commentId ? 1 : 0,
         borderTopColor: theme.palette.grey.pearl,
@@ -131,10 +131,11 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <SingleAvatar size={isIdleExistingComment ? 24 : 36} userId={props.commentAuthorId || session.user.id} />
         {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
           <>
-            <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.medium, flexShrink: 1 }}>
+            <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
               {props.commentAuthor}
             </TextSemiBold>
-            <TextItalic style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, color: theme.palette.grey.graphite }}>
+            <TextItalic
+              style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing._LEGACY_small, color: theme.palette.grey.graphite }}>
               {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
             </TextItalic>
           </>
@@ -147,9 +148,9 @@ const CommentField = (props: CommentFieldProps, ref) => {
           borderWidth: isIdleExistingComment ? 0 : 1,
           borderColor: theme.palette.grey.cloudy,
           borderRadius: UI_SIZES.radius.mediumPlus,
-          marginLeft: UI_SIZES.spacing[isIdleExistingComment ? 'extraLargePlus' : 'smallPlus'],
-          paddingHorizontal: UI_SIZES.spacing.medium,
-          paddingVertical: UI_SIZES.spacing.smallPlus,
+          marginLeft: isIdleExistingComment ? UI_SIZES.spacing.big : UI_SIZES.spacing.small,
+          paddingHorizontal: UI_SIZES.spacing.small,
+          paddingVertical: UI_SIZES.spacing.minor,
           maxHeight: isIdleExistingComment ? undefined : UI_SIZES.elements.textFieldMaxHeight,
           height: '100%',
         }}>
@@ -166,7 +167,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         />
       </View>
       {!isIdleExistingComment ? (
-        <View style={{ marginLeft: UI_SIZES.spacing.smallPlus }}>
+        <View style={{ marginLeft: UI_SIZES.spacing.minor }}>
           <RoundButton
             iconName={isEditing ? 'pictos-save' : 'pictos-send'}
             action={() => publishComment()}
@@ -184,7 +185,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <TextSemiBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.large }}>
+              <TextSemiBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
                 {I18n.t('common.delete')}
               </TextSemiBold>
             </TouchableOpacity>

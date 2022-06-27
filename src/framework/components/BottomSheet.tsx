@@ -32,6 +32,6 @@ BottomSheet.styles = StyleSheet.create({
   },
   innerWrapper: {
     alignItems: 'center',
-    padding: UI_SIZES.spacing.large,
+    padding: UI_SIZES.spacing.medium,
   },
 });

@@ -23,13 +23,13 @@ export class AttachmentGroupImages extends React.PureComponent<{
         data={attachments}
         horizontal
         persistentScrollbar
-        contentContainerStyle={{ padding: UI_SIZES.spacing.medium }}
+        contentContainerStyle={{ padding: UI_SIZES.spacing.small }}
         renderItem={({ item, index }) => {
           return (
             <View
               style={{
-                marginTop: UI_SIZES.spacing.small,
-                marginRight: index === attachments.length - 1 ? UI_SIZES.spacing.medium : UI_SIZES.spacing.largePlus,
+                marginTop: UI_SIZES.spacing._LEGACY_small,
+                marginRight: index === attachments.length - 1 ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
               }}>
               <TouchableOpacity
                 onPress={() => {

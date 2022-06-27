@@ -29,9 +29,9 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
       style={{
         flexDirection: 'row',
         borderRadius: UI_SIZES.radius.small,
-        marginTop: UI_SIZES.spacing.medium,
-        padding: UI_SIZES.spacing.large,
-        marginLeft: UI_SIZES.spacing.largePlus,
+        marginTop: UI_SIZES.spacing.small,
+        padding: UI_SIZES.spacing.medium,
+        marginLeft: UI_SIZES.spacing.big,
         backgroundColor: theme.ui.background.card,
         elevation: 7,
         shadowColor: theme.ui.shadowColor,
@@ -46,12 +46,12 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
           </TextBold>
         ) : null}
         {formattedContent ? (
-          <Text style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.extraSmall }} numberOfLines={2}>
+          <Text style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
             {formattedContent}
           </Text>
         ) : null}
       </View>
-      <View style={{ justifyContent: 'center', marginLeft: UI_SIZES.spacing.medium }}>
+      <View style={{ justifyContent: 'center', marginLeft: UI_SIZES.spacing.small }}>
         <Icon
           name="arrow_right"
           color={arrowColor}

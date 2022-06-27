@@ -95,8 +95,8 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
             alwaysBounceVertical={false}
             overScrollMode="never"
             ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
-            gap={UI_SIZES.spacing.extraLarge}
-            gapOutside={UI_SIZES.spacing.extraLarge}
+            gap={UI_SIZES.spacing.big}
+            gapOutside={UI_SIZES.spacing.big}
           />
         </PageView>
       </>

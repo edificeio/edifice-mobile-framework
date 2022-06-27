@@ -63,11 +63,11 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
               <TextBold
                 style={{
                   ...TextSizeStyle.SlightBigPlus,
-                  marginTop: UI_SIZES.spacing.extraSmall,
+                  marginTop: UI_SIZES.spacing.tiny,
                 }}>
                 {acknowledgementsString(word?.ackNumber, word?.total)}
               </TextBold>
-              <Text style={{ marginTop: UI_SIZES.spacing.smallPlus }}>
+              <Text style={{ marginTop: UI_SIZES.spacing.minor }}>
                 {I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidAcknowledge')}
               </Text>
               <FlatList
@@ -82,13 +82,13 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   return (
                     <View
                       style={{
-                        paddingVertical: UI_SIZES.spacing.medium,
-                        paddingHorizontal: UI_SIZES.spacing.large,
+                        paddingVertical: UI_SIZES.spacing.small,
+                        paddingHorizontal: UI_SIZES.spacing.medium,
                         borderBottomWidth: isLastItem ? 0 : 1,
                         borderBottomColor: theme.palette.grey.cloudy,
                       }}>
                       <TextAvatar isHorizontal size={24} userId={item.owner} text={item.ownerName} />
-                      <View style={{ marginLeft: UI_SIZES.spacing.extraLargeBig }}>
+                      <View style={{ marginLeft: UI_SIZES.spacing.large }}>
                         <Text
                           numberOfLines={acknowledgedByTextMaxLines}
                           style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
@@ -101,8 +101,8 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                               borderRadius: UI_SIZES.radius.medium,
                               borderWidth: 1,
                               borderColor: theme.palette.grey.cloudy,
-                              padding: UI_SIZES.spacing.smallPlus,
-                              marginTop: UI_SIZES.spacing.extraSmall,
+                              padding: UI_SIZES.spacing.minor,
+                              marginTop: UI_SIZES.spacing.tiny,
                             }}>
                             <TextAvatar
                               isHorizontal
@@ -111,9 +111,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                               text={response.parentName}
                               textStyle={{ ...FontStyle.SemiBold, ...TextSizeStyle.Small }}
                             />
-                            <Text style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.extraLargeBig }}>
-                              {response.comment}
-                            </Text>
+                            <Text style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.large }}>{response.comment}</Text>
                           </View>
                         ))}
                       </View>
@@ -130,7 +128,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  marginTop: UI_SIZES.spacing[hasAcknowledgedStudents ? 'extraLarge' : 'extraSmall'],
+                  marginTop: hasAcknowledgedStudents ? UI_SIZES.spacing.tiny + UI_SIZES.spacing.medium : UI_SIZES.spacing.tiny,
                 }}>
                 <TextBold style={{ ...TextSizeStyle.SlightBigPlus }}>
                   {unacknowledgementsString(word?.ackNumber, word?.total)}
@@ -145,7 +143,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   />
                 ) : null}
               </View>
-              <Text style={{ marginTop: UI_SIZES.spacing.smallPlus }}>
+              <Text style={{ marginTop: UI_SIZES.spacing.minor }}>
                 {`${I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidNotAcknowledge')}${
                   hasSchoolbookWordResendRights ? ' ' + I18n.t('schoolbook.schoolbookWordReportScreen.reminderPossible') : ''
                 }`}
@@ -158,8 +156,8 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                 contentContainerStyle={{ backgroundColor: theme.ui.background.card, borderRadius: UI_SIZES.radius.medium }}
                 customItemStyle={{
                   marginBottom: undefined,
-                  paddingVertical: UI_SIZES.spacing.medium,
-                  paddingHorizontal: UI_SIZES.spacing.large,
+                  paddingVertical: UI_SIZES.spacing.small,
+                  paddingHorizontal: UI_SIZES.spacing.medium,
                 }}
                 withSeparator
               />
@@ -174,7 +172,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
             <TextBold style={{ ...TextSizeStyle.SlightBigPlus }}>
               {I18n.t('schoolbook.schoolbookWordReportScreen.reminderModal.title')}
             </TextBold>
-            <Text style={{ ...TextSizeStyle.SlightBig, marginTop: UI_SIZES.spacing.medium }}>
+            <Text style={{ ...TextSizeStyle.SlightBig, marginTop: UI_SIZES.spacing.small }}>
               {I18n.t('schoolbook.schoolbookWordReportScreen.reminderModal.text')}
             </Text>
             <View
@@ -182,10 +180,10 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                 flexDirection: 'row',
                 justifyContent: 'flex-end',
                 alignItems: 'center',
-                marginTop: UI_SIZES.spacing.extraLargePlus,
+                marginTop: UI_SIZES.spacing.large,
               }}>
               <TouchableOpacity onPress={() => modalBoxRef?.current?.doDismissModal()}>
-                <TextSemiBold style={{ marginRight: UI_SIZES.spacing.extraLarge, color: theme.palette.grey.graphite }}>
+                <TextSemiBold style={{ marginRight: UI_SIZES.spacing.big, color: theme.palette.grey.graphite }}>
                   {I18n.t('common.cancel')}
                 </TextSemiBold>
               </TouchableOpacity>
@@ -200,7 +198,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
 
 SchoolbookWordReportCard.Style = StyleSheet.create({
   list: {
-    marginTop: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.small,
     shadowColor: theme.ui.shadowColor,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,

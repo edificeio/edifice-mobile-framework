@@ -233,14 +233,14 @@ CarnetDeBord.styles = StyleSheet.create({
   },
   textLabel: {
     flex: 1,
-    marginRight: UI_SIZES.spacing.medium,
+    marginRight: UI_SIZES.spacing.small,
   },
   card: {
-    marginHorizontal: UI_SIZES.spacing.large,
-    marginBottom: UI_SIZES.spacing.large,
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   button: {
-    marginTop: UI_SIZES.spacing.extraLarge,
+    marginTop: UI_SIZES.spacing.big,
   },
 });
 CarnetDeBord.SectionContent = function (props: {

@@ -152,10 +152,10 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
 
     return (
       <View style={{ flex: 1 }}>
-        {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.extraLarge} />}
+        {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.big} />}
         <SectionList
           contentContainerStyle={{
-            padding: hasHomework ? UI_SIZES.spacing.large : undefined,
+            padding: hasHomework ? UI_SIZES.spacing.medium : undefined,
             paddingTop: hasHomework ? undefined : 0,
             flex: noFutureHomeworkHiddenPast ? 1 : undefined,
           }}
@@ -166,11 +166,11 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             if (type !== 'day') {
               return (
                 <>
-                  <HomeworkTimeline topPosition={26} leftPosition={UI_SIZES.spacing.smallPlus} />
+                  <HomeworkTimeline topPosition={26} leftPosition={UI_SIZES.spacing.minor} />
                   <View
                     style={{
-                      marginTop: UI_SIZES.spacing.extraLarge,
-                      marginBottom: UI_SIZES.spacing.mediumPlus,
+                      marginTop: UI_SIZES.spacing.big,
+                      marginBottom: UI_SIZES.spacing.small,
                     }}>
                     <Label color={theme.palette.grey.grey} text={I18n.t('homework.homeworkTaskListScreen.noFutureHomework')} />
                   </View>
@@ -184,15 +184,15 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               return (
                 <View
                   style={{
-                    marginBottom: UI_SIZES.spacing.extraSmall,
-                    marginTop: UI_SIZES.spacing.extraLarge,
+                    marginBottom: UI_SIZES.spacing.tiny,
+                    marginTop: UI_SIZES.spacing.big,
                   }}>
                   <View style={{ zIndex: 1 }}>
                     <HomeworkDayCheckpoint date={title} />
                   </View>
                   <HomeworkTimeline
-                    leftPosition={UI_SIZES.spacing.smallPlus}
-                    topPosition={UI_SIZES.spacing.extraSmall}
+                    leftPosition={UI_SIZES.spacing.minor}
+                    topPosition={UI_SIZES.spacing.tiny}
                     color={timelineColor}
                   />
                 </View>
@@ -294,12 +294,12 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             borderWidth: UI_SIZES.dimensions.width.tiny,
             borderRadius: UI_SIZES.radius.medium,
             borderColor: theme.palette.grey.cloudy,
-            paddingVertical: UI_SIZES.spacing.large,
-            paddingRight: UI_SIZES.spacing.extraLarge,
-            paddingLeft: UI_SIZES.spacing.large,
-            marginLeft: UI_SIZES.spacing.largePlus,
+            paddingVertical: UI_SIZES.spacing.medium,
+            paddingRight: UI_SIZES.spacing.big,
+            paddingLeft: UI_SIZES.spacing.medium,
+            marginLeft: UI_SIZES.spacing.big,
           }}>
-          <View style={{ justifyContent: 'center', marginRight: UI_SIZES.spacing.large }}>
+          <View style={{ justifyContent: 'center', marginRight: UI_SIZES.spacing.medium }}>
             <Icon name="informations" color={theme.palette.grey.stone} size={TextSizeStyle.Huge.fontSize} />
           </View>
           <View style={{ flex: 1 }}>

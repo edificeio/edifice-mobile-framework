@@ -80,7 +80,7 @@ export const SchoolbookWordSummaryCard = ({
       <TouchableResourceCard
         onPress={action}
         customHeaderStyle={{
-          paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.smallPlus,
+          paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.minor,
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
           backgroundColor: theme.palette.grey.fog,
@@ -111,13 +111,13 @@ export const SchoolbookWordSummaryCard = ({
                 width={UI_SIZES.dimensions.width.large}
                 height={UI_SIZES.dimensions.height.large}
                 fill={theme.palette.primary.regular}
-                style={{ marginRight: UI_SIZES.spacing.smallPlus }}
+                style={{ marginRight: UI_SIZES.spacing.minor }}
               />
               <TextSemiBold style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</TextSemiBold>
             </View>
           ) : undefined
         }>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: UI_SIZES.spacing.smallPlus }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: UI_SIZES.spacing.minor }}>
           {category ? (
             <ImageLabel
               cachedSVG
@@ -134,14 +134,12 @@ export const SchoolbookWordSummaryCard = ({
           </TextSemiBold>
         </View>
         {sendingDate ? (
-          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.smallPlus }}>
+          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.minor }}>
             {displayPastDate(sendingDate)}
           </TextItalic>
         ) : null}
         {title ? (
-          <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.extraSmall, ...TextColorStyle.Normal }}>
-            {title}
-          </ContentCardTitle>
+          <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.tiny, ...TextColorStyle.Normal }}>{title}</ContentCardTitle>
         ) : null}
       </TouchableResourceCard>
     </ArticleContainer>

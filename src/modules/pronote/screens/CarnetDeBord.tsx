@@ -286,17 +286,17 @@ CarnetDeBordScreen.styles = StyleSheet.create({
   },
   textLabel: {
     flex: 1,
-    marginRight: UI_SIZES.spacing.medium,
+    marginRight: UI_SIZES.spacing.small,
   },
   card: {
-    marginHorizontal: UI_SIZES.spacing.large,
-    marginTop: UI_SIZES.spacing.large,
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.medium,
   },
   button: {
-    marginTop: UI_SIZES.spacing.extraLargePlus,
+    marginTop: UI_SIZES.spacing.large,
     marginBottom: UI_SIZES.screen.bottomInset
-      ? UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.extraLarge - UI_SIZES.screen.bottomInset
-      : UI_SIZES.spacing.extraLargePlus + UI_SIZES.spacing.large,
+      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
   },
 });
 CarnetDeBordScreen.SectionContent = function (props: {
