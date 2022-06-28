@@ -7,7 +7,7 @@ import { asyncActionTypes } from '~/infra/redux/async';
 import config from '~/workspace/config';
 import { ContentUri } from '~/workspace/types';
 
-import { formatResults, uploadDocumentAction } from './helpers/documents';
+import { uploadDocumentAction } from './helpers/documents';
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
@@ -59,10 +59,11 @@ export function uploadAction(parentId: string, uriContent: ContentUri[] | Conten
         });
       }
       dispatch(uploadRequested(parentId));
-      const response = await dispatch(uploadDocumentAction(content, parentId));
-      const data = response.map(item => JSON.parse(item));
-      dispatch(uploadReceived(parentId, formatResults(data)));
-      doTrack && Trackers.trackEvent('Workspace', 'UPLOAD');
+      const files = await dispatch(uploadDocumentAction(content, parentId));
+      dispatch(uploadReceived(parentId, files));
+      if (doTrack) {
+        Trackers.trackEvent('Workspace', 'UPLOAD');
+      }
     } catch (ex) {
       dispatch(uploadError(parentId, ex));
     }
