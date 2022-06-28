@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-28T16:55:15",
-  "notes": "fix(schoolbook): MB- better scroll management after send response\nchore(push): MB-736, react-nattive-firebase upgrade\nrelease: 1.8.0-rc.5(1080015)",
+  "last": "2022-06-28T18:42:55",
+  "notes": "chore(push): MB-736, react-nattive-firebase downgrade\nrelease: 1.8.0-rc.6(1080016)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
