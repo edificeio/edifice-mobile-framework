@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-27T12:41:00",
-  "notes": "fix: MB-727 crash on rn-kb-avoiding-scrollview when ref isn't provided\nrelease: 1.8.0-rc.4(1080014)",
+  "last": "2022-06-28T16:55:15",
+  "notes": "fix(schoolbook): MB- better scroll management after send response\nchore(push): MB-736, react-nattive-firebase upgrade\nrelease: 1.8.0-rc.5(1080015)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
