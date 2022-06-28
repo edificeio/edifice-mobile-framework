@@ -578,8 +578,7 @@
     "sharebigfiles": "Téléchargement de fichier lourd",
     "support": "Aide et support",
     "timelinegenerator": "Frise chronologique",
-    "wiki": "Wiki",
-    "workspaceworkspace": "Espace documentaire"
+    "wiki": "Wiki"
   },
   "move": "Déplacer",
   "move-documents": "Déplacer documents dans:",
@@ -1011,18 +1010,16 @@
   "viesco-validate": "Valider",
   "viesco-year": "Année",
   "welcome": "Bienvenue",
-  "workspace": "Espace documentaire",
-  "workspace-quota-overflowText": "Votre espace de stockage est plein. Vous ne pouvez plus importer de documents.",
-  "workspace-quota-overflowTitle": "Quota atteint",
-  "workspace-uploadFailed": "L'import du document a échoué",
-  "workspace-uploadSuccessful": "Le document a bien été importé",
   "workspace.file-added": "Fichier ajouté",
   "workspace.folder-created": "Folder created",
+  "workspace.quota.overflowText": "Votre espace de stockage est plein. Vous ne pouvez plus importer de documents.",
+  "workspace.quota.overflowTitle": "Quota atteint",
   "workspace.successfully-copied": "Copie effectuée",
   "workspace.successfully-deleted": "Suppression effectuée",
   "workspace.successfully-edited": "Modification effectuée",
   "workspace.successfully-moved": "Déplacement effectué",
   "workspace.successfully-restored": "Restauration effectuée",
+  "workspace.tabName": "Espace documentaire",
   "workspaceEmptyScreen": {
     "owner": {
       "text": "Stockez ici vos documents personnels : photos, vidéos, audio, fichiers PDF, ...",

@@ -67,7 +67,7 @@ const WorkspaceNavigator = createStackNavigator(
     initialRouteParams: {
       filter: 'root',
       parentId: 'root',
-      title: I18n.t('workspace'),
+      title: I18n.t('workspace.tabName'),
     },
     headerMode: 'none',
   },

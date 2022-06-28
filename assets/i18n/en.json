@@ -579,8 +579,7 @@
     "sharebigfiles": "Share big files",
     "support": "Help and support",
     "timelinegenerator": "Timeline",
-    "wiki": "Wiki",
-    "workspaceworkspace": "Filespace"
+    "wiki": "Wiki"
   },
   "move": "Move",
   "move-documents": "Move documents to",
@@ -1024,18 +1023,16 @@
   "viesco-validate": "Validate",
   "viesco-year": "Year",
   "welcome": "Welcome",
-  "workspace": "Workspace",
-  "workspace-quota-overflowText": "Your storage space is full. You cannot upload more files.",
-  "workspace-quota-overflowTitle": "Quota reached",
-  "workspace-uploadFailed": "Error importing document",
-  "workspace-uploadSuccessful": "The document has been successfully imported",
   "workspace.file-added": "File added",
   "workspace.folder-created": "Folder created",
+  "workspace.quota.overflowText": "Your storage space is full. You cannot upload more files.",
+  "workspace.quota.overflowTitle": "Quota reached",
   "workspace.successfully-copied": "Successfully copied",
   "workspace.successfully-deleted": "Successfully deleted",
   "workspace.successfully-edited": "Successfully edited",
   "workspace.successfully-moved": "Successfully moved",
   "workspace.successfully-restored": "Successfully restored",
+  "workspace.tabName": "Workspace",
   "workspaceEmptyScreen": {
     "owner": {
       "text": "This is where you can store your personal documents, including photos, videos, audio recordings, PDFs, and more.",

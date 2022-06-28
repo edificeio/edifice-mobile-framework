@@ -579,8 +579,7 @@
     "sharebigfiles": "Descarga de archivos pesados",
     "support": "Ayuda y soporte",
     "timelinegenerator": "Barra cronológica",
-    "wiki": "Wiki",
-    "workspaceworkspace": "Espacio documental"
+    "wiki": "Wiki"
   },
   "move": "Move",
   "move-documents": "Move documents",
@@ -1024,18 +1023,16 @@
   "viesco-validate": "Validar",
   "viesco-year": "Año",
   "welcome": "Bienvenido",
-  "workspace": "Espacio documental",
-  "workspace-quota-overflowText": "El espacio de almacenamiento insuficiente para completar esta operación.",
-  "workspace-quota-overflowTitle": "Espacio de almacenamiento completo",
-  "workspace-uploadFailed": "Error al importar documento",
-  "workspace-uploadSuccessful": "El documento se ha importado correctamente",
   "workspace.file-added": "Archivo añadido",
   "workspace.folder-created": "Carpeta creada",
+  "workspace.quota.overflowText": "El espacio de almacenamiento insuficiente para completar esta operación.",
+  "workspace.quota.overflowTitle": "Espacio de almacenamiento completo",
   "workspace.successfully-copied": "Copia realizada",
   "workspace.successfully-deleted": "Borrado realizado",
   "workspace.successfully-edited": "Enmienda realizada",
   "workspace.successfully-moved": "Mudanza realizada",
   "workspace.successfully-restored": "Restauración realizada",
+  "workspace.tabName": "Espacio documental",
   "workspaceEmptyScreen": {
     "owner": {
       "text": "Guarde aquí los documentos personales: fotos, videos, audio, archivos PDF, etc.",

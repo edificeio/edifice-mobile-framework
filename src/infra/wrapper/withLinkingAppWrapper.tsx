@@ -22,7 +22,7 @@ export default function withLinckingAppWrapper<T extends IProps>(WrappedComponen
         mainNavNavigate('Workspace', {
           filter: FilterId.root,
           parentId: FilterId.root,
-          title: I18n.t('workspace'),
+          title: I18n.t('workspace.tabName'),
           childRoute: 'Workspace',
           childParams: {
             parentId: 'owner',

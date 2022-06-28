@@ -25,7 +25,7 @@ const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => asy
     mainNavNavigate('Workspace', {
       filter: FilterId.root,
       parentId: FilterId.root,
-      title: I18n.t('workspace'),
+      title: I18n.t('workspace.tabName'),
       childRoute: 'Workspace',
       childParams: { parentId, filter: FilterId.shared, title: name },
     });
@@ -45,7 +45,7 @@ const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => asy
     mainNavNavigate('Workspace', {
       filter: FilterId.root,
       parentId: FilterId.root,
-      title: I18n.t('workspace'),
+      title: I18n.t('workspace.tabName'),
       childRoute: 'WorkspaceDetails',
       childParams: { item, title: name },
     });

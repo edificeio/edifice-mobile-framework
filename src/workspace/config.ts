@@ -4,7 +4,7 @@ import FunctionalModuleConfig from '~/infra/moduleTool';
 export default new FunctionalModuleConfig({
   name: 'workspace',
   apiName: 'Espace documentaire',
-  displayName: 'workspace',
+  displayName: 'workspace.tabName',
   picture: { type: 'NamedSvg', name: 'files', fill: theme.palette.complementary.red.regular },
   group: true,
   notifHandlerFactory: async () => {

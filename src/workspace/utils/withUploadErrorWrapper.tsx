@@ -37,10 +37,10 @@ function withUploadErrorWrapper<T extends object>(
                 <View style={styles.title}>
                   <Icon name="warning" size={18} color={CommonStyles.orangeColorTheme} />
                 </View>
-                <TextBold>{I18n.t('workspace-quota-overflowTitle')}</TextBold>
+                <TextBold>{I18n.t('workspace.quota.overflowTitle')}</TextBold>
               </DialogTitle>
               <View style={styles.overflowText}>
-                <Text>{I18n.t('workspace-quota-overflowText')}</Text>
+                <Text>{I18n.t('workspace.quota.overflowText')}</Text>
               </View>
               <DialogButtonOk label={I18n.t('common-ok')} onPress={() => this.props.resetError()} />
             </DialogContainer>

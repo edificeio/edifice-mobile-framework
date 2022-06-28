@@ -174,11 +174,7 @@ export const uploadDocumentAction =
       });
     } catch (e) {
       if (e && e?.response && e.response.body === `{"error":"file.too.large"}`) {
-        Toast.show(I18n.t('workspace-quota-overflowText'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
-        });
+        Toast.show(I18n.t('workspace.quota.overflowText'));
       }
     }
   };
