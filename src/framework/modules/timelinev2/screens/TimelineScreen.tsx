@@ -30,6 +30,7 @@ import { INotifications_State } from '~/framework/modules/timelinev2/reducer/not
 import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
 import { notificationsService } from '~/framework/modules/timelinev2/service';
 import { getTimelineWorkflows } from '~/framework/modules/timelinev2/timelineModules';
+import { openUrl } from '~/framework/util/linking';
 import {
   IAbstractNotification,
   IResourceUriNotification,
@@ -298,10 +299,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   async doOpenNotification(n: IResourceUriNotification) {
     const fallbackHandleNotificationAction: NotifHandlerThunkAction = n => async (dispatch, getState) => {
-      isResourceUriNotification(n) &&
-        this.props.navigation.navigate('timeline/goto', {
-          notification: n as IResourceUriNotification,
-        });
+      isResourceUriNotification(n) && openUrl((n as IResourceUriNotification).resource.uri);
       return { managed: 1 };
     };
     this.props.handleOpenNotification &&

@@ -11,6 +11,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
 import { IAbstractNotification, ITimelineNotification, getAsResourceUriNotification } from '.';
+import { openUrl } from '../linking';
 
 // Module Map
 
@@ -103,9 +104,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     if ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) {
       /**/ // #44727 tmp fix. Copied from timelineRedirection.
       trackCategory && Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
-      mainNavNavigate('timeline/goto', {
-        notification: notifWithUri,
-      });
+      openUrl(notifWithUri.resource.uri);
       return { managed: 1 };
     } else {
       /**/ // #44727 tmp fix. Copied from timelineRedirection.

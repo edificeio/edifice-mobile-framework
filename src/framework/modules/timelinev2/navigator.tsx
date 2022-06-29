@@ -7,7 +7,6 @@ import { addViewTrackingToStackRoutes } from '~/framework/util/tracker/withViewT
 import moduleConfig from './moduleConfig';
 import FiltersScreen from './screens/TimelineFiltersScreen';
 import TimelineScreen from './screens/TimelineScreen';
-import WebViewScreen from './screens/TimelineWebViewScreen';
 import { timelineSubModules } from './timelineModules';
 
 const namespaceTimelineSubModules = (rmap: RouteMap) => {
@@ -27,9 +26,6 @@ export default () => {
       ...addViewTrackingToStackRoutes({
         [`${moduleConfig.routeName}`]: {
           screen: TimelineScreen,
-        },
-        [`${moduleConfig.routeName}/goto`]: {
-          screen: WebViewScreen,
         },
         [`${moduleConfig.routeName}/filters`]: {
           screen: FiltersScreen,

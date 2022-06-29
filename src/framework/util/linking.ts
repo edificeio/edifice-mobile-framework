@@ -5,7 +5,7 @@
 import I18n from 'i18n-js';
 import { Alert, Linking } from 'react-native';
 
-import { getIsUrlSignable } from '~/infra/oauth';
+import { getIsUrlSignable, transformedSrc } from '~/infra/oauth';
 
 import { IUserSession, getUserSession } from './session';
 
@@ -42,14 +42,19 @@ export async function openUrl(
       throw new Error('openUrl : no url provided.');
     }
     // 1. compute url redirection if function provided
-    if (getIsUrlSignable(url)) {
-      const customToken = await session.oauth.getQueryParamToken();
-      if (customToken) {
-        // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
-        const urlObj = new URL(url);
-        urlObj.searchParams.append('queryparam_token', customToken);
-        url = urlObj.href;
+    url = transformedSrc(url);
+    try {
+      if (getIsUrlSignable(url)) {
+        const customToken = await session.oauth.getQueryParamToken();
+        if (customToken) {
+          // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
+          const urlObj = new URL(url);
+          urlObj.searchParams.append('queryparam_token', customToken);
+          url = urlObj.href;
+        }
       }
+    } catch (e) {
+      // DO nothing. We just don't have customToken.
     }
     const finalUrl: string = url;
     // 2. Show confirmation
