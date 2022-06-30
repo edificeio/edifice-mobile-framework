@@ -1,5 +1,5 @@
 {
-  "last": "2022-06-28T19:42:32",
-  "notes": "Merge branch 'dev/1.8.0' into dev/1.8.1\nchore(push): MB-736, react-nattive-firebase downgrade\nrelease: 1.8.0-rc.6(1080016)",
+  "last": "2022-06-29T12:10:33",
+  "notes": "release: 1.8.0-rc.7(1080017)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
