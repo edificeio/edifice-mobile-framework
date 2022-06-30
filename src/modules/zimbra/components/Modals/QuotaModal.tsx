@@ -44,7 +44,7 @@ export const ModalStorageWarning = ({ isVisible, closeModal }: { isVisible: bool
       </View>
       <View style={styles.actionsButtonsContainer}>
         <ModalContentBlock style={styles.row}>
-          <DialogButtonOk label={I18n.t('common.ok')} onPress={() => closeModal()} />
+          <DialogButtonOk label={I18n.t('common.ok')} onPress={closeModal} />
         </ModalContentBlock>
       </View>
     </ModalContent>

@@ -52,7 +52,7 @@ export const ModalPermanentDelete = ({
       </View>
       <View style={styles.actionsButtonsContainer}>
         <ModalContentBlock style={styles.row}>
-          <DialogButtonCancel onPress={() => closeModal()} />
+          <DialogButtonCancel onPress={closeModal} />
           <DialogButtonOk label={I18n.t('delete')} onPress={() => actionsDeleteSuccess(deleteModal.mailsIds)} />
         </ModalContentBlock>
       </View>

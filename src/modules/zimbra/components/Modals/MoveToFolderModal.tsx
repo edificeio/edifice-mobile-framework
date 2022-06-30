@@ -134,7 +134,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
             </ScrollView>
             <View style={styles.actionsButtonsContainer}>
               <DialogButtonOk label={I18n.t('zimbra-move')} onPress={confirm} />
-              <DialogButtonCancel onPress={() => closeModal()} />
+              <DialogButtonCancel onPress={closeModal} />
             </View>
           </View>
         </ModalContent>

@@ -177,12 +177,7 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
   return (
     <View style={styles.userOrGroupSearchContainer}>
       <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-      <Input
-        value={search}
-        onChangeText={updateSearch}
-        onSubmit={() => inputValidateAction()}
-        onBlur={() => inputValidateAction(true)}
-      />
+      <Input value={search} onChangeText={updateSearch} onSubmit={inputValidateAction} onBlur={() => inputValidateAction(true)} />
       <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
     </View>
   );

@@ -18,9 +18,6 @@ import { CenterPanel, Header, LeftPanel, PageContainer } from '~/ui/ContainerCon
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const styles = StyleSheet.create({
-  fullView: {
-    flex: 1,
-  },
   fullGrowView: {
     flexGrow: 1,
     paddingVertical: 5,
@@ -35,23 +32,17 @@ const styles = StyleSheet.create({
   containerMailSelected: {
     backgroundColor: theme.palette.primary.light,
   },
-  mailInfos: {
+  mailInfoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'flex-end',
+    width: '100%',
+    justifyContent: 'space-between',
   },
-  mailInfoSender: {
-    flex: 1,
+  displayNameText: {
+    flexShrink: 1,
+    marginRight: 4,
   },
   greyColor: {
     color: theme.palette.grey.stone,
-  },
-  subjectText: {
-    flex: 1,
-    color: theme.palette.grey.stone,
-  },
-  attachmentIcon: {
-    alignSelf: 'flex-end',
   },
   shadow: {
     elevation: 4,
@@ -123,14 +114,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   }
 
-  hasShadow = isShadow => {
-    return isShadow ? styles.shadow : null;
-  };
-
-  containerStyle = isChecked => {
-    return !isChecked ? null : styles.containerMailSelected;
-  };
-
   selectItem = mailInfos => {
     mailInfos.isChecked = !mailInfos.isChecked;
 
@@ -143,7 +126,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     this.props.selectMails();
   };
 
-  renderMailContent = mailInfos => {
+  openMail = mailInfos => {
     if (mailInfos.state === 'DRAFT' && mailInfos.systemFolder === 'DRAFT') {
       this.props.navigation.navigate('newMail', {
         type: DraftType.DRAFT,
@@ -168,50 +151,58 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   };
 
-  renderDateFormat = (mailDate: moment.Moment) => {
-    if (mailDate.year() < moment().year()) {
-      return mailDate.calendar();
+  getDisplayName = (mail: IMail) => {
+    if (mail.systemFolder === 'INBOX') {
+      const sender = mail.displayNames.find(item => item[0] === mail.from);
+      return sender ? sender[1] : I18n.t('zimbra-unknown');
     }
-    return mailDate.format('D MMM');
+    const recipient = mail.displayNames.find(item => item[0] === mail.to[0]);
+    return recipient ? recipient[1] : I18n.t('zimbra-unknown');
   };
 
-  private renderMailItemInfos(mailInfos) {
-    let contact = ['', ''];
-    if (mailInfos.systemFolder === 'INBOX') contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
-    else contact = mailInfos.displayNames.find(item => item[0] === mailInfos.to[0]);
-    if (contact === undefined) contact = ['', I18n.t('zimbra-unknown')];
+  formatDate = (date: moment.Moment) => {
+    if (date.year() < moment().year()) {
+      return date.calendar();
+    }
+    return date.format('D MMM');
+  };
+
+  private renderMail(mail) {
+    const displayName = this.getDisplayName(mail);
+    const date = this.formatDate(mail.date);
+    const selectMail = () => this.selectItem(mail);
+    const onPressMail = () => {
+      if (this.props.isHeaderSelectVisible) {
+        selectMail();
+      } else {
+        this.openMail(mail);
+      }
+    };
     return (
-      <TouchableOpacity
-        onPress={() => {
-          if (!this.props.isHeaderSelectVisible) {
-            this.renderMailContent(mailInfos);
-          } else this.selectItem(mailInfos);
-        }}
-        onLongPress={() => this.selectItem(mailInfos)}>
-        <Header style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
+      <TouchableOpacity onPress={onPressMail} onLongPress={selectMail}>
+        <Header style={[styles.containerMail, mail.isChecked && styles.containerMailSelected, mail.unread && styles.shadow]}>
           <LeftPanel>
-            {mailInfos.unread && <Icon name="mail" size={18} color={theme.palette.secondary.regular} />}
-            <SingleAvatar userId={mailInfos.from} />
+            {mail.unread && <Icon name="mail" size={18} color={theme.palette.secondary.regular} />}
+            <SingleAvatar userId={mail.from} />
           </LeftPanel>
           <CenterPanel>
-            <View style={styles.mailInfos}>
-              {contact &&
-                (mailInfos.unread ? (
-                  <TextBold style={styles.mailInfoSender} numberOfLines={1}>
-                    {contact[1]}
-                  </TextBold>
-                ) : (
-                  <Text style={styles.mailInfoSender} numberOfLines={1}>
-                    {contact[1]}
-                  </Text>
-                ))}
-              <Text style={styles.greyColor}>{this.renderDateFormat(moment(mailInfos.date))}</Text>
+            <View style={styles.mailInfoRow}>
+              {mail.unread ? (
+                <TextBold style={styles.displayNameText} numberOfLines={1}>
+                  {displayName}
+                </TextBold>
+              ) : (
+                <Text style={styles.displayNameText} numberOfLines={1}>
+                  {displayName}
+                </Text>
+              )}
+              <Text style={styles.greyColor}>{date}</Text>
             </View>
-            <View style={styles.mailInfos}>
-              <Text style={styles.subjectText} numberOfLines={1}>
-                {mailInfos.subject}
+            <View style={styles.mailInfoRow}>
+              <Text style={styles.greyColor} numberOfLines={1}>
+                {mail.subject}
               </Text>
-              {mailInfos.hasAttachment && <Icon style={styles.attachmentIcon} name="attached" size={18} color="black" />}
+              {mail.hasAttachment ? <Icon name="attached" size={18} color="black" /> : null}
             </View>
           </CenterPanel>
         </Header>
@@ -236,21 +227,15 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   public render() {
     const { isFetching, firstFetch } = this.props;
-    const uniqueId = [];
-    const uniqueMails = this.state.mails.filter((mail: IMail) => {
-      // @ts-ignore
-      if (uniqueId.indexOf(mail.id) === -1) {
-        // @ts-ignore
-        uniqueId.push(mail.id);
-        return true;
-      }
+    const uniqueMails = this.state.mails.filter((mail: IMail, index, self) => {
+      return index === self.indexOf(mail);
     });
     return (
       <PageContainer>
         <FlatList
           contentContainerStyle={styles.fullGrowView}
-          data={uniqueMails.length > 0 ? uniqueMails : []}
-          renderItem={({ item }) => this.renderMailItemInfos(item)}
+          data={uniqueMails}
+          renderItem={({ item }) => this.renderMail(item)}
           extraData={uniqueMails}
           keyExtractor={(item: IMail) => item.id}
           refreshControl={<RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />}
@@ -266,13 +251,11 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             isFetching && firstFetch ? (
               <LoadingIndicator />
             ) : (
-              <View style={styles.fullView}>
-                <EmptyScreen
-                  svgImage="empty-conversation"
-                  title={I18n.t('zimbra-empty-mailbox-title')}
-                  text={I18n.t('zimbra-empty-mailbox-text')}
-                />
-              </View>
+              <EmptyScreen
+                svgImage="empty-conversation"
+                title={I18n.t('zimbra-empty-mailbox-title')}
+                text={I18n.t('zimbra-empty-mailbox-text')}
+              />
             )
           }
         />
