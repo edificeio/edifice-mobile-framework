@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import theme from '~/app/theme';
@@ -15,7 +15,6 @@ import { DraftType } from '~/modules/zimbra/containers/NewMail';
 import { IMail } from '~/modules/zimbra/state/mailContent';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, Header, LeftPanel, PageContainer } from '~/ui/ContainerContent';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const styles = StyleSheet.create({

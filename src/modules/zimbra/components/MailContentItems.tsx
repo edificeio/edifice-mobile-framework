@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -16,7 +16,6 @@ import { getUserColor } from '~/modules/zimbra/utils/userColor';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { ButtonIcon } from '~/ui/ButtonIconText';
 import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from './MailItem';
 

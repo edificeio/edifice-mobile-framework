@@ -1,8 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';

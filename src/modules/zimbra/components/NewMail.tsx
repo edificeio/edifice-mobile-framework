@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
 import theme from '~/app/theme';
@@ -12,7 +12,6 @@ import Notifier from '~/infra/notifier/container';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
 import { Attachment } from './Attachment';

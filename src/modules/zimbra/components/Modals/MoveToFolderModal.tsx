@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';

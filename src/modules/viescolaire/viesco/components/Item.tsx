@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { CommonStyles } from '~/styles/common/styles';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const styleConstant = StyleSheet.create({
   container: {

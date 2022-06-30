@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import theme from '~/app/theme';
@@ -18,7 +18,6 @@ import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolair
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/Dashboard';
 import { INavigationProps } from '~/types';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { viescoTheme } from '../utils/viescoTheme';
 

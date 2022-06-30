@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';

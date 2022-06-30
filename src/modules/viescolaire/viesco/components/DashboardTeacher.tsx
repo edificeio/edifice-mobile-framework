@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import theme from '~/app/theme';

@@ -1,8 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -12,7 +11,6 @@ import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import { viescoTheme } from '../../viesco/utils/viescoTheme';

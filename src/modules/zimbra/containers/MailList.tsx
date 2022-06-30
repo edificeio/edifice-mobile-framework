@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { withNavigationFocus } from 'react-navigation';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
@@ -8,9 +8,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction } from '~/framework/components/header';
+import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextSizeStyle } from '~/framework/components/text';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
@@ -37,10 +36,6 @@ import { IInit } from './DrawerMenu';
 // STYLE
 
 const styles = StyleSheet.create({
-  selectedMailsNumberText: {
-    ...TextSizeStyle.SlightBig,
-    color: theme.palette.grey.white,
-  },
   headerContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -48,9 +43,6 @@ const styles = StyleSheet.create({
   },
   headerIconsSpace: {
     marginRight: 20,
-  },
-  headerRightIconSpace: {
-    marginRight: 10,
   },
 });
 
@@ -325,64 +317,42 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     ];
   };
 
-  renderSelectedTrashMailsHeader = () => {
-    return (
-      <>
-        <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
-          <FakeHeader_Row>
-            <HeaderBackAction onPress={() => this.onUnselectListMails()} />
-            <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
-            <View style={styles.headerContainer}>
-              <TouchableOpacity onPress={() => this.restoreSelectedMails()}>
-                <Icon name="delete-restore" size={24} color="white" style={styles.headerIconsSpace} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.deleteSelectedMails()}>
-                <Icon name="delete" size={24} color="white" style={styles.headerRightIconSpace} />
-              </TouchableOpacity>
-            </View>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
-
-        <ModalPermanentDelete
-          deleteModal={this.state.deleteModal}
-          closeModal={this.closeDeleteModal}
-          actionsDeleteSuccess={this.actionsDeleteSuccess}
-        />
-      </>
+  renderSelectedMailsActions = () => {
+    const { navigation } = this.props;
+    const isTrash = navigation.getParam('isTrashed') || navigation.state.routeName === 'trash';
+    return isTrash ? (
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={this.restoreSelectedMails}>
+          <Icon name="delete-restore" size={24} color="white" style={styles.headerIconsSpace} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.deleteSelectedMails}>
+          <Icon name="delete" size={24} color="white" style={styles.headerIconsSpace} />
+        </TouchableOpacity>
+      </View>
+    ) : (
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={this.markSelectedMailsAsUnread}>
+          <Icon name={this.checkMailReadState() ? 'email' : 'email-open'} size={24} color="white" style={styles.headerIconsSpace} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.showMenu}>
+          <Icon name="more_vert" size={24} color="white" style={styles.headerIconsSpace} />
+        </TouchableOpacity>
+      </View>
     );
   };
 
-  renderSelectedMailsHeader = () => {
-    return (
-      <>
-        <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
-          <FakeHeader_Row>
-            <HeaderBackAction onPress={() => this.onUnselectListMails()} />
-            <Text style={styles.selectedMailsNumberText}>{this.getListSelectedMails().length}</Text>
-            <View style={styles.headerContainer}>
-              <TouchableOpacity onPress={() => this.markSelectedMailsAsUnread()}>
-                {this.checkMailReadState() ? (
-                  <Icon name="email" size={24} color="white" style={styles.headerIconsSpace} />
-                ) : (
-                  <Icon name="email-open" size={24} color="white" style={styles.headerIconsSpace} />
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.showMenu}>
-                <Icon name="more_vert" size={24} color="white" style={styles.headerRightIconSpace} />
-              </TouchableOpacity>
-            </View>
-          </FakeHeader_Row>
-        </FakeHeader_Container>
-
-        <MoveModal
-          mail={this.getListSelectedMails()}
-          show={this.state.isShownMoveModal}
-          closeModal={this.closeMoveModal}
-          successCallback={this.mailsMoved}
-        />
-      </>
-    );
-  };
+  renderSelectedMailsHeader = () => (
+    <View>
+      <StatusBar barStyle="light-content" backgroundColor={theme.palette.secondary.regular} />
+      <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
+        <FakeHeader_Row>
+          <HeaderBackAction onPress={this.onUnselectListMails} />
+          <HeaderTitle>{this.getListSelectedMails().length}</HeaderTitle>
+          {this.renderSelectedMailsActions()}
+        </FakeHeader_Row>
+      </FakeHeader_Container>
+    </View>
+  );
 
   // ------------------------------------------------------------------------------------------------
 
@@ -391,11 +361,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     return (
       <>
         <PageContainer>
-          {this.state.isHeaderSelectVisible &&
-            (navigation.getParam('isTrashed') || navigation.state.routeName === 'trash'
-              ? this.renderSelectedTrashMailsHeader()
-              : this.renderSelectedMailsHeader())}
-
+          {this.state.isHeaderSelectVisible && this.renderSelectedMailsHeader()}
           <MailList
             {...this.props}
             setMails={this.setMails}
@@ -423,6 +389,17 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             closeModal={() => this.setState({ isShownStorageWarning: false })}
           />
         )}
+        <ModalPermanentDelete
+          deleteModal={this.state.deleteModal}
+          closeModal={this.closeDeleteModal}
+          actionsDeleteSuccess={this.actionsDeleteSuccess}
+        />
+        <MoveModal
+          mail={this.getListSelectedMails()}
+          show={this.state.isShownMoveModal}
+          closeModal={this.closeMoveModal}
+          successCallback={this.mailsMoved}
+        />
       </>
     );
   }

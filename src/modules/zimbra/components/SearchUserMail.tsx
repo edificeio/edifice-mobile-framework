@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList, StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';

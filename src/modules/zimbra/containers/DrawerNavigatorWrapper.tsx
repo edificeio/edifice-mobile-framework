@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { NavigationDrawerScreenProps, createDrawerNavigator } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
@@ -10,7 +10,6 @@ import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import DrawerMenuContainer from './DrawerMenu';
 import MailList from './MailList';

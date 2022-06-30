@@ -1,8 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';

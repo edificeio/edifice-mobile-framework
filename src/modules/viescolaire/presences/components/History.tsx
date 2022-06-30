@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 
 import { LoadingIndicator } from '~/framework/components/loading';

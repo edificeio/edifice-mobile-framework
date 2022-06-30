@@ -2,8 +2,7 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { useState } from 'react';
-import { FlexAlignType, StyleSheet, View } from 'react-native';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList, FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';

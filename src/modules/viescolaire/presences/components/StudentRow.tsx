@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-swipeable';
 
 import theme from '~/app/theme';
@@ -7,7 +7,6 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { INavigationProps } from '~/types';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
