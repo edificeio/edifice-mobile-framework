@@ -266,7 +266,7 @@ export const defaultTheme: ThemeInitializer = {
       shadowColor: '#000',
       background: {
         card: this.palette.grey.white,
-        empty: this.palette.grey.white,
+        empty: this.palette.grey.fog,
         page: this.palette.grey.fog,
       },
       border: {
