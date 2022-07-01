@@ -21,13 +21,7 @@ const width = () => {
 };
 
 const styles = StyleSheet.create({
-  unavailableImageContainer: {
-    width: width(),
-    height: height(),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  renderImageContainer: {
+  iconContainer: {
     width: width(),
     height: height(),
     justifyContent: 'center',
@@ -36,7 +30,7 @@ const styles = StyleSheet.create({
 });
 
 const UnavailableImage = () => (
-  <View style={styles.unavailableImageContainer}>
+  <View style={styles.iconContainer}>
     <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_200} name="picture" />
   </View>
 );
@@ -114,38 +108,15 @@ const getIcon = (id: string | null, isFolder: boolean, pName: string | null, con
   return 'file-document-outline';
 };
 
-export const renderSmallIcon = (id: string | null, isFolder: boolean, name: string, contentType: string | undefined): any => {
-  const icon = getIcon(id, isFolder, name, contentType);
-
-  if (icon) {
-    return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_30} name={icon} />;
-  } else {
-    // @ts-ignore
-    const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
-    const style = { width: layoutSize.LAYOUT_30, height: layoutSize.LAYOUT_30 };
-    return (
-      // resizeRatio === contain by default
-      <ImageOptional
-        style={style}
-        imageComponent={Image}
-        errorComponent={<UnavailableIcon />}
-        source={DEPRECATED_signImageURISource(uri)}
-      />
-    );
-  }
-};
-
 export const renderIcon = (id: string | null, isFolder: boolean, name: string, contentType: string | undefined): any => {
   const icon = getIcon(id, isFolder, name, contentType);
 
   if (icon) {
     return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_50} name={icon} />;
   } else {
-    // @ts-ignore
     const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
     const style = { width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50 };
     return (
-      // resizeRatio === contain by default
       <ImageOptional
         style={style}
         imageComponent={Image}
@@ -162,7 +133,7 @@ export const renderImage = (item: IFile, isFolder: boolean, name: string): any =
 
   if (icon) {
     return (
-      <View style={styles.renderImageContainer}>
+      <View style={styles.iconContainer}>
         <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon} />
       </View>
     );

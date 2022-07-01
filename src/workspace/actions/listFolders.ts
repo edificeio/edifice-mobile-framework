@@ -8,8 +8,6 @@ import config from '~/workspace/config';
 
 import { formatResults } from './helpers/formatListFolders';
 
-// ACTION LIST ------------------------------------------------------------------------------------
-
 const WORKSPACE_FOLDER = '/workspace/folders/list?filter=owner&hierarchical=true';
 
 export const actionTypesFolder = asyncActionTypes(config.createActionType(WORKSPACE_FOLDER));

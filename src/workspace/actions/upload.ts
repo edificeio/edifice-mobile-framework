@@ -1,4 +1,3 @@
-// require the module
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { Platform } from 'react-native';
 
@@ -8,8 +7,6 @@ import config from '~/workspace/config';
 import { ContentUri } from '~/workspace/types';
 
 import { uploadDocumentAction } from './helpers/documents';
-
-// ACTION UPLOAD ------------------------------------------------------------------------------------
 
 export const actionTypesUpload = asyncActionTypes(config.createActionType('WORKSPACE_UPLOAD'));
 

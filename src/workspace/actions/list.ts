@@ -11,8 +11,6 @@ import { FilterId, IFiltersParameters, IFolder, IItems } from '~/workspace/types
 import { formatResults } from './helpers/documents';
 import { factoryRootFolder } from './helpers/factoryRootFolder';
 
-// GET -----------------------------------------------------------------------------------------
-
 const formatParameters = (parameters = {}) => {
   let result = '?';
   (parameters as { includeall: string }).includeall = 'true';
@@ -49,8 +47,6 @@ const getRootFolders: () => IItems<IFolder> = () => {
   return result;
 };
 
-// ACTION LIST ------------------------------------------------------------------------------------
-
 export const actionTypesList = asyncActionTypes(config.createActionType('/workspace/list'));
 
 /**
@@ -64,14 +60,6 @@ export function listAction(payload: IFiltersParameters) {
     if (parentId === FilterId.root) {
       return getRootFolders();
     }
-    /*
-    const [dataFolders, dataDocuments] = await Promise.all([getFolders(payload), getDocuments(payload)]);
-
-    return {
-      ...dataFolders,
-      ...dataDocuments,
-    };
-    */
     return await getDocuments(payload); // Now getDocuments returns folders too
   });
 }

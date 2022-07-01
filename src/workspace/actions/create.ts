@@ -1,4 +1,3 @@
-// ACTION LIST ------------------------------------------------------------------------------------
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
@@ -37,12 +36,4 @@ export function createFolderAction(name: string, parentId?: string) {
       return dispatch({ type: actionTypesCreateFolder.fetchError, e, payload });
     }
   };
-
-  //   return asyncActionFactory(
-  //     WORKSPACE_FOLDER,
-  //     parentId === "owner" ? { name, parentId } : { name, parentId, parentFolderId: parentId },
-  //     actionTypesCreateFolder,
-  //     formatResults,
-  //     { method: "post", formData: true }
-  //   );
 }

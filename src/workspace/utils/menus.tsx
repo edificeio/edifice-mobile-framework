@@ -1,6 +1,5 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform } from 'react-native';
 
 import { Trackers } from '~/framework/util/tracker';
 import { FilePicker } from '~/infra/filePicker';
@@ -8,51 +7,41 @@ import { createFolderAction } from '~/workspace/actions/create';
 import { deleteAction, trashAction } from '~/workspace/actions/delete';
 import { downloadAndSaveAction } from '~/workspace/actions/download';
 import { listAction } from '~/workspace/actions/list';
+import { moveAction } from '~/workspace/actions/move';
+import { pastAction } from '~/workspace/actions/past';
 import { renameAction } from '~/workspace/actions/rename';
 import { restoreAction } from '~/workspace/actions/restore';
 import { uploadAction } from '~/workspace/actions/upload';
 import { ContentUri, FilterId } from '~/workspace/types';
 
-import { copyDocuments, moveDocuments } from './copypast';
-
-export const addMenu = () => {
-  return {
-    text: I18n.t('add-file'),
-    icon: 'file-plus',
-    id: 'addDocument',
-    // onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
-    wrapper: ({ children, dispatch, parentId, filter }) => (
-      <FilePicker
-        multiple
-        callback={async file => {
-          const convertedFile: ContentUri = {
-            mime: file.type,
-            name: file.fileName,
-            uri: file.uri,
-            path: file.uri,
-          };
-          await dispatch(uploadAction(parentId, convertedFile));
-          await dispatch(
-            listAction(
-              parentId && filter
-                ? { parentId, filter }
-                : parentId
-                ? { parentId }
-                : { filter: FilterId.owner, parentId: FilterId.owner },
-            ),
-          );
-        }}>
-        {children}
-      </FilePicker>
-    ),
-  };
-};
-
-export const backMenu = () => ({
-  text: 'Back',
-  icon: Platform.OS === 'ios' ? 'chevron-left1' : 'back',
-  id: 'back',
-  onEvent: () => null,
+export const addMenu = () => ({
+  text: I18n.t('add-file'),
+  icon: 'file-plus',
+  id: 'addDocument',
+  wrapper: ({ children, dispatch, parentId, filter }) => (
+    <FilePicker
+      multiple
+      callback={async file => {
+        const convertedFile: ContentUri = {
+          mime: file.type,
+          name: file.fileName,
+          uri: file.uri,
+          path: file.uri,
+        };
+        await dispatch(uploadAction(parentId, convertedFile));
+        await dispatch(
+          listAction(
+            parentId && filter
+              ? { parentId, filter }
+              : parentId
+              ? { parentId }
+              : { filter: FilterId.owner, parentId: FilterId.owner },
+          ),
+        );
+      }}>
+      {children}
+    </FilePicker>
+  ),
 });
 
 export const createMenu = () => ({
@@ -105,7 +94,7 @@ export const downloadMenu = () => ({
     title: I18n.t('download-documents'),
     okLabel: I18n.t('download'),
   },
-  onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAndSaveAction(selected)),
+  onEvent: ({ dispatch, selected }) => dispatch(downloadAndSaveAction(selected)),
 });
 
 export const restoreMenu = () => ({
@@ -125,7 +114,7 @@ export const copyMenu = () => ({
     okLabel: I18n.t('copy'),
     selectDestination: true,
   },
-  onEvent: params => copyDocuments(params),
+  onEvent: ({ dispatch, selected, value }) => dispatch(pastAction(value, selected)),
 });
 
 export const moveMenu = () => ({
@@ -138,7 +127,7 @@ export const moveMenu = () => ({
     okLabel: I18n.t('move'),
     selectDestination: true,
   },
-  onEvent: params => moveDocuments(params),
+  onEvent: ({ dispatch, parentId, selected, value }) => dispatch(moveAction(value, parentId, selected)),
 });
 
 export const renameMenu = () => ({

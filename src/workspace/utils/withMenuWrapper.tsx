@@ -20,8 +20,6 @@ import { IItems } from '~/workspace/reducers/select';
 import { IFile, IItem } from '~/workspace/types';
 import { FilterId } from '~/workspace/types/filters';
 
-import { nbItems } from './index';
-
 const styles = StyleSheet.create({
   actionContainer: {
     justifyContent: 'center',
@@ -61,6 +59,11 @@ export type IState = {
   dialogVisible: boolean;
   selectedMenuItem: IMenuItem;
 };
+
+function nbItems(items) {
+  if (!items) return 0;
+  return Object.keys(items).length;
+}
 
 function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
   return class extends React.PureComponent<T, IState> {

@@ -1,4 +1,3 @@
-// ACTION LIST ------------------------------------------------------------------------------------
 import { Trackers } from '~/framework/util/tracker';
 import { asyncActionFactory } from '~/infra/actions/asyncActionFactory';
 import { getExtension } from '~/infra/actions/downloadHelper';
