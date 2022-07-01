@@ -411,10 +411,15 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   getMailData = () => {
     let { mail, prevBody, signature, isNewSignature } = this.state;
+    const draftType = this.props.navigation.getParam('type');
     const regexp = /(\r\n|\n|\r)/gm;
 
     mail.body = mail.body.replace(regexp, '<br>');
-    prevBody = prevBody?.replace(/(<br>|<br \/>)/gs, '\n');
+    if (draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL) {
+      prevBody = prevBody?.replace('\n', '<br />');
+    } else {
+      prevBody = prevBody?.replace(/(<br>|<br \/>)/gs, '\n');
+    }
     if (prevBody === undefined) {
       prevBody = '';
     }
@@ -426,7 +431,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         ret[key] = value.map(user => user.id);
       } else if (key === 'body') {
         if (signature.text !== '' && (signature.useGlobal || isNewSignature)) {
-          const draftType = this.props.navigation.getParam('type');
           if (draftType === DraftType.DRAFT) {
             ret[key] = value + prevBody;
           } else {
