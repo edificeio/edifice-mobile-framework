@@ -10,9 +10,10 @@ import { ResourceView } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import ScrollView from '~/framework/components/scrollView';
-import { FontStyle, Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
-import { TextAvatar } from '~/framework/components/textAvatar';
+import { Text, TextBold, TextItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { displayPastDate } from '~/framework/util/date';
 import { IUserSession } from '~/framework/util/session';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '../reducer';
 import { hasResendRight } from '../rights';
@@ -87,33 +88,51 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                         borderBottomWidth: isLastItem ? 0 : 1,
                         borderBottomColor: theme.palette.grey.cloudy,
                       }}>
-                      <TextAvatar isHorizontal size={24} userId={item.owner} text={item.ownerName} />
-                      <View style={{ marginLeft: UI_SIZES.spacing.large }}>
-                        <Text
-                          numberOfLines={acknowledgedByTextMaxLines}
-                          style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
-                          {acknowledgedByString(item.acknowledgments)}
-                        </Text>
-                        {item.responses?.map(response => (
-                          <View
-                            style={{
-                              backgroundColor: theme.palette.grey.fog,
-                              borderRadius: UI_SIZES.radius.medium,
-                              borderWidth: 1,
-                              borderColor: theme.palette.grey.cloudy,
-                              padding: UI_SIZES.spacing.minor,
-                              marginTop: UI_SIZES.spacing.tiny,
-                            }}>
-                            <TextAvatar
-                              isHorizontal
-                              size={24}
-                              userId={response.owner}
-                              text={response.parentName}
-                              textStyle={{ ...FontStyle.SemiBold, ...TextSizeStyle.Small }}
-                            />
-                            <Text style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.large }}>{response.comment}</Text>
-                          </View>
-                        ))}
+                      <View style={{ flexDirection: 'row' }}>
+                        <SingleAvatar size={24} userId={item.owner} />
+                        <View style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }}>
+                          <Text numberOfLines={1}>{item.ownerName}</Text>
+                          <Text
+                            numberOfLines={acknowledgedByTextMaxLines}
+                            style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
+                            {acknowledgedByString(item.acknowledgments)}
+                          </Text>
+                          {item.responses?.map((response, index) => {
+                            const isLastItem = item.responses && item.responses.length - 1 === index;
+                            return (
+                              <View
+                                style={{
+                                  backgroundColor: theme.palette.grey.fog,
+                                  borderRadius: UI_SIZES.radius.medium,
+                                  borderWidth: 1,
+                                  borderColor: theme.palette.grey.cloudy,
+                                  padding: UI_SIZES.spacing.minor,
+                                  marginVertical: UI_SIZES.spacing.tiny,
+                                  marginBottom: isLastItem ? 0 : UI_SIZES.spacing.tiny,
+                                }}>
+                                <View style={{ flexDirection: 'row' }}>
+                                  <SingleAvatar size={24} userId={response.owner} />
+                                  <View style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }}>
+                                    <View style={{ flexDirection: 'row' }}>
+                                      <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, flexShrink: 1 }}>
+                                        {response.parentName}
+                                      </TextSemiBold>
+                                      <TextItalic
+                                        style={{
+                                          ...TextSizeStyle.Small,
+                                          marginLeft: UI_SIZES.spacing.minor,
+                                          color: theme.palette.grey.graphite,
+                                        }}>
+                                        {displayPastDate(response.modified)}
+                                      </TextItalic>
+                                    </View>
+                                    <Text style={{ ...TextSizeStyle.Small }}>{response.comment}</Text>
+                                  </View>
+                                </View>
+                              </View>
+                            );
+                          })}
+                        </View>
                       </View>
                     </View>
                   );
