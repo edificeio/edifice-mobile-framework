@@ -4,47 +4,30 @@
  */
 import { asyncActionRawFactory } from '~/infra/actions/asyncActionFactory';
 import { asyncActionTypes, asyncGetJson } from '~/infra/redux/async';
-import { FilterId, IFiltersParameters, IFolder, IItems } from '~/modules/workspace/types';
+import { Filter, IFiltersParameters, IFolder, IItems } from '~/modules/workspace/types';
 import { IId } from '~/types';
 
 import { formatResults } from './helpers/documents';
 import { factoryRootFolder } from './helpers/factoryRootFolder';
 
-const formatParameters = (parameters = {}) => {
-  let result = '?';
-  (parameters as { includeall: string }).includeall = 'true';
-  for (const key in parameters) {
-    if (!(parameters as any)[key]) {
-      // skip empty parameters
-      continue;
-    }
-    if (key === 'parentId' && (parameters as any)[key] in FilterId) {
-      // its a root folder, no pass parentId
-      continue;
-    }
-    result = result.concat(`${key}=${(parameters as any)[key]}&`);
-  }
-  return result.slice(0, -1);
-};
-
-export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
-  return asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, formatResults);
-}
-
-export function getFolders(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
-  return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, formatResults);
-}
-
 const getRootFolders: () => IItems<IFolder> = () => {
-  const result = {} as IItems<IFolder>;
-
-  result[FilterId.owner] = factoryRootFolder(FilterId.owner);
-  result[FilterId.protected] = factoryRootFolder(FilterId.protected);
-  result[FilterId.shared] = factoryRootFolder(FilterId.shared);
-  result[FilterId.trash] = factoryRootFolder(FilterId.trash);
-
-  return result;
+  return {
+    [Filter.OWNER]: factoryRootFolder(Filter.OWNER),
+    [Filter.PROTECTED]: factoryRootFolder(Filter.PROTECTED),
+    [Filter.SHARED]: factoryRootFolder(Filter.SHARED),
+    [Filter.TRASH]: factoryRootFolder(Filter.TRASH),
+  };
 };
+
+function getDocuments(payload: IFiltersParameters): Promise<IItems<IId | string>> {
+  let params = `?filter=${payload.filter}`;
+
+  if (!Object.values(Filter).includes(payload.parentId as Filter)) {
+    params += `&parentId=${payload.parentId}`;
+  }
+  params += '&includeall=true';
+  return asyncGetJson(`/workspace/documents${params}`, formatResults);
+}
 
 export const actionTypesList = asyncActionTypes('WORKSPACE_LIST');
 
@@ -54,11 +37,9 @@ export const actionTypesList = asyncActionTypes('WORKSPACE_LIST');
  */
 export function listAction(payload: IFiltersParameters) {
   return asyncActionRawFactory(actionTypesList, payload, async () => {
-    const { parentId } = payload;
-
-    if (parentId === FilterId.root) {
+    if (payload.parentId === Filter.ROOT) {
       return getRootFolders();
     }
-    return await getDocuments(payload); // Now getDocuments returns folders too
+    return getDocuments(payload);
   });
 }

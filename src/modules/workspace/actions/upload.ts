@@ -1,17 +1,17 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { Platform } from 'react-native';
 
-import { createAsyncActionTypes } from '~/framework/util/redux/async';
 import { Trackers } from '~/framework/util/tracker';
+import { asyncActionTypes } from '~/infra/redux/async';
 import { ContentUri } from '~/modules/workspace/types';
 
 import { uploadDocumentAction } from './helpers/documents';
 
-export const actionTypesUpload = createAsyncActionTypes('WORKSPACE_UPLOAD');
+export const actionTypesUpload = asyncActionTypes('WORKSPACE_UPLOAD');
 
 export function uploadRequested(parentId) {
   return {
-    type: actionTypesUpload.request,
+    type: actionTypesUpload.requested,
     payload: {
       parentId,
     },
@@ -20,7 +20,7 @@ export function uploadRequested(parentId) {
 
 export function uploadReceived(parentId, data: any) {
   return {
-    type: actionTypesUpload.receipt,
+    type: actionTypesUpload.received,
     data,
     receivedAt: Date.now(),
     payload: {
@@ -31,7 +31,7 @@ export function uploadReceived(parentId, data: any) {
 
 export function uploadError(parentId, errmsg: string) {
   return {
-    type: actionTypesUpload.error,
+    type: actionTypesUpload.fetchError,
     error: true,
     errmsg,
     payload: {

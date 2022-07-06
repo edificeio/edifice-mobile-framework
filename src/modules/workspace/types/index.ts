@@ -1,13 +1,13 @@
 import { ContentUri } from '~/types/contentUri';
 
-import { FilterId, IFiltersParameters } from './filters';
+import { Filter, IFiltersParameters } from './filters';
 import { EVENT_TYPE, IActionProps, IDataItemsProps, IDetailsProps, IEventProps, IItemsProps, INavigationProps } from './props';
 import { IAsyncItems, IFile, IFolder, IItem, IItems, IState } from './states';
 
 export {
   ContentUri,
   EVENT_TYPE,
-  FilterId,
+  Filter,
   IFiltersParameters,
   IDataItemsProps,
   IItemsProps,

@@ -1,10 +1,10 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Text, TextSizeStyle } from '~/framework/components/text';
-import { EVENT_TYPE, IEventProps } from '~/modules/workspace/types';
+import { IEventProps } from '~/modules/workspace/types';
 import { renderIcon } from '~/modules/workspace/utils/image';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
@@ -30,23 +30,15 @@ const style = StyleSheet.create({
   },
 });
 
-export const WorkspaceFileListItem = ({ onEvent, item, selected, multiSelect }: IEventProps & any) => {
+export const WorkspaceFileListItem = ({ item, isSelected, onPressCallback, onLongPressCallback }: IEventProps & any) => {
   const { id, isFolder, name, date, ownerName = '', contentType } = item;
   const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
 
   return (
     <ListItem
-      onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
-      onPress={() => {
-        const previewEvent = { type: EVENT_TYPE.PREVIEW, item };
-        const selectEvent = { type: EVENT_TYPE.SELECT, id: item.id, item };
-        const eventInfos = Platform.select({
-          ios: isFolder || multiSelect ? selectEvent : previewEvent,
-          default: selectEvent,
-        });
-        onEvent(eventInfos);
-      }}
-      style={{ backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card }}
+      onPress={() => onPressCallback(item)}
+      onLongPress={() => onLongPressCallback(item)}
+      style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card }}
       borderBottomWidth={0}>
       <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>

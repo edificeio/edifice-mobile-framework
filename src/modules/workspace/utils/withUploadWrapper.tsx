@@ -26,13 +26,13 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
 
     private handleIntent() {
       const { navigation, dispatch } = this.props;
-      const filterId = navigation.getParam('filter');
+      const filter = navigation.getParam('filter');
       const parentId = navigation.getParam('parentId');
 
       // signal we are in owner workspace
-      setInOwnerWorkspace(filterId === 'owner');
+      setInOwnerWorkspace(filter === 'owner');
 
-      if (filterId === 'owner') {
+      if (filter === 'owner') {
         const { contentUri } = this.props;
 
         if (contentUri && contentUri.length) {

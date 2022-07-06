@@ -1,12 +1,12 @@
-export enum FilterId {
-  owner = 'owner',
-  shared = 'shared',
-  protected = 'protected',
-  root = 'root',
-  trash = 'trash',
+export enum Filter {
+  OWNER = 'owner',
+  PROTECTED = 'protected',
+  ROOT = 'root',
+  SHARED = 'shared',
+  TRASH = 'trash',
 }
 
 export interface IFiltersParameters {
-  filter?: FilterId;
-  parentId?: string;
+  filter: Filter;
+  parentId: string;
 }

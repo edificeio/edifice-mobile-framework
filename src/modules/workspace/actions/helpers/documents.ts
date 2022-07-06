@@ -183,8 +183,8 @@ export const uploadDocumentAction =
 //   const signedHeaders = getAuthHeader();
 //   const headers = { ...signedHeaders, "Content-Type": "multipart/form-data" };
 
-//   const parentIdParam = !!parentId && !Object.keys(FilterId).includes(parentId) ? `parentId=${parentId}&` : "";
-//   const protectedParam = parentId === FilterId.protected ? "protected=true&application=media-library&" : "";
+//   const parentIdParam = !!parentId && !Object.keys(Filter).includes(parentId) ? `parentId=${parentId}&` : "";
+//   const protectedParam = parentId === Filter.protected ? "protected=true&application=media-library&" : "";
 
 //   const url = `${Conf.currentPlatform.url}/workspace/document?${parentIdParam}${protectedParam}quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
 

@@ -12,7 +12,7 @@ import { listFoldersAction } from '~/modules/workspace/actions/listFolders';
 import { selectAction, selectClearAction } from '~/modules/workspace/actions/select';
 import { IItems } from '~/modules/workspace/reducers/select';
 import { IFile, IItem } from '~/modules/workspace/types';
-import { FilterId } from '~/modules/workspace/types/filters';
+import { Filter } from '~/modules/workspace/types/filters';
 import { EVENT_TYPE, IEvent } from '~/types/ievents';
 import { ConfirmDialog } from '~/ui/ConfirmDialog';
 import { FloatingAction } from '~/ui/FloatingButton/FloatingAction';
@@ -95,8 +95,8 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           } else {
             // navigate
             const { id: parentId, name: title, isFolder } = item;
-            const filterId = this.props.navigation.getParam('filter');
-            const filter = filterId === FilterId.root ? parentId : filterId;
+            let filter = this.props.navigation.getParam('filter');
+            filter = filter === Filter.ROOT ? parentId : filter;
 
             // check we navigate on a no selected item
 
@@ -117,7 +117,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
         case EVENT_TYPE.MENU_SELECT: {
           const selectedMenuItem = item as any as IMenuItem;
-          const filterId = navigation.getParam('filter');
+          const filter = navigation.getParam('filter');
 
           // check to see if dialog
           if (selectedMenuItem.dialog) {
@@ -128,7 +128,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           } else {
             selectedMenuItem.onEvent({
               dispatch,
-              filterId,
+              filter,
               navigation,
               parentId: navigation.getParam('parentId'),
               selected: selectedItems,
@@ -160,7 +160,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
       const parentId = navigation.getParam('parentId');
       const popupMenuItems = this.getMenuItems('popupItems');
       const toolbarActions = this.getMenuItems('toolbarActions');
-      const filterId = navigation.getParam('filter');
+      const filter = navigation.getParam('filter');
       const title = navigation.getParam('title');
       const { dialogVisible, selectedMenuItem } = this.state;
       const selectedArrayItems = Object.values(selectedItems);
@@ -202,7 +202,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
             <ConfirmDialog
               {...selectedMenuItem.dialog}
               folders={folders}
-              filterId={filterId}
+              filter={filter}
               parentId={parentId}
               selected={selectedArrayItems}
               visible={this.state.dialogVisible}
@@ -211,7 +211,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
                 requestAnimationFrame(() =>
                   selectedMenuItem.onEvent({
                     dispatch,
-                    filterId,
+                    filter,
                     navigation,
                     parentId,
                     selected: selectedItems,
@@ -235,7 +235,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               onEvent={this.handleEvent.bind(this)}
               eventHandleData={{
                 dispatch,
-                filterId,
+                filter,
                 navigation,
                 parentId: navigation.getParam('parentId'),
                 filter: navigation.getParam('filter'),

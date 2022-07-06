@@ -6,7 +6,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { DEPRECATED_signImageURISource } from '~/infra/oauth';
 import { IFile } from '~/modules/workspace/types';
-import { FilterId } from '~/modules/workspace/types/filters';
+import { Filter } from '~/modules/workspace/types/filters';
 import { filters } from '~/modules/workspace/types/filters/helpers/filters';
 import { DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
@@ -40,13 +40,13 @@ const UnavailableIcon = () => <Icon color={CommonStyles.missingGrey} size={layou
 const getIcon = (id: string | null, isFolder: boolean, pName: string | null, contentType: string | undefined): string | null => {
   if (isFolder) {
     switch (filters(id)) {
-      case FilterId.owner:
+      case Filter.OWNER:
         return 'folder11';
-      case FilterId.shared:
+      case Filter.SHARED:
         return 'shared_files';
-      case FilterId.protected:
+      case Filter.PROTECTED:
         return 'added_files';
-      case FilterId.trash:
+      case Filter.TRASH:
         return 'deleted_files';
       default:
         return 'folder11';

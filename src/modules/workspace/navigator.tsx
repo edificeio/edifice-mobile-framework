@@ -1,3 +1,4 @@
+import I18n from 'i18n-js';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import moduleConfig from './moduleConfig';
@@ -19,6 +20,11 @@ export default () =>
       ...timelineRoutes,
     },
     {
+      initialRouteParams: {
+        filter: 'root',
+        parentId: 'root',
+        title: I18n.t('workspace.tabName'),
+      },
       headerMode: 'none',
     },
   );

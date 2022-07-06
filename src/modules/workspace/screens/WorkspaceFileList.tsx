@@ -1,27 +1,27 @@
 import * as React from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
-import { NavigationEventSubscription } from 'react-navigation';
+import { useEffect, useState } from 'react';
+import { FlatList, Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
+import theme from '~/app/theme';
+import { HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
-import { removeAccents } from '~/framework/util/string';
-import Notifier from '~/infra/notifier/container';
 import { listAction } from '~/modules/workspace/actions/list';
 import { WorkspaceFileListItem } from '~/modules/workspace/components/WorkspaceFileListItem';
-import { FilterId, IItem, IItemsProps, IState } from '~/modules/workspace/types';
-import { getEmptyScreen } from '~/modules/workspace/utils/empty';
-import { layoutSize } from '~/styles/common/layoutSize';
+import { Filter, IFile, IItem, IItemsProps } from '~/modules/workspace/types';
+import { renderEmptyScreen } from '~/modules/workspace/utils/empty';
 import { CommonStyles } from '~/styles/common/styles';
 import { IDispatchProps } from '~/types';
-import { ISelectedProps } from '~/types/ievents';
+
+import { newDownloadThenOpenAction } from '../actions/download';
+import moduleConfig from '../moduleConfig';
 
 const styles = StyleSheet.create({
   separator: {
     borderBottomColor: CommonStyles.borderColorLighter,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    marginLeft: layoutSize.LAYOUT_80,
   },
   listContainer: {
     backgroundColor: CommonStyles.lightGrey,
@@ -29,99 +29,122 @@ const styles = StyleSheet.create({
   },
 });
 
-export class WorkspaceFileList extends React.Component<IDispatchProps & IItemsProps & ISelectedProps, { isFocused: boolean }> {
-  focusListener!: NavigationEventSubscription;
+type IWorkspaceFileListProps = IDispatchProps & IItemsProps;
 
-  constructor(props: IDispatchProps & IItemsProps & ISelectedProps) {
-    super(props);
-    this.focusListener = this.props.navigation.addListener('willFocus', () => {
-      this.makeRequest();
-    });
-  }
+const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (props: IWorkspaceFileListProps) => {
+  const [shouldFetch, setShouldFetch] = useState<boolean>(true);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
 
-  public componentWillUnmount() {
-    this.focusListener.remove();
-  }
-
-  public makeRequest() {
-    const { dispatch } = this.props;
-
-    dispatch(
+  const fetchFiles = () => {
+    props.dispatch(
       listAction({
-        filter: this.props.navigation.getParam('filter'),
-        parentId: this.props.navigation.getParam('parentId'),
+        filter: props.navigation.getParam('filter'),
+        parentId: props.navigation.getParam('parentId'),
       }),
     );
-  }
+  };
 
-  private sortItems(firstItem: IItem, secondItem: IItem): number {
-    const sortByType = (a: IItem, b: IItem): number => {
-      if (a.isFolder === b.isFolder) {
-        return 0;
-      } else {
-        return a.isFolder ? -1 : 1;
-      }
-    };
-
-    const sortByName = (a: IItem, b: IItem): number => {
-      if (!b.name) return 1;
-      if (!a.name) return -1;
-      return removeAccents(a.name.toLocaleLowerCase()).localeCompare(removeAccents(b.name.toLocaleLowerCase()));
-    };
-
-    return sortByType(firstItem, secondItem) !== 0 ? sortByType(firstItem, secondItem) : sortByName(firstItem, secondItem);
-  }
-
-  public render(): React.ReactNode {
-    const { items, isFetching, selectedItems } = this.props;
-    const parentId = this.props.navigation.getParam('parentId') || null;
-    const values = Object.values(items);
-
-    if (values.length === 0 && !isFetching) {
-      return <View style={{backgroundColor: 'red', flex: 1}} />;
+  useEffect(() => {
+    if (shouldFetch) {
+      setShouldFetch(false);
+      fetchFiles();
     }
+  }, [shouldFetch]);
 
-    const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
+  const onGoBack = () => {
+    if (selectedFiles.length) {
+      setSelectedFiles([]);
+      return false;
+    }
+    return true;
+  };
 
-    const multiSelect = Object.keys(selectedItems).length > 0;
+  const onPressBackAction = () => {
+    if (onGoBack()) {
+      props.navigation.dispatch(NavigationActions.back());
+    }
+  };
 
-    return (
-      <PageView navigation={this.props.navigation}>
-        <Notifier id="workspace" />
-        <FlatList
-          contentContainerStyle={styles.listContainer}
-          data={itemsArray}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          keyExtractor={(item: IItem) => item.id}
-          refreshing={this.props.isFetching}
-          onRefresh={this.makeRequest}
-          refreshControl={<RefreshControl refreshing={isFetching} onRefresh={this.makeRequest} />}
-          renderItem={({ item }) => (
-            <WorkspaceFileListItem
-              item={item}
-              onEvent={this.props.onEvent}
-              selected={selectedItems[item.id]}
-              multiSelect={multiSelect}
-            />
-          )}
-          ListEmptyComponent={getEmptyScreen(parentId)}
-        />
-      </PageView>
-    );
-  }
-}
+  const selectFile = (file: IItem) => {
+    if (selectedFiles.includes(file.id)) {
+      setSelectedFiles(selectedFiles.filter(id => id !== file.id));
+    } else {
+      setSelectedFiles(selected => [...selected, file.id]);
+    }
+  };
+
+  const onPressFile = (file: IItem) => {
+    if (Platform.OS === 'ios' && !selectedFiles.length && !file.isFolder) {
+      return props.dispatch(newDownloadThenOpenAction('', { item: file as IFile }));
+    } else if (selectedFiles.length) {
+      return selectFile(file);
+    }
+    const { id: parentId, name: title, isFolder } = file;
+    if (isFolder) {
+      let filter = props.navigation.getParam('filter');
+      filter = filter === Filter.ROOT ? parentId : filter;
+      props.navigation.push(moduleConfig.routeName, { filter, parentId, title });
+    } else {
+      props.navigation.navigate(`${moduleConfig.routeName}/details`, { file, title });
+    }
+  };
+
+  const compareFiles = (a: IItem, b: IItem): number => {
+    if (a.isFolder !== b.isFolder) {
+      return a.isFolder ? -1 : 1;
+    }
+    return a.name.localeCompare(b.name);
+  };
+
+  const parentId = props.navigation.getParam('parentId') || null;
+  const files = Object.values(props.files);
+  files.sort(compareFiles);
+
+  const navBarInfo = {
+    left: (
+      <>
+        <HeaderBackAction onPress={onPressBackAction} />
+        {selectedFiles.length ? <HeaderTitle>{selectedFiles.length}</HeaderTitle> : null}
+      </>
+    ),
+    title: props.navigation.getParam('title'),
+    style: {
+      backgroundColor: selectedFiles.length ? theme.palette.secondary.regular : theme.palette.primary.regular,
+    },
+  };
+
+  return (
+    <PageView navigation={props.navigation} navBar={navBarInfo} onBack={onGoBack}>
+      <FlatList
+        data={files}
+        renderItem={({ item }) => (
+          <WorkspaceFileListItem
+            item={item}
+            isSelected={selectedFiles.includes(item.id)}
+            onPressCallback={onPressFile}
+            onLongPressCallback={selectFile}
+          />
+        )}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        keyExtractor={(item: IItem) => item.id}
+        refreshControl={<RefreshControl refreshing={props.isFetching} onRefresh={fetchFiles} />}
+        ListEmptyComponent={!props.isFetching ? renderEmptyScreen(parentId) : null}
+        contentContainerStyle={styles.listContainer}
+      />
+    </PageView>
+  );
+};
 
 const mapStateToProps = (state: any, props: any) => {
-  /*const parentId = props.navigation.getParam('parentId');
-  const parentIdItems = state.data[parentId] || {
-    isFetching: null,
+  const parentId = props.navigation.getParam('parentId');
+  const parentIdItems = state.workspace2.items.data[parentId] || {
+    isFetching: false,
     data: {},
-  };*/
+  };
 
   return {
-    /*items: parentIdItems.data,
-    isFetching: parentIdItems.isFetching,*/
-    items: [],
+    files: parentIdItems.data,
+    isFetching: parentIdItems.isFetching,
     session: getUserSession(),
   };
 };

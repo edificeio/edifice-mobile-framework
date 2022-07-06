@@ -12,7 +12,7 @@ import { pastAction } from '~/modules/workspace/actions/past';
 import { renameAction } from '~/modules/workspace/actions/rename';
 import { restoreAction } from '~/modules/workspace/actions/restore';
 import { uploadAction } from '~/modules/workspace/actions/upload';
-import { ContentUri, FilterId } from '~/modules/workspace/types';
+import { ContentUri, Filter } from '~/modules/workspace/types';
 
 export const addMenu = () => ({
   text: I18n.t('add-file'),
@@ -35,7 +35,7 @@ export const addMenu = () => ({
               ? { parentId, filter }
               : parentId
               ? { parentId }
-              : { filter: FilterId.owner, parentId: FilterId.owner },
+              : { filter: Filter.OWNER, parentId: Filter.OWNER },
           ),
         );
       }}>

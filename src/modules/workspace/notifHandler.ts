@@ -5,7 +5,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { NotificationHandlerFactory } from '~/infra/pushNotification';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
-import { FilterId, IFile } from './types';
+import { Filter, IFile } from './types';
 
 const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, trackCategory) => {
   if (!notificationData?.resourceUri?.startsWith('/workspace')) {
@@ -23,11 +23,11 @@ const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => asy
 
   if (isFolder) {
     mainNavNavigate('Workspace', {
-      filter: FilterId.root,
-      parentId: FilterId.root,
+      filter: Filter.ROOT,
+      parentId: Filter.ROOT,
       title: I18n.t('workspace.tabName'),
       childRoute: 'Workspace',
-      childParams: { parentId, filter: FilterId.shared, title: name },
+      childParams: { parentId, filter: Filter.SHARED, title: name },
     });
   } else {
     const item: IFile = {
@@ -43,8 +43,8 @@ const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => asy
       url: `/workspace/document/${parentId}`,
     };
     mainNavNavigate('Workspace', {
-      filter: FilterId.root,
-      parentId: FilterId.root,
+      filter: Filter.ROOT,
+      parentId: Filter.ROOT,
       title: I18n.t('workspace.tabName'),
       childRoute: 'WorkspaceDetails',
       childParams: { item, title: name },

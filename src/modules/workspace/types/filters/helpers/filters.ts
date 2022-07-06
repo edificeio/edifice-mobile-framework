@@ -1,17 +1,17 @@
-import { FilterId } from '~/modules/workspace/types/index';
+import { Filter } from '~/modules/workspace/types/index';
 
-export const filters = (value: string | null): FilterId => {
+export const filters = (value: string | null): Filter => {
   switch (value) {
     case 'owner':
     case null:
-      return FilterId.owner;
+      return Filter.OWNER;
     case 'shared':
-      return FilterId.shared;
+      return Filter.SHARED;
     case 'protected':
-      return FilterId.protected;
+      return Filter.PROTECTED;
     case 'trash':
-      return FilterId.trash;
+      return Filter.TRASH;
     default:
-      return FilterId.owner;
+      return Filter.OWNER;
   }
 };
