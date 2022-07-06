@@ -8,6 +8,8 @@ import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-we
 import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
+
+
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
@@ -23,6 +25,7 @@ import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
+
 
 enum WAYFPageMode {
   EMPTY = 0,
@@ -403,6 +406,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       const index = components[1].indexOf('"');
       // Call oauth2 token api with received SAML if any
       if (index > 0) this.samlResponse = components[1].substring(0, index);
+      if (this.samlResponse) this.getOAuthToken();
     }
   }
 
@@ -424,11 +428,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     //   - WAYF redirects to web standard login page
     const url = request.url;
     if (this.isFirstLoadFinished && this.pfUrl && url.startsWith(this.pfUrl)) {
-      if (this.samlResponse) {
-        this.getOAuthToken();
-      } else {
-        this.props.navigation.navigate('LoginHome');
-      }
+      if (!this.samlResponse) this.props.navigation.navigate('LoginHome');
       return false;
     }
     return true;
