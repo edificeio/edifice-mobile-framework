@@ -44,6 +44,7 @@ export enum OAuthErrorType {
   // Response errors
   BAD_CREDENTIALS = 'bad_credentials',
   BAD_SAML = 'bad_saml',
+  BLOCKED_TYPE = 'blocked_type',
   BLOCKED_USER = 'blocked_user',
   INVALID_CLIENT = 'invalid_client',
   INVALID_GRANT = 'invalid_grant',
@@ -153,6 +154,8 @@ export class OAuth2RessourceOwnerPasswordClient {
           err.type = OAuthErrorType.BAD_CREDENTIALS;
         } else if (bodyOrType.error_description === 'auth.error.blockedUser') {
           err.type = OAuthErrorType.BLOCKED_USER;
+        } else if (bodyOrType.error_description === 'auth.error.blockedProfileType') {
+          err.type = OAuthErrorType.BLOCKED_TYPE;
         } else if (bodyOrType.error_description === 'auth.error.global') {
           err.type = OAuthErrorType.PLATFORM_UNAVAILABLE;
         } else if (bodyOrType.error_description === 'auth.error.ban') {
