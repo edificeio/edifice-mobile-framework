@@ -140,7 +140,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
             <View style={{ marginTop: UI_SIZES.spacing.small }}>
               <FlatButton
                 title={I18n.t('common.openInBrowser')}
-                customButtonStyle={{ backgroundColor: theme.legacy.neutral.extraLight }}
+                customButtonStyle={{ backgroundColor: theme.palette.grey.fog }}
                 customTextStyle={{ color: theme.palette.primary.regular }}
                 onPress={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)

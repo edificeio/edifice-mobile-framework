@@ -48,7 +48,7 @@ export const BackdropModal = ({
       <View
         style={{
           alignItems: 'center',
-          backgroundColor: headerColor || theme.legacy.neutral.extraLight,
+          backgroundColor: headerColor || theme.palette.grey.fog,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           height: 40,
@@ -67,7 +67,7 @@ export const BackdropModal = ({
         <View
           style={{
             alignItems: 'center',
-            backgroundColor: headerColor || theme.legacy.neutral.extraLight,
+            backgroundColor: headerColor || theme.palette.grey.fog,
             height: 60,
             justifyContent: 'center',
             paddingBottom: UI_SIZES.spacing.medium,

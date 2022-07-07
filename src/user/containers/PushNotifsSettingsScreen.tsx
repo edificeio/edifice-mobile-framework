@@ -90,7 +90,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
             left: (
               <LoadingIndicator
                 small
-                customColor={theme.legacy.neutral.extraLight}
+                customColor={theme.ui.text.inverse}
                 customStyle={{ justifyContent: 'center', paddingHorizontal: UI_SIZES.spacing.big }}
               />
             ),
