@@ -1,5 +1,5 @@
 /**
- * Schoolbook word report screen
+ * Schoolbook word report
  */
 import I18n from 'i18n-js';
 import React from 'react';
