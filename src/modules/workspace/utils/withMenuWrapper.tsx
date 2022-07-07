@@ -6,13 +6,9 @@ import theme from '~/app/theme';
 import FlatList from '~/framework/components/flatList';
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/picture';
-import { newDownloadThenOpenAction } from '~/modules/workspace/actions/download';
 import { ITreeItem } from '~/modules/workspace/actions/helpers/formatListFolders';
 import { listFoldersAction } from '~/modules/workspace/actions/listFolders';
-import { selectAction, selectClearAction } from '~/modules/workspace/actions/select';
-import { IItems } from '~/modules/workspace/reducers/select';
-import { IFile, IItem } from '~/modules/workspace/types';
-import { Filter } from '~/modules/workspace/types/filters';
+import { IItem } from '~/modules/workspace/types';
 import { EVENT_TYPE, IEvent } from '~/types/ievents';
 import { ConfirmDialog } from '~/ui/ConfirmDialog';
 import { FloatingAction } from '~/ui/FloatingButton/FloatingAction';
@@ -87,34 +83,6 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
       const { dispatch, navigation, nbSelectedItems, selectedItems } = this.props;
 
       switch (type) {
-        case EVENT_TYPE.SELECT:
-          if (nbSelectedItems) {
-            // we are in select mode
-            // add a new item on selection list
-            dispatch(selectAction(item));
-          } else {
-            // navigate
-            const { id: parentId, name: title, isFolder } = item;
-            let filter = this.props.navigation.getParam('filter');
-            filter = filter === Filter.ROOT ? parentId : filter;
-
-            // check we navigate on a no selected item
-
-            if (Object.values(selectedItems).filter(selectedItem => selectedItem.id === parentId).length === 1) return;
-
-            if (isFolder) navigation.push('Workspace', { filter, parentId, title });
-            else navigation.push('WorkspaceDetails', { item, title });
-          }
-          return;
-
-        case EVENT_TYPE.PREVIEW:
-          dispatch(newDownloadThenOpenAction('', { item: item as IFile }));
-          return;
-
-        case EVENT_TYPE.LONG_SELECT:
-          if (navigation.getParam('filter') !== 'root') dispatch(selectAction(item));
-          return;
-
         case EVENT_TYPE.MENU_SELECT: {
           const selectedMenuItem = item as any as IMenuItem;
           const filter = navigation.getParam('filter');

@@ -30,10 +30,10 @@ export const convertIFileToIDistantFile = (file: IFile) => {
 };
 
 export const newDownloadAction =
-  (parentId: string, selected: IItems<IFile>, callback: (f: SyncedFile) => void) =>
+  (selected: IItems<IFile>, callback: (f: SyncedFile) => void) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     return dispatch(
-      asyncActionRawFactory(actionTypesDownload, { parentId }, async () => {
+      asyncActionRawFactory(actionTypesDownload, null, async () => {
         const ret = [] as Promise<void>[];
         for (const k in selected) {
           const sel = selected[k];
@@ -49,14 +49,13 @@ export const newDownloadAction =
     );
   };
 
-export const newDownloadThenOpenAction = (parentId: string, selected: IItems<IFile>) =>
-  newDownloadAction(parentId, selected, f => f.open());
+export const newDownloadThenOpenAction = (selected: IItems<IFile>) => newDownloadAction(selected, f => f.open());
 
 export const downloadAndSaveAction =
   (downloadable: IItems<IFile>) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       dispatch(
-        newDownloadAction('', downloadable, async file => {
+        newDownloadAction(downloadable, async file => {
           await file.mirrorToDownloadFolder();
           const length = Object.keys(downloadable).length;
           if (length === 1) {

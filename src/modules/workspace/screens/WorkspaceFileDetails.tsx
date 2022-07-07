@@ -8,40 +8,46 @@ import { ThunkDispatch } from 'redux-thunk';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import { shareAction } from '~/infra/actions/share';
-import { downloadAndSaveAction, newDownloadThenOpenAction } from '~/modules/workspace/actions/download';
-import { IFile } from '~/modules/workspace/types';
-import { renderImage } from '~/modules/workspace/utils/image';
 import { ButtonIconText } from '~/ui/ButtonIconText';
+
+import { downloadAndSaveAction, newDownloadThenOpenAction } from '../actions/download';
+import { IFile } from '../types';
+import { renderImage } from '../utils/image';
 
 const styles = StyleSheet.create({
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    height: 90,
   },
 });
 
 type IWorkspaceFileDetailsProps = {
+  file: IFile;
+  title: string;
   dispatch: ThunkDispatch<any, any, any>;
 } & NavigationInjectedProps;
 
-const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsProps> = (props: IWorkspaceFileDetailsProps) => {
-  const file = props.navigation.getParam('file');
-  const title = props.navigation.getParam('title');
-
+const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsProps> = ({
+  file,
+  navigation,
+  title,
+  dispatch,
+}: IWorkspaceFileDetailsProps) => {
   const preview = () => {
-    props.dispatch(newDownloadThenOpenAction('', { item: file as IFile }));
+    dispatch(newDownloadThenOpenAction({ item: file }));
   };
 
   const download = () => {
-    props.dispatch(downloadAndSaveAction({ item: file as IFile }));
+    dispatch(downloadAndSaveAction({ item: file }));
   };
 
   const share = () => {
-    props.dispatch(shareAction(file as IFile));
+    dispatch(shareAction(file));
   };
 
   return (
-    <PageView navigation={props.navigation} navBarWithBack={{ title }}>
+    <PageView navigation={navigation} navBarWithBack={{ title }}>
       <TouchableOpacity onPress={preview}>{renderImage(file, false, file.name)}</TouchableOpacity>
       <View style={styles.actionsContainer}>
         {Platform.OS !== 'ios' ? (
@@ -57,9 +63,12 @@ const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsProps> 
   );
 };
 
-export default connect(
-  () => ({
+const mapStateToProps = (state: any, props: any) => {
+  return {
+    file: props.navigation.getParam('file'),
+    title: props.navigation.getParam('title'),
     session: getUserSession(),
-  }),
-  dispatch => ({ dispatch }),
-)(WorkspaceFileDetails);
+  };
+};
+
+export default connect(mapStateToProps, dispatch => ({ dispatch }))(WorkspaceFileDetails);
