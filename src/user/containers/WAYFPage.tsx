@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
@@ -59,8 +60,14 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Styles sheet
   static get STYLES() {
     return StyleSheet.create({
-      container: { alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 },
-      help: { marginTop: 32, textAlign: 'center' },
+      container: {
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'space-around',
+        paddingHorizontal: UI_SIZES.spacing.large,
+        paddingVertical: UI_SIZES.spacing.huge * 1.5,
+      },
+      help: { marginTop: UI_SIZES.spacing.large, textAlign: 'center' },
       safeView: { flex: 1, backgroundColor: theme.ui.background.card },
       select: { borderColor: theme.palette.primary.regular, borderWidth: 1 },
       selectBackDrop: { flex: 1 },

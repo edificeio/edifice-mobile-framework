@@ -26,14 +26,14 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: 10, // MO-142 use UI_SIZES.spacing here
   },
   weekText: {
-    marginRight: 4,
+    marginRight: 4, // MO-142 use UI_SIZES.spacing here
   },
   courseView: {
     flexDirection: 'row',
-    padding: 8,
+    padding: 8, // MO-142 use UI_SIZES.spacing here
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -51,7 +51,7 @@ const style = StyleSheet.create({
   },
   halfCourseView: {
     flexShrink: 1,
-    padding: 8,
+    padding: 8, // MO-142 use UI_SIZES.spacing here
     height: '100%',
     justifyContent: 'center',
   },

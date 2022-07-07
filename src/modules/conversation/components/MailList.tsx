@@ -324,7 +324,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             ) : (
               <FlatList
                 ref={ref => (this.flatListRef = ref)}
-                style={{ marginTop: 45 }}
+                style={{ marginTop: 45 }} // ToDo : Magic value here as it's Drawer size
                 contentContainerStyle={{ flexGrow: 1 }}
                 data={uniqueMails.length > 0 ? uniqueMails : []}
                 onScrollBeginDrag={() => {

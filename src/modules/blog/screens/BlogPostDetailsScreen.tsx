@@ -15,6 +15,7 @@ import { BottomSheet } from '~/framework/components/BottomSheet';
 import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
@@ -332,7 +333,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View style={{ backgroundColor: theme.ui.background.card }}>
-        <View style={{ marginTop: 16 }}>
+        <View style={{ marginTop: UI_SIZES.spacing.medium }}>
           <ResourceView
             header={
               <ContentCardHeader
@@ -351,12 +352,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 color={theme.palette.status.warning}
                 labelStyle="outline"
                 labelSize="small"
-                style={{ marginTop: 4, marginBottom: 2 }}
+                style={{ marginVertical: UI_SIZES.spacing.tiny }}
               />
             ) : null}
             <TextBold style={{ color: theme.ui.text.light }}>{blogInfos?.title}</TextBold>
             <ViewportAwareTitle
-              style={{ marginBottom: 16 }}
+              style={{ marginBottom: UI_SIZES.spacing.medium }}
               onViewportEnter={() => this.updateVisible(true)}
               onViewportLeave={() => this.updateVisible(false)}
               innerRef={ref => (this._titleRef = ref)}>
@@ -377,15 +378,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              marginTop: 10,
-              paddingHorizontal: 12,
-              paddingVertical: 10,
+              marginTop: UI_SIZES.spacing.minor,
+              padding: UI_SIZES.spacing.small,
               borderTopWidth: 1,
               borderBottomWidth: 1,
               borderTopColor: theme.ui.border.input,
               borderBottomColor: theme.ui.border.input,
             }}>
-            <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.ui.text.regular} />
+            <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
             <TextSemiBold style={{ color: theme.ui.text.light, fontSize: 12 }}>
               {commentsString(blogPostComments?.length || 0)}
             </TextSemiBold>

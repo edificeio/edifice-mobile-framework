@@ -1,6 +1,7 @@
 import styled from '@emotion/native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -8,7 +9,8 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Weight } from './Typography';
 
 export const ArticleContainer = styled.View({
-  padding: 5,
+  padding: UI_SIZES.spacing.medium,
+  paddingTop: 0,
 });
 
 export const ListItem = styled(TouchableOpacity)<{
@@ -18,8 +20,8 @@ export const ListItem = styled(TouchableOpacity)<{
 }>(
   {
     backgroundColor: theme.ui.background.card,
-    paddingHorizontal: layoutSize.LAYOUT_10,
-    paddingVertical: layoutSize.LAYOUT_12,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.small,
     borderBottomColor: CommonStyles.borderBottomItem,
     flexDirection: 'row',
   },
@@ -35,7 +37,7 @@ export const Header = styled.View({
   alignItems: 'stretch',
   flexDirection: 'row',
   justifyContent: 'flex-start',
-  marginBottom: 6,
+  marginBottom: 6, // MO-142 use UI_SIZES.spacing here
   minHeight: layoutSize.LAYOUT_50,
   width: '100%',
 });
@@ -52,7 +54,7 @@ export const LeftIconPanel = styled.View({
   minHeight: layoutSize.LAYOUT_54,
   width: layoutSize.LAYOUT_50,
   margin: 0,
-  marginRight: layoutSize.LAYOUT_10,
+  marginRight: UI_SIZES.spacing.small,
 });
 
 export const LeftSmallIconPanel = styled.View({
@@ -61,15 +63,15 @@ export const LeftSmallIconPanel = styled.View({
   minHeight: layoutSize.LAYOUT_34,
   width: layoutSize.LAYOUT_30,
   margin: 0,
-  marginRight: layoutSize.LAYOUT_5,
+  marginRight: UI_SIZES.spacing.tiny,
 });
 
 export const CenterPanel = styled.View({
   alignItems: 'flex-start',
   flex: 1,
   justifyContent: 'center',
-  marginHorizontal: 6,
-  padding: 2,
+  marginHorizontal: UI_SIZES.spacing.minor,
+  padding: UI_SIZES.spacing.tiny / 2, // MO-142 use UI_SIZES.spacing here
 });
 
 export const RightPanel = styled.View({
@@ -85,7 +87,7 @@ export const Content = styled.Text<{ nb: number }>(
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: layoutSize.LAYOUT_12,
     fontWeight: Weight.Light,
-    marginTop: 10,
+    marginTop: UI_SIZES.spacing.small,
   },
   ({ nb = 0 }) => ({
     color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,

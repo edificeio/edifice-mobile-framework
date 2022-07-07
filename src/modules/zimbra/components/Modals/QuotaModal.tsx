@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
   },
   text: {
     ...TextSizeStyle.SlightBig,
-    marginLeft: 8,
+    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
   },
   messageContainer: {
     width: '100%',
-    marginBottom: 35,
-    paddingHorizontal: 18,
+    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 18, // MO-142 use UI_SIZES.spacing here
   },
   actionsButtonsContainer: {
     alignSelf: 'flex-end',

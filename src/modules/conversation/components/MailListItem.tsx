@@ -6,6 +6,7 @@ import Swipeable from 'react-native-swipeable';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
@@ -60,7 +61,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
     <TouchableOpacity style={[styles.buttonContainer, style]} onPress={action}>
       <View style={styles.button}>
         <Icon name={actionIcon} size={16} color={theme.ui.text.inverse} />
-        <Text style={{ color: theme.ui.text.inverse, marginLeft: 10 }}>{actionText}</Text>
+        <Text style={{ color: theme.ui.text.inverse, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Text>
       </View>
     </TouchableOpacity>,
   ];
@@ -162,7 +163,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                       return (
                         <TextSubjectComponent
                           numberOfLines={1}
-                          style={{ marginTop: 4, flex: 1, color: textSubjectColor, ...TextSizeStyle.Small }}>
+                          style={{ marginTop: UI_SIZES.spacing.tiny, flex: 1, color: textSubjectColor, ...TextSizeStyle.Small }}>
                           {mailInfos.subject}
                         </TextSubjectComponent>
                       );
@@ -186,14 +187,14 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
 
 const styles = StyleSheet.create({
   containerMailRead: {
-    paddingVertical: 18,
+    paddingVertical: UI_SIZES.spacing.medium,
   },
   containerMailUnread: {
     backgroundColor: theme.palette.primary.pale,
-    paddingVertical: 18,
+    paddingVertical: UI_SIZES.spacing.medium,
   },
   mailInfos: {
-    paddingLeft: 12,
+    paddingLeft: UI_SIZES.spacing.small,
     flex: 1,
   },
   mailDate: {
@@ -207,8 +208,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingTop: 2,
-    paddingLeft: 12,
+    paddingTop: UI_SIZES.spacing.tiny,
+    paddingLeft: UI_SIZES.spacing.small,
   },
   buttonContainer: {
     flex: 1,
@@ -219,6 +220,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,
-    paddingHorizontal: 20,
+    paddingHorizontal: UI_SIZES.spacing.big,
   },
 });

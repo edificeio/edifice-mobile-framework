@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
@@ -104,7 +105,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
         renderItem={({ item }: { item: INewsComment }) => this.renderComment(item)}
         keyExtractor={(item: INewsComment) => item._id.toString()}
         ListHeaderComponent={this.renderNewsDetails()}
-        contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.ui.background.card }}
+        contentContainerStyle={{ flexGrow: 1, paddingVertical: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card }}
         refreshControl={
           <RefreshControl
             refreshing={[NewsDetailsLoadingState.REFRESH, NewsDetailsLoadingState.INIT].includes(loadingState)}
@@ -125,7 +126,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
     const hasComments = newsComments && newsComments.length > 0;
     return (
       <View>
-        <View style={{ paddingHorizontal: 16 }}>
+        <View style={{ paddingHorizontal: UI_SIZES.spacing.medium }}>
           <NotificationTopInfo notification={notification} />
           <HtmlContentView
             html={newsContent}
@@ -136,7 +137,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
             onOpen={() => Trackers.trackEvent('News', 'OPEN ATTACHMENT', 'Read mode')}
           />
           {resourceUri ? (
-            <View style={{ marginTop: 10 }}>
+            <View style={{ marginTop: UI_SIZES.spacing.small }}>
               <FlatButton
                 title={I18n.t('common.openInBrowser')}
                 customButtonStyle={{ backgroundColor: theme.legacy.neutral.extraLight }}
@@ -165,10 +166,12 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
               elevation: 2,
               borderBottomColor: undefined,
               borderBottomWidth: undefined,
-              marginTop: 10,
-              marginBottom: 4,
+              marginTop: UI_SIZES.spacing.small,
+              marginBottom: UI_SIZES.spacing.tiny,
             }}
-            leftElement={<Icon name="new_comment" color={theme.ui.text.light} size={16} style={{ marginRight: 5 }} />}
+            leftElement={
+              <Icon name="new_comment" color={theme.ui.text.light} size={16} style={{ marginRight: UI_SIZES.spacing.minor }} />
+            }
             rightElement={
               <TextLight>
                 {newsComments!.length} {I18n.t(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
@@ -191,9 +194,9 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           />
         }
         rightElement={
-          <View style={{ marginLeft: 15 }}>
+          <View style={{ marginLeft: UI_SIZES.spacing.medium }}>
             <View style={{ flexDirection: 'row' }}>
-              <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: 5, maxWidth: '70%' }}>
+              <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: UI_SIZES.spacing.minor, maxWidth: '70%' }}>
                 {newsComment.username}
               </TextSemiBold>
               <TextLight style={{ fontSize: 10 }}>{moment(newsComment.created).fromNow()}</TextLight>

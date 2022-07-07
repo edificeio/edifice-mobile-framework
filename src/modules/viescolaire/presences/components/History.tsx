@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    padding: 15,
+    padding: 15, // MO-142 use UI_SIZES.spacing here
     alignItems: 'stretch',
   },
   dropdownStyle: {

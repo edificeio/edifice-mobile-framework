@@ -1,6 +1,7 @@
 import styled from '@emotion/native';
 import NativeModal from 'react-native-modal';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 import { LightP } from '~/ui/Typography';
 
@@ -18,7 +19,7 @@ export const ModalContent = styled.View({
   elevation: CommonStyles.elevation,
   flex: 0,
   justifyContent: 'center',
-  paddingTop: 35,
+  paddingTop: UI_SIZES.spacing.large,
   shadowColor: CommonStyles.shadowColor,
   shadowOffset: CommonStyles.shadowOffset,
   shadowOpacity: CommonStyles.shadowOpacity,
@@ -30,8 +31,8 @@ export const ModalContentBlock = styled.View({
   alignItems: 'stretch',
   flex: 0,
   flexGrow: 0,
-  marginBottom: 35,
-  marginHorizontal: 20,
+  marginBottom: UI_SIZES.spacing.large,
+  marginHorizontal: UI_SIZES.spacing.big,
 });
 
 export const ModalContentText = styled(LightP)({

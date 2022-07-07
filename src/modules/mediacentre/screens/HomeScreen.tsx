@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    marginHorizontal: 20,
-    marginTop: 10,
+    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginTop: 10, // MO-142 use UI_SIZES.spacing here
   },
   loadingIndicator: {
     marginTop: '45%',

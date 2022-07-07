@@ -9,7 +9,7 @@ import { CommonStyles } from '~/styles/common/styles';
 
 const ViewDate = styled.View<{ min: boolean }>(
   ({ min }): ViewStyle => ({
-    marginBottom: min ? -2 : 4,
+    marginBottom: min ? -2 : 4, // MO-142 use UI_SIZES.spacing here
   }),
 );
 

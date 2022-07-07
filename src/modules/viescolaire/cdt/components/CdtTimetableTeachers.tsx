@@ -25,10 +25,10 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 10, // MO-142 use UI_SIZES.spacing here
   },
   weekText: {
-    marginRight: 4,
+    marginRight: 4, // MO-142 use UI_SIZES.spacing here
   },
   calendarContainer: {
     height: 1,
@@ -36,7 +36,7 @@ const style = StyleSheet.create({
   },
   courseView: {
     flexDirection: 'row',
-    padding: 8,
+    padding: 8, // MO-142 use UI_SIZES.spacing here
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -46,7 +46,7 @@ const style = StyleSheet.create({
     flexShrink: 1,
   },
   subjectPadding: {
-    paddingLeft: 4,
+    paddingLeft: 4, // MO-142 use UI_SIZES.spacing here
   },
   classText: {
     ...TextSizeStyle.Big,
@@ -60,20 +60,20 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 45,
-    marginBottom: 15,
-    paddingHorizontal: 10,
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
   },
   homeworksText: {
     ...TextSizeStyle.SlightBig,
   },
   halfSessionMargin: {
-    marginHorizontal: 8,
+    marginHorizontal: 8, // MO-142 use UI_SIZES.spacing here
   },
   sessionMargin: {
-    marginHorizontal: 20,
+    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
   },
   homeworkMargin: {
-    marginRight: 4,
+    marginRight: 4, // MO-142 use UI_SIZES.spacing here
   },
 });
 

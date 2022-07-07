@@ -3,6 +3,7 @@ import * as React from 'react';
 import { TextStyle, TouchableOpacityProps } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Icon } from './icons/Icon';
@@ -22,7 +23,7 @@ const ButtonText = styled.Text({
   backgroundColor: 'transparent',
   color: theme.palette.primary.regular,
   fontWeight: '400',
-  marginHorizontal: 15,
+  marginHorizontal: UI_SIZES.spacing.medium,
   textAlign: 'center',
   textAlignVertical: 'center',
 });

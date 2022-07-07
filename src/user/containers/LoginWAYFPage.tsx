@@ -4,6 +4,7 @@ import { SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text } from '~/framework/components/text';
@@ -36,7 +37,13 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
         }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
           <View
-            style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 }}>
+            style={{
+              alignItems: 'center',
+              flex: 1,
+              justifyContent: 'space-around',
+              paddingHorizontal: UI_SIZES.spacing.large,
+              paddingVertical: UI_SIZES.spacing.huge * 1.5,
+            }}>
             <PFLogo />
             <Text style={{ textAlign: 'center' }}>{I18n.t('login-wayf-main-text')}</Text>
             <FlatButton

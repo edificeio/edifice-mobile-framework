@@ -37,14 +37,21 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
     const appName = I18n.t('user.onboardingScreen.appName');
     const isOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
     const svgSize = UI_SIZES.screen.width * 0.8;
-    const imageStyle = { width: svgSize, height: svgSize, maxHeight: '60%', maxWidth: '80%', marginTop: 4, marginBottom: 30 };
+    const imageStyle = {
+      width: svgSize,
+      height: svgSize,
+      maxHeight: '60%',
+      maxWidth: '80%',
+      marginTop: UI_SIZES.spacing.tiny,
+      marginBottom: UI_SIZES.spacing.large,
+    };
     const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
     return (
       <SafeAreaView
         style={{
           flex: 1,
           backgroundColor: theme.ui.background.page,
-          paddingVertical: 20,
+          paddingVertical: UI_SIZES.spacing.big,
         }}>
         <View style={{ flex: 4 }}>
           <H1

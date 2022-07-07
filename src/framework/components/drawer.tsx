@@ -125,8 +125,9 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
         };
         const color = isItemSelected ? theme.palette.secondary.regular : theme.ui.text.regular;
         formattedItem.labelStyle = { ...formattedItem.labelStyle, color };
-        if (item.iconName) formattedItem.icon = () => <Icon size={25} name={item.iconName} color={color} />;
-        if (item.depth) formattedItem.containerStyle = { marginLeft: item.depth * 25 };
+        if (item.iconName)
+          formattedItem.icon = () => <Icon size={UI_SIZES.dimensions.width.larger} name={item.iconName} color={color} />;
+        if (item.depth) formattedItem.containerStyle = { marginLeft: item.depth * UI_SIZES.dimensions.width.larger };
         return formattedItem;
       });
 
@@ -181,7 +182,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
 
 const styles = StyleSheet.create({
   arrowContainer: {
-    marginRight: 8,
+    marginRight: UI_SIZES.spacing.minor,
   },
   arrowUp: {
     transform: [{ rotate: '180deg' }],
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
   },
   listItemContainer: {
     height: ITEM_HEIGHT,
-    paddingLeft: 40,
+    paddingLeft: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny, // A little random here but it looks cool
   },
   placeholder: {
     color: theme.palette.secondary.regular,

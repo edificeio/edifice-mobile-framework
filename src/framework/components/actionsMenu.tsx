@@ -41,7 +41,7 @@ const style = StyleSheet.create({
     borderBottomWidth: 1,
     width: '100%',
   },
-  menuIconPicture: { width: 22, height: 22, marginLeft: 10 },
+  menuIconPicture: { width: 22, height: 22, marginLeft: UI_SIZES.spacing.small },
 });
 
 type ActionsMenuProps = {
@@ -68,10 +68,17 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
                 const itemColorStyle = item.icon === 'delete' ? TextColorStyle.Error : {};
                 return (
                   <TouchableOpacity onPress={item.onPress}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 15 }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        paddingVertical: UI_SIZES.spacing.small,
+                        paddingHorizontal: UI_SIZES.spacing.medium,
+                      }}>
                       <Text style={{ ...itemColorStyle }}>{item.text}</Text>
                       {typeof item.icon === 'string' ? (
-                        <Icon name={item.icon} size={22} style={{ marginLeft: 10, ...itemColorStyle }} />
+                        <Icon name={item.icon} size={22} style={{ marginLeft: UI_SIZES.spacing.small, ...itemColorStyle }} />
                       ) : (
                         <Picture
                           fill={theme.ui.text.regular}

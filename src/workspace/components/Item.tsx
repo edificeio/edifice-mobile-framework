@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
@@ -18,7 +19,7 @@ const style = StyleSheet.create({
   dateContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: UI_SIZES.spacing.tiny,
   },
   dateText: {
     maxWidth: '50%',

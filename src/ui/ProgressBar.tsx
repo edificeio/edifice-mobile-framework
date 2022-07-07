@@ -1,17 +1,24 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import styles, { deviceWidth } from '~/styles';
+import { UI_SIZES } from '~/framework/components/constants';
 
 interface ProgressBarProps {
   value: number;
 }
 
+const styles = StyleSheet.create({
+  loading: {
+    backgroundColor: '#30ff30',
+    height: 3,
+  },
+});
+
 class ProgressBar extends React.Component<ProgressBarProps> {
   public render() {
     const { value } = this.props;
-    const width = value ? (value * deviceWidth) / 100 : 0;
+    const width = value ? (value * UI_SIZES.screen.width) / 100 : 0;
 
     return value > 0 ? <View style={[styles.loading, { width }]} /> : <View />;
   }

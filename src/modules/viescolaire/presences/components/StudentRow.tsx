@@ -17,8 +17,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     elevation: 2,
-    paddingRight: 10,
-    paddingVertical: 5,
+    paddingRight: 10, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: 5, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.palette.grey.white,
     flexWrap: 'wrap',
   },
@@ -27,14 +27,14 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 100,
     width: 45,
-    marginLeft: 10,
+    marginLeft: 10, // MO-142 use UI_SIZES.spacing here
   },
   alignRightContainer: { flexGrow: 1, flexDirection: 'row-reverse' },
   dash: { height: 10, width: 30, borderRadius: 10 },
   swipeButtons: { flexDirection: 'row-reverse', flexGrow: 1 },
   swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
-  studentName: { marginLeft: 10, marginVertical: 15 },
-  iconsView: { flexDirection: 'row', marginLeft: 5 },
+  studentName: { marginLeft: 10, marginVertical: 15 }, // MO-142 use UI_SIZES.spacing here
+  iconsView: { flexDirection: 'row', marginLeft: 5 }, // MO-142 use UI_SIZES.spacing here
   grey: {
     backgroundColor: theme.palette.grey.grey,
   },

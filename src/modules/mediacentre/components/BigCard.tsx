@@ -15,12 +15,12 @@ import { ResourceImage, SourceImage } from './ResourceImage';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginHorizontal: 20,
-    marginBottom: 15,
+    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
   contentContainer: {
     flexDirection: 'row',
-    marginTop: -20,
+    marginTop: -20, // MO-142 use UI_SIZES.spacing here
   },
   cardImage: {
     height: 80,
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     flexGrow: 1,
-    marginLeft: 15,
+    marginLeft: 15, // MO-142 use UI_SIZES.spacing here
     justifyContent: 'space-between',
   },
   cardActionIcon: {
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     ...TextSizeStyle.Small,
-    marginLeft: 5,
+    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
   },
 });
 

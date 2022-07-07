@@ -28,11 +28,11 @@ const style = StyleSheet.create({
   },
   homeworkPart: {
     flex: 1,
-    paddingBottom: 8,
-    paddingHorizontal: 15,
+    paddingBottom: 8, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 15, // MO-142 use UI_SIZES.spacing here
   },
   grid: {
-    marginTop: 10,
+    marginTop: 10, // MO-142 use UI_SIZES.spacing here
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
@@ -43,15 +43,15 @@ const style = StyleSheet.create({
     alignItems: 'flex-end',
   },
   gridSwith: {
-    marginTop: 30,
-    marginHorizontal: 12,
+    marginTop: 30, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
   },
   gridSesionTitle: {
     flex: 1,
     alignItems: 'flex-start',
   },
   datePicker: {
-    marginHorizontal: 12,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
   },
 });
 

@@ -3,11 +3,9 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 
-
-
+import { UI_SIZES } from '~/framework/components/constants';
 import { removeAccents } from '~/framework/util/string';
 import Notifier from '~/infra/notifier/container';
-import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import { IDispatchProps } from '~/types';
 import { ISelectedProps } from '~/types/ievents';
@@ -21,12 +19,11 @@ import withNavigationWrapper from '~/workspace/utils/withNavigationWrapper';
 import withUploadErrorWrapper from '~/workspace/utils/withUploadErrorWrapper';
 import withUploadWrapper from '~/workspace/utils/withUploadWrapper';
 
-
 const styles = StyleSheet.create({
   separator: {
     borderBottomColor: CommonStyles.borderColorLighter,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    marginLeft: layoutSize.LAYOUT_80,
+    marginLeft: UI_SIZES.spacing.huge,
   },
   transparentRender: {
     backgroundColor: 'transparent',

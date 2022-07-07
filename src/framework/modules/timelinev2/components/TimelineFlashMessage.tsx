@@ -52,7 +52,14 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
           }}
           headerIndicator={
             <TouchableOpacity onPress={this.props.flashMessageAction}>
-              <Icon name="close" color={theme.ui.text.inverse} style={{ paddingVertical: 5, paddingLeft: 8, marginRight: -3 }} />
+              <Icon
+                name="close"
+                color={theme.ui.text.inverse}
+                style={{
+                  paddingVertical: UI_SIZES.spacing.tiny,
+                  paddingLeft: UI_SIZES.spacing.minor,
+                }}
+              />
             </TouchableOpacity>
           }
           style={{
@@ -106,7 +113,14 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 }}>
                 {I18n.t('seeMore')}
               </Text>
-              <Icon name="arrow_down" color={theme.ui.text.inverse} style={{ marginLeft: 10, marginRight: -3, paddingTop: 2 }} />
+              <Icon
+                name="arrow_down"
+                color={theme.ui.text.inverse}
+                style={{
+                  marginLeft: UI_SIZES.spacing.minor,
+                  paddingTop: UI_SIZES.spacing.tiny,
+                }}
+              />
             </View>
           ) : null}
         </TouchableContentCard>

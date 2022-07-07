@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
 import { CommonStyles } from '~/styles/common/styles';
@@ -25,10 +26,10 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
           },
         ]}
       />
-      <Icon size={25} style={{ margin: 10 }} color={CommonStyles.primary} name={getFileIcon(fileType)} />
+      <Icon size={25} style={{ margin: UI_SIZES.spacing.small }} color={CommonStyles.primary} name={getFileIcon(fileType)} />
       <Text style={{ flex: 1, color: CommonStyles.primary }}>{fileName}</Text>
       <TouchableOpacity onPress={onRemove}>
-        <Icon name="close" style={{ margin: 10 }} color="red" />
+        <Icon name="close" style={{ margin: UI_SIZES.spacing.small }} color="red" />
       </TouchableOpacity>
     </View>
   );

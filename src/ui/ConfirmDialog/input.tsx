@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -24,6 +25,6 @@ const styles = StyleSheet.create({
     fontSize: layoutSize.LAYOUT_16,
     borderColor: '#00000012',
     borderBottomWidth: 1,
-    marginBottom: layoutSize.LAYOUT_14,
+    marginBottom: UI_SIZES.spacing.small,
   },
 });

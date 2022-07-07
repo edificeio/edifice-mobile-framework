@@ -135,7 +135,7 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
           ? {}
           : {
               backgroundColor: theme.ui.background.card,
-              padding: 16,
+              padding: UI_SIZES.spacing.medium,
             },
         contentContainerStyle,
       ]}
@@ -202,9 +202,9 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
 
 const commonItemTouchableStyle = {
   flex: 1,
-  marginHorizontal: 12,
-  marginVertical: 10,
-  borderRadius: 18,
+  marginHorizontal: UI_SIZES.spacing.small,
+  marginVertical: UI_SIZES.spacing.small,
+  borderRadius: UI_SIZES.radius.explorer,
 };
 export const resourceItemTouchableStyle = {
   ...commonItemTouchableStyle,
@@ -225,8 +225,8 @@ const ThumbnailView = styled.View({
   borderTopRightRadius: 17,
 });
 const MetadataView = styled.View({
-  paddingVertical: 6,
-  paddingHorizontal: 8,
+  paddingVertical: UI_SIZES.spacing._LEGACY_small,
+  paddingHorizontal: UI_SIZES.spacing.minor,
 });
 
 export const ResourceItem = (props: {

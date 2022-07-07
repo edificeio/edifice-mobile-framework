@@ -5,6 +5,7 @@ import { ActivityIndicator, Animated, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { checkConnection, watchConnection } from '~/infra/actions/connectionTracker';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -16,7 +17,7 @@ const TrackerText = styled.Text({
   flex: 1,
   textAlign: 'center',
   lineHeight: 40,
-  marginLeft: 40,
+  marginLeft: UI_SIZES.spacing.large,
 });
 
 const TrackingContainer = styled(TouchableOpacity)({
@@ -135,9 +136,14 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
           <View style={{ flexDirection: 'row', flex: 1 }}>
             <TrackerText>{I18n.t(this.text)}</TrackerText>
             {this.props.loading ? (
-              <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: 80 }} />
+              <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.huge }} />
             ) : (
-              <Icon name={this.iconName} size={18} style={{ marginRight: 80, marginTop: 10 }} color={theme.ui.text.inverse} />
+              <Icon
+                name={this.iconName}
+                size={18}
+                style={{ marginRight: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.small }}
+                color={theme.ui.text.inverse}
+              />
             )}
           </View>
         </TrackingContainer>

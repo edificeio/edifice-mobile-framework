@@ -26,19 +26,19 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   homeworkPart: {
-    paddingVertical: 8,
-    paddingHorizontal: 15,
+    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 15, // MO-142 use UI_SIZES.spacing here
   },
   title: {
     ...TextSizeStyle.SlightBig,
   },
   subtitle: {
     color: theme.palette.grey.stone,
-    marginBottom: 15,
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
   course: {
     textTransform: 'uppercase',
-    marginLeft: 8,
+    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
   },
 });
 

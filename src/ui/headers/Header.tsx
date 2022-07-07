@@ -61,8 +61,8 @@ export const sensitiveStylePanel: ViewStyle = {
   alignItems: 'center',
   height: UI_SIZES.elements.navbarHeight,
   justifyContent: 'center',
-  paddingLeft: 18,
-  paddingRight: 18,
+  paddingLeft: UI_SIZES.spacing.medium,
+  paddingRight: UI_SIZES.spacing.medium,
   width: 60,
 };
 
@@ -116,7 +116,7 @@ export const HeaderAction = styled.Text(
     fontWeight: '400',
     flex: 1,
     textAlign: 'right',
-    paddingRight: 20,
+    paddingRight: UI_SIZES.spacing.medium,
     height: UI_SIZES.elements.navbarHeight,
     lineHeight: UI_SIZES.elements.navbarHeight,
   },

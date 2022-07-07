@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { IApp, IEstablishment } from '~/modules/support/containers/Support';
 import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     color: CommonStyles.textColor,
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
-    paddingVertical: 4,
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
   textInputMultiline: {
     maxHeight: 115,

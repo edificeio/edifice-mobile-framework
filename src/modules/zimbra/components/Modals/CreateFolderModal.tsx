@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
   },
   directoryNameContainer: {
     width: '100%',
-    marginBottom: 35,
-    paddingHorizontal: 20,
+    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
   },
   row: {
     flexDirection: 'row',

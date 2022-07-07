@@ -207,7 +207,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                   style={{
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: 5,
+                    padding: UI_SIZES.spacing.tiny,
                     flex: 0,
                   }}>
                   <Text style={{ ...TextSizeStyle.SlightBig, textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</Text>
@@ -219,8 +219,8 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                 <View
                   style={{
                     backgroundColor: theme.palette.primary.light,
-                    paddingVertical: 6,
-                    paddingHorizontal: 14,
+                    paddingVertical: UI_SIZES.spacing.minor,
+                    paddingHorizontal: UI_SIZES.spacing.medium,
                     borderColor: theme.palette.primary.regular,
                     borderWidth: 1,
                     borderRadius: 10,
@@ -315,19 +315,15 @@ const FormContainer = styled.View({
   flexGrow: 1,
   flexShrink: 0,
   justifyContent: 'space-between',
-  paddingTop: 30,
-  paddingHorizontal: 30,
+  paddingTop: UI_SIZES.spacing.big,
+  paddingHorizontal: UI_SIZES.spacing.big,
 });
-const ButtonWrapper = styled.View(
-  {
-    alignItems: 'center',
-    flex: 0,
-    justifyContent: 'flex-start',
-  },
-  ({ error, typing }: { error: boolean; typing: boolean }) => ({
-    marginTop: error && !typing ? 10 : 10,
-  }),
-);
+const ButtonWrapper = styled.View({
+  alignItems: 'center',
+  flex: 0,
+  justifyContent: 'flex-start',
+  marginTop: UI_SIZES.spacing.small,
+});
 const MiniSpacer = styled.View({
-  marginTop: 10,
+  marginTop: UI_SIZES.spacing.small,
 });

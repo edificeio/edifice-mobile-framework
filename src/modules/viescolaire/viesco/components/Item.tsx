@@ -7,9 +7,9 @@ import { CommonStyles } from '~/styles/common/styles';
 const styleConstant = StyleSheet.create({
   container: {
     borderRadius: 10,
-    marginVertical: 5,
+    marginVertical: 5, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.palette.grey.white,
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   containerShadow: {
     shadowColor: CommonStyles.shadowColor,

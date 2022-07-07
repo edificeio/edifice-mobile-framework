@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
   shadowContainer: {
     flexGrow: 1,
-    marginTop: 5,
+    marginTop: 5, // MO-142 use UI_SIZES.spacing here
     marginBottom: 0,
     flexDirection: 'column-reverse',
     backgroundColor: theme.palette.grey.white,
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     height: 1,
   },
   scrollContent: {
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   containerFooter: {
     flexDirection: 'row',

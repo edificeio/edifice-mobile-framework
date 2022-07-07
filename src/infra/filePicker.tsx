@@ -10,6 +10,7 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { assertPermissions } from '~/framework/util/permissions';
 import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
@@ -110,11 +111,11 @@ export class FilePicker extends React.PureComponent<
         <ModalBox backdropOpacity={0.5} isVisible={showModal}>
           <ModalContent>
             {menuActions.map(a => (
-              <ModalContentBlock key={a.id} style={{ marginBottom: 20 }}>
+              <ModalContentBlock key={a.id} style={{ marginBottom: UI_SIZES.spacing.medium }}>
                 <ButtonTextIcon
                   disabled={!enabled}
                   style={{ width: 250 }}
-                  textStyle={{ fontSize: 18, padding: 15, marginTop: -10 }}
+                  textStyle={{ fontSize: 18, padding: UI_SIZES.spacing.medium, marginTop: -UI_SIZES.spacing.small }}
                   title={a.title}
                   onPress={() => {
                     this.setState({ enabled: false });

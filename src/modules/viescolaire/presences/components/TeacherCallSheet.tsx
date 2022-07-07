@@ -22,22 +22,22 @@ const style = StyleSheet.create({
     alignSelf: 'center',
     width: '40%',
     height: 50,
-    margin: 20,
+    margin: 20, // MO-142 use UI_SIZES.spacing here
   },
   classesView: {
     justifyContent: 'flex-end',
     flexDirection: 'row',
-    paddingBottom: 15,
+    paddingBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
   topItem: {
     justifyContent: 'flex-end',
     flexDirection: 'row',
   },
   classroomText: {
-    marginLeft: 8,
+    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
   },
   gradeText: {
-    marginLeft: 8,
+    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
   },
 });
 

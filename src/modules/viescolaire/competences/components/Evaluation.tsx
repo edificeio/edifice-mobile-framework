@@ -19,17 +19,17 @@ import Dropdown from '~/ui/Dropdown';
 import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from './Item';
 
 const styles = StyleSheet.create({
-  subtitle: { color: theme.palette.grey.stone, paddingVertical: 8 },
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 },
+  subtitle: { color: theme.palette.grey.stone, paddingVertical: 8 }, // MO-142 use UI_SIZES.spacing here
+  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 }, // MO-142 use UI_SIZES.spacing here
   containerDropdowns: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 10,
-    marginHorizontal: 5,
+    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: 5, // MO-142 use UI_SIZES.spacing here
   },
   dropdownStyle: {
-    marginRight: 5,
+    marginRight: 5, // MO-142 use UI_SIZES.spacing here
   },
   mainView: {
     flex: 1,
@@ -39,14 +39,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headerGradeText: {
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
     maxWidth: '50%',
   },
   headerSelectedPeriodText: {
     color: theme.palette.grey.stone,
   },
   headerColorSwitchContainer: {
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     maxWidth: '50%',
   },
   selectedPeriodText: {
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
 });
 

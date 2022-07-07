@@ -1,13 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { LayoutEvent } from 'react-navigation';
 import { Text, View } from 'react-native';
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
+import { LayoutEvent } from 'react-navigation';
 
-import { A } from './Typography';
-
+import { UI_SIZES } from '~/framework/components/constants';
 import { contentStyle } from '~/framework/modules/myAppMenu/components/NewContainerContent';
 import { CommonStyles } from '~/styles/common/styles';
+
+import { A } from './Typography';
 
 export interface ITextPreviewProps {
   textContent: string;
@@ -40,7 +41,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
       color: CommonStyles.textColor,
       fontFamily: CommonStyles.primaryFontFamily,
       fontSize: 12,
-      marginTop: 5,
+      marginTop: UI_SIZES.spacing.tiny,
     },
   };
 

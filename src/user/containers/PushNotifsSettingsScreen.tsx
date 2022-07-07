@@ -91,7 +91,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
               <LoadingIndicator
                 small
                 customColor={theme.legacy.neutral.extraLight}
-                customStyle={{ justifyContent: 'center', paddingHorizontal: 22 }}
+                customStyle={{ justifyContent: 'center', paddingHorizontal: UI_SIZES.spacing.big }}
               />
             ),
           }
@@ -190,7 +190,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
               <Icon
                 name="arrow_down"
                 color={theme.palette.primary.regular}
-                style={{ flex: 0, marginLeft: 20, transform: [{ rotate: '270deg' }] }}
+                style={{ flex: 0, marginLeft: UI_SIZES.spacing.big, transform: [{ rotate: '270deg' }] }}
               />
             </View>
           }

@@ -6,6 +6,7 @@ import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Toucha
 import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Text, TextAction } from '~/framework/components/text';
@@ -150,12 +151,12 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         flexDirection: 'row',
                         alignItems: 'center',
                         alignSelf: 'stretch',
-                        marginTop: 30,
+                        marginTop: UI_SIZES.spacing.big,
                       }}>
                       <Checkbox
                         checked={isCGUAccepted}
                         onPress={() => this.setState({ isCGUAccepted: !isCGUAccepted })}
-                        customContainerStyle={{ marginRight: 5 }}
+                        customContainerStyle={{ marginRight: UI_SIZES.spacing.tiny }}
                       />
                       <Text>{I18n.t('activation-cgu-accept')}</Text>
                       <TouchableOpacity onPress={this.handleOpenCGU}>
@@ -200,21 +201,17 @@ const FormContainer = styled.View({
   flex: 1,
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: 40,
-  paddingTop: 60,
+  padding: UI_SIZES.spacing.large,
+  paddingTop: UI_SIZES.spacing.huge,
 });
 const LogoWrapper = styled.View({
   flexGrow: 2,
   alignItems: 'center',
   justifyContent: 'center',
 });
-const ButtonWrapper = styled.View<{ error: any; typing: boolean }>(
-  {
-    alignItems: 'center',
-    flexGrow: 2,
-    justifyContent: 'flex-start',
-  },
-  ({ error, typing }) => ({
-    marginTop: error && !typing ? 10 : 10,
-  }),
-);
+const ButtonWrapper = styled.View<{ error: any; typing: boolean }>({
+  alignItems: 'center',
+  flexGrow: 2,
+  justifyContent: 'flex-start',
+  marginTop: UI_SIZES.spacing.small,
+});

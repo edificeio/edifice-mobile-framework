@@ -6,6 +6,7 @@ import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
 import { NestedText, Text, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
@@ -24,7 +25,7 @@ const User = ({ userId, userName }) => {
   getUserColor(userId).then(setDotColor);
 
   return (
-    <View style={{ flexDirection: 'row', marginLeft: 4, alignItems: 'baseline' }} key={userId}>
+    <View style={{ flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'baseline' }} key={userId}>
       <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
       <Text style={{ ...TextSizeStyle.Small }}>{userName}</Text>
     </View>
@@ -35,7 +36,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
   const contacts = getMailPeople(mailInfos);
 
   return (
-    <View style={{ marginTop: 4 }}>
+    <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
       {inInbox || (
         <View style={{ flexDirection: 'row' }}>
           <Text style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</Text>
@@ -74,15 +75,6 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
   );
 };
 
-const IconButton = ({ icon, color, text, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.gridButton}>
-      <Text style={styles.gridButtonText}>{text}</Text>
-      <Icon size={12} color={color} name={icon} />
-    </TouchableOpacity>
-  );
-};
-
 // EXPORTED COMPONENTS
 
 export const HeaderMail = ({ mailInfos, currentFolder }) => {
@@ -96,9 +88,9 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   return (
     <TouchableOpacity onPress={() => toggleVisible(!isVisible)} activeOpacity={1}>
       <ListItem
-        style={{ paddingVertical: 18, borderBottomWidth: 0 }}
+        style={{ paddingVertical: UI_SIZES.spacing.small, borderBottomWidth: 0 }}
         leftElement={
-          <View style={{ alignSelf: 'flex-start', marginTop: 20 }}>
+          <View style={{ alignSelf: 'flex-start', marginTop: UI_SIZES.spacing.medium + UI_SIZES.spacing.tiny }}>
             <GridAvatars users={[{ id: mailContacts.from[0], isGroup: mailContacts.from[2] }]} />
           </View>
         }
@@ -129,7 +121,9 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   return isVisible ? (
                     <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
                   ) : (
-                    <Text style={{ marginTop: 4, flex: 0, ...TextColorStyle.Normal, ...TextSizeStyle.Small }} numberOfLines={1}>
+                    <Text
+                      style={{ marginTop: UI_SIZES.spacing.tiny, flex: 0, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}
+                      numberOfLines={1}>
                       <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
                       <NestedText style={{ color: theme.palette.primary.regular }}>
                         {mailContacts.to[0][1]}
@@ -202,7 +196,7 @@ export const RenderPJs = ({
                 {item.filename}
               </Text>
               {index === 0 && (
-                <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5, flex: 0 }}>
+                <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: UI_SIZES.spacing.tiny, flex: 0 }}>
                   {attachments.length > 1 && (
                     <Text style={styles.gridButtonTextPJnb}>
                       {isVisible ? '-' : '+'}
@@ -222,7 +216,7 @@ export const RenderPJs = ({
                       Toast.show(I18n.t('download-error-generic'));
                     }
                   }}
-                  style={{ paddingHorizontal: 12 }}>
+                  style={{ paddingHorizontal: UI_SIZES.spacing.small }}>
                   <Icon name="download" size={18} color={theme.palette.primary.regular} />
                 </TouchableOpacity>
               ) : null}
@@ -240,16 +234,6 @@ const styles = StyleSheet.create({
   containerMail: {
     backgroundColor: theme.ui.background.card,
   },
-  gridButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 5,
-  },
-  gridButtonText: {
-    color: theme.palette.primary.regular,
-    marginRight: 5,
-  },
   gridButtonTextPJnb: {
     color: theme.palette.primary.regular,
     justifyContent: 'flex-end',
@@ -258,22 +242,22 @@ const styles = StyleSheet.create({
   },
   gridButtonTextPJnames: {
     color: theme.palette.primary.regular,
-    marginLeft: 5,
+    marginLeft: UI_SIZES.spacing.tiny,
     flex: 1,
   },
   dotReceiverColor: {
     width: 8,
     height: 8,
     borderRadius: 15,
-    marginTop: 6,
-    marginRight: 5,
+    marginTop: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.tiny,
   },
   greyColor: {
     color: theme.palette.grey.graphite,
     ...TextSizeStyle.Small,
   },
   mailInfos: {
-    paddingLeft: 12,
+    paddingLeft: UI_SIZES.spacing.small,
     flex: 1,
     alignSelf: 'flex-start',
   },
@@ -288,8 +272,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
-    paddingTop: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: UI_SIZES.spacing.small,
     flex: 0,
   },
 });

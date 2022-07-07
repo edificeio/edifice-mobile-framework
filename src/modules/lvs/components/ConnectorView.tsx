@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   errorText: {
-    marginBottom: 20,
+    marginBottom: UI_SIZES.spacing.big,
     width: '70%',
   },
 });

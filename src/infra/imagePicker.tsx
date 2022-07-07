@@ -4,6 +4,7 @@ import type { GestureResponderEvent, TouchableOpacityProps } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
@@ -79,10 +80,10 @@ export class ImagePicker extends React.PureComponent<
         <ModalBox backdropOpacity={0.5} isVisible={this.state.showModal}>
           <ModalContent>
             {menuActions.map(a => (
-              <ModalContentBlock style={{ marginBottom: 20 }} key={a.id}>
+              <ModalContentBlock style={{ marginBottom: UI_SIZES.spacing.medium }} key={a.id}>
                 <ButtonTextIcon
                   style={{ width: 250 }}
-                  textStyle={{ fontSize: 18, padding: 15, marginTop: -10 }}
+                  textStyle={{ fontSize: 18, padding: UI_SIZES.spacing.medium, marginTop: -UI_SIZES.spacing.small }}
                   title={a.title}
                   onPress={() => {
                     actions[a.id]();

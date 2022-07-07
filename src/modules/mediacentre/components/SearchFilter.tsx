@@ -10,7 +10,7 @@ import { IResource } from '~/modules/mediacentre/utils/Resource';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.ui.background.card,
     borderRadius: 15,
     shadowColor: theme.ui.shadowColor,
@@ -25,19 +25,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
-    marginRight: 10,
+    marginRight: 10, // MO-142 use UI_SIZES.spacing here
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 5, // MO-142 use UI_SIZES.spacing here
   },
   itemTextContainer: {
     flex: 1,
-    marginLeft: 5,
+    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
   },
   sectionContainer: {
-    paddingVertical: 5,
+    paddingVertical: 5, // MO-142 use UI_SIZES.spacing here
   },
   sectionHeaderContainer: {
     flexDirection: 'row',

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
@@ -49,7 +50,7 @@ export const UserCard = ({
           width: 6,
           height: 6,
           borderRadius: 3,
-          marginRight: 4,
+          marginRight: UI_SIZES.spacing.tiny,
           backgroundColor: CommonStyles.profileTypes[type] || CommonStyles.lightGrey,
         }}
         key={type}
@@ -105,17 +106,20 @@ export const UserCard = ({
         flexDirection: 'row',
         flexGrow: 0,
         justifyContent: 'flex-start',
-        padding: 15,
+        padding: UI_SIZES.spacing.medium,
         width: '100%',
         borderBottomWidth: 1,
         borderColor: '#ddd',
       }}
       onPress={onPress}>
-      <View style={{ padding: 10, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ padding: UI_SIZES.spacing.small, alignItems: 'center', justifyContent: 'center' }}>
         <Avatar sourceOrId={id} size={Size.verylarge} />
         {canEdit ? renderActions(hasAvatar, onChangeAvatar, onDeleteAvatar) : null}
         {updatingAvatar ? (
-          <Loading customColor="white" customStyle={{ position: 'absolute', paddingTop: 6, paddingLeft: 3 }} />
+          <Loading
+            customColor="white"
+            customStyle={{ position: 'absolute', paddingTop: UI_SIZES.spacing.minor, paddingLeft: UI_SIZES.spacing.tiny }}
+          />
         ) : null}
       </View>
       <View
@@ -123,7 +127,7 @@ export const UserCard = ({
           flexGrow: 0,
           flexShrink: 1,
           marginRight: 'auto',
-          paddingLeft: 15,
+          paddingLeft: UI_SIZES.spacing.medium,
         }}>
         <TextBold>{displayName}</TextBold>
         {Array.isArray(type) ? type.map(item => renderUserType(item)) : renderUserType(type)}

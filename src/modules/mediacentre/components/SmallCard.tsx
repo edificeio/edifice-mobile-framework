@@ -17,12 +17,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
   },
   titleText: {
     color: theme.palette.primary.regular,
     flexShrink: 1,
-    marginRight: 5,
+    marginRight: 5, // MO-142 use UI_SIZES.spacing here
   },
   lowerContentContainer: {
     flexDirection: 'row',
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   secondaryContainer: {
     flex: 1,
     justifyContent: 'space-between',
-    marginLeft: 5,
+    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
   },
   descriptionText: {
     ...TextSizeStyle.Small,

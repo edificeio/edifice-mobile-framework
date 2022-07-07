@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
@@ -13,8 +14,8 @@ import { resetError } from '~/workspace/reducers/items';
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  title: { marginRight: 10 },
-  overflowText: { padding: 10 },
+  title: { marginRight: UI_SIZES.spacing.small },
+  overflowText: { padding: UI_SIZES.spacing.small },
 });
 
 export type IUploadErrorWrapperProps<T extends object> = T & {

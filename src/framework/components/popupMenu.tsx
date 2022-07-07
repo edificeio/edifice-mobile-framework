@@ -12,6 +12,7 @@ import { NavigationNavigateActionPayload } from 'react-navigation';
 import theme from '~/app/theme';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
+import { UI_SIZES } from './constants';
 import { DEPRECATED_HeaderPrimaryAction } from './header';
 import { Icon } from './icon';
 import { Text } from './text';
@@ -117,7 +118,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
       justifyContent: 'flex-start',
       alignItems: 'center',
       flex: 1,
-      paddingVertical: 12,
+      paddingVertical: UI_SIZES.spacing.small,
     });
 
     return (
@@ -131,7 +132,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
           size={26}
           name={item.icon}
           style={{
-            paddingHorizontal: 12,
+            paddingHorizontal: UI_SIZES.spacing.small,
           }}
         />
         <Text numberOfLines={1} style={{ color: theme.ui.text.heavy }}>

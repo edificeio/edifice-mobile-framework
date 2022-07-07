@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   declareAbscenceText: {
     color: theme.palette.grey.white,
   },
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
+  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 }, // MO-142 use UI_SIZES.spacing here
   gridAllModules: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   gridButtonContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 6,
+    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 6, // MO-142 use UI_SIZES.spacing here
   },
   gridButton: {
     borderRadius: 5,
@@ -46,10 +46,10 @@ const styles = StyleSheet.create({
   viewButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
+    padding: 8, // MO-142 use UI_SIZES.spacing here
   },
   gridButtonText: {
-    marginLeft: 10,
+    marginLeft: 10, // MO-142 use UI_SIZES.spacing here
     color: theme.palette.grey.white,
     textAlign: 'center',
   },
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   declareAbsenceButton: {
     backgroundColor: viescoTheme.palette.presences,
-    paddingHorizontal: 5,
+    paddingHorizontal: 5, // MO-142 use UI_SIZES.spacing here
     justifyContent: 'center',
     alignSelf: 'stretch',
     borderRadius: 5,

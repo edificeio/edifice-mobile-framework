@@ -13,8 +13,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: 10, // MO-142 use UI_SIZES.spacing here
     borderWidth: 2,
     borderRadius: 50,
     borderColor: theme.palette.primary.regular,
@@ -22,10 +22,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 10, // MO-142 use UI_SIZES.spacing here
   },
   buttonIcon: {
-    marginRight: 5,
+    marginRight: 5, // MO-142 use UI_SIZES.spacing here
   },
 });
 

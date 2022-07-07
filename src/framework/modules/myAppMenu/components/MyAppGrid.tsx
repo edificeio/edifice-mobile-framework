@@ -80,7 +80,7 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
             borderColor: theme.palette.primary.regular,
             borderWidth: 1.5,
             paddingHorizontal: UI_SIZES.spacing.medium,
-            paddingVertical: 6,
+            paddingVertical: UI_SIZES.spacing.minor,
           }}
           customTextStyle={{ color: theme.palette.primary.regular }}
           onPress={() => {

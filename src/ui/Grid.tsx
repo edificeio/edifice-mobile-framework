@@ -3,10 +3,8 @@ import styled from '@emotion/native';
 import * as React from 'react';
 import { FlexAlignType, View } from 'react-native';
 
-
-
+import { UI_SIZES } from '~/framework/components/constants';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-
 
 export interface ColProperties {
   alignItems?: FlexAlignType;
@@ -42,7 +40,7 @@ export const Col = (props: ColProperties) => {
     flex: size ? size : width ? 0 : 1,
     flexDirection: 'column',
     flexWrap: 'wrap',
-    paddingVertical: pv ? 2 : paddingVertical ? paddingVertical : 0,
+    paddingVertical: pv ? UI_SIZES.spacing.tiny / 2 : paddingVertical ? paddingVertical : 0,
   };
 
   if (props.onPress) {

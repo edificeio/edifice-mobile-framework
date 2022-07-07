@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
@@ -206,7 +207,7 @@ export default function TreeSelect({
               style={{
                 flexDirection: 'row',
                 backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || '#fff',
-                marginBottom: 2,
+                marginBottom: UI_SIZES.spacing.tiny / 2,
                 height: layoutSize.LAYOUT_30,
                 alignItems: 'center',
               }}>
@@ -223,7 +224,7 @@ export default function TreeSelect({
           {isOpen && (
             <FlatList
               keyExtractor={(childrenItem, i) => i.toString()}
-              style={{ flex: 1, marginLeft: layoutSize.LAYOUT_15 }}
+              style={{ flex: 1, marginLeft: UI_SIZES.spacing.medium }}
               onEndReachedThreshold={0.01}
               data={item.children.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))}
               renderItem={_renderRow}
@@ -238,7 +239,7 @@ export default function TreeSelect({
           style={{
             flexDirection: 'row',
             backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || theme.ui.background.card,
-            marginBottom: 2,
+            marginBottom: UI_SIZES.spacing.tiny / 2,
             height: 30,
             alignItems: 'center',
           }}>
@@ -264,15 +265,15 @@ export default function TreeSelect({
           alignItems: 'center',
           borderBottomWidth: 1,
           borderColor: '#cccccc',
-          marginRight: layoutSize.LAYOUT_10,
-          marginBottom: layoutSize.LAYOUT_10,
-          marginTop: -layoutSize.LAYOUT_4,
+          marginRight: UI_SIZES.spacing.small,
+          marginBottom: UI_SIZES.spacing.small,
+          marginTop: -UI_SIZES.spacing.tiny,
         }}>
         <TextInput
           style={{
             height: layoutSize.LAYOUT_40,
             fontSize: layoutSize.LAYOUT_15,
-            paddingHorizontal: 5,
+            paddingHorizontal: UI_SIZES.spacing.tiny,
             flex: 1,
           }}
           value={searchValue}
@@ -292,9 +293,12 @@ export default function TreeSelect({
             flexDirection: 'row',
             alignItems: 'center',
             height: layoutSize.LAYOUT_34,
-            paddingLeft: layoutSize.LAYOUT_3,
+            paddingLeft: UI_SIZES.spacing.tiny,
           }}>
-          <Icon name="search2" style={{ color: '#999999', fontSize: layoutSize.LAYOUT_24, marginHorizontal: 8 }} />
+          <Icon
+            name="search2"
+            style={{ color: '#999999', fontSize: layoutSize.LAYOUT_24, marginHorizontal: UI_SIZES.spacing.minor }}
+          />
         </TouchableOpacity>
       </View>
     );
@@ -318,7 +322,7 @@ const styles = StyleSheet.create({
   collapseIcon: {
     width: 0,
     height: 0,
-    marginRight: 2,
+    marginRight: UI_SIZES.spacing.tiny / 2,
     borderStyle: 'solid',
   },
   container: {
@@ -326,19 +330,19 @@ const styles = StyleSheet.create({
     backgroundColor: theme.ui.background.card,
   },
   contentContainer: {
-    paddingBottom: layoutSize.LAYOUT_18,
+    paddingBottom: UI_SIZES.spacing.medium,
     backgroundColor: theme.ui.background.card,
   },
   flatList: {
     flexGrow: 0,
-    marginVertical: 5,
+    marginVertical: UI_SIZES.spacing.tiny,
     maxHeight: DEVICE_HEIGHT() - layoutSize.LAYOUT_250,
-    marginTop: layoutSize.LAYOUT_10,
-    marginBottom: layoutSize.LAYOUT_10,
-    paddingHorizontal: 15,
+    marginTop: UI_SIZES.spacing.small,
+    marginBottom: UI_SIZES.spacing.small,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   textName: {
     fontSize: layoutSize.LAYOUT_14,
-    marginLeft: 5,
+    marginLeft: UI_SIZES.spacing.tiny,
   },
 });

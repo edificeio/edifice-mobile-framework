@@ -6,10 +6,11 @@ import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { postFolderAction } from '~/modules/conversation/actions/folders';
 import { fetchInitAction } from '~/modules/conversation/actions/initMails';
 import { CommonStyles } from '~/styles/common/styles';
-import { DialogButtonOk, DialogButtonCancel } from '~/ui/ConfirmDialog';
+import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 import { TextBold } from '~/ui/Typography';
 
@@ -64,7 +65,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
           <ModalContentBlock>
             <TextBold>{I18n.t('conversation.createDirectory')}</TextBold>
           </ModalContentBlock>
-          <View style={{ width: '100%', marginBottom: 35, paddingHorizontal: 20 }}>
+          <View style={{ width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
             <TextInput
               autoFocus
               value={name}

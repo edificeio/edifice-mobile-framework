@@ -190,7 +190,7 @@ class MailContentContainer extends React.PureComponent<
                   <ScrollView style={{ flex: 1 }} scrollEventThrottle={16}>
                     {this.props.mail.id && this.mailHeader()}
                     <ViewportAwareSubject
-                      style={{ marginHorizontal: 12, backgroundColor: theme.ui.background.card }}
+                      style={{ marginHorizontal: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card }}
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
@@ -280,7 +280,7 @@ class MailContentContainer extends React.PureComponent<
 
   private mailContent() {
     return (
-      <View style={{ flexGrow: 1, padding: 12, backgroundColor: theme.ui.background.card }}>
+      <View style={{ flexGrow: 1, padding: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card }}>
         {this.props.mail.body !== undefined && (
           <HtmlContentView
             onHtmlError={() => this.setState({ htmlError: true })}
@@ -288,7 +288,7 @@ class MailContentContainer extends React.PureComponent<
             opts={{ selectable: true }}
           />
         )}
-        <View style={{ marginTop: 20 }} />
+        <View style={{ marginTop: UI_SIZES.spacing.medium }} />
         {this.props.mail.attachments && this.props.mail.attachments.length > 0 && (
           <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} dispatch={this.props.dispatch} />
         )}

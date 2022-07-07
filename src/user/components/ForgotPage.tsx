@@ -5,6 +5,7 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { H1, Text, TextColorStyle } from '~/framework/components/text';
@@ -184,7 +185,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             flexDirection: 'row',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            paddingRight: 10,
+                            paddingRight: UI_SIZES.spacing.small,
                             backgroundColor: structureName ? CommonStyles.primary : undefined,
                             borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
                             borderBottomColor:
@@ -206,7 +207,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           <Icon
                             name="arrow_down"
                             color={structureName ? 'white' : 'black'}
-                            style={[{ marginTop: 10 }, showStructurePicker && { transform: [{ rotate: '180deg' }] }]}
+                            style={[
+                              { marginTop: UI_SIZES.spacing.small },
+                              showStructurePicker && { transform: [{ rotate: '180deg' }] },
+                            ]}
                           />
                           <TouchableOpacity
                             style={{ height: '100%', width: '100%', position: 'absolute' }}
@@ -232,7 +236,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         alignItems: 'center',
                         flexGrow: 2,
                         justifyContent: 'flex-start',
-                        marginTop: (isError || isSuccess) && !editing ? 10 : 30,
+                        marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
                       }}>
                       {!isSuccess || editing ? (
                         <FlatButton
@@ -265,8 +269,8 @@ const FormContainer = styled.View({
   flex: 1,
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: 40,
-  paddingTop: 60,
+  padding: UI_SIZES.spacing.large,
+  paddingTop: UI_SIZES.spacing.huge,
 });
 const LogoWrapper = styled.View({
   flexGrow: 2,

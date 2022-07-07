@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
@@ -14,8 +15,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexGrow: 3,
     justifyContent: 'flex-start',
-    margin: 2,
-    marginLeft: -20,
+    margin: UI_SIZES.spacing.tiny,
+    marginLeft: -UI_SIZES.spacing.medium,
   },
   text: {
     color: 'black',
@@ -26,13 +27,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: layoutSize.LAYOUT_58,
     flexGrow: 0,
-    margin: 2,
-    padding: 2,
+    margin: UI_SIZES.spacing.tiny,
+    padding: UI_SIZES.spacing.tiny,
   },
   touchPanel: {
     flexDirection: 'row',
     flex: 1,
-    paddingLeft: 5,
+    paddingLeft: UI_SIZES.spacing.tiny,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },

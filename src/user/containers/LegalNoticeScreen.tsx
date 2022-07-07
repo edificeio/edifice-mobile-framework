@@ -5,6 +5,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
@@ -63,7 +64,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
             <Icon
               name="arrow_down"
               color={theme.palette.primary.regular}
-              style={{ flex: 0, marginLeft: 20, transform: [{ rotate: '270deg' }] }}
+              style={{ flex: 0, marginLeft: UI_SIZES.spacing.medium, transform: [{ rotate: '270deg' }] }}
             />
           }
         />

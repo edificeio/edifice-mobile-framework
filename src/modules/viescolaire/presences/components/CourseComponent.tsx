@@ -23,9 +23,9 @@ const styles = StyleSheet.create({
     top: '20%',
     left: '30%',
   },
-  itemContent: { flex: 1, padding: 15, justifyContent: 'space-evenly' },
+  itemContent: { flex: 1, padding: 15, justifyContent: 'space-evenly' }, // MO-142 use UI_SIZES.spacing here
   itemRowStyle: { flexDirection: 'row' },
-  iconMarginRight: { marginRight: 10 },
+  iconMarginRight: { marginRight: 10 }, // MO-142 use UI_SIZES.spacing here
   itemClassGroupText: {
     ...TextSizeStyle.Big,
   },

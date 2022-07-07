@@ -11,40 +11,40 @@ import { CommonStyles } from '~/styles/common/styles';
 
 const styles = StyleSheet.create({
   studentInfos: {
-    padding: 10,
-    paddingBottom: 20,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: 20, // MO-142 use UI_SIZES.spacing here
   },
   studentName: {
     ...TextSizeStyle.SlightBig,
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   studentGroups: {
-    marginTop: -5,
-    marginBottom: 5,
+    marginTop: -5, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
   },
   infoLine: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   iconDisplay: {
-    marginRight: 10,
-    marginTop: -3,
+    marginRight: 10, // MO-142 use UI_SIZES.spacing here
+    marginTop: -3, // MO-142 use UI_SIZES.spacing here
   },
   relativesInfos: {
     flex: 1,
     borderStyle: 'solid',
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   relativesTitleText: {
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   relativesContainer: {
-    marginBottom: 20,
+    marginBottom: 20, // MO-142 use UI_SIZES.spacing here
   },
   relativesIdentity: {
-    marginBottom: 5,
+    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
   },
   shadow: {
     backgroundColor: theme.palette.grey.white,

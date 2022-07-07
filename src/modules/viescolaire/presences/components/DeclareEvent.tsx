@@ -28,29 +28,29 @@ const style = StyleSheet.create({
     flex: 1,
   },
   recapHeader: {
-    marginTop: 10,
-    paddingVertical: 12,
+    marginTop: 10, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: 12, // MO-142 use UI_SIZES.spacing here
     alignSelf: 'flex-end',
     width: '90%',
-    marginBottom: 15,
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
   recapHeaderView: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   recapHeaderText: {
-    marginHorizontal: 5,
+    marginHorizontal: 5, // MO-142 use UI_SIZES.spacing here
   },
   underlinedText: {
     alignSelf: 'center',
     borderBottomWidth: 2,
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   inputContainer: {
-    marginHorizontal: 30,
+    marginHorizontal: 30, // MO-142 use UI_SIZES.spacing here
   },
   timeView: {
-    margin: 40,
+    margin: 40, // MO-142 use UI_SIZES.spacing here
     alignItems: 'center',
     borderWidth: 2,
     borderStyle: 'solid',
@@ -59,23 +59,23 @@ const style = StyleSheet.create({
   },
   timeViewText: {
     ...responsiveStyle(55),
-    paddingVertical: 50,
+    paddingVertical: 50, // MO-142 use UI_SIZES.spacing here
     textDecorationLine: 'underline',
   },
   labelText: {
     ...TextSizeStyle.Small,
-    marginBottom: 4,
+    marginBottom: 4, // MO-142 use UI_SIZES.spacing here
   },
   reasonTextInput: {
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
-    paddingVertical: 4,
+    paddingVertical: 4, // MO-142 use UI_SIZES.spacing here
   },
   buttonOkContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     flexWrap: 'nowrap',
-    marginVertical: 20,
+    marginVertical: 20, // MO-142 use UI_SIZES.spacing here
   },
 });
 

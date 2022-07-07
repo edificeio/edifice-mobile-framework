@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ColorValue } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
@@ -18,17 +19,17 @@ const Container = styled(TouchableOpacity)({
   height: 46,
   justifyContent: 'flex-start',
   // marginTop: 20,
-  paddingHorizontal: 15,
+  paddingHorizontal: UI_SIZES.spacing.medium,
 });
 
 export const ContainerSpacer = styled.View({
-  marginTop: 20,
+  marginTop: UI_SIZES.spacing.small,
 });
 
 export const ContainerLabel = styled.Text({
-  paddingHorizontal: 15,
-  marginTop: 14,
-  marginBottom: 6,
+  paddingHorizontal: UI_SIZES.spacing.medium,
+  marginTop: UI_SIZES.spacing.medium,
+  marginBottom: UI_SIZES.spacing.minor,
   color: CommonStyles.textColor,
 });
 
@@ -48,7 +49,7 @@ export const ContainerView = styled.View({
   height: 46,
   justifyContent: 'flex-start',
   // marginTop: 20,
-  paddingHorizontal: 15,
+  paddingHorizontal: UI_SIZES.spacing.medium,
 });
 
 export const ContainerTextInput = styled.TextInput({
@@ -60,7 +61,7 @@ export const ContainerTextInput = styled.TextInput({
   height: 46,
   justifyContent: 'flex-start',
   // marginTop: 20,
-  paddingHorizontal: 15,
+  paddingHorizontal: UI_SIZES.spacing.medium,
 });
 
 const LinkStyle = styled.Text<{ color: ColorValue }>(

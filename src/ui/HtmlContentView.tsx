@@ -9,6 +9,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewProps } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -155,7 +156,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
           {hasAttachments ? (
             <AttachmentGroup
               attachments={attachments}
-              containerStyle={{ marginTop: 12 }}
+              containerStyle={{ marginTop: UI_SIZES.spacing.small }}
               onDownload={onDownload}
               onError={onError}
               onDownloadAll={onDownloadAll}

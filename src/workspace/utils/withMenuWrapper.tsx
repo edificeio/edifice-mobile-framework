@@ -3,6 +3,7 @@ import { StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/picture';
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 50,
-    padding: 14,
+    padding: UI_SIZES.spacing.medium,
   },
   mainContainer: {
     flex: 1,
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: UI_SIZES.spacing.minor,
   },
   titleText: {
     justifyContent: 'center',

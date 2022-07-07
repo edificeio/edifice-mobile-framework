@@ -16,7 +16,7 @@ import { Italic } from './Typography';
 
 const BubbleText = styled.Text({
   color: theme.ui.text.inverse,
-  marginHorizontal: -10,
+  marginHorizontal: -UI_SIZES.spacing.small,
   textAlign: 'center',
 });
 
@@ -38,6 +38,7 @@ const Overlay = styled(TouchableOpacity)({
   position: 'absolute',
   right: 0,
   width: '100%',
+  borderRadius: UI_SIZES.radius.small,
 });
 
 const Column = styled.View({
@@ -50,8 +51,8 @@ const BubbleView = styled.View({
   borderRadius: 15,
   height: 30,
   left: '50%',
-  marginLeft: -10,
-  padding: 5,
+  marginLeft: -UI_SIZES.spacing.small,
+  padding: UI_SIZES.spacing.tiny,
   position: 'absolute',
   width: 30,
 });
@@ -66,8 +67,8 @@ const UnavailableImage = () => (
     style={{
       backgroundColor: CommonStyles.entryfieldBorder,
       height: '100%',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: UI_SIZES.spacing.medium,
+      paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
     <Italic>{I18n.t('imageNotAvailable')}</Italic>
@@ -82,6 +83,7 @@ const StretchImage = (props: ImageProps) => (
     style={{
       height: '100%',
       width: '100%',
+      borderRadius: UI_SIZES.radius.small,
     }}
     resizeMode={FastImage.resizeMode.cover}
   />
@@ -131,12 +133,12 @@ class Images extends React.Component<
     if (images.length === 2) {
       return (
         <Row style={{ justifyContent: 'space-between' }}>
-          <Column style={{ paddingRight: 5 }}>
+          <Column style={{ paddingRight: UI_SIZES.spacing.tiny }}>
             <SoloImage style={{ height: heightRatio }} onPress={() => this.openImage(0)}>
               <StretchImage source={getImageSource(images[0].src)} />
             </SoloImage>
           </Column>
-          <Column style={{ paddingLeft: 5 }}>
+          <Column style={{ paddingLeft: UI_SIZES.spacing.tiny }}>
             <SoloImage style={{ height: heightRatio }} onPress={() => this.openImage(1)}>
               <StretchImage source={getImageSource(images[1].src)} />
             </SoloImage>
@@ -147,12 +149,12 @@ class Images extends React.Component<
     if (images.length === 3) {
       return (
         <Row style={{ justifyContent: 'space-between' }}>
-          <Column style={{ paddingRight: 5 }}>
+          <Column style={{ paddingRight: UI_SIZES.spacing.tiny }}>
             <SoloImage style={{ height: heightRatio }} onPress={() => this.openImage(0)}>
               <StretchImage source={getImageSource(images[0].src)} />
             </SoloImage>
           </Column>
-          <Column style={{ paddingLeft: 5 }}>
+          <Column style={{ paddingLeft: UI_SIZES.spacing.tiny }}>
             <QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(1)}>
               <StretchImage source={getImageSource(images[1].src)} />
             </QuarterImage>
@@ -166,7 +168,7 @@ class Images extends React.Component<
     if (images.length >= 4) {
       return (
         <Row style={{ justifyContent: 'space-between' }}>
-          <Column style={{ paddingRight: 5 }}>
+          <Column style={{ paddingRight: UI_SIZES.spacing.tiny }}>
             <QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(0)}>
               <StretchImage source={getImageSource(images[0].src)} />
             </QuarterImage>
@@ -174,7 +176,7 @@ class Images extends React.Component<
               <StretchImage source={getImageSource(images[2].src)} />
             </QuarterImage>
           </Column>
-          <Column style={{ paddingLeft: 5 }}>
+          <Column style={{ paddingLeft: UI_SIZES.spacing.tiny }}>
             <QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(1)}>
               <StretchImage source={getImageSource(images[1].src)} />
             </QuarterImage>

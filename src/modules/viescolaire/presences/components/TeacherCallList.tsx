@@ -14,12 +14,12 @@ import CourseComponent from './CourseComponent';
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 8,
-    paddingHorizontal: 27,
+    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 27, // MO-142 use UI_SIZES.spacing here
     flex: 1,
   },
   dateText: {
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   renderContainer: {
     flex: 1,
@@ -55,9 +55,9 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 4,
-    marginHorizontal: 10,
-    marginTop: 3,
-    marginBottom: 3,
+    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginTop: 3, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 3, // MO-142 use UI_SIZES.spacing here
   },
   carouselActiveDot: {
     width: 20,

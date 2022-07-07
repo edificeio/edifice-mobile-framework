@@ -17,19 +17,19 @@ const styles = StyleSheet.create({
   labelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.palette.primary.pale,
   },
   labelText: {
     ...TextSizeStyle.SlightBig,
-    marginLeft: 12,
+    marginLeft: 12, // MO-142 use UI_SIZES.spacing here
   },
   container: {
     backgroundColor: theme.palette.grey.white,
   },
   folderCreationButton: {
-    paddingLeft: 12,
-    marginBottom: 2,
+    paddingLeft: 12, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 2, // MO-142 use UI_SIZES.spacing here
   },
   loadBar: {
     backgroundColor: theme.palette.grey.cloudy,

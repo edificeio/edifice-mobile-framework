@@ -25,26 +25,26 @@ const style = StyleSheet.create({
   },
   homeworkPart: {
     flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
+    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 15, // MO-142 use UI_SIZES.spacing here
   },
   title: {
     ...TextSizeStyle.SlightBig,
   },
   homeworksView: {
-    marginBottom: 40,
+    marginBottom: 40, // MO-142 use UI_SIZES.spacing here
   },
   homeworkType: {
     ...TextSizeStyle.SlightBig,
-    marginTop: 15,
+    marginTop: 15, // MO-142 use UI_SIZES.spacing here
   },
   subtitle: {
     color: theme.palette.grey.stone,
-    marginBottom: 15,
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
   course: {
     textTransform: 'uppercase',
-    marginLeft: 8,
+    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
   },
 });
 

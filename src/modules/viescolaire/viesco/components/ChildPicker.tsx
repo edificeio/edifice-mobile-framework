@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   innerContainer: {
-    paddingTop: 10,
-    paddingBottom: 15,
-    paddingHorizontal: 10,
+    paddingTop: 10, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: 15, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -56,8 +56,9 @@ export default class ChildPicker extends React.PureComponent<ChildPickerProps> {
       />
     );
 
-    const wrappedChildren = React.Children.map([dropdown, ...React.Children.toArray(children)], child =>
-      React.cloneElement(child as React.ReactElement<any>, { style: [child.props.style, { margin: 5 }] }),
+    const wrappedChildren = React.Children.map(
+      [dropdown, ...React.Children.toArray(children)],
+      child => React.cloneElement(child as React.ReactElement<any>, { style: [child.props.style, { margin: 5 }] }), // MO-142 use UI_SIZES.spacing here
     );
 
     return (

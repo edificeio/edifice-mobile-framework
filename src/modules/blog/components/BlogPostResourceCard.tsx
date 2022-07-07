@@ -5,6 +5,7 @@ import { View } from 'react-native';
 
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { FontStyle, Text, TextSemiBold } from '~/framework/components/text';
@@ -82,14 +83,14 @@ export const BlogPostResourceCard = ({
                 flexDirection: 'row',
                 alignItems: 'center',
               }}>
-              <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.ui.text.regular} />
+              <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
               <TextSemiBold style={{ color: theme.ui.text.light, fontSize: 12 }}>{commentsString(comments)}</TextSemiBold>
             </View>
           ) : undefined
         }>
         {hasBlogPostText ? (
           <Text
-            style={{ color: theme.ui.text.regular, marginBottom: blogPostMedia?.length ? 10 : undefined }}
+            style={{ color: theme.ui.text.regular, marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
             numberOfLines={contentTextMaxLines}>
             {blogPostText}
           </Text>

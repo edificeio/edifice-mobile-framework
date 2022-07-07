@@ -11,12 +11,12 @@ import { SmallCard } from './SmallCard';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginBottom: 25,
+    marginBottom: 25, // MO-142 use UI_SIZES.spacing here
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: 10,
+    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
   },
   titleText: {
     flexShrink: 1,

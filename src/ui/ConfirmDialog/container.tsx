@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import AnimatedModal from 'react-native-modal';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { layoutSize } from '~/styles/common/layoutSize';
 
 const styles = StyleSheet.create({
@@ -19,24 +20,24 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'column',
     borderRadius: 3,
-    paddingHorizontal: layoutSize.LAYOUT_12,
-    paddingVertical: layoutSize.LAYOUT_8,
-    marginVertical: layoutSize.LAYOUT_0,
-    marginHorizontal: layoutSize.LAYOUT_12,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
+    marginVertical: 0,
+    marginHorizontal: UI_SIZES.spacing.small,
     backgroundColor: theme.palette.grey.white,
     overflow: 'hidden',
     elevation: 4,
     minWidth: 300,
   },
   header: {
-    margin: layoutSize.LAYOUT_4,
+    margin: UI_SIZES.spacing.tiny,
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginTop: 4,
-    padding: layoutSize.LAYOUT_8,
+    marginTop: UI_SIZES.spacing.tiny,
+    padding: UI_SIZES.spacing.minor,
   },
 });
 

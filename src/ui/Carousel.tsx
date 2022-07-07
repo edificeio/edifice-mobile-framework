@@ -23,8 +23,8 @@ const UnavailableImage = () => (
       alignItems: 'center',
       height: '100%',
       justifyContent: 'center',
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: UI_SIZES.spacing.medium,
+      paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
     <Italic>{I18n.t('imageNotAvailable')}</Italic>
@@ -328,8 +328,8 @@ class Carousel extends React.Component<
               {item.linkTo && (
                 <View
                   style={{
-                    bottom: 15,
-                    padding: 20,
+                    bottom: UI_SIZES.spacing.medium,
+                    padding: UI_SIZES.spacing.big,
                     position: 'absolute',
                     width: '100%',
                   }}>
@@ -337,7 +337,7 @@ class Carousel extends React.Component<
                     onPress={() => openUrl(item.linkTo)}
                     style={{
                       backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                      padding: 10,
+                      padding: UI_SIZES.spacing.small,
                       width: '100%',
                       flexDirection: 'row',
                       alignItems: 'center',

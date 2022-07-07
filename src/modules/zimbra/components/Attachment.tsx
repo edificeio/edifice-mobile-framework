@@ -20,11 +20,11 @@ const styles = StyleSheet.create({
   nameText: {
     color: theme.palette.primary.regular,
     flexShrink: 1,
-    marginVertical: 4,
+    marginVertical: 4, // MO-142 use UI_SIZES.spacing here
   },
   iconMargin: {
-    marginHorizontal: 12,
-    marginVertical: 8,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginVertical: 8, // MO-142 use UI_SIZES.spacing here
   },
 });
 

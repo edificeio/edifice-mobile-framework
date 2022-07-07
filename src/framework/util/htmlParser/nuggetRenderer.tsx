@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { Image, ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import {
   NestedText,
   NestedTextAction,
@@ -116,7 +117,7 @@ export function renderNuggets(
     <View>
       {nuggets.map((nugget, index) => {
         // let's put a margin to each element except the first one
-        const style = index === 0 ? {} : { marginTop: 15 };
+        const style = index === 0 ? {} : { marginTop: UI_SIZES.spacing.medium };
 
         if (nugget.type === HtmlParserNuggetTypes.Text) {
           return renderParseText(nugget, index, style, globalStyles[HtmlParserNuggetTypes.Text], false, selectable);

@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 12, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.palette.grey.white,
   },
   selectedItem: {
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     ...TextSizeStyle.SlightBig,
-    marginHorizontal: 12,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
   },
   itemTextSelected: {
     color: theme.palette.grey.white,

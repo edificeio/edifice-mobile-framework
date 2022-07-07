@@ -29,7 +29,7 @@ const ViewBadge = styled.View(
 
 const ViewEmpty = styled.View({
   height: 16,
-  marginBottom: 7,
+  marginBottom: 7, // Magic number here
 });
 
 const Text = styled.Text({

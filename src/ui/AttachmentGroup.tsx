@@ -3,6 +3,7 @@ import * as React from 'react';
 import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -61,12 +62,12 @@ export class AttachmentGroup extends React.PureComponent<
               justifyContent: 'space-between',
             }}>
             <View style={{ flexDirection: 'row' }}>
-              <Bold style={{ marginRight: 5 }}>{I18n.t(`attachment${attachments.length > 1 ? 's' : ''}`)}</Bold>
+              <Bold style={{ marginRight: UI_SIZES.spacing.tiny }}>{I18n.t(`attachment${attachments.length > 1 ? 's' : ''}`)}</Bold>
               <Icon
                 color={CommonStyles.textColor}
                 size={16}
                 name="attached"
-                style={{ flex: 0, marginRight: 8, transform: [{ rotate: '270deg' }] }}
+                style={{ flex: 0, marginRight: UI_SIZES.spacing.minor, transform: [{ rotate: '270deg' }] }}
               />
             </View>
             {attachments.length > 1 ? (
@@ -83,7 +84,7 @@ export class AttachmentGroup extends React.PureComponent<
         <BubbleStyle
           style={{
             flex: 0,
-            paddingVertical: 2,
+            paddingVertical: UI_SIZES.spacing.tiny / 2,
             marginTop: 0,
             marginBottom: 0,
             maxHeight: editMode ? 150 : undefined,
@@ -101,7 +102,7 @@ export class AttachmentGroup extends React.PureComponent<
                     onDownload={onDownload}
                     onError={onError}
                     onOpen={onOpen}
-                    style={{ marginTop: index === 0 ? 0 : 2 }}
+                    style={{ marginTop: index === 0 ? 0 : UI_SIZES.spacing.tiny / 2 }}
                     editMode={editMode && !item.hasOwnProperty('id')}
                     onRemove={() => onRemove && onRemove(index)}
                   />

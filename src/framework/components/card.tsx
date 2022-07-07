@@ -25,8 +25,8 @@ import { UI_SIZES } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
 import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle } from './text';
 
-export const cardPaddingV = 12;
-export const cardPaddingH = 16;
+export const cardPaddingV = UI_SIZES.spacing.medium;
+export const cardPaddingH = UI_SIZES.spacing.medium;
 export const cardPadding: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: cardPaddingV };
 export const cardPaddingEqual: ViewStyle = { paddingHorizontal: 0, paddingVertical: cardPaddingH - cardPaddingV };
 export const cardPaddingMerging: ViewStyle = { paddingHorizontal: cardPaddingH, paddingBottom: cardPaddingV };
@@ -34,7 +34,7 @@ export const cardPaddingSmall: ViewStyle = { paddingHorizontal: cardPaddingH, pa
 
 const cardStyle: ViewStyle = {
   backgroundColor: theme.ui.background.card,
-  borderRadius: 15,
+  borderRadius: UI_SIZES.radius.card,
 };
 
 const cardShadow: ViewStyle = {
@@ -103,19 +103,25 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
   );
   const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
   const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
+  const content =
+    props.children || props.footer
+      ? [
+          props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null,
+          props.footer ? (
+            <>
+              <FooterSeparator />
+              <FooterFlexViewWithPadding>{props.footer}</FooterFlexViewWithPadding>
+            </>
+          ) : null,
+        ]
+      : null;
   return (
     <CC {...viewProps}>
       <HeaderFlexViewWithPadding>
         <View style={{ flex: 1 }}>{props.header ?? null}</View>
         <View style={[{ flex: 0 }, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
       </HeaderFlexViewWithPadding>
-      {props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null}
-      {props.footer ? (
-        <>
-          <FooterSeparator />
-          <FooterFlexViewWithPadding>{props.footer}</FooterFlexViewWithPadding>
-        </>
-      ) : null}
+      {content}
     </CC>
   );
 };
@@ -130,7 +136,10 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
     <Icon
       name="arrow_right"
       color={theme.palette.primary.regular}
-      style={{ paddingVertical: 6, paddingLeft: 8, marginRight: -3 }}
+      style={{
+        paddingVertical: UI_SIZES.spacing.minor,
+        paddingLeft: UI_SIZES.spacing.minor,
+      }}
     />
   );
   return <ContentCardBase {...otherProps} headerIndicator={realHeaderIndicator} cardComponent={TouchCardWithoutPadding} />;
@@ -251,15 +260,21 @@ const ResourceCard_base = (props: IResourceCardProps_base) => {
       header
     );
   const realHeader = title ? typeof title === 'string' ? <ContentCardTitle>{title}</ContentCardTitle> : title : metaDataComponent;
+  const content =
+    title || children
+      ? [
+          title ? (
+            <>
+              {metaDataComponent}
+              <View style={{ height: 12 }} />
+            </>
+          ) : null,
+          children,
+        ]
+      : null;
   return (
     <CC header={realHeader} footer={footer} {...otherProps}>
-      {title ? (
-        <>
-          {metaDataComponent}
-          <View style={{ height: 12 }} />
-        </>
-      ) : null}
-      {children}
+      {content}
     </CC>
   );
 };
@@ -399,8 +414,8 @@ OverviewCardBase.styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.regular,
     borderRadius: 12,
     overflow: 'hidden',
-    padding: 4,
-    marginRight: 8,
+    padding: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.minor,
   },
 });
 export function OverviewCard(props: OverviewCardProps) {

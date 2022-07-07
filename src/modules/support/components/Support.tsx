@@ -21,12 +21,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   textsContainer: {
-    marginHorizontal: 12,
-    marginVertical: 16,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginVertical: 16, // MO-142 use UI_SIZES.spacing here
   },
   titleText: {
     ...TextSizeStyle.SlightBig,
-    marginBottom: 4,
+    marginBottom: 4, // MO-142 use UI_SIZES.spacing here
   },
   informationText: {
     color: theme.palette.grey.graphite,
@@ -35,15 +35,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 12,
-    marginVertical: 4,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginVertical: 4, // MO-142 use UI_SIZES.spacing here
   },
   selectionText: {
     width: '50%',
   },
   inputContainer: {
-    marginHorizontal: 12,
-    marginVertical: 16,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginVertical: 16, // MO-142 use UI_SIZES.spacing here
   },
   mandatoryFieldText: {
     color: theme.palette.complementary.red.regular,
@@ -51,22 +51,22 @@ const styles = StyleSheet.create({
   attachmentsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 12,
-    marginTop: 4,
-    marginBottom: 16,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginTop: 4, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 16, // MO-142 use UI_SIZES.spacing here
   },
   attachmentsIcon: {
-    marginRight: 4,
+    marginRight: 4, // MO-142 use UI_SIZES.spacing here
   },
   registerButtonContainer: {
     borderRadius: 5,
-    marginHorizontal: 12,
-    marginVertical: 16,
+    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginVertical: 16, // MO-142 use UI_SIZES.spacing here
   },
   registerButtonText: {
     color: theme.palette.grey.white,
     textAlign: 'center',
-    margin: 12,
+    margin: 12, // MO-142 use UI_SIZES.spacing here
   },
 });
 

@@ -1,8 +1,9 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
-import { ButtonsOkOnly, ButtonsOkCancelReverse } from '~/ui/ButtonsOkCancel';
-import { ModalContent, ModalBox, ModalContentBlock } from '~/ui/Modal';
+import { UI_SIZES } from '~/framework/components/constants';
+import { ButtonsOkCancelReverse, ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
+import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 import { LightP, Paragraph } from '~/ui/Typography';
 
 export default function VersionModal(props: {
@@ -24,7 +25,7 @@ export default function VersionModal(props: {
             <LightP>{I18n.t('common-VersionTitle')}</LightP>
           </ModalContentBlock>
           <ModalContentBlock>
-            <Paragraph style={{ textAlign: 'center', paddingTop: 12 }}>
+            <Paragraph style={{ textAlign: 'center', paddingTop: UI_SIZES.spacing.small }}>
               {I18n.t('common-VersionContentMandatory', { version })}
             </Paragraph>
           </ModalContentBlock>
@@ -42,7 +43,9 @@ export default function VersionModal(props: {
             <LightP>{I18n.t('common-VersionTitle')}</LightP>
           </ModalContentBlock>
           <ModalContentBlock>
-            <Paragraph style={{ textAlign: 'center', paddingTop: 12 }}>{I18n.t('common-VersionContent', { version })}</Paragraph>
+            <Paragraph style={{ textAlign: 'center', paddingTop: UI_SIZES.spacing.small }}>
+              {I18n.t('common-VersionContent', { version })}
+            </Paragraph>
           </ModalContentBlock>
           <ModalContentBlock>
             <ButtonsOkCancelReverse

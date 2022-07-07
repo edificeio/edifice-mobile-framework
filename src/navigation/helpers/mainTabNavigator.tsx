@@ -37,16 +37,17 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
     },
   });
 
+// ToDo : remove magic values here, replace with RN6
 export const createMainTabNavOption = (title: string, icon?: string | PictureProps, iconFocus?: PictureProps) => {
   const computePicture = (icon: PictureProps) => {
     if (icon.type === 'NamedSvg') {
       icon.height = icon.width = 24;
-      icon.style = { marginTop: -6 };
+      icon.style = { marginTop: -6 }; // MO-142 use UI_SIZES.spacing here
     } else if (icon.type === 'Image') {
-      icon.style = { width: 24, height: 24, marginTop: -6 };
+      icon.style = { width: 24, height: 24, marginTop: -6 }; // MO-142 use UI_SIZES.spacing here
     } else if (icon.type === 'Icon') {
       icon.size = 24;
-      icon.style = { marginTop: -6 };
+      icon.style = { marginTop: -6 }; // MO-142 use UI_SIZES.spacing here
     }
     return icon;
   };
@@ -57,7 +58,7 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
     };
   } else if (typeof icon === 'string') {
     return {
-      tabBarIcon: ({ focused }) => <IconOnOff size={24} name={icon} focused={focused} style={{ marginTop: -6 }} />,
+      tabBarIcon: ({ focused }) => <IconOnOff size={24} name={icon} focused={focused} style={{ marginTop: -6 }} />, // MO-142 use UI_SIZES.spacing here
       tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
     };
   } else {
@@ -69,7 +70,7 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
         tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
       };
     } else if (icon.type === 'Image') {
-      icon.style = { width: 24, height: 24, marginTop: -6 };
+      icon.style = { width: 24, height: 24, marginTop: -6 }; // MO-142 use UI_SIZES.spacing here
       return {
         tabBarIcon: ({ focused }) => (focused ? <Picture {...iconFocus} /> : <Picture {...icon} />),
         tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
@@ -98,8 +99,8 @@ const MainTabNavigationLabel = styled.Text(
     alignSelf: 'center',
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 10,
-    marginBottom: 4,
-    marginTop: -12,
+    marginBottom: UI_SIZES.spacing.tiny,
+    marginTop: -UI_SIZES.spacing.small,
   },
   ({ focused }) => ({
     color: focused ? theme.palette.primary.regular : CommonStyles.textTabBottomColor,

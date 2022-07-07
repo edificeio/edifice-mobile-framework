@@ -16,17 +16,17 @@ const style = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
-    paddingVertical: 4,
+    paddingVertical: UI_SIZES.spacing.tiny,
     borderBottomLeftRadius: 15,
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
   },
   itemIcon: {
-    marginRight: 8,
+    marginRight: UI_SIZES.spacing.minor,
     color: theme.palette.grey.white,
   },
   itemText: {

@@ -1,12 +1,10 @@
 import styled from '@emotion/native';
-import { PickerProps } from '@react-native-picker/picker';
 import * as React from 'react';
-import { ActivityIndicator, TextStyle, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import styles from '~/styles';
 import { CommonStyles } from '~/styles/common/styles';
 
 import { Row, RowProperties } from './Grid';
@@ -31,6 +29,16 @@ export interface ValidTextIconProps {
 export interface State {
   marginTop: any;
 }
+
+const styles = StyleSheet.create({
+  Disable: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+});
 
 const Disable = () => <View style={styles.Disable} />;
 
@@ -85,8 +93,8 @@ const ValidStyle = (props: RowProperties) => (
 const ButtonStyleComponent = styled.TouchableOpacity(
   {
     borderRadius: 38 * 0.5,
-    paddingHorizontal: 36,
-    paddingVertical: 9,
+    paddingHorizontal: UI_SIZES.spacing.large,
+    paddingVertical: 9, // ToDo remove magic number
   },
   ({ disabled }) => ({
     backgroundColor: disabled ? 'transparent' : theme.palette.primary.regular,

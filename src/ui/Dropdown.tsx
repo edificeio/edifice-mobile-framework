@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dropdownButton: {
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
   },
   dropdownPicker: {
     width: '100%',
-    marginBottom: 35,
-    paddingHorizontal: 20,
+    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
   },
 });
 

@@ -14,7 +14,7 @@ import { PageContainer } from '~/ui/ContainerContent';
 import { viescoTheme } from '../utils/viescoTheme';
 
 const styles = StyleSheet.create({
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
+  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 }, // MO-142 use UI_SIZES.spacing here
   coursesPart: {
     backgroundColor: theme.palette.grey.white,
     borderBottomLeftRadius: 20,
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
     shadowRadius: CommonStyles.shadowRadius,
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   coursesPartHeight: {
     height: 'auto',
@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
   },
   gridButtonContainer: {
     width: '50%',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: 12, // MO-142 use UI_SIZES.spacing here
     elevation: CommonStyles.elevation,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,

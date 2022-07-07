@@ -4,6 +4,7 @@ import * as React from 'react';
 import { SafeAreaView, ScrollView, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { TextLightItalic } from '~/framework/components/text';
@@ -41,7 +42,7 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                   </LogoWrapper>
                   <View style={{ flexGrow: 4, justifyContent: 'flex-start' }}>
                     <TextLightItalic>{I18n.t('federatedAccount-instructions')}</TextLightItalic>
-                    <TextLightItalic style={{ marginLeft: 25, marginTop: 20 }}>
+                    <TextLightItalic style={{ marginLeft: UI_SIZES.spacing.big, marginTop: UI_SIZES.spacing.medium }}>
                       {I18n.t('federatedAccount-instructions-details')}
                     </TextLightItalic>
                   </View>
@@ -50,7 +51,7 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                       alignItems: 'center',
                       flexGrow: 1,
                       justifyContent: 'center',
-                      marginTop: 40,
+                      marginTop: UI_SIZES.spacing.large,
                     }}>
                     <FlatButton
                       onPress={() => onLink()}
@@ -76,12 +77,12 @@ const FormWrapper = styled.View({ flex: 1 });
 const FormContainer = styled.View({
   height: '100%',
   margin: 0,
-  padding: 40,
-  paddingVertical: 20,
+  padding: UI_SIZES.spacing.large,
+  paddingVertical: UI_SIZES.spacing.medium,
 });
 const LogoWrapper = styled.View({
   flexGrow: 2,
   alignItems: 'center',
   justifyContent: 'center',
-  marginBottom: 20,
+  marginBottom: UI_SIZES.spacing.big,
 });

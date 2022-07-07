@@ -4,7 +4,7 @@
  * use `gap` and `gapOutside` props to manage spaces around the items. Give number or [horizontal, vertical].
  */
 import * as React from 'react';
-import { FlatList, FlatListProps, ListRenderItemInfo, View } from 'react-native';
+import { FlatList, FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
 
 export interface GridListProps<ItemT> extends FlatListProps<ItemT> {
   gap?: number | [number, number]; // distance BETWEEN each item
@@ -17,12 +17,15 @@ const gridListItemWrapperStyleBase = {
 };
 
 export default function GridList<ItemT>(props: GridListProps<ItemT>) {
-  let { renderItem, numColumns, columnWrapperStyle, gap, gapOutside, ...otherProps } = props;
+  const { renderItem, numColumns, columnWrapperStyle, gap, gapOutside, ...otherProps } = props;
   const realNumColumns = numColumns ?? 2;
   const realGap = gap ?? 0,
-    realGapHV = typeof realGap === 'number' ? [realGap, realGap] : realGap;
+    realGapHV = React.useMemo(() => (typeof realGap === 'number' ? [realGap, realGap] : realGap), [realGap]);
   const realGapOutside = gapOutside ?? 0,
-    realGapOutsideHV = typeof realGapOutside === 'number' ? [realGapOutside, realGapOutside] : realGapOutside;
+    realGapOutsideHV = React.useMemo(
+      () => (typeof realGapOutside === 'number' ? [realGapOutside, realGapOutside] : realGapOutside),
+      [realGapOutside],
+    );
   const gridListItemWrapperStyleCustom = {
     flexBasis: `${100 / realNumColumns}%`,
     paddingHorizontal: realGapHV[0] / 2,
@@ -31,10 +34,20 @@ export default function GridList<ItemT>(props: GridListProps<ItemT>) {
     (info: ListRenderItemInfo<ItemT>) => ({
       paddingTop: info.index < realNumColumns ? realGapOutsideHV[1] : realGapHV[1],
       paddingBottom:
-        Math.floor(info.index / realNumColumns) + 1 >= Math.ceil((props.data?.length ?? 0) / realNumColumns) ? realGapOutsideHV[1] : 0,
+        Math.floor(info.index / realNumColumns) + 1 >= Math.ceil((props.data?.length ?? 0) / realNumColumns)
+          ? realGapOutsideHV[1]
+          : 0,
     }),
-    [gap, gapOutside, props.data],
+    [props.data?.length, realGapHV, realGapOutsideHV, realNumColumns],
   );
+  const realColumnWrapperStyle: StyleProp<ViewStyle> = [
+    {
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      marginHorizontal: realGapOutsideHV[0] - realGapHV[0] / 2,
+    },
+    columnWrapperStyle,
+  ];
   return (
     <FlatList
       renderItem={info => (
@@ -43,14 +56,7 @@ export default function GridList<ItemT>(props: GridListProps<ItemT>) {
         </View>
       )}
       numColumns={realNumColumns}
-      columnWrapperStyle={[
-        {
-          alignItems: 'flex-start',
-          justifyContent: 'flex-start',
-          marginHorizontal: realGapOutsideHV[0] - realGapHV[0] / 2,
-        },
-        columnWrapperStyle,
-      ]}
+      columnWrapperStyle={realColumnWrapperStyle}
       scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
       {...otherProps}
     />

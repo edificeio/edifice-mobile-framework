@@ -1,13 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, TextStyle, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { layoutSize } from '~/styles/common/layoutSize';
 
 const styles = StyleSheet.create({
   text: {
     fontWeight: '600',
     fontSize: layoutSize.LAYOUT_16,
-    marginBottom: layoutSize.LAYOUT_10,
+    marginBottom: UI_SIZES.spacing.minor,
   },
   container: {
     flexDirection: 'row',

@@ -1,18 +1,17 @@
 /**
  * Player (audio/video)
  */
-
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, ViewStyle, TouchableOpacity, Platform, Image, ImageURISource } from 'react-native';
+import { Image, ImageURISource, Platform, TouchableOpacity, View, ViewStyle } from 'react-native';
 import VideoPlayer from 'react-native-video';
 import VideoPlayerAndroid from 'react-native-video-player';
 
-import { Loading } from './Loading';
-import { MediaAction } from './MediaAction';
-
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextItalic } from '~/framework/components/text';
+
+import { Loading } from './Loading';
+import { MediaAction } from './MediaAction';
 
 export interface IPlayerProps {
   type: 'audio' | 'video';
@@ -107,7 +106,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
                 position: 'relative',
                 top: undefined,
                 right: undefined,
-                paddingLeft: 4,
+                paddingLeft: UI_SIZES.spacing.tiny,
                 backgroundColor: 'rgba(63,63,63,0.8)',
               }}
             />

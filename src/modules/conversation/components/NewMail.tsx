@@ -46,7 +46,7 @@ interface NewMailComponentProps extends NavigationInjectedProps {
 
 const styles = StyleSheet.create({
   mailPart: {
-    padding: 5,
+    padding: UI_SIZES.spacing.small,
     backgroundColor: 'white',
   },
 });
@@ -162,7 +162,7 @@ const Fields = ({
       onChange={to => onHeaderChange({ ...headers, to })}
       rightComponent={
         isSearchingUsersFinal ? undefined : (
-          <TouchableOpacity style={{ paddingVertical: 6 }} onPress={() => toggleExtraFields(!showExtraFields)}>
+          <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
             <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
           </TouchableOpacity>
         )
@@ -295,8 +295,9 @@ const MailContactField = connect(state => ({
 
     const inputStyle = {
       flexDirection: 'row',
-      alignItems: 'flex-start',
-      paddingHorizontal: 10,
+      alignItems: 'stretch',
+      paddingHorizontal: UI_SIZES.spacing.medium,
+      paddingVertical: UI_SIZES.spacing.minor,
       borderBottomColor: theme.palette.grey.cloudy,
       borderBottomWidth: 2,
       backgroundColor: theme.ui.background.card,
@@ -306,8 +307,8 @@ const MailContactField = connect(state => ({
       <View style={{ flexGrow: 1 }}>
         <View style={{ flex: 0, alignItems: 'stretch' }}>
           <View style={[inputStyle, style]}>
-            <Text style={{ color: CommonStyles.lightTextColor, paddingVertical: 10 }}>{title} : </Text>
-            <View style={{ overflow: 'visible', marginHorizontal: 5, flex: 1 }}>
+            <Text style={{ color: CommonStyles.lightTextColor, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </Text>
+            <View style={{ overflow: 'visible', marginHorizontal: UI_SIZES.spacing.tiny, flex: 1 }}>
               <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
               <Input
                 inputRef={inputRef}
@@ -347,7 +348,7 @@ const HeaderUsers = ({
   const headerStyle = {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: UI_SIZES.spacing.small,
     borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 2,
   } as ViewStyle;
@@ -370,7 +371,7 @@ const HeaderSubject = ({
   const headerStyle = {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: UI_SIZES.spacing.small,
     borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 2,
     backgroundColor: theme.ui.background.card,

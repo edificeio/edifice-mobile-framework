@@ -4,6 +4,7 @@ import Modal from 'react-native-modal';
 
 import theme from '~/app/theme';
 
+import { UI_SIZES } from './constants';
 import { TextBold } from './text';
 
 export interface IBackdropModalProps {
@@ -69,7 +70,7 @@ export const BackdropModal = ({
             backgroundColor: headerColor || theme.legacy.neutral.extraLight,
             height: 60,
             justifyContent: 'center',
-            paddingBottom: 20,
+            paddingBottom: UI_SIZES.spacing.medium,
           }}>
           <TextBold>{title}</TextBold>
         </View>

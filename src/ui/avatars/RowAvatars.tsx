@@ -15,7 +15,7 @@ const SkippedContainer = styled.View({
   width: 29,
   alignItems: 'center',
   justifyContent: 'center',
-  marginLeft: -4,
+  marginLeft: -UI_SIZES.spacing.tiny,
   backgroundColor: theme.ui.background.card,
 });
 

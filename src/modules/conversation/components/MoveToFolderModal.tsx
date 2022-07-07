@@ -3,14 +3,12 @@ import * as React from 'react';
 import { View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-
-
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { TextBold, TextSemiBold } from '~/framework/components/text';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
-
 
 type MoveToFolderModalProps = {
   show: boolean;
@@ -63,7 +61,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
         <ModalContent
           style={{
             height: 250,
-            padding: 20,
+            padding: UI_SIZES.spacing.big,
             paddingTop: undefined,
             width: undefined,
             justifyContent: 'space-between',

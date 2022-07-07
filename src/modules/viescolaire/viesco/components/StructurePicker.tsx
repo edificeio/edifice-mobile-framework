@@ -7,9 +7,9 @@ import Dropdown from '~/ui/Dropdown';
 const styles = StyleSheet.create({
   container: {
     zIndex: 20,
-    marginTop: 10,
-    paddingBottom: 10,
-    marginHorizontal: 20,
+    marginTop: 10, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',

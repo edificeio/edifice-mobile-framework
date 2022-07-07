@@ -58,7 +58,7 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps & Navig
             }}
             renderItem={({ item: user }) => {
               return (
-                <View style={{ marginBottom: 15 }} key={user.id}>
+                <View style={{ marginBottom: UI_SIZES.spacing.medium }} key={user.id}>
                   <UserCard id={user.id} displayName={user.displayName} type="Student" />
                 </View>
               );

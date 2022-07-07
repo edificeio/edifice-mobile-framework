@@ -68,6 +68,8 @@ export const UI_SIZES = {
   radius: {
     small: 4,
     medium: 8,
+    card: 8,
+    explorer: 18,
     mediumPlus: 16,
     large: 21,
     extraLarge: 24,

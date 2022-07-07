@@ -20,13 +20,13 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 const styles = StyleSheet.create({
   fullGrowView: {
     flexGrow: 1,
-    paddingVertical: 5,
+    paddingVertical: 5, // MO-142 use UI_SIZES.spacing here
   },
   containerMail: {
-    marginTop: 5,
-    marginHorizontal: 8,
+    marginTop: 5, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: 8, // MO-142 use UI_SIZES.spacing here
     maxWidth: UI_SIZES.screen.width - 16,
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.palette.grey.white,
   },
   containerMailSelected: {
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   displayNameText: {
     flexShrink: 1,
-    marginRight: 4,
+    marginRight: 4, // MO-142 use UI_SIZES.spacing here
   },
   greyColor: {
     color: theme.palette.grey.stone,

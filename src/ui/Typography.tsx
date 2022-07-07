@@ -1,9 +1,7 @@
 import styled from '@emotion/native';
 
-
-
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
-
 
 /**
  * Font weights defined in this font family
@@ -132,16 +130,6 @@ export const Label = styled.Text({
   textAlignVertical: 'center',
 });
 
-export const Quote = styled.Text({
-  color: CommonStyles.lightTextColor,
-  fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 12,
-  fontWeight: '400',
-  marginBottom: 20,
-  marginTop: 20,
-  textAlign: 'center',
-});
-
 export const A = styled.Text({
   color: CommonStyles.actionColor,
   fontFamily: CommonStyles.primaryFontFamily,
@@ -160,8 +148,8 @@ export const H4 = styled.Text({
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
   fontWeight: '400',
-  marginTop: 40,
-  paddingHorizontal: 20,
+  marginTop: UI_SIZES.spacing.big,
+  paddingHorizontal: UI_SIZES.spacing.medium,
 });
 
 export const H1 = styled.Text({
@@ -169,8 +157,8 @@ export const H1 = styled.Text({
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 18,
   fontWeight: '600',
-  marginBottom: 20,
-  marginTop: 20,
+  marginBottom: UI_SIZES.spacing.big,
+  marginTop: UI_SIZES.spacing.big,
 });
 
 export const ErrorMessage = styled.Text({
@@ -179,8 +167,8 @@ export const ErrorMessage = styled.Text({
   flexGrow: 0,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
-  marginTop: 15,
-  padding: 5,
+  marginTop: UI_SIZES.spacing.medium,
+  padding: UI_SIZES.spacing.tiny,
   textAlign: 'center',
 });
 
@@ -190,7 +178,7 @@ export const InfoMessage = styled.Text({
   flexGrow: 0,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
-  marginTop: 15,
-  padding: 5,
+  marginTop: UI_SIZES.spacing.medium,
+  padding: UI_SIZES.spacing.tiny,
   textAlign: 'center',
 });

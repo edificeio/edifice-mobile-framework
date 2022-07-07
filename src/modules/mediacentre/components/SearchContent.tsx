@@ -17,11 +17,11 @@ import { SearchFilter } from './SearchFilter';
 const styles = StyleSheet.create({
   fieldContainer: {
     flexDirection: 'row',
-    marginRight: 10,
+    marginRight: 10, // MO-142 use UI_SIZES.spacing here
   },
   parametersContainer: {
-    marginHorizontal: 20,
-    marginBottom: 10,
+    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   upperContainer: {
     flexDirection: 'row',
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   sourceImage: {
     width: 24,
     height: 24,
-    marginRight: 10,
+    marginRight: 10, // MO-142 use UI_SIZES.spacing here
   },
   cancelButton: {
     backgroundColor: theme.palette.primary.regular,
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   fieldsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 5,
+    marginTop: 5, // MO-142 use UI_SIZES.spacing here
   },
   mainContainer: {
     flex: 1,
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     marginTop: '45%',
   },
   filterContainer: {
-    marginHorizontal: 20,
-    marginBottom: 15,
+    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
 });
 

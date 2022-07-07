@@ -7,6 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
@@ -99,7 +100,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
         keyExtractor={(item: IBlog) => item.id.toString()}
         contentContainerStyle={{
           flexGrow: 1,
-          paddingBottom: isEmpty ? undefined : 12,
+          paddingBottom: isEmpty ? undefined : UI_SIZES.spacing.small,
           backgroundColor: theme.ui.background.card,
         }}
         ListEmptyComponent={this.renderEmpty()}
@@ -144,9 +145,9 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
                 ]}
                 fallback={require('ASSETS/images/resource-avatar.png')}
               />
-              <View style={{ flex: 1, marginLeft: 10 }}>
+              <View style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
                 <TextSemiBold numberOfLines={1}>{blog.title}</TextSemiBold>
-                <TextLight style={{ fontSize: 12, marginTop: 8 }}>
+                <TextLight style={{ fontSize: 12, marginTop: UI_SIZES.spacing.minor }}>
                   {I18n.t(`blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? '' : 's'}`, {
                     nb: blogShareNumber || 0,
                   })}

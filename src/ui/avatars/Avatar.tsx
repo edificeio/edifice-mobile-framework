@@ -5,6 +5,7 @@ import { Grayscale } from 'react-native-color-matrix-image-filters';
 import FastImage from 'react-native-fast-image';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
@@ -64,8 +65,8 @@ const AlignedContainer = styled.View(
   {
     borderRadius: 16,
     height: 29,
-    marginRight: -4,
-    marginLeft: -4,
+    marginRight: -UI_SIZES.spacing.tiny,
+    marginLeft: -UI_SIZES.spacing.tiny,
     width: 29,
     backgroundColor: theme.palette.grey.pearl,
   },

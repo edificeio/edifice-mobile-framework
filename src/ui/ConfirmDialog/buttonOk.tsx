@@ -2,16 +2,16 @@ import React from 'react';
 import { StyleSheet, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Text } from '~/framework/components/text';
-import { layoutSize } from '~/styles/common/layoutSize';
 
 const styles = StyleSheet.create({
   buttonContainer: {
     backgroundColor: theme.palette.secondary.regular,
     borderRadius: 2,
-    marginLeft: layoutSize.LAYOUT_16,
-    paddingHorizontal: layoutSize.LAYOUT_16,
-    paddingVertical: layoutSize.LAYOUT_8,
+    marginLeft: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
     justifyContent: 'center',
     alignItems: 'center',
   },

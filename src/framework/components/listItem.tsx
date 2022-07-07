@@ -3,6 +3,8 @@ import { View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 
+import { UI_SIZES } from './constants';
+
 export const ListItem = ({
   leftElement,
   rightElement,
@@ -20,7 +22,7 @@ export const ListItem = ({
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: 12,
+          padding: UI_SIZES.spacing.small,
           borderBottomWidth: 1,
           borderBottomColor: theme.ui.border.listItem,
         },

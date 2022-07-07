@@ -1,22 +1,20 @@
 import styled from '@emotion/native';
 import { ViewStyle } from 'react-native';
 
-
-
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
-
 export const BubbleStyle = styled.View<{
-  my: boolean
+  my: boolean;
 }>(
   {
     alignSelf: 'stretch',
     elevation: 2,
     justifyContent: 'center',
-    marginBottom: 10,
-    marginTop: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    marginBottom: UI_SIZES.spacing.small,
+    marginTop: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
@@ -24,21 +22,21 @@ export const BubbleStyle = styled.View<{
   },
   ({ my, style }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : 'white',
-    ...style as ViewStyle,
+    ...(style as ViewStyle),
   }),
 );
 
 export const BubbleScrollStyle = styled.ScrollView<{
-  my: boolean
+  my: boolean;
 }>(
   {
     alignSelf: 'stretch',
     elevation: 2,
     justifyContent: 'center',
-    marginBottom: 10,
-    marginTop: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    marginBottom: UI_SIZES.spacing.small,
+    marginTop: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
@@ -46,6 +44,6 @@ export const BubbleScrollStyle = styled.ScrollView<{
   },
   ({ my, style }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : 'white',
-    ...style as ViewStyle,
+    ...(style as ViewStyle),
   }),
 );

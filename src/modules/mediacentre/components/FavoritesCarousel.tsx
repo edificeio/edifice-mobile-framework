@@ -17,27 +17,27 @@ import { ResourceImage } from './ResourceImage';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginBottom: 15,
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
   titleText: {
-    marginLeft: 10,
+    marginLeft: 10, // MO-142 use UI_SIZES.spacing here
   },
   cardListContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    margin: 10,
+    margin: 10, // MO-142 use UI_SIZES.spacing here
   },
   cardSlideContainer: {
     width: 145,
     height: 150,
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   cardContainer: {
     width: 125,
   },
   contentContainer: {
-    marginLeft: 12,
-    padding: 10,
+    marginLeft: 12, // MO-142 use UI_SIZES.spacing here
+    padding: 10, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.ui.background.card,
     borderTopRightRadius: 14,
     borderBottomRightRadius: 14,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 60,
     alignSelf: 'center',
-    marginVertical: 5,
+    marginVertical: 5, // MO-142 use UI_SIZES.spacing here
   },
   actionsContainer: {
     flexDirection: 'row',

@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   criteriaInput: {
     width: '75%',
     height: 45,
-    paddingHorizontal: 10,
+    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
     borderWidth: 2,
     borderRadius: 5,
     borderColor: theme.palette.primary.regular,
@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
   sourceCheckBoxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10,
+    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
   },
   sourceImage: {
     width: 30,
     height: 30,
-    marginRight: 5,
+    marginRight: 5, // MO-142 use UI_SIZES.spacing here
   },
   safeAreaContainer: {
     flex: 1,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.regular,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
   },
   headerTitle: {
     ...TextSizeStyle.SlightBig,
@@ -63,16 +63,16 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: 'space-between',
-    padding: 20,
+    padding: 20, // MO-142 use UI_SIZES.spacing here
   },
   sourcesContainer: {
-    marginBottom: 5,
+    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
   },
   sourcesContentContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 5, // MO-142 use UI_SIZES.spacing here
   },
   dialogButtonsContainer: {
     flexDirection: 'row',

@@ -124,8 +124,8 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
               style={{
                 maxHeight: layoutSize.LAYOUT_450,
                 height: layoutSize.LAYOUT_80 * selected.length,
-                marginTop: layoutSize.LAYOUT_10,
-                marginBottom: layoutSize.LAYOUT_10,
+                marginTop: UI_SIZES.spacing.small,
+                marginBottom: UI_SIZES.spacing.small,
                 position: 'relative',
                 display: 'flex',
                 flex: 0,

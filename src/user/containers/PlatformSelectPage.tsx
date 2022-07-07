@@ -41,20 +41,6 @@ export type IPlatformSelectPageProps = IPlatformSelectPageDataProps & IPlatformS
 
 // Main component ---------------------------------------------------------------------------------
 
-const PlatformButton = styled(TouchableOpacity)({
-  elevation: 3,
-  shadowColor: '#6B7C93',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.3,
-  shadowRadius: 2,
-
-  flexDirection: 'column',
-  paddingHorizontal: 16,
-  paddingVertical: 32,
-
-  backgroundColor: theme.ui.background.card,
-});
-
 export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageProps, object> {
   public render() {
     return (
@@ -84,12 +70,12 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
                     color: CommonStyles.textColor,
                     fontSize: 20,
                     fontWeight: 'normal',
-                    marginTop: 55,
+                    marginTop: UI_SIZES.spacing.medium + UI_SIZES.screen.topInset,
                     textAlign: 'center',
                   }}>
                   {I18n.t('welcome')}
                 </H1>
-                <LightP style={{ textAlign: 'center', marginBottom: 12 }}>{I18n.t('select-platform')}</LightP>
+                <LightP style={{ textAlign: 'center', marginBottom: UI_SIZES.spacing.small }}>{I18n.t('select-platform')}</LightP>
               </>
             }
             alwaysBounceVertical={false}

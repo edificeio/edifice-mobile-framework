@@ -34,12 +34,12 @@ export class RelativesPage extends React.PureComponent<IRelativesPageProps & Nav
             data={this.props.relatives}
             keyExtractor={item => item.id}
             renderItem={({ item: user }) => (
-              <View style={{ marginBottom: 15 }} key={user.id}>
+              <View style={{ marginBottom: UI_SIZES.spacing.medium }} key={user.id}>
                 <UserCard id={user.id} displayName={user.displayName} type="Relative" />
               </View>
             )}
             ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
-            contentContainerStyle={{ marginTop: 40 }}
+            contentContainerStyle={{ marginTop: UI_SIZES.spacing.large }}
           />
         ) : null}
       </PageView>

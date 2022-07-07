@@ -7,6 +7,7 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
@@ -73,8 +74,8 @@ const FormContainer = styled.View({
   flex: 1,
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: 40,
-  paddingTop: 80,
+  padding: UI_SIZES.spacing.large,
+  paddingTop: UI_SIZES.spacing.huge,
 });
 
 export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState> {
@@ -157,7 +158,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 backgroundColor: '#FCEEEA',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: 5,
+                padding: UI_SIZES.spacing.minor,
                 borderColor: theme.palette.status.failure,
                 borderWidth: 1,
                 borderRadius: 15,
@@ -191,8 +192,10 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               value={password}
               hasError={(error && !typing && !errtype) as boolean}
             />
-            <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: 20 }}>
-              <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t('AutoLogin')}</Text>
+            <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium }}>
+              <Text style={{ marginRight: UI_SIZES.spacing.small, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>
+                {I18n.t('AutoLogin')}
+              </Text>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
@@ -215,7 +218,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 alignItems: 'center',
                 flexGrow: 2,
                 justifyContent: 'flex-start',
-                marginTop: error && !typing ? 10 : 20,
+                marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
               }}>
               {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
                 <FlatButton
@@ -240,14 +243,14 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                   justifyContent: 'center',
                 }}>
                 <Text
-                  style={{ textDecorationLine: 'underline', marginTop: 48, ...TextColorStyle.Light }}
+                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, ...TextColorStyle.Light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: false });
                   }}>
                   {I18n.t('forgot-password')}
                 </Text>
                 <Text
-                  style={{ textDecorationLine: 'underline', marginTop: 20, ...TextColorStyle.Light }}
+                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.medium, ...TextColorStyle.Light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: true });
                   }}>
@@ -257,7 +260,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                   <FederationTextComponent
                     style={{
                       textDecorationLine: 'underline',
-                      marginTop: 48,
+                      marginTop: UI_SIZES.spacing.major,
                       textAlign: 'center',
                       color: error ? CommonStyles.profileTypes.Student : theme.ui.text.light,
                     }}

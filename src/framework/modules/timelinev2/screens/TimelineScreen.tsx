@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
@@ -153,11 +154,11 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 12,
+              padding: UI_SIZES.spacing.small,
               width: 140,
             }}>
             <Icon name={actionIcon} size={16} color={color} />
-            <Text style={{ color, marginLeft: 10 }}>{actionText}</Text>
+            <Text style={{ color, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Text>
           </View>
         </TouchableOpacity>
       </View>,
@@ -186,7 +187,9 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         ListFooterComponent={
           this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? <LoadingIndicator /> : null
         }
-        ListHeaderComponent={getTimelineWorkflows(this.props.session).length ? <View style={{ height: 12 }} /> : null}
+        ListHeaderComponent={
+          getTimelineWorkflows(this.props.session).length ? <View style={{ height: UI_SIZES.spacing.medium }} /> : null
+        }
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
         // Swipeable props

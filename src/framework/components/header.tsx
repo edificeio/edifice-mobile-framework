@@ -85,7 +85,7 @@ export const HeaderCenter = styled.View({
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: UI_SIZES.elements.navbarHeight,
-  marginHorizontal: 60,
+  marginHorizontal: 60, // Value in px ! Measured to fit icons at left & right.
 });
 
 const iconSpecificSizes = {
@@ -104,8 +104,8 @@ export const HeaderIcon = (props: {
     ? styled.View({
         height: 50,
         width: 50,
-        marginTop: 20,
-        marginRight: 20,
+        marginTop: 20, // Value in px ! Measured to fit icons at left & right.
+        marginRight: 20, // Value in px ! Measured to fit icons at left & right.
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
@@ -152,7 +152,7 @@ interface IHeaderActionCustomProps extends IHeaderActionCommonProps {
 }
 
 const HeaderActionText = styled(TextInverse)({
-  paddingHorizontal: 18,
+  paddingHorizontal: 18, // Value in px ! Measured to fit icons at left & right.
   justifyContent: 'center',
   alignItems: 'center',
 });

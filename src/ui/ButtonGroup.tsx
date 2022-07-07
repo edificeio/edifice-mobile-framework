@@ -11,10 +11,10 @@ const style = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     overflow: 'hidden',
-    marginBottom: 5,
+    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
   },
   buttonContainer: {
-    padding: 5,
+    padding: 5, // MO-142 use UI_SIZES.spacing here
   },
   buttonText: {
     color: theme.palette.grey.white,

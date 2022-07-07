@@ -21,14 +21,14 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     justifyContent: 'center',
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   switchPart: {
     flex: 1,
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: theme.palette.grey.cloudy,
-    padding: 15,
+    padding: 15, // MO-142 use UI_SIZES.spacing here
     justifyContent: 'center',
   },
   leftSwitch: {
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   rightSwitchSingle: { flexDirection: 'row' },
-  rightSwitchSingleText: { marginHorizontal: 10 },
+  rightSwitchSingleText: { marginHorizontal: 10 }, // MO-142 use UI_SIZES.spacing here
   selected: {
     backgroundColor: theme.palette.grey.white,
     elevation: CommonStyles.elevation,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     shadowRadius: CommonStyles.shadowRadius,
   },
   row: {
-    marginVertical: 10,
+    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
     justifyContent: 'space-evenly',
     flexDirection: 'row',
   },
@@ -59,13 +59,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     backgroundColor: theme.palette.grey.white,
     alignItems: 'center',
-    margin: 10,
+    margin: 10, // MO-142 use UI_SIZES.spacing here
   },
   timePickerRender: {
     borderStyle: 'solid',
     borderBottomWidth: 2,
     borderColor: viescoTheme.palette.presences,
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   timePickerTitleText: {
     color: viescoTheme.palette.presences,
@@ -73,28 +73,28 @@ const styles = StyleSheet.create({
   },
   timePickerDate: {
     ...responsiveStyle(24),
-    padding: 10,
+    padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   inputContainer: {
     backgroundColor: theme.palette.grey.white,
     flexDirection: 'column',
-    paddingHorizontal: 25,
-    paddingTop: 16,
+    paddingHorizontal: 25, // MO-142 use UI_SIZES.spacing here
+    paddingTop: 16, // MO-142 use UI_SIZES.spacing here
   },
-  inputContainerText: { marginBottom: 8 },
+  inputContainerText: { marginBottom: 8 }, // MO-142 use UI_SIZES.spacing here
   motiveTextInput: {
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
-    paddingVertical: 4,
+    paddingVertical: 4, // MO-142 use UI_SIZES.spacing here
   },
   filePickerStyle: {
     flexDirection: 'row',
-    paddingVertical: 16,
+    paddingVertical: 16, // MO-142 use UI_SIZES.spacing here
   },
-  iconAttMarginRight: { marginRight: 10 },
+  iconAttMarginRight: { marginRight: 10 }, // MO-142 use UI_SIZES.spacing here
   dialogButtonOk: {
     alignSelf: 'center',
-    marginVertical: 10,
+    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
   },
 });
 

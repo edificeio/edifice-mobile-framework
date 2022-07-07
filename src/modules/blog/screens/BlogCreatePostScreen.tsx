@@ -7,6 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -91,7 +92,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         <LoadingIndicator
           small
           customColor={theme.legacy.neutral.extraLight}
-          customStyle={{ justifyContent: 'center', paddingHorizontal: 18 }}
+          customStyle={{ justifyContent: 'center', paddingHorizontal: UI_SIZES.spacing.big }}
         />
       ) : (
         <HeaderAction
@@ -117,7 +118,11 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         <ScrollView
           alwaysBounceVertical={false}
           overScrollMode="never"
-          contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}>
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingVertical: UI_SIZES.spacing.small,
+            paddingHorizontal: UI_SIZES.spacing.medium,
+          }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
         </ScrollView>
       </KeyboardPageView>
@@ -143,9 +148,9 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     const { id, displayName } = session.user;
     const blog = navigation.getParam('blog');
     return (
-      <View style={{ marginBottom: 20, flexDirection: 'row', alignItems: 'center' }}>
+      <View style={{ marginBottom: UI_SIZES.spacing.big, flexDirection: 'row', alignItems: 'center' }}>
         <GridAvatars users={[id]} />
-        <View style={{ flex: 1, justifyContent: 'center', marginLeft: 6 }}>
+        <View style={{ flex: 1, justifyContent: 'center', marginLeft: UI_SIZES.spacing.minor }}>
           <TextBold>{displayName}</TextBold>
           <TextLight>{blog?.title}</TextLight>
         </View>
@@ -157,14 +162,14 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     const { title, content } = this.state;
     return (
       <>
-        <TextBold style={{ marginBottom: 10 }}>{I18n.t('blog.blogCreatePostScreen.postTitle')}</TextBold>
+        <TextBold style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.t('blog.blogCreatePostScreen.postTitle')}</TextBold>
         <TextInput
           placeholder={I18n.t('blog.blogCreatePostScreen.postTitlePlaceholder')}
           value={title}
           onChangeText={text => this.setState({ title: text })}
           style={{
-            marginBottom: 20,
-            padding: 10,
+            marginBottom: UI_SIZES.spacing.big,
+            padding: UI_SIZES.spacing.small,
             backgroundColor: theme.ui.background.card,
             borderColor: theme.ui.border.input,
             borderWidth: 1,
@@ -172,14 +177,14 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             color: theme.ui.text.regular,
           }}
         />
-        <TextBold style={{ marginBottom: 10 }}>{I18n.t('blog.blogCreatePostScreen.postContent')}</TextBold>
+        <TextBold style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.t('blog.blogCreatePostScreen.postContent')}</TextBold>
         <TextInput
           placeholder={I18n.t('blog.blogCreatePostScreen.postContentPlaceholder')}
           value={content}
           onChangeText={text => this.setState({ content: text })}
           style={{
-            marginBottom: 20,
-            padding: 10,
+            marginBottom: UI_SIZES.spacing.medium,
+            padding: UI_SIZES.spacing.small,
             backgroundColor: theme.ui.background.card,
             borderColor: theme.ui.border.input,
             borderWidth: 1,
@@ -215,12 +220,12 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
               alignItems: 'center',
               justifyContent: 'center',
               flexDirection: imagesAdded ? 'row' : 'column',
-              marginTop: 20,
-              marginBottom: imagesAdded ? 10 : 20,
+              marginTop: UI_SIZES.spacing.big,
+              marginBottom: imagesAdded ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
             }}
             // onPress={() => this.attachmentPickerRef.onPickAttachment()}
           >
-            <TextAction style={{ width: 300, marginRight: imagesAdded ? 5 : 0, textAlign: 'center' }}>
+            <TextAction style={{ width: 300, marginRight: imagesAdded ? UI_SIZES.spacing.minor : 0, textAlign: 'center' }}>
               {I18n.t('createPost-create-mediaField')}
             </TextAction>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />

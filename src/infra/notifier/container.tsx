@@ -5,6 +5,7 @@ import { AnimatedValue, LayoutEvent } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -114,7 +115,7 @@ class Notifier extends React.Component<
     const icon = notifier && notifier.icon;
     const heightIos = measuredText && !longText ? undefined : notifierHeight;
     const height = Platform.OS === 'ios' ? heightIos : undefined;
-    const marginLeft = !icon && !loading ? undefined : 40;
+    const marginLeft = !icon && !loading ? undefined : UI_SIZES.spacing.large;
 
     return (
       <Animated.View
@@ -138,16 +139,16 @@ class Notifier extends React.Component<
                   alignSelf: 'center',
                   height,
                   marginLeft,
-                  paddingTop: longText ? 15 : undefined,
-                  paddingBottom: longText ? 15 : undefined,
+                  paddingTop: longText ? UI_SIZES.spacing.medium : undefined,
+                  paddingBottom: longText ? UI_SIZES.spacing.medium : undefined,
                 }}>
                 {text}
               </Text>
             ) : null}
             {loading ? (
-              <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: 20 }} />
+              <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.big }} />
             ) : icon ? (
-              <Icon name={icon} size={18} style={{ marginRight: 20 }} color={theme.ui.text.inverse} />
+              <Icon name={icon} size={18} style={{ marginRight: UI_SIZES.spacing.big }} color={theme.ui.text.inverse} />
             ) : null}
           </View>
         </NotifierWrapper>

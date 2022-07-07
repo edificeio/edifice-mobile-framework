@@ -5,6 +5,7 @@ import { PanGestureHandler, ScrollView, State, TouchableOpacity } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { IHomework } from '~/modules/viescolaire/types/homework';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -20,14 +21,14 @@ const styles = StyleSheet.create({
   daysHeader: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 10,
+    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
   },
   topDay: {
     flexDirection: 'column',
     alignItems: 'center',
     borderRadius: 10,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    paddingVertical: UI_SIZES.spacing.tiny,
+    paddingHorizontal: UI_SIZES.spacing.small,
     overflow: 'hidden',
   },
   whiteText: {

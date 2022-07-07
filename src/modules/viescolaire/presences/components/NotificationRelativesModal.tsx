@@ -15,18 +15,18 @@ import { viescoTheme } from '../../viesco/utils/viescoTheme';
 const styles = StyleSheet.create({
   modalTitle: {
     ...TextSizeStyle.SlightBig,
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   modalSubsection: {
-    paddingLeft: 15,
-    marginBottom: 15,
+    paddingLeft: 15, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
   },
   eventTitle: {
     textTransform: 'uppercase',
     color: theme.palette.grey.grey,
   },
   eventTextContainer: {
-    marginVertical: 2,
+    marginVertical: 2, // MO-142 use UI_SIZES.spacing here
   },
   eventNestedText: {
     ...TextSizeStyle.Tiny,
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   modalContentView: {
     backgroundColor: theme.palette.grey.white,
     borderRadius: 5,
-    padding: 25,
+    padding: 25, // MO-142 use UI_SIZES.spacing here
     alignItems: 'stretch',
   },
 });

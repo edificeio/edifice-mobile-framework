@@ -4,6 +4,7 @@ import moment from 'moment';
 import React, { useState } from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
@@ -15,12 +16,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 8,
+    padding: UI_SIZES.spacing.minor,
     backgroundColor: 'white',
     borderRadius: 5,
   },
   text: {
-    marginLeft: 4,
+    marginLeft: UI_SIZES.spacing.tiny,
   },
   modalContentContainer: {
     width: 350,
@@ -28,14 +29,14 @@ const styles = StyleSheet.create({
   pickerContainer: {
     width: '100%',
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    marginBottom: 35,
+    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
     alignItems: 'center',
   },
   textPicker: {
     justifyContent: 'flex-end',
     width: '60%',
-    paddingLeft: 20,
+    paddingLeft: 20, // MO-142 use UI_SIZES.spacing here
   },
   iosPickerContainer: {
     justifyContent: 'flex-start',

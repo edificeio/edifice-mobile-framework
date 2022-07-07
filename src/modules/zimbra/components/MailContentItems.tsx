@@ -23,11 +23,11 @@ import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from '
 
 const styles = StyleSheet.create({
   containerMail: {
-    padding: 15,
+    padding: 15, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.palette.grey.white,
   },
   containerMailDetails: {
-    padding: 15,
+    padding: 15, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.palette.grey.white,
     position: 'absolute',
     zIndex: 9,
@@ -40,11 +40,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 5,
+    paddingHorizontal: 5, // MO-142 use UI_SIZES.spacing here
   },
   gridButtonText: {
     color: theme.palette.primary.regular,
-    marginRight: 5,
+    marginRight: 5, // MO-142 use UI_SIZES.spacing here
   },
   gridViewStyle: {
     flexDirection: 'row',
@@ -53,14 +53,14 @@ const styles = StyleSheet.create({
   gridButtonTextPJnames: {
     flex: 2,
     color: theme.palette.primary.regular,
-    marginLeft: 5,
+    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
   },
   dotReceiverColor: {
     width: 8,
     height: 8,
     borderRadius: 15,
-    marginTop: 6,
-    marginRight: 5,
+    marginTop: 6, // MO-142 use UI_SIZES.spacing here
+    marginRight: 5, // MO-142 use UI_SIZES.spacing here
   },
   greyColor: {
     color: theme.palette.grey.stone,
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.8,
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   attachmentContainer: {
     flexDirection: 'column',
@@ -86,11 +86,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   attachmentDownloadButton: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 12, // MO-142 use UI_SIZES.spacing here
     flex: 0,
   },
   attachmentListButton: {
-    padding: 5,
+    padding: 5, // MO-142 use UI_SIZES.spacing here
   },
   attachmentListText: {
     color: theme.palette.primary.regular,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   footerButtonContainer: {
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    marginBottom: 10,
+    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   footerButton: {
     backgroundColor: theme.palette.grey.white,
@@ -112,17 +112,17 @@ const styles = StyleSheet.create({
   },
   fullView: {
     flex: 1,
-    marginLeft: 4,
+    marginLeft: 4, // MO-142 use UI_SIZES.spacing here
   },
   headerLeftPanel: {
     justifyContent: 'flex-start',
   },
   headerCenterPanel: {
-    marginRight: 5,
+    marginRight: 5, // MO-142 use UI_SIZES.spacing here
     paddingRight: 0,
   },
   detailsDateText: {
-    marginTop: 4,
+    marginTop: 4, // MO-142 use UI_SIZES.spacing here
   },
   sendersContainer: {
     flex: 1,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   userContainer: {
     flexDirection: 'row',
-    marginLeft: 4,
+    marginLeft: 4, // MO-142 use UI_SIZES.spacing here
   },
 });
 

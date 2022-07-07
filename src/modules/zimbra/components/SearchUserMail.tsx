@@ -14,8 +14,8 @@ const styles = StyleSheet.create({
   foundListButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5,
-    marginLeft: 10,
+    marginVertical: 5, // MO-142 use UI_SIZES.spacing here
+    marginLeft: 10, // MO-142 use UI_SIZES.spacing here
   },
   selectedListContainer: {
     flexDirection: 'row',
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
   userOrGroupSearchContainer: {
     overflow: 'visible',
-    marginHorizontal: 5,
+    marginHorizontal: 5, // MO-142 use UI_SIZES.spacing here
     flex: 1,
   },
 });
@@ -99,8 +99,8 @@ const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
     const itemStyle = {
       backgroundColor: theme.palette.primary.pale,
       borderRadius: 3,
-      padding: 5,
-      margin: 2,
+      padding: 5, // MO-142 use UI_SIZES.spacing here
+      margin: 2, // MO-142 use UI_SIZES.spacing here
     } as ViewStyle;
 
     const userLabel = { color: theme.palette.primary.regular, textAlignVertical: 'center' } as ViewStyle;

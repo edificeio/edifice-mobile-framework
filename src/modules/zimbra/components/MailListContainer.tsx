@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   headerIconsSpace: {
-    marginRight: 20,
+    marginRight: 20, // MO-142 use UI_SIZES.spacing here
   },
 });
 

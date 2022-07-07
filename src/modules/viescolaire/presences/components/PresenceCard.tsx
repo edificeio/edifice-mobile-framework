@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: { flex: 1 },
   itemView: { flex: 1, justifyContent: 'center' },
-  childText: { marginVertical: 2 },
+  childText: { marginVertical: 2 }, // MO-142 use UI_SIZES.spacing here
   childNestedText: {
     ...TextSizeStyle.Tiny,
   },

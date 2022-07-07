@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: 60,
+    marginRight: 60, // MO-142 use UI_SIZES.spacing here
   },
   searchIcon: {
-    marginHorizontal: 20,
+    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
   },
   textInput: {
     flex: 1,

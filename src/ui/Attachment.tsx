@@ -10,6 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -180,11 +181,20 @@ class Attachment extends React.PureComponent<
           <Pressable style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.onPressAttachment(notifierId)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
-                <ActivityIndicator size="small" color={theme.palette.primary.regular} style={{ marginRight: 4, height: 18 }} />
+                <ActivityIndicator
+                  size="small"
+                  color={theme.palette.primary.regular}
+                  style={{ marginRight: UI_SIZES.spacing.tiny, height: 18 }}
+                />
               ) : downloadState === DownloadState.Success ? (
-                <Icon color={theme.palette.status.success} size={16} name="checked" style={{ marginRight: 8 }} />
+                <Icon
+                  color={theme.palette.status.success}
+                  size={16}
+                  name="checked"
+                  style={{ marginRight: UI_SIZES.spacing.minor }}
+                />
               ) : !this.attId || downloadState === DownloadState.Error ? (
-                <Icon color={theme.palette.status.failure} size={16} name="close" style={{ marginRight: 8 }} />
+                <Icon color={theme.palette.status.failure} size={16} name="close" style={{ marginRight: UI_SIZES.spacing.minor }} />
               ) : (
                 <Icon
                   color={CommonStyles.textColor}
@@ -195,7 +205,7 @@ class Attachment extends React.PureComponent<
                       (att as IRemoteAttachment).displayName ||
                       '',
                   )}
-                  style={{ marginRight: 8 }}
+                  style={{ marginRight: UI_SIZES.spacing.minor }}
                 />
               )}
             </View>
@@ -247,7 +257,7 @@ class Attachment extends React.PureComponent<
                       // TODO: Manage error
                     });
                   }}
-                  style={{ paddingLeft: 12 }}>
+                  style={{ paddingLeft: UI_SIZES.spacing.small }}>
                   <IconButton
                     iconName="download"
                     iconColor={theme.palette.grey.black}

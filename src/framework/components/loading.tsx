@@ -7,6 +7,8 @@ import { ActivityIndicator, ColorValue, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 
+import { UI_SIZES } from './constants';
+
 interface LoadingProps {
   small?: boolean;
   customColor?: ColorValue;
@@ -15,7 +17,15 @@ interface LoadingProps {
 }
 
 export const LoadingIndicator = ({ small, customColor, customStyle, withMargins }: LoadingProps) => (
-  <View style={customStyle || { flex: 1, alignItems: 'center', justifyContent: 'center', ...(withMargins ? { margin: 12 } : {}) }}>
+  <View
+    style={
+      customStyle || {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...(withMargins ? { margin: UI_SIZES.spacing.small } : {}),
+      }
+    }>
     <ActivityIndicator size={small ? 'small' : 'large'} color={customColor || theme.palette.primary.regular} />
   </View>
 );

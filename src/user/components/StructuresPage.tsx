@@ -55,9 +55,9 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps & N
             renderItem={({ item: classe }) => (
               <Text
                 style={{
-                  marginLeft: 40,
-                  marginRight: 20,
-                  marginVertical: 10,
+                  marginLeft: UI_SIZES.spacing.medium,
+                  marginRight: UI_SIZES.spacing.medium,
+                  marginVertical: UI_SIZES.spacing.small,
                 }}>
                 <NestedText style={{ color: CommonStyles.profileTypes.Student }}>◆ </NestedText>
                 {classe}
