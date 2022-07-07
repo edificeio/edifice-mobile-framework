@@ -29,14 +29,13 @@ import {
 } from '~/modules/zimbra/actions/newMail';
 import { getSignatureAction } from '~/modules/zimbra/actions/signature';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
+import SignatureModal from '~/modules/zimbra/components/Modals/SignatureModal';
 import NewMailComponent from '~/modules/zimbra/components/NewMail';
 import moduleConfig from '~/modules/zimbra/moduleConfig';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
 import { DropdownMenu } from '~/ui/DropdownMenu';
-
-import SignatureModal from './SignatureModal';
 
 //STYLE
 

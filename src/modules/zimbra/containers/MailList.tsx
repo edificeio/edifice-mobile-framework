@@ -23,8 +23,8 @@ import { fetchMailListAction, fetchMailListFromFolderAction } from '~/modules/zi
 import { fetchQuotaAction } from '~/modules/zimbra/actions/quota';
 import MailList from '~/modules/zimbra/components/MailList';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
+import MoveModal from '~/modules/zimbra/components/Modals/MoveToFolderModal';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
-import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
 import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails';
 import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
@@ -172,7 +172,9 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   }
 
   componentWillUnmount() {
-    if (!this.props.isSearch) this.state.unsubscribe();
+    if (!this.props.isSearch) {
+      this.state.unsubscribe();
+    }
   }
 
   onGoBack = (goBack = false) => {
@@ -276,11 +278,15 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     const { navigation } = this.props;
     if (this.getListSelectedMails().length > 0) {
       this.setState({ isHeaderSelectVisible: true });
-      if (this.props.isSearch) this.props.setSearchHeaderVisibility(true);
+      if (this.props.isSearch) {
+        this.props.setSearchHeaderVisibility(true);
+      }
       navigation.navigate(navigation.state.routeName, { selectedMails: true });
     } else {
       this.setState({ isHeaderSelectVisible: false });
-      if (this.props.isSearch) this.props.setSearchHeaderVisibility(false);
+      if (this.props.isSearch) {
+        this.props.setSearchHeaderVisibility(false);
+      }
       navigation.navigate(navigation.state.routeName, { selectedMails: false });
     }
   };

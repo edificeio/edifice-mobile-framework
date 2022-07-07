@@ -1,12 +1,16 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextSizeStyle } from '~/framework/components/text';
+import { moveMailsToFolderAction, moveMailsToInboxAction } from '~/modules/zimbra/actions/mail';
 import { IFolder } from '~/modules/zimbra/state/initMails';
+import { getRootFolderListState } from '~/modules/zimbra/state/rootFolders';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
 
@@ -64,18 +68,50 @@ const styles = StyleSheet.create({
 });
 
 type MoveToFolderModalProps = {
-  show: boolean;
   folders: IFolder[];
-  selectedFolder: string | null;
+  mail: any;
+  show: boolean;
   closeModal: () => any;
-  confirm: () => any;
-  selectFolder: (id: string) => any;
+  moveToFolder: (ids: string[], folder: string) => any;
+  moveToInbox: (ids: string[]) => any;
+  successCallback: () => any;
 };
 
-export default class MoveToFolderModal extends React.Component<MoveToFolderModalProps> {
+type MoveToFolderModalState = {
+  selectedFolder: string | null;
+};
+
+class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFolderModalState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedFolder: null,
+    };
+  }
+
+  selectFolder = (selectedFolder: string) => {
+    this.setState({
+      selectedFolder,
+    });
+  };
+
+  confirm = async () => {
+    const { moveToFolder, moveToInbox, mail, successCallback } = this.props;
+    const { selectedFolder } = this.state;
+    await this.props.closeModal();
+
+    const mailsIds = [] as any;
+    if (Array.isArray(mail)) mail.forEach(mailInfos => mailsIds.push(mailInfos.id));
+    else mailsIds.push(mail.id);
+
+    if (!selectedFolder) return;
+    else if (selectedFolder === 'inbox') await moveToInbox(mailsIds);
+    else await moveToFolder(mailsIds, selectedFolder);
+    successCallback();
+  };
+
   private renderOption = (id, displayName, iconName) => {
-    const { selectedFolder, selectFolder } = this.props;
-    const selected = selectedFolder === id;
+    const selected = this.state.selectedFolder === id;
     const touchableStyle = selected ? [styles.opacity, styles.selectedItem] : styles.opacity;
     const textStyle = selected ? { color: 'white', ...TextSizeStyle.SlightBig } : { ...TextSizeStyle.SlightBig };
     const iconStyle = selected ? { color: 'white', margin: 10 } : { margin: 10 };
@@ -83,7 +119,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
       <>
         <TouchableOpacity
           onPress={() => {
-            selectFolder(id);
+            this.selectFolder(id);
           }}
           style={touchableStyle}>
           <View style={styles.rowView}>
@@ -105,8 +141,9 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
   };
 
   public render() {
-    const { show, folders, closeModal, confirm } = this.props;
+    const { show, folders, closeModal } = this.props;
     const inboxSubFolder = folders?.find(item => item.folderName === 'Inbox');
+
     return (
       <ModalBox isVisible={show}>
         <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
@@ -133,7 +170,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
               )}
             </ScrollView>
             <View style={styles.actionsButtonsContainer}>
-              <DialogButtonOk label={I18n.t('zimbra-move')} onPress={confirm} />
+              <DialogButtonOk label={I18n.t('zimbra-move')} onPress={this.confirm} />
               <DialogButtonCancel onPress={closeModal} />
             </View>
           </View>
@@ -142,3 +179,21 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     );
   }
 }
+
+const mapStateToProps = (state: any) => {
+  return {
+    folders: getRootFolderListState(state).data,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return bindActionCreators(
+    {
+      moveToFolder: moveMailsToFolderAction,
+      moveToInbox: moveMailsToInboxAction,
+    },
+    dispatch,
+  );
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MoveToFolderModal);
