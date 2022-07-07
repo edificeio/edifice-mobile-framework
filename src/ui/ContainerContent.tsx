@@ -2,6 +2,7 @@ import styled from '@emotion/native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { pageGutterSize } from '~/framework/components/page';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -9,7 +10,8 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Weight } from './Typography';
 
 export const ArticleContainer = styled.View({
-  padding: UI_SIZES.spacing.medium,
+  paddingHorizontal: pageGutterSize,
+  paddingVertical: pageGutterSize,
   paddingTop: 0,
 });
 

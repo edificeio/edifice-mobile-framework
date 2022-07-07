@@ -1,16 +1,13 @@
 /**
  * Blog post list
  */
-
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { RefreshControl, View, ScrollView, FlatList } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import { IDisplayedBlog } from './BlogExplorerScreen';
 
 import { IGlobalState } from '~/AppStore';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -19,14 +16,16 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { DEPRECATED_HeaderPrimaryAction, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { getUserSession, IUserSession } from '~/framework/util/session';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResourceCard';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlogPost, IBlogPostList } from '~/modules/blog/reducer';
 import { getBlogPostRight } from '~/modules/blog/rights';
 import { blogService } from '~/modules/blog/service';
-import { computeRelativePath } from '~/framework/util/navigation';
+
+import { IDisplayedBlog } from './BlogExplorerScreen';
 
 // TYPES ==========================================================================================
 
@@ -260,7 +259,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         }}
         keyExtractor={item => item._id}
         ListEmptyComponent={renderEmpty()}
-        ListHeaderComponent={hasBlogPostCreationRights ? <View style={{ height: 12 }} /> : null}
+        ListHeaderComponent={hasBlogPostCreationRights ? <View style={{ height: UI_SIZES.spacing.medium }} /> : null}
         ListFooterComponent={
           <>
             {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}

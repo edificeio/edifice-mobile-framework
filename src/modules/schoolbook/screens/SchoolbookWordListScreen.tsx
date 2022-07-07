@@ -4,7 +4,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { RefreshControl, ScrollView } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -355,7 +355,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
           />
         )}
         ListEmptyComponent={renderEmpty()}
-        ListHeaderComponent={hasSeveralChildren ? renderChildrenList() : null}
+        ListHeaderComponent={hasSeveralChildren ? renderChildrenList() : <View style={{ height: UI_SIZES.spacing.medium }} />}
         ListFooterComponent={loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />}
         contentContainerStyle={{ flexGrow: 1 }}

@@ -190,7 +190,7 @@ class MailContentContainer extends React.PureComponent<
                   <ScrollView style={{ flex: 1 }} scrollEventThrottle={16}>
                     {this.props.mail.id && this.mailHeader()}
                     <ViewportAwareSubject
-                      style={{ marginHorizontal: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card }}
+                      style={{ marginHorizontal: UI_SIZES.spacing.medium, backgroundColor: theme.ui.background.card }}
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>

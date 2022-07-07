@@ -28,6 +28,7 @@ import theme from '~/app/theme';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
+import { UI_SIZES } from './constants';
 import { FakeHeader, FakeHeaderProps, HeaderBackAction } from './header';
 
 export interface PageViewProps extends ViewProps {
@@ -39,14 +40,29 @@ export interface PageViewProps extends ViewProps {
   // Use multiple navBar for a super combo plus ultra !
   onBack?: () => boolean | void; // call when trigger a Back event. The given function returns true to perform the back action, false to cancel it.
   // Fixme : Currently not working for iOS swipe back.
+  gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
 }
 
-export const PageView_Style = styled.View({
+export const pageGutterSize = UI_SIZES.spacing.medium;
+export const pageGutterStyleH = { paddingHorizontal: pageGutterSize };
+export const pageGutterStyleV = { paddingVertical: pageGutterSize };
+
+const styles = StyleSheet.create({
+  flex1: { flex: 1 },
+  flexGrow1: { flexGrow: 1 },
+});
+
+export const getPageGutterStyle = (gutters: PageViewProps['gutters'] = true) => ({
+  ...(gutters === 'both' || gutters === 'vertical' || gutters === true ? pageGutterStyleV : {}),
+  ...(gutters === 'both' || gutters === 'horizontal' || gutters === true ? pageGutterStyleH : {}),
+});
+
+export const PageViewWithStyle = styled.View({
   flex: 1,
   backgroundColor: theme.ui.background.page,
 });
 export const PageView = (props: PageViewProps) => {
-  const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, ...viewProps } = props;
+  const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, gutters, ...viewProps } = props;
 
   const goBack = () => {
     return (onBack && onBack() && navigation.dispatch(NavigationActions.back())) || undefined;
@@ -66,8 +82,16 @@ export const PageView = (props: PageViewProps) => {
     }
   });
 
+  const gutterStyle = React.useMemo(
+    () => ({
+      flex: 1,
+      ...getPageGutterStyle(gutters ?? 'none'),
+    }),
+    [gutters],
+  );
+
   return (
-    <PageView_Style {...viewProps}>
+    <PageViewWithStyle {...viewProps}>
       <StatusBar barStyle="light-content" backgroundColor={theme.palette.primary.regular} />
       {navBar ? <FakeHeader {...navBar} /> : null}
       {navBarWithBack ? (
@@ -88,8 +112,8 @@ export const PageView = (props: PageViewProps) => {
       {navBarNode ? navBarNode : null}
       <DEPRECATED_ConnectionTrackingBar />
       <Notifier id={navigation.state.routeName} />
-      {children}
-    </PageView_Style>
+      <View style={gutterStyle}>{children}</View>
+    </PageViewWithStyle>
   );
 };
 
@@ -112,19 +136,17 @@ export const KeyboardPageView = (
   const AreaComponent = props.safeArea ?? true ? SafeAreaView : View;
   return (
     <PageView {...pageProps}>
-      <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} style={styles.flex1}>
         <InnerViewComponent
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1 }}
+          style={styles.flex1}
+          contentContainerStyle={styles.flexGrow1}
           alwaysBounceVertical={false}
           overScrollMode="never"
           keyboardShouldPersistTaps="never"
           {...props.scrollViewProps}>
-          <AreaComponent style={styles.area}>{children}</AreaComponent>
+          <AreaComponent style={styles.flex1}>{children}</AreaComponent>
         </InnerViewComponent>
       </KeyboardAvoidingView>
     </PageView>
   );
 };
-
-const styles = StyleSheet.create({ area: { flex: 1 } });

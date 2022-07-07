@@ -13,7 +13,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
+import { PageView, pageGutterSize, pageGutterStyleH } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
 import { Text } from '~/framework/components/text';
@@ -170,7 +170,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         // data
         data={items}
         keyExtractor={n => n.data.id.toString()}
-        contentContainerStyle={isEmpty ? { flex: 1 } : null}
+        contentContainerStyle={isEmpty ? { flex: 1 } : undefined}
         renderItem={({ item }) =>
           item.type === ITimelineItemType.NOTIFICATION
             ? this.renderNotificationItem(item.data as ITimelineNotification)
@@ -187,9 +187,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         ListFooterComponent={
           this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? <LoadingIndicator /> : null
         }
-        ListHeaderComponent={
-          getTimelineWorkflows(this.props.session).length ? <View style={{ height: UI_SIZES.spacing.medium }} /> : null
-        }
+        ListHeaderComponent={getTimelineWorkflows(this.props.session).length ? <View style={{ height: pageGutterSize }} /> : null}
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
         // Swipeable props
