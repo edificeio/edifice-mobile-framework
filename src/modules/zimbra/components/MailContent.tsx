@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { getUserSession } from '~/framework/util/session';
-import { DraftType } from '~/modules/zimbra/containers/NewMail';
+import { DraftType } from '~/modules/zimbra/screens/NewMail';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';

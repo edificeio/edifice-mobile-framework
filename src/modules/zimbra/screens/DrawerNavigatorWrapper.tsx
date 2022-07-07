@@ -11,8 +11,8 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 
-import DrawerMenuContainer from './DrawerMenu';
-import MailList from './MailList';
+import DrawerMenuContainer from '../components/DrawerMenuContainer';
+import MailList from '../components/MailListContainer';
 import { DraftType } from './NewMail';
 
 const styles = StyleSheet.create({

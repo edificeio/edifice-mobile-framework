@@ -1,15 +1,16 @@
+import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import theme from '~/app/theme';
 import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Input } from '~/modules/zimbra/components/SearchFunction';
 
-import MailListContainer from './MailList';
+import MailListContainer from '../components/MailListContainer';
 
 const styles = StyleSheet.create({
   headerRow: {
@@ -24,6 +25,11 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginHorizontal: 20,
   },
+  textInput: {
+    flex: 1,
+    color: theme.palette.grey.white,
+    fontSize: 16,
+  },
 });
 
 type SearchProps = NavigationInjectedProps;
@@ -31,6 +37,31 @@ type SearchProps = NavigationInjectedProps;
 type SearchState = {
   isShownHeader: boolean;
   searchText: string;
+};
+
+const Input = ({ value, onChange }: { value: string; onChange: (text: string) => void }) => {
+  const textUpdateTimeout = React.useRef();
+  const [currentValue, updateCurrentValue] = React.useState(value);
+
+  React.useEffect(() => {
+    window.clearTimeout(textUpdateTimeout.current);
+    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
+
+    return () => {
+      window.clearTimeout(textUpdateTimeout.current);
+    };
+  }, [currentValue]);
+
+  return (
+    <TextInput
+      style={styles.textInput}
+      placeholder={I18n.t('Search')}
+      placeholderTextColor={theme.palette.grey.white}
+      numberOfLines={1}
+      defaultValue={currentValue}
+      onChangeText={text => updateCurrentValue(text)}
+    />
+  );
 };
 
 export class SearchContainer extends React.PureComponent<SearchProps, SearchState> {

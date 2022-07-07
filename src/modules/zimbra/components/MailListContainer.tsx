@@ -31,7 +31,7 @@ import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 import { PageContainer } from '~/ui/ContainerContent';
 import { DropdownMenu } from '~/ui/DropdownMenu';
 
-import { IInit } from './DrawerMenu';
+import { IInit } from './DrawerMenuContainer';
 
 // STYLE
 
@@ -360,7 +360,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     </View>
   );
 
-  // ------------------------------------------------------------------------------------------------
+  // -- MANAGE HEADERS ------------------------------------------------------------------------------
 
   public render() {
     const { navigation } = this.props;

@@ -1,16 +1,16 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import DrawerNavigatorWrapper from './containers/DrawerNavigatorWrapper';
-import MailItem from './containers/MailContent';
-import CreateMail from './containers/NewMail';
-import Search from './containers/SearchFunction';
+import DrawerNavigatorWrapper from './screens/DrawerNavigatorWrapper';
+import MailContent from './screens/MailContent';
+import NewMail from './screens/NewMail';
+import Search from './screens/SearchFunction';
 
 export default () =>
   createStackNavigator(
     {
       DrawerNavigator: DrawerNavigatorWrapper,
-      mailDetail: MailItem,
-      newMail: CreateMail,
+      mailDetail: MailContent,
+      newMail: NewMail,
       search: Search,
     },
     { initialRouteName: 'DrawerNavigator', headerMode: 'none' },
