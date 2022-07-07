@@ -3,6 +3,7 @@ import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { getUserSession } from '~/framework/util/session';
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
   },
   shadowContainer: {
     flexGrow: 1,
-    marginTop: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
     marginBottom: 0,
     flexDirection: 'column-reverse',
     backgroundColor: theme.palette.grey.white,
@@ -40,13 +41,13 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   marginView: {
-    height: 115,
+    height: 110,
   },
   scrollAlign: {
     height: 1,
   },
   scrollContent: {
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
   },
   containerFooter: {
     flexDirection: 'row',

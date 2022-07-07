@@ -26,11 +26,11 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   mailPart: {
-    padding: 5, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.tiny,
     backgroundColor: theme.palette.grey.white,
   },
   lineSeparator: {
-    marginLeft: 15, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.medium,
     width: '50%',
     borderColor: theme.palette.grey.grey,
     borderBottomWidth: 1,
@@ -38,13 +38,13 @@ const styles = StyleSheet.create({
   },
   signatureZoneContainer: {
     flexGrow: 1,
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
   },
   signatureZone: {
     backgroundColor: theme.palette.grey.white,
     minHeight: 40,
     maxHeight: UI_SIZES.screen.height / 3,
-    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
   attachmentView: {
     padding: 0,
@@ -90,8 +90,8 @@ const HeaderUsers = ({
   const headerStyle = {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.tiny,
+    paddingHorizontal: UI_SIZES.spacing.small,
   } as ViewStyle;
 
   return (
@@ -117,8 +117,8 @@ const HeaderSubject = ({
   const headerStyle = {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.tiny,
+    paddingHorizontal: UI_SIZES.spacing.small,
   } as ViewStyle;
 
   const inputStyle = {

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { getFileIcon } from '~/modules/zimbra/utils/fileIcon';
@@ -20,11 +21,11 @@ const styles = StyleSheet.create({
   nameText: {
     color: theme.palette.primary.regular,
     flexShrink: 1,
-    marginVertical: 4, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.tiny,
   },
   iconMargin: {
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
-    marginVertical: 8, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
+    marginVertical: UI_SIZES.spacing.minor,
   },
 });
 

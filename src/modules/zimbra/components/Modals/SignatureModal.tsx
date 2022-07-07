@@ -17,35 +17,35 @@ const styles = StyleSheet.create({
   containerView: {
     flexGrow: 1,
     width: '100%',
-    marginTop: -25, // MO-142 use UI_SIZES.spacing here
+    marginTop: -UI_SIZES.spacing.big,
   },
   titleContainer: {
     alignSelf: 'baseline',
-    paddingBottom: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
   titleText: {
     ...TextSizeStyle.SlightBig,
   },
   textZone: {
-    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
     borderBottomWidth: 0.5,
     borderColor: theme.palette.grey.cloudy,
     maxHeight: UI_SIZES.screen.height / 4,
   },
   infosView: {
     flexDirection: 'row',
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
-    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.small,
+    marginHorizontal: UI_SIZES.spacing.small,
   },
   useSignatureText: {
-    paddingTop: 3, // MO-142 use UI_SIZES.spacing here
-    paddingLeft: 10, // MO-142 use UI_SIZES.spacing here
+    paddingTop: UI_SIZES.spacing.tiny,
+    paddingLeft: UI_SIZES.spacing.small,
   },
   actionsButtonsContainer: {
     flexDirection: 'row-reverse',
-    padding: 20, // MO-142 use UI_SIZES.spacing here
-    paddingBottom: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.medium,
+    paddingBottom: UI_SIZES.spacing.small,
   },
 });
 

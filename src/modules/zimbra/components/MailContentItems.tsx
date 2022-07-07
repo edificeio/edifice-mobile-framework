@@ -6,6 +6,7 @@ import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -23,11 +24,11 @@ import { Author, findReceivers2, findReceiversAvatars, findSenderAvatar } from '
 
 const styles = StyleSheet.create({
   containerMail: {
-    padding: 15, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.medium,
     backgroundColor: theme.palette.grey.white,
   },
   containerMailDetails: {
-    padding: 15, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.medium,
     backgroundColor: theme.palette.grey.white,
     position: 'absolute',
     zIndex: 9,
@@ -40,11 +41,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 5, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.tiny,
   },
   gridButtonText: {
     color: theme.palette.primary.regular,
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   gridViewStyle: {
     flexDirection: 'row',
@@ -53,14 +54,14 @@ const styles = StyleSheet.create({
   gridButtonTextPJnames: {
     flex: 2,
     color: theme.palette.primary.regular,
-    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.tiny,
   },
   dotReceiverColor: {
     width: 8,
     height: 8,
     borderRadius: 15,
-    marginTop: 6, // MO-142 use UI_SIZES.spacing here
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.minor,
+    marginRight: UI_SIZES.spacing.tiny,
   },
   greyColor: {
     color: theme.palette.grey.stone,
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.8,
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
   },
   attachmentContainer: {
     flexDirection: 'column',
@@ -86,11 +87,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   attachmentDownloadButton: {
-    paddingHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.small,
     flex: 0,
   },
   attachmentListButton: {
-    padding: 5, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.tiny,
   },
   attachmentListText: {
     color: theme.palette.primary.regular,
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
   footerButtonContainer: {
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
   },
   footerButton: {
     backgroundColor: theme.palette.grey.white,
@@ -112,17 +113,17 @@ const styles = StyleSheet.create({
   },
   fullView: {
     flex: 1,
-    marginLeft: 4, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.tiny,
   },
   headerLeftPanel: {
     justifyContent: 'flex-start',
   },
   headerCenterPanel: {
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
     paddingRight: 0,
   },
   detailsDateText: {
-    marginTop: 4, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
   },
   sendersContainer: {
     flex: 1,
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   },
   userContainer: {
     flexDirection: 'row',
-    marginLeft: 4, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.tiny,
   },
 });
 

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -20,10 +21,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: 60, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.huge,
   },
   searchIcon: {
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.medium,
   },
   textInput: {
     flex: 1,

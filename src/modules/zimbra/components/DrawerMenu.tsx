@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import CreateFolderModal from '~/modules/zimbra/components/Modals/CreateFolderModal';
@@ -17,19 +18,19 @@ const styles = StyleSheet.create({
   labelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
     backgroundColor: theme.palette.primary.pale,
   },
   labelText: {
     ...TextSizeStyle.SlightBig,
-    marginLeft: 12, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.small,
   },
   container: {
     backgroundColor: theme.palette.grey.white,
   },
   folderCreationButton: {
-    paddingLeft: 12, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 2, // MO-142 use UI_SIZES.spacing here
+    paddingLeft: UI_SIZES.spacing.small,
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   loadBar: {
     backgroundColor: theme.palette.grey.cloudy,

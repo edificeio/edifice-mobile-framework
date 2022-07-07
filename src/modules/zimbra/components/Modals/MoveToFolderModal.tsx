@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
   containerView: {
     flexGrow: 1,
     width: '100%',
-    marginTop: -25, // MO-142 use UI_SIZES.spacing here
+    marginTop: -UI_SIZES.spacing.big,
   },
   moveTextContainer: {
     alignSelf: 'baseline',
-    paddingBottom: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
   textStyle: {
     ...TextSizeStyle.SlightBig,
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
   actionsContainers: {
     width: '100%',
-    padding: 4, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.tiny,
   },
   messagesContainer: {
     backgroundColor: theme.palette.primary.light,
@@ -43,15 +43,15 @@ const styles = StyleSheet.create({
   },
   actionsButtonsContainer: {
     flexDirection: 'row-reverse',
-    padding: 20, // MO-142 use UI_SIZES.spacing here
-    paddingBottom: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.big,
+    paddingBottom: UI_SIZES.spacing.small,
   },
   rowView: {
     alignItems: 'center',
     flexDirection: 'row',
     flexGrow: 1,
     overflow: 'hidden',
-    paddingRight: 90, // MO-142 use UI_SIZES.spacing here
+    paddingRight: UI_SIZES.spacing.huge,
   },
   separator: {
     borderBottomColor: theme.palette.grey.pearl,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   opacity: {
     flexDirection: 'row',
-    paddingHorizontal: 5, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.tiny,
   },
   selectedItem: {
     backgroundColor: theme.palette.secondary.regular,
@@ -114,7 +114,7 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
     const selected = this.state.selectedFolder === id;
     const touchableStyle = selected ? [styles.opacity, styles.selectedItem] : styles.opacity;
     const textStyle = selected ? { color: 'white', ...TextSizeStyle.SlightBig } : { ...TextSizeStyle.SlightBig };
-    const iconStyle = selected ? { color: 'white', margin: 10 } : { margin: 10 }; // MO-142 use UI_SIZES.spacing here
+    const iconStyle = selected ? { color: 'white', margin: UI_SIZES.spacing.small } : { margin: UI_SIZES.spacing.small };
     return (
       <>
         <TouchableOpacity

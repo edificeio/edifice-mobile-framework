@@ -20,13 +20,13 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 const styles = StyleSheet.create({
   fullGrowView: {
     flexGrow: 1,
-    paddingVertical: 5, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
   containerMail: {
-    marginTop: 5, // MO-142 use UI_SIZES.spacing here
-    marginHorizontal: 8, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
+    marginHorizontal: UI_SIZES.spacing.minor,
     maxWidth: UI_SIZES.screen.width - 16,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     backgroundColor: theme.palette.grey.white,
   },
   containerMailSelected: {
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   displayNameText: {
     flexShrink: 1,
-    marginRight: 4, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   greyColor: {
     color: theme.palette.grey.stone,
@@ -169,7 +169,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     return date.format('D MMM');
   };
 
-  private renderMail(mail) {
+  private renderMailItem(mail) {
     const displayName = this.getDisplayName(mail);
     const date = this.formatDate(mail.date);
     const selectMail = () => this.selectItem(mail);
@@ -237,7 +237,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         <FlatList
           contentContainerStyle={styles.fullGrowView}
           data={uniqueMails}
-          renderItem={({ item }) => this.renderMail(item)}
+          renderItem={({ item }) => this.renderMailItem(item)}
           extraData={uniqueMails}
           keyExtractor={(item: IMail) => item.id}
           refreshControl={<RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />}

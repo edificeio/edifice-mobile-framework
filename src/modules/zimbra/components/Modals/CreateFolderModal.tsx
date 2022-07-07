@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { TextBold } from '~/framework/components/text';
 import { fetchRootFoldersAction, postFolderAction } from '~/modules/zimbra/actions/folders';
 import { CommonStyles } from '~/styles/common/styles';
@@ -18,8 +19,8 @@ const styles = StyleSheet.create({
   },
   directoryNameContainer: {
     width: '100%',
-    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.big,
   },
   row: {
     flexDirection: 'row',

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -18,12 +19,12 @@ const styles = StyleSheet.create({
   },
   text: {
     ...TextSizeStyle.SlightBig,
-    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.minor,
   },
   messageContainer: {
     width: '100%',
-    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 18, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   actionsButtonsContainer: {
     alignSelf: 'flex-end',

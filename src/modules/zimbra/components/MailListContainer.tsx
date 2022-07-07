@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/picture/Icon';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   headerIconsSpace: {
-    marginRight: 20, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.medium,
   },
 });
 
