@@ -93,12 +93,14 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   componentDidUpdate(prevProps) {
     const { notifications, isFetching, fetchCompleted } = this.props;
+    if (prevProps.navigation.getParam('key') !== this.props.navigation.getParam('key')) {
+      this.setState({ indexPage: 0 });
+    }
     if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && this.props.fetchRequested) {
       this.props.setMails(notifications);
       this.setState({ mails: notifications });
       fetchCompleted();
     }
-
     if (
       notifications !== prevProps.notifications &&
       this.state.indexPage > 0 &&
