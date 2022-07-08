@@ -259,7 +259,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         }}
         keyExtractor={item => item._id}
         ListEmptyComponent={renderEmpty()}
-        ListHeaderComponent={hasBlogPostCreationRights ? <View style={{ height: UI_SIZES.spacing.medium }} /> : null}
+        ListHeaderComponent={<View style={{ height: UI_SIZES.spacing.medium }} />}
         ListFooterComponent={
           <>
             {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
