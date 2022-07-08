@@ -1,5 +1,5 @@
 {
-  "last": "2022-07-07T20:29:28",
-  "notes": "refacto: MB-567 remove old bg colors\nrefacto: MB-565 gutter control in PageView\nrefacto(zimbra): MO-142, AMV2-363: Change spacers\nchore: rechanged schoolbook page comment\nchore(schoolbook): changed page comment\nrefacto: MB-499 factorise spacings\nfix(zimbra): AMV2-331: Fix mail list actualization\nrefacto(zimbra): Fix containers/ into screens/ and components/\nrefacto(zimbra): Move modals into components\nfix(wayf):  MB-714, Bypass Android WebView onShouldStartLoadWithRequest not called\nfix: Blocked users specific step addition\nfeat(schoolbook): MB-713, display date for report page responses\nfix(theme): MB-724, EmptyScreen background color = fog\nfix(zimbra): AMV2-341, Fix reply's previous body\nrelease: 1.8.1-alpha.3(1080103)",
+  "last": "2022-07-08T11:44:48",
+  "notes": "release: 1.8.1-alpha.4(1080104)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
