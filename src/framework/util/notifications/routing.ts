@@ -7,11 +7,11 @@ import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import legacyModuleDefinitions from '~/AppModules';
+import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
 import { IAbstractNotification, ITimelineNotification, getAsResourceUriNotification } from '.';
-import { openUrl } from '../linking';
 
 // Module Map
 

@@ -8,9 +8,8 @@ import {
   IActivationUserInfo,
   actionTypeActivationSubmit,
 } from '~/user/actions/activation';
+import { actionTypeActivationContext } from '~/user/actions/initActivation';
 import { ContextState, IActivationContext, SubmitState } from '~/utils/SubmitState';
-
-import { actionTypeActivationContext } from '../actions/initActivation';
 
 export interface IActivationState {
   isActivating: boolean;

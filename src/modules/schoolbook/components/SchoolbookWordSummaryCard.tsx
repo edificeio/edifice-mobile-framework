@@ -11,16 +11,15 @@ import { Picture } from '~/framework/components/picture';
 import { Text, TextColorStyle, TextItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { UserType } from '~/framework/util/session';
-import { ArticleContainer } from '~/ui/ContainerContent';
-import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
 import {
   IAcknowledgment,
   IResponse,
   getIsWordAcknowledgedForParent,
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
-} from '../reducer';
+} from '~/modules/schoolbook/reducer';
+import { ArticleContainer } from '~/ui/ContainerContent';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;

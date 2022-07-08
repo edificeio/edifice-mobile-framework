@@ -17,12 +17,11 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
+import SchoolbookWordDetailsCard from '~/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
-
-import SchoolbookWordDetailsCard from '../components/SchoolbookWordDetailsCard';
-import { IWordReport } from '../reducer';
-import { hasDeleteRight } from '../rights';
-import { schoolbookService, schoolbookUriCaptureFunction } from '../service';
+import { IWordReport } from '~/modules/schoolbook/reducer';
+import { hasDeleteRight } from '~/modules/schoolbook/rights';
+import { schoolbookService, schoolbookUriCaptureFunction } from '~/modules/schoolbook/service';
 
 // TYPES ==========================================================================================
 

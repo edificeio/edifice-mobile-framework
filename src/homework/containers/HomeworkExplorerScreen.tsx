@@ -4,14 +4,14 @@ import { connect } from 'react-redux';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchHomeworkDiaryList } from '~/homework/actions/diaryList';
+import homeworkDiarySelected from '~/homework/actions/selectedDiary';
 import {
   HomeworkExplorerScreen,
   IHomeworkExplorerScreenDataProps,
   IHomeworkExplorerScreenEventProps,
   IHomeworkExplorerScreenProps,
 } from '~/homework/components/HomeworkExplorerScreen';
-import homeworkDiarySelected from '../actions/selectedDiary';
-import config from '../config';
+import config from '~/homework/config';
 
 const mapStateToProps: (state: any) => IHomeworkExplorerScreenDataProps = state => {
   // Extract data from state

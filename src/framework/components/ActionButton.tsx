@@ -2,12 +2,11 @@ import * as React from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { Picture } from '~/framework/components//picture';
+import { TextSemiBold } from '~/framework/components//text';
+import { UI_SIZES } from '~/framework/components/constants';
+import { openUrl } from '~/framework/util/linking';
 import { transformedSrc } from '~/infra/oauth';
-
-import { openUrl } from '../util/linking';
-import { UI_SIZES } from './constants';
-import { Picture } from './picture';
-import { TextSemiBold } from './text';
 
 export interface ActionButtonProps {
   text: string;

@@ -5,8 +5,7 @@
 import { ImageStyle } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
-
-import { PictureProps } from '../components/picture';
+import { PictureProps } from '~/framework/components/picture';
 
 // Platforms ======================================================================================
 

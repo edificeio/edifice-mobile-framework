@@ -8,8 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-
-import redirect from '../service/redirect';
+import redirect from '~/modules/pronote/service/redirect';
 
 export interface IConnectorRedirectScreenDataProps {
   session: IUserSession;

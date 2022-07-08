@@ -6,14 +6,13 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
+import StudentRow from '~/modules/viescolaire/presences/components/StudentRow';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { PageContainer } from '~/ui/ContainerContent';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
-import StudentRow from './StudentRow';
 
 const style = StyleSheet.create({
   fullView: {

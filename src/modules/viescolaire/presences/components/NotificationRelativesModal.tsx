@@ -7,11 +7,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { IChildArray } from '~/modules/viescolaire/viesco/state/children';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { ModalBox } from '~/ui/Modal';
-
-import { IChildArray } from '../../viesco/state/children';
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   modalTitle: {

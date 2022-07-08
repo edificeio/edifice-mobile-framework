@@ -13,10 +13,9 @@ import ScrollView from '~/framework/components/scrollView';
 import { Text, TextBold, TextItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IUserSession } from '~/framework/util/session';
+import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '~/modules/schoolbook/reducer';
+import { hasResendRight } from '~/modules/schoolbook/rights';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '../reducer';
-import { hasResendRight } from '../rights';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;

@@ -8,8 +8,7 @@ import { PageView } from '~/framework/components/page';
 import { fetchMementoAction } from '~/modules/viescolaire/viesco/actions/memento';
 import { RelativesInfos, StudentInfos } from '~/modules/viescolaire/viesco/components/Memento';
 import { IMementoState, getMementoState } from '~/modules/viescolaire/viesco/state/memento';
-
-import { viescoTheme } from '../utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 export type IMementoContainerProps = {
   memento: IMementoState;

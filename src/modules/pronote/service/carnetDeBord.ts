@@ -7,7 +7,6 @@ import moment from 'moment';
 
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-
 import {
   ICarnetDeBord,
   ICarnetDeBordCahierDeTextesTravailAFaire,
@@ -23,7 +22,7 @@ import {
   ICarnetDeBordVieScolaireSanction,
   IPronoteConnectorInfo,
   sortCarnetDeBordItems,
-} from '../model/carnetDeBord';
+} from '~/modules/pronote/model/carnetDeBord';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
   xmlResponse: string;

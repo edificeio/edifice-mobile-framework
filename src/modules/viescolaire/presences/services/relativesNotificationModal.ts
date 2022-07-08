@@ -1,9 +1,8 @@
 import moment from 'moment';
 
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-
-import { IChildArray } from '../../viesco/state/children';
-import { IChildEventsNotification } from '../state/relativesNotificationModal';
+import { IChildEventsNotification } from '~/modules/viescolaire/presences/state/relativesNotificationModal';
+import { IChildArray } from '~/modules/viescolaire/viesco/state/children';
 
 export type IAbsenceReason = {
   absence_compliance: boolean;

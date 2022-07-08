@@ -9,9 +9,8 @@ import { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-
-import DropdownSelector from '../components/DropdownSelector';
-import redirect from '../service/redirect';
+import DropdownSelector from '~/modules/pronote/components/DropdownSelector';
+import redirect from '~/modules/pronote/service/redirect';
 
 export interface IConnectorSelectorScreenDataProps {
   session: IUserSession;

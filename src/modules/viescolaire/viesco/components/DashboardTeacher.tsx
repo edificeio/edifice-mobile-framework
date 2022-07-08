@@ -9,10 +9,9 @@ import { Text } from '~/framework/components/text';
 import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import StructurePicker from '~/modules/viescolaire/viesco/containers/StructurePicker';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
-
-import { viescoTheme } from '../utils/viescoTheme';
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium },

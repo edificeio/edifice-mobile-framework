@@ -1,3 +1,5 @@
+import { ICarnetDeBord } from 'modules/pronote/state/carnetDeBord/model/carnetDeBord';
+
 import { IGlobalState } from '~/AppStore';
 import {
   AsyncState,
@@ -6,8 +8,6 @@ import {
   createSessionAsyncReducer,
 } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/pronote/moduleConfig';
-
-import { ICarnetDeBord } from '../../model/carnetDeBord';
 
 export type ICarnetDeBordStateData = ICarnetDeBord[];
 export type ICarnetDeBordState = AsyncState<ICarnetDeBordStateData>;

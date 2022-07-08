@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import { ActionButton } from '~/framework/components/ActionButton';
+import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -18,15 +19,13 @@ import { ContentLoader } from '~/framework/hooks/loader';
 import { tryAction } from '~/framework/util/redux/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
+import CarnetDeBordDetails from '~/modules/pronote/containers/CarnetDeBordDetails';
+import moduleConfig from '~/modules/pronote/moduleConfig';
+import { CarnetDeBordSection, ICarnetDeBord } from '~/modules/pronote/state/carnetDeBord';
+import { loadCarnetDeBordAction } from '~/modules/pronote/state/carnetDeBord/actions';
+import { ICarnetDeBordStateData } from '~/modules/pronote/state/carnetDeBord/reducer';
 import { TextBold } from '~/ui/Typography';
 import { IUserInfoState } from '~/user/state/info';
-
-import UserList, { IUserListItem, UserListProps } from '../../../framework/components/UserList';
-import moduleConfig from '../moduleConfig';
-import { CarnetDeBordSection, ICarnetDeBord } from '../state/carnetDeBord';
-import { loadCarnetDeBordAction } from '../state/carnetDeBord/actions';
-import { ICarnetDeBordStateData } from '../state/carnetDeBord/reducer';
-import CarnetDeBordDetails from './CarnetDeBordDetails';
 
 export interface CarnetDeBordDataProps {
   session: IUserSession;

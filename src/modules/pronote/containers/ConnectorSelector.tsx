@@ -4,8 +4,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import { PageView } from '~/framework/components/page';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
-
-import DropdownSelector from '../components/DropdownSelector';
+import DropdownSelector from '~/modules/pronote/components/DropdownSelector';
 
 export interface IConnectorSelectorProps
   extends NavigationInjectedProps<{

@@ -7,8 +7,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   itemContainer: { flex: 1, padding: 0 },

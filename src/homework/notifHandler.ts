@@ -1,12 +1,10 @@
-import { fetchHomeworkDiaryList } from './actions/diaryList';
-
+import timelineConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { Trackers } from '~/framework/util/tracker';
 import { NotificationHandlerFactory } from '~/infra/pushNotification';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
-import moduleConfig from './config';
-import timelineConfig from '../framework/modules/timelinev2/moduleConfig';
 import homeworkDiarySelected from './actions/selectedDiary';
+import moduleConfig from './config';
 
 //TODO add types args
 const homeworksNotificationHandlerFactory: NotificationHandlerFactory<any, any, any> =

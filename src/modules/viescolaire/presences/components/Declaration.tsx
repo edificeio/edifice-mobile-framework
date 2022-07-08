@@ -9,12 +9,11 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, responsiveStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
 import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import DateTimePicker from '~/ui/DateTimePicker';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   keyboardAvoidingContainer: {

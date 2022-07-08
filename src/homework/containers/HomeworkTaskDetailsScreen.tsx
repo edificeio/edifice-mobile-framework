@@ -11,10 +11,9 @@ import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import HomeworkDayCheckpoint from '~/homework/components/HomeworkDayCheckpoint';
+import config from '~/homework/config';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-
-import HomeworkDayCheckpoint from '../components/HomeworkDayCheckpoint';
-import config from '../config';
 
 const dayImages = {
   monday: 'days-monday',

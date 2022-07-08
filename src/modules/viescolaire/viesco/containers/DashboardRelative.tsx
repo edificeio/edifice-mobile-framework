@@ -16,11 +16,9 @@ import { fetchChildrenGroupsAction } from '~/modules/viescolaire/viesco/actions/
 import { fetchPersonnelListAction } from '~/modules/viescolaire/viesco/actions/personnel';
 import { fetchSubjectListAction } from '~/modules/viescolaire/viesco/actions/subjects';
 import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardRelative';
+import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/Dashboard';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
-
-import NotificationRelativesModal from '../../presences/containers/NotificationRelativesModal';
-import { IAuthorizedViescoApps } from './Dashboard';
 
 type IDashboardContainerProps = {
   authorizedViescoApps: IAuthorizedViescoApps;

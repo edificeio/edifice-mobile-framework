@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
-import { getUserSession } from '../util/session';
-import { BottomSheet, BottomSheetProps } from './BottomSheet';
-import CommentField, { CommentFieldProps } from './commentField';
+import { BottomSheet, BottomSheetProps } from '~/framework/components/BottomSheet';
+import CommentField, { CommentFieldProps } from '~/framework/components/commentField';
+import { getUserSession } from '~/framework/util/session';
 
 const BottomEditorSheet = (
   { isResponse, isPublishingComment, onPublishComment, displayShadow }: CommentFieldProps & Omit<BottomSheetProps, 'content'>,

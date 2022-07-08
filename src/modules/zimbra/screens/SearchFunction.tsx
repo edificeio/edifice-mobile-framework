@@ -10,8 +10,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-
-import MailListContainer from '../components/MailListContainer';
+import MailListContainer from '~/modules/zimbra/components/MailListContainer';
 
 const styles = StyleSheet.create({
   headerRow: {

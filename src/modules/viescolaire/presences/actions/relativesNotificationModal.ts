@@ -1,10 +1,9 @@
 import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-
-import { IChildArray } from '../../viesco/state/children';
-import { relativesNotificationService } from '../services/relativesNotificationModal';
-import { IChildEventsNotification, actionTypes } from '../state/relativesNotificationModal';
+import { relativesNotificationService } from '~/modules/viescolaire/presences/services/relativesNotificationModal';
+import { IChildEventsNotification, actionTypes } from '~/modules/viescolaire/presences/state/relativesNotificationModal';
+import { IChildArray } from '~/modules/viescolaire/viesco/state/children';
 
 export const dataActions = createAsyncActionCreators<IChildEventsNotification>(actionTypes);
 

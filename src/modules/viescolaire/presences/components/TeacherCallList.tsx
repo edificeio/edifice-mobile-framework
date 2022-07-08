@@ -8,10 +8,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { TextBold, TextSizeStyle } from '~/framework/components/text';
+import CourseComponent from '~/modules/viescolaire/presences/components/CourseComponent';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
-import CourseComponent from './CourseComponent';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   container: {

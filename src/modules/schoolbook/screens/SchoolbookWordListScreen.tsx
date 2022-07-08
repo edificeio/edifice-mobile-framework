@@ -28,11 +28,10 @@ import { IUserSession, UserType, getUserSession } from '~/framework/util/session
 import { removeFirstWord } from '~/framework/util/string';
 import { SchoolbookWordSummaryCard } from '~/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import moduleConfig from '~/modules/schoolbook/moduleConfig';
+import { IStudentAndParentWord, IStudentAndParentWordList, ITeacherWord, ITeacherWordList } from '~/modules/schoolbook/reducer';
+import { getSchoolbookWorkflowInformation } from '~/modules/schoolbook/rights';
+import { schoolbookService } from '~/modules/schoolbook/service';
 import { userService } from '~/user/service';
-
-import { IStudentAndParentWord, IStudentAndParentWordList, ITeacherWord, ITeacherWordList } from '../reducer';
-import { getSchoolbookWorkflowInformation } from '../rights';
-import { schoolbookService } from '../service';
 
 // TYPES ==========================================================================================
 

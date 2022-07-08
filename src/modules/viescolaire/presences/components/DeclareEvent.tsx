@@ -19,10 +19,9 @@ import {
   updateLeavingEvent,
 } from '~/modules/viescolaire/presences/actions/events';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const style = StyleSheet.create({
   safeAreaContainer: {

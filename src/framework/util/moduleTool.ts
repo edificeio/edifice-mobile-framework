@@ -10,11 +10,10 @@ import type { StackNavigationOptions, StackNavigationProp } from 'react-navigati
 import type { Reducer } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
+import { PictureProps } from '~/framework/components/picture';
+import { updateAppBadges } from '~/framework/modules/timelinev2/appBadges';
+import { toSnakeCase } from '~/framework/util/string';
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
-
-import { PictureProps } from '../components/picture';
-import { updateAppBadges } from '../modules/timelinev2/appBadges';
-import { toSnakeCase } from './string';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888

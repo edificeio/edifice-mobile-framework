@@ -16,9 +16,8 @@ import { DenseDevoirList } from '~/modules/viescolaire/competences/components/It
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/cdt';
-
-import { viescoTheme } from '../utils/viescoTheme';
-import { IHomeworkByDateList } from './DashboardRelative';
+import { IHomeworkByDateList } from '~/modules/viescolaire/viesco/components/DashboardRelative';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   mainContainer: {

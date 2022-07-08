@@ -15,10 +15,9 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-
-import SchoolbookWordReportCard from '../components/SchoolbookWordReportCard';
-import { IWordReport } from '../reducer';
-import { schoolbookService } from '../service';
+import SchoolbookWordReportCard from '~/modules/schoolbook/components/SchoolbookWordReportCard';
+import { IWordReport } from '~/modules/schoolbook/reducer';
+import { schoolbookService } from '~/modules/schoolbook/service';
 
 // TYPES ==========================================================================================
 

@@ -16,9 +16,6 @@ import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
 import { Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { UserType } from '~/framework/util/session';
-import { HtmlContentView } from '~/ui/HtmlContentView';
-import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
 import {
   IConcernedStudent,
   IWordReport,
@@ -29,7 +26,9 @@ import {
   getIsWordRepliedToForParent,
   getReportByStudentForParent,
   getStudentsForTeacher,
-} from '../reducer';
+} from '~/modules/schoolbook/reducer';
+import { HtmlContentView } from '~/ui/HtmlContentView';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;

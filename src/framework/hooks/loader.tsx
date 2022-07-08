@@ -4,8 +4,8 @@
 import * as React from 'react';
 import { RefreshControl, ScrollView, ScrollViewProps } from 'react-native';
 
-import { EmptyConnectionScreen } from '../components/emptyConnectionScreen';
-import { LoadingIndicator } from '../components/loading';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 
 export enum LoadingState {
   PRISTINE, // When no data has been fetched yet

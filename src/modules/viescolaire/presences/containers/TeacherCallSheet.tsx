@@ -10,8 +10,7 @@ import { fetchClassesCallAction } from '~/modules/viescolaire/presences/actions/
 import TeacherCallSheet from '~/modules/viescolaire/presences/components/TeacherCallSheet';
 import { getClassesCallListState } from '~/modules/viescolaire/presences/state/teacherClassesCall';
 import { getCoursesListState } from '~/modules/viescolaire/presences/state/teacherCourses';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 class CallSheet extends React.PureComponent<any> {
   public render() {

@@ -19,13 +19,13 @@ import { getDayOfTheWeek } from '~/framework/util/date';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
+import config from '~/homework/config';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { Loading } from '~/ui/Loading';
 import today from '~/utils/today';
 
-import config from '../config';
 import HomeworkCard from './HomeworkCard';
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
 import HomeworkTimeline from './HomeworkTimeline';

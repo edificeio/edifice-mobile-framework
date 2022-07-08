@@ -5,10 +5,10 @@ import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
+import { displayPastDate } from '~/framework/util/date';
 import { getUserSession } from '~/framework/util/session';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { displayPastDate } from '../util/date';
 import { RoundButton } from './RoundButton';
 import { UI_SIZES } from './constants';
 import { TextItalic, TextSemiBold, TextSizeStyle } from './text';

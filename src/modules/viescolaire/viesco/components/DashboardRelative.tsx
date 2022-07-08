@@ -18,9 +18,8 @@ import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/d
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/cdt';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/Dashboard';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { INavigationProps } from '~/types';
-
-import { viescoTheme } from '../utils/viescoTheme';
 
 const styles = StyleSheet.create({
   mainContainer: {

@@ -13,9 +13,6 @@ import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { UserType } from '~/framework/util/session';
 import { isStringEmpty } from '~/framework/util/string';
-import { ArticleContainer } from '~/ui/ContainerContent';
-import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
 import {
   IAcknowledgment,
   IRecipient,
@@ -25,7 +22,9 @@ import {
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
   getResponseNumberForStudentAndParent,
-} from '../reducer';
+} from '~/modules/schoolbook/reducer';
+import { ArticleContainer } from '~/ui/ContainerContent';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${total === 1 ? '' : 's'}`).toLowerCase()}`;

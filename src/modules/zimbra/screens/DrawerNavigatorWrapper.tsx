@@ -8,12 +8,11 @@ import { connect } from 'react-redux';
 import { DEPRECATED_HeaderPrimaryAction, HeaderAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
+import DrawerMenuContainer from '~/modules/zimbra/components/DrawerMenuContainer';
+import MailList from '~/modules/zimbra/components/MailListContainer';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
+import { DraftType } from '~/modules/zimbra/screens/NewMail';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
-
-import DrawerMenuContainer from '../components/DrawerMenuContainer';
-import MailList from '../components/MailListContainer';
-import { DraftType } from './NewMail';
 
 const styles = StyleSheet.create({
   headerContainer: {

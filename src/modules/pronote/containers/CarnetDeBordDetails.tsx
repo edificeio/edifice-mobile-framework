@@ -18,9 +18,8 @@ import ScrollView from '~/framework/components/scrollView';
 import { TextSizeStyle } from '~/framework/components/text';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { splitWords } from '~/framework/util/string';
+import { CarnetDeBordSection, ICarnetDeBord } from '~/modules/pronote/state/carnetDeBord';
 import { TextBold, TextSemiBold } from '~/ui/Typography';
-
-import { CarnetDeBordSection, ICarnetDeBord } from '../state/carnetDeBord';
 
 export interface CarnetDeBordDetailsDataProps {}
 

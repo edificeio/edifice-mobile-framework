@@ -4,10 +4,9 @@ import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
+import { IPunishment } from '~/modules/viescolaire/presences/state/events';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
-import { IPunishment } from '../state/events';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 interface PresenceCardProps {
   color: string;

@@ -11,7 +11,7 @@ import {
   IHomeworkTaskListScreenEventProps,
   IHomeworkTaskListScreenProps,
 } from '~/homework/components/HomeworkTaskListScreen';
-import config from '../config';
+import config from '~/homework/config';
 
 const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state => {
   // Extract data from state

@@ -10,11 +10,10 @@ import { PageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
+import config from '~/homework/config';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
-
-import config from '../config';
 
 export interface IHomeworkExplorerScreenDataProps {
   diaryList?: {

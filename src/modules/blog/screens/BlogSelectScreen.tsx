@@ -21,9 +21,8 @@ import { getAuthHeader } from '~/infra/oauth';
 import { getPublishableBlogListAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog, IBlogList } from '~/modules/blog/reducer';
+import { getBlogWorkflowInformation } from '~/modules/blog/rights';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-
-import { getBlogWorkflowInformation } from '../rights';
 
 // TYPES ==========================================================================================
 

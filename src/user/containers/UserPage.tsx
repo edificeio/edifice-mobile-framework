@@ -27,8 +27,7 @@ import { Label } from '~/ui/Typography';
 import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
-
-import { IUserInfoState } from '../state/info';
+import { IUserInfoState } from '~/user/state/info';
 
 const uploadAvatarError = () => {
   return dispatch => {

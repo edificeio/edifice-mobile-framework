@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import { ActionButton } from '~/framework/components/ActionButton';
+import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -19,10 +20,6 @@ import { displayDate } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
-import { TextBold } from '~/ui/Typography';
-import { IUserInfoState } from '~/user/state/info';
-
-import UserList, { IUserListItem, UserListProps } from '../../../framework/components/UserList';
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
@@ -30,11 +27,13 @@ import {
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   getSummaryItem,
-} from '../model/carnetDeBord';
-import moduleConfig from '../moduleConfig';
-import redirect from '../service/redirect';
-import { loadCarnetDeBordAction } from '../state/carnetDeBord/actions';
-import { ICarnetDeBordStateData } from '../state/carnetDeBord/reducer';
+} from '~/modules/pronote/model/carnetDeBord';
+import moduleConfig from '~/modules/pronote/moduleConfig';
+import redirect from '~/modules/pronote/service/redirect';
+import { loadCarnetDeBordAction } from '~/modules/pronote/state/carnetDeBord/actions';
+import { ICarnetDeBordStateData } from '~/modules/pronote/state/carnetDeBord/reducer';
+import { TextBold } from '~/ui/Typography';
+import { IUserInfoState } from '~/user/state/info';
 
 export interface CarnetDeBordScreenDataProps {
   session: IUserSession;

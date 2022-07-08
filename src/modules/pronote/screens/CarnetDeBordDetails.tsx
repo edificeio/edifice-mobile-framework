@@ -19,16 +19,15 @@ import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { splitWords } from '~/framework/util/string';
-import { TextBold, TextSemiBold } from '~/ui/Typography';
-
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
-} from '../model/carnetDeBord';
-import redirect from '../service/redirect';
+} from '~/modules/pronote/model/carnetDeBord';
+import redirect from '~/modules/pronote/service/redirect';
+import { TextBold, TextSemiBold } from '~/ui/Typography';
 
 export interface CarnetDeBordDetailsScreenDataProps {
   session: IUserSession;
