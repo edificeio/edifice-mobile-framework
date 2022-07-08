@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     width: 125,
   },
   contentContainer: {
-    marginLeft: 12, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.small,
     padding: 10, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.ui.background.card,
     borderTopRightRadius: 14,

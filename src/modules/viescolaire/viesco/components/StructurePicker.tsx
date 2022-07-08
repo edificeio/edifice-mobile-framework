@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { IStructure, IStructureArray } from '~/modules/viescolaire/viesco/state/structure';
 import Dropdown from '~/ui/Dropdown';
 
 const styles = StyleSheet.create({
   container: {
     zIndex: 20,
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
-    paddingBottom: 10, // MO-142 use UI_SIZES.spacing here
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.small,
+    paddingBottom: UI_SIZES.spacing.minor,
+    marginHorizontal: UI_SIZES.spacing.medium,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',

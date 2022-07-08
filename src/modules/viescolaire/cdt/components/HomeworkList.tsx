@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { FlatList, Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
@@ -28,8 +29,8 @@ const style = StyleSheet.create({
   },
   homeworkPart: {
     flex: 1,
-    paddingBottom: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 15, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   grid: {
     marginTop: 10, // MO-142 use UI_SIZES.spacing here
@@ -44,14 +45,14 @@ const style = StyleSheet.create({
   },
   gridSwith: {
     marginTop: 30, // MO-142 use UI_SIZES.spacing here
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
   },
   gridSesionTitle: {
     flex: 1,
     alignItems: 'flex-start',
   },
   datePicker: {
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
   },
 });
 

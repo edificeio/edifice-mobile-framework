@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
@@ -34,10 +35,10 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   classroomText: {
-    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.minor,
   },
   gradeText: {
-    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.minor,
   },
 });
 

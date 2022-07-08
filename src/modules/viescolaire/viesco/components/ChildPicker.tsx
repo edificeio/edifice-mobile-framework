@@ -3,6 +3,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { IChild, IChildArray } from '~/modules/viescolaire/viesco/state/children';
 import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
@@ -22,9 +23,9 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   innerContainer: {
-    paddingTop: 10, // MO-142 use UI_SIZES.spacing here
-    paddingBottom: 15, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    paddingTop: UI_SIZES.spacing.small,
+    paddingBottom: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.small,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -56,9 +57,8 @@ export default class ChildPicker extends React.PureComponent<ChildPickerProps> {
       />
     );
 
-    const wrappedChildren = React.Children.map(
-      [dropdown, ...React.Children.toArray(children)],
-      child => React.cloneElement(child as React.ReactElement<any>, { style: [child.props.style, { margin: 5 }] }), // MO-142 use UI_SIZES.spacing here
+    const wrappedChildren = React.Children.map([dropdown, ...React.Children.toArray(children)], child =>
+      React.cloneElement(child as React.ReactElement<any>, { style: [child.props.style, { margin: UI_SIZES.spacing.tiny }] }),
     );
 
     return (

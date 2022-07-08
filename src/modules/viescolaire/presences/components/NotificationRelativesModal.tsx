@@ -4,6 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   modalContentView: {
     backgroundColor: theme.palette.grey.white,
     borderRadius: 5,
-    padding: 25, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.big,
     alignItems: 'stretch',
   },
 });

@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
@@ -14,8 +15,8 @@ import CourseComponent from './CourseComponent';
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 27, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.big,
     flex: 1,
   },
   dateText: {
@@ -56,8 +57,8 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 4,
     marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
-    marginTop: 3, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 3, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   carouselActiveDot: {
     width: 20,

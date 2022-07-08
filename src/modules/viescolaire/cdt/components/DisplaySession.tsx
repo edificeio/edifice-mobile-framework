@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Session } from '~/modules/viescolaire/utils/cdt';
@@ -18,8 +19,8 @@ const style = StyleSheet.create({
     flex: 1,
   },
   sessionPart: {
-    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 15, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   sessionInfoBar: {
     justifyContent: 'flex-end',
@@ -38,7 +39,7 @@ const style = StyleSheet.create({
   },
   course: {
     textTransform: 'uppercase',
-    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.minor,
   },
 });
 

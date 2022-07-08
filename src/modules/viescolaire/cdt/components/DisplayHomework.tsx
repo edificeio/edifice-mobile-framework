@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
@@ -26,19 +27,19 @@ const style = StyleSheet.create({
     flexDirection: 'row',
   },
   homeworkPart: {
-    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 15, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   title: {
     ...TextSizeStyle.SlightBig,
   },
   subtitle: {
     color: theme.palette.grey.stone,
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.medium,
   },
   course: {
     textTransform: 'uppercase',
-    marginLeft: 8, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.minor,
   },
 });
 

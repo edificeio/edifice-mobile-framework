@@ -2,14 +2,15 @@ import * as React from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
 const styleConstant = StyleSheet.create({
   container: {
     borderRadius: 10,
-    marginVertical: 5, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.tiny,
     backgroundColor: theme.palette.grey.white,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
   },
   containerShadow: {
     shadowColor: CommonStyles.shadowColor,

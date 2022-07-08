@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
@@ -29,7 +30,7 @@ const style = StyleSheet.create({
   },
   recapHeader: {
     marginTop: 10, // MO-142 use UI_SIZES.spacing here
-    paddingVertical: 12, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.small,
     alignSelf: 'flex-end',
     width: '90%',
     marginBottom: 15, // MO-142 use UI_SIZES.spacing here
@@ -64,12 +65,12 @@ const style = StyleSheet.create({
   },
   labelText: {
     ...TextSizeStyle.Small,
-    marginBottom: 4, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   reasonTextInput: {
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
-    paddingVertical: 4, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
   buttonOkContainer: {
     flexDirection: 'row',

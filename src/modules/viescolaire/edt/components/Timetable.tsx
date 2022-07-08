@@ -4,6 +4,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
@@ -29,11 +30,11 @@ const style = StyleSheet.create({
     marginTop: 10, // MO-142 use UI_SIZES.spacing here
   },
   weekText: {
-    marginRight: 4, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   courseView: {
     flexDirection: 'row',
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -51,7 +52,7 @@ const style = StyleSheet.create({
   },
   halfCourseView: {
     flexShrink: 1,
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     height: '100%',
     justifyContent: 'center',
   },

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, responsiveStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -78,18 +79,18 @@ const styles = StyleSheet.create({
   inputContainer: {
     backgroundColor: theme.palette.grey.white,
     flexDirection: 'column',
-    paddingHorizontal: 25, // MO-142 use UI_SIZES.spacing here
-    paddingTop: 16, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.medium,
   },
-  inputContainerText: { marginBottom: 8 }, // MO-142 use UI_SIZES.spacing here
+  inputContainerText: { marginBottom: UI_SIZES.spacing.minor },
   motiveTextInput: {
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
-    paddingVertical: 4, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
   filePickerStyle: {
     flexDirection: 'row',
-    paddingVertical: 16, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.medium,
   },
   iconAttMarginRight: { marginRight: 10 }, // MO-142 use UI_SIZES.spacing here
   dialogButtonOk: {

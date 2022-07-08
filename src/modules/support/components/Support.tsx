@@ -3,6 +3,7 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/picture';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
@@ -21,12 +22,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   textsContainer: {
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
-    marginVertical: 16, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
+    marginVertical: UI_SIZES.spacing.medium,
   },
   titleText: {
     ...TextSizeStyle.SlightBig,
-    marginBottom: 4, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   informationText: {
     color: theme.palette.grey.graphite,
@@ -35,15 +36,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
-    marginVertical: 4, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
+    marginVertical: UI_SIZES.spacing.tiny,
   },
   selectionText: {
     width: '50%',
   },
   inputContainer: {
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
-    marginVertical: 16, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
+    marginVertical: UI_SIZES.spacing.medium,
   },
   mandatoryFieldText: {
     color: theme.palette.complementary.red.regular,
@@ -51,22 +52,22 @@ const styles = StyleSheet.create({
   attachmentsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
-    marginTop: 4, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 16, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
+    marginTop: UI_SIZES.spacing.tiny,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   attachmentsIcon: {
-    marginRight: 4, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   registerButtonContainer: {
     borderRadius: 5,
-    marginHorizontal: 12, // MO-142 use UI_SIZES.spacing here
-    marginVertical: 16, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
+    marginVertical: UI_SIZES.spacing.medium,
   },
   registerButtonText: {
     color: theme.palette.grey.white,
     textAlign: 'center',
-    margin: 12, // MO-142 use UI_SIZES.spacing here
+    margin: UI_SIZES.spacing.small,
   },
 });
 

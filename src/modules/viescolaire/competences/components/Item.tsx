@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { FlatList, FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
@@ -40,7 +41,7 @@ const styleConstant = StyleSheet.create({
   coloredSquareNoteTextContainer: {
     alignSelf: 'center',
     color: theme.palette.grey.white,
-    marginVertical: 8, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.minor, // MO-142 use UI_SIZES.spacing here
   },
   coloredSquareNoteText: {
     ...TextSizeStyle.Big,
@@ -89,14 +90,14 @@ const styleConstant = StyleSheet.create({
     marginLeft: 5, // MO-142 use UI_SIZES.spacing here
     height: 25,
     width: 25,
-    borderRadius: 15,
+    borderRadius: UI_SIZES.spacing.medium,
   },
   subMatieres: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingBottom: 10, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 15, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   shadow: {
     shadowColor: CommonStyles.shadowColor,
@@ -117,7 +118,7 @@ const styleConstant = StyleSheet.create({
     flexGrow: 1,
   },
   gradesDevoirsMoyennesItemView: {
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     maxWidth: '75%',
   },
   gradesDevoirsMoyennesCourseNameText: {
@@ -130,7 +131,7 @@ const styleConstant = StyleSheet.create({
   denseDevoirListMatiereContainer: {
     flexDirection: 'row',
     width: '75%',
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     justifyContent: 'space-between',
   },
   denseDevoirListMatiereText: {
@@ -144,10 +145,10 @@ const styleConstant = StyleSheet.create({
     paddingTop: 6, // MO-142 use UI_SIZES.spacing here
   },
   denseDevoirListDiviseurText: {
-    paddingTop: 8, // MO-142 use UI_SIZES.spacing here
+    paddingTop: UI_SIZES.spacing.minor,
   },
   gradesDevoirsResumeContainer: {
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     maxWidth: '52%',
   },
 });

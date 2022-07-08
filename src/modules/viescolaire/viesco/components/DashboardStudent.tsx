@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import { NavigationActions } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 }, // MO-142 use UI_SIZES.spacing here
+  dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium },
   gridAllModules: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -32,8 +33,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   gridButtonContainer: {
-    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 6, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.minor,
   },
   gridButton: {
     borderRadius: 5,
@@ -56,10 +57,10 @@ const styles = StyleSheet.create({
   viewButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
   },
   gridButtonText: {
-    marginLeft: 10, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.minor,
     color: theme.palette.grey.white,
     textAlign: 'center',
   },

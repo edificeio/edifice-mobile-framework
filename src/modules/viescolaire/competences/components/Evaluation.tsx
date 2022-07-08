@@ -5,6 +5,7 @@ import * as React from 'react';
 import { StyleSheet, Switch, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Text, TextBold } from '~/framework/components/text';
@@ -19,17 +20,17 @@ import Dropdown from '~/ui/Dropdown';
 import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from './Item';
 
 const styles = StyleSheet.create({
-  subtitle: { color: theme.palette.grey.stone, paddingVertical: 8 }, // MO-142 use UI_SIZES.spacing here
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 }, // MO-142 use UI_SIZES.spacing here
+  subtitle: { color: theme.palette.grey.stone, paddingVertical: UI_SIZES.spacing.minor },
+  dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium, flex: 1 },
   containerDropdowns: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 10, // MO-142 use UI_SIZES.spacing here
-    marginHorizontal: 5, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.tiny,
   },
   dropdownStyle: {
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   mainView: {
     flex: 1,

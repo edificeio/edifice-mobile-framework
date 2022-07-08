@@ -4,6 +4,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
@@ -25,10 +26,10 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.minor,
   },
   weekText: {
-    marginRight: 4, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   calendarContainer: {
     height: 1,
@@ -36,7 +37,7 @@ const style = StyleSheet.create({
   },
   courseView: {
     flexDirection: 'row',
-    padding: 8, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -46,7 +47,7 @@ const style = StyleSheet.create({
     flexShrink: 1,
   },
   subjectPadding: {
-    paddingLeft: 4, // MO-142 use UI_SIZES.spacing here
+    paddingLeft: UI_SIZES.spacing.tiny,
   },
   classText: {
     ...TextSizeStyle.Big,
@@ -60,20 +61,20 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 45,
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
   homeworksText: {
     ...TextSizeStyle.SlightBig,
   },
   halfSessionMargin: {
-    marginHorizontal: 8, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.minor,
   },
   sessionMargin: {
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.big,
   },
   homeworkMargin: {
-    marginRight: 4, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
 });
 

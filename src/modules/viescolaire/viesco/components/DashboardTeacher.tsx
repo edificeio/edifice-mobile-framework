@@ -4,6 +4,7 @@ import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Text } from '~/framework/components/text';
 import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
@@ -14,7 +15,7 @@ import { PageContainer } from '~/ui/ContainerContent';
 import { viescoTheme } from '../utils/viescoTheme';
 
 const styles = StyleSheet.create({
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 }, // MO-142 use UI_SIZES.spacing here
+  dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium },
   coursesPart: {
     backgroundColor: theme.palette.grey.white,
     borderBottomLeftRadius: 20,
@@ -39,8 +40,8 @@ const styles = StyleSheet.create({
   },
   gridButtonContainer: {
     width: '50%',
-    paddingVertical: 8, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 12, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
     elevation: CommonStyles.elevation,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
