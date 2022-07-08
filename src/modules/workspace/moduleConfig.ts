@@ -1,7 +1,7 @@
 import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { IWorkspace_State } from './reducers';
+import { IWorkspace_State } from './reducer';
 
 export default new NavigableModuleConfig<'workspace2', IWorkspace_State>({
   name: 'workspace2',

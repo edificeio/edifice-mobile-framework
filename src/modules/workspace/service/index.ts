@@ -1,8 +1,9 @@
 import moment from 'moment';
 
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { IFile } from '~/modules/workspace/reducers';
+import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { IFile } from '~/modules/workspace/reducer';
 import { Filter } from '~/modules/workspace/types';
 
 export type IEntcoreWorkspaceDocument = {
@@ -93,6 +94,66 @@ export const workspaceService = {
       const api = `/workspace/documents${params}`;
       const files = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFileList;
       return files.map(file => workspaceFileAdapter(file)).sort(compareFiles) as IFile[];
+    },
+    copy: async (session: IUserSession, parentId: string, ids: string[], destinationId: string) => {
+      const api = `/workspace/documents/copy/${destinationId}`;
+      const body = JSON.stringify({ parentId, ids });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'PUT',
+        body,
+      });
+    },
+    move: async (session: IUserSession, parentId: string, ids: string[], destinationId: string) => {
+      const api = `/workspace/documents/move/${destinationId}`;
+      const body = JSON.stringify({ parentId, ids });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'PUT',
+        body,
+      });
+    },
+    restore: async (session: IUserSession, parentId: string, ids: string[]) => {
+      const api = '/workspace/documents/restore';
+      const body = JSON.stringify({ parentId, ids });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'PUT',
+        body,
+      });
+    },
+    trash: async (session: IUserSession, parentId: string, ids: string[]) => {
+      const api = '/workspace/documents/trash';
+      const body = JSON.stringify({ parentId, ids });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'PUT',
+        body,
+      });
+    },
+    delete: async (session: IUserSession, parentId: string, ids: string[]) => {
+      const api = '/workspace/documents';
+      const body = JSON.stringify({ parentId, ids });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'DELETE',
+        body,
+      });
+    },
+  },
+  file: {
+    rename: async (session: IUserSession, parentId: string, id: string, name: string) => {
+      const api = `/workspace/rename/${id}`;
+      const body = JSON.stringify({ parentId, name });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'PUT',
+        body,
+      });
+    },
+  },
+  folder: {
+    rename: async (session: IUserSession, parentId: string, id: string, name: string) => {
+      const api = `/workspace/folder/rename/${id}`;
+      const body = JSON.stringify({ parentId, name });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'PUT',
+        body,
+      });
     },
   },
 };

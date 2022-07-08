@@ -12,7 +12,7 @@ import { ButtonIconText } from '~/ui/ButtonIconText';
 
 import { downloadAndSaveAction, newDownloadThenOpenAction } from '../actions/download';
 import { IFile } from '../types';
-import { renderImage } from '../utils/image';
+import { renderImage } from '../components/image';
 
 const styles = StyleSheet.create({
   actionsContainer: {

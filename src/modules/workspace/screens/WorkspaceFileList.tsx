@@ -16,7 +16,8 @@ import { fetchWorkspaceFilesAction } from '~/modules/workspace/actions';
 import { newDownloadThenOpenAction } from '~/modules/workspace/actions/download';
 import { WorkspaceFileListItem } from '~/modules/workspace/components/WorkspaceFileListItem';
 import moduleConfig from '~/modules/workspace/moduleConfig';
-import { Filter, IFile } from '~/modules/workspace/types';
+import { IFile } from '~/modules/workspace/reducer';
+import { Filter } from '~/modules/workspace/types';
 import { CommonStyles } from '~/styles/common/styles';
 
 const styles = StyleSheet.create({

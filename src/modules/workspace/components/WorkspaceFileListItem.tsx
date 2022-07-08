@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { IEventProps } from '~/modules/workspace/types';
-import { renderIcon } from '~/modules/workspace/utils/image';
+import { renderIcon } from '~/modules/workspace/components/image';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
