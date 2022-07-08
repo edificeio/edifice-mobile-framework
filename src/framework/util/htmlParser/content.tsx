@@ -25,8 +25,7 @@ export const extractTextFromHtml = (html: string) => {
   const formattedSpaces = trimmedToBlank
     .replaceAll(/\u200b/g, '') // Remove ZWSP
     .replaceAll(/^\s+|\s+$/g, '') // Trim blank from start and end
-    .replaceAll(/[^\S\r\n]+/g, ' ') // Compact spaces
-    .replaceAll(/(\r|\n|\r\n)+/g, '$1'); // Compact new lines
+    .replaceAll(/\s+/g, ' '); // Compact spaces & new lines
 
   return formattedSpaces;
 };
