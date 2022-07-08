@@ -187,7 +187,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         ListFooterComponent={
           this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? <LoadingIndicator /> : null
         }
-        ListHeaderComponent={getTimelineWorkflows(this.props.session).length ? <View style={{ height: pageGutterSize }} /> : null}
+        ListHeaderComponent={<View style={{ height: pageGutterSize }} />}
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
         // Swipeable props
