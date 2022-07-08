@@ -28,7 +28,7 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
       onPress={onPress}
       style={{
         flexDirection: 'row',
-        borderRadius: UI_SIZES.radius.small,
+        borderRadius: UI_SIZES.radius.card,
         marginTop: UI_SIZES.spacing.small,
         padding: UI_SIZES.spacing.medium,
         marginLeft: UI_SIZES.spacing.big,

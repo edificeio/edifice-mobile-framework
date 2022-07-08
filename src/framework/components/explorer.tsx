@@ -134,7 +134,6 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
         explorerData.length === 0
           ? {}
           : {
-              backgroundColor: theme.ui.background.card,
               padding: UI_SIZES.spacing.medium,
             },
         contentContainerStyle,
@@ -194,7 +193,9 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
         }
         textStyle={isResourceWithDate ? {} : { textAlign: 'center' }}
         textProps={{ numberOfLines: isResourceWithDate ? 1 : 2 }}
-        style={{}} // reset default card styles because that's the touchable that hold them
+        style={
+          item.type !== 'folder' ? { backgroundColor: theme.ui.background.card, borderRadius: UI_SIZES.radius.explorer - 1 } : {}
+        } // reset default card styles because that's the touchable that hold them
       />
     </TheRightTouchable>
   );
