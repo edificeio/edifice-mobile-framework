@@ -1,8 +1,6 @@
 import { decode } from 'html-entities';
 import * as React from 'react';
 
-
-
 import { IMedia } from '~/framework//util/notifications';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { signURISource, transformedSrc } from '~/infra/oauth';
@@ -11,7 +9,6 @@ import { AttachmentGroup } from '~/ui/AttachmentGroup';
 import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
 import Player from '~/ui/Player';
-
 
 /**
  * Extracts text from an input html string
@@ -26,9 +23,10 @@ export const extractTextFromHtml = (html: string) => {
   const trimmedToNull = unescaped === null ? null : unescaped.trim().length === 0 ? null : unescaped.trim();
   const trimmedToBlank = trimmedToNull !== null ? trimmedToNull : '';
   const formattedSpaces = trimmedToBlank
-    .replaceAll(/\u200b/g, '')
-    .replaceAll(/[ ,\t]{2,}/g, ' ')
-    .replaceAll(/[\s]{2,}/g, '\n');
+    .replaceAll(/\u200b/g, '') // Remove ZWSP
+    .replaceAll(/^\s+|\s+$/g, '') // Trim blank from start and end
+    .replaceAll(/[^\S\r\n]+/g, ' ') // Compact spaces
+    .replaceAll(/(\r|\n|\r\n)+/g, '$1'); // Compact new lines
 
   return formattedSpaces;
 };
