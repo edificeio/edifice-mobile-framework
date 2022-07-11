@@ -9,16 +9,15 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { HeaderBackAction, HeaderTitle } from '~/framework/components/header';
+import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
-import { fetchWorkspaceFilesAction } from '~/modules/workspace/actions';
-import { newDownloadThenOpenAction } from '~/modules/workspace/actions/download';
+import { downloadThenOpenWorkspaceFileAction, fetchWorkspaceFilesAction } from '~/modules/workspace/actions';
 import { WorkspaceFileListItem } from '~/modules/workspace/components/WorkspaceFileListItem';
 import moduleConfig from '~/modules/workspace/moduleConfig';
-import { IFile } from '~/modules/workspace/reducer';
-import { Filter } from '~/modules/workspace/types';
+import { Filter, IFile } from '~/modules/workspace/reducer';
 import { CommonStyles } from '~/styles/common/styles';
+import { DropdownMenu, DropdownMenuAction } from '~/ui/DropdownMenu';
 
 const styles = StyleSheet.create({
   separator: {
@@ -33,6 +32,7 @@ const styles = StyleSheet.create({
 
 interface IWorkspaceFileListEventProps {
   fetchFiles: (filter: Filter, parentId: string) => void;
+  previewFile: (file: IFile) => void;
   dispatch: ThunkDispatch<any, any, any>;
 }
 
@@ -46,6 +46,7 @@ type IWorkspaceFileListProps = {
 
 const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (props: IWorkspaceFileListProps) => {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const isSelectionActive = selectedFiles.length > 0;
 
   const fetchFiles = () => {
@@ -72,6 +73,14 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     }
   };
 
+  const showDropdown = () => {
+    setDropdownVisible(true);
+  };
+
+  const hideDropdown = () => {
+    setDropdownVisible(false);
+  };
+
   const selectFile = (file: IFile) => {
     if (selectedFiles.includes(file.id)) {
       setSelectedFiles(selectedFiles.filter(id => id !== file.id));
@@ -82,7 +91,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
 
   const onPressFile = (file: IFile) => {
     if (Platform.OS === 'ios' && !isSelectionActive && !file.isFolder) {
-      return props.dispatch(newDownloadThenOpenAction({ item: file }));
+      return props.previewFile(file);
     } else if (isSelectionActive) {
       return selectFile(file);
     }
@@ -103,6 +112,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
       </>
     ),
     title: isSelectionActive ? null : props.navigation.getParam('title'),
+    right: getRightIcons(),
     style: {
       backgroundColor: isSelectionActive ? theme.palette.secondary.regular : theme.palette.primary.regular,
     },
@@ -119,6 +129,44 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
         text={I18n.t(`workspaceEmptyScreen.${screen}.text`)}
       />
     );
+  };
+
+  const getMenuActions = (): DropdownMenuAction[] | null => {
+    if (isSelectionActive) {
+      return null;
+    }
+    if (props.filter === Filter.OWNER) {
+      return [
+        {
+          text: I18n.t('add-file'),
+          icon: 'file-plus',
+          onPress: () => true,
+        },
+        {
+          text: I18n.t('create-folder'),
+          icon: 'added_files',
+          onPress: () => true,
+        },
+      ];
+    } else if (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED) {
+      return [
+        {
+          text: I18n.t('add-file'),
+          icon: 'file-plus',
+          onPress: () => true,
+        },
+      ];
+    }
+    const showAddMenu = props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED);
+    return showAddMenu ? <HeaderAction iconName="add" onPress={showDropdown} /> : null;
+  };
+
+  const renderMenus = () => {
+    const dropdownActions = getMenuActions();
+    const dropdownColor = isSelectionActive ? theme.palette.secondary.regular : theme.palette.primary.regular;
+    return dropdownActions ? (
+      <DropdownMenu data={dropdownActions} isVisible={isDropdownVisible} color={dropdownColor} onTapOutside={hideDropdown} />
+    ) : null;
   };
 
   return (
@@ -139,6 +187,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
         ListEmptyComponent={renderEmpty()}
         contentContainerStyle={styles.listContainer}
       />
+      {renderMenus()}
     </PageView>
   );
 };
@@ -162,6 +211,9 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
 ) => ({
   fetchFiles: async (filter: Filter, parentId: string) => {
     return dispatch(fetchWorkspaceFilesAction(filter, parentId));
+  },
+  previewFile: async (file: IFile) => {
+    return dispatch(downloadThenOpenWorkspaceFileAction(file));
   },
   dispatch,
 });

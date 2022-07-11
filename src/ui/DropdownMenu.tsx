@@ -35,12 +35,14 @@ const style = StyleSheet.create({
   },
 });
 
+export type DropdownMenuAction = {
+  icon: string;
+  text: string;
+  onPress: () => any;
+};
+
 interface IDropdrownMenuProps {
-  data: {
-    icon: string;
-    text: string;
-    onPress: () => any;
-  }[];
+  data: DropdownMenuAction[];
   isVisible: boolean;
   color?: string;
   onTapOutside: () => any;

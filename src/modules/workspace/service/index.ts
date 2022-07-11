@@ -3,10 +3,9 @@ import moment from 'moment';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
-import { IFile } from '~/modules/workspace/reducer';
-import { Filter } from '~/modules/workspace/types';
+import { Filter, IFile } from '~/modules/workspace/reducer';
 
-export type IEntcoreWorkspaceDocument = {
+type IEntcoreWorkspaceDocument = {
   _id: string;
   name: string;
   metadata: {
@@ -30,7 +29,7 @@ export type IEntcoreWorkspaceDocument = {
   thumbnails: { [id: string]: string };
 };
 
-export type IEntcoreWorkspaceFolder = {
+type IEntcoreWorkspaceFolder = {
   _id: string;
   created: string;
   modified: string;
@@ -146,7 +145,24 @@ export const workspaceService = {
       });
     },
   },
+  folders: {
+    list: async (session: IUserSession) => {
+      const api = '/workspace/folders/list?filter=owner&hierarchical=true';
+      const folders = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFolder[];
+      return folders;
+    },
+  },
   folder: {
+    create: async (session: IUserSession, name: string, parentId: string) => {
+      const api = '/workspace/folder';
+      const body = JSON.stringify({ name, parentFolderId: parentId, externalId: '' });
+      const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' };
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'POST',
+        body,
+        headers,
+      });
+    },
     rename: async (session: IUserSession, parentId: string, id: string, name: string) => {
       const api = `/workspace/folder/rename/${id}`;
       const body = JSON.stringify({ parentId, name });

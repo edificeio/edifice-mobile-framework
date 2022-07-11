@@ -6,9 +6,16 @@ import { combineReducers } from 'redux';
 
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/workspace/moduleConfig';
-import { Filter } from '~/modules/workspace/types';
 
 // Types
+
+export enum Filter {
+  OWNER = 'owner',
+  PROTECTED = 'protected',
+  ROOT = 'root',
+  SHARED = 'shared',
+  TRASH = 'trash',
+}
 
 export type IDirectory<T> = {
   [key: string]: T;
@@ -64,12 +71,18 @@ const initialState: IWorkspace_StateData = {
 
 export const actionTypes = {
   copy: createAsyncActionTypes(moduleConfig.namespaceActionType('COPY')),
+  createFolder: createAsyncActionTypes(moduleConfig.namespaceActionType('CREATE_FOLDER')),
   delete: createAsyncActionTypes(moduleConfig.namespaceActionType('DELETE')),
   directories: createAsyncActionTypes(moduleConfig.namespaceActionType('DIRECTORIES')),
+  download: createAsyncActionTypes(moduleConfig.namespaceActionType('DOWNLOAD')),
+  listFolders: createAsyncActionTypes(moduleConfig.namespaceActionType('LIST_FOLDERS')),
   move: createAsyncActionTypes(moduleConfig.namespaceActionType('MOVE')),
+  preview: createAsyncActionTypes(moduleConfig.namespaceActionType('PREVIEW')),
   rename: createAsyncActionTypes(moduleConfig.namespaceActionType('RENAME')),
   restore: createAsyncActionTypes(moduleConfig.namespaceActionType('RESTORE')),
+  share: createAsyncActionTypes(moduleConfig.namespaceActionType('SHARE')),
   trash: createAsyncActionTypes(moduleConfig.namespaceActionType('TRASH')),
+  upload: createAsyncActionTypes(moduleConfig.namespaceActionType('UPLOAD')),
 };
 
 export default combineReducers({

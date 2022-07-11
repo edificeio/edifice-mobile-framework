@@ -4,7 +4,6 @@ import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Text, TextSizeStyle } from '~/framework/components/text';
-import { IEventProps } from '~/modules/workspace/types';
 import { renderIcon } from '~/modules/workspace/components/image';
 import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
@@ -30,7 +29,7 @@ const style = StyleSheet.create({
   },
 });
 
-export const WorkspaceFileListItem = ({ item, isSelected, onPressCallback, onLongPressCallback }: IEventProps & any) => {
+export const WorkspaceFileListItem = ({ item, isSelected, onPressCallback, onLongPressCallback }) => {
   const { id, isFolder, name, date, ownerName = '', contentType } = item;
   const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
 

@@ -1050,7 +1050,7 @@
       "text": "No hay ningún documento en esta carpeta.",
       "title": "Esta carpeta está vacía"
     },
-    "trashed": {
+    "trash": {
       "text": "Aquí encontrará los documentos eliminados. Actualmente todo está limpio.",
       "title": "La papelera está vacía"
     }

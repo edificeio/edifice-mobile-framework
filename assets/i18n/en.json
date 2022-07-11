@@ -1050,7 +1050,7 @@
       "text": "There are no documents in this folder.",
       "title": "This folder is empty"
     },
-    "trashed": {
+    "trash": {
       "text": "This is where you can find all your deleted documents. Right now, everything's tidy.",
       "title": "The trash can is empty"
     }

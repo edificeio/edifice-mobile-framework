@@ -8,5 +8,6 @@ export default [
     require("~/modules/schoolbook"),
     require("~/modules/support"),
     require("~/modules/viescolaire"),
+    require("~/modules/workspace"),
     require("~/modules/zimbra"),
 ];

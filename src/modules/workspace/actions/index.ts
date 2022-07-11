@@ -1,13 +1,16 @@
 /**
  * Workspace actions
  */
+import { Platform } from 'react-native';
+import Share from 'react-native-share';
 import { ThunkAction } from 'redux-thunk';
 
+import { IDistantFile, SyncedFile } from '~/framework/util/fileHandler';
+import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
-import { IFile, actionTypes } from '~/modules/workspace/reducer';
+import { Filter, IFile, actionTypes } from '~/modules/workspace/reducer';
 import { workspaceService } from '~/modules/workspace/service';
-import { Filter } from '~/modules/workspace/types';
 
 /**
  * Fetch the files of a given directory.
@@ -28,6 +31,40 @@ export const fetchWorkspaceFilesAction =
       throw e;
     }
   };
+
+/**
+ * Fetch the owner folders.
+ */
+export const workspaceListFoldersActionsCreators = createAsyncActionCreators(actionTypes.listFolders);
+export const listWorkspaceFoldersAction = (): ThunkAction<Promise<IFile[]>, any, any, any> => async (dispatch, getState) => {
+  try {
+    const session = getUserSession();
+    dispatch(workspaceListFoldersActionsCreators.request());
+    const folders = await workspaceService.folders.list(session);
+    dispatch(workspaceListFoldersActionsCreators.receipt(folders));
+    return folders;
+  } catch (e) {
+    dispatch(workspaceListFoldersActionsCreators.error(e as Error));
+    throw e;
+  }
+};
+
+/**
+ * Create a new folder.
+ */
+export const workspaceCreateFolderActionsCreators = createAsyncActionCreators(actionTypes.createFolder);
+export const createWorkspaceFolderAction = (name: string, parentId: string) => async (dispatch, getState) => {
+  try {
+    dispatch(workspaceCreateFolderActionsCreators);
+    const session = getUserSession();
+    const folder = await workspaceService.folder.create(session, name, parentId);
+    dispatch(workspaceCreateFolderActionsCreators.receipt(folder));
+    return folder;
+  } catch (e) {
+    dispatch(workspaceCreateFolderActionsCreators.error(e as Error));
+    throw e;
+  }
+};
 
 /**
  * Copy files with given ids to specified directory.
@@ -127,6 +164,77 @@ export const renameWorkspaceFileAction = (parentId: string, file: IFile, name: s
     dispatch(workspaceRenameActionsCreators.receipt(name));
   } catch (e) {
     dispatch(workspaceRenameActionsCreators.error(e as Error));
+    throw e;
+  }
+};
+
+const convertIFileToIDistantFile = (file: IFile) => {
+  return {
+    url: file.url,
+    filename: file.name,
+    filesize: file.size,
+    filetype: file.contentType,
+  } as IDistantFile;
+};
+
+/**
+ * Download and open the given file.
+ */
+export const workspacePreviewActionsCreators = createAsyncActionCreators(actionTypes.preview);
+export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {
+  try {
+    dispatch(workspacePreviewActionsCreators.request());
+    const session = getUserSession();
+    const distanteFile = convertIFileToIDistantFile(file);
+    const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
+    syncedFile.open();
+    dispatch(workspacePreviewActionsCreators.receipt(syncedFile));
+  } catch (e) {
+    dispatch(workspacePreviewActionsCreators.error(e as Error));
+    throw e;
+  }
+};
+
+/**
+ * Download and open the given file.
+ */
+export const workspaceShareActionsCreators = createAsyncActionCreators(actionTypes.share);
+export const downloadThenShareWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {
+  try {
+    dispatch(workspaceShareActionsCreators.request());
+    const session = getUserSession();
+    const distanteFile = convertIFileToIDistantFile(file);
+    const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
+    await Share.open({
+      type: syncedFile.filetype || 'text/html',
+      url: Platform.OS === 'android' ? 'file://' + syncedFile.filepath : syncedFile.filepath,
+      showAppsToView: true,
+    });
+    dispatch(workspaceShareActionsCreators.receipt(syncedFile));
+  } catch (e) {
+    dispatch(workspaceShareActionsCreators.error(e as Error));
+    throw e;
+  }
+};
+
+/**
+ * Download and save the given files.
+ */
+export const workspaceDownloadActionsCreators = createAsyncActionCreators(actionTypes.download);
+export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch, getState) => {
+  try {
+    dispatch(workspaceDownloadActionsCreators.request());
+    const syncedFiles: SyncedFile[] = [];
+    const session = getUserSession();
+    for (const file of files) {
+      const distanteFile = convertIFileToIDistantFile(file);
+      const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
+      await syncedFile.mirrorToDownloadFolder();
+      syncedFiles.push(syncedFile);
+    }
+    dispatch(workspaceDownloadActionsCreators.receipt(syncedFiles));
+  } catch (e) {
+    dispatch(workspaceDownloadActionsCreators.error(e as Error));
     throw e;
   }
 };

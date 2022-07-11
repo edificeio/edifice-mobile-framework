@@ -5,9 +5,7 @@ import FastImage from 'react-native-fast-image';
 import { Icon } from '~/framework/components/picture/Icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { DEPRECATED_signImageURISource } from '~/infra/oauth';
-import { IFile } from '~/modules/workspace/types';
-import { Filter } from '~/modules/workspace/types/filters';
-import { filters } from '~/modules/workspace/types/filters/helpers/filters';
+import { Filter, IFile } from '~/modules/workspace/reducer';
 import { DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import ImageOptional from '~/ui/ImageOptional';
@@ -39,7 +37,7 @@ const UnavailableIcon = () => <Icon color={CommonStyles.missingGrey} size={layou
 
 const getIcon = (id: string | null, isFolder: boolean, pName: string | null, contentType: string | undefined): string | null => {
   if (isFolder) {
-    switch (filters(id)) {
+    switch (id) {
       case Filter.OWNER:
         return 'folder11';
       case Filter.SHARED:

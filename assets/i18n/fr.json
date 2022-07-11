@@ -1037,7 +1037,7 @@
       "text": "Il n'y a aucun document dans ce dossier.",
       "title": "Ce dossier est vide"
     },
-    "trashed": {
+    "trash": {
       "text": "Vous retrouvez ici vos documents supprimés. Actuellement, tout est propre.",
       "title": "Le panier est vide"
     }

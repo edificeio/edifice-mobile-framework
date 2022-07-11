@@ -5,14 +5,17 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
-import { shareAction } from '~/infra/actions/share';
+import {
+  downloadThenOpenWorkspaceFileAction,
+  downloadThenShareWorkspaceFileAction,
+  downloadWorkspaceFilesAction,
+} from '~/modules/workspace/actions';
+import { renderImage } from '~/modules/workspace/components/image';
+import { IFile } from '~/modules/workspace/reducer';
 import { ButtonIconText } from '~/ui/ButtonIconText';
-
-import { downloadAndSaveAction, newDownloadThenOpenAction } from '../actions/download';
-import { IFile } from '../types';
-import { renderImage } from '../components/image';
 
 const styles = StyleSheet.create({
   actionsContainer: {
@@ -22,33 +25,36 @@ const styles = StyleSheet.create({
   },
 });
 
+interface IWorkspaceFileDetailsEventProps {
+  downloadFile: (file: IFile) => void;
+  previewFile: (file: IFile) => void;
+  shareFile: (file: IFile) => void;
+  dispatch: ThunkDispatch<any, any, any>;
+}
+
 type IWorkspaceFileDetailsProps = {
   file: IFile;
   title: string;
   dispatch: ThunkDispatch<any, any, any>;
-} & NavigationInjectedProps;
+} & NavigationInjectedProps &
+  IWorkspaceFileDetailsEventProps;
 
-const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsProps> = ({
-  file,
-  navigation,
-  title,
-  dispatch,
-}: IWorkspaceFileDetailsProps) => {
+const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsProps> = (props: IWorkspaceFileDetailsProps) => {
   const preview = () => {
-    dispatch(newDownloadThenOpenAction({ item: file }));
+    props.previewFile(props.file);
   };
 
   const download = () => {
-    dispatch(downloadAndSaveAction({ item: file }));
+    props.downloadFile(props.file);
   };
 
   const share = () => {
-    dispatch(shareAction(file));
+    props.shareFile(props.file);
   };
 
   return (
-    <PageView navigation={navigation} navBarWithBack={{ title }}>
-      <TouchableOpacity onPress={preview}>{renderImage(file, false, file.name)}</TouchableOpacity>
+    <PageView navigation={props.navigation} navBarWithBack={{ title: props.title }}>
+      <TouchableOpacity onPress={preview}>{renderImage(props.file, false, props.file.name)}</TouchableOpacity>
       <View style={styles.actionsContainer}>
         {Platform.OS !== 'ios' ? (
           <ButtonIconText name="download" onPress={download}>
@@ -71,4 +77,20 @@ const mapStateToProps = (state: any, props: any) => {
   };
 };
 
-export default connect(mapStateToProps, dispatch => ({ dispatch }))(WorkspaceFileDetails);
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState,
+) => IWorkspaceFileDetailsEventProps = (dispatch, getState) => ({
+  downloadFile: async (file: IFile) => {
+    return dispatch(downloadWorkspaceFilesAction([file]));
+  },
+  previewFile: async (file: IFile) => {
+    return dispatch(downloadThenOpenWorkspaceFileAction(file));
+  },
+  shareFile: async (file: IFile) => {
+    return dispatch(downloadThenShareWorkspaceFileAction(file));
+  },
+  dispatch,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceFileDetails);
