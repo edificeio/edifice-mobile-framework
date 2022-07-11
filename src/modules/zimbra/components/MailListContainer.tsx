@@ -386,7 +386,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             data={this.getMenuData(navigation.state.routeName)}
             isVisible={this.state.isDropdownMenuVisible}
             onTapOutside={this.hideMenu}
-            color={theme.palette.secondary.regular.toString()}
+            color={theme.palette.secondary.regular}
           />
         </PageContainer>
 

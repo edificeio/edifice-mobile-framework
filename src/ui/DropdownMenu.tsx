@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ColorValue, FlatList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -44,7 +44,7 @@ export type DropdownMenuAction = {
 interface IDropdrownMenuProps {
   data: DropdownMenuAction[];
   isVisible: boolean;
-  color?: string;
+  color?: ColorValue;
   onTapOutside: () => any;
 }
 
