@@ -1,7 +1,6 @@
 /**
  * Workspace Reducer
  */
-import I18n from 'i18n-js';
 import { combineReducers } from 'redux';
 
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
@@ -34,12 +33,20 @@ export type IFile = {
   url?: string;
 };
 
+export type IFolder = {
+  id: string;
+  name: string;
+  parentId: string;
+  sortNo: string;
+  children: IFolder[];
+};
+
 const factoryRootFolder = (filter: Filter): IFile => {
   return {
     id: filter,
     date: 0,
     isFolder: true,
-    name: I18n.t(filter),
+    name: filter,
     owner: '',
     ownerName: '',
     parentId: 'root',
@@ -50,10 +57,12 @@ const factoryRootFolder = (filter: Filter): IFile => {
 
 interface IWorkspace_StateData {
   directories: IDirectory<IFile[]>;
+  folderTree: IFolder[];
 }
 
 export interface IWorkspace_State {
   directories: AsyncState<IDirectory<IFile[]>>;
+  folderTree: AsyncState<IFolder[]>;
 }
 
 // Reducer
@@ -67,6 +76,7 @@ const initialState: IWorkspace_StateData = {
       factoryRootFolder(Filter.TRASH),
     ],
   },
+  folderTree: [],
 };
 
 export const actionTypes = {
@@ -87,4 +97,5 @@ export const actionTypes = {
 
 export default combineReducers({
   directories: createSessionAsyncReducer(initialState.directories, actionTypes.directories),
+  folderTree: createSessionAsyncReducer(initialState.folderTree, actionTypes.listFolders),
 });

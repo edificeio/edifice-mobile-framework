@@ -1,16 +1,38 @@
 /**
  * Workspace actions
  */
+import I18n from 'i18n-js';
 import { Platform } from 'react-native';
 import Share from 'react-native-share';
+import Toast from 'react-native-tiny-toast';
 import { ThunkAction } from 'redux-thunk';
 
-import { IDistantFile, SyncedFile } from '~/framework/util/fileHandler';
+import uploadService, { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import { Filter, IFile, actionTypes } from '~/modules/workspace/reducer';
 import { workspaceService } from '~/modules/workspace/service';
+
+/**
+ * Take a file from the mobile and post it to the backend.
+ */
+export const workspaceUploadActionsCreators = createAsyncActionCreators(actionTypes.upload);
+export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => async (dispatch, getState) => {
+  try {
+    dispatch(workspaceUploadActionsCreators.request());
+    const file = await uploadService.startUploadFile(getUserSession(), lf, {
+      parent: parentId as IWorkspaceUploadParams['parent'],
+    });
+    dispatch(workspaceUploadActionsCreators.receipt(file));
+  } catch (e) {
+    if (e && e?.response && e.response.body === `{"error":"file.too.large"}`) {
+      Toast.show(I18n.t('workspace.quota.overflowText'));
+    }
+    dispatch(workspaceUploadActionsCreators.error(e as Error));
+  }
+};
 
 /**
  * Fetch the files of a given directory.
@@ -36,7 +58,7 @@ export const fetchWorkspaceFilesAction =
  * Fetch the owner folders.
  */
 export const workspaceListFoldersActionsCreators = createAsyncActionCreators(actionTypes.listFolders);
-export const listWorkspaceFoldersAction = (): ThunkAction<Promise<IFile[]>, any, any, any> => async (dispatch, getState) => {
+export const listWorkspaceFoldersAction = () => async (dispatch, getState) => {
   try {
     const session = getUserSession();
     dispatch(workspaceListFoldersActionsCreators.request());
@@ -196,7 +218,7 @@ export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async (dispa
 };
 
 /**
- * Download and open the given file.
+ * Download and share the given file.
  */
 export const workspaceShareActionsCreators = createAsyncActionCreators(actionTypes.share);
 export const downloadThenShareWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {

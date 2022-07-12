@@ -5,6 +5,8 @@ import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 import { Filter, IFile } from '~/modules/workspace/reducer';
 
+import { workspaceFolderListAdapter } from './folderAdaptater';
+
 type IEntcoreWorkspaceDocument = {
   _id: string;
   name: string;
@@ -149,7 +151,7 @@ export const workspaceService = {
     list: async (session: IUserSession) => {
       const api = '/workspace/folders/list?filter=owner&hierarchical=true';
       const folders = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFolder[];
-      return folders;
+      return workspaceFolderListAdapter(folders);
     },
   },
   folder: {
