@@ -63,6 +63,7 @@ export const PageViewWithStyle = styled.View({
 });
 export const PageView = (props: PageViewProps) => {
   const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, gutters, ...viewProps } = props;
+  const navBarColor = StyleSheet.flatten(navBar?.style || navBarWithBack?.style)?.backgroundColor;
 
   const goBack = () => {
     return (onBack && onBack() && navigation.dispatch(NavigationActions.back())) || undefined;
@@ -92,7 +93,7 @@ export const PageView = (props: PageViewProps) => {
 
   return (
     <PageViewWithStyle {...viewProps}>
-      <StatusBar barStyle="light-content" backgroundColor={theme.palette.primary.regular} />
+      <StatusBar barStyle="light-content" backgroundColor={navBarColor || theme.palette.primary.regular} />
       {navBar ? <FakeHeader {...navBar} /> : null}
       {navBarWithBack ? (
         <FakeHeader
