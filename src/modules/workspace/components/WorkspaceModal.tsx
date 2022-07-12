@@ -7,7 +7,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSizeStyle } from '~/framework/components/text';
-import { IFile } from '~/modules/workspace/reducer';
+import { IFile, IFolder } from '~/modules/workspace/reducer';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
 
@@ -49,10 +49,22 @@ interface IWorkspaceModalSettings {
   hasInput?: boolean;
 }
 
+export interface IWorkspaceModalEventProps {
+  createFolder: (name: string, parentId: string) => void;
+  deleteFiles: (parentId: string, files: IFile[]) => void;
+  downloadFiles: (files: IFile[]) => void;
+  duplicateFiles: (parentId: string, files: IFile[], destinationId: string) => void;
+  moveFiles: (parentId: string, files: IFile[], destinationId: string) => void;
+  renameFile: (file: IFile, name: string) => void;
+  trashFiles: (parentId: string, files: IFile[]) => void;
+}
+
 interface IWorkspaceModalProps {
+  folderTree: IFolder[];
   modalBoxRef: any;
   selectedFiles: IFile[];
   type: WorkspaceModalType;
+  onAction: (files: IFile[], value: string, destinationId: string) => void;
 }
 
 const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => {
@@ -77,9 +89,12 @@ const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => 
   }
 };
 
-export const WorkspaceModal = ({ modalBoxRef, selectedFiles, type }: IWorkspaceModalProps) => {
+export const WorkspaceModal = ({ modalBoxRef, selectedFiles, type, onAction }: IWorkspaceModalProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const settings = getModalSettings(type);
+  const actionCallback = () => {
+    onAction(selectedFiles, inputValue, inputValue);
+  };
   return (
     <ModalBox
       ref={modalBoxRef}
@@ -97,7 +112,7 @@ export const WorkspaceModal = ({ modalBoxRef, selectedFiles, type }: IWorkspaceM
           {settings.hasInput ? (
             <TextInput value={inputValue} onChangeText={value => setInputValue(value)} style={styles.textInput} />
           ) : null}
-          <ActionButton text={settings.buttonText} />
+          <ActionButton action={actionCallback} text={settings.buttonText} />
         </View>
       }
     />

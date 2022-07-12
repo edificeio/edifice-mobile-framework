@@ -78,6 +78,6 @@ export const workspaceFolderListAdapter = (data: IEntcoreWorkspaceFolderList): I
       treeItems: result.treeItems,
       notFormated: [] as IEntcoreWorkspaceFolder[],
     });
-  } while (result.notFormated.length !== data.length);
+  } while (result.notFormated.length > 0);
   return result.treeItems;
 };

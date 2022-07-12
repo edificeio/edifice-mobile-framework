@@ -12,17 +12,26 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import { FilePicker } from '~/infra/filePicker';
 import {
+  copyWorkspaceFilesAction,
+  createWorkspaceFolderAction,
+  deleteWorkspaceFilesAction,
   downloadThenOpenWorkspaceFileAction,
+  downloadWorkspaceFilesAction,
   fetchWorkspaceFilesAction,
+  listWorkspaceFoldersAction,
+  moveWorkspaceFilesAction,
+  renameWorkspaceFileAction,
+  trashWorkspaceFilesAction,
   uploadWorkspaceFileAction,
 } from '~/modules/workspace/actions';
 import { WorkspaceFileListItem } from '~/modules/workspace/components/WorkspaceFileListItem';
-import { WorkspaceModal, WorkspaceModalType } from '~/modules/workspace/components/WorkspaceModal';
+import { IWorkspaceModalEventProps, WorkspaceModal, WorkspaceModalType } from '~/modules/workspace/components/WorkspaceModal';
 import moduleConfig from '~/modules/workspace/moduleConfig';
-import { Filter, IFile } from '~/modules/workspace/reducer';
+import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
 import { CommonStyles } from '~/styles/common/styles';
 import { DropdownMenu, DropdownMenuAction } from '~/ui/DropdownMenu';
 
@@ -38,7 +47,9 @@ const styles = StyleSheet.create({
 });
 
 interface IWorkspaceFileListEventProps {
+  modalEvents: IWorkspaceModalEventProps;
   fetchFiles: (filter: Filter, parentId: string) => void;
+  listFolders: () => void;
   previewFile: (file: IFile) => void;
   uploadFile: (parentId: string, lf: LocalFile) => void;
   dispatch: ThunkDispatch<any, any, any>;
@@ -47,6 +58,7 @@ interface IWorkspaceFileListEventProps {
 type IWorkspaceFileListProps = {
   files: IFile[];
   filter: Filter;
+  folderTree: AsyncState<IFolder[]>;
   isFetching: boolean;
   parentId: string;
 } & NavigationInjectedProps &
@@ -55,7 +67,6 @@ type IWorkspaceFileListProps = {
 const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (props: IWorkspaceFileListProps) => {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
-  const [isFilePickerVisible, setFilePickerVisible] = useState<boolean>(false);
   const [modalType, setModalType] = useState<WorkspaceModalType>(WorkspaceModalType.NONE);
   const modalBoxRef: { current: any } = React.createRef();
   const isSelectionActive = selectedFiles.length > 0;
@@ -63,6 +74,9 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
   const fetchFiles = () => {
     if (props.filter !== Filter.ROOT) {
       props.fetchFiles(props.filter, props.parentId);
+    }
+    if (!props.folderTree.data.length && !props.folderTree.isFetching) {
+      props.listFolders();
     }
   };
 
@@ -160,7 +174,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     if (props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED)) {
       const navBarActions = [{ icon: 'add', onPress: showDropdown }];
       const dropdownActions = [
-        { text: I18n.t('add-file'), icon: 'file-plus', onPress: () => setFilePickerVisible(true) },
+        { text: I18n.t('add-file'), icon: 'file-plus', onPress: () => true },
         ...(props.filter === Filter.OWNER
           ? [{ text: I18n.t('create-folder'), icon: 'added_files', onPress: () => openModal(WorkspaceModalType.CREATE_FOLDER) }]
           : []),
@@ -185,6 +199,27 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     },
   };
 
+  const onModalAction = (files: IFile[], value: string, destinationId: string) => {
+    const { parentId } = props;
+    modalBoxRef?.current?.doDismissModal();
+    switch (modalType) {
+      case WorkspaceModalType.CREATE_FOLDER:
+        return props.modalEvents.createFolder(value, parentId);
+      case WorkspaceModalType.DELETE:
+        return props.modalEvents.deleteFiles(parentId, files);
+      case WorkspaceModalType.DOWNLOAD:
+        return props.modalEvents.downloadFiles(files);
+      case WorkspaceModalType.DUPLICATE:
+        return props.modalEvents.duplicateFiles(parentId, files, destinationId);
+      case WorkspaceModalType.EDIT:
+        return props.modalEvents.renameFile(files[0], value);
+      case WorkspaceModalType.MOVE:
+        return props.modalEvents.moveFiles(parentId, files, destinationId);
+      case WorkspaceModalType.TRASH:
+        return props.modalEvents.trashFiles(parentId, files);
+    }
+  };
+
   // TODO: filepicker
   const renderMenus = () => {
     const dropdownColor = isSelectionActive ? theme.palette.secondary.regular : theme.palette.primary.regular;
@@ -204,7 +239,13 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
             props.uploadFile(props.parentId, lf);
           }}
         />
-        <WorkspaceModal modalBoxRef={modalBoxRef} selectedFiles={files} type={modalType} />
+        <WorkspaceModal
+          folderTree={props.folderTree.data}
+          modalBoxRef={modalBoxRef}
+          selectedFiles={files}
+          type={modalType}
+          onAction={onModalAction}
+        />
       </>
     );
   };
@@ -252,6 +293,7 @@ const mapStateToProps = (gs: any, props: any) => {
   return {
     files: state.directories.data[parentId] || [],
     filter: props.navigation.getParam('filter'),
+    folderTree: state.folderTree,
     isFetching: state.directories.isFetching,
     parentId,
     session: getUserSession(),
@@ -262,8 +304,38 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   dispatch,
   getState,
 ) => ({
+  modalEvents: {
+    createFolder: async (name: string, parentId: string) => {
+      return dispatch(createWorkspaceFolderAction(name, parentId));
+    },
+    deleteFiles: async (parentId: string, files: IFile[]) => {
+      const ids = files.map(file => file.id);
+      return dispatch(deleteWorkspaceFilesAction(parentId, ids));
+    },
+    downloadFiles: async (files: IFile[]) => {
+      return dispatch(downloadWorkspaceFilesAction(files));
+    },
+    duplicateFiles: async (parentId: string, files: IFile[], destinationId: string) => {
+      const ids = files.map(file => file.id);
+      return dispatch(copyWorkspaceFilesAction(parentId, ids, destinationId));
+    },
+    moveFiles: async (parentId: string, files: IFile[], destinationId: string) => {
+      const ids = files.map(file => file.id);
+      return dispatch(moveWorkspaceFilesAction(parentId, ids, destinationId));
+    },
+    renameFile: async (file: IFile, name: string) => {
+      return dispatch(renameWorkspaceFileAction(file, name));
+    },
+    trashFiles: async (parentId: string, files: IFile[]) => {
+      const ids = files.map(file => file.id);
+      return dispatch(trashWorkspaceFilesAction(parentId, ids));
+    },
+  },
   fetchFiles: async (filter: Filter, parentId: string) => {
     return dispatch(fetchWorkspaceFilesAction(filter, parentId));
+  },
+  listFolders: async () => {
+    return dispatch(listWorkspaceFoldersAction());
   },
   previewFile: async (file: IFile) => {
     return dispatch(downloadThenOpenWorkspaceFileAction(file));

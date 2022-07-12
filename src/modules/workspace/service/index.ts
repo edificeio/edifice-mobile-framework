@@ -138,9 +138,9 @@ export const workspaceService = {
     },
   },
   file: {
-    rename: async (session: IUserSession, parentId: string, id: string, name: string) => {
+    rename: async (session: IUserSession, id: string, name: string) => {
       const api = `/workspace/rename/${id}`;
-      const body = JSON.stringify({ parentId, name });
+      const body = JSON.stringify({ name });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'PUT',
         body,
@@ -165,9 +165,9 @@ export const workspaceService = {
         headers,
       });
     },
-    rename: async (session: IUserSession, parentId: string, id: string, name: string) => {
+    rename: async (session: IUserSession, id: string, name: string) => {
       const api = `/workspace/folder/rename/${id}`;
-      const body = JSON.stringify({ parentId, name });
+      const body = JSON.stringify({ name });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'PUT',
         body,
