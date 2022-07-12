@@ -1,5 +1,5 @@
 {
-  "last": "2022-07-08T11:44:48",
-  "notes": "release: 1.8.1-alpha.4(1080104)",
+  "last": "2022-07-12T17:26:22",
+  "notes": "chore: set navbar color to statusbar\nchore(workspace): modal actions\nchore(workspace): wip modals\nchore(workspace): navbar actions\nchore(workspace): deleted types folder, edited actions\nchore(workspace): deleted old actions and reducers\nchore(workspace): changed back architecture\nchore(workspace): file selection\nchore(workspace): added new module version using NavigableModuleConfig\nchore(workspace): deleted dead code\nfix(blog) : MB-565 no top margin when no create menu\nfix: MB-730 regex made simpler\nchore(refactor): Relative imports removal\nchore: added Toulon logo\nfix: MB-730 fix preview regexs\nfix: MB-567 wrong page background somewhere\nfix(timeline): MB-565 no top margin when no create menu\nrefacto: MO-142, AMV2-363: Change spacers\nrelease: 1.8.1-alpha.5(1080105)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
