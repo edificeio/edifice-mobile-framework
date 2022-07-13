@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { ColorValue, FlatList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Asset } from 'react-native-image-picker';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
+import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   transparentContainer: {
     position: 'absolute',
     width: '100%',
@@ -38,7 +40,9 @@ const style = StyleSheet.create({
 export type DropdownMenuAction = {
   icon: string;
   text: string;
+  isFilePicker?: boolean;
   onPress: () => any;
+  filePickerCallback?: (file: Asset | DocumentPicked) => any;
 };
 
 interface IDropdrownMenuProps {
@@ -49,24 +53,35 @@ interface IDropdrownMenuProps {
 }
 
 export const DropdownMenu = ({ data, isVisible, color, onTapOutside }: IDropdrownMenuProps) => {
+  const renderAction = ({ item }: { item: DropdownMenuAction }) => {
+    const onAction = () => {
+      item.onPress();
+      onTapOutside();
+    };
+    return item.isFilePicker ? (
+      <FilePicker callback={item.filePickerCallback!} multiple>
+        <View style={styles.itemContainer}>
+          <Icon name={item.icon} size={24} style={styles.itemIcon} />
+          <Text style={styles.itemText}>{item.text}</Text>
+        </View>
+      </FilePicker>
+    ) : (
+      <TouchableOpacity onPress={onAction}>
+        <View style={styles.itemContainer}>
+          <Icon name={item.icon} size={24} style={styles.itemIcon} />
+          <Text style={styles.itemText}>{item.text}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return isVisible ? (
     <TouchableWithoutFeedback onPress={onTapOutside}>
-      <View style={style.transparentContainer}>
+      <View style={styles.transparentContainer}>
         <FlatList
           data={data}
-          style={[style.menuContainer, { backgroundColor: color || theme.palette.primary.regular }]}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => {
-                item.onPress();
-                onTapOutside();
-              }}>
-              <View style={style.itemContainer}>
-                <Icon name={item.icon} size={24} style={style.itemIcon} />
-                <Text style={style.itemText}>{item.text}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
+          style={[styles.menuContainer, { backgroundColor: color || theme.palette.primary.regular }]}
+          renderItem={renderAction}
         />
       </View>
     </TouchableWithoutFeedback>

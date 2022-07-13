@@ -69,6 +69,7 @@ export const HeaderLeft = styled(FakeHeader_Row)({
   left: 0,
   height: '100%',
   flexDirection: 'row',
+  justifyContent: 'center',
   alignItems: 'stretch',
   zIndex: 1,
 });

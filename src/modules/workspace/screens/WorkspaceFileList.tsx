@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { FlatList, Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { Asset } from 'react-native-image-picker';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -14,7 +15,7 @@ import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
-import { FilePicker } from '~/infra/filePicker';
+import { DocumentPicked } from '~/infra/filePicker';
 import {
   copyWorkspaceFilesAction,
   createWorkspaceFolderAction,
@@ -25,6 +26,7 @@ import {
   listWorkspaceFoldersAction,
   moveWorkspaceFilesAction,
   renameWorkspaceFileAction,
+  restoreWorkspaceFilesAction,
   trashWorkspaceFilesAction,
   uploadWorkspaceFileAction,
 } from '~/modules/workspace/actions';
@@ -46,11 +48,14 @@ const styles = StyleSheet.create({
   },
 });
 
+// TYPES ==========================================================================================
+
 interface IWorkspaceFileListEventProps {
   modalEvents: IWorkspaceModalEventProps;
   fetchFiles: (filter: Filter, parentId: string) => void;
   listFolders: () => void;
   previewFile: (file: IFile) => void;
+  restoreFiles: (parentId: string, ids: string[]) => void;
   uploadFile: (parentId: string, lf: LocalFile) => void;
   dispatch: ThunkDispatch<any, any, any>;
 }
@@ -64,12 +69,16 @@ type IWorkspaceFileListProps = {
 } & NavigationInjectedProps &
   IWorkspaceFileListEventProps;
 
+// COMPONENT ======================================================================================
+
 const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (props: IWorkspaceFileListProps) => {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [modalType, setModalType] = useState<WorkspaceModalType>(WorkspaceModalType.NONE);
   const modalBoxRef: { current: any } = React.createRef();
   const isSelectionActive = selectedFiles.length > 0;
+
+  // LOADER =======================================================================================
 
   const fetchFiles = () => {
     if (props.filter !== Filter.ROOT) {
@@ -83,6 +92,8 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
   useEffect(() => {
     fetchFiles();
   }, []);
+
+  // EVENTS =======================================================================================
 
   const onGoBack = () => {
     if (isDropdownVisible) {
@@ -102,11 +113,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
   };
 
   const showDropdown = () => {
-    setDropdownVisible(true);
-  };
-
-  const hideDropdown = () => {
-    setDropdownVisible(false);
+    setDropdownVisible(!isDropdownVisible);
   };
 
   const openModal = async (type: WorkspaceModalType) => {
@@ -137,6 +144,42 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     }
   };
 
+  const uploadFile = async (file: Asset | DocumentPicked) => {
+    const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
+    await props.uploadFile(props.parentId, lf);
+    return props.fetchFiles(props.filter, props.parentId);
+  };
+
+  const restoreSelectedFiles = async () => {
+    setSelectedFiles([]);
+    await props.restoreFiles(props.parentId, selectedFiles);
+    return props.fetchFiles(props.filter, props.parentId);
+  };
+
+  const onModalAction = (files: IFile[], value: string, destinationId: string) => {
+    const { parentId } = props;
+    setSelectedFiles([]);
+    modalBoxRef?.current?.doDismissModal();
+    switch (modalType) {
+      case WorkspaceModalType.CREATE_FOLDER:
+        return props.modalEvents.createFolder(value, parentId);
+      case WorkspaceModalType.DELETE:
+        return props.modalEvents.deleteFiles(parentId, files);
+      case WorkspaceModalType.DOWNLOAD:
+        return props.modalEvents.downloadFiles(files);
+      case WorkspaceModalType.DUPLICATE:
+        return props.modalEvents.duplicateFiles(parentId, files, destinationId);
+      case WorkspaceModalType.EDIT:
+        return props.modalEvents.renameFile(files[0], value);
+      case WorkspaceModalType.MOVE:
+        return props.modalEvents.moveFiles(parentId, files, destinationId);
+      case WorkspaceModalType.TRASH:
+        return props.modalEvents.trashFiles(parentId, files);
+    }
+  };
+
+  // HEADER =======================================================================================
+
   const getMenuActions = (): {
     navBarActions: { icon: string; onPress: () => void }[];
     dropdownActions: DropdownMenuAction[];
@@ -156,6 +199,9 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
         ...(props.filter !== Filter.TRASH
           ? [{ text: I18n.t('move'), icon: 'package-up', onPress: () => openModal(WorkspaceModalType.MOVE) }]
           : []),
+        ...(props.filter === Filter.TRASH
+          ? [{ text: I18n.t('conversation.restore'), icon: 'restore', onPress: restoreSelectedFiles }]
+          : []),
         ...(Platform.OS !== 'ios' && !isFolderSelected
           ? [{ text: I18n.t('download'), icon: 'download', onPress: () => openModal(WorkspaceModalType.DOWNLOAD) }]
           : []),
@@ -174,7 +220,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     if (props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED)) {
       const navBarActions = [{ icon: 'add', onPress: showDropdown }];
       const dropdownActions = [
-        { text: I18n.t('add-file'), icon: 'file-plus', onPress: () => true },
+        { text: I18n.t('add-file'), icon: 'file-plus', isFilePicker: true, onPress: () => true, onFilePick: uploadFile },
         ...(props.filter === Filter.OWNER
           ? [{ text: I18n.t('create-folder'), icon: 'added_files', onPress: () => openModal(WorkspaceModalType.CREATE_FOLDER) }]
           : []),
@@ -199,28 +245,8 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     },
   };
 
-  const onModalAction = (files: IFile[], value: string, destinationId: string) => {
-    const { parentId } = props;
-    modalBoxRef?.current?.doDismissModal();
-    switch (modalType) {
-      case WorkspaceModalType.CREATE_FOLDER:
-        return props.modalEvents.createFolder(value, parentId);
-      case WorkspaceModalType.DELETE:
-        return props.modalEvents.deleteFiles(parentId, files);
-      case WorkspaceModalType.DOWNLOAD:
-        return props.modalEvents.downloadFiles(files);
-      case WorkspaceModalType.DUPLICATE:
-        return props.modalEvents.duplicateFiles(parentId, files, destinationId);
-      case WorkspaceModalType.EDIT:
-        return props.modalEvents.renameFile(files[0], value);
-      case WorkspaceModalType.MOVE:
-        return props.modalEvents.moveFiles(parentId, files, destinationId);
-      case WorkspaceModalType.TRASH:
-        return props.modalEvents.trashFiles(parentId, files);
-    }
-  };
+  // MENUS ========================================================================================
 
-  // TODO: filepicker
   const renderMenus = () => {
     const dropdownColor = isSelectionActive ? theme.palette.secondary.regular : theme.palette.primary.regular;
     const files = props.files.filter(file => selectedFiles.includes(file.id));
@@ -230,14 +256,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
           data={menuActions.dropdownActions}
           isVisible={isDropdownVisible}
           color={dropdownColor}
-          onTapOutside={hideDropdown}
-        />
-        <FilePicker
-          multiple
-          callback={async file => {
-            const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
-            props.uploadFile(props.parentId, lf);
-          }}
+          onTapOutside={showDropdown}
         />
         <WorkspaceModal
           folderTree={props.folderTree.data}
@@ -249,6 +268,8 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
       </>
     );
   };
+
+  // EMPTY SCREEN =================================================================================
 
   const renderEmpty = () => {
     if (props.isFetching) return null;
@@ -262,6 +283,8 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
       />
     );
   };
+
+  // RENDER =======================================================================================
 
   return (
     <PageView navigation={props.navigation} navBar={navBarInfo} onBack={onGoBack}>
@@ -285,6 +308,8 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     </PageView>
   );
 };
+
+// MAPPING ========================================================================================
 
 const mapStateToProps = (gs: any, props: any) => {
   const state = moduleConfig.getState(gs);
@@ -339,6 +364,9 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   },
   previewFile: async (file: IFile) => {
     return dispatch(downloadThenOpenWorkspaceFileAction(file));
+  },
+  restoreFiles: async (parentId: string, ids: string[]) => {
+    return dispatch(restoreWorkspaceFilesAction(parentId, ids));
   },
   uploadFile: async (parentId: string, lf: LocalFile) => {
     return dispatch(uploadWorkspaceFileAction(parentId, lf));
