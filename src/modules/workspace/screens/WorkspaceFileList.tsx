@@ -271,8 +271,8 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
           <WorkspaceFileListItem
             item={item}
             isSelected={selectedFiles.includes(item.id)}
-            onPressCallback={onPressFile}
-            onLongPressCallback={selectFile}
+            onPress={onPressFile}
+            onLongPress={selectFile}
           />
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}

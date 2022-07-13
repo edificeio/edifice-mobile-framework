@@ -34,24 +34,24 @@ interface IWorkspaceFileListItemProps {
   item: IFile;
   disabled?: boolean;
   isSelected?: boolean;
-  onLongPressCallback: (file: IFile) => void;
-  onPressCallback: (file: IFile) => void;
+  onLongPress: (file: IFile) => void;
+  onPress: (file: IFile) => void;
 }
 
-export const WorkspaceFileListItem = ({
-  item,
-  disabled,
-  isSelected,
-  onLongPressCallback,
-  onPressCallback,
-}: IWorkspaceFileListItemProps) => {
+export const WorkspaceFileListItem = ({ item, disabled, isSelected, onLongPress, onPress }: IWorkspaceFileListItemProps) => {
   const { id, isFolder, name, date, ownerName = '', contentType } = item;
   const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
+  const onPressCallback = () => onPress(item);
+  const onLongPressCallback = () => {
+    if (item.parentId !== 'root') {
+      onLongPress(item);
+    }
+  };
 
   return (
     <ListItem
-      onPress={() => onPressCallback(item)}
-      onLongPress={() => onLongPressCallback(item)}
+      onPress={onPressCallback}
+      onLongPress={onLongPressCallback}
       disabled={disabled}
       style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card }}
       borderBottomWidth={0}>
