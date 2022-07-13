@@ -77,7 +77,7 @@ export const listWorkspaceFoldersAction = () => async (dispatch, getState) => {
 export const workspaceCreateFolderActionsCreators = createAsyncActionCreators(actionTypes.createFolder);
 export const createWorkspaceFolderAction = (name: string, parentId: string) => async (dispatch, getState) => {
   try {
-    dispatch(workspaceCreateFolderActionsCreators);
+    dispatch(workspaceCreateFolderActionsCreators.request());
     const session = getUserSession();
     const folder = await workspaceService.folder.create(session, name, parentId);
     dispatch(workspaceCreateFolderActionsCreators.receipt(folder));

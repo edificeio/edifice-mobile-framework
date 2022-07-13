@@ -1,4 +1,5 @@
 import moment from 'moment';
+import queryString from 'query-string';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
@@ -157,13 +158,20 @@ export const workspaceService = {
   folder: {
     create: async (session: IUserSession, name: string, parentId: string) => {
       const api = '/workspace/folder';
-      const body = JSON.stringify({ name, parentFolderId: parentId, externalId: '' });
-      const headers = { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' };
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      const body = queryString.stringify({
+        name,
+        externalId: '',
+        ...(parentId ? { parentFolderId: parentId } : {}),
+      });
+      const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      };
+      const folder = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'POST',
         body,
         headers,
-      });
+      })) as Promise<IEntcoreWorkspaceFolder>;
+      return workspaceFileAdapter(folder);
     },
     rename: async (session: IUserSession, id: string, name: string) => {
       const api = `/workspace/folder/rename/${id}`;

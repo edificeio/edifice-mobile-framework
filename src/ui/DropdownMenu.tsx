@@ -15,7 +15,7 @@ const style = StyleSheet.create({
   menuContainer: {
     position: 'absolute',
     right: 0,
-    top: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
+    top: 0,
     paddingVertical: UI_SIZES.spacing.tiny,
     borderBottomLeftRadius: 15,
   },
