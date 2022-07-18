@@ -42,7 +42,7 @@ export type DropdownMenuAction = {
   text: string;
   isFilePicker?: boolean;
   onPress: () => any;
-  filePickerCallback?: (file: Asset | DocumentPicked) => any;
+  onFilePick?: (file: Asset | DocumentPicked) => any;
 };
 
 interface IDropdrownMenuProps {
@@ -59,7 +59,7 @@ export const DropdownMenu = ({ data, isVisible, color, onTapOutside }: IDropdrow
       onTapOutside();
     };
     return item.isFilePicker ? (
-      <FilePicker callback={item.filePickerCallback!} multiple>
+      <FilePicker callback={item.onFilePick!} multiple>
         <View style={styles.itemContainer}>
           <Icon name={item.icon} size={24} style={styles.itemIcon} />
           <Text style={styles.itemText}>{item.text}</Text>

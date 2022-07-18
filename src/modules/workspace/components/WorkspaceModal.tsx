@@ -1,13 +1,14 @@
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { IFile, IFolder } from '~/modules/workspace/reducer';
+import { FlatButton } from '~/ui';
+import FolderSelector from '~/ui/ConfirmDialog/select';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
 
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
   textInput: {
     marginVertical: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.minor,
-    backgroundColor: theme.ui.background.card,
+    backgroundColor: theme.palette.grey.fog,
     borderColor: theme.ui.border.input,
     borderWidth: 1,
     borderRadius: 5,
@@ -62,6 +63,7 @@ export interface IWorkspaceModalEventProps {
 interface IWorkspaceModalProps {
   folderTree: IFolder[];
   modalBoxRef: any;
+  parentId: string;
   selectedFiles: IFile[];
   type: WorkspaceModalType;
   onAction: (files: IFile[], value: string, destinationId: string) => void;
@@ -89,18 +91,42 @@ const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => 
   }
 };
 
-export const WorkspaceModal = ({ modalBoxRef, selectedFiles, type, onAction }: IWorkspaceModalProps) => {
+export const WorkspaceModal = ({ folderTree, modalBoxRef, parentId, selectedFiles, type, onAction }: IWorkspaceModalProps) => {
   const [inputValue, setInputValue] = useState<string>('');
+  const [fileExtension, setFileExtension] = useState<string>('');
+  const [destination, setDestination] = useState<string>('');
   const settings = getModalSettings(type);
-  const actionCallback = () => {
-    onAction(selectedFiles, inputValue, inputValue);
-  };
+  const isDisabled = (settings.hasInput && inputValue === '') || (settings.hasDestinationSelector && destination === parentId);
+  const action = () => onAction(selectedFiles, inputValue + fileExtension, destination);
+
+  useEffect(() => {
+    if (type === WorkspaceModalType.EDIT && selectedFiles.length) {
+      const name = selectedFiles[0].name;
+      const index = name.lastIndexOf('.');
+      setInputValue(index > 0 ? name.substring(0, index) : name);
+      setFileExtension(index > 0 ? name.substring(index) : '');
+    } else if (type === WorkspaceModalType.CREATE_FOLDER) {
+      setInputValue('');
+      setFileExtension('');
+    } else if (settings.hasDestinationSelector) {
+      setDestination(parentId);
+    }
+  }, [parentId, selectedFiles, settings.hasDestinationSelector, type]);
+
   return (
     <ModalBox
       ref={modalBoxRef}
       content={
         <View>
           <Text style={styles.titleText}>{settings.title}</Text>
+          {settings.hasDestinationSelector ? (
+            <FolderSelector
+              data={folderTree}
+              defaultSelectedId={[parentId]}
+              excludeData={selectedFiles}
+              onPress={(id, isParentOfSelection) => setDestination(id)}
+            />
+          ) : null}
           {settings.hasFileList ? (
             <FlatList
               data={selectedFiles}
@@ -110,9 +136,14 @@ export const WorkspaceModal = ({ modalBoxRef, selectedFiles, type, onAction }: I
             />
           ) : null}
           {settings.hasInput ? (
-            <TextInput value={inputValue} onChangeText={value => setInputValue(value)} style={styles.textInput} />
+            <TextInput
+              value={inputValue}
+              onChangeText={value => setInputValue(value)}
+              autoFocus={type === WorkspaceModalType.CREATE_FOLDER}
+              style={styles.textInput}
+            />
           ) : null}
-          <ActionButton action={actionCallback} text={settings.buttonText} />
+          <FlatButton onPress={action} title={settings.buttonText} disabled={isDisabled} />
         </View>
       }
     />

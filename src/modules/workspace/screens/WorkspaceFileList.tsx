@@ -196,7 +196,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
         ...(props.filter !== Filter.TRASH
           ? [{ text: I18n.t('copy'), icon: 'content-copy', onPress: () => openModal(WorkspaceModalType.DUPLICATE) }]
           : []),
-        ...(props.filter !== Filter.TRASH
+        ...(props.filter === Filter.OWNER
           ? [{ text: I18n.t('move'), icon: 'package-up', onPress: () => openModal(WorkspaceModalType.MOVE) }]
           : []),
         ...(props.filter === Filter.TRASH
@@ -261,6 +261,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
         <WorkspaceModal
           folderTree={props.folderTree.data}
           modalBoxRef={modalBoxRef}
+          parentId={props.parentId}
           selectedFiles={files}
           type={modalType}
           onAction={onModalAction}

@@ -101,7 +101,7 @@ export const workspaceService = {
       const api = `/workspace/documents/copy/${destinationId}`;
       const body = JSON.stringify({ parentId, ids });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
-        method: 'PUT',
+        method: 'POST',
         body,
       });
     },
