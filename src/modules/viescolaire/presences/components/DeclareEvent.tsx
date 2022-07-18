@@ -192,8 +192,8 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     const { date } = this.state;
     const { type, event, student, startDate, endDate } = this.props.navigation.state.params;
     const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties(type);
-    const startDateString = moment(startDate).format('H:mm');
-    const endDateString = moment(endDate).format('H:mm');
+    const startDateString = moment(startDate).format('HH:mm');
+    const endDateString = moment(endDate).format('HH:mm');
 
     const navBarInfo = {
       title: this.props.navigation.getParam('title'),

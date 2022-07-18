@@ -81,8 +81,8 @@ const renderChild = (key: string, event) => {
         <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
         <TextBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</TextBold>
         <Text>{' - '}</Text>
-        <Text style={{ color }}>{moment(event.start_date).format('hh:mm')}</Text>
-        <Text style={{ color }}> - {moment(event.end_date).format('hh:mm')}</Text>
+        <Text style={{ color }}>{moment(event.start_date).format('HH:mm')}</Text>
+        <Text style={{ color }}> - {moment(event.end_date).format('HH:mm')}</Text>
         {duration > 0 ? <NestedTextBold style={{ color }}>{' - ' + duration + 'mn'}</NestedTextBold> : null}
       </Text>
     </>

@@ -98,7 +98,7 @@ export const NoReasonCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
-      {event.start_date.format('H:mm') + ' - ' + event.end_date.format('H:mm')}
+      {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
     </Text>
   );
   return (
@@ -115,7 +115,7 @@ export const UnregularizedCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
-      {event.start_date.format('H:mm') + ' - ' + event.end_date.format('H:mm')}
+      {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
     </Text>
   );
   return (
@@ -132,7 +132,7 @@ export const RegularizedCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
-      {event.start_date.format('H:mm') + ' - ' + event.end_date.format('H:mm')}
+      {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
     </Text>
   );
   return (
@@ -149,7 +149,7 @@ export const LatenessCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
-      {event.end_date.format('H:mm')}
+      {event.end_date.format('HH:mm')}
       <NestedTextBold>{' - ' + event.end_date.diff(event.start_date, 'minutes') + 'mn'}</NestedTextBold>
     </Text>
   );
@@ -167,7 +167,7 @@ export const DepartureCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
-      {event.start_date.format('H:mm')}
+      {event.start_date.format('HH:mm')}
       <NestedTextBold>{' - ' + Math.abs(event.start_date.diff(event.end_date, 'minutes')) + 'mn'}</NestedTextBold>
     </Text>
   );
@@ -198,7 +198,7 @@ export const IncidentCard = ({ elements }) => {
     <Text>
       <NestedText>{' ' + event.label}</NestedText>
       <Text> - </Text>
-      <NestedTextBold>{event.date.format('DD/MM/YY H:mm')}</NestedTextBold>
+      <NestedTextBold>{event.date.format('DD/MM/YY HH:mm')}</NestedTextBold>
       {' - ' + event.protagonist.label}
     </Text>
   );
@@ -229,10 +229,10 @@ export const PunishmentCard = ({ elements }) => {
         let startDetentionDate: string = createdDate;
         let endDetentionDate: string = '';
         if (punishment.start_date) {
-          startDetentionDate = punishment.start_date.format('DD/MM/YY - H:mm');
+          startDetentionDate = punishment.start_date.format('DD/MM/YY - HH:mm');
         }
         if (punishment.end_date) {
-          endDetentionDate = punishment.end_date.format('H:mm');
+          endDetentionDate = punishment.end_date.format('HH:mm');
         }
         return (
           I18n.t('viesco-incidents-punishments-date.for-the') +
