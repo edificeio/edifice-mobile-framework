@@ -210,6 +210,15 @@ class UserService {
       // console.warn('[UserService] getUserChildren: could not get children data', e);
     }
   }
+  async revalidateTerms() {
+    try {
+      await fetchJSONWithCache('/auth/cgu/revalidate', {
+        method: 'PUT',
+      });
+    } catch (e) {
+      // console.warn('[UserService] revalidateTerms: could not revalidate terms', e);
+    }
+  }
 }
 
 export const userService = new UserService();

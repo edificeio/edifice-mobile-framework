@@ -35,6 +35,7 @@ enum LoginFlowErrorType {
   NOT_PREMIUM = 'not_premium',
   PRE_DELETED = 'pre_deleted',
   MUST_CHANGE_PASSWORD = 'must-change-password',
+  MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
 }
 export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
 
@@ -153,6 +154,10 @@ export function loginAction(
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
+      } else if (userinfo2.needRevalidateTerms) {
+        const err = new Error('[loginAction]: User must revalidate terms.');
+        (err as any).type = LoginFlowErrorType.MUST_REVALIDATE_TERMS;
+        throw err;
       }
       // === 4: Gather another user information
       let userdata: any, userPublicInfo: any;
@@ -220,6 +225,7 @@ export function loginAction(
     } catch (err) {
       // In case of error...
       let routeToGo;
+      let routeParams;
 
       // === 1: Check if user is in activation mode
       if (err.type === OAuthErrorType.BAD_CREDENTIALS) {
@@ -258,15 +264,14 @@ export function loginAction(
         }
       } else if (err.type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
         routeToGo = 'ChangePassword';
+      } else if (err.type === LoginFlowErrorType.MUST_REVALIDATE_TERMS) {
+        routeToGo = 'RevalidateTerms';
+        routeParams = { credentials };
       }
 
       if (routeToGo) {
-        dispatch({
-          type: actionTypeLoggedInPartial,
-          userbook: (err as any).userinfo2,
-        });
         if (credentials) {
-          navigate(routeToGo);
+          navigate(routeToGo, routeParams);
         } else {
           resetNavigation(
             [
@@ -279,6 +284,10 @@ export function loginAction(
             2,
           );
         }
+        dispatch({
+          type: actionTypeLoggedInPartial,
+          userbook: (err as any).userinfo2,
+        });
       } else {
         // ToDo Tracking
 

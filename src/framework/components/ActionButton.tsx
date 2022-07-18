@@ -88,7 +88,6 @@ ActionButton.Style = StyleSheet.create({
     alignSelf: 'center',
   },
   textCommon: {
-    marginRight: UI_SIZES.spacing.minor,
     lineHeight: rlh,
     height: rlh,
   },

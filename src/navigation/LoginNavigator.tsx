@@ -1,13 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { View } from 'react-native';
-import { NavigationActions, NavigationNavigateAction } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-
-
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { redirectAfterChangePassword } from '~/user/actions/login';
 import ActivationPage from '~/user/containers/ActivationPage';
@@ -18,12 +12,10 @@ import LoginPage from '~/user/containers/LoginPage';
 import LoginWAYFPage from '~/user/containers/LoginWAYFPage';
 import OnboardingScreen from '~/user/containers/OnboardingScreen';
 import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
+import RevalidateTermsScreen from '~/user/containers/RevalidateTermsScreen';
 import WAYFPage from '~/user/containers/WAYFPage';
 
-
-
-import { getLoginRouteName, loginRouteNames } from './helpers/loginRouteName';
-
+import { loginRouteNames } from './helpers/loginRouteName';
 
 /**
  * # Login Navigator
@@ -50,6 +42,12 @@ export default createStackNavigator(
         redirectCallback: redirectAfterChangePassword,
         forceChange: true,
         isLoginNavigator: true,
+      },
+    },
+    RevalidateTerms: {
+      screen: RevalidateTermsScreen,
+      navigationOptions: {
+        gestureEnabled: false,
       },
     },
   },

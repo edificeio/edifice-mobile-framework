@@ -147,6 +147,7 @@
   "changePassword-errorRegex": "Le nouveau mot de passe ne correspond pas aux critères de sécurité.",
   "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
   "common": {
+    "accept": "Accepter",
     "all": "Tous",
     "apply": "Appliquer",
     "by": "Par :",
@@ -927,6 +928,14 @@
         "one": "({{count}} activée sur {{total}})",
         "other": "({{count}} activées sur {{total}})"
       }
+    },
+    "revalidateTermsScreen": {
+      "EULA": "CGU",
+      "mustAccept": "Pour pouvoir continuer à utiliser l'application, vous devez accepter les",
+      "newEndUserLicenseAgreement": "Nouvelles Conditions Générales d'Utilisation",
+      "newEULA": "Nouvelles CGU",
+      "refuseAndDisconnect": "Refuser et se déconnecter",
+      "title": "Mise à jour des CGU"
     }
   },
   "version-number": "Version",
