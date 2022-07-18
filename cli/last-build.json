@@ -1,5 +1,5 @@
 {
-  "last": "2022-07-13T12:40:54",
-  "notes": "chore: add workspace to modules\nchore(workspace): action toasts\nchore(workspace): create folder action fix\nrelease: 1.8.1-alpha.6(1080106)",
+  "last": "2022-07-18T18:17:14",
+  "notes": "feat(user): MB-29, revalidate new terms\nfix(viesco): Presences: AMV2-335, Change hour format\nchore(workspace): move and duplicate modals\nchore(workspace): file upload front\nrelease: 1.8.1-alpha.7(1080107)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
 }
