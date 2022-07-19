@@ -13,7 +13,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView, pageGutterSize, pageGutterStyleH } from '~/framework/components/page';
+import { PageView, pageGutterSize } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
 import { Text } from '~/framework/components/text';
@@ -68,6 +68,7 @@ export enum TimelineLoadingState {
   PRISTINE,
   INIT,
   REFRESH,
+  REFRESH_SILENT,
   DONE,
 }
 export interface ITimelineScreenState {
@@ -294,6 +295,15 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     }
   }
 
+  async doRefreshSilent() {
+    try {
+      this.setState({ loadingState: TimelineLoadingState.REFRESH_SILENT });
+      await this.props.handleInitTimeline();
+    } finally {
+      this.setState({ loadingState: TimelineLoadingState.DONE });
+    }
+  }
+
   async doNextPage() {
     if (!this.props.notifications.endReached) await this.props.handleNextPage();
   }
@@ -309,6 +319,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   async doDismissFlashMessage(flashMessageId: number) {
     await this.props.handleDismissFlashMessage(flashMessageId);
+    await this.doRefreshSilent();
   }
 
   goToFilters() {
