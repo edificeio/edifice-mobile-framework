@@ -1,3 +1,4 @@
+import I18n from 'i18n-js';
 import moment from 'moment';
 import queryString from 'query-string';
 
@@ -75,6 +76,18 @@ const workspaceFileAdapter = (file: IEntcoreWorkspaceDocument | IEntcoreWorkspac
         ownerName: file.ownerName,
       };
   return ret as IFile;
+};
+
+export const factoryRootFolder = (filter: Filter): IFile => {
+  return {
+    id: filter,
+    date: 0,
+    isFolder: true,
+    name: I18n.t(filter),
+    owner: '',
+    ownerName: '',
+    parentId: 'root',
+  };
 };
 
 const compareFiles = (a: IFile, b: IFile): number => {

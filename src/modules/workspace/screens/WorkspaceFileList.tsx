@@ -81,9 +81,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
   // LOADER =======================================================================================
 
   const fetchFiles = () => {
-    if (props.filter !== Filter.ROOT) {
-      props.fetchFiles(props.filter, props.parentId);
-    }
+    props.fetchFiles(props.filter, props.parentId);
     if (!props.folderTree.data.length && !props.folderTree.isFetching) {
       props.listFolders();
     }

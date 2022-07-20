@@ -13,7 +13,7 @@ import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import { Filter, IFile, actionTypes } from '~/modules/workspace/reducer';
-import { workspaceService } from '~/modules/workspace/service';
+import { factoryRootFolder, workspaceService } from '~/modules/workspace/service';
 
 /**
  * Take a file from the mobile and post it to the backend.
@@ -46,7 +46,17 @@ export const fetchWorkspaceFilesAction =
       const session = getUserSession();
       const state = getState();
       dispatch(workspaceDirectoriesActionsCreators.request());
-      const files = await workspaceService.files.get(session, filter, parentId);
+      let files: IFile[];
+      if (filter === Filter.ROOT) {
+        files = [
+          factoryRootFolder(Filter.OWNER),
+          factoryRootFolder(Filter.PROTECTED),
+          factoryRootFolder(Filter.SHARED),
+          factoryRootFolder(Filter.TRASH),
+        ];
+      } else {
+        files = await workspaceService.files.get(session, filter, parentId);
+      }
       dispatch(workspaceDirectoriesActionsCreators.receipt({ ...state.workspace2.directories.data, [parentId]: files }));
       return files;
     } catch (e) {

@@ -41,18 +41,6 @@ export type IFolder = {
   children: IFolder[];
 };
 
-const factoryRootFolder = (filter: Filter): IFile => {
-  return {
-    id: filter,
-    date: 0,
-    isFolder: true,
-    name: filter,
-    owner: '',
-    ownerName: '',
-    parentId: 'root',
-  };
-};
-
 // State
 
 interface IWorkspace_StateData {
@@ -68,14 +56,7 @@ export interface IWorkspace_State {
 // Reducer
 
 const initialState: IWorkspace_StateData = {
-  directories: {
-    root: [
-      factoryRootFolder(Filter.OWNER),
-      factoryRootFolder(Filter.PROTECTED),
-      factoryRootFolder(Filter.SHARED),
-      factoryRootFolder(Filter.TRASH),
-    ],
-  },
+  directories: {},
   folderTree: [],
 };
 
