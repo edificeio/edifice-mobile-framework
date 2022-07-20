@@ -8,14 +8,13 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { H1, TextSemiBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
-import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
-import { FlatButton } from '~/ui/FlatButton';
 import { selectPlatform } from '~/user/actions/platform';
 
 // TYPES ==========================================================================================
@@ -99,14 +98,9 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <View style={{ height: 90, justifyContent: 'space-between' }}>
-            <FlatButton
-              title={I18n.t('user.onboardingScreen.joinMyNetwork')}
-              customButtonStyle={{
-                backgroundColor: theme.palette.primary.regular,
-                width: 230,
-                alignItems: 'center',
-              }}
-              onPress={() => {
+            <ActionButton
+              text={I18n.t('user.onboardingScreen.joinMyNetwork')}
+              action={() => {
                 const hasMultiplePlatforms = appConf.platforms.length > 1;
                 if (!hasMultiplePlatforms) {
                   dispatch(selectPlatform(appConf.platforms[0].name));
@@ -117,21 +111,10 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
             {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
             {isPlatformIos && isOneOrNeo ? null : (
-              <FlatButton
-                title={I18n.t('user.onboardingScreen.discover')}
-                customTextStyle={{ color: theme.palette.primary.regular }}
-                customButtonStyle={{
-                  backgroundColor: theme.ui.background.page,
-                  borderColor: theme.palette.primary.regular,
-                  borderWidth: 1,
-                  width: 230,
-                  alignItems: 'center',
-                }}
-                onPress={() => {
-                  const url = I18n.t('user.onboardingScreen.discoverLink');
-                  openUrl(url);
-                }}
-                rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+              <ActionButton
+                text={I18n.t('user.onboardingScreen.discover')}
+                type="secondary"
+                url={I18n.t('user.onboardingScreen.discoverLink')}
               />
             )}
           </View>
