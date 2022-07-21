@@ -11,7 +11,6 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
-import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -43,11 +42,14 @@ const styles = StyleSheet.create({
   rightSwitchSingleText: { marginHorizontal: 10 }, // MO-142 use UI_SIZES.spacing here
   selected: {
     backgroundColor: theme.palette.grey.white,
-    elevation: CommonStyles.elevation,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    elevation: 20,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
   },
   row: {
     marginVertical: 10, // MO-142 use UI_SIZES.spacing here

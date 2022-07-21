@@ -5,7 +5,6 @@ import { ColorValue } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { Icon } from './icons/Icon';
@@ -30,7 +29,7 @@ export const ContainerLabel = styled.Text({
   paddingHorizontal: UI_SIZES.spacing.medium,
   marginTop: UI_SIZES.spacing.medium,
   marginBottom: UI_SIZES.spacing.minor,
-  color: CommonStyles.textColor,
+  color: theme.ui.text.regular,
 });
 
 export const NoTouchableContainer = styled.View({

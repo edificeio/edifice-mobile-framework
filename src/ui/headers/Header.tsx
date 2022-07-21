@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 /**
@@ -100,7 +99,7 @@ export const CenterPanel = styled(TouchableOpacity)({
 
 export const AppTitle = styled.Text({
   color: theme.ui.text.inverse,
-  fontFamily: CommonStyles.primaryFontFamily,
+  fontFamily: 'OpenSans-Regular',
   fontWeight: '400',
   fontSize: 16,
   flex: 1,
@@ -112,7 +111,7 @@ export const AppTitle = styled.Text({
 export const HeaderAction = styled.Text(
   {
     color: theme.ui.text.inverse,
-    fontFamily: CommonStyles.primaryFontFamily,
+    fontFamily: 'OpenSans-Regular',
     fontWeight: '400',
     flex: 1,
     textAlign: 'right',
@@ -128,7 +127,7 @@ export const HeaderAction = styled.Text(
 export const Title = styled.Text<{ smallSize?: boolean }>(
   {
     color: theme.ui.text.inverse,
-    fontFamily: CommonStyles.primaryFontFamily,
+    fontFamily: 'OpenSans-Regular',
     fontWeight: '400',
     textAlign: 'left',
     textAlignVertical: 'center',
@@ -140,7 +139,7 @@ export const Title = styled.Text<{ smallSize?: boolean }>(
 
 export const SubTitle = styled.Text({
   color: theme.ui.text.inverse,
-  fontFamily: CommonStyles.primaryFontFamily,
+  fontFamily: 'OpenSans-Regular',
   fontWeight: '400',
   fontSize: 12,
   opacity: 0.7,

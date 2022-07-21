@@ -52,7 +52,7 @@ export const UserCard = ({
           height: 6,
           borderRadius: 3,
           marginRight: UI_SIZES.spacing.tiny,
-          backgroundColor: CommonStyles.profileTypes[type] || CommonStyles.lightGrey,
+          backgroundColor: CommonStyles.profileTypes[type] || theme.palette.grey.fog,
         }}
         key={type}
       />
@@ -75,7 +75,7 @@ export const UserCard = ({
           callback={image => (updatingAvatar ? null : onChangeAvatar(image))}
           activeOpacity={updatingAvatar ? 1 : 0}
           cameraOptions={{ cameraType: 'front' }}>
-          <IconButton disabled={updatingAvatar} iconName="pencil" iconColor={CommonStyles.white} iconSize={15} />
+          <IconButton disabled={updatingAvatar} iconName="pencil" iconColor={theme.ui.text.inverse} iconSize={15} />
         </ImagePicker>
       ) : (
         <View style={{ height: 30, width: 30 }} />
@@ -85,14 +85,14 @@ export const UserCard = ({
           disallowInterruption
           onPress={() => (updatingAvatar ? null : onDeleteAvatar())}
           activeOpacity={updatingAvatar ? 1 : 0}>
-          <IconButton disabled={updatingAvatar} iconName="trash" iconColor={CommonStyles.white} />
+          <IconButton disabled={updatingAvatar} iconName="trash" iconColor={theme.ui.text.inverse} />
         </TouchableOpacity>
       ) : (
         <ImagePicker
           callback={image => (updatingAvatar ? null : onChangeAvatar(image))}
           activeOpacity={updatingAvatar ? 1 : 0}
           cameraOptions={{ cameraType: 'front' }}>
-          <IconButton disabled={updatingAvatar} iconName="camera-on" iconColor={CommonStyles.white} iconSize={15} />
+          <IconButton disabled={updatingAvatar} iconName="camera-on" iconColor={theme.ui.text.inverse} iconSize={15} />
         </ImagePicker>
       )}
     </View>

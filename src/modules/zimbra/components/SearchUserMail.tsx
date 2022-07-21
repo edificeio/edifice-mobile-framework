@@ -8,7 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Text } from '~/framework/components/text';
 import { newMailService } from '~/modules/zimbra/service/newMail';
 import { getProfileColor } from '~/modules/zimbra/utils/userColor';
-import { CommonStyles, IOSShadowStyle } from '~/styles/common/styles';
+import { IOSShadowStyle } from '~/styles/common/styles';
 
 const styles = StyleSheet.create({
   foundListButton: {
@@ -32,7 +32,7 @@ const Input = ({ value, onChangeText, onSubmit, onBlur }) => {
   const textInputStyle = {
     flex: 1,
     height: 40,
-    color: CommonStyles.textColor,
+    color: theme.legacy.neutral.subtleShadow,
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 2,
   } as ViewStyle;
@@ -59,7 +59,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     width: '100%',
     zIndex: 10,
     backgroundColor: theme.ui.background.card,
-    elevation: CommonStyles.elevation,
+    elevation: 20,
     maxHeight: UI_SIZES.screen.height * 0.25,
     flexGrow: 1,
     ...IOSShadowStyle,

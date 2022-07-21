@@ -1,4 +1,3 @@
-import { Text } from 'react-native';
 import { setCustomText } from 'react-native-global-props';
 
 import theme from '~/app/theme';
@@ -21,23 +20,19 @@ export const CommonStyles = {
   missingGrey: 'rgb(218,218,210)',
   lightTextColor: '#858FA9',
   actionColor: '#2A9CC8',
-  // actionColorDisabled: "#2A9CC888",
   borderBottomItem: '#dddddd',
-  // borderBottomNewsItem: "#e7e7e7",
   borderColorLighter: '#e2e2e2',
   borderColorVeryLighter: '#e2e2e299',
-  // cardTitle: "#1467ff",
   elevation: 20,
   lightBlue: '#EEF3F8',
   entryfieldBorder: '#DCDDE0',
   errorColor: '#EC5D61',
   fadColor: '#444444',
-  hightlightColor: '#FFFF00', // remove this
+  hightlightColor: '#FFFF00',
   iconColorOff: '#858FA9',
   iconColorOn: '#2A9CC8',
   inputBackColor: '#F8F8FA',
   inverseColor: '#F8F8FA',
-  // linkColor: "#2a97f5",
   mainColorTheme: '#2A9CC8',
   mainStatusbarColorTheme: '#2A9CC8',
   orangeColorTheme: '#FF8000',
@@ -45,18 +40,7 @@ export const CommonStyles = {
   miniTextColor: '#858FA9',
   nonLue: '#2A9CC81A',
   placeholderColor: '#B2BECDDD',
-  // primaryBorderColor: "#bcbbc1",
-  // primaryButtonColor: "#007396",
   primaryFontFamily: 'OpenSans-Regular',
-  // primaryFontFamilyBold: "OpenSans-Bold",
-  // primaryFontFamilyLight: "OpenSans-Light",
-  // primaryFontFamilySemibold: "OpenSans-SemiBold",
-  // primaryTitleColor: "#007396",
-  // secondaryBackGroundColor: "#f9fafb",
-  // secondaryButtonColor: "#fc624d",
-  // secondaryFontColor: "#8e8e93",
-  // selectColor: "#ffff00",
-  // selectColor2: "#ffff00aa",
   shadowColor: 'rgba(0, 0, 0, 1.0)',
   shadowOffset: {
     height: 2,
@@ -65,12 +49,10 @@ export const CommonStyles = {
   shadowOpacity: 0.25,
   shadowRadius: 2,
   statusBarColor: '#2A9CC8',
-  // tabBackgroundColor: "#2a97f5",
   tabBottomColor: '#ffffff',
   textColor: '#414355',
   textInputColor: '#414355',
   textTabBottomColor: '#858FA9',
-  // titleColor: "#1467ff",
   warning: '#FFB000',
   success: '#19CA72',
   error: '#E04B35',
@@ -93,5 +75,3 @@ export const IOSShadowStyle = {
 };
 
 setCustomText({ style: { fontFamily: CommonStyles.primaryFontFamily } });
-
-// Text.defaultProps.style = { fontFamily: CommonStyles.primaryFontFamily }; // Obsolete from RN 0.57

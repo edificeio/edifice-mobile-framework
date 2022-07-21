@@ -9,7 +9,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextBold } from '~/framework/components/text';
 import { fetchRootFoldersAction, postFolderAction } from '~/modules/zimbra/actions/folders';
-import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
@@ -65,7 +64,7 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
     const { name } = this.state;
     const { show } = this.props;
     const textInputStyle = {
-      color: CommonStyles.textColor,
+      color: theme.ui.text.regular,
       borderBottomWidth: 0.5,
       borderColor: theme.palette.grey.cloudy,
     } as ViewStyle;

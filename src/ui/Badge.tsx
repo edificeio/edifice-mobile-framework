@@ -4,7 +4,6 @@ import { ColorValue } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CommonStyles } from '~/styles/common/styles';
 
 import { Weight } from './Typography';
 
@@ -34,7 +33,7 @@ const ViewEmpty = styled.View({
 
 const Text = styled.Text({
   color: theme.ui.text.inverse,
-  fontFamily: CommonStyles.primaryFontFamily,
+  fontFamily: 'OpenSans-Regular',
   fontSize: 10,
   fontWeight: Weight.SemiBold,
 });

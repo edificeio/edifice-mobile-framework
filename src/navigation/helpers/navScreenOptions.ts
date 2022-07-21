@@ -3,7 +3,6 @@ import deviceInfoModule from 'react-native-device-info';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { CommonStyles } from '~/styles/common/styles';
 
 /**
  * Options for a header with centered title
@@ -27,7 +26,7 @@ export const standardNavScreenOptions = (props, { state }) => {
     headerTitleStyle: {
       alignSelf: 'center',
       color: theme.ui.text.inverse,
-      fontFamily: CommonStyles.primaryFontFamily,
+      fontFamily: 'OpenSans-Regular',
       fontSize: 16,
       fontWeight: '400',
       textAlign: 'center',
@@ -49,7 +48,7 @@ export const alternativeNavScreenOptions = (props, navigation) =>
       headerTitleStyle: {
         alignSelf: 'center',
         color: theme.ui.text.inverse,
-        fontFamily: CommonStyles.primaryFontFamily,
+        fontFamily: 'OpenSans-Regular',
         fontSize: 16,
         fontWeight: '400',
         textAlign: 'left',

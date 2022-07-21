@@ -24,7 +24,7 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
       showLabel: true,
       // Style
       style: {
-        backgroundColor: CommonStyles.tabBottomColor,
+        backgroundColor: theme.ui.background.card,
         borderTopColor: CommonStyles.borderColorLighter,
         borderTopWidth: 1,
         elevation: 1,
@@ -77,7 +77,6 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
       };
     } else if (icon.type === 'Icon') {
       return {
-        // focused ? theme.palette.primary.regular : CommonStyles.iconColorOff
         tabBarIcon: ({ focused }) =>
           focused ? (
             <Picture {...iconFocus} color={theme.palette.primary.regular} />
@@ -97,13 +96,13 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
 const MainTabNavigationLabel = styled.Text(
   {
     alignSelf: 'center',
-    fontFamily: CommonStyles.primaryFontFamily,
+    fontFamily: 'OpenSans-Regular',
     fontSize: 10,
     marginBottom: UI_SIZES.spacing.tiny,
     marginTop: -UI_SIZES.spacing.small,
   },
   ({ focused }) => ({
-    color: focused ? theme.palette.primary.regular : CommonStyles.textTabBottomColor,
+    color: focused ? theme.palette.primary.regular : theme.legacy.neutral.subtleLight,
   }),
 );
 

@@ -6,10 +6,10 @@ import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { postFolderAction } from '~/modules/conversation/actions/folders';
 import { fetchInitAction } from '~/modules/conversation/actions/initMails';
-import { CommonStyles } from '~/styles/common/styles';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 import { TextBold } from '~/ui/Typography';
@@ -57,7 +57,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
     const { name } = this.state;
     const { show } = this.props;
     const textInputStyle = {
-      color: CommonStyles.textColor,
+      color: theme.ui.text.regular,
     } as ViewStyle;
     return (
       <ModalBox isVisible={show} backdropOpacity={0.5}>

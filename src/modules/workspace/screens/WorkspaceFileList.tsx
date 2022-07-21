@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   listContainer: {
-    backgroundColor: CommonStyles.lightGrey,
+    backgroundColor: theme.palette.grey.fog,
     flexGrow: 1,
   },
 });

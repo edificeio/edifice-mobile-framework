@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { checkConnection, watchConnection } from '~/infra/actions/connectionTracker';
-import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { Icon } from './icons/Icon';
@@ -114,12 +113,12 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 
   get barColor(): string {
     if (this.props.loading) {
-      return CommonStyles.warning;
+      return theme.palette.status.warning;
     }
     if (this.props.connected) {
-      return CommonStyles.success;
+      return theme.palette.status.success;
     }
-    return CommonStyles.error;
+    return theme.palette.status.failure;
   }
 
   public render() {

@@ -5,7 +5,6 @@ import { Platform, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSizeStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
 import { EVENT_TYPE, IEventProps } from '~/workspace/types';
@@ -26,7 +25,7 @@ const style = StyleSheet.create({
   },
   authorText: {
     ...TextSizeStyle.Small,
-    color: CommonStyles.lightTextColor,
+    color: theme.legacy.neutral.subtleLight,
     maxWidth: '50%',
   },
 });

@@ -13,7 +13,6 @@ import { Text, TextBold } from '~/framework/components/text';
 import { IInit } from '~/modules/zimbra/components/DrawerMenuContainer';
 import { DraftType } from '~/modules/zimbra/screens/NewMail';
 import { IMail } from '~/modules/zimbra/state/mailContent';
-import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, Header, LeftPanel, PageContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -46,10 +45,13 @@ const styles = StyleSheet.create({
   },
   shadow: {
     elevation: 4,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
   },
 });
 

@@ -6,7 +6,6 @@ import theme from '~/app/theme';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { renderIcon } from '~/modules/workspace/components/image';
 import { IFile } from '~/modules/workspace/reducer';
-import { CommonStyles } from '~/styles/common/styles';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
 
@@ -25,7 +24,7 @@ const style = StyleSheet.create({
   },
   authorText: {
     ...TextSizeStyle.Small,
-    color: CommonStyles.lightTextColor,
+    color: theme.legacy.neutral.subtleLight,
     maxWidth: '50%',
   },
 });

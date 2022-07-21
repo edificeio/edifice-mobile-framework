@@ -6,11 +6,11 @@ import { PanGestureHandler, PinchGestureHandler, State } from 'react-native-gest
 import RNCarousel from 'react-native-snap-carousel';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { CommonStyles } from '~/styles/common/styles';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
@@ -345,7 +345,7 @@ class Carousel extends React.Component<
                     }}>
                     <Text
                       style={{
-                        color: CommonStyles.lightGrey,
+                        color: theme.palette.grey.fog,
                         textAlign: 'center',
                       }}>
                       {I18n.t('linkTo')}{' '}
@@ -363,7 +363,7 @@ class Carousel extends React.Component<
                       name="ui-externalLink"
                       width={16}
                       height={16}
-                      fill={CommonStyles.lightGrey}
+                      fill={theme.palette.grey.fog}
                       style={{ marginLeft: UI_SIZES.spacing._LEGACY_small }}
                     />
                   </TouchableOpacity>

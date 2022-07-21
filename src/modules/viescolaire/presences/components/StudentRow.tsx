@@ -6,7 +6,6 @@ import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
-import { CommonStyles } from '~/styles/common/styles';
 import { INavigationProps } from '~/types';
 
 const styles = StyleSheet.create({
@@ -38,11 +37,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.grey.grey,
   },
   lightGrey: { backgroundColor: theme.palette.grey.cloudy },
-  red: { backgroundColor: CommonStyles.themeOpenEnt.red },
+  red: { backgroundColor: theme.palette.complementary.red.regular },
   blue: {
     backgroundColor: viescoTheme.palette.presencesEvents.departure,
   },
-  purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },
+  purple: { backgroundColor: theme.palette.complementary.purple.regular },
 });
 
 type Student = {

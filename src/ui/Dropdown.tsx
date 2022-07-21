@@ -63,7 +63,7 @@ const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyE
     <View style={[selectedStyle, styles.fullView, style]}>
       <Picker
         style={{
-          color: CommonStyles.textColor,
+          color: theme.ui.text.regular,
         }}
         prompt={title}
         selectedValue={value}

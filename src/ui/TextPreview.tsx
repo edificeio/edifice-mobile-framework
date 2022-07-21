@@ -4,9 +4,9 @@ import { Text, View } from 'react-native';
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
 import { LayoutEvent } from 'react-navigation';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { contentStyle } from '~/framework/modules/myAppMenu/components/NewContainerContent';
-import { CommonStyles } from '~/styles/common/styles';
 
 import { A } from './Typography';
 
@@ -38,8 +38,8 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     numberOfLines: 5,
     expansionTextStyle: { fontSize: 12 },
     textStyle: {
-      color: CommonStyles.textColor,
-      fontFamily: CommonStyles.primaryFontFamily,
+      color: theme.ui.text.regular,
+      fontFamily: 'OpenSans-Regular',
       fontSize: 12,
       marginTop: UI_SIZES.spacing.tiny,
     },

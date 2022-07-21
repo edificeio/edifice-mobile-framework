@@ -5,7 +5,6 @@ import Carousel from 'react-native-snap-carousel';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { CommonStyles } from '~/styles/common/styles';
 
 import { Avatar, Size } from './Avatar';
 
@@ -20,9 +19,9 @@ const SkippedContainer = styled.View({
 });
 
 const Skipped = styled.Text({
-  color: CommonStyles.warning,
+  color: theme.palette.status.warning,
   textAlign: 'center',
-  fontFamily: CommonStyles.primaryFontFamily,
+  fontFamily: 'OpenSans-Regular',
   fontSize: 12,
 });
 

@@ -3,9 +3,9 @@ import * as React from 'react';
 import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CommonStyles } from '~/styles/common/styles';
 
 import Attachment, { IRemoteAttachment } from './Attachment';
 import { BubbleStyle } from './BubbleStyle';
@@ -64,7 +64,7 @@ export class AttachmentGroup extends React.PureComponent<
             <View style={{ flexDirection: 'row' }}>
               <Bold style={{ marginRight: UI_SIZES.spacing.tiny }}>{I18n.t(`attachment${attachments.length > 1 ? 's' : ''}`)}</Bold>
               <Icon
-                color={CommonStyles.textColor}
+                color={theme.ui.text.regular}
                 size={16}
                 name="attached"
                 style={{ flex: 0, marginRight: UI_SIZES.spacing.minor, transform: [{ rotate: '270deg' }] }}

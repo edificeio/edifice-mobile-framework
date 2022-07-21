@@ -5,7 +5,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
-import { CommonStyles } from '~/styles/common/styles';
 import { ContentUri } from '~/types/contentUri';
 
 import { IconButton } from './IconButton';
@@ -61,7 +60,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
                     iconColor={theme.palette.grey.black}
                     iconSize={18}
                     buttonStyle={{
-                      backgroundColor: CommonStyles.lightGrey,
+                      backgroundColor: theme.palette.grey.fog,
                       shadowColor: theme.ui.shadowColor,
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.15,

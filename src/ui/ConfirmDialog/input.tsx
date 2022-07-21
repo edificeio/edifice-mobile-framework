@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { layoutSize } from '~/styles/common/layoutSize';
-import { CommonStyles } from '~/styles/common/styles';
 
 type IProps = {
   value: string;
@@ -21,7 +21,7 @@ export default class DialogInput extends React.PureComponent<IProps> {
 
 const styles = StyleSheet.create({
   textInput: {
-    color: CommonStyles.textInputColor,
+    color: theme.ui.text.regular,
     fontSize: layoutSize.LAYOUT_16,
     borderColor: '#00000012',
     borderBottomWidth: 1,

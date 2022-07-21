@@ -4,7 +4,6 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IApp, IEstablishment } from '~/modules/support/containers/Support';
-import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
 
 const styles = StyleSheet.create({
@@ -17,7 +16,7 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     flex: 1,
-    color: CommonStyles.textColor,
+    color: theme.ui.text.regular,
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
     paddingVertical: UI_SIZES.spacing.tiny,

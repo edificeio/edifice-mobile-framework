@@ -1,8 +1,7 @@
 // Libraries
-import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, Platform, StatusBar, View } from 'react-native';
+import { Platform, StatusBar, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -12,9 +11,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { CommonStyles } from '~/styles/common/styles';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { H1, Light, LightP } from '~/ui/Typography';
+import { H1, LightP } from '~/ui/Typography';
 import { selectPlatform } from '~/user/actions/platform';
 import { IUserAuthState } from '~/user/reducers/auth';
 
@@ -67,7 +64,7 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
               <>
                 <H1
                   style={{
-                    color: CommonStyles.textColor,
+                    color: theme.ui.text.regular,
                     fontSize: 20,
                     fontWeight: 'normal',
                     marginTop: UI_SIZES.spacing.medium + UI_SIZES.screen.topInset,

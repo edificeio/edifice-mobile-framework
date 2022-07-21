@@ -10,7 +10,6 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import Notifier from '~/infra/notifier/container';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
-import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
@@ -96,7 +95,7 @@ const HeaderUsers = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
+      <Text style={{ color: theme.ui.text.light }}>{title} : </Text>
       <SearchUserMail
         selectedUsersOrGroups={value}
         onChange={val => onChange(val)}
@@ -124,7 +123,7 @@ const HeaderSubject = ({
   const inputStyle = {
     flex: 1,
     height: 40,
-    color: CommonStyles.textColor,
+    color: theme.ui.text.regular,
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 2,
   } as ViewStyle;
@@ -143,7 +142,7 @@ const HeaderSubject = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
+      <Text style={{ color: theme.ui.text.regular }}>{title} : </Text>
       <TextInput
         style={inputStyle}
         defaultValue={value}

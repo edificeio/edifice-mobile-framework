@@ -5,16 +5,18 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IChild, IChildArray } from '~/modules/viescolaire/viesco/state/children';
-import { CommonStyles } from '~/styles/common/styles';
 import Dropdown from '~/ui/Dropdown';
 
 const styles = StyleSheet.create({
   shadow: {
-    elevation: CommonStyles.elevation,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    elevation: 20,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
   },
   container: {
     borderBottomRightRadius: 30,

@@ -3,17 +3,17 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
 import { FontStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
-import { CommonStyles } from '~/styles/common/styles';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
 
 export const Author = styled.Text<{ nb: number }>(
   {
-    color: CommonStyles.textColor,
-    fontFamily: CommonStyles.primaryFontFamily,
+    color: theme.ui.text.regular,
+    fontFamily: 'OpenSans-Regular',
     fontSize: 14,
   },
   ({ nb }) => ({

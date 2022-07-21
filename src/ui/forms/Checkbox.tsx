@@ -52,13 +52,13 @@ export const SquareCheckbox = ({
 }) => {
   const checkedStyle = value
     ? { backgroundColor: color, borderWidth: 0 }
-    : { backgroundColor: CommonStyles.lightGrey, borderWidth: 2 };
+    : { backgroundColor: theme.palette.grey.fog, borderWidth: 2 };
   const opacity = disabled ? 0.3 : 1;
 
   return (
     <View style={{ opacity }}>
       <TouchableOpacity disabled={disabled} onPress={onChange} style={[squareCheckboxStyle.square, checkedStyle]}>
-        <Icon size={17} name="checked" color={CommonStyles.lightGrey} />
+        <Icon size={17} name="checked" color={theme.palette.grey.fog} />
       </TouchableOpacity>
     </View>
   );
