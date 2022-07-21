@@ -144,14 +144,14 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
 
   const uploadFile = async (file: Asset | DocumentPicked) => {
     const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
-    await props.uploadFile(props.parentId, lf);
-    return props.fetchFiles(props.filter, props.parentId);
+    props.uploadFile(props.parentId, lf);
+    props.fetchFiles(props.filter, props.parentId);
   };
 
   const restoreSelectedFiles = async () => {
     setSelectedFiles([]);
-    await props.restoreFiles(props.parentId, selectedFiles);
-    return props.fetchFiles(props.filter, props.parentId);
+    props.restoreFiles(props.parentId, selectedFiles);
+    props.fetchFiles(props.filter, props.parentId);
   };
 
   const onModalAction = (files: IFile[], value: string, destinationId: string) => {
@@ -160,19 +160,26 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     modalBoxRef?.current?.doDismissModal();
     switch (modalType) {
       case WorkspaceModalType.CREATE_FOLDER:
-        return props.modalEvents.createFolder(value, parentId);
+        props.modalEvents.createFolder(value, parentId);
+        return props.fetchFiles(props.filter, parentId);
       case WorkspaceModalType.DELETE:
-        return props.modalEvents.deleteFiles(parentId, files);
+        props.modalEvents.deleteFiles(parentId, files);
+        return props.fetchFiles(props.filter, parentId);
       case WorkspaceModalType.DOWNLOAD:
         return props.modalEvents.downloadFiles(files);
       case WorkspaceModalType.DUPLICATE:
-        return props.modalEvents.duplicateFiles(parentId, files, destinationId);
+        props.modalEvents.duplicateFiles(parentId, files, destinationId);
+        return props.fetchFiles(props.filter, destinationId);
       case WorkspaceModalType.EDIT:
-        return props.modalEvents.renameFile(files[0], value);
+        props.modalEvents.renameFile(files[0], value);
+        return props.fetchFiles(props.filter, parentId);
       case WorkspaceModalType.MOVE:
-        return props.modalEvents.moveFiles(parentId, files, destinationId);
+        props.modalEvents.moveFiles(parentId, files, destinationId);
+        props.fetchFiles(props.filter, destinationId);
+        return props.fetchFiles(props.filter, parentId);
       case WorkspaceModalType.TRASH:
-        return props.modalEvents.trashFiles(parentId, files);
+        props.modalEvents.trashFiles(parentId, files);
+        return props.fetchFiles(props.filter, parentId);
     }
   };
 
@@ -187,7 +194,10 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
       const navBarActions = [
         selectedFiles.length === 1 && props.filter !== Filter.TRASH
           ? { icon: 'pencil', onPress: () => openModal(WorkspaceModalType.EDIT) }
-          : { icon: 'delete', onPress: () => openModal(WorkspaceModalType.DELETE) },
+          : {
+              icon: 'delete',
+              onPress: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+            },
         { icon: 'more_vert', onPress: showDropdown },
       ];
       const dropdownActions = [
