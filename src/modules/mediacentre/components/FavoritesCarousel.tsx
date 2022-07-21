@@ -9,6 +9,7 @@ import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextBold } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { FavoriteIcon, IconButton } from '~/modules/mediacentre/components/SmallCard';
 import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
@@ -92,7 +93,11 @@ const getCardColors = (length: number): string[] => {
 
 const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
   const openUrlCallback = () => {
-    openUrl(props.resource.link);
+    if (props.resource.source === Source.SIGNET) {
+      return openUrl(props.resource.link);
+    }
+    const link = encodeURIComponent(props.resource.link);
+    openUrl(`${DEPRECATED_getCurrentPlatform()!.url}/mediacentre/resource/open?url=${link}`);
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);

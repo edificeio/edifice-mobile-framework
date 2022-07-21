@@ -8,6 +8,7 @@ import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
 import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
@@ -89,7 +90,11 @@ export const FavoriteIcon: React.FunctionComponent<IFavoriteIconProps> = (props:
 
 export class SmallCard extends React.PureComponent<ISmallCardProps> {
   openUrlCallback = () => {
-    openUrl(this.props.resource.link);
+    if (this.props.resource.source === Source.SIGNET) {
+      return openUrl(this.props.resource.link);
+    }
+    const link = encodeURIComponent(this.props.resource.link);
+    openUrl(`${DEPRECATED_getCurrentPlatform()!.url}/mediacentre/resource/open?url=${link}`);
   };
 
   copyToClipboard = () => {

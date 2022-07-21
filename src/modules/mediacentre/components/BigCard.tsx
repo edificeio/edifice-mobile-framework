@@ -8,6 +8,7 @@ import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextSizeStyle } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
 
@@ -90,7 +91,11 @@ const FavoriteAction: React.FunctionComponent<IFavoriteActionProps> = (props: IF
 
 export class BigCard extends React.PureComponent<IBigCardProps> {
   openUrlCallback = () => {
-    openUrl(this.props.resource.link);
+    if (this.props.resource.source === Source.SIGNET) {
+      return openUrl(this.props.resource.link);
+    }
+    const link = encodeURIComponent(this.props.resource.link);
+    openUrl(`${DEPRECATED_getCurrentPlatform()!.url}/mediacentre/resource/open?url=${link}`);
   };
 
   copyToClipboard = () => {
