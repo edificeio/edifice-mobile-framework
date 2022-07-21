@@ -2,6 +2,7 @@ import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Line } from '~/ui/Grid';
@@ -12,7 +13,7 @@ const Container = styled(TouchableOpacity)({
   alignItems: 'center',
   backgroundColor: 'white',
   borderBottomWidth: 1,
-  borderColor: '#ddd',
+  borderColor: theme.palette.grey.cloudy,
   flexDirection: 'row',
   height: 46,
   justifyContent: 'flex-start',

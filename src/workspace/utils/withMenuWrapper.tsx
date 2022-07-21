@@ -151,7 +151,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           style={styles.actionContainer}
           onPress={() => this.handleEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}
           disabled={isDisabled}>
-          <Icon color={isDisabled ? '#77777750' : '#ffffff'} size={24} name={icon} />
+          <Icon color={isDisabled ? '#77777750' : theme.ui.text.inverse} size={24} name={icon} />
         </TouchableOpacity>
       );
     };

@@ -5,6 +5,8 @@ import theme from '~/app/theme';
 import { Text, TextBold } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 const styles = StyleSheet.create({
   sessionLeftColoredItem: {
     alignItems: 'center',
@@ -23,7 +25,7 @@ const styles = StyleSheet.create({
 });
 
 export const SessionItem = ({ matiere, author }: any) => (
-  <LeftColoredItem style={styles.sessionLeftColoredItem} color="#2bab6f">
+  <LeftColoredItem style={styles.sessionLeftColoredItem} color={viescoTheme.palette.diary}>
     <View style={styles.sessionView}>
       <TextBold style={styles.matiereText}>{matiere}</TextBold>
       <Text style={styles.authorText}>{author}</Text>

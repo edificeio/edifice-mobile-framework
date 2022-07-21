@@ -7,6 +7,7 @@ import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 
 import { ModalBox, ModalContent, ModalContentBlock } from './Modal';
@@ -93,7 +94,7 @@ const DateTimePickerIOS: React.FunctionComponent<IDateTimePickerProps> = ({
           style={style}
           onPress={() => setModalVisible(true)}
           text={selectedTime.format('DD/MM/YY')}
-          color={color || '#2BAB6F'}
+          color={color || viescoTheme.palette.diary}
         />
       )}
       <ModalBox isVisible={isModalVisible} onDismiss={() => setModalVisible(false)}>
@@ -158,7 +159,7 @@ const DateTimePickerAndroid: React.FunctionComponent<IDateTimePickerProps> = ({
           style={style}
           onPress={() => setModalVisible(true)}
           text={selectedTime.format('DD/MM/YY')}
-          color={color || '#2BAB6F'}
+          color={color || viescoTheme.palette.diary}
         />
       )}
       {isModalVisible ? (

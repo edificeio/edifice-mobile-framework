@@ -17,6 +17,8 @@ import Calendar from '~/ui/Calendar';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 const style = StyleSheet.create({
   refreshContainer: {
     height: '100%',
@@ -183,7 +185,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
         style={isHalfCourse ? style.halfSessionMargin : style.sessionMargin}
         onPress={() => navigation.navigate('SessionPage', sessionListDetailsTeacherAdapter(course.session || course))}
         disabled={!isSessionPublished}>
-        <Icon name="insert_drive_file1" size={24} color={isSessionPublished ? '#2BAB6F' : 'lightgrey'} />
+        <Icon name="insert_drive_file1" size={24} color={isSessionPublished ? viescoTheme.palette.diary : 'lightgrey'} />
       </TouchableOpacity>
     );
   };
@@ -218,7 +220,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
         <View style={style.refreshContainer}>
           <View style={style.weekPickerView}>
             <Text style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Text>
-            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#00AB6F" />
+            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.diary} />
           </View>
           {courses.isFetching || courses.isPristine ? (
             <LoadingIndicator />
@@ -233,7 +235,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
                 renderDaysHomeworks={this.renderDaysHomeworks}
                 numberOfDays={6}
                 slotHeight={70}
-                mainColor="#00AB6F"
+                mainColor={viescoTheme.palette.diary}
                 slots={slots.data}
                 initialSelectedDate={selectedDate}
                 hideSlots

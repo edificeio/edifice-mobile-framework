@@ -157,7 +157,9 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
             {student.last_course_absent && (
               <Icon style={{ transform: [{ rotateY: '180deg' }] }} color="red" size={20} name="refresh" />
             )}
-            {student.forgotten_notebook && <Icon color="#b0ead5" size={20} name="bookmark-remove" />}
+            {student.forgotten_notebook && (
+              <Icon color={viescoTheme.palette.presencesEvents.forgotNotebook} size={20} name="bookmark-remove" />
+            )}
           </View>
           <View style={styles.alignRightContainer}>
             {absentEvent !== undefined && <View style={[styles.dash, styles.red]} />}

@@ -1,3 +1,4 @@
+import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IConnectorState } from './reducers/connector';
@@ -17,5 +18,5 @@ export default new NavigableModuleConfig<'lvs', IConnectorState>({
 
   displayI18n: 'LVS',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'Icon', name: 'lvs', color: '#299cc8' },
+  displayPicture: { type: 'Icon', name: 'lvs', color: theme.palette.primary.regular },
 });

@@ -18,6 +18,8 @@ import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/a
 import { ICourseListState, getCoursesListState } from '~/modules/viescolaire/viesco/state/courses';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 export type TimetableProps = {
   courses: ICourseListState;
   sessions: ISessionListState;
@@ -87,7 +89,7 @@ class TeacherTimetableContainer extends React.PureComponent<TimetableProps, Time
         navBarWithBack={{
           title: I18n.t('Homework'),
           style: {
-            backgroundColor: '#00AB6F',
+            backgroundColor: viescoTheme.palette.diary,
           },
         }}>
         <TeacherCdtTimetable

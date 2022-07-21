@@ -14,6 +14,8 @@ import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 const style = StyleSheet.create({
   mainView: {
     flex: 1,
@@ -122,10 +124,10 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
           <View style={style.mainView}>
             <View style={style.sessionInfoBar}>
-              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color="#00ab6f">
+              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color={viescoTheme.palette.diary}>
                 {sessionList && sessionList[indexSelectedSession]?.date ? (
                   <>
-                    <Icon size={20} color="#00ab6f" name="date_range" />
+                    <Icon size={20} color={viescoTheme.palette.diary} name="date_range" />
                     <Text>&emsp;{moment(sessionList[indexSelectedSession].date).format('DD/MM/YY')}</Text>
                   </>
                 ) : null}

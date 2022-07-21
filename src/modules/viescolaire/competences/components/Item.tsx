@@ -15,6 +15,8 @@ import { CommonStyles } from '~/styles/common/styles';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 // STYLE
 
 const styleConstant = StyleSheet.create({
@@ -172,7 +174,7 @@ const getColorFromNote = (note: number, moy: number, diviseur: number) => {
   } else if (note === moy) {
     return '#FA9701';
   } else if (note < moy) {
-    return '#E61610';
+    return viescoTheme.palette.presencesEvents.no_reason;
   }
 };
 

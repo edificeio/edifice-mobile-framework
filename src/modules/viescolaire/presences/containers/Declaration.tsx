@@ -16,6 +16,8 @@ import { declareAbsenceAction, declareAbsenceWithFileAction } from '~/modules/vi
 import DeclarationComponent from '~/modules/viescolaire/presences/components/Declaration';
 import { getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
   declareAbsenceWithFileAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string, file: LocalFile) => void;
@@ -97,7 +99,7 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
         navBarWithBack={{
           title: `${I18n.t('viesco-absence-declaration')} ${this.props.navigation.getParam('childName')}`,
           style: {
-            backgroundColor: '#FCB602',
+            backgroundColor: viescoTheme.palette.presences,
           },
         }}>
         <DeclarationComponent

@@ -6,6 +6,8 @@ import { PageView } from '~/framework/components/page';
 import DisplayHomework from '~/modules/viescolaire/cdt/components/DisplayHomework';
 import DisplayListHomework from '~/modules/viescolaire/cdt/components/DisplayListHomework';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 class Homework extends React.PureComponent<any> {
   public render() {
     const diaryTitle = this.props.navigation.getParam('diaryTitle');
@@ -29,7 +31,7 @@ class Homework extends React.PureComponent<any> {
         navigation={this.props.navigation}
         navBarWithBack={{
           title: diaryTitle || I18n.t('Homework'),
-          style: { backgroundColor: '#2BAB6F' },
+          style: { backgroundColor: viescoTheme.palette.diary },
         }}>
         {content}
       </PageView>

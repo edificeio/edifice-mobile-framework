@@ -22,6 +22,8 @@ import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolai
 import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
 import { IPeriodsList, getPeriodsListState } from '~/modules/viescolaire/viesco/state/periods';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 export type CompetencesProps = {
   devoirsList: IDevoirsMatieresState;
   devoirsMoyennesList: IMoyenneListState;
@@ -68,7 +70,7 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
         navBarWithBack={{
           title: I18n.t('viesco-tests'),
           style: {
-            backgroundColor: '#F95303',
+            backgroundColor: viescoTheme.palette.competences,
           },
         }}>
         <Competences {...this.props} />

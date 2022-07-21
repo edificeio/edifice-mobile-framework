@@ -6,6 +6,8 @@ import { Text, TextBold } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 const styles = StyleSheet.create({
   homeworkLeftColoredItem: {
     alignItems: 'center',
@@ -63,7 +65,7 @@ export const HomeworkItem = ({
 );
 
 export const SessionItem = ({ onPress, matiere, author }: any) => (
-  <LeftColoredItem shadow onPress={onPress} style={styles.sessionLeftColoredItem} color="#2bab6f">
+  <LeftColoredItem shadow onPress={onPress} style={styles.sessionLeftColoredItem} color={viescoTheme.palette.diary}>
     <View style={styles.sessionView}>
       <TextBold style={styles.sessionMatiereText}>{matiere}</TextBold>
       <Text style={styles.sessionAuthorText}>{author}</Text>

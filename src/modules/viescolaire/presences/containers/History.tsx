@@ -20,6 +20,8 @@ import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/v
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 interface HistoryProps extends NavigationInjectedProps {
   data: any;
   events: any;
@@ -209,7 +211,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
         navBarWithBack={{
           title: I18n.t('viesco-history'),
           style: {
-            backgroundColor: '#FCB602',
+            backgroundColor: viescoTheme.palette.presences,
           },
         }}>
         <HistoryComponent

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
@@ -109,7 +110,7 @@ export const UserCard = ({
         padding: UI_SIZES.spacing.medium,
         width: '100%',
         borderBottomWidth: 1,
-        borderColor: '#ddd',
+        borderColor: theme.palette.grey.cloudy,
       }}
       onPress={onPress}>
       <View style={{ padding: UI_SIZES.spacing.small, alignItems: 'center', justifyContent: 'center' }}>
@@ -132,7 +133,9 @@ export const UserCard = ({
         <TextBold>{displayName}</TextBold>
         {Array.isArray(type) ? type.map(item => renderUserType(item)) : renderUserType(type)}
       </View>
-      {touchable ? <Icon name="arrow_down" color="#868CA0" style={{ transform: [{ rotate: '270deg' }] }} /> : undefined}
+      {touchable ? (
+        <Icon name="arrow_down" color={theme.legacy.neutral.regular} style={{ transform: [{ rotate: '270deg' }] }} />
+      ) : undefined}
     </WrapperComponent>
   );
 };

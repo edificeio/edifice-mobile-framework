@@ -93,7 +93,7 @@ export const ButtonLine = ({
       {/* FIXME: a ButtonLine without onClick prop will raise an error. Fire an event up or use onPress={onPress}. */}
       <LinkStyle color={color!}>{I18n.t(title)}</LinkStyle>
       {/* FIXME: This UI button force to use translation. It shouldn't. */}
-      {!hideIcon && <Icon name="arrow_down" color="#868CA0" style={{ transform: [{ rotate: '270deg' }] }} />}
+      {!hideIcon && <Icon name="arrow_down" color={theme.legacy.neutral.regular} style={{ transform: [{ rotate: '270deg' }] }} />}
     </Comp>
   );
 };

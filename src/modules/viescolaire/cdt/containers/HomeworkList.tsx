@@ -20,6 +20,8 @@ import { getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { IPersonnelList, getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 type HomeworkListProps = {
   homeworks: any;
   sessions: any;
@@ -54,7 +56,7 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
         navBarWithBack={{
           title: diaryTitle || I18n.t('Homework'),
           style: {
-            backgroundColor: '#2BAB6F',
+            backgroundColor: viescoTheme.palette.diary,
           },
         }}>
         <HomeworkList

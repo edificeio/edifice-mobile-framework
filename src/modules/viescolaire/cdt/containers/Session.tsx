@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { PageView } from '~/framework/components/page';
 import DisplaySession from '~/modules/viescolaire/cdt/components/DisplaySession';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 class Session extends React.PureComponent<any> {
   public render() {
     return (
@@ -13,7 +15,7 @@ class Session extends React.PureComponent<any> {
         navBarWithBack={{
           title: I18n.t('Homework'),
           style: {
-            backgroundColor: '#2BAB6F',
+            backgroundColor: viescoTheme.palette.diary,
           },
         }}>
         <DisplaySession

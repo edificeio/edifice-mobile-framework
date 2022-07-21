@@ -206,7 +206,7 @@ export default function TreeSelect({
             <View
               style={{
                 flexDirection: 'row',
-                backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || '#fff',
+                backgroundColor: isCurrentNode ? '#2A9CC825' : backgroundColor || theme.ui.background.card,
                 marginBottom: UI_SIZES.spacing.tiny / 2,
                 height: layoutSize.LAYOUT_30,
                 alignItems: 'center',
@@ -264,7 +264,7 @@ export default function TreeSelect({
           flexDirection: 'row',
           alignItems: 'center',
           borderBottomWidth: 1,
-          borderColor: '#cccccc',
+          borderColor: theme.palette.grey.grey,
           marginRight: UI_SIZES.spacing.small,
           marginBottom: UI_SIZES.spacing.small,
           marginTop: -UI_SIZES.spacing.tiny,
@@ -278,7 +278,7 @@ export default function TreeSelect({
           }}
           value={searchValue}
           placeholder={I18n.t('Search')}
-          placeholderTextColor="#e9e5e1"
+          placeholderTextColor={theme.palette.grey.cloudy}
           returnKeyType="search"
           autoCapitalize="none"
           underlineColorAndroid="transparent"
@@ -297,7 +297,7 @@ export default function TreeSelect({
           }}>
           <Icon
             name="search2"
-            style={{ color: '#999999', fontSize: layoutSize.LAYOUT_24, marginHorizontal: UI_SIZES.spacing.minor }}
+            style={{ color: theme.palette.grey.stone, fontSize: layoutSize.LAYOUT_24, marginHorizontal: UI_SIZES.spacing.minor }}
           />
         </TouchableOpacity>
       </View>

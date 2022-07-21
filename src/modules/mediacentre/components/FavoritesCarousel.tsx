@@ -73,7 +73,15 @@ interface IFavoritesCarouselProps {
 }
 
 const getCardColors = (length: number): string[] => {
-  const colors = ['#4bafd5', '#46bfaf', '#ecbe30', '#e13a3a', '#b930a2', '#763294', '#1a22a2'];
+  const colors = [
+    theme.palette.status.info,
+    theme.palette.complementary.green.regular,
+    theme.palette.complementary.yellow.regular,
+    theme.palette.complementary.red.regular,
+    theme.palette.complementary.pink.regular,
+    theme.palette.complementary.purple.regular,
+    theme.palette.complementary.indigo.regular,
+  ];
   const cardColors: string[] = [];
 
   for (let index = 0; index < length; index += 1) {

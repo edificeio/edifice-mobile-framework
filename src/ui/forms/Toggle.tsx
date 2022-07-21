@@ -31,7 +31,7 @@ const Container = styled(TouchableOpacity)<{ checked: boolean }>(
     alignItems: 'center',
     width: 40,
     height: 22,
-    borderColor: '#dddddd',
+    borderColor: theme.palette.grey.cloudy,
     position: 'absolute',
     left: 0,
     top: 0,

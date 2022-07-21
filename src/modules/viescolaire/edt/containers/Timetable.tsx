@@ -23,6 +23,8 @@ import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/person
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
+
 export type TimetableProps = {
   courses: any;
   subjects: any;
@@ -118,7 +120,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
         navBarWithBack={{
           title: I18n.t('viesco-timetable'),
           style: {
-            backgroundColor: '#162EAE',
+            backgroundColor: viescoTheme.palette.timetable,
           },
         }}>
         <Timetable

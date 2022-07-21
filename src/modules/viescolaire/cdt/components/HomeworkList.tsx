@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { FlatList, Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Text, TextBold } from '~/framework/components/text';
@@ -21,6 +22,7 @@ import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 
+import { viescoTheme } from '../../viesco/utils/viescoTheme';
 import { HomeworkItem, SessionItem } from './Items';
 
 const style = StyleSheet.create({
@@ -190,19 +192,19 @@ export default (props: HomeworkListProps) => {
     let newProps = {};
     switch (Platform.OS) {
       case 'android': {
-        newProps = { thumbColor: value ? '#2BAB6F' : '#FA9700', ...newProps };
+        newProps = { thumbColor: value ? viescoTheme.palette.diary : theme.palette.status.warning, ...newProps };
         break;
       }
       case 'ios': {
         newProps = {
-          trackColor: { false: '#FA9700', true: '#2BAB6F' },
-          ios_backgroundColor: '#FA9700',
+          trackColor: { false: theme.palette.status.warning, true: viescoTheme.palette.diary },
+          ios_backgroundColor: theme.palette.status.warning,
           ...newProps,
         };
         break;
       }
       default: {
-        newProps = { trackColor: { false: '#FA9700', true: '#2BAB6F' }, ...newProps };
+        newProps = { trackColor: { false: theme.palette.status.warning, true: viescoTheme.palette.diary }, ...newProps };
         break;
       }
     }
