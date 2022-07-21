@@ -134,7 +134,7 @@ const TopDay = ({ day, onPress, color = '#000', selected = false }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.topDay, { backgroundColor: selected ? color : undefined }]}>
-        <Text style={selected ? styles.whiteText : { color: CommonStyles.lightTextColor }}>
+        <Text style={selected ? styles.whiteText : { color: theme.ui.text.light }}>
           {day.format('ddd').charAt(0).toUpperCase()}
         </Text>
         <Text style={selected ? styles.whiteText : styles.blackText}>{day.format('DD')}</Text>

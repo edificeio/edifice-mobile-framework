@@ -11,7 +11,6 @@ import { ILevelsList } from '~/modules/viescolaire/competences/state/competences
 import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { CommonStyles } from '~/styles/common/styles';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
@@ -35,7 +34,7 @@ const styleConstant = StyleSheet.create({
     maxWidth: '50%',
   },
   coloredSquare: {
-    backgroundColor: CommonStyles.primary,
+    backgroundColor: theme.palette.complementary.blue.regular,
     borderRadius: 5,
     padding: 10, // MO-142 use UI_SIZES.spacing here
     minWidth: '29%',
@@ -102,10 +101,13 @@ const styleConstant = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   shadow: {
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
     elevation: 3,
   },
   modalBlock: {
@@ -249,7 +251,11 @@ const ColoredSquare = ({
   hideScore?: boolean;
   backgroundColor?: string;
 }) => (
-  <View style={[styleConstant.coloredSquare, { backgroundColor: backgroundColor ? backgroundColor : CommonStyles.primary }]}>
+  <View
+    style={[
+      styleConstant.coloredSquare,
+      { backgroundColor: backgroundColor ? backgroundColor : theme.palette.complementary.blue.regular },
+    ]}>
     <Text style={styleConstant.coloredSquareNoteTextContainer}>
       {!isNaN(Number(note)) ? (
         <>
@@ -309,7 +315,7 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
     contentContainerStyle={styleConstant.gradesDevoirsMoyennesView}
     data={devoirs}
     renderItem={({ item, index }) => (
-      <LeftColoredItem color={CommonStyles.primary} key={index}>
+      <LeftColoredItem color={theme.palette.complementary.blue.regular} key={index}>
         <View style={styleConstant.devoirsList}>
           <View style={styleConstant.gradesDevoirsMoyennesItemView}>
             <TextBold numberOfLines={1}>{item.matiere.toUpperCase()}</TextBold>
@@ -327,11 +333,13 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
                       {course.name.toUpperCase()}
                     </Text>
                     {course.note ? (
-                      <Text style={{ color: CommonStyles.primary }}>
+                      <Text style={{ color: theme.palette.complementary.blue.regular }}>
                         {course.note}/{course.diviseur}
                       </Text>
                     ) : (
-                      course.libelle_court && <Text style={{ color: CommonStyles.primary }}>{course.libelle_court}</Text>
+                      course.libelle_court && (
+                        <Text style={{ color: theme.palette.complementary.blue.regular }}>{course.libelle_court}</Text>
+                      )
                     )}
                   </View>
                 ),
@@ -368,7 +376,7 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
                         parseFloat(item.moyenne.replace(/\./g, ',').replace(',', '.')),
                         item.diviseur,
                       )
-                    : CommonStyles.primary
+                    : theme.palette.complementary.blue.regular
                 }
               />
             </>

@@ -72,7 +72,7 @@ export const FlatButton = ({
         </TextStyleComponent>
         {rightName !== undefined && typeof rightName !== 'string' ? (
           <Picture
-            fill={customTextStyle?.color ?? disabled ? theme.palette.primary.regular : CommonStyles.inverseColor}
+            fill={customTextStyle?.color ?? disabled ? theme.palette.primary.regular : theme.legacy.neutral.light}
             {...rightName}
             style={{ marginHorizontal: UI_SIZES.spacing._LEGACY_small }}
             width={22}
@@ -105,12 +105,12 @@ const ButtonStyleComponent = styled.TouchableOpacity(
 
 const TextStyleComponent = styled.Text<{ disabled: boolean }>(
   {
-    fontFamily: CommonStyles.primaryFontFamily,
+    fontFamily: 'OpenSans-Regular',
     fontSize: 14,
     fontWeight: Weight.SemiBold,
     textAlignVertical: 'center',
   },
   ({ disabled }) => ({
-    color: disabled ? theme.palette.primary.regular : CommonStyles.inverseColor,
+    color: disabled ? theme.palette.primary.regular : theme.legacy.neutral.light,
   }),
 );

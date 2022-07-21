@@ -7,7 +7,6 @@ import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
-import { CommonStyles } from '~/styles/common/styles';
 
 const styles = StyleSheet.create({
   studentInfos: {
@@ -49,10 +48,13 @@ const styles = StyleSheet.create({
   shadow: {
     backgroundColor: theme.palette.grey.white,
     elevation: 4,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
   },
 });
 

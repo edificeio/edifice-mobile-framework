@@ -10,7 +10,6 @@ import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import StructurePicker from '~/modules/viescolaire/viesco/containers/StructurePicker';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
-import { CommonStyles } from '~/styles/common/styles';
 import { PageContainer } from '~/ui/ContainerContent';
 
 const styles = StyleSheet.create({
@@ -19,11 +18,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    elevation: CommonStyles.elevation,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    elevation: 20,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
     marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   coursesPartHeight: {
@@ -41,11 +43,14 @@ const styles = StyleSheet.create({
     width: '50%',
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
-    elevation: CommonStyles.elevation,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    elevation: 20,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
   },
   gridButton: {
     alignItems: 'center',

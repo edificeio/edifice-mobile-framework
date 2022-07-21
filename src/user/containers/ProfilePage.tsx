@@ -15,7 +15,6 @@ import { IUserSession, UserType, getUserSession } from '~/framework/util/session
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
 import { signURISource } from '~/infra/oauth';
-import { CommonStyles } from '~/styles/common/styles';
 import { ButtonLine, ContainerLabel, ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
 import { PageContainer } from '~/ui/ContainerContent';
 import { Label } from '~/ui/Typography';
@@ -219,9 +218,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
             style={{
               color: validator
                 ? this.state[validator.key]
-                  ? CommonStyles.textColor
-                  : CommonStyles.errorColor
-                : CommonStyles.textColor,
+                  ? theme.ui.text.regular
+                  : theme.palette.status.failure
+                : theme.ui.text.regular,
             }}>
             {getter()}
           </Label>

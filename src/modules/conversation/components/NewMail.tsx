@@ -12,7 +12,6 @@ import HtmlToText from '~/infra/htmlConverter/text';
 import moduleConfig from '~/modules/conversation/moduleConfig';
 import { ISearchUsers, IUser } from '~/modules/conversation/service/newMail';
 import { IVisibleGroup, IVisibleUser, IVisiblesState, searchVisibles } from '~/modules/conversation/state/visibles';
-import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
@@ -307,7 +306,7 @@ const MailContactField = connect(state => ({
       <View style={{ flexGrow: 1 }}>
         <View style={{ flex: 0, alignItems: 'stretch' }}>
           <View style={[inputStyle, style]}>
-            <Text style={{ color: CommonStyles.lightTextColor, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </Text>
+            <Text style={{ color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </Text>
             <View style={{ overflow: 'visible', marginHorizontal: UI_SIZES.spacing.tiny, flex: 1 }}>
               <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
               <Input
@@ -355,7 +354,7 @@ const HeaderUsers = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
+      <Text style={{ color: theme.ui.text.light }}>{title} : </Text>
       <SearchUserMail selectedUsersOrGroups={value} onChange={val => onChange(val)} autoFocus={autoFocus} />
       {children}
     </View>
@@ -380,7 +379,7 @@ const HeaderSubject = ({
   const inputStyle = {
     flex: 1,
     height: 40,
-    color: CommonStyles.textColor,
+    color: theme.ui.text.regular,
   } as ViewStyle;
 
   const textUpdateTimeout = React.useRef();
@@ -397,7 +396,7 @@ const HeaderSubject = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
+      <Text style={{ color: theme.ui.text.light }}>{title} : </Text>
       <TextInput style={inputStyle} defaultValue={value} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />
     </View>
   );

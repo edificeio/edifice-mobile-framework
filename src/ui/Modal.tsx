@@ -3,7 +3,6 @@ import NativeModal from 'react-native-modal';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { CommonStyles } from '~/styles/common/styles';
 import { LightP } from '~/ui/Typography';
 
 export const ModalBox = styled(NativeModal)({
@@ -17,14 +16,17 @@ export const ModalContent = styled.View({
   alignSelf: 'center',
   backgroundColor: theme.ui.background.card,
   borderRadius: 4,
-  elevation: CommonStyles.elevation,
+  elevation: 20,
   flex: 0,
   justifyContent: 'center',
   paddingTop: UI_SIZES.spacing.large,
-  shadowColor: CommonStyles.shadowColor,
-  shadowOffset: CommonStyles.shadowOffset,
-  shadowOpacity: CommonStyles.shadowOpacity,
-  shadowRadius: CommonStyles.shadowRadius,
+  shadowColor: 'rgba(0, 0, 0, 1.0)',
+  shadowOffset: {
+    height: 2,
+    width: 0,
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 2,
   width: 270,
 });
 

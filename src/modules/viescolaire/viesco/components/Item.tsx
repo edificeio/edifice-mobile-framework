@@ -3,7 +3,6 @@ import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { CommonStyles } from '~/styles/common/styles';
 
 const styleConstant = StyleSheet.create({
   container: {
@@ -13,10 +12,13 @@ const styleConstant = StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
   },
   containerShadow: {
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
     elevation: 3,
   },
 });

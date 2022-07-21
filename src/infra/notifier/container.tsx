@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { NotifierState } from './state';
@@ -84,10 +83,10 @@ class Notifier extends React.Component<
     const type = (notifier && notifier.notifierType) || 'info';
 
     return {
-      info: CommonStyles.primary,
-      success: CommonStyles.success,
-      warning: CommonStyles.warning,
-      error: CommonStyles.error,
+      info: theme.palette.complementary.blue.regular,
+      success: theme.palette.status.success,
+      warning: theme.palette.status.warning,
+      error: theme.palette.status.failure,
     }[type];
   }
 

@@ -64,7 +64,7 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
   const textInputStyle = {
     flex: 0,
     paddingVertical: UI_SIZES.spacing.tiny,
-    color: CommonStyles.textColor,
+    color: theme.ui.text.regular,
     ...FontStyle.Regular,
     ...TextSizeStyle.Normal,
     ...TextColorStyle.Normal,
@@ -159,12 +159,17 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
       alignItems: 'baseline',
     } as ViewStyle;
 
-    const userLabel = { color: CommonStyles.primary, textAlignVertical: 'center' } as ViewStyle;
+    const userLabel = { color: theme.palette.complementary.blue.regular, textAlignVertical: 'center' } as ViewStyle;
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
         <Text style={userLabel}>{displayName}</Text>
-        <Icon name="close" size={12} color={CommonStyles.primary} style={{ marginLeft: UI_SIZES.spacing.minor }} />
+        <Icon
+          name="close"
+          size={12}
+          color={theme.palette.complementary.blue.regular}
+          style={{ marginLeft: UI_SIZES.spacing.minor }}
+        />
       </TouchableOpacity>
     );
   };

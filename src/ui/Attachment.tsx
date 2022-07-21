@@ -197,7 +197,7 @@ class Attachment extends React.PureComponent<
                 <Icon color={theme.palette.status.failure} size={16} name="close" style={{ marginRight: UI_SIZES.spacing.minor }} />
               ) : (
                 <Icon
-                  color={CommonStyles.textColor}
+                  color={theme.ui.text.regular}
                   size={16}
                   name={getAttachmentTypeByExt(
                     (editMode && (att as ILocalAttachment).name) ||
@@ -216,9 +216,8 @@ class Attachment extends React.PureComponent<
               <Text style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
                 <Text
                   style={{
-                    textDecorationColor:
-                      downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
-                    color: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
+                    textDecorationColor: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
+                    color: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
                     textDecorationLine: 'underline',
                     textDecorationStyle: 'solid',
                   }}>
@@ -230,7 +229,7 @@ class Attachment extends React.PureComponent<
                 </Text>
                 <Text
                   style={{
-                    color: CommonStyles.lightTextColor,
+                    color: theme.ui.text.light,
                     flex: 0,
                   }}>
                   {downloadState === DownloadState.Success

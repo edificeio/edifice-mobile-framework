@@ -3,9 +3,9 @@ import moment from 'moment';
 import * as React from 'react';
 import { ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
-import { CommonStyles } from '~/styles/common/styles';
 
 const ViewDate = styled.View<{ min: boolean }>(
   ({ min }): ViewStyle => ({
@@ -17,7 +17,7 @@ export const DateView = ({ date, min = false, strong = false }) => (
   <ViewDate min={min}>
     <Text
       numberOfLines={1}
-      style={[{ color: strong ? CommonStyles.textColor : CommonStyles.lightTextColor }, !strong && { ...TextSizeStyle.Small }]}>
+      style={[{ color: strong ? theme.ui.text.regular : theme.ui.text.light }, !strong && { ...TextSizeStyle.Small }]}>
       {displayPastDate(moment(date))}
     </Text>
   </ViewDate>
