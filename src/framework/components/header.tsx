@@ -222,7 +222,7 @@ export const HeaderTitleAndSubtitle = (props: { title?: string; subtitle?: strin
 );
 
 export const ButtonIcon = ({ name, onPress, size, style, color }: ButtonIconProps) => {
-  if (color === undefined) color = 'white';
+  if (color === undefined) color = theme.ui.text.inverse;
   const Button = styled.TouchableOpacity({ ...buttonStyle, ...style });
   return (
     <Button onPress={onPress} style={{ ...buttonStyle, ...style }}>

@@ -58,7 +58,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     right: 0,
     width: '100%',
     zIndex: 10,
-    backgroundColor: 'white',
+    backgroundColor: theme.ui.background.card,
     elevation: CommonStyles.elevation,
     maxHeight: UI_SIZES.screen.height * 0.25,
     flexGrow: 1,

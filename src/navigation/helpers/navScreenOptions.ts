@@ -14,7 +14,7 @@ export const standardNavScreenOptions = (props, { state }) => {
 
   return {
     header,
-    headerTintColor: 'white',
+    headerTintColor: theme.ui.background.card,
     tabBarVisible: header !== null,
     headerBackTitle: null,
     ...props,
@@ -26,7 +26,7 @@ export const standardNavScreenOptions = (props, { state }) => {
     },
     headerTitleStyle: {
       alignSelf: 'center',
-      color: 'white',
+      color: theme.ui.text.inverse,
       fontFamily: CommonStyles.primaryFontFamily,
       fontSize: 16,
       fontWeight: '400',
@@ -48,7 +48,7 @@ export const alternativeNavScreenOptions = (props, navigation) =>
     {
       headerTitleStyle: {
         alignSelf: 'center',
-        color: 'white',
+        color: theme.ui.text.inverse,
         fontFamily: CommonStyles.primaryFontFamily,
         fontSize: 16,
         fontWeight: '400',

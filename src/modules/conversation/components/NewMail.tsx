@@ -47,7 +47,7 @@ interface NewMailComponentProps extends NavigationInjectedProps {
 const styles = StyleSheet.create({
   mailPart: {
     padding: UI_SIZES.spacing.small,
-    backgroundColor: 'white',
+    backgroundColor: theme.ui.background.card,
   },
 });
 

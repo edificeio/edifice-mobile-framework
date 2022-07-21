@@ -11,7 +11,7 @@ import { Toggle } from '~/ui/forms/Toggle';
 
 const Container = styled(TouchableOpacity)({
   alignItems: 'center',
-  backgroundColor: 'white',
+  backgroundColor: theme.ui.background.card,
   borderBottomWidth: 1,
   borderColor: theme.palette.grey.cloudy,
   flexDirection: 'row',

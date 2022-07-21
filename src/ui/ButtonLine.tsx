@@ -13,7 +13,7 @@ import { Icon } from './icons/Icon';
 const Container = styled(TouchableOpacity)({
   alignItems: 'center',
   flexDirection: 'row',
-  backgroundColor: 'white',
+  backgroundColor: theme.ui.background.card,
   borderBottomWidth: 1,
   borderColor: theme.palette.grey.cloudy,
   height: 46,
@@ -43,7 +43,7 @@ export const NoTouchableContainer = styled.View({
 export const ContainerView = styled.View({
   alignItems: 'center',
   flexDirection: 'row',
-  backgroundColor: 'white',
+  backgroundColor: theme.ui.background.card,
   borderBottomWidth: 1,
   borderColor: theme.palette.grey.cloudy,
   height: 46,
@@ -55,7 +55,7 @@ export const ContainerView = styled.View({
 export const ContainerTextInput = styled.TextInput({
   alignItems: 'center',
   flexDirection: 'row',
-  backgroundColor: 'white',
+  backgroundColor: theme.ui.background.card,
   borderBottomWidth: 1,
   borderColor: theme.palette.grey.cloudy,
   height: 46,

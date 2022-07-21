@@ -112,7 +112,7 @@ const IconButtonModule = ({ disabled, icon, color, text, onPress, nbModules }: I
       onPress={onPress}
       style={[styles.gridButton, disabled ? styles.gridButtonDefaultColor : { backgroundColor: color }]}>
       <View style={[styles.viewButton, nbModules === 4 ? styles.gridButtonAllModules : styles.gridButtonLineModules]}>
-        <Icon size={20} color="white" name={icon} />
+        <Icon size={20} color={theme.ui.text.inverse} name={icon} />
         <Text style={styles.gridButtonText}>{text}</Text>
       </View>
     </TouchableOpacity>

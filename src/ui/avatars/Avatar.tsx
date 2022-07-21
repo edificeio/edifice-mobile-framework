@@ -148,7 +148,7 @@ const VeryLargeImage = props => {
 };
 
 const smallImageStyle = {
-  borderColor: 'white',
+  borderColor: theme.palette.grey.white,
   borderWidth: 1,
 };
 

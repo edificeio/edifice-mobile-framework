@@ -1,6 +1,7 @@
 import styled from '@emotion/native';
 import { ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -21,7 +22,7 @@ export const BubbleStyle = styled.View<{
     shadowRadius: CommonStyles.shadowRadius,
   },
   ({ my, style }): ViewStyle => ({
-    backgroundColor: my ? CommonStyles.iconColorOn : 'white',
+    backgroundColor: my ? CommonStyles.iconColorOn : theme.ui.background.card,
     ...(style as ViewStyle),
   }),
 );
@@ -43,7 +44,7 @@ export const BubbleScrollStyle = styled.ScrollView<{
     shadowRadius: CommonStyles.shadowRadius,
   },
   ({ my, style }): ViewStyle => ({
-    backgroundColor: my ? CommonStyles.iconColorOn : 'white',
+    backgroundColor: my ? CommonStyles.iconColorOn : theme.ui.background.card,
     ...(style as ViewStyle),
   }),
 );

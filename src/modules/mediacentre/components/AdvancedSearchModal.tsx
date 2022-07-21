@@ -233,7 +233,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         <View style={styles.headerContainer}>
           <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
           <TouchableOpacity onPress={props.closeModal}>
-            <Icon name="close" color="white" size={24} />
+            <Icon name="close" color={theme.ui.text.inverse} size={24} />
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">

@@ -102,7 +102,7 @@ export const UserCard = ({
     <WrapperComponent
       style={{
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: theme.ui.background.card,
         flex: 0,
         flexDirection: 'row',
         flexGrow: 0,
@@ -118,7 +118,7 @@ export const UserCard = ({
         {canEdit ? renderActions(hasAvatar, onChangeAvatar, onDeleteAvatar) : null}
         {updatingAvatar ? (
           <Loading
-            customColor="white"
+            customColor={theme.palette.grey.white}
             customStyle={{ position: 'absolute', paddingTop: UI_SIZES.spacing.minor, paddingLeft: UI_SIZES.spacing.tiny }}
           />
         ) : null}

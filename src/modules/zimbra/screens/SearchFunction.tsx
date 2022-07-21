@@ -88,7 +88,7 @@ export class SearchContainer extends React.PureComponent<SearchProps, SearchStat
             <FakeHeader_Container>
               <FakeHeader_Row style={styles.headerRow}>
                 <View style={styles.searchContainer}>
-                  <Icon name="search2" size={20} color="white" style={styles.searchIcon} />
+                  <Icon name="search2" size={20} color={theme.ui.text.inverse} style={styles.searchIcon} />
                   <Input value={this.state.searchText} onChange={text => this.setState({ searchText: text })} />
                 </View>
                 <HeaderRight>

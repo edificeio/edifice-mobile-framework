@@ -1,6 +1,7 @@
 import styled from '@emotion/native';
 import NativeModal from 'react-native-modal';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CommonStyles } from '~/styles/common/styles';
 import { LightP } from '~/ui/Typography';
@@ -8,13 +9,13 @@ import { LightP } from '~/ui/Typography';
 export const ModalBox = styled(NativeModal)({
   alignItems: 'stretch',
   // debug below
-  // backgroundColor: "red"
+  // backgroundColor: theme.palette.complementary.red.regular
 });
 
 export const ModalContent = styled.View({
   alignItems: 'center',
   alignSelf: 'center',
-  backgroundColor: 'white',
+  backgroundColor: theme.ui.background.card,
   borderRadius: 4,
   elevation: CommonStyles.elevation,
   flex: 0,

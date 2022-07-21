@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
+import theme from '~/app/theme';
 import { TextBold } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
@@ -51,7 +52,7 @@ const selectedStyle = {
   borderColor: CommonStyles.grey,
   borderWidth: 2,
   borderStyle: 'solid',
-  backgroundColor: 'white',
+  backgroundColor: theme.ui.background.card,
 } as ViewStyle;
 
 const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {

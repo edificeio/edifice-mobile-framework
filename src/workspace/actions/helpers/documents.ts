@@ -217,7 +217,7 @@ export const uploadDocumentAction =
 //           Toast.show(I18n.t("workspace-quota-overflowText"), {
 //             position: Toast.position.BOTTOM,
 //             mask: false,
-//             containerStyle: { width: "95%", backgroundColor: "black" },
+//             containerStyle: { width: "95%", backgroundColor: theme.palette.grey.black },
 //           });
 //         };
 //       })

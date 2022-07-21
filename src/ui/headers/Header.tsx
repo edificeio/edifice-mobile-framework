@@ -99,7 +99,7 @@ export const CenterPanel = styled(TouchableOpacity)({
 });
 
 export const AppTitle = styled.Text({
-  color: 'white',
+  color: theme.ui.text.inverse,
   fontFamily: CommonStyles.primaryFontFamily,
   fontWeight: '400',
   fontSize: 16,
@@ -111,7 +111,7 @@ export const AppTitle = styled.Text({
 
 export const HeaderAction = styled.Text(
   {
-    color: 'white',
+    color: theme.ui.text.inverse,
     fontFamily: CommonStyles.primaryFontFamily,
     fontWeight: '400',
     flex: 1,
@@ -127,7 +127,7 @@ export const HeaderAction = styled.Text(
 
 export const Title = styled.Text<{ smallSize?: boolean }>(
   {
-    color: 'white',
+    color: theme.ui.text.inverse,
     fontFamily: CommonStyles.primaryFontFamily,
     fontWeight: '400',
     textAlign: 'left',
@@ -139,7 +139,7 @@ export const Title = styled.Text<{ smallSize?: boolean }>(
 );
 
 export const SubTitle = styled.Text({
-  color: 'white',
+  color: theme.ui.text.inverse,
   fontFamily: CommonStyles.primaryFontFamily,
   fontWeight: '400',
   fontSize: 12,

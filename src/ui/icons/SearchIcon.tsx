@@ -1,6 +1,9 @@
-import React from "react";
-import { Icon } from "./Icon"
+import React from 'react';
 
-export const SearchIcon = () => <Icon size={22} name={"search"} color={"white"} />
+import theme from '~/app/theme';
 
-export const CloseIcon = () => <Icon size={22} name={"close"} color={"white"} />
+import { Icon } from './Icon';
+
+export const SearchIcon = () => <Icon size={22} name={'search'} color={theme.ui.text.inverse} />;
+
+export const CloseIcon = () => <Icon size={22} name={'close'} color={theme.ui.text.inverse} />;

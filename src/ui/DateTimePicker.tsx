@@ -4,6 +4,7 @@ import moment from 'moment';
 import React, { useState } from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: UI_SIZES.spacing.minor,
-    backgroundColor: 'white',
+    backgroundColor: theme.ui.background.card,
     borderRadius: 5,
   },
   text: {

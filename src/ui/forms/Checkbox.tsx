@@ -24,7 +24,7 @@ const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
 
 export const Checkbox = ({ checked, onUncheck, onCheck }: { checked: boolean; onUncheck?: () => void; onCheck?: () => void }) => (
   <TapCircle onPress={() => (checked ? onUncheck && onUncheck() : onCheck && onCheck())} checked={checked}>
-    <Icon size={17} name="checked" color="white" />
+    <Icon size={17} name="checked" color={theme.ui.text.inverse} />
   </TapCircle>
 );
 

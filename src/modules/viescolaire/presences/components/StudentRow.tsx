@@ -107,12 +107,12 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
     <View style={styles.swipeButtons}>
       <View style={[styles.swipeButton, styles.purple]}>
         <TouchableOpacity onPress={callBack1}>
-          <Icon color="white" size={28} name="access_time" />
+          <Icon color={theme.ui.text.inverse} size={28} name="access_time" />
         </TouchableOpacity>
       </View>
       <View style={[styles.swipeButton, styles.blue]}>
         <TouchableOpacity onPress={callBack2}>
-          <Icon color="white" size={28} name="directions_walk" />
+          <Icon color={theme.ui.text.inverse} size={28} name="directions_walk" />
         </TouchableOpacity>
       </View>
     </View>,

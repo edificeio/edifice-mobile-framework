@@ -202,11 +202,11 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             placeholder={I18n.t('School')}
                             value={structureName}
                             style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
-                            inputStyle={{ color: 'white' }}
+                            inputStyle={{ color: theme.ui.text.inverse }}
                           />
                           <Icon
                             name="arrow_down"
-                            color={structureName ? 'white' : 'black'}
+                            color={structureName ? theme.ui.text.inverse : 'black'}
                             style={[
                               { marginTop: UI_SIZES.spacing.small },
                               showStructurePicker && { transform: [{ rotate: '180deg' }] },

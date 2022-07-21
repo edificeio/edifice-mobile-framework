@@ -330,19 +330,24 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     return isTrash ? (
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={this.restoreSelectedMails}>
-          <Icon name="delete-restore" size={24} color="white" style={styles.headerIconsSpace} />
+          <Icon name="delete-restore" size={24} color={theme.ui.text.inverse} style={styles.headerIconsSpace} />
         </TouchableOpacity>
         <TouchableOpacity onPress={this.deleteSelectedMails}>
-          <Icon name="delete" size={24} color="white" style={styles.headerIconsSpace} />
+          <Icon name="delete" size={24} color={theme.ui.text.inverse} style={styles.headerIconsSpace} />
         </TouchableOpacity>
       </View>
     ) : (
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={this.markSelectedMailsAsUnread}>
-          <Icon name={this.checkMailReadState() ? 'email' : 'email-open'} size={24} color="white" style={styles.headerIconsSpace} />
+          <Icon
+            name={this.checkMailReadState() ? 'email' : 'email-open'}
+            size={24}
+            color={theme.ui.text.inverse}
+            style={styles.headerIconsSpace}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={this.showMenu}>
-          <Icon name="more_vert" size={24} color="white" style={styles.headerIconsSpace} />
+          <Icon name="more_vert" size={24} color={theme.ui.text.inverse} style={styles.headerIconsSpace} />
         </TouchableOpacity>
       </View>
     );

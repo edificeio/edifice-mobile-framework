@@ -42,7 +42,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.15,
                   elevation: 7,
-                  backgroundColor: 'white',
+                  backgroundColor: theme.ui.background.card,
                   borderRadius: 3,
                 }}>
                 <Image source={{ uri: item.uri }} style={{ width: 110, height: 110, borderRadius: 3 }} resizeMode="cover" />

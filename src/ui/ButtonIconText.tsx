@@ -1,6 +1,6 @@
 import styled from '@emotion/native';
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ColorValue, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -37,12 +37,12 @@ interface IButtonTextIconProps {
   size?: number;
   style?: any;
   children?: any;
-  color?: string;
+  color?: string | ColorValue;
   colorText?: string;
   onPress: () => any;
 }
 
-export const ButtonIcon = ({ name, size, style, color = 'white', onPress }: IButtonTextIconProps) => (
+export const ButtonIcon = ({ name, size, style, color = theme.ui.text.inverse, onPress }: IButtonTextIconProps) => (
   <TouchableOpacity onPress={onPress} style={[styles.buttonWithShadow, style]}>
     <Icon color={color} size={size ? size : layoutSize.LAYOUT_25} name={name} />
   </TouchableOpacity>

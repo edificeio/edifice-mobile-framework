@@ -33,7 +33,7 @@ const ViewEmpty = styled.View({
 });
 
 const Text = styled.Text({
-  color: 'white',
+  color: theme.ui.text.inverse,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 10,
   fontWeight: Weight.SemiBold,

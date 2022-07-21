@@ -113,8 +113,10 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   private renderOption = (id, displayName, iconName) => {
     const selected = this.state.selectedFolder === id;
     const touchableStyle = selected ? [styles.opacity, styles.selectedItem] : styles.opacity;
-    const textStyle = selected ? { color: 'white', ...TextSizeStyle.SlightBig } : { ...TextSizeStyle.SlightBig };
-    const iconStyle = selected ? { color: 'white', margin: UI_SIZES.spacing.small } : { margin: UI_SIZES.spacing.small };
+    const textStyle = selected ? { color: theme.ui.text.inverse, ...TextSizeStyle.SlightBig } : { ...TextSizeStyle.SlightBig };
+    const iconStyle = selected
+      ? { color: theme.ui.text.inverse, margin: UI_SIZES.spacing.small }
+      : { margin: UI_SIZES.spacing.small };
     return (
       <>
         <TouchableOpacity
