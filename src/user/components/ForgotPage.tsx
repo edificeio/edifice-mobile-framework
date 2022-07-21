@@ -186,13 +186,13 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             paddingRight: UI_SIZES.spacing.small,
-                            backgroundColor: structureName ? CommonStyles.primary : undefined,
+                            backgroundColor: structureName ? theme.palette.complementary.blue.regular : undefined,
                             borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
                             borderBottomColor:
                               isError && !editing
-                                ? CommonStyles.errorColor
+                                ? theme.palette.status.failure
                                 : showStructurePicker
-                                ? CommonStyles.iconColorOn
+                                ? theme.palette.complementary.blue.regular
                                 : CommonStyles.entryfieldBorder,
                           }}>
                           <TextInputLine

@@ -101,7 +101,7 @@ const styleConstant = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   shadow: {
-    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
       width: 0,

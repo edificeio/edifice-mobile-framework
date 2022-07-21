@@ -85,14 +85,14 @@ export const RightPanel = styled.View({
 
 export const Content = styled.Text<{ nb: number }>(
   {
-    color: CommonStyles.iconColorOff,
-    fontFamily: CommonStyles.primaryFontFamily,
+    color: theme.ui.text.light,
+    fontFamily: 'OpenSans-Regular',
     fontSize: layoutSize.LAYOUT_12,
     fontWeight: Weight.Light,
     marginTop: UI_SIZES.spacing.small,
   },
   ({ nb = 0 }) => ({
-    color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,
+    color: nb > 0 ? theme.ui.text.regular : theme.ui.text.light,
     fontWeight: nb > 0 ? Weight.Normal : Weight.Light,
   }),
 );

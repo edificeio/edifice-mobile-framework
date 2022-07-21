@@ -15,7 +15,7 @@ export const BubbleStyle = styled.View<{
     marginTop: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
-    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
       width: 0,
@@ -40,7 +40,7 @@ export const BubbleScrollStyle = styled.ScrollView<{
     marginTop: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
-    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
       width: 0,

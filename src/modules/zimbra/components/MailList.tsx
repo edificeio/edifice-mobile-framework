@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   shadow: {
     elevation: 4,
-    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
       width: 0,

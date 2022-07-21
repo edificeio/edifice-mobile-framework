@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     elevation: 20,
-    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
       width: 0,
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
     elevation: 20,
-    shadowColor: 'rgba(0, 0, 0, 1.0)',
+    shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
       width: 0,

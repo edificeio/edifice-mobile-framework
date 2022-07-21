@@ -20,7 +20,7 @@ export const ModalContent = styled.View({
   flex: 0,
   justifyContent: 'center',
   paddingTop: UI_SIZES.spacing.large,
-  shadowColor: 'rgba(0, 0, 0, 1.0)',
+  shadowColor: theme.ui.shadowColor,
   shadowOffset: {
     height: 2,
     width: 0,
