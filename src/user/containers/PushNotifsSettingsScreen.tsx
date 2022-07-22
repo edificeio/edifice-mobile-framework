@@ -32,6 +32,7 @@ import {
 } from '~/framework/modules/timelinev2/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import Notifier from '~/framework/util/notifier';
+import { shallowEqual } from '~/framework/util/object';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
@@ -83,7 +84,17 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     const { navigation, timelineState, handleUpdatePushNotifSettings } = this.props;
     const { loadingState, pendingPrefsChanges } = this.state;
     const settings = timelineState.notifSettings.pushNotifsSettings;
-    const hasPendingPrefsChanges = Object.keys(pendingPrefsChanges).length > 0;
+    const type = navigation.getParam('type')!;
+    const settingsForType = getPushNotifsSettingsByType(this.props.timelineState)[type] || {};
+    const defaultsForType = getDefaultPushNotifsSettingsByType(this.props.timelineState)[type] || {};
+    const initialItems = deepmerge<IPushNotifsSettings>(defaultsForType, settingsForType);
+    let items = initialItems;
+    const prefKeysArray = Object.keys(items);
+    const pendingForType = Object.fromEntries(
+      Object.entries(this.state.pendingPrefsChanges).filter(([k, v]) => prefKeysArray.includes(k)),
+    );
+    items = deepmerge<IPushNotifsSettings>(items, pendingForType);
+    const arePrefsUnchanged = shallowEqual(initialItems, items);
     const navBarInfo = {
       title: I18n.t('directory-notificationsTitle'),
       ...(navigation.getParam('type')
@@ -91,7 +102,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
             right: (
               <HeaderAction
                 text={I18n.t('common.apply')}
-                disabled={!hasPendingPrefsChanges || [PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)}
+                disabled={arePrefsUnchanged}
                 onPress={() => {
                   this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
                   handleUpdatePushNotifSettings(pendingPrefsChanges).then(() => {
@@ -109,7 +120,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
         navigation={navigation}
         navBarWithBack={navBarInfo}
         onBack={() => {
-          if (hasPendingPrefsChanges && ![PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)) {
+          if (!arePrefsUnchanged) {
             Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
               {
                 text: I18n.t('common.cancel'),
