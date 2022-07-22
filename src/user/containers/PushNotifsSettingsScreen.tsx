@@ -4,7 +4,7 @@
 import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { NavigationActions, NavigationInjectedProps, StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -16,6 +16,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -85,13 +86,19 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     const hasPendingPrefsChanges = Object.keys(pendingPrefsChanges).length > 0;
     const navBarInfo = {
       title: I18n.t('directory-notificationsTitle'),
-      ...([PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)
+      ...(navigation.getParam('type')
         ? {
-            left: (
-              <LoadingIndicator
-                small
-                customColor={theme.ui.text.inverse}
-                customStyle={{ justifyContent: 'center', paddingHorizontal: UI_SIZES.spacing.big }}
+            right: (
+              <HeaderAction
+                text={I18n.t('common.apply')}
+                disabled={!hasPendingPrefsChanges || [PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)}
+                onPress={() => {
+                  this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
+                  handleUpdatePushNotifSettings(pendingPrefsChanges).then(() => {
+                    this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsSettingsLoadingState.DONE });
+                    navigation.dispatch(NavigationActions.back());
+                  });
+                }}
               />
             ),
           }
@@ -100,22 +107,24 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     return (
       <PageView
         navigation={navigation}
-        {...([PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)
-          ? { navBar: navBarInfo }
-          : {
-              navBarWithBack: navBarInfo,
-              onBack: () => {
-                if (hasPendingPrefsChanges) {
-                  this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
-                  handleUpdatePushNotifSettings(pendingPrefsChanges).then(() => {
-                    this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsSettingsLoadingState.DONE });
-                    navigation.dispatch(NavigationActions.back());
-                  });
-                } else {
-                  return true;
-                }
+        navBarWithBack={navBarInfo}
+        onBack={() => {
+          if (hasPendingPrefsChanges && ![PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)) {
+            Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+              {
+                text: I18n.t('common.cancel'),
+                style: 'cancel',
               },
-            })}>
+              {
+                text: I18n.t('common.quit'),
+                style: 'destructive',
+                onPress: () => navigation.dispatch(NavigationActions.back()),
+              },
+            ]);
+          } else {
+            return true;
+          }
+        }}>
         <Notifier id="timeline/push-notifications" />
         {[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(loadingState) ? (
           <LoadingIndicator />
