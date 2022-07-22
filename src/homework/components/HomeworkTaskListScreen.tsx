@@ -275,7 +275,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                   }`,
                 )}
                 buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createActivity') : undefined}
-                buttonUrl="/homeworks"
+                buttonUrl={`/homeworks#/view-homeworks/${diaryId}`}
                 buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
               />
             ) : null
