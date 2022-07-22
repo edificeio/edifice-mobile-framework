@@ -783,7 +783,7 @@
       "USERBOOK_MOOD": "Moods",
       "USERBOOK_MOTTO": "Mottos",
       "WIKI": "Wiki",
-      "WORKSPACE": "Filespace"
+      "WORKSPACE": "Workspace"
     },
     "blogPostDetailsScreen": {
       "title": "Blog"
@@ -932,7 +932,7 @@
         "0": "Welcome to your mobile app, which works as an extension of your virtual learning environment!",
         "1": "Get real-time notifications of the latest news.",
         "2": "Communicate more easily with Mailbox.",
-        "3": "Upload or download your documents to Filespace."
+        "3": "Upload or download your documents to Workspace."
       }
     },
     "pushNotifsSettingsScreen": {
