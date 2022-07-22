@@ -12,7 +12,7 @@ import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandle
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
-import { Filter, IFile, actionTypes } from '~/modules/workspace/reducer';
+import { Filter, IFile, IFolder, actionTypes } from '~/modules/workspace/reducer';
 import { factoryRootFolder, workspaceService } from '~/modules/workspace/service';
 
 /**
@@ -71,9 +71,18 @@ export const fetchWorkspaceFilesAction =
 export const workspaceListFoldersActionsCreators = createAsyncActionCreators(actionTypes.listFolders);
 export const listWorkspaceFoldersAction = () => async (dispatch, getState) => {
   try {
+    const folders: IFolder[] = [
+      {
+        id: 'owner',
+        name: I18n.t('owner'),
+        parentId: '0',
+        sortNo: 'owner',
+        children: [],
+      },
+    ];
     const session = getUserSession();
     dispatch(workspaceListFoldersActionsCreators.request());
-    const folders = await workspaceService.folders.list(session);
+    folders[0].children = await workspaceService.folders.list(session);
     dispatch(workspaceListFoldersActionsCreators.receipt(folders));
     return folders;
   } catch (e) {

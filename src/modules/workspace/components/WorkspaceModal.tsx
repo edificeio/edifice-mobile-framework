@@ -6,11 +6,11 @@ import theme from '~/app/theme';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSizeStyle } from '~/framework/components/text';
-import { IFile, IFolder } from '~/modules/workspace/reducer';
+import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
 import { FlatButton } from '~/ui';
-import FolderSelector from '~/ui/ConfirmDialog/select';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
+import { WorkspaceFolderSelector } from './WorkspaceFolderSelector';
 
 const styles = StyleSheet.create({
   titleText: {
@@ -61,6 +61,7 @@ export interface IWorkspaceModalEventProps {
 }
 
 interface IWorkspaceModalProps {
+  filter: Filter;
   folderTree: IFolder[];
   modalBoxRef: any;
   parentId: string;
@@ -91,12 +92,22 @@ const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => 
   }
 };
 
-export const WorkspaceModal = ({ folderTree, modalBoxRef, parentId, selectedFiles, type, onAction }: IWorkspaceModalProps) => {
+export const WorkspaceModal = ({
+  filter,
+  folderTree,
+  modalBoxRef,
+  parentId,
+  selectedFiles,
+  type,
+  onAction,
+}: IWorkspaceModalProps) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [fileExtension, setFileExtension] = useState<string>('');
   const [destination, setDestination] = useState<string>('');
   const settings = getModalSettings(type);
-  const isDisabled = (settings.hasInput && inputValue === '') || (settings.hasDestinationSelector && destination === parentId);
+  const isDisabled =
+    (settings.hasInput && inputValue === '') ||
+    (settings.hasDestinationSelector && filter === Filter.OWNER && destination === parentId);
   const action = () => onAction(selectedFiles, inputValue + fileExtension, destination);
 
   useEffect(() => {
@@ -120,11 +131,11 @@ export const WorkspaceModal = ({ folderTree, modalBoxRef, parentId, selectedFile
         <View>
           <Text style={styles.titleText}>{settings.title}</Text>
           {settings.hasDestinationSelector ? (
-            <FolderSelector
+            <WorkspaceFolderSelector
               data={folderTree}
-              defaultSelectedId={[parentId]}
+              defaultValue={filter === Filter.OWNER ? parentId : 'owner'}
               excludeData={selectedFiles}
-              onPress={(id, isParentOfSelection) => setDestination(id)}
+              onChangeValue={value => setDestination(value)}
             />
           ) : null}
           {settings.hasFileList ? (

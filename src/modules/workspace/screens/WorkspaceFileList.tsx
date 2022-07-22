@@ -114,7 +114,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
     setDropdownVisible(!isDropdownVisible);
   };
 
-  const openModal = async (type: WorkspaceModalType) => {
+  const openModal = (type: WorkspaceModalType) => {
     setModalType(type);
     modalBoxRef?.current?.doShowModal();
   };
@@ -267,6 +267,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
           onTapOutside={showDropdown}
         />
         <WorkspaceModal
+          filter={props.filter}
           folderTree={props.folderTree.data}
           modalBoxRef={modalBoxRef}
           parentId={props.parentId}
