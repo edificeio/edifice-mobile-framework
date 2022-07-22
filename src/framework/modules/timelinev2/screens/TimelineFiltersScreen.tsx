@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Alert, Text, TouchableOpacity } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -17,6 +17,7 @@ import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
+import { shallowEqual } from '~/framework/util/object';
 
 // TYPES ==========================================================================================
 
@@ -48,15 +49,37 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
 
   render() {
     const { selectedFilters } = this.state;
-    const noneSet = !Object.values(selectedFilters).find(value => value);
+    const { navigation, notifFilterSettings } = this.props;
+    const areFiltersUnchanged = shallowEqual(notifFilterSettings, selectedFilters);
     return (
       <PageView
-        navigation={this.props.navigation}
+        navigation={navigation}
         navBarWithBack={{
           right: (
-            <HeaderAction text={I18n.t('common.apply')} disabled={noneSet} onPress={() => this.doSetFilters(selectedFilters)} />
+            <HeaderAction
+              text={I18n.t('common.apply')}
+              disabled={areFiltersUnchanged}
+              onPress={() => this.doSetFilters(selectedFilters)}
+            />
           ),
           title: I18n.t('timeline.filtersScreen.title'),
+        }}
+        onBack={() => {
+          if (!areFiltersUnchanged) {
+            Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+              {
+                text: I18n.t('common.cancel'),
+                style: 'cancel',
+              },
+              {
+                text: I18n.t('common.quit'),
+                style: 'destructive',
+                onPress: () => navigation.navigate('timeline'),
+              },
+            ]);
+          } else {
+            return true;
+          }
         }}>
         {this.renderList()}
       </PageView>
