@@ -149,6 +149,7 @@
   "common": {
     "all": "Todo",
     "apply": "Aplicar",
+    "appName": "",
     "by": "Por:",
     "cancel": "Cancelar",
     "close": "Cerrar",
@@ -924,7 +925,6 @@
       "userCharter": "Política de uso"
     },
     "onboardingScreen": {
-      "appName": "",
       "discover": "Descubrir",
       "discoverLink": "https://opendigitaleducation.com/index.php?lang=es",
       "joinMyNetwork": "Acceder a mi red",

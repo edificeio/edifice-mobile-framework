@@ -149,6 +149,7 @@
   "common": {
     "all": "All",
     "apply": "Apply",
+    "appName": "",
     "by": "By:",
     "cancel": "Cancel",
     "close": "Close",
@@ -924,7 +925,6 @@
       "userCharter": "User Agreement"
     },
     "onboardingScreen": {
-      "appName": "",
       "discover": "Learn more",
       "discoverLink": "https://opendigitaleducation.com",
       "joinMyNetwork": "Join my network",
