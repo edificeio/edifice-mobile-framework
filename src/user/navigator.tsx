@@ -8,6 +8,7 @@ import PushNotifsSettingsScreen from './containers/PushNotifsSettingsScreen';
 import RelativesPage from './containers/RelativesPage';
 import StructuresPage from './containers/StructuresPage';
 import UserPage from './containers/UserPage';
+import WhoAreWeScreen from './containers/WhoAreWeScreen';
 
 export default createStackNavigator(
   {
@@ -17,6 +18,10 @@ export default createStackNavigator(
 
     NotifPrefs: {
       screen: PushNotifsSettingsScreen,
+    },
+
+    WhoAreWe: {
+      screen: WhoAreWeScreen,
     },
 
     LegalNotice: {

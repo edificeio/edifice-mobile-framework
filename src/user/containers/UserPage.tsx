@@ -191,6 +191,9 @@ export class UserPage extends React.PureComponent<
         signedURISource && signedURISource.uri
       }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
+    const appName = I18n.t('common.appName');
+    const isAppOnePocket = appName.includes('ONE Pocket');
+    const isPlatformSAASOne = session.platform.name === 'prod-one' || session.platform.name === 'preprod-one';
 
     return (
       <PageView
@@ -233,13 +236,14 @@ export class UserPage extends React.PureComponent<
           ) : null}
           <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
           <ContainerSpacer />
+          {isAppOnePocket && isPlatformSAASOne ? (
+            <>
+              <ButtonLine title={'directory-whoAreWeTitle'} onPress={() => this.props.navigation.navigate('WhoAreWe')} />
+              <ContainerSpacer />
+            </>
+          ) : null}
           <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
           <ContainerSpacer />
-          {/* <ButtonLine
-          title={"directory-legalNoticeTitle"}
-          onPress={() => this.props.navigation.navigate("LegalNotice")}
-        />
-        <ContainerSpacer /> */}
           <ContainerView>
             <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
               {I18n.t('version-number')} {DeviceInfo.getVersion()}

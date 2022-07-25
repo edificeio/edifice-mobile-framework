@@ -33,8 +33,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
   render() {
     const { navigation, dispatch } = this.props;
     const isPlatformIos = Platform.OS === 'ios';
-    const appName = I18n.t('user.onboardingScreen.appName');
-    const isOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
+    const appName = I18n.t('common.appName');
+    const isAppOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
     const svgSize = UI_SIZES.screen.width * 0.8;
     const imageStyle = {
       width: svgSize,
@@ -61,7 +61,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
               height: 80,
               lineHeight: undefined,
             }}>
-            {I18n.t('user.onboardingScreen.appName').toUpperCase()}
+            {I18n.t('common.appName').toUpperCase()}
           </H1>
           <Swiper
             autoplay
@@ -110,7 +110,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
             />
             {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
-            {isPlatformIos && isOneOrNeo ? null : (
+            {isPlatformIos && isAppOneOrNeo ? null : (
               <ActionButton
                 text={I18n.t('user.onboardingScreen.discover')}
                 type="secondary"

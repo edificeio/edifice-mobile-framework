@@ -150,6 +150,7 @@
     "accept": "Accepter",
     "all": "Tous",
     "apply": "Appliquer",
+    "appName": "",
     "by": "Par :",
     "cancel": "Annuler",
     "close": "Fermer",
@@ -446,6 +447,7 @@
   "directory-notificationsTitle": "Notifications mobile",
   "directory-relativesTitle": "Parent(s)",
   "directory-structuresTitle": "Établissement(s) et classe(s)",
+  "directory-whoAreWeTitle": "Qui sommes-nous ?",
   "download": "Télécharger",
   "download-all": "Tout télécharger",
   "download-confirm": "Souhaitez-vous télécharger\n{{name}}{{size}} ?",
@@ -905,6 +907,10 @@
   "tryagain": "Réessayer",
   "unknown-user": "Utilisateur inconnu",
   "user": {
+    "whoAreWeScreen": {
+      "description": "Éditée par Open Digital Education, NEO Pocket est l'appli mobile du premier réseau social éducatif conçu spécialement pour les collèges et les lycées. L'idée ? Rapprocher ceux qui enseignent, apprennent et contribuent à l'éducation. Simplifier la vie des enseignants en offrant un outil sécurisé pour collaborer, communiquer avec les familles et créer des activités pédagogiques. Rendre l'élève acteur de son apprentissage et favoriser sa créativité comme sa réussite scolaire !",
+      "reviewApp": "Evaluez votre app ⭐"
+    },
     "legalNoticeScreen": {
       "cgu": "CGU",
       "cookies": "Notice cookies",
@@ -912,7 +918,6 @@
       "userCharter": "Charte d'utilisation"
     },
     "onboardingScreen": {
-      "appName": "",
       "discover": "Découvrir",
       "discoverLink": "https://opendigitaleducation.com/index.php?lang=fr",
       "joinMyNetwork": "Rejoindre mon réseau",
