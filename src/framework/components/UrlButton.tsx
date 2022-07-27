@@ -29,7 +29,3 @@ export const UrlButton = ({ text, url }: UrlButtonProps) => {
     </TouchableOpacity>
   );
 };
-
-//TODO:
-//⚪️ insert correct icon
-//⚪️ manage onPress

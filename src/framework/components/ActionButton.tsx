@@ -11,14 +11,26 @@ import { transformedSrc } from '~/infra/oauth';
 export interface ActionButtonProps {
   text: string;
   iconName?: string;
+  showIcon?: boolean;
   url?: string;
+  showConfirmation?: boolean;
   action?: () => void;
   disabled?: boolean;
   type?: 'primary' | 'secondary';
   style?: StyleProp<ViewStyle>;
 }
 
-export const ActionButton = ({ text, iconName, url, action, disabled, type, style }: ActionButtonProps) => {
+export const ActionButton = ({
+  text,
+  iconName,
+  showIcon = true,
+  url,
+  showConfirmation = true,
+  action,
+  disabled,
+  type,
+  style,
+}: ActionButtonProps) => {
   const Component = disabled ? View : TouchableOpacity;
   const viewStyle = {
     primary: {
@@ -53,7 +65,7 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
                 action();
               }
               if (url) {
-                openUrl(transformedSrc(url));
+                openUrl(transformedSrc(url), undefined, undefined, showConfirmation);
               }
             },
           }
@@ -61,7 +73,7 @@ export const ActionButton = ({ text, iconName, url, action, disabled, type, styl
       <TextSemiBold numberOfLines={1} style={[ActionButton.Style.textCommon, textStyle[type ?? 'primary']]}>
         {text}
       </TextSemiBold>
-      {url || iconName ? (
+      {showIcon && (url || iconName) ? (
         <Picture
           type="NamedSvg"
           name={iconName || 'pictos-external-link'}

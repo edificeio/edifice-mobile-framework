@@ -17,16 +17,11 @@ export interface OpenUrlCustomLabels {
   error?: string;
 }
 
-export async function openUrl(url?: string, customLabels?: OpenUrlCustomLabels, generateException?: boolean): Promise<void>;
-export async function openUrl(
-  getUrl?: (session: IUserSession) => string | false | undefined | Promise<string | false | undefined>,
-  customLabels?: OpenUrlCustomLabels,
-  generateException?: boolean,
-): Promise<void>;
 export async function openUrl(
   urlOrGetUrl?: string | ((session: IUserSession) => string | false | undefined | Promise<string | false | undefined>),
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
+  showConfirmation: boolean = true,
 ): Promise<void> {
   try {
     const session = getUserSession();
@@ -57,32 +52,35 @@ export async function openUrl(
       // DO nothing. We just don't have customToken.
     }
     const finalUrl: string = url;
-    // 2. Show confirmation
-    Alert.alert(
-      customLabels?.title ?? I18n.t('common.redirect.browser.title'),
-      customLabels?.message ?? I18n.t('common.redirect.browser.message'),
-      [
-        {
-          text: customLabels?.cancel ?? I18n.t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: customLabels?.continue ?? I18n.t('common.continue'),
-          onPress: async () => {
-            const isSupported = await Linking.canOpenURL(finalUrl);
-            if (isSupported === true) {
-              await Linking.openURL(finalUrl);
-            } else {
-              throw new Error('openUrl : url provided is not supported');
-            }
+    // 2. Show confirmation or open url directly
+    const verifyAndOpenUrl = async () => {
+      const isSupported = await Linking.canOpenURL(finalUrl);
+      if (isSupported === true) {
+        await Linking.openURL(finalUrl);
+      } else {
+        throw new Error('openUrl : url provided is not supported');
+      }
+    };
+    if (showConfirmation) {
+      Alert.alert(
+        customLabels?.title ?? I18n.t('common.redirect.browser.title'),
+        customLabels?.message ?? I18n.t('common.redirect.browser.message'),
+        [
+          {
+            text: customLabels?.cancel ?? I18n.t('common.cancel'),
+            style: 'cancel',
           },
-          style: 'default',
+          {
+            text: customLabels?.continue ?? I18n.t('common.continue'),
+            onPress: () => verifyAndOpenUrl(),
+            style: 'default',
+          },
+        ],
+        {
+          cancelable: true,
         },
-      ],
-      {
-        cancelable: true,
-      },
-    );
+      );
+    } else verifyAndOpenUrl();
   } catch (e) {
     Alert.alert(customLabels?.error ?? I18n.t('common.redirect.browser.error'));
     if (generateException) throw e;
