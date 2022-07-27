@@ -355,7 +355,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
         )}
         ListEmptyComponent={renderEmpty()}
         ListHeaderComponent={hasSeveralChildren ? renderChildrenList() : <View style={{ height: UI_SIZES.spacing.medium }} />}
-        ListFooterComponent={loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
+        ListFooterComponent={loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withVerticalMargins /> : null}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />}
         contentContainerStyle={{ flexGrow: 1 }}
         onEndReached={() => (isAllDataLoaded ? null : fetchNextPage())}

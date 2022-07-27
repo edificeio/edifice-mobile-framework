@@ -186,7 +186,9 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
           />
         }
         ListFooterComponent={
-          this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? <LoadingIndicator /> : null
+          this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? (
+            <LoadingIndicator withVerticalMargins />
+          ) : null
         }
         ListHeaderComponent={<View style={{ height: pageGutterSize }} />}
         onEndReached={() => this.doNextPage()}

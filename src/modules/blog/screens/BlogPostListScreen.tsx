@@ -262,7 +262,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         ListHeaderComponent={<View style={{ height: UI_SIZES.spacing.medium }} />}
         ListFooterComponent={
           <>
-            {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withMargins /> : null}
+            {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withVerticalMargins /> : null}
             <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
           </>
         }

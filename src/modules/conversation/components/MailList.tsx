@@ -6,11 +6,12 @@ import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
+import { PageView, pageGutterSize } from '~/framework/components/page';
 import { Trackers } from '~/framework/util/tracker';
 import MailListItem from '~/modules/conversation/components/MailListItem';
 import CreateFolderModal from '~/modules/conversation/containers/CreateFolderModal';
@@ -386,7 +387,11 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                     this.onChangePage();
                   }
                 }}
-                ListFooterComponent={isChangingPage ? <LoadingIndicator /> : null}
+                ListFooterComponent={
+                  isChangingPage ? (
+                    <LoadingIndicator customStyle={{ marginTop: UI_SIZES.spacing.big, marginBottom: pageGutterSize }} />
+                  ) : null
+                }
                 ListEmptyComponent={this.renderEmpty()}
               />
             )}
