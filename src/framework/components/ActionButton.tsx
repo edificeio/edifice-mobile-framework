@@ -14,6 +14,7 @@ export interface ActionButtonProps {
   showIcon?: boolean;
   url?: string;
   showConfirmation?: boolean;
+  requireSession?: boolean;
   action?: () => void;
   disabled?: boolean;
   type?: 'primary' | 'secondary';
@@ -26,6 +27,7 @@ export const ActionButton = ({
   showIcon = true,
   url,
   showConfirmation = true,
+  requireSession = true,
   action,
   disabled,
   type,
@@ -65,7 +67,7 @@ export const ActionButton = ({
                 action();
               }
               if (url) {
-                openUrl(transformedSrc(url), undefined, undefined, showConfirmation);
+                openUrl(transformedSrc(url), undefined, undefined, showConfirmation, requireSession);
               }
             },
           }

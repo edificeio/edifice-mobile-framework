@@ -115,6 +115,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                 text={I18n.t('user.onboardingScreen.discover')}
                 type="secondary"
                 url={I18n.t('user.onboardingScreen.discoverLink')}
+                requireSession={false}
               />
             )}
           </View>

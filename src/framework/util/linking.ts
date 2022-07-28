@@ -22,10 +22,11 @@ export async function openUrl(
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
   showConfirmation: boolean = true,
+  requireSession: boolean = true,
 ): Promise<void> {
   try {
     const session = getUserSession();
-    if (!session) {
+    if (requireSession && !session) {
       throw new Error('openUrl : no active session.');
     }
     // 1. compute url redirection if function provided
