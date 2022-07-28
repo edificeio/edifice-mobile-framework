@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Alert, View } from 'react-native';
+import Rate, { AndroidMarket } from 'react-native-rate';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import { ActionButton } from '~/framework/components/ActionButton';
@@ -13,10 +14,6 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 class WhoAreWeScreen extends React.PureComponent<NavigationInjectedProps<object>> {
   render() {
     const { navigation } = this.props;
-    const appReviewUrl = Platform.select({
-      ios: 'https://apps.apple.com/fr/app/one-pocket/id1450246545',
-      android: 'https://play.google.com/store/apps/details?id=com.ode.one',
-    });
     return (
       <PageView navigation={navigation} navBarWithBack={{ title: I18n.t('directory-whoAreWeTitle') }}>
         <View style={{ aspectRatio: 3 }}>
@@ -32,9 +29,21 @@ class WhoAreWeScreen extends React.PureComponent<NavigationInjectedProps<object>
           <ActionButton
             style={{ marginTop: UI_SIZES.spacing.large }}
             text={I18n.t('user.whoAreWeScreen.reviewApp')}
-            url={appReviewUrl}
-            showIcon={false}
-            showConfirmation={false}
+            action={() => {
+              const options = {
+                AppleAppID: '1450246545',
+                GooglePackageName: 'com.ode.one',
+                preferredAndroidMarket: AndroidMarket.Google,
+                preferInApp: true,
+                inAppDelay: 0,
+              };
+              Rate.rate(options, (success, error) => {
+                if (error) {
+                  Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+                  console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
+                }
+              });
+            }}
           />
         </View>
       </PageView>
