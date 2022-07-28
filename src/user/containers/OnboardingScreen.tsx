@@ -23,18 +23,36 @@ interface IOnboardingScreenProps extends NavigationInjectedProps<object> {
   dispatch: ThunkDispatch<any, any, any>;
 }
 
+export interface IOnboardingScreenState {
+  discoverButtonWidth: number;
+  joinMyNetworkButtonWidth: number;
+  measuredDiscoverButton: boolean;
+  measuredJoinMyNetworkButton: boolean;
+}
+
 // COMPONENT ======================================================================================
 
-class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
+class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnboardingScreenState> {
   // DECLARATIONS ===================================================================================
+
+  state = {
+    discoverButtonWidth: 0,
+    joinMyNetworkButtonWidth: 0,
+    measuredDiscoverButton: false,
+    measuredJoinMyNetworkButton: false,
+  };
 
   // RENDER =========================================================================================
 
   render() {
     const { navigation, dispatch } = this.props;
+    const { discoverButtonWidth, joinMyNetworkButtonWidth, measuredDiscoverButton, measuredJoinMyNetworkButton } = this.state;
+    const largestButtonWidth = Math.max(joinMyNetworkButtonWidth, discoverButtonWidth);
+    const areAllButtonsMeasured = measuredDiscoverButton && measuredJoinMyNetworkButton;
     const isPlatformIos = Platform.OS === 'ios';
     const appName = I18n.t('common.appName');
     const isAppOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
+    const hideDiscoveryButton = isPlatformIos && isAppOneOrNeo;
     const svgSize = UI_SIZES.screen.width * 0.8;
     const imageStyle = {
       width: svgSize,
@@ -107,16 +125,35 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                 }
                 navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : getLoginRouteName());
               }}
+              onLayout={e => {
+                if (!measuredJoinMyNetworkButton) {
+                  const joinMyNetworkButtonWidth = e.nativeEvent.layout.width;
+                  this.setState({ joinMyNetworkButtonWidth, measuredJoinMyNetworkButton: true });
+                }
+              }}
+              style={{ width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
             />
             {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
-            {isPlatformIos && isAppOneOrNeo ? null : (
+            {hideDiscoveryButton ? null : (
               <ActionButton
                 text={I18n.t('user.onboardingScreen.discover')}
                 type="secondary"
                 url={I18n.t('user.onboardingScreen.discoverLink')}
                 requireSession={false}
+                onLayout={e => {
+                  if (!measuredDiscoverButton) {
+                    const discoverButtonWidth = e.nativeEvent.layout.width;
+                    this.setState({ discoverButtonWidth, measuredDiscoverButton: true });
+                  }
+                }}
+                style={{ width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
               />
+            )}
+            {/* Note: if there is no Discovery button, the JoinMyNetwork button is immediately displayed;
+            otherwise, both buttons are hidden until measurements are done (so they are directly displayed with the same width).*/}
+            {hideDiscoveryButton || areAllButtonsMeasured ? null : (
+              <View style={{ backgroundColor: theme.ui.background.page, width: '100%', height: '100%', position: 'absolute' }} />
             )}
           </View>
         </View>

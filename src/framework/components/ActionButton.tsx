@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components//picture';
@@ -12,13 +12,14 @@ export interface ActionButtonProps {
   text: string;
   iconName?: string;
   showIcon?: boolean;
+  action?: () => void;
   url?: string;
   showConfirmation?: boolean;
   requireSession?: boolean;
-  action?: () => void;
   disabled?: boolean;
   type?: 'primary' | 'secondary';
   style?: StyleProp<ViewStyle>;
+  onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
 }
 
 export const ActionButton = ({
@@ -32,6 +33,7 @@ export const ActionButton = ({
   disabled,
   type,
   style,
+  onLayout,
 }: ActionButtonProps) => {
   const Component = disabled ? View : TouchableOpacity;
   const viewStyle = {
@@ -59,6 +61,7 @@ export const ActionButton = ({
   };
   return (
     <Component
+      onLayout={e => onLayout && onLayout(e)}
       style={[ActionButton.Style.viewCommon, viewStyle[type ?? 'primary'], style]}
       {...(!disabled
         ? {
@@ -99,6 +102,7 @@ ActionButton.Style = StyleSheet.create({
     borderRadius: UI_SIZES.radius.extraLarge,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     alignSelf: 'center',
   },
   textCommon: {
