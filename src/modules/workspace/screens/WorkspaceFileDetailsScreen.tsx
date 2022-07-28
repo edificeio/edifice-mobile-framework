@@ -25,21 +25,25 @@ const styles = StyleSheet.create({
   },
 });
 
-interface IWorkspaceFileDetailsEventProps {
+interface IWorkspaceFileDetailsScreen_DataProps {
+  file: IFile;
+  title: string;
+}
+
+interface IWorkspaceFileDetailsScreen_EventProps {
   downloadFile: (file: IFile) => void;
   previewFile: (file: IFile) => void;
   shareFile: (file: IFile) => void;
   dispatch: ThunkDispatch<any, any, any>;
 }
 
-type IWorkspaceFileDetailsProps = {
-  file: IFile;
-  title: string;
-  dispatch: ThunkDispatch<any, any, any>;
-} & NavigationInjectedProps &
-  IWorkspaceFileDetailsEventProps;
+type IWorkspaceFileDetailsScreen_Props = IWorkspaceFileDetailsScreen_DataProps &
+  IWorkspaceFileDetailsScreen_EventProps &
+  NavigationInjectedProps;
 
-const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsProps> = (props: IWorkspaceFileDetailsProps) => {
+const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsScreen_Props> = (
+  props: IWorkspaceFileDetailsScreen_Props,
+) => {
   const preview = () => {
     props.previewFile(props.file);
   };
@@ -80,7 +84,7 @@ const mapStateToProps = (state: any, props: any) => {
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
   getState: () => IGlobalState,
-) => IWorkspaceFileDetailsEventProps = (dispatch, getState) => ({
+) => IWorkspaceFileDetailsScreen_EventProps = (dispatch, getState) => ({
   downloadFile: async (file: IFile) => {
     return dispatch(downloadWorkspaceFilesAction([file]));
   },

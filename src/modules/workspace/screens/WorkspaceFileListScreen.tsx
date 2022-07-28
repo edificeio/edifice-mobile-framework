@@ -50,7 +50,15 @@ const styles = StyleSheet.create({
 
 // TYPES ==========================================================================================
 
-interface IWorkspaceFileListEventProps {
+interface IWorkspaceFileListScreen_DataProps {
+  files: IFile[];
+  filter: Filter;
+  folderTree: AsyncState<IFolder[]>;
+  isFetching: boolean;
+  parentId: string;
+}
+
+interface IWorkspaceFileListScreen_EventProps {
   modalEvents: IWorkspaceModalEventProps;
   fetchFiles: (filter: Filter, parentId: string) => void;
   listFolders: () => void;
@@ -60,18 +68,13 @@ interface IWorkspaceFileListEventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 
-type IWorkspaceFileListProps = {
-  files: IFile[];
-  filter: Filter;
-  folderTree: AsyncState<IFolder[]>;
-  isFetching: boolean;
-  parentId: string;
-} & NavigationInjectedProps &
-  IWorkspaceFileListEventProps;
+type IWorkspaceFileListScreen_Props = IWorkspaceFileListScreen_DataProps &
+  IWorkspaceFileListScreen_EventProps &
+  NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
 
-const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (props: IWorkspaceFileListProps) => {
+const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListScreen_Props> = (props: IWorkspaceFileListScreen_Props) => {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [modalType, setModalType] = useState<WorkspaceModalType>(WorkspaceModalType.NONE);
@@ -345,10 +348,10 @@ const mapStateToProps = (gs: any, props: any) => {
   };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IWorkspaceFileListEventProps = (
-  dispatch,
-  getState,
-) => ({
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState,
+) => IWorkspaceFileListScreen_EventProps = (dispatch, getState) => ({
   modalEvents: {
     createFolder: async (name: string, parentId: string) => {
       return dispatch(createWorkspaceFolderAction(name, parentId));

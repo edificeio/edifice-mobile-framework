@@ -2,15 +2,15 @@ import I18n from 'i18n-js';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import moduleConfig from './moduleConfig';
-import WorkspaceFileDetails from './screens/WorkspaceFileDetails';
-import WorkspaceFileList from './screens/WorkspaceFileList';
+import WorkspaceFileDetailsScreen from './screens/WorkspaceFileDetailsScreen';
+import WorkspaceFileListScreen from './screens/WorkspaceFileListScreen';
 
 export const timelineRoutes = {
   [`${moduleConfig.routeName}`]: {
-    screen: WorkspaceFileList,
+    screen: WorkspaceFileListScreen,
   },
   [`${moduleConfig.routeName}/details`]: {
-    screen: WorkspaceFileDetails,
+    screen: WorkspaceFileDetailsScreen,
   },
 };
 
