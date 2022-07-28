@@ -156,7 +156,6 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                     type="secondary"
                     text={I18n.t('schoolbook.schoolbookWordReportScreen.reminder')}
                     iconName="pictos-send"
-                    leftIcon
                     action={() => modalBoxRef?.current?.doShowModal()}
                   />
                 ) : null}
@@ -205,7 +204,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   {I18n.t('common.cancel')}
                 </TextSemiBold>
               </TouchableOpacity>
-              <ActionButton text={I18n.t('common.send')} iconName="pictos-send" leftIcon action={action} />
+              <ActionButton text={I18n.t('common.send')} iconName="pictos-send" action={action} />
             </View>
           </>
         }
