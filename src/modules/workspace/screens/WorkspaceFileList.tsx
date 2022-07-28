@@ -144,7 +144,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
 
   const uploadFile = async (file: Asset | DocumentPicked) => {
     const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
-    props.uploadFile(props.parentId, lf);
+    await props.uploadFile(props.parentId, lf);
     props.fetchFiles(props.filter, props.parentId);
   };
 
@@ -191,16 +191,19 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
   } => {
     if (isSelectionActive) {
       const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
-      const navBarActions = [
-        selectedFiles.length === 1 && props.filter !== Filter.TRASH
-          ? { icon: 'pencil', onPress: () => openModal(WorkspaceModalType.EDIT) }
-          : {
-              icon: 'delete',
-              onPress: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
-            },
-        { icon: 'more_vert', onPress: showDropdown },
-      ];
-      const dropdownActions = [
+      const actions = [
+        ...(selectedFiles.length === 1 && props.filter === Filter.OWNER
+          ? [{ text: I18n.t('rename'), icon: 'pencil', onPress: () => openModal(WorkspaceModalType.EDIT) }]
+          : []),
+        ...((selectedFiles.length > 1 && props.filter === Filter.OWNER) || props.filter === Filter.TRASH
+          ? [
+              {
+                text: I18n.t('delete'),
+                icon: 'delete',
+                onPress: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+              },
+            ]
+          : []),
         ...(props.filter !== Filter.TRASH
           ? [{ text: I18n.t('copy'), icon: 'content-copy', onPress: () => openModal(WorkspaceModalType.DUPLICATE) }]
           : []),
@@ -213,7 +216,7 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
         ...(Platform.OS !== 'ios' && !isFolderSelected
           ? [{ text: I18n.t('download'), icon: 'download', onPress: () => openModal(WorkspaceModalType.DOWNLOAD) }]
           : []),
-        ...(selectedFiles.length === 1
+        ...(selectedFiles.length === 1 && props.filter === Filter.OWNER
           ? [
               {
                 text: I18n.t('delete'),
@@ -223,10 +226,15 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
             ]
           : []),
       ];
-      return { navBarActions, dropdownActions };
+      if (actions.length > 2) {
+        const firstAction = actions[0] as { icon: string; onPress: () => void };
+        const navBarActions = [firstAction, { icon: 'more_vert', onPress: showDropdown }];
+        return { navBarActions, dropdownActions: actions.slice(1) };
+      }
+      return { navBarActions: actions, dropdownActions: [] };
     }
     if (props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED)) {
-      const navBarActions = [{ icon: 'add', onPress: showDropdown }];
+      const navBarActions = [{ icon: isDropdownVisible ? 'close' : 'add', onPress: showDropdown }];
       const dropdownActions = [
         { text: I18n.t('add-file'), icon: 'file-plus', isFilePicker: true, onPress: () => true, onFilePick: uploadFile },
         ...(props.filter === Filter.OWNER
@@ -247,7 +255,9 @@ const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListProps> = (pro
       </>
     ),
     title: isSelectionActive ? null : props.navigation.getParam('title'),
-    right: menuActions.navBarActions.map(action => <HeaderAction iconName={action.icon} onPress={action.onPress} />),
+    right: menuActions.navBarActions.map(action => (
+      <HeaderAction iconName={action.icon} iconSize={isSelectionActive ? 24 : 20} onPress={action.onPress} />
+    )),
     style: {
       backgroundColor: isSelectionActive ? theme.palette.secondary.regular : theme.palette.primary.regular,
     },

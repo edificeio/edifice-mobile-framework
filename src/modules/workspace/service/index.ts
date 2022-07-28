@@ -111,6 +111,7 @@ export const workspaceService = {
       return files.map(file => workspaceFileAdapter(file)).sort(compareFiles) as IFile[];
     },
     copy: async (session: IUserSession, parentId: string, ids: string[], destinationId: string) => {
+      destinationId = destinationId === 'owner' ? 'root' : destinationId;
       const api = `/workspace/documents/copy/${destinationId}`;
       const body = JSON.stringify({ parentId, ids });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
@@ -119,6 +120,7 @@ export const workspaceService = {
       });
     },
     move: async (session: IUserSession, parentId: string, ids: string[], destinationId: string) => {
+      destinationId = destinationId === 'owner' ? 'root' : destinationId;
       const api = `/workspace/documents/move/${destinationId}`;
       const body = JSON.stringify({ parentId, ids });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
@@ -174,7 +176,7 @@ export const workspaceService = {
       const body = queryString.stringify({
         name,
         externalId: '',
-        ...(parentId ? { parentFolderId: parentId } : {}),
+        ...(parentId !== 'owner' ? { parentFolderId: parentId } : {}),
       });
       const headers = {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',

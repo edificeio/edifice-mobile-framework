@@ -14,13 +14,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: layoutSize.LAYOUT_30,
     marginBottom: UI_SIZES.spacing.tiny / 2,
+    borderRadius: 5,
   },
   nameText: {
     fontSize: layoutSize.LAYOUT_14,
     marginLeft: UI_SIZES.spacing.tiny,
   },
   searchBarInput: {
-    marginVertical: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
     padding: UI_SIZES.spacing.minor,
     backgroundColor: theme.palette.grey.fog,
     borderColor: theme.ui.border.input,
@@ -69,7 +71,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
     return stack;
   }
 
-  const onClick = ({ item }) => {
+  const onTapFolder = ({ item }) => {
     setCurrentValue(item.id);
     if (expandedFolders.includes(item.id)) {
       setExpandedFolders(expandedFolders.filter(id => id !== item.id));
@@ -119,7 +121,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
       const isExpanded = expandedFolders.includes(item.id);
       return (
         <View>
-          <TouchableOpacity onPress={() => onClick({ item })} style={[styles.rowContainer, { backgroundColor }]}>
+          <TouchableOpacity onPress={() => onTapFolder({ item })} style={[styles.rowContainer, { backgroundColor }]}>
             <Icon
               name={isExpanded ? 'menu-down' : 'menu-right'}
               size={layoutSize.LAYOUT_24}
@@ -139,7 +141,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
       );
     }
     return (
-      <TouchableOpacity onPress={() => onClick({ item })} style={[styles.rowContainer, { backgroundColor }]}>
+      <TouchableOpacity onPress={() => onTapFolder({ item })} style={[styles.rowContainer, { backgroundColor }]}>
         <Text style={styles.nameText}>{item.name} </Text>
       </TouchableOpacity>
     );

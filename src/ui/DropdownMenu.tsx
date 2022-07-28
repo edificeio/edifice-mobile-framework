@@ -82,6 +82,7 @@ export const DropdownMenu = ({ data, isVisible, color, onTapOutside }: IDropdrow
           data={data}
           style={[styles.menuContainer, { backgroundColor: color || theme.palette.primary.regular }]}
           renderItem={renderAction}
+          scrollEnabled={false}
         />
       </View>
     </TouchableWithoutFeedback>
