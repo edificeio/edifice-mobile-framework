@@ -43,3 +43,21 @@ export const flatten = (data: Record<string, any>) => {
   recurse(data, '');
   return result;
 };
+
+/**
+ * Get duplicate values within an object.
+ * @param object
+ */
+export const getDuplicateValues = (object: Record<string, any>) => {
+  const keys = Object.keys(object);
+  const keys2 = Object.keys(object);
+  let duplicateValues: string[] = [];
+  for (let key of keys) {
+    for (let key2 of keys2) {
+      if (object[key] === object[key2] && key !== key2 && !duplicateValues.includes(object[key])) {
+        duplicateValues.push(object[key]);
+      }
+    }
+  }
+  return duplicateValues;
+};
