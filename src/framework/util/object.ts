@@ -23,7 +23,7 @@ export const shallowEqual = (object1: Record<string, any>, object2: Record<strin
  * @param object
  */
 // from https://stackoverflow.com/questions/19098797/fastest-way-to-flatten-un-flatten-nested-javascript-objects
-export const flatten = (data: Record<string, any>) => {
+export const flatten = (object: Record<string, any>) => {
   let result = {};
   const recurse = (cur, prop) => {
     if (Object(cur) !== cur) {
@@ -40,7 +40,7 @@ export const flatten = (data: Record<string, any>) => {
       if (isEmpty && prop) result[prop] = {};
     }
   };
-  recurse(data, '');
+  recurse(object, '');
   return result;
 };
 
@@ -50,12 +50,13 @@ export const flatten = (data: Record<string, any>) => {
  */
 export const getDuplicateValues = (object: Record<string, any>) => {
   const keys = Object.keys(object);
-  const keys2 = Object.keys(object);
   let duplicateValues: string[] = [];
   for (let key of keys) {
-    for (let key2 of keys2) {
-      if (object[key] === object[key2] && key !== key2 && !duplicateValues.includes(object[key])) {
+    if (duplicateValues.includes(object[key])) continue;
+    for (let key2 of keys) {
+      if (key !== key2 && object[key] === object[key2]) {
         duplicateValues.push(object[key]);
+        break;
       }
     }
   }
