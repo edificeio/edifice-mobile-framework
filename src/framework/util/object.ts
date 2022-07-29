@@ -1,24 +1,4 @@
 /**
- * Check if two objects are equal.
- * @param object1
- * @param object2
- */
-// from https://dmitripavlutin.com/how-to-compare-objects-in-javascript
-export const shallowEqual = (object1: Record<string, any>, object2: Record<string, any>) => {
-  const keys1 = Object.keys(object1);
-  const keys2 = Object.keys(object2);
-  if (keys1.length !== keys2.length) {
-    return false;
-  }
-  for (let key of keys1) {
-    if (object1[key] !== object2[key]) {
-      return false;
-    }
-  }
-  return true;
-};
-
-/**
  * Flatten a nested object.
  * @param object
  */
@@ -64,20 +44,21 @@ export const getDuplicateValues = (object: Record<string, any>) => {
 };
 
 /**
- * Get difference between two objects.
+ * Check if two objects are equal.
  * @param object1
  * @param object2
  */
-export const getDifference = (object1: Record<string, any>, object2: Record<string, any>) => {
+// from https://dmitripavlutin.com/how-to-compare-objects-in-javascript
+export const shallowEqual = (object1: Record<string, any>, object2: Record<string, any>) => {
   const keys1 = Object.keys(object1);
   const keys2 = Object.keys(object2);
-  let extraDataObject1: Record<string, any> = {};
-  let extraDataObject2: Record<string, any> = {};
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
   for (let key of keys1) {
-    if (!keys2.includes(key)) extraDataObject1[key] = object1[key];
+    if (object1[key] !== object2[key]) {
+      return false;
+    }
   }
-  for (let key of keys2) {
-    if (!keys1.includes(key)) extraDataObject2[key] = object2[key];
-  }
-  return { extraDataObject1, extraDataObject2 };
+  return true;
 };
