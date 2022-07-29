@@ -121,12 +121,12 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   }
 
   protected renderLogo = () => {
-    const logoStyle = { height: 50, width: 200 };
+    const logoStyle = { height: 64, width: '100%' };
     if (DEPRECATED_getCurrentPlatform()!.logoStyle) {
       Object.assign(logoStyle, DEPRECATED_getCurrentPlatform()!.logoStyle!);
     }
     return (
-      <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flexGrow: 2, justifyContent: 'center', width: '100%' }}>
         <Picture
           type={DEPRECATED_getCurrentPlatform()!.logoType}
           source={DEPRECATED_getCurrentPlatform()!.logo}
