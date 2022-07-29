@@ -62,3 +62,22 @@ export const getDuplicateValues = (object: Record<string, any>) => {
   }
   return duplicateValues;
 };
+
+/**
+ * Get difference between two objects.
+ * @param object1
+ * @param object2
+ */
+export const getDifference = (object1: Record<string, any>, object2: Record<string, any>) => {
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+  let extraDataObject1: Record<string, any> = {};
+  let extraDataObject2: Record<string, any> = {};
+  for (let key of keys1) {
+    if (!keys2.includes(key)) extraDataObject1[key] = object1[key];
+  }
+  for (let key of keys2) {
+    if (!keys1.includes(key)) extraDataObject2[key] = object2[key];
+  }
+  return { extraDataObject1, extraDataObject2 };
+};
