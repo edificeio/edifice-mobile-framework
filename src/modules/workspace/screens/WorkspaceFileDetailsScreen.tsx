@@ -41,9 +41,7 @@ type IWorkspaceFileDetailsScreen_Props = IWorkspaceFileDetailsScreen_DataProps &
   IWorkspaceFileDetailsScreen_EventProps &
   NavigationInjectedProps;
 
-const WorkspaceFileDetails: React.FunctionComponent<IWorkspaceFileDetailsScreen_Props> = (
-  props: IWorkspaceFileDetailsScreen_Props,
-) => {
+const WorkspaceFileDetailsScreen = (props: IWorkspaceFileDetailsScreen_Props) => {
   const preview = () => {
     props.previewFile(props.file);
   };
@@ -97,4 +95,4 @@ const mapDispatchToProps: (
   dispatch,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceFileDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceFileDetailsScreen);

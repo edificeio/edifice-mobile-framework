@@ -74,7 +74,7 @@ type IWorkspaceFileListScreen_Props = IWorkspaceFileListScreen_DataProps &
 
 // COMPONENT ======================================================================================
 
-const WorkspaceFileList: React.FunctionComponent<IWorkspaceFileListScreen_Props> = (props: IWorkspaceFileListScreen_Props) => {
+const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [modalType, setModalType] = useState<WorkspaceModalType>(WorkspaceModalType.NONE);
@@ -342,7 +342,7 @@ const mapStateToProps = (gs: any, props: any) => {
     files: state.directories.data[parentId] || [],
     filter: props.navigation.getParam('filter'),
     folderTree: state.folderTree,
-    isFetching: state.directories.isFetching,
+    isFetching: state.directories.isFetching || !state.directories.data[parentId],
     parentId,
     session: getUserSession(),
   };
@@ -397,4 +397,4 @@ const mapDispatchToProps: (
   dispatch,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceFileList);
+export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceFileListScreen);
