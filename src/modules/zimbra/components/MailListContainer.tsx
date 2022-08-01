@@ -1,16 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { withNavigationFocus } from 'react-navigation';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { FakeHeader_Container, FakeHeader_Row, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
-import { Icon } from '~/framework/components/picture/Icon';
+import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
+import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
@@ -29,25 +26,9 @@ import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaMod
 import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails';
 import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
-import { PageContainer } from '~/ui/ContainerContent';
 import { DropdownMenu } from '~/ui/DropdownMenu';
 
 import { IInit } from './DrawerMenuContainer';
-
-// STYLE
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  headerIconsSpace: {
-    marginRight: UI_SIZES.spacing.medium,
-  },
-});
-
-// ------------------------------------------------------------------------------------------------
 
 export interface IStorage {
   data: IQuota;
@@ -314,7 +295,21 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     });
   };
 
-  getMenuData = (route: string) => {
+  getNavBarActions = () => {
+    const { navigation } = this.props;
+    const isTrash = navigation.getParam('isTrashed') || navigation.state.routeName === 'trash';
+    return isTrash
+      ? [
+          { icon: 'delete-restore', onPress: this.restoreSelectedMails },
+          { icon: 'delete', onPress: this.deleteSelectedMails },
+        ]
+      : [
+          { icon: this.checkMailReadState() ? 'email' : 'email-open', onPress: this.markSelectedMailsAsUnread },
+          { icon: 'more_vert', onPress: this.showMenu },
+        ];
+  };
+
+  getDropdownActions = (route: string) => {
     if (route === 'sendMessages') {
       return [{ text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.deleteSelectedMails }];
     }
@@ -324,77 +319,44 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     ];
   };
 
-  renderSelectedMailsActions = () => {
-    const { navigation } = this.props;
-    const isTrash = navigation.getParam('isTrashed') || navigation.state.routeName === 'trash';
-    return isTrash ? (
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={this.restoreSelectedMails}>
-          <Icon name="delete-restore" size={24} color={theme.ui.text.inverse} style={styles.headerIconsSpace} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.deleteSelectedMails}>
-          <Icon name="delete" size={24} color={theme.ui.text.inverse} style={styles.headerIconsSpace} />
-        </TouchableOpacity>
-      </View>
-    ) : (
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={this.markSelectedMailsAsUnread}>
-          <Icon
-            name={this.checkMailReadState() ? 'email' : 'email-open'}
-            size={24}
-            color={theme.ui.text.inverse}
-            style={styles.headerIconsSpace}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.showMenu}>
-          <Icon name="more_vert" size={24} color={theme.ui.text.inverse} style={styles.headerIconsSpace} />
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
-  renderSelectedMailsHeader = () => (
-    <View>
-      <StatusBar barStyle="light-content" backgroundColor={theme.palette.secondary.regular} />
-      <FakeHeader_Container style={{ backgroundColor: theme.palette.secondary.regular }}>
-        <FakeHeader_Row>
-          <HeaderBackAction onPress={this.onUnselectListMails} />
-          <HeaderTitle>{this.getListSelectedMails().length}</HeaderTitle>
-          {this.renderSelectedMailsActions()}
-        </FakeHeader_Row>
-      </FakeHeader_Container>
-    </View>
-  );
-
   // -- MANAGE HEADERS ------------------------------------------------------------------------------
 
   public render() {
     const { navigation } = this.props;
+    const navBarActions = this.getNavBarActions();
+    const navBarInfo = {
+      left: (
+        <>
+          <HeaderBackAction onPress={this.onUnselectListMails} />
+          <HeaderTitle>{this.getListSelectedMails().length}</HeaderTitle>
+        </>
+      ),
+      right: navBarActions.map(action => <HeaderAction iconName={action.icon} iconSize={24} onPress={action.onPress} />),
+      style: {
+        backgroundColor: theme.palette.secondary.regular,
+      },
+    };
     return (
-      <>
-        <PageContainer>
-          {this.state.isHeaderSelectVisible && this.renderSelectedMailsHeader()}
-          <MailList
-            {...this.props}
-            setMails={this.setMails}
-            fetchMails={this.fetchMails}
-            isTrashed={this.props.navigation.getParam('key') === 'trash'}
-            isSended={this.props.navigation.getParam('key') === 'sendMessages'}
-            firstFetch={this.state.firstFetch}
-            fetchRequested={this.state.fetchRequested}
-            fetchCompleted={this.fetchCompleted}
-            isHeaderSelectVisible={this.state.isHeaderSelectVisible}
-            selectMails={this.selectMails}
-            goBack={this.onGoBack}
-          />
-          <DropdownMenu
-            data={this.getMenuData(navigation.state.routeName)}
-            isVisible={this.state.isDropdownMenuVisible}
-            onTapOutside={this.hideMenu}
-            color={theme.palette.secondary.regular}
-          />
-        </PageContainer>
-
+      <PageView navigation={navigation} navBar={this.state.isHeaderSelectVisible ? navBarInfo : undefined}>
+        <MailList
+          {...this.props}
+          setMails={this.setMails}
+          fetchMails={this.fetchMails}
+          isTrashed={navigation.getParam('key') === 'trash'}
+          isSended={navigation.getParam('key') === 'sendMessages'}
+          firstFetch={this.state.firstFetch}
+          fetchRequested={this.state.fetchRequested}
+          fetchCompleted={this.fetchCompleted}
+          isHeaderSelectVisible={this.state.isHeaderSelectVisible}
+          selectMails={this.selectMails}
+          goBack={this.onGoBack}
+        />
+        <DropdownMenu
+          data={this.getDropdownActions(navigation.state.routeName)}
+          isVisible={this.state.isDropdownMenuVisible}
+          onTapOutside={this.hideMenu}
+          color={theme.palette.secondary.regular}
+        />
         {this.isStorageFull() && (
           <ModalStorageWarning
             isVisible={this.state.isShownStorageWarning}
@@ -412,7 +374,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
           closeModal={this.closeMoveModal}
           successCallback={this.mailsMoved}
         />
-      </>
+      </PageView>
     );
   }
 }
@@ -455,13 +417,12 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-const viewsToTrack = ['inbox', 'sendMessages', 'drafts', 'spams'];
-
-const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
+const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(MailListContainer);
 
 export default withViewTracking((props: MailListContainerProps) => {
   const currentFolder = props.navigation.getParam('key');
   if (currentFolder === undefined) return `zimbra/inbox`;
+  const viewsToTrack = ['inbox', 'sendMessages', 'drafts', 'spams'];
   let toTrack = '';
   viewsToTrack.map(viewName => {
     if (viewName === currentFolder) toTrack = `zimbra/${currentFolder}`;

@@ -169,23 +169,20 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
 
     const navBarInfo = {
       title: navigation.state.params.subject,
-      right: error || htmlError ? undefined : <HeaderAction iconName="more_vert" onPress={this.showMenu} />,
+      right: error || htmlError ? undefined : <HeaderAction iconName="more_vert" iconSize={24} onPress={this.showMenu} />,
     };
 
     return (
-      <>
-        <PageView navigation={navigation} navBarWithBack={navBarInfo}>
-          <MailContent
-            {...this.props}
-            onHtmlError={() => this.setState({ htmlError: true })}
-            delete={this.delete}
-            restore={this.restore}
-            checkStorage={this.checkStorage}
-          />
-        </PageView>
-
-        <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />
+      <PageView navigation={navigation} navBarWithBack={navBarInfo}>
+        <MailContent
+          {...this.props}
+          onHtmlError={() => this.setState({ htmlError: true })}
+          delete={this.delete}
+          restore={this.restore}
+          checkStorage={this.checkStorage}
+        />
         <DropdownMenu data={menuData} isVisible={showMenu} onTapOutside={this.showMenu} />
+        <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />
         <ModalPermanentDelete
           deleteModal={this.state.deleteModal}
           closeModal={this.closeDeleteModal}
@@ -195,7 +192,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
           isVisible={this.state.isShownStorageWarning}
           closeModal={() => this.setState({ isShownStorageWarning: false })}
         />
-      </>
+      </PageView>
     );
   }
 }
