@@ -13,7 +13,7 @@ import { Text, TextBold } from '~/framework/components/text';
 import { IInit } from '~/modules/zimbra/components/DrawerMenuContainer';
 import { DraftType } from '~/modules/zimbra/screens/NewMail';
 import { IMail } from '~/modules/zimbra/state/mailContent';
-import { CenterPanel, Header, LeftPanel, PageContainer } from '~/ui/ContainerContent';
+import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const styles = StyleSheet.create({
@@ -235,35 +235,33 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       return index === self.indexOf(mail);
     });
     return (
-      <PageContainer>
-        <FlatList
-          contentContainerStyle={styles.fullGrowView}
-          data={uniqueMails}
-          renderItem={({ item }) => this.renderMailItem(item)}
-          extraData={uniqueMails}
-          keyExtractor={(item: IMail) => item.id}
-          refreshControl={<RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />}
-          onEndReachedThreshold={0.001}
-          onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
-          onEndReached={() => {
-            if (this.state.nextPageCallable) {
-              this.setState({ nextPageCallable: false });
-              this.onChangePage();
-            }
-          }}
-          ListEmptyComponent={
-            isFetching && firstFetch ? (
-              <LoadingIndicator />
-            ) : (
-              <EmptyScreen
-                svgImage="empty-conversation"
-                title={I18n.t('zimbra-empty-mailbox-title')}
-                text={I18n.t('zimbra-empty-mailbox-text')}
-              />
-            )
+      <FlatList
+        contentContainerStyle={styles.fullGrowView}
+        data={uniqueMails}
+        renderItem={({ item }) => this.renderMailItem(item)}
+        extraData={uniqueMails}
+        keyExtractor={(item: IMail) => item.id}
+        refreshControl={<RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />}
+        onEndReachedThreshold={0.001}
+        onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
+        onEndReached={() => {
+          if (this.state.nextPageCallable) {
+            this.setState({ nextPageCallable: false });
+            this.onChangePage();
           }
-        />
-      </PageContainer>
+        }}
+        ListEmptyComponent={
+          isFetching && firstFetch ? (
+            <LoadingIndicator />
+          ) : (
+            <EmptyScreen
+              svgImage="empty-conversation"
+              title={I18n.t('zimbra-empty-mailbox-title')}
+              text={I18n.t('zimbra-empty-mailbox-text')}
+            />
+          )
+        }
+      />
     );
   }
 }

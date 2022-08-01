@@ -327,7 +327,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     const navBarInfo = {
       left: (
         <>
-          <HeaderBackAction onPress={this.onUnselectListMails} />
+          <HeaderBackAction onPress={this.onGoBack} />
           <HeaderTitle>{this.getListSelectedMails().length}</HeaderTitle>
         </>
       ),
@@ -337,7 +337,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       },
     };
     return (
-      <PageView navigation={navigation} navBar={this.state.isHeaderSelectVisible ? navBarInfo : undefined}>
+      <PageView navigation={navigation} navBar={this.state.isHeaderSelectVisible ? navBarInfo : undefined} onBack={this.onGoBack}>
         <MailList
           {...this.props}
           setMails={this.setMails}
