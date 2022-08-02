@@ -1,5 +1,5 @@
 {
   "last": "2022-07-28T12:38:23",
   "notes": "feat(user): MB-657, native review popup\nchore: new company description\nfeat(user): MB-657, app-review link\nchore: replaced val-de-marne logo\nfeat: MB-569, list loader position\nchore: update company description\nchore: remove unused date translations\nrelease: 1.8.1-alpha.9(1080109)",
-  "WARNING": "¡¡¡ USED AND UPDATED BY prepare-rc.js - DO NOT EDIT MANUALLY !!!"
+  "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
