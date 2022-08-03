@@ -102,7 +102,7 @@ const getTranslationActions = () => {
   } catch (error) {
     console.error('!!! Unable to read fr.json, en.json or es.json !!!');
     console.log(error);
-    process.exit(1);
+    process.exit(2);
   }
 
   //
@@ -156,7 +156,7 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   } catch (error) {
     console.error(`!!! Unable to read ${localTranslationsFile} !!!`);
     console.log(error);
-    process.exit(4);
+    process.exit(5);
   }
 
   //
@@ -170,7 +170,7 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   } catch (error) {
     console.error(`!!! Unable to read ${newTranslationsFile} !!!`);
     console.log(error);
-    process.exit(5);
+    process.exit(6);
   }
 
   //
@@ -194,7 +194,7 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   } catch (error) {
     console.error('!!! Unable to update translations !!!');
     console.log(error);
-    process.exit(6);
+    process.exit(7);
   }
 
   //
@@ -207,7 +207,7 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   } catch (error) {
     console.error(`!!! Unable to update ${localTranslationsFile} !!!`);
     console.log(error);
-    process.exit(7);
+    process.exit(8);
   }
 
   //
@@ -223,7 +223,7 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   } catch (error) {
     console.error('!!! Unable to read last-build.json !!!');
     console.log(error);
-    process.exit(8);
+    process.exit(9);
   }
 
   //
@@ -237,7 +237,7 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   } catch (error) {
     console.error('!!! Unable to commit && push changes !!!');
     console.log(error);
-    process.exit(9);
+    process.exit(10);
   }
 };
 
@@ -258,13 +258,13 @@ switch (actionType) {
     const language = process.argv.slice(2)[1];
     if (!['en', 'es', 'fr'].includes(language)) {
       console.error('!!! Second argument should be "en", "es" or "fr" !!!');
-      process.exit(2);
+      process.exit(3);
     }
     // Get & check newTranslationsFile
     const newTranslationsFile = process.argv.slice(2)[2];
     if (!newTranslationsFile) {
       console.error('!!! Third argument newTranslationsFile missing !!!');
-      process.exit(3);
+      process.exit(4);
     }
     // Process merge
     mergeNewTranslations(language, newTranslationsFile);
@@ -273,5 +273,5 @@ switch (actionType) {
   // Display error message
   default:
     console.error('!!! First argument should be "diff" or "merge" !!!');
-    process.exit(10);
+    process.exit(1);
 }
