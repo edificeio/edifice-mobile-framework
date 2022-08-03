@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -28,6 +28,43 @@ export interface CommentFieldProps {
   index?: number;
   isResponse?: boolean;
 }
+
+// STYLES =========================================================================================
+
+const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'column',
+    borderColor: theme.palette.grey.pearl,
+    alignItems: 'flex-end',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  col: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    flex: 1,
+  },
+  textInputAndroid: {
+    flexGrow: 1,
+    color: theme.palette.grey.black,
+    backgroundColor: theme.palette.grey.fog,
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.mediumPlus,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
+    textAlignVertical: 'center',
+  },
+  textInputIOS: {
+    flexGrow: 1,
+    color: theme.palette.grey.black,
+    backgroundColor: theme.palette.grey.fog,
+    borderColor: theme.palette.grey.cloudy,
+    borderRadius: UI_SIZES.radius.mediumPlus,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
+  },
+});
 
 // COMPONENT ======================================================================================
 
@@ -115,67 +152,82 @@ const CommentField = (props: CommentFieldProps, ref) => {
     }
   }, [isEditing]);
 
-  return (
-    <View
-      style={{
-        backgroundColor: theme.ui.background.card,
+  const wrapperStyle = React.useMemo(
+    () => [
+      styles.wrapper,
+      {
         padding: props.commentId ? UI_SIZES.spacing.medium : undefined,
         borderTopWidth: props.commentId && isFirstComment ? 1 : 0,
         borderBottomWidth: props.commentId ? 1 : 0,
-        borderTopColor: theme.palette.grey.pearl,
-        borderBottomColor: theme.palette.grey.pearl,
-        alignItems: isIdleExistingComment ? undefined : 'flex-end',
-        flexDirection: isIdleExistingComment ? 'column' : 'row',
-      }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      },
+    ],
+    [isFirstComment, props.commentId],
+  );
+
+  const textInputStyle = React.useMemo(
+    () => [
+      Platform.select({ ios: styles.textInputIOS, android: styles.textInputAndroid }),
+      {
+        maxHeight: isIdleExistingComment ? undefined : UI_SIZES.elements.textFieldMaxHeight,
+        borderWidth: isIdleExistingComment ? 0 : 1,
+        marginLeft: isIdleExistingComment ? 0 : UI_SIZES.spacing.small,
+      },
+    ],
+    [isIdleExistingComment],
+  );
+
+  const textInputComponent = React.useMemo(
+    () => (
+      <TextInput
+        ref={inputRef}
+        placeholder={I18n.t(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
+        placeholderTextColor={theme.palette.grey.graphite}
+        multiline
+        scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
+        editable={!(props.isPublishingComment || isIdleExistingComment)}
+        onChangeText={text => setComment(text)}
+        value={comment}
+        style={Platform.select({ ios: undefined, android: textInputStyle })}
+      />
+    ),
+    [comment, isIdleExistingComment, props.isPublishingComment, props.isResponse, textInputStyle],
+  );
+
+  return (
+    <View style={wrapperStyle}>
+      {/* 1st row : comment content // editor */}
+      <View style={[styles.row, { alignItems: props.commentId ? 'flex-start' : 'flex-end' }]}>
         <SingleAvatar size={isIdleExistingComment ? 24 : 36} userId={props.commentAuthorId || session.user.id} />
-        {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
-          <>
-            <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
-              {props.commentAuthor}
-            </TextSemiBold>
-            <TextItalic
-              style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing._LEGACY_small, color: theme.palette.grey.graphite }}>
-              {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
-            </TextItalic>
-          </>
+        <View style={styles.col}>
+          {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
+            <View style={styles.row}>
+              <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
+                {props.commentAuthor}
+              </TextSemiBold>
+              <TextItalic
+                style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing._LEGACY_small, color: theme.palette.grey.graphite }}>
+                {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
+              </TextItalic>
+            </View>
+          ) : null}
+          {
+            Platform.select({
+              ios: <View style={textInputStyle}>{textInputComponent}</View>,
+              android: textInputComponent,
+            })!
+          }
+        </View>
+        {!isIdleExistingComment ? (
+          <View style={{ marginLeft: UI_SIZES.spacing.minor, alignSelf: 'flex-end' }}>
+            <RoundButton
+              iconName={isEditing ? 'pictos-save' : 'pictos-send'}
+              action={() => publishComment()}
+              disabled={!comment || isCommentUnchanged()}
+              loading={props.isPublishingComment}
+            />
+          </View>
         ) : null}
       </View>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: theme.palette.grey.fog,
-          borderWidth: isIdleExistingComment ? 0 : 1,
-          borderColor: theme.palette.grey.cloudy,
-          borderRadius: UI_SIZES.radius.mediumPlus,
-          marginLeft: isIdleExistingComment ? UI_SIZES.spacing.big : UI_SIZES.spacing.small,
-          paddingHorizontal: UI_SIZES.spacing.small,
-          paddingVertical: UI_SIZES.spacing.minor,
-          maxHeight: isIdleExistingComment ? undefined : UI_SIZES.elements.textFieldMaxHeight,
-          height: '100%',
-        }}>
-        <TextInput
-          ref={inputRef}
-          placeholder={I18n.t(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
-          placeholderTextColor={theme.palette.grey.graphite}
-          multiline
-          scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
-          editable={!(props.isPublishingComment || isIdleExistingComment)}
-          onChangeText={text => setComment(text)}
-          value={comment}
-          style={{ paddingTop: 0, color: theme.palette.grey.black }}
-        />
-      </View>
-      {!isIdleExistingComment ? (
-        <View style={{ marginLeft: UI_SIZES.spacing.minor }}>
-          <RoundButton
-            iconName={isEditing ? 'pictos-save' : 'pictos-send'}
-            action={() => publishComment()}
-            disabled={!comment || isCommentUnchanged()}
-            loading={props.isPublishingComment}
-          />
-        </View>
-      ) : null}
       {isIdleExistingComment && isUserComment && (props.onPublishComment || props.onDeleteComment) ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
