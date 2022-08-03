@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { FlatList, Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -18,7 +19,6 @@ import {
 } from '~/modules/viescolaire/utils/cdt';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
-import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -73,7 +73,7 @@ type HomeworkListProps = {
   onRefreshHomeworks: any;
   onRefreshSessions: any;
   childId: string;
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 const hasEmptyDescription = (session: ISession) => {
   // retrieve html description tag and search "body" tag

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-swipeable';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
-import { INavigationProps } from '~/types';
 
 const styles = StyleSheet.create({
   studentsList: {
@@ -71,7 +71,7 @@ type StudentRowProps = {
   leavingCallback: (event: any) => any;
   checkAbsent: () => void;
   uncheckAbsent: (event: any) => any;
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
   swipeableRef = null;

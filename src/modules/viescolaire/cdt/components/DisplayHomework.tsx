@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -10,7 +11,6 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
@@ -46,7 +46,7 @@ const style = StyleSheet.create({
 type IDisplayHomeworkProps = {
   homework: Homework;
   homeworkList: Homework[];
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 type IDisplayHomeworkState = {
   indexSelectedHomework: number;

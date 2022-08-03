@@ -16,7 +16,6 @@ import { IRegisterPreferencesState, getRegisterPreferencesState } from '~/module
 import { getCoursesRegisterState } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
 import { ICourses, getCoursesListState } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
-import { INavigationProps } from '~/types';
 
 export enum SwitchState {
   DEFAULT,
@@ -54,8 +53,7 @@ type ICallListContainerProps = {
   getRegisterPreferences: () => void; // get CPE multipleSlot preference
   fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string, multipleSlot?: boolean) => void;
   fetchRegisterId: (any: any) => void;
-} & INavigationProps &
-  NavigationFocusInjectedProps;
+} & NavigationFocusInjectedProps;
 
 class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
   componentDidMount() {

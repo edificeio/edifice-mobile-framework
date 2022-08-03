@@ -5,7 +5,7 @@ import { Asset } from 'react-native-image-picker';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { TextSemiBold } from '~/framework/components/text';
 import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 
 const styles = StyleSheet.create({
@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
     color: theme.palette.grey.white,
   },
   itemText: {
-    fontSize: 15,
     color: theme.palette.grey.white,
   },
 });
@@ -62,14 +61,14 @@ export const DropdownMenu = ({ data, isVisible, color, onTapOutside }: IDropdrow
       <FilePicker callback={item.onFilePick!} multiple>
         <View style={styles.itemContainer}>
           <Icon name={item.icon} size={24} style={styles.itemIcon} />
-          <Text style={styles.itemText}>{item.text}</Text>
+          <TextSemiBold style={styles.itemText}>{item.text}</TextSemiBold>
         </View>
       </FilePicker>
     ) : (
       <TouchableOpacity onPress={onAction}>
         <View style={styles.itemContainer}>
           <Icon name={item.icon} size={24} style={styles.itemIcon} />
-          <Text style={styles.itemText}>{item.text}</Text>
+          <TextSemiBold style={styles.itemText}>{item.text}</TextSemiBold>
         </View>
       </TouchableOpacity>
     );

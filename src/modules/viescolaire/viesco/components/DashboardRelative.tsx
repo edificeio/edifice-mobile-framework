@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -19,7 +19,6 @@ import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolair
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IAuthorizedViescoApps } from '~/modules/viescolaire/viesco/containers/Dashboard';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
-import { INavigationProps } from '~/types';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -94,7 +93,7 @@ type IDashboardProps = {
   evaluations: IDevoirsMatieresState;
   levels: ILevelsList;
   hasRightToCreateAbsence: boolean;
-} & INavigationProps;
+} & NavigationInjectedProps;
 
 interface IIconButtonProps {
   disabled?: boolean;

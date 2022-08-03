@@ -7,7 +7,7 @@ import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
-import { FlatButton } from '~/ui';
+import { FlatButton } from '~/ui/FlatButton';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
 import { WorkspaceFolderSelector } from './WorkspaceFolderSelector';
