@@ -19,7 +19,7 @@
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 
-const versionFile = 'cli/prepare-build.json';
+const lastFile = 'cli/last-build.json';
 
 /**
  * Check if object is empty.
@@ -214,17 +214,14 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   // Read prepare-build.json & compute version number
   //
 
-  let versionContent = null;
-  let versionNumber = null;
+  let lastContent = null;
+  let lastVersion = null;
 
   try {
-    versionContent = JSON.parse(fs.readFileSync(versionFile, 'utf-8'));
-    const major = versionContent.major;
-    const minor = versionContent.minor;
-    const rev = versionContent.rev;
-    versionNumber = `${major}.${minor}.${rev}`;
+    lastContent = JSON.parse(fs.readFileSync(lastFile, 'utf-8'));
+    lastVersion = lastContent.version;
   } catch (error) {
-    console.error('!!! Unable to read prepare-build.json !!!');
+    console.error('!!! Unable to read last-build.json !!!');
     console.log(error);
     process.exit(8);
   }
@@ -235,7 +232,7 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
 
   try {
     execSync(`git add -A`);
-    execSync(`git commit -m "translations (${versionNumber}): ${language}.json"`);
+    execSync(`git commit -m "translations (${lastVersion}): ${language}.json"`);
     execSync('git push');
   } catch (error) {
     console.error('!!! Unable to commit && push changes !!!');

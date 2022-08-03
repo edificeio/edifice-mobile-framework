@@ -40,49 +40,6 @@ if (!['alpha', 'rc', 'major', 'minor', 'rev'].includes(buildType)) {
 console.info(`==> Will prepare ${buildType} build`);
 
 //
-// Read last-build.json
-//
-
-let lastContent = null;
-
-try {
-  lastContent = JSON.parse(fs.readFileSync(lastFile, 'utf-8'));
-} catch (error) {
-  console.error('!!! Unable to read last-build.json !!!');
-  console.log(error);
-  process.exit(2);
-}
-
-//
-// Update release notes infos (last && notes) if needed
-//
-
-try {
-  if (['alpha', 'rc'].includes(buildType)) {
-    lastContent.notes = execSync(`git log --pretty=format:"%s" --since=${lastContent.last}`).toString();
-    //.replace(/(\n)/g, '<br />');
-    lastContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
-  }
-} catch (error) {
-  console.error('!!! Unable to compute last build !!!');
-  console.log(error);
-  process.exit(3);
-}
-
-//
-// Write new content to last-build.json
-//
-
-try {
-  fs.writeFileSync(lastFile, JSON.stringify(lastContent, null, 2), 'utf-8');
-  console.info('==> last-build.json file updated');
-} catch (error) {
-  console.error('!!! Unable to write last-build.json !!!');
-  console.log(error);
-  process.exit(4);
-}
-
-//
 // Read prepare-build.json
 //
 
@@ -93,7 +50,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to read prepare-build.json !!!');
   console.log(error);
-  process.exit(5);
+  process.exit(2);
 }
 
 //
@@ -143,7 +100,7 @@ try {
 } catch (error) {
   console.error('!!! Unable to compute build number !!!');
   console.log(error);
-  process.exit(6);
+  process.exit(3);
 }
 
 //
@@ -155,6 +112,49 @@ try {
   console.info('==> prepare-build.json file updated');
 } catch (error) {
   console.error('!!! Unable to write prepare-build.json !!!');
+  console.log(error);
+  process.exit(4);
+}
+
+//
+// Read last-build.json
+//
+
+let lastContent = null;
+
+try {
+  lastContent = JSON.parse(fs.readFileSync(lastFile, 'utf-8'));
+} catch (error) {
+  console.error('!!! Unable to read last-build.json !!!');
+  console.log(error);
+  process.exit(5);
+}
+
+//
+// Update release notes infos (last && notes) if needed
+//
+
+try {
+  if (['alpha', 'rc'].includes(buildType)) {
+    lastContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
+    lastContent.notes = execSync(`git log --pretty=format:"%s" --since=${lastContent.last}`).toString();
+    lastContent.version = fullVersion;
+  }
+} catch (error) {
+  console.error('!!! Unable to compute last-build !!!');
+  console.log(error);
+  process.exit(6);
+}
+
+//
+// Write new content to last-build.json
+//
+
+try {
+  fs.writeFileSync(lastFile, JSON.stringify(lastContent, null, 2), 'utf-8');
+  console.info('==> last-build.json file updated');
+} catch (error) {
+  console.error('!!! Unable to write last-build.json !!!');
   console.log(error);
   process.exit(7);
 }
