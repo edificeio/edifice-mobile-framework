@@ -57,7 +57,7 @@ export const fetchWorkspaceFilesAction =
       } else {
         files = await workspaceService.files.get(session, filter, parentId);
       }
-      dispatch(workspaceDirectoriesActionsCreators.receipt({ ...state.workspace2.directories.data, [parentId]: files }));
+      dispatch(workspaceDirectoriesActionsCreators.receipt({ ...state.workspace.directories.data, [parentId]: files }));
       return files;
     } catch (e) {
       dispatch(workspaceDirectoriesActionsCreators.error(e as Error));
