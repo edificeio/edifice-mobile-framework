@@ -83,8 +83,6 @@ export const SchoolbookWordSummaryCard = ({
           borderTopLeftRadius: UI_SIZES.radius.medium,
           borderTopRightRadius: UI_SIZES.radius.medium,
           backgroundColor: theme.palette.grey.fog,
-          borderBottomColor: theme.palette.grey.pearl,
-          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
         }}
         headerIndicator={<View />}
         header={
