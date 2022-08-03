@@ -80,8 +80,8 @@ export const SchoolbookWordSummaryCard = ({
         onPress={action}
         customHeaderStyle={{
           paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.minor,
-          borderTopLeftRadius: 15,
-          borderTopRightRadius: 15,
+          borderTopLeftRadius: UI_SIZES.radius.medium,
+          borderTopRightRadius: UI_SIZES.radius.medium,
           backgroundColor: theme.palette.grey.fog,
           borderBottomColor: theme.palette.grey.pearl,
           borderBottomWidth: UI_SIZES.dimensions.width.tiny,
