@@ -4,29 +4,30 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
+import { IGlobalState } from '~/AppStore';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchWithCache } from '~/infra/fetchWithCache';
-import { fetchExternalsAction } from '~/modules/mediacentre/actions/externals';
-import { addFavoriteAction, fetchFavoritesAction, removeFavoriteAction } from '~/modules/mediacentre/actions/favorites';
-import { searchResourcesAction, searchResourcesAdvancedAction } from '~/modules/mediacentre/actions/search';
-import { fetchSignetsAction } from '~/modules/mediacentre/actions/signets';
-import { fetchTextbooksAction } from '~/modules/mediacentre/actions/textbooks';
+import {
+  addFavoriteAction,
+  fetchExternalsAction,
+  fetchFavoritesAction,
+  fetchSignetsAction,
+  fetchTextbooksAction,
+  removeFavoriteAction,
+  searchResourcesAction,
+  searchResourcesAdvancedAction,
+} from '~/modules/mediacentre/actions';
 import { AdvancedSearchModal, IField, ISearchModalHandle, ISources } from '~/modules/mediacentre/components/AdvancedSearchModal';
 import { FavoritesCarousel } from '~/modules/mediacentre/components/FavoritesCarousel';
 import { ResourceGrid } from '~/modules/mediacentre/components/ResourceGrid';
 import { SearchContent, SearchState } from '~/modules/mediacentre/components/SearchContent';
 import { ISearchBarHandle, IconButtonText, SearchBar } from '~/modules/mediacentre/components/SearchItems';
-import { IExternals, getExternalsState } from '~/modules/mediacentre/state/externals';
-import { IFavorites, getFavoritesState } from '~/modules/mediacentre/state/favorites';
-import { ISearch, getSearchState } from '~/modules/mediacentre/state/search';
-import { ISignets, getSignetsState } from '~/modules/mediacentre/state/signets';
-import { ITextbooks, getTextbooksState } from '~/modules/mediacentre/state/textbooks';
-import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
+import moduleConfig from '~/modules/mediacentre/moduleConfig';
+import { IResource, IResourceList, ISignets, Source } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -41,27 +42,36 @@ const styles = StyleSheet.create({
   },
 });
 
-type IHomeScreenProps = {
-  externals: IExternals;
-  favorites: IFavorites;
+// TYPES ==========================================================================================
+
+interface IMediacentreHomeScreen_DataProps {
+  externals: IResourceList;
+  favorites: IResourceList;
   isFetchingSearch: boolean;
   isFetchingSections: boolean;
   navigation: { navigate };
-  search: ISearch;
+  search: IResourceList;
   signets: ISignets;
-  textbooks: ITextbooks;
+  textbooks: IResourceList;
+}
 
-  postAddFavorite: (id: string, resource: IResource) => any;
+interface IMediacentreHomeScreen_EventProps {
+  addFavorite: (id: string, resource: IResource) => any;
   fetchExternals: (sources: string[]) => any;
   fetchFavorites: () => any;
   fetchSignets: () => any;
   fetchTextbooks: () => any;
-  postRemoveFavorite: (id: string, source: Source) => any;
+  removeFavorite: (id: string, source: Source) => any;
   searchResources: (sources: string[], query: string) => any;
   searchResourcesAdvanced: (fields: IField[], sources: ISources) => any;
-} & NavigationInjectedProps;
+  dispatch: ThunkDispatch<any, any, any>;
+}
 
-export const HomeScreen: React.FunctionComponent<IHomeScreenProps> = (props: IHomeScreenProps) => {
+type IMediacentreHomeScreen_Props = IMediacentreHomeScreen_DataProps & IMediacentreHomeScreen_EventProps & NavigationInjectedProps;
+
+// COMPONENT ======================================================================================
+
+const MediacentreHomeScreen = (props: IMediacentreHomeScreen_Props) => {
   const [shouldFetch, setShouldFetch] = useState<boolean>(true);
   const [isFetchingSources, setFetchingSources] = useState<boolean>(true);
   const [sources, setSources] = useState<string[]>([]);
@@ -74,9 +84,11 @@ export const HomeScreen: React.FunctionComponent<IHomeScreenProps> = (props: IHo
   const sections = [
     { title: 'mediacentre.external-resources', resources: props.externals },
     { title: 'mediacentre.my-textbooks', resources: props.textbooks },
-    { title: 'mediacentre.my-signets', resources: props.signets.sharedSignets },
-    { title: 'mediacentre.orientation-signets', resources: props.signets.orientationSignets },
+    { title: 'mediacentre.my-signets', resources: props.signets.shared },
+    { title: 'mediacentre.orientation-signets', resources: props.signets.orientation },
   ].filter(section => section.resources.length > 0);
+
+  // LOADER =======================================================================================
 
   const fetchSources = useCallback(async () => {
     const response = await fetchWithCache(`/mediacentre`, {
@@ -113,6 +125,8 @@ export const HomeScreen: React.FunctionComponent<IHomeScreenProps> = (props: IHo
   useEffect(() => {
     setSearchedResources(props.search);
   }, [props.search]);
+
+  // EVENTS =======================================================================================
 
   const onSearch = (query: string) => {
     props.searchResources(sources, query);
@@ -155,7 +169,7 @@ export const HomeScreen: React.FunctionComponent<IHomeScreenProps> = (props: IHo
 
   const addFavorite = async (resourceId: string, resource: IResource) => {
     try {
-      await props.postAddFavorite(resourceId, resource);
+      await props.addFavorite(resourceId, resource);
       Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
         position: Toast.position.BOTTOM,
         mask: false,
@@ -168,7 +182,7 @@ export const HomeScreen: React.FunctionComponent<IHomeScreenProps> = (props: IHo
 
   const removeFavorite = async (resourceId: string, resource: Source) => {
     try {
-      await props.postRemoveFavorite(resourceId, resource);
+      await props.removeFavorite(resourceId, resource);
       Toast.showSuccess(I18n.t('mediacentre.favorite-removed'), {
         position: Toast.position.BOTTOM,
         mask: false,
@@ -179,12 +193,16 @@ export const HomeScreen: React.FunctionComponent<IHomeScreenProps> = (props: IHo
     }
   };
 
+  // EMPTY SCREEN =================================================================================
+
   const renderEmptyState = () => {
     if (isFetchingSources) {
       return <LoadingIndicator />;
     }
     return <EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />;
   };
+
+  // RENDER =======================================================================================
 
   return (
     <PageView navigation={props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.tabName') }}>
@@ -254,24 +272,27 @@ export const HomeScreen: React.FunctionComponent<IHomeScreenProps> = (props: IHo
   );
 };
 
+// MAPPING ========================================================================================
+
 const setFavorites = (resources: IResource[], favorites: string[]) => {
   for (const resource of resources) {
     resource.favorite = favorites.includes(String(resource.id));
   }
 };
 
-const mapStateToProps: (state: any) => any = state => {
-  const externals = getExternalsState(state);
-  const favorites = getFavoritesState(state);
-  const search = getSearchState(state);
-  const signets = getSignetsState(state);
-  const textbooks = getTextbooksState(state);
+const mapStateToProps = (gs: any) => {
+  const state = moduleConfig.getState(gs);
+  const externals = state.externals;
+  const favorites = state.favorites;
+  const search = state.search;
+  const signets = state.signets;
+  const textbooks = state.textbooks;
 
   const favIds = favorites.data.map(favorite => String(favorite.id));
   setFavorites(externals.data, favIds);
   setFavorites(search.data, favIds);
-  setFavorites(signets.data.orientationSignets, favIds);
-  setFavorites(signets.data.sharedSignets, favIds);
+  setFavorites(signets.data.orientation, favIds);
+  setFavorites(signets.data.shared, favIds);
   setFavorites(textbooks.data, favIds);
 
   return {
@@ -286,20 +307,35 @@ const mapStateToProps: (state: any) => any = state => {
   };
 };
 
-const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators(
-    {
-      postAddFavorite: addFavoriteAction,
-      fetchFavorites: fetchFavoritesAction,
-      fetchExternals: fetchExternalsAction,
-      fetchSignets: fetchSignetsAction,
-      fetchTextbooks: fetchTextbooksAction,
-      postRemoveFavorite: removeFavoriteAction,
-      searchResources: searchResourcesAction,
-      searchResourcesAdvanced: searchResourcesAdvancedAction,
-    },
-    dispatch,
-  );
-};
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState,
+) => IMediacentreHomeScreen_EventProps = (dispatch, getState) => ({
+  addFavorite: async (resourceId: string, resource: IResource) => {
+    return dispatch(addFavoriteAction(resourceId, resource));
+  },
+  fetchFavorites: async () => {
+    return dispatch(fetchFavoritesAction());
+  },
+  fetchExternals: async (sources: string[]) => {
+    return dispatch(fetchExternalsAction(sources));
+  },
+  fetchSignets: async () => {
+    return dispatch(fetchSignetsAction());
+  },
+  fetchTextbooks: async () => {
+    return dispatch(fetchTextbooksAction());
+  },
+  removeFavorite: async (resourceId: string, source: Source) => {
+    return dispatch(removeFavoriteAction(resourceId, source));
+  },
+  searchResources: async (sources: string[], query: string) => {
+    return dispatch(searchResourcesAction(sources, query));
+  },
+  searchResourcesAdvanced: async (fields: IField[], sources: ISources) => {
+    return dispatch(searchResourcesAdvancedAction(fields, sources));
+  },
+  dispatch,
+});
 
-export default withViewTracking('mediacentre')(connect(mapStateToProps, mapDispatchToProps)(HomeScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(MediacentreHomeScreen);

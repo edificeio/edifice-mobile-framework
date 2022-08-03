@@ -7,7 +7,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold } from '~/framework/components/text';
-import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/reducer';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 
 import { IField, ISources } from './AdvancedSearchModal';

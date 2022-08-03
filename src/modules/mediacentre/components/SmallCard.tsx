@@ -11,7 +11,7 @@ import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
-import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
   upperContentContainer: {

@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text } from '~/framework/components/text';
-import { IResource } from '~/modules/mediacentre/utils/Resource';
+import { IResource } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
   mainContainer: {

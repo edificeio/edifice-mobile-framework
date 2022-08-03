@@ -4,7 +4,7 @@ import { Image, ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 
 import { NamedSVG } from '~/framework/components/picture';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getAuthHeader } from '~/infra/oauth';
-import { Source } from '~/modules/mediacentre/utils/Resource';
+import { Source } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
   sourceImageContainer: {

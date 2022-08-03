@@ -10,7 +10,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
-import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/reducer';
 
 import { ResourceImage, SourceImage } from './ResourceImage';
 

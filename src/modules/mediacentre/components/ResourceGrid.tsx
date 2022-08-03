@@ -5,7 +5,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { Text, TextBold } from '~/framework/components/text';
-import { IResource, Source } from '~/modules/mediacentre/utils/Resource';
+import { IResource, Source } from '~/modules/mediacentre/reducer';
 
 import { SmallCard } from './SmallCard';
 

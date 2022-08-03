@@ -17,7 +17,7 @@ import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
-import { Source } from '~/modules/mediacentre/utils/Resource';
+import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 
