@@ -2,6 +2,7 @@ import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
@@ -44,14 +45,17 @@ export interface IActivationPageDataProps extends IActivationModel {
   externalError: string;
   contextState: ContextState;
   submitState: SubmitState;
-  navigation: any;
 }
 export interface IActivationPageEventProps {
-  onSubmit(model: IActivationModel): Promise<void>;
+  onSubmit(model: IActivationModel, rememberMe?: boolean): Promise<void>;
   onRetryLoad: (args: IActivationUserInfo) => void;
   onCancelLoad: () => void;
 }
-export type IActivationPageProps = IActivationPageDataProps & IActivationPageEventProps;
+export type IActivationPageProps = IActivationPageDataProps &
+  IActivationPageEventProps &
+  NavigationInjectedProps<{
+    rememberMe?: boolean;
+  }>;
 // Activation Page Component -------------------------------------------------------------
 
 export class ActivationPage extends React.PureComponent<IActivationPageProps, IActivationPageState> {
@@ -62,10 +66,12 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     isCGUAccepted: false,
     isModalVisible: false,
   };
+
   private handleActivation = async () => {
-    this.props.onSubmit({ ...this.state });
+    this.props.onSubmit({ ...this.state }, this.props.navigation.getParam('rememberMe'));
     this.setState({ typing: false });
   };
+
   private onChange = (key: IFields) => {
     return (valueChange: ValueChangeArgs<string>) => {
       const newState: Partial<IActivationPageState> = {

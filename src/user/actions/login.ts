@@ -82,7 +82,7 @@ export enum DEPRECATED_LoginResult {
 
 export function loginAction(
   redirectOnError: boolean = false,
-  credentials?: { username: string; password: string; rememberMe: boolean },
+  credentials?: { username: string; password: string; rememberMe?: boolean },
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const pf = DEPRECATED_getCurrentPlatform();
@@ -253,6 +253,7 @@ export function loginAction(
                       login: credentials.username,
                     },
                     true,
+                    credentials?.rememberMe,
                   ),
                 );
                 return; // End error handling if activation match is a success

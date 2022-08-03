@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { activationAccount, cancelActivationAccount, initActivationAccount } from '~/user/actions/activation';
+import { activationAccount, cancelActivationAccount } from '~/user/actions/activation';
 import {
   ActivationPage,
   IActivationPageDataProps,
@@ -11,6 +11,8 @@ import {
 } from '~/user/components/ActivationPage';
 import userConfig from '~/user/config';
 import { IActivationState } from '~/user/reducers/activation';
+
+import { initActivationAccount } from '../actions/initActivation';
 
 const mapStateToProps: (state: any) => IActivationPageDataProps & { version: number } = state => {
   const activationState: IActivationState = state[userConfig.reducerName].activation;
@@ -34,8 +36,8 @@ const mapStateToProps: (state: any) => IActivationPageDataProps & { version: num
 const mapDispatchToProps: (dispatch) => IActivationPageEventProps = dispatch => {
   return {
     dispatch,
-    onSubmit(model) {
-      return dispatch(activationAccount(model));
+    onSubmit(model, rememberMe?: boolean) {
+      return dispatch(activationAccount(model, rememberMe));
     },
     onCancelLoad() {
       dispatch(cancelActivationAccount());

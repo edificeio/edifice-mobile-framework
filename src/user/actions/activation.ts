@@ -77,7 +77,7 @@ function activationSubmitError(message: string): IActivationSubmitErrorAction {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function activationAccount(model: IActivationModel) {
+export function activationAccount(model: IActivationModel, rememberMe?: boolean) {
   return async (dispatch, getState) => {
     try {
       // === 0 auto select the default theme
@@ -132,6 +132,7 @@ export function activationAccount(model: IActivationModel) {
         loginAction(true, {
           username: model.login,
           password: model.password,
+          rememberMe,
         }),
       );
       // === 5 - activation finished successfully

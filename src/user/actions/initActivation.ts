@@ -20,7 +20,7 @@ function activationContextError(): Action {
   return { type: actionTypeActivationContext.fetchError };
 }
 
-export function initActivationAccount(args: IActivationUserInfo, redirect: boolean) {
+export function initActivationAccount(args: IActivationUserInfo, redirect: boolean, rememberMe?: boolean) {
   return async dispatch => {
     try {
       // === 1 - Fetch activation context
@@ -28,7 +28,7 @@ export function initActivationAccount(args: IActivationUserInfo, redirect: boole
       const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
       // === 2 - Navigate if needed
       if (redirect) {
-        navigate('LoginActivation');
+        navigate('LoginActivation', { rememberMe });
       }
       // === 3 - send result to store
       if (!res.ok) {
