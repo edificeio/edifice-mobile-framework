@@ -35,7 +35,6 @@ import { IUserInfoState } from './user/state/info';
 //require("./pronote");
 //require("./lvs");
 require('./homework');
-require('./workspace');
 //require("./viescolaire");
 //require("./support");
 require('./user');
