@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { UI_SIZES } from '~/framework/components/constants';
-import { PageViewWithStyle } from '~/framework/components/page';
+import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { H1, Text, TextAction, TextSemiBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -23,7 +23,7 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
   const eulaUrl = `${platform}${path}`;
 
   return (
-    <PageViewWithStyle
+    <PageViewStyle
       style={{
         backgroundColor: theme.ui.background.empty,
         paddingTop: UI_SIZES.spacing.huge,
@@ -62,6 +62,6 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
         title={I18n.t('user.revalidateTermsScreen.EULA')}
         uri={eulaUrl}
       />
-    </PageViewWithStyle>
+    </PageViewStyle>
   );
 };

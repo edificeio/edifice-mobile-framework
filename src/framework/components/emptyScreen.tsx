@@ -12,7 +12,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
 import { ActionButton } from './ActionButton';
 import { UI_SIZES } from './constants';
-import { PageViewWithStyle } from './page';
+import { PageViewStyle } from './page';
 import { Text, TextSemiBold } from './text';
 
 export const EmptyScreen = ({
@@ -36,7 +36,7 @@ export const EmptyScreen = ({
   const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
-    <PageViewWithStyle
+    <PageViewStyle
       style={[
         {
           backgroundColor: theme.ui.background.empty,
@@ -75,6 +75,6 @@ export const EmptyScreen = ({
           <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} />
         </View>
       ) : null}
-    </PageViewWithStyle>
+    </PageViewStyle>
   );
 };

@@ -57,7 +57,7 @@ export const getPageGutterStyle = (gutters: PageViewProps['gutters'] = true) => 
   ...(gutters === 'both' || gutters === 'horizontal' || gutters === true ? pageGutterStyleH : {}),
 });
 
-export const PageViewWithStyle = styled.View({
+export const PageViewStyle = styled.View({
   flex: 1,
   backgroundColor: theme.ui.background.page,
 });
@@ -92,29 +92,31 @@ export const PageView = (props: PageViewProps) => {
   );
 
   return (
-    <PageViewWithStyle {...viewProps}>
-      <StatusBar barStyle="light-content" backgroundColor={navBarColor || theme.palette.primary.regular} />
-      {navBar ? <FakeHeader {...navBar} /> : null}
-      {navBarWithBack ? (
-        <FakeHeader
-          left={
-            <HeaderBackAction
-              navigation={navigation}
-              {...(onBack
-                ? {
-                    onPress: goBack,
-                  }
-                : {})}
-            />
-          }
-          {...navBarWithBack}
-        />
-      ) : null}
-      {navBarNode ? navBarNode : null}
-      <DEPRECATED_ConnectionTrackingBar />
-      <Notifier id={navigation.state.routeName} />
-      <View style={gutterStyle}>{children}</View>
-    </PageViewWithStyle>
+    <PageViewStyle {...viewProps}>
+      <>
+        <StatusBar barStyle="light-content" backgroundColor={navBarColor || theme.palette.primary.regular} />
+        {navBar ? <FakeHeader {...navBar} /> : null}
+        {navBarWithBack ? (
+          <FakeHeader
+            left={
+              <HeaderBackAction
+                navigation={navigation}
+                {...(onBack
+                  ? {
+                      onPress: goBack,
+                    }
+                  : {})}
+              />
+            }
+            {...navBarWithBack}
+          />
+        ) : null}
+        {navBarNode ? navBarNode : null}
+        <DEPRECATED_ConnectionTrackingBar />
+        <Notifier id={navigation.state.routeName} />
+        <View style={gutterStyle}>{children}</View>
+      </>
+    </PageViewStyle>
   );
 };
 
@@ -132,12 +134,15 @@ export const KeyboardPageView = (
     android: undefined,
   }) as KeyboardAvoidingViewProps['behavior'];
   // BEWARE of adding keyboardVerticalOffset in the future when we'll get back the real React Navigation headers.
-  const { children, ...pageProps } = props;
+  const { children, gutters, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
   const AreaComponent = props.safeArea ?? true ? SafeAreaView : View;
   return (
-    <PageView {...pageProps}>
-      <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} style={styles.flex1}>
+    <PageView gutters={gutters} {...pageProps}>
+      <KeyboardAvoidingView
+        behavior={keyboardAvoidingViewBehavior}
+        keyboardVerticalOffset={UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset}
+        style={styles.flex1}>
         <InnerViewComponent
           style={styles.flex1}
           contentContainerStyle={styles.flexGrow1}
