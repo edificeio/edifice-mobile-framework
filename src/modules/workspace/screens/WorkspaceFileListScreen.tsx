@@ -301,8 +301,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
     return (
       <EmptyScreen
         svgImage={image}
-        title={I18n.t(`workspaceEmptyScreen.${screen}.title`)}
-        text={I18n.t(`workspaceEmptyScreen.${screen}.text`)}
+        title={I18n.t(`workspace.emptyScreen.${screen}.title`)}
+        text={I18n.t(`workspace.emptyScreen.${screen}.text`)}
       />
     );
   };
