@@ -39,7 +39,7 @@ android {
         versionCode 1080200
         versionName "1.8.2"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.1\""
+        buildConfigField "String", "BundleVersionType", "\"alpha.0\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
         ndk {
