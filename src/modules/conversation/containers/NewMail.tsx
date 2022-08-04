@@ -48,12 +48,12 @@ interface ICreateMailEventProps {
   setup: () => void;
   sendMail: (mailDatas: object, draftId: string | undefined, inReplyTo: string) => void;
   forwardMail: (draftId: string, inReplyTo: string) => void;
-  makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
+  makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => Promise<void>;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
   deleteMessage: (mailId: string[]) => void;
   onPickFileError: (notifierId: string) => void;
-  addAttachment: (draftId: string, files: LocalFile, callbacks?: IUploadCallbaks) => () => Promise<SyncedFileWithId>;
+  addAttachment: (draftId: string, files: LocalFile, callbacks?: IUploadCallbaks) => Promise<SyncedFileWithId>;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
@@ -627,7 +627,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         <View style={{ flexDirection: 'row' }}>
           {addGivenAttachment && (
             <View style={{ width: 48, alignItems: 'center' }}>
-              <FilePicker multiple callback={addGivenAttachment}>
+              <FilePicker multiple synchrone callback={addGivenAttachment}>
                 <HeaderIcon name="attachment" />
               </FilePicker>
             </View>

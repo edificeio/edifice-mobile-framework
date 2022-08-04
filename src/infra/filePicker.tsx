@@ -24,9 +24,10 @@ export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri' | 'type
 
 export class FilePicker extends React.PureComponent<
   {
-    callback: (document: ImagePicked | DocumentPicked, sourceType?: string) => void;
+    callback: (document: ImagePicked | DocumentPicked, sourceType?: string) => Promise<void> | void;
     options?: Partial<ImageLibraryOptions & CameraOptions & DocumentPickerOptions<keyof PlatformTypes>>;
     multiple?: boolean;
+    synchrone?: boolean;
   } & TouchableOpacityProps,
   {
     enabled: boolean;
@@ -36,17 +37,18 @@ export class FilePicker extends React.PureComponent<
   state = { enabled: true, showModal: false };
 
   render() {
-    const { callback, options, multiple, ...props } = this.props;
+    const { callback, options, multiple, synchrone, ...props } = this.props;
     const { enabled, showModal } = this.state;
 
-    const imageCallback = (images: LocalFile[], sourceType: string) => {
+    const imageCallback = async (images: LocalFile[], sourceType: string) => {
       try {
         for (const img of images) {
           const imgFormatted = {
             ...img.nativeInfo,
             ...img,
           };
-          callback(imgFormatted as ImagePicked);
+          if (synchrone) await callback(imgFormatted as ImagePicked);
+          else callback(imgFormatted as ImagePicked);
         }
       } catch (error) {}
     };
@@ -58,7 +60,8 @@ export class FilePicker extends React.PureComponent<
             android: getPath(file.uri),
             default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
           });
-          callback({ fileName: file.name, fileSize: file.size!, uri: file.uri, type: file.type }, sourceType);
+          if (synchrone) await callback({ fileName: file.name, fileSize: file.size!, uri: file.uri, type: file.type }, sourceType);
+          else callback({ fileName: file.name, fileSize: file.size!, uri: file.uri, type: file.type }, sourceType);
         }
       } catch (error) {}
     };
@@ -69,8 +72,11 @@ export class FilePicker extends React.PureComponent<
         title: I18n.t('common-photoPicker-take'),
         action: async (sourceType: string) => {
           LocalFile.pick({ source: 'camera' })
-            .then(lf => imageCallback(lf, sourceType))
-            .finally(() => this.setState({ enabled: true, showModal: false }));
+            .then(lf => {
+              this.setState({ showModal: false });
+              return imageCallback(lf, sourceType);
+            })
+            .finally(() => this.setState({ enabled: true }));
         },
       },
       {
@@ -78,8 +84,11 @@ export class FilePicker extends React.PureComponent<
         title: I18n.t('common-photoPicker-pick'),
         action: async (sourceType: string) => {
           LocalFile.pick({ source: 'galery', multiple })
-            .then(lf => imageCallback(lf, sourceType))
-            .finally(() => this.setState({ enabled: true, showModal: false }));
+            .then(lf => {
+              this.setState({ showModal: false });
+              return imageCallback(lf, sourceType);
+            })
+            .finally(() => this.setState({ enabled: true }));
         },
       },
       {
@@ -93,8 +102,11 @@ export class FilePicker extends React.PureComponent<
               | DocumentType[keyof PlatformTypes],
             ...options,
           })
-            .then(file => documentCallback(file, sourceType))
-            .finally(() => this.setState({ enabled: true, showModal: false }));
+            .then(file => {
+              this.setState({ showModal: false });
+              return documentCallback(file, sourceType);
+            })
+            .finally(() => this.setState({ enabled: true }));
         },
       },
       {
