@@ -16,7 +16,7 @@ const HomeworkTimeline = ({ leftPosition, topPosition, color }: IHomeworkTimelin
       backgroundColor: color || theme.palette.grey.pearl,
       left: leftPosition,
       top: topPosition,
-      width: UI_SIZES.dimensions.width.small,
+      width: UI_SIZES.dimensions.width.tiny,
       height: UI_SIZES.screen.height,
       position: 'absolute',
     }}

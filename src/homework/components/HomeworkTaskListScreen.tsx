@@ -166,7 +166,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             if (type !== 'day') {
               return (
                 <>
-                  <HomeworkTimeline topPosition={26} leftPosition={UI_SIZES.spacing.minor} />
+                  <HomeworkTimeline topPosition={UI_SIZES.spacing.large} leftPosition={UI_SIZES.spacing.minor} />
                   <View
                     style={{
                       marginTop: UI_SIZES.spacing.big,
