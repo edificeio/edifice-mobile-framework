@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { H1, Text, TextColorStyle } from '~/framework/components/text';
+import { HeadingS, Text, TextColorStyle } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage, InfoMessage } from '~/ui/Typography';
@@ -127,7 +127,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
-                      <H1 style={{ ...TextColorStyle.Light }}>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</H1>
+                      <HeadingS style={{ ...TextColorStyle.Light }}>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeadingS>
                       <Text style={{ ...TextColorStyle.Light }}>
                         {I18n.t(`forgot-${forgotId ? 'id' : 'password'}-instructions`)}
                       </Text>

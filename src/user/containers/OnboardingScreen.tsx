@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { H1, TextSemiBold } from '~/framework/components/text';
+import { HeadingS, TextSemiBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
@@ -71,7 +71,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
           paddingVertical: UI_SIZES.spacing.big,
         }}>
         <View style={{ flex: 4 }}>
-          <H1
+          <HeadingS
             style={{
               color: theme.palette.primary.regular,
               alignSelf: 'center',
@@ -80,7 +80,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
               lineHeight: undefined,
             }}>
             {I18n.t('common.appName').toUpperCase()}
-          </H1>
+          </HeadingS>
           <Swiper
             autoplay
             autoplayTimeout={5}

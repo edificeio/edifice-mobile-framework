@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { HeadingS, Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
 import { UserType } from '~/framework/util/session';
 import {
   IConcernedStudent,
@@ -252,9 +252,7 @@ const SchoolbookWordDetailsCard = (
             />
           </View>
         ) : null}
-        {word?.title ? (
-          <TextBold style={{ marginTop: UI_SIZES.spacing.small, ...TextSizeStyle.SlightBigPlus }}>{word?.title}</TextBold>
-        ) : null}
+        {word?.title ? <HeadingS style={{ marginTop: UI_SIZES.spacing.small }}>{word?.title}</HeadingS> : null}
         {word?.text ? (
           <View style={{ marginTop: UI_SIZES.spacing.minor, marginBottom: UI_SIZES.spacing.small }}>
             <HtmlContentView html={word?.text} opts={{ globalTextStyle: { ...TextSizeStyle.SlightBig } }} />

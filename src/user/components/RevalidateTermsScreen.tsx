@@ -11,7 +11,7 @@ import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { H1, Text, TextAction, TextSemiBold } from '~/framework/components/text';
+import { HeadingS, Text, TextAction, TextSemiBold } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAction: () => void; acceptAction: () => void }) => {
@@ -34,7 +34,7 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
           <NamedSVG name={'empty-eula'} width={imageWidth} height={imageHeight} />
         </View>
       </View>
-      <H1
+      <HeadingS
         numberOfLines={2}
         style={{
           textAlign: 'center',
@@ -42,7 +42,7 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
           marginTop: UI_SIZES.spacing.large,
         }}>
         {I18n.t('user.revalidateTermsScreen.newEULA')}
-      </H1>
+      </HeadingS>
       <Text numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
         {`${I18n.t('user.revalidateTermsScreen.mustAccept')} `}
         <TextAction onPress={() => setIsModalVisible(true)} style={{ textDecorationLine: 'underline' }}>

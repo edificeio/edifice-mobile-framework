@@ -64,7 +64,7 @@ export const TextColorStyle = {
   Normal: { color: theme.ui.text.regular },
 } as { [key in TextColorStyleKey]: TextStyle };
 
-type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'Big' | 'Huge';
+type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'SlightBig' | 'SlightBigPlus' | 'Big' | 'Huge';
 
 export const responsiveStyle = (value: number) => ({
   fontSize: UI_SIZES.getResponsiveFontSize(value),
@@ -76,6 +76,7 @@ export const TextSizeStyle = {
   Small: responsiveStyle(12),
   Normal: responsiveStyle(14),
   SlightBig: responsiveStyle(16),
+  SlightBigPlus: responsiveStyle(18),
   Big: responsiveStyle(20),
   Huge: responsiveStyle(28),
 } as { [key in TextSizeStyleKey]: TextStyle };
@@ -139,10 +140,10 @@ export const NestedTextInverse = styled.Text({
   ...TextColorStyle.Inverse,
 });
 
-export const H1 = styled(Text)({
-  ...FontStyle.SemiBold,
+export const HeadingS = styled(Text)({
+  ...FontStyle.Bold,
+  ...TextSizeStyle.SlightBigPlus,
   ...TextColorStyle.Normal,
-  fontSize: 18,
 });
 
 export const TextAction = styled(Text)({
