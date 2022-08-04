@@ -11,10 +11,9 @@ import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const style = StyleSheet.create({
   refreshContainer: {

@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 
 import { PageView } from '~/framework/components/page';
 import DisplaySession from '~/modules/viescolaire/cdt/components/DisplaySession';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 class Session extends React.PureComponent<any> {
   public render() {

@@ -22,8 +22,7 @@ import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
 import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 export type TimetableProps = {
   courses: any;

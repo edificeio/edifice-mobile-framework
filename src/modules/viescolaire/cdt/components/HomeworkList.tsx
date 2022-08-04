@@ -19,10 +19,10 @@ import {
 } from '~/modules/viescolaire/utils/cdt';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 import { HomeworkItem, SessionItem } from './Items';
 
 const style = StyleSheet.create({

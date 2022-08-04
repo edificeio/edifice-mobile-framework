@@ -21,8 +21,7 @@ import { fetchPeriodsListAction } from '~/modules/viescolaire/viesco/actions/per
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
 import { IPeriodsList, getPeriodsListState } from '~/modules/viescolaire/viesco/state/periods';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 export type CompetencesProps = {
   devoirsList: IDevoirsMatieresState;

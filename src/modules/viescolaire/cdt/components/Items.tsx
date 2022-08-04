@@ -4,9 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { Text, TextBold } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   homeworkLeftColoredItem: {

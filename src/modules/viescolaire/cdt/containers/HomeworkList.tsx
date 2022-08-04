@@ -19,8 +19,7 @@ import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks
 import { getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { IPersonnelList, getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 type HomeworkListProps = {
   homeworks: any;

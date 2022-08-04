@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import { PageView } from '~/framework/components/page';
 import DisplayHomework from '~/modules/viescolaire/cdt/components/DisplayHomework';
 import DisplayListHomework from '~/modules/viescolaire/cdt/components/DisplayListHomework';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 class Homework extends React.PureComponent<any> {
   public render() {

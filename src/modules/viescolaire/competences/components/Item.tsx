@@ -11,10 +11,9 @@ import { ILevelsList } from '~/modules/viescolaire/competences/state/competences
 import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 // STYLE
 

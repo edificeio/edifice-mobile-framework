@@ -17,8 +17,7 @@ import { ITimeSlotsState, getSlotsListState } from '~/modules/viescolaire/cdt/st
 import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/viesco/actions/courses';
 import { ICourseListState, getCoursesListState } from '~/modules/viescolaire/viesco/state/courses';
 import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 export type TimetableProps = {
   courses: ICourseListState;

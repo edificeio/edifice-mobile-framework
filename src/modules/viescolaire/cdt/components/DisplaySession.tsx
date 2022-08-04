@@ -11,10 +11,9 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
 import { Session } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
 
 const style = StyleSheet.create({
   mainView: {

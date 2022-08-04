@@ -19,8 +19,7 @@ import { IPresencesUserChildrenState, getUserChildrenState } from '~/modules/vie
 import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/viesco/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
-
-import { viescoTheme } from '../../viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 interface HistoryProps extends NavigationInjectedProps {
   data: any;
