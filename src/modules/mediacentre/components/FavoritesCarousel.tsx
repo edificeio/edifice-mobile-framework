@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     marginLeft: UI_SIZES.spacing.small,
     padding: 10, // MO-142 use UI_SIZES.spacing here
     backgroundColor: theme.ui.background.card,
-    borderTopRightRadius: 14,
-    borderBottomRightRadius: 14,
+    borderTopRightRadius: UI_SIZES.radius.card,
+    borderBottomRightRadius: UI_SIZES.radius.card,
   },
   cardTitleText: {
     alignSelf: 'center',
