@@ -22,8 +22,8 @@ const fs = require('fs');
 const lastFile = 'cli/last-build.json';
 
 /**
- * Check if object is empty.
- * @param object
+ * Verify if object is empty.
+ * @param object object being verified
  */
 // from https://www.samanthaming.com/tidbits/94-how-to-check-if-object-is-empty
 const isObjectEmpty = object => {
@@ -32,8 +32,8 @@ const isObjectEmpty = object => {
 
 /**
  * Get keys difference between two objects.
- * @param object1
- * @param object2
+ * @param object1 base object
+ * @param object2 compared object
  */
 const getKeysDifference = (object1, object2) => {
   const keys1 = Object.keys(object1);
@@ -51,8 +51,8 @@ const getKeysDifference = (object1, object2) => {
 
 /**
  * Check if two objects are equal.
- * @param object1
- * @param object2
+ * @param object1 base object
+ * @param object2 compared object
  */
 // from https://dmitripavlutin.com/how-to-compare-objects-in-javascript
 const shallowEqual = (object1, object2) => {
