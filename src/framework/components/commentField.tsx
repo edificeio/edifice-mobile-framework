@@ -159,6 +159,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         padding: props.commentId ? UI_SIZES.spacing.medium : undefined,
         borderTopWidth: props.commentId && isFirstComment ? 1 : 0,
         borderBottomWidth: props.commentId ? 1 : 0,
+        backgroundColor: theme.ui.background.card,
       },
     ],
     [isFirstComment, props.commentId],
@@ -170,7 +171,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
       {
         maxHeight: isIdleExistingComment ? undefined : UI_SIZES.elements.textFieldMaxHeight,
         borderWidth: isIdleExistingComment ? 0 : 1,
-        marginLeft: isIdleExistingComment ? 0 : UI_SIZES.spacing.small,
+        marginLeft: isIdleExistingComment ? UI_SIZES.spacing.small : UI_SIZES.spacing.small,
+        marginTop: isIdleExistingComment ? UI_SIZES.spacing.tiny : 0,
+        // 'paddingVertical seems odd on iOS, better use of paddingBottom only'
+        [Platform.select({ ios: 'paddingBottom', android: 'paddingVertical' })!]: isIdleExistingComment
+          ? UI_SIZES.spacing.minor
+          : 0,
       },
     ],
     [isIdleExistingComment],
@@ -187,7 +193,10 @@ const CommentField = (props: CommentFieldProps, ref) => {
         editable={!(props.isPublishingComment || isIdleExistingComment)}
         onChangeText={text => setComment(text)}
         value={comment}
-        style={Platform.select({ ios: undefined, android: textInputStyle })}
+        style={Platform.select({
+          ios: undefined,
+          android: textInputStyle,
+        })}
       />
     ),
     [comment, isIdleExistingComment, props.isPublishingComment, props.isResponse, textInputStyle],
