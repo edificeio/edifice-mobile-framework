@@ -8,8 +8,6 @@ import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-we
 import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
-
-
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -26,7 +24,6 @@ import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
-
 
 enum WAYFPageMode {
   EMPTY = 0,
@@ -242,6 +239,9 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.pfUrl = pfConf?.url || '';
     this.wayfUrl = pfConf?.wayf || '';
     this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
+    this.backActions.forEach(action => {
+      action.bind(this);
+    });
   }
 
   componentDidUpdate(prevProps: IWAYFPageProps) {

@@ -16,28 +16,29 @@ import { I18nManager } from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 
 // Built-in translations
-const builtInTranslations = {
+const builtInTranslations = unflatten({
   fr: require('ASSETS/i18n/fr.json'),
   en: require('ASSETS/i18n/en.json'),
   es: require('ASSETS/i18n/es.json'),
-};
+});
+
 // Overrides translations
-const overrideTranslations = {
+const overrideTranslations = unflatten({
   fr: require('ASSETS/i18n/override/fr.json'),
   en: require('ASSETS/i18n/override/en.json'),
   es: require('ASSETS/i18n/override/es.json'),
-};
+});
+
 // Finale translations
 const finaleTranslations = Object.fromEntries(
   Object.keys(builtInTranslations).map(k => [k, deepmerge<object>(builtInTranslations[k], overrideTranslations[k])]),
 );
-const unflattenedTranslations = unflatten(finaleTranslations);
 
 // Translation setup
 export const initI18n = () => {
   I18n.fallbacks = true;
   I18n.defaultLocale = 'en';
-  I18n.translations = unflattenedTranslations;
+  I18n.translations = finaleTranslations;
   const res = RNLocalize.findBestAvailableLanguage(Object.keys(I18n.translations)) as {
     languageTag: string;
     isRTL: boolean;
