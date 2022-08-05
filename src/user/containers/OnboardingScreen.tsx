@@ -153,7 +153,14 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
             {/* Note: if there is no Discovery button, the JoinMyNetwork button is immediately displayed;
             otherwise, both buttons are hidden until measurements are done (so they are directly displayed with the same width).*/}
             {hideDiscoveryButton || areAllButtonsMeasured ? null : (
-              <View style={{ backgroundColor: theme.ui.background.page, width: '100%', height: '100%', position: 'absolute' }} />
+              <View
+                style={{
+                  backgroundColor: theme.ui.background.page,
+                  width: '100%',
+                  height: '110%', // Note: height is slightly bigger than View to completely hide buttons on Android
+                  position: 'absolute',
+                }}
+              />
             )}
           </View>
         </View>
