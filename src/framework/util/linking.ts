@@ -22,11 +22,11 @@ export async function openUrl(
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
   showConfirmation: boolean = true,
-  requireSession: boolean = true,
+  autoLogin: boolean = true,
 ): Promise<void> {
   try {
     const session = getUserSession();
-    if (requireSession && !session) {
+    if (autoLogin && !session) {
       throw new Error('openUrl : no active session.');
     }
     // 1. compute url redirection if function provided
@@ -40,7 +40,7 @@ export async function openUrl(
     // 1. compute url redirection if function provided
     url = transformedSrc(url);
     try {
-      if (getIsUrlSignable(url)) {
+      if (getIsUrlSignable(url) && autoLogin) {
         const customToken = await session.oauth.getQueryParamToken();
         if (customToken) {
           // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
