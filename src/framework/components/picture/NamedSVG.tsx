@@ -76,6 +76,7 @@ const imports = {
   'empty-blog': import('ASSETS/images/empty-screen/empty-blog.svg'),
   'empty-content': import('ASSETS/images/empty-screen/empty-content.svg'),
   'empty-conversation': import('ASSETS/images/empty-screen/empty-conversation.svg'),
+  'empty-eula': import('ASSETS/images/empty-screen/empty-eula.svg'),
   'empty-evaluations': import('ASSETS/images/empty-screen/empty-evaluations.svg'),
   'empty-hammock': import('ASSETS/images/empty-screen/empty-hammock.svg'),
   'empty-homework': import('ASSETS/images/empty-screen/empty-homework.svg'),
