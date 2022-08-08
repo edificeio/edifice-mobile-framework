@@ -16,7 +16,7 @@ import {
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
   },
   headerTitle: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     color: theme.palette.grey.white,
   },
   contentContainer: {
@@ -158,7 +158,7 @@ const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICri
         <ButtonGroup buttons={buttons} selectedButton={props.field.operand} onPress={onChangeOperand} />
       ) : null}
       <View style={styles.criteriaContainer}>
-        <Text>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Text>
+        <Small>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Small>
         <TextInput
           defaultValue={props.field.value}
           placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
@@ -231,7 +231,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         keyboardVerticalOffset={60}
         style={styles.safeAreaContainer}>
         <View style={styles.headerContainer}>
-          <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
+          <SmallBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</SmallBold>
           <TouchableOpacity onPress={props.closeModal}>
             <Icon name="close" color={theme.ui.text.inverse} size={24} />
           </TouchableOpacity>
@@ -241,7 +241,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
             <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
           ))}
           <View style={styles.sourcesContainer}>
-            <Text>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
+            <Small>{I18n.t('mediacentre.advancedSearch.sources')}</Small>
             <View style={styles.sourcesContentContainer}>
               {props.availableSources.includes(Source.GAR) ? (
                 <SourceCheckbox

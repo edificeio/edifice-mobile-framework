@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import HtmlToText from '~/infra/htmlConverter/text';
 import today from '~/utils/today';
@@ -41,23 +41,18 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
       }}>
       <View style={{ flex: 1 }}>
         {title ? (
-          <TextBold style={{ ...TextSizeStyle.SlightBig, color: theme.ui.text.regular }} numberOfLines={1}>
+          <SmallBold style={{ ...TextSizeStyle.Medium, color: theme.ui.text.regular }} numberOfLines={1}>
             {title}
-          </TextBold>
+          </SmallBold>
         ) : null}
         {formattedContent ? (
-          <Text style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
+          <Small style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
             {formattedContent}
-          </Text>
+          </Small>
         ) : null}
       </View>
       <View style={{ justifyContent: 'center', marginLeft: UI_SIZES.spacing.small }}>
-        <Icon
-          name="arrow_right"
-          color={arrowColor}
-          size={TextSizeStyle.SlightBig.fontSize}
-          style={{ left: UI_SIZES.spacing.tiny }}
-        />
+        <Icon name="arrow_right" color={arrowColor} size={TextSizeStyle.Medium.fontSize} style={{ left: UI_SIZES.spacing.tiny }} />
       </View>
     </TouchableOpacity>
   );

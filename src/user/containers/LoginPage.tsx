@@ -10,13 +10,12 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
 import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~/user/actions/version';
@@ -134,7 +133,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   protected renderForm() {
     const { loggingIn, loggedIn, error, errtype } = this.props.auth;
     const { login, password, typing, rememberMe } = this.state;
-    const FederationTextComponent = error ? TextBold : Text;
+    const FederationTextComponent = error ? SmallBold : Small;
     const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
 
     return (
@@ -159,9 +158,9 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 alignSelf: 'center',
                 position: 'absolute',
               }}>
-              <TextBold style={{ textAlign: 'center', color: theme.palette.status.failure }}>
+              <SmallBold style={{ textAlign: 'center', color: theme.palette.status.failure }}>
                 {I18n.t('common.sommeNumeriqueAlert_temp')}
-              </TextBold>
+              </SmallBold>
             </View>
           ) : null}
           <FormContainer>
@@ -186,16 +185,24 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               hasError={(error && !typing && !errtype) as boolean}
             />
             <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium }}>
-              <Text style={{ marginRight: UI_SIZES.spacing.small, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>
+              <Small style={{ marginRight: UI_SIZES.spacing.small, color: theme.ui.text.regular, ...TextSizeStyle.Small }}>
                 {I18n.t('AutoLogin')}
-              </Text>
+              </Small>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <ErrorMessage style={errtype === 'warning' ? { color: theme.palette.status.warning } : {}}>
+            <Small
+              style={{
+                flexGrow: 0,
+                marginTop: UI_SIZES.spacing.medium,
+                padding: UI_SIZES.spacing.tiny,
+                textAlign: 'center',
+                alignSelf: 'center',
+                color: errtype === 'warning' ? theme.palette.status.warning : theme.palette.status.failure,
+              }}>
               {this.state.typing
                 ? ''
                 : error &&
@@ -204,7 +211,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                     errorcode: error,
                     currentplatform: DEPRECATED_getCurrentPlatform()!.url,
                   })}
-            </ErrorMessage>
+            </Small>
 
             <View
               style={{
@@ -235,20 +242,20 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Text
-                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, ...TextColorStyle.Light }}
+                <Small
+                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, color: theme.ui.text.light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: false });
                   }}>
                   {I18n.t('forgot-password')}
-                </Text>
-                <Text
-                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.medium, ...TextColorStyle.Light }}
+                </Small>
+                <Small
+                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.medium, color: theme.ui.text.light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: true });
                   }}>
                   {I18n.t('forgot-id')}
-                </Text>
+                </Small>
                 {DEPRECATED_getCurrentPlatform()!.federation && (
                   <FederationTextComponent
                     style={{

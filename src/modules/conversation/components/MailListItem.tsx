@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
@@ -61,7 +61,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
     <TouchableOpacity style={[styles.buttonContainer, style]} onPress={action}>
       <View style={styles.button}>
         <Icon name={actionIcon} size={16} color={theme.ui.text.inverse} />
-        <Text style={{ color: theme.ui.text.inverse, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Text>
+        <Small style={{ color: theme.ui.text.inverse, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Small>
       </View>
     </TouchableOpacity>,
   ];
@@ -134,36 +134,35 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                 {/* Contact name */}
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                   {(() => {
-                    const TextContactComponent = isMailUnread ? TextBold : TextSemiBold;
+                    const TextContactComponent = isMailUnread ? SmallBold : SmallBold;
                     const textContactPrefixColor = isMailUnread ? theme.ui.text.regular : theme.ui.text.light;
                     return (
                       <>
                         {isFolderOutbox || isFolderDrafts ? (
-                          <Text style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</Text>
+                          <Small style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</Small>
                         ) : null}
                         <TextContactComponent
                           numberOfLines={1}
-                          style={{ ...(isFolderDrafts ? TextColorStyle.Warning : {}), flex: 1 }}>
+                          style={{ ...(isFolderDrafts ? { color: theme.palette.status.warning } : {}), flex: 1 }}>
                           {contacts.map(c => c[1]).join(', ')}
                         </TextContactComponent>
                       </>
                     );
                   })()}
                   {/* Date */}
-                  <Text style={styles.mailDate} numberOfLines={1}>
+                  <Small style={styles.mailDate} numberOfLines={1}>
                     {displayPastDate(moment(mailInfos.date))}
-                  </Text>
+                  </Small>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                   {/* Mail subjet & content */}
                   <View style={{ flex: 1 }}>
                     {(() => {
-                      const TextSubjectComponent = isMailUnread ? TextSemiBold : Text;
-                      const textSubjectColor = isMailUnread ? theme.ui.text.heavy : theme.ui.text.regular;
+                      const TextSubjectComponent = isMailUnread ? SmallBold : Small;
                       return (
                         <TextSubjectComponent
                           numberOfLines={1}
-                          style={{ marginTop: UI_SIZES.spacing.tiny, flex: 1, color: textSubjectColor, ...TextSizeStyle.Small }}>
+                          style={{ marginTop: UI_SIZES.spacing.tiny, flex: 1, ...TextSizeStyle.Small }}>
                           {mailInfos.subject}
                         </TextSubjectComponent>
                       );
@@ -201,7 +200,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    ...TextColorStyle.Light,
+    color: theme.ui.text.light,
   },
   mailIndicator: {
     flexDirection: 'row',

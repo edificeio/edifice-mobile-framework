@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/picture';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     marginVertical: UI_SIZES.spacing.medium,
   },
   titleText: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     marginBottom: UI_SIZES.spacing.tiny,
   },
   informationText: {
@@ -101,7 +101,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     const { onFieldChange, ticket } = this.props;
     return (
       <View style={styles.selectionContainer}>
-        <TextBold style={styles.selectionText}>{I18n.t(fieldTranslation)}</TextBold>
+        <SmallBold style={styles.selectionText}>{I18n.t(fieldTranslation)}</SmallBold>
         {fieldName === 'category' ? (
           <CategoryPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, category: field })} />
         ) : (
@@ -116,10 +116,10 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     const mandatory = '* ';
     return (
       <View style={styles.inputContainer}>
-        <TextBold style={styles.selectionText}>
-          <TextBold style={styles.mandatoryFieldText}>{mandatory}</TextBold>
+        <SmallBold style={styles.selectionText}>
+          <SmallBold style={styles.mandatoryFieldText}>{mandatory}</SmallBold>
           {I18n.t(fieldTranslation)}
-        </TextBold>
+        </SmallBold>
         <FormInput
           fieldName={fieldName}
           setResetter={resetter => this.reset.push(resetter)}
@@ -171,13 +171,13 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           style={styles.safeAreaContainer}>
           <ScrollView contentContainerStyle={styles.scrollStyle}>
             <View style={styles.textsContainer}>
-              <TextBold style={styles.titleText}>{I18n.t('support-report-incident')}</TextBold>
-              <Text style={styles.informationText}>{I18n.t('support-mobile-only')}</Text>
+              <SmallBold style={styles.titleText}>{I18n.t('support-report-incident')}</SmallBold>
+              <Small style={styles.informationText}>{I18n.t('support-mobile-only')}</Small>
             </View>
             {this.renderForm()}
             <FilePicker multiple callback={this.props.uploadAttachment} style={styles.attachmentsContainer}>
               <Icon name="attachment" size={16} style={styles.attachmentsIcon} />
-              <Text>{I18n.t('support-add-attachments')}</Text>
+              <Small>{I18n.t('support-add-attachments')}</Small>
             </FilePicker>
             {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
             <TouchableOpacity
@@ -187,7 +187,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
                 styles.registerButtonContainer,
                 { backgroundColor: isDisabled ? theme.palette.grey.stone : theme.palette.secondary.regular },
               ]}>
-              <Text style={styles.registerButtonText}>{I18n.t('support-ticket-register').toUpperCase()}</Text>
+              <Small style={styles.registerButtonText}>{I18n.t('support-ticket-register').toUpperCase()}</Small>
             </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>

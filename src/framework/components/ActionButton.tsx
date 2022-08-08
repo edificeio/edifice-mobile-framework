@@ -3,7 +3,7 @@ import { LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, View, ViewS
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components//picture';
-import { TextSemiBold } from '~/framework/components//text';
+import { SmallBold } from '~/framework/components//text';
 import { UI_SIZES } from '~/framework/components/constants';
 import { openUrl } from '~/framework/util/linking';
 import { transformedSrc } from '~/infra/oauth';
@@ -75,9 +75,9 @@ export const ActionButton = ({
             },
           }
         : {})}>
-      <TextSemiBold numberOfLines={1} style={[ActionButton.Style.textCommon, textStyle[type ?? 'primary']]}>
+      <SmallBold numberOfLines={1} style={[{ lineHeight: undefined }, textStyle[type ?? 'primary']]}>
         {text}
-      </TextSemiBold>
+      </SmallBold>
       {showIcon && (url || iconName) ? (
         <Picture
           type="NamedSvg"
@@ -92,8 +92,6 @@ export const ActionButton = ({
   );
 };
 
-const rlh = UI_SIZES.getResponsiveStyledLineHeight();
-
 ActionButton.Style = StyleSheet.create({
   viewCommon: {
     height: UI_SIZES.dimensions.height.largePlus,
@@ -104,10 +102,6 @@ ActionButton.Style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-  },
-  textCommon: {
-    lineHeight: rlh,
-    height: rlh,
   },
   picture: {
     marginLeft: UI_SIZES.spacing.minor,

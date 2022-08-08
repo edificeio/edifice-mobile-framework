@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { Small } from '~/framework/components/text';
 import { IResource } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
@@ -110,7 +110,7 @@ const FilterItem: React.FunctionComponent<IFilterItemProps> = (props: IFilterIte
     <View style={styles.itemContainer}>
       <Checkbox checked={props.item.active} onPress={onCheck} />
       <TouchableOpacity onPress={onCheck} style={styles.itemTextContainer}>
-        <Text>{props.item.value}</Text>
+        <Small>{props.item.value}</Small>
       </TouchableOpacity>
     </View>
   );
@@ -126,7 +126,7 @@ const FilterSection: React.FunctionComponent<IFilterSectionProps> = (props: IFil
     <View>
       <TouchableOpacity style={styles.sectionContainer} onPress={expandSection}>
         <View style={styles.sectionHeaderContainer}>
-          <Text>{I18n.t(`mediacentre.${props.title}`)}</Text>
+          <Small>{I18n.t(`mediacentre.${props.title}`)}</Small>
           <Icon name={iconName} size={30} />
         </View>
         <View style={styles.sectionUnderlineView} />
@@ -155,7 +155,7 @@ export const SearchFilter: React.FunctionComponent<ISearchFilterProps> = (props:
     <View style={[styles.mainContainer, props.containerStyle]}>
       <TouchableOpacity style={styles.titleContainer} onPress={expand}>
         <Icon name="filter" size={16} style={styles.iconContainer} />
-        <Text>{I18n.t('mediacentre.filter').toUpperCase()}</Text>
+        <Small>{I18n.t('mediacentre.filter').toUpperCase()}</Small>
       </TouchableOpacity>
       {expanded ? (
         <FlatList

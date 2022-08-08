@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -146,7 +146,7 @@ const User = ({ userId, userName }: { userId: string; userName: string }) => {
   return (
     <View style={styles.userContainer} key={userId}>
       <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
-      <Text>{userName}</Text>
+      <Small>{userName}</Small>
     </View>
   );
 };
@@ -156,12 +156,12 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
     <View>
       {inInbox || (
         <View style={styles.row}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-from-prefix')}</Text>
+          <Small style={styles.greyColor}>{I18n.t('zimbra-from-prefix')}</Small>
           <User userId={sender} userName={displayNames.find(item => item[0] === sender)[1]} />
         </View>
       )}
       <View style={styles.row}>
-        <Text style={styles.greyColor}>{I18n.t('zimbra-to-prefix')}</Text>
+        <Small style={styles.greyColor}>{I18n.t('zimbra-to-prefix')}</Small>
         <View style={styles.sendersContainer}>
           {receivers.map(receiver => (
             <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
@@ -170,7 +170,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
       </View>
       {cc && (
         <View style={styles.row}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-receiversCC')}</Text>
+          <Small style={styles.greyColor}>{I18n.t('zimbra-receiversCC')}</Small>
           <View style={styles.sendersContainer}>
             {cc.map(person => (
               <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
@@ -185,7 +185,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
 const IconButton = ({ icon, color, text, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.gridButton}>
-      <Text style={styles.gridButtonText}>{text}</Text>
+      <Small style={styles.gridButtonText}>{text}</Small>
       <Icon size={12} color={color} name={icon} />
     </TouchableOpacity>
   );
@@ -233,9 +233,9 @@ const HeaderMailInfos = ({
         />
       </CenterPanel>
       {!isDetails ? (
-        <Text style={styles.detailsDateText}>{moment(mailInfos.date).format('LL - LT')}</Text>
+        <Small style={styles.detailsDateText}>{moment(mailInfos.date).format('LL - LT')}</Small>
       ) : (
-        <Text style={styles.detailsDateText}>{moment(mailInfos.date).format('dddd LL')}</Text>
+        <Small style={styles.detailsDateText}>{moment(mailInfos.date).format('dddd LL')}</Small>
       )}
     </Header>
   );
@@ -265,8 +265,8 @@ export const HeaderMailDetails = ({
 
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={styles.row}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
-          <TextBold style={styles.fullView}>{mailInfos.subject}</TextBold>
+          <Small style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Small>
+          <SmallBold style={styles.fullView}>{mailInfos.subject}</SmallBold>
         </View>
       ) : (
         <View />
@@ -282,8 +282,8 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
 
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={styles.row}>
-          <Text style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Text>
-          <TextBold style={styles.fullView}>{mailInfos.subject}</TextBold>
+          <Small style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Small>
+          <SmallBold style={styles.fullView}>{mailInfos.subject}</SmallBold>
         </View>
       ) : (
         <View />
@@ -296,7 +296,7 @@ export const FooterButton = ({ icon, text, onPress }) => {
   return (
     <View style={styles.footerButtonContainer}>
       <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color="black" />
-      <Text>{text}</Text>
+      <Small>{text}</Small>
     </View>
   );
 };
@@ -333,9 +333,9 @@ export const RenderPJs = ({
             <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
               <View style={[styles.gridViewStyle, styles.attachmentGridViewChild]}>
                 <Icon size={25} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} />
-                <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
+                <Small style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
                   {item.filename}
-                </Text>
+                </Small>
               </View>
 
               <View style={[styles.gridViewStyle, styles.attachmentDownloadContainer]}>
@@ -357,10 +357,10 @@ export const RenderPJs = ({
                 {index === 0 ? (
                   <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={styles.attachmentListButton}>
                     {attachments.length > 1 && (
-                      <Text style={styles.attachmentListText}>
+                      <Small style={styles.attachmentListText}>
                         {isVisible ? '-' : '+'}
                         {attachments.length - 1}
-                      </Text>
+                      </Small>
                     )}
                   </TouchableOpacity>
                 ) : (

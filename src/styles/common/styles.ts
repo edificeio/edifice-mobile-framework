@@ -1,5 +1,3 @@
-import { setCustomText } from 'react-native-global-props';
-
 import theme from '~/app/theme';
 
 export const CommonStyles = {
@@ -40,7 +38,6 @@ export const CommonStyles = {
   miniTextColor: '#858FA9',
   nonLue: '#2A9CC81A',
   placeholderColor: '#B2BECDDD',
-  primaryFontFamily: 'OpenSans-Regular',
   shadowColor: 'rgba(0, 0, 0, 1.0)',
   shadowOffset: {
     height: 2,
@@ -73,5 +70,3 @@ export const IOSShadowStyle = {
   shadowOpacity: CommonStyles.shadowOpacity,
   shadowRadius: CommonStyles.shadowRadius,
 };
-
-setCustomText({ style: { fontFamily: CommonStyles.primaryFontFamily } });

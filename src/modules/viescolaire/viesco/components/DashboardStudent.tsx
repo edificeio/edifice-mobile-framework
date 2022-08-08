@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import theme from '~/app/theme';
@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { TextBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBold, SmallInverse, TextSizeStyle } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
@@ -60,11 +60,10 @@ const styles = StyleSheet.create({
   },
   gridButtonText: {
     marginLeft: UI_SIZES.spacing.minor,
-    color: theme.palette.grey.white,
     textAlign: 'center',
   },
   title: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   subtitle: { color: theme.palette.grey.stone },
 });
@@ -86,7 +85,7 @@ const IconButtonModule = ({ disabled, icon, color, text, onPress, nbModules }: I
       style={[styles.gridButton, disabled ? styles.gridButtonDefaultColor : { backgroundColor: color }]}>
       <View style={[styles.viewButton, nbModules === 4 ? styles.gridButtonAllModules : styles.gridButtonLineModules]}>
         <Icon size={20} color={theme.ui.text.inverse} name={icon} />
-        <Text style={styles.gridButtonText}>{text}</Text>
+        <SmallInverse style={styles.gridButtonText}>{text}</SmallInverse>
       </View>
     </TouchableOpacity>
   </View>
@@ -169,7 +168,7 @@ export default class Dashboard extends React.PureComponent<any> {
 
     return (
       <View style={styles.dashboardPart}>
-        <TextBold style={styles.title}>{I18n.t('viesco-homework')}</TextBold>
+        <SmallBold style={styles.title}>{I18n.t('viesco-homework')}</SmallBold>
         {Object.values(homeworks).length === 0 && (
           <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
         )}
@@ -228,7 +227,7 @@ export default class Dashboard extends React.PureComponent<any> {
     const evaluationList = this.getSortedEvaluationList(evaluations);
     return (
       <View style={styles.dashboardPart}>
-        <TextBold style={styles.title}>{I18n.t('viesco-lasteval')}</TextBold>
+        <SmallBold style={styles.title}>{I18n.t('viesco-lasteval')}</SmallBold>
         {evaluations && evaluations.data.devoirs && evaluationList !== undefined && evaluationList.length > 0 ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (

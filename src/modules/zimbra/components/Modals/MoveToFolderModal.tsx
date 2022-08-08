@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 import { moveMailsToFolderAction, moveMailsToInboxAction } from '~/modules/zimbra/actions/mail';
 import { IFolder } from '~/modules/zimbra/state/initMails';
 import { getRootFolderListState } from '~/modules/zimbra/state/rootFolders';
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
   },
   textStyle: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   scrollViewContainer: {
     flexGrow: 1,
@@ -113,7 +113,7 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   private renderOption = (id, displayName, iconName) => {
     const selected = this.state.selectedFolder === id;
     const touchableStyle = selected ? [styles.opacity, styles.selectedItem] : styles.opacity;
-    const textStyle = selected ? { color: theme.ui.text.inverse, ...TextSizeStyle.SlightBig } : { ...TextSizeStyle.SlightBig };
+    const textStyle = selected ? { color: theme.ui.text.inverse, ...TextSizeStyle.Medium } : { ...TextSizeStyle.Medium };
     const iconStyle = selected
       ? { color: theme.ui.text.inverse, margin: UI_SIZES.spacing.small }
       : { margin: UI_SIZES.spacing.small };
@@ -126,9 +126,9 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
           style={touchableStyle}>
           <View style={styles.rowView}>
             <Icon name={iconName} size={20} style={iconStyle} />
-            <Text numberOfLines={1} style={textStyle}>
+            <Small numberOfLines={1} style={textStyle}>
               {displayName}
-            </Text>
+            </Small>
           </View>
         </TouchableOpacity>
         <View style={styles.separator} />
@@ -151,11 +151,11 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
         <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
           <View style={styles.containerView}>
             <View style={styles.moveTextContainer}>
-              <Text style={styles.textStyle}>{I18n.t('zimbra-move-to')}</Text>
+              <Small style={styles.textStyle}>{I18n.t('zimbra-move-to')}</Small>
             </View>
             <ScrollView style={[styles.scrollViewContainer, { height: UI_SIZES.screen.width }]}>
               <View style={[styles.actionsContainers, styles.messagesContainer]}>
-                <Text style={styles.textStyle}>{I18n.t('zimbra-messages')}</Text>
+                <Small style={styles.textStyle}>{I18n.t('zimbra-messages')}</Small>
               </View>
               {this.renderOption('inbox', I18n.t('zimbra-inbox'), 'inbox')}
               {this.renderOption(this.findMainFolderId('Sent'), I18n.t('zimbra-outbox'), 'send')}
@@ -165,7 +165,7 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
               {inboxSubFolder !== undefined && inboxSubFolder.folders !== undefined && inboxSubFolder.folders.length > 0 && (
                 <View>
                   <View style={[styles.actionsContainers, styles.directoriesContainer]}>
-                    <Text style={styles.textStyle}>{I18n.t('zimbra-directories')}</Text>
+                    <Small style={styles.textStyle}>{I18n.t('zimbra-directories')}</Small>
                   </View>
                   <View>{inboxSubFolder.folders.map(f => this.renderOption(f.id, f.folderName, 'folder'))}</View>
                 </View>

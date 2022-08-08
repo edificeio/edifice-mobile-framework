@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 import theme from '~/app/theme';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
 import { FlatButton } from '~/ui/FlatButton';
 
@@ -14,7 +14,7 @@ import { WorkspaceFolderSelector } from './WorkspaceFolderSelector';
 
 const styles = StyleSheet.create({
   titleText: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   flatListContainer: {
     maxHeight: 400,
@@ -129,7 +129,7 @@ export const WorkspaceModal = ({
       ref={modalBoxRef}
       content={
         <View>
-          <Text style={styles.titleText}>{settings.title}</Text>
+          <Small style={styles.titleText}>{settings.title}</Small>
           {settings.hasDestinationSelector ? (
             <WorkspaceFolderSelector
               data={folderTree}

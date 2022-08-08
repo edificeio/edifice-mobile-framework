@@ -8,7 +8,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
 class WhoAreWeScreen extends React.PureComponent<NavigationInjectedProps<object>> {
@@ -25,7 +25,7 @@ class WhoAreWeScreen extends React.PureComponent<NavigationInjectedProps<object>
           />
         </View>
         <View style={{ padding: UI_SIZES.spacing.big }}>
-          <Text style={{ ...TextSizeStyle.SlightBig }}>{I18n.t('user.whoAreWeScreen.description')}</Text>
+          <Small style={{ ...TextSizeStyle.Medium }}>{I18n.t('user.whoAreWeScreen.description')}</Small>
           <ActionButton
             style={{ marginTop: UI_SIZES.spacing.large }}
             text={I18n.t('user.whoAreWeScreen.reviewApp')}

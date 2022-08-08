@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { Text, TextBold } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
@@ -214,10 +214,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     return (
       <View style={styles.mainView}>
         <View style={styles.renderDevoirsByPeriodView}>
-          <TextBold style={styles.selectedPeriodText} numberOfLines={1}>
+          <SmallBold style={styles.selectedPeriodText} numberOfLines={1}>
             {selectedPeriod.type}
-          </TextBold>
-          <Text> - {I18n.t('viesco-average').toUpperCase()}</Text>
+          </SmallBold>
+          <Small> - {I18n.t('viesco-average').toUpperCase()}</Small>
         </View>
         {devoirsMoyennesList.isFetching ? (
           <LoadingIndicator />
@@ -246,18 +246,18 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     return (
       <>
-        {screenDisplay === ScreenDisplay.DISCIPLINE && <TextBold numberOfLines={1}>{selectedDiscipline}</TextBold>}
+        {screenDisplay === ScreenDisplay.DISCIPLINE && <SmallBold numberOfLines={1}>{selectedDiscipline}</SmallBold>}
         <View style={styles.headerView}>
           {screenDisplay === ScreenDisplay.DASHBOARD ? (
-            <TextBold style={styles.headerGradeText} numberOfLines={1}>
+            <SmallBold style={styles.headerGradeText} numberOfLines={1}>
               {I18n.t('viesco-last-grades')}
-            </TextBold>
+            </SmallBold>
           ) : (
-            <Text style={styles.headerSelectedPeriodText}>{selectedPeriod.type}</Text>
+            <Small style={styles.headerSelectedPeriodText}>{selectedPeriod.type}</Small>
           )}
           {isDevoirsNoted ? (
             <View style={styles.headerColorSwitchContainer}>
-              <Text>{I18n.t('viesco-colors')}&ensp;</Text>
+              <Small>{I18n.t('viesco-colors')}&ensp;</Small>
               <Switch
                 trackColor={{ false: '#D1D1D1', true: '#A1DED5' }}
                 thumbColor={value ? '#EFEFEF' : '#46BFAF'}
@@ -380,7 +380,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       <PageContainer>
         {this.props.userType === 'Relative' && <ChildPicker hideButton />}
         <View style={styles.dashboardPart}>
-          <Text style={styles.subtitle}>{I18n.t('viesco-report-card')}</Text>
+          <Small style={styles.subtitle}>{I18n.t('viesco-report-card')}</Small>
           <View style={styles.containerDropdowns}>
             {this.displayPeriodsDropdown()}
             {this.displayDisciplinesDropdown()}

@@ -78,7 +78,6 @@ export interface ITheme {
     };
     text: {
       regular: ColorValue;
-      heavy: ColorValue;
       light: ColorValue;
       inverse: ColorValue;
     };
@@ -282,7 +281,6 @@ export const defaultTheme: ThemeInitializer = {
       },
       text: {
         regular: this.palette.grey.black,
-        heavy: this.palette.grey.black, // ToDo remove
         light: this.palette.grey.graphite,
         inverse: this.palette.grey.white,
       },

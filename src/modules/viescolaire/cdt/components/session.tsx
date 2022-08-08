@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Text, TextBold } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
 export const SessionItem = ({ matiere, author }: any) => (
   <LeftColoredItem style={styles.sessionLeftColoredItem} color={viescoTheme.palette.diary}>
     <View style={styles.sessionView}>
-      <TextBold style={styles.matiereText}>{matiere}</TextBold>
-      <Text style={styles.authorText}>{author}</Text>
+      <SmallBold style={styles.matiereText}>{matiere}</SmallBold>
+      <Small style={styles.authorText}>{author}</Small>
     </View>
   </LeftColoredItem>
 );

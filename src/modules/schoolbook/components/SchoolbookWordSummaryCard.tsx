@@ -8,7 +8,7 @@ import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/fr
 import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { Text, TextColorStyle, TextItalic, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, SmallItalic, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { UserType } from '~/framework/util/session';
 import {
@@ -90,10 +90,10 @@ export const SchoolbookWordSummaryCard = ({
             <ContentCardHeader
               icon={<SingleAvatar size={36} userId={owner} />}
               text={
-                <Text style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+                <Small style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
                   {`${I18n.t('common.from')} `}
-                  <TextSemiBold style={{ ...TextSizeStyle.Small }}>{ownerName}</TextSemiBold>
-                </Text>
+                  <SmallBold style={{ ...TextSizeStyle.Small }}>{ownerName}</SmallBold>
+                </Small>
               }
             />
           )
@@ -110,7 +110,7 @@ export const SchoolbookWordSummaryCard = ({
                 fill={theme.palette.primary.regular}
                 style={{ marginRight: UI_SIZES.spacing.minor }}
               />
-              <TextSemiBold style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</TextSemiBold>
+              <SmallBold style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</SmallBold>
             </View>
           ) : undefined
         }>
@@ -126,17 +126,19 @@ export const SchoolbookWordSummaryCard = ({
           ) : (
             <View />
           )}
-          <TextSemiBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.palette.status.warning }}>
+          <SmallBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.palette.status.warning }}>
             {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
-          </TextSemiBold>
+          </SmallBold>
         </View>
         {sendingDate ? (
-          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.minor }}>
+          <SmallItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.minor }}>
             {displayPastDate(sendingDate)}
-          </TextItalic>
+          </SmallItalic>
         ) : null}
         {title ? (
-          <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.tiny, ...TextColorStyle.Normal }}>{title}</ContentCardTitle>
+          <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.tiny, color: theme.ui.text.regular }}>
+            {title}
+          </ContentCardTitle>
         ) : null}
       </TouchableResourceCard>
     </ArticleContainer>

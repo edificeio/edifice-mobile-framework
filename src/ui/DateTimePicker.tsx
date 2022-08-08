@@ -7,7 +7,7 @@ import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { Small } from '~/framework/components/text';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 
@@ -67,7 +67,7 @@ type IDateTimePickerProps = {
 const DateTimeButton: React.FunctionComponent<IDateTimeButtonProps> = ({ color, text, style, onPress }: IDateTimeButtonProps) => (
   <TouchableOpacity onPress={onPress} style={[styles.containerStyle, style]}>
     <Icon name="date_range" size={20} color={color} />
-    <Text style={styles.text}>{text}</Text>
+    <Small style={styles.text}>{text}</Small>
   </TouchableOpacity>
 );
 
@@ -101,7 +101,7 @@ const DateTimePickerIOS: React.FunctionComponent<IDateTimePickerProps> = ({
       <ModalBox isVisible={isModalVisible} onDismiss={() => setModalVisible(false)}>
         <ModalContent style={styles.modalContentContainer}>
           <View style={styles.pickerContainer}>
-            <Text style={styles.textPicker}>{I18n.t(mode === 'time' ? 'pick-hour' : 'pick-date')} :</Text>
+            <Small style={styles.textPicker}>{I18n.t(mode === 'time' ? 'pick-hour' : 'pick-date')} :</Small>
             <DateTimePicker
               mode={mode}
               locale="fr-FR"

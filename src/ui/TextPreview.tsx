@@ -1,14 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
 import { LayoutEvent } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { contentStyle } from '~/framework/modules/myAppMenu/components/NewContainerContent';
-
-import { A } from './Typography';
+import { Caption, Small, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
 export interface ITextPreviewProps {
   textContent: string;
@@ -36,24 +34,20 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   static defaultProps = {
     expandMessage: I18n.t('common.readMore'),
     numberOfLines: 5,
-    expansionTextStyle: { fontSize: 12 },
+    expansionTextStyle: { color: theme.palette.complementary.blue.regular },
     textStyle: {
       color: theme.ui.text.regular,
-      fontFamily: 'OpenSans-Regular',
-      fontSize: 12,
       marginTop: UI_SIZES.spacing.tiny,
     },
   };
 
   public measureText = (numberOfLines: number | undefined) => async (evt: LayoutEvent) => {
     if (numberOfLines) {
-      const { fontFamily, fontSize, fontWeight } = contentStyle;
       const { textContent } = this.props;
       const result: TSMeasureResult = await rnTextSize.measure({
+        ...TextFontStyle.Regular,
+        ...TextSizeStyle.Small,
         text: textContent,
-        fontFamily,
-        fontSize,
-        fontWeight,
         width: evt.nativeEvent.layout.width,
       } as TSMeasureParams);
       result.lineCount > numberOfLines && this.setState({ longText: true });
@@ -79,10 +73,10 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     const collapse = collapseMessage || I18n.t('seeLess');
     return (
       this.showExpansionLabels() && (
-        <A style={expansionTextStyle} onPress={() => (onExpand ? onExpand() : this.setState({ isExpanded: !isExpanded }))}>
+        <Caption style={expansionTextStyle} onPress={() => (onExpand ? onExpand() : this.setState({ isExpanded: !isExpanded }))}>
           {!numberOfLines && ' '}
           {isExpanded ? collapse : expand}
-        </A>
+        </Caption>
       )
     );
   }
@@ -92,24 +86,24 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     const { isExpanded } = this.state;
     return (
       <View>
-        <Text
+        <Caption
           style={textStyle}
           numberOfLines={!numberOfLines || isExpanded ? undefined : numberOfLines}
           onLayout={this.measureText(numberOfLines)}>
           {textContent}
           {additionalText && !this.showExpansionLabels() && (
             <>
-              <Text> </Text>
+              <Small> </Small>
               {additionalText}
             </>
           )}
           {!numberOfLines && this.renderExpansionLabels()}
-        </Text>
+        </Caption>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           {additionalText && this.showExpansionLabels() && (
             <>
               {additionalText}
-              <Text> </Text>
+              <Small> </Small>
             </>
           )}
           {numberOfLines && this.renderExpansionLabels()}

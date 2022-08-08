@@ -6,7 +6,7 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 import CreateFolderModal from '~/modules/zimbra/components/Modals/CreateFolderModal';
 import { IFolder, IQuota } from '~/modules/zimbra/state/initMails';
 import { IRootFolderList } from '~/modules/zimbra/state/rootFolders';
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.pale,
   },
   labelText: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     marginLeft: UI_SIZES.spacing.small,
   },
   container: {
@@ -128,9 +128,9 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     return (
       <View style={styles.loadBar}>
         <View style={[styles.loadBarPercent, { width: `${storagePercent}%` }]}>
-          <Text style={styles.loadBarText}>
+          <Small style={styles.loadBarText}>
             {storage}&ensp;{unit}
-          </Text>
+          </Small>
         </View>
       </View>
     );
@@ -207,21 +207,21 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       <PageContainer style={styles.container}>
         <ScrollView>
           <View style={styles.labelContainer}>
-            <Text style={styles.labelText}>{I18n.t('zimbra-messages')}</Text>
+            <Small style={styles.labelText}>{I18n.t('zimbra-messages')}</Small>
           </View>
           {this.renderDrawerMessages()}
           <View style={styles.labelContainer}>
-            <Text style={styles.labelText}>{I18n.t('zimbra-directories')}</Text>
+            <Small style={styles.labelText}>{I18n.t('zimbra-directories')}</Small>
           </View>
           {this.renderDrawerFolders()}
           <TouchableOpacity onPress={this.onFolderCreationModalShow} style={[styles.labelContainer, styles.folderCreationButton]}>
             <Icon size={22} name="create_new_folder" />
-            <Text style={styles.labelText}>{I18n.t('zimbra-create-directory')}</Text>
+            <Small style={styles.labelText}>{I18n.t('zimbra-create-directory')}</Small>
           </TouchableOpacity>
         </ScrollView>
         <View style={styles.drawerBottom}>
           <View style={styles.labelContainer}>
-            <Text style={styles.labelText}>{I18n.t('zimbra-storage')}</Text>
+            <Small style={styles.labelText}>{I18n.t('zimbra-storage')}</Small>
           </View>
           {this.renderStorage()}
         </View>

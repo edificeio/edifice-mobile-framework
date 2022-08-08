@@ -11,7 +11,7 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { RoundButton } from './RoundButton';
 import { UI_SIZES } from './constants';
-import { TextItalic, TextSemiBold, TextSizeStyle } from './text';
+import { SmallBold, SmallItalic, TextSizeStyle } from './text';
 
 // TYPES ==========================================================================================
 
@@ -221,13 +221,13 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={styles.col}>
           {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
             <View style={styles.row}>
-              <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
+              <SmallBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
                 {props.commentAuthor}
-              </TextSemiBold>
-              <TextItalic
+              </SmallBold>
+              <SmallItalic
                 style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing._LEGACY_small, color: theme.palette.grey.graphite }}>
                 {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
-              </TextItalic>
+              </SmallItalic>
             </View>
           ) : null}
           {
@@ -252,14 +252,14 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <TextSemiBold style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
+              <SmallBold style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</SmallBold>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <TextSemiBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+              <SmallBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
                 {I18n.t('common.delete')}
-              </TextSemiBold>
+              </SmallBold>
             </TouchableOpacity>
           ) : null}
         </View>

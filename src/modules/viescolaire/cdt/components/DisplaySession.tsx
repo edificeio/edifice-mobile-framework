@@ -8,7 +8,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { Session } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -36,7 +36,7 @@ const style = StyleSheet.create({
     textTransform: 'uppercase',
   },
   title: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   course: {
     textTransform: 'uppercase',
@@ -127,20 +127,20 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
                 {sessionList && sessionList[indexSelectedSession]?.date ? (
                   <>
                     <Icon size={20} color={viescoTheme.palette.diary} name="date_range" />
-                    <Text>&emsp;{moment(sessionList[indexSelectedSession].date).format('DD/MM/YY')}</Text>
+                    <Small>&emsp;{moment(sessionList[indexSelectedSession].date).format('DD/MM/YY')}</Small>
                   </>
                 ) : null}
                 {sessionList && sessionList[indexSelectedSession]?.subject ? (
-                  <TextBold style={style.course}>{sessionList[indexSelectedSession].subject}</TextBold>
+                  <SmallBold style={style.course}>{sessionList[indexSelectedSession].subject}</SmallBold>
                 ) : null}
               </LeftColoredItem>
             </View>
 
             <ScrollView>
               <View style={style.sessionPart}>
-                <Text style={style.pageTitle}>{I18n.t('viesco-session')}</Text>
+                <Small style={style.pageTitle}>{I18n.t('viesco-session')}</Small>
                 {sessionList && sessionList[indexSelectedSession]?.title && (
-                  <TextBold style={style.title}>{sessionList[indexSelectedSession].title}</TextBold>
+                  <SmallBold style={style.title}>{sessionList[indexSelectedSession].title}</SmallBold>
                 )}
                 {!isRemovedDescription && sessionList && sessionList[indexSelectedSession]?.description && (
                   <HtmlContentView html={sessionList[indexSelectedSession].description} opts={htmlOpts} />

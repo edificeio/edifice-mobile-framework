@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
+import { getScaleDimension } from '~/framework/components/constants';
+import { NestedText, NestedTextBold, Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { IPunishment } from '~/modules/viescolaire/presences/state/events';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -18,20 +19,21 @@ interface PresenceCardProps {
 
 const styles = StyleSheet.create({
   title: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     textTransform: 'uppercase',
     color: theme.palette.grey.graphite,
   },
   row: { flexDirection: 'row' },
   leftColumn: { width: '30%', alignItems: 'center' },
   leftColumnText: {
-    ...responsiveStyle(48),
+    fontSize: getScaleDimension(48, 'font'),
+    lineHeight: getScaleDimension(54, 'font'),
   },
   itemContainer: { flex: 1 },
   itemView: { flex: 1, justifyContent: 'center' },
   childText: { marginVertical: 2 }, // MO-142 use UI_SIZES.spacing here
   childNestedText: {
-    ...TextSizeStyle.Tiny,
+    ...TextSizeStyle.Small,
   },
   itemText: {
     alignSelf: 'center',
@@ -48,43 +50,43 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
 
   const renderChild = item => {
     return (
-      <Text style={styles.childText}>
+      <Small style={styles.childText}>
         <NestedText style={[styles.childNestedText, { color }]}>{'\u25A0 '}</NestedText>
         {renderItem(item)}
-      </Text>
+      </Small>
     );
   };
 
   const renderMore = () => (
-    <Text onPress={() => setExpanded(!expanded)} style={styles.itemMoretext}>
+    <Small onPress={() => setExpanded(!expanded)} style={styles.itemMoretext}>
       {expanded ? (
         <>
           {I18n.t('seeLess') + ' '}
-          <TextBold>-</TextBold>
+          <SmallBold>-</SmallBold>
         </>
       ) : (
         <>
           {I18n.t('seeMore') + ' '}
-          <TextBold>+</TextBold>
+          <SmallBold>+</SmallBold>
         </>
       )}
-    </Text>
+    </Small>
   );
 
   return (
     <BottomColoredItem shadow color={color}>
-      <Text style={styles.title}>{title}</Text>
+      <Small style={styles.title}>{title}</Small>
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <NestedTextBold style={styles.leftColumnText}>{numberChildren}</NestedTextBold>
-          {subNumber && <Text>{subNumber}</Text>}
+          {subNumber && <Small>{subNumber}</Small>}
         </View>
         <View style={styles.itemContainer}>
           {numberChildren !== 0 ? (
             displayedElements.map(renderChild)
           ) : (
             <View style={styles.itemView}>
-              <Text style={styles.itemText}>{I18n.t('viesco-empty-card')}</Text>
+              <Small style={styles.itemText}>{I18n.t('viesco-empty-card')}</Small>
             </View>
           )}
           {numberChildren > 2 && renderMore()}
@@ -96,10 +98,10 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
 
 export const NoReasonCard = ({ elements }) => {
   const renderItem = event => (
-    <Text>
+    <Small>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
       {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
-    </Text>
+    </Small>
   );
   return (
     <PresenceCard
@@ -113,10 +115,10 @@ export const NoReasonCard = ({ elements }) => {
 
 export const UnregularizedCard = ({ elements }) => {
   const renderItem = event => (
-    <Text>
+    <Small>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
       {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
-    </Text>
+    </Small>
   );
   return (
     <PresenceCard
@@ -130,10 +132,10 @@ export const UnregularizedCard = ({ elements }) => {
 
 export const RegularizedCard = ({ elements }) => {
   const renderItem = event => (
-    <Text>
+    <Small>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
       {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
-    </Text>
+    </Small>
   );
   return (
     <PresenceCard
@@ -147,11 +149,11 @@ export const RegularizedCard = ({ elements }) => {
 
 export const LatenessCard = ({ elements }) => {
   const renderItem = event => (
-    <Text>
+    <Small>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
       {event.end_date.format('HH:mm')}
       <NestedTextBold>{' - ' + event.end_date.diff(event.start_date, 'minutes') + 'mn'}</NestedTextBold>
-    </Text>
+    </Small>
   );
   return (
     <PresenceCard
@@ -165,11 +167,11 @@ export const LatenessCard = ({ elements }) => {
 
 export const DepartureCard = ({ elements }) => {
   const renderItem = event => (
-    <Text>
+    <Small>
       <NestedTextBold>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedTextBold>
       {event.start_date.format('HH:mm')}
       <NestedTextBold>{' - ' + Math.abs(event.start_date.diff(event.end_date, 'minutes')) + 'mn'}</NestedTextBold>
-    </Text>
+    </Small>
   );
   return (
     <PresenceCard
@@ -182,7 +184,7 @@ export const DepartureCard = ({ elements }) => {
 };
 
 export const ForgotNotebookCard = ({ elements }) => {
-  const renderItem = event => <TextBold>{' ' + event.date.format('DD/MM/YY')}</TextBold>;
+  const renderItem = event => <SmallBold>{' ' + event.date.format('DD/MM/YY')}</SmallBold>;
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.forgotNotebook}
@@ -195,12 +197,12 @@ export const ForgotNotebookCard = ({ elements }) => {
 
 export const IncidentCard = ({ elements }) => {
   const renderItem = event => (
-    <Text>
+    <Small>
       <NestedText>{' ' + event.label}</NestedText>
-      <Text> - </Text>
+      <Small> - </Small>
       <NestedTextBold>{event.date.format('DD/MM/YY HH:mm')}</NestedTextBold>
       {' - ' + event.protagonist.label}
-    </Text>
+    </Small>
   );
   return (
     <PresenceCard
@@ -264,10 +266,10 @@ export const PunishmentCard = ({ elements }) => {
   };
 
   const renderItem = (event: IPunishment) => (
-    <Text>
+    <Small>
       <NestedTextBold>{' ' + event.label + ' - '}</NestedTextBold>
       {getPunishmentDate(event)}
-    </Text>
+    </Small>
   );
 
   return (

@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -58,7 +58,8 @@ const style = StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
   },
   timeViewText: {
-    ...responsiveStyle(55),
+    fontSize: getScaleDimension(55, 'font'),
+    lineHeight: getScaleDimension(61, 'font'),
     paddingVertical: 50, // MO-142 use UI_SIZES.spacing here
     textDecorationLine: 'underline',
   },
@@ -213,25 +214,25 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
             <LeftColoredItem color={mainColor} style={style.recapHeader}>
               <View style={style.recapHeaderView}>
                 <Icon color="grey" size={12} name="access_time" />
-                <Text style={style.recapHeaderText}>
+                <Small style={style.recapHeaderText}>
                   {startDateString} - {endDateString}
-                </Text>
-                <TextBold>{student.name}</TextBold>
+                </Small>
+                <SmallBold>{student.name}</SmallBold>
               </View>
             </LeftColoredItem>
-            <Text style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Text>
+            <Small style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Small>
             <DateTimePicker
               value={moment(date)}
               mode="time"
               onChange={this.onTimeChange}
               renderDate={dateItem => (
                 <View style={[style.timeView, { borderColor: lightColor }]}>
-                  <Text style={style.timeViewText}>{dateItem.format('HH : mm')}</Text>
+                  <Small style={style.timeViewText}>{dateItem.format('HH : mm')}</Small>
                 </View>
               )}
             />
             <View style={style.inputContainer}>
-              <Text style={style.labelText}>{inputLabel}</Text>
+              <Small style={style.labelText}>{inputLabel}</Small>
               <TextInput
                 defaultValue={event === undefined ? '' : event.comment}
                 placeholder={I18n.t('viesco-enter-text')}

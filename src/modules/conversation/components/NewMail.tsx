@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import { Small } from '~/framework/components/text';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
 import moduleConfig from '~/modules/conversation/moduleConfig';
@@ -15,7 +16,6 @@ import { IVisibleGroup, IVisibleUser, IVisiblesState, searchVisibles } from '~/m
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
-import { Text } from '~/ui/Typography';
 
 import Attachment from './Attachment';
 import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';
@@ -306,7 +306,7 @@ const MailContactField = connect(state => ({
       <View style={{ flexGrow: 1 }}>
         <View style={{ flex: 0, alignItems: 'stretch' }}>
           <View style={[inputStyle, style]}>
-            <Text style={{ color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </Text>
+            <Small style={{ color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </Small>
             <View style={{ overflow: 'visible', marginHorizontal: UI_SIZES.spacing.tiny, flex: 1 }}>
               <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
               <Input
@@ -354,7 +354,7 @@ const HeaderUsers = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Text style={{ color: theme.ui.text.light }}>{title} : </Text>
+      <Small style={{ color: theme.ui.text.light }}>{title} : </Small>
       <SearchUserMail selectedUsersOrGroups={value} onChange={val => onChange(val)} autoFocus={autoFocus} />
       {children}
     </View>
@@ -396,7 +396,7 @@ const HeaderSubject = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Text style={{ color: theme.ui.text.light }}>{title} : </Text>
+      <Small style={{ color: theme.ui.text.light }}>{title} : </Small>
       <TextInput style={inputStyle} defaultValue={value} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />
     </View>
   );

@@ -8,11 +8,11 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { SmallBold } from '~/framework/components/text';
 import { postFolderAction } from '~/modules/conversation/actions/folders';
 import { fetchInitAction } from '~/modules/conversation/actions/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
-import { TextBold } from '~/ui/Typography';
 
 class CreateFolderModal extends React.PureComponent<any, any> {
   constructor(props) {
@@ -63,7 +63,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       <ModalBox isVisible={show} backdropOpacity={0.5}>
         <ModalContent style={{ width: 350 }}>
           <ModalContentBlock>
-            <TextBold>{I18n.t('conversation.createDirectory')}</TextBold>
+            <SmallBold>{I18n.t('conversation.createDirectory')}</SmallBold>
           </ModalContentBlock>
           <View style={{ width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
             <TextInput

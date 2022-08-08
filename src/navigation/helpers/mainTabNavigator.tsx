@@ -1,4 +1,3 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { View } from 'react-native';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
@@ -7,6 +6,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
+import { Caption } from '~/framework/components/text';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
 
 export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
@@ -92,17 +92,16 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
   }
 };
 
-const MainTabNavigationLabel = styled.Text(
-  {
-    alignSelf: 'center',
-    fontFamily: 'OpenSans-Regular',
-    fontSize: 10,
-    marginBottom: UI_SIZES.spacing.tiny,
-    marginTop: -UI_SIZES.spacing.small,
-  },
-  ({ focused }) => ({
-    color: focused ? theme.palette.primary.regular : theme.ui.text.light,
-  }),
+const MainTabNavigationLabel = props => (
+  <Caption
+    style={{
+      alignSelf: 'center',
+      marginBottom: UI_SIZES.spacing.tiny,
+      marginTop: -UI_SIZES.spacing.small,
+      color: props.focused ? theme.palette.primary.regular : theme.ui.text.light,
+    }}>
+    {props.children}
+  </Caption>
 );
 
 export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {

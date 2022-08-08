@@ -7,7 +7,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { Text, TextBold } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
@@ -106,9 +106,9 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
         <View key={item.id}>
           {index === 0 ||
           moment(item.due_date).format('DD/MM/YY') !== moment(homeworksArray[index - 1].due_date).format('DD/MM/YY') ? (
-            <TextBold>
+            <SmallBold>
               {I18n.t('viesco-homework-fordate')} {moment(item.due_date).format('dddd Do MMMM')}
-            </TextBold>
+            </SmallBold>
           ) : null}
           <HomeworkItem
             onPress={() => onHomeworkTap(item)}
@@ -138,7 +138,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
       renderItem={({ item, index }) => (
         <View>
           {index === 0 || moment(item.date).format('DD/MM/YY') !== moment(sessionList[index - 1].date).format('DD/MM/YY') ? (
-            <TextBold>{moment(item.date).format('DD/MM/YY')}</TextBold>
+            <SmallBold>{moment(item.date).format('DD/MM/YY')}</SmallBold>
           ) : null}
           <SessionItem
             onPress={() => onSessionTap(item)}
@@ -181,9 +181,9 @@ export default (props: HomeworkListProps) => {
 
   const DatePickers = React.memo(({ startDate, endDate }) => (
     <View style={style.grid}>
-      <Text>{I18n.t('viesco-from')}</Text>
+      <Small>{I18n.t('viesco-from')}</Small>
       <DateTimePicker mode="date" style={style.datePicker} value={startDate} maximumDate={endDate} onChange={setStartDate} />
-      <Text>{I18n.t('viesco-to')}</Text>
+      <Small>{I18n.t('viesco-to')}</Small>
       <DateTimePicker mode="date" style={style.datePicker} value={endDate} minimumDate={startDate} onChange={setEndDate} />
     </View>
   ));
@@ -212,7 +212,7 @@ export default (props: HomeworkListProps) => {
     return (
       <View style={style.grid}>
         <View style={style.gridHomeworkTitle}>
-          <Text>{I18n.t('viesco-homework')}</Text>
+          <Small>{I18n.t('viesco-homework')}</Small>
         </View>
         <Switch
           style={style.gridSwith}
@@ -223,7 +223,7 @@ export default (props: HomeworkListProps) => {
           {...newProps}
         />
         <View style={style.gridSesionTitle}>
-          <Text>{I18n.t('viesco-session')}</Text>
+          <Small>{I18n.t('viesco-session')}</Small>
         </View>
       </View>
     );

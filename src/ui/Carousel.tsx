@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Animated, Image, ImageURISource, StatusBar, Text, View } from 'react-native';
+import { Animated, Image, ImageURISource, StatusBar, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { PanGestureHandler, PinchGestureHandler, State } from 'react-native-gesture-handler';
 import RNCarousel from 'react-native-snap-carousel';
@@ -9,13 +9,13 @@ import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
+import { Small, SmallItalic } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
 import { MediaAction } from './MediaAction';
-import { A, Italic } from './Typography';
 
 const UnavailableImage = () => (
   <View
@@ -27,7 +27,7 @@ const UnavailableImage = () => (
       paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
-    <Italic>{I18n.t('imageNotAvailable')}</Italic>
+    <SmallItalic>{I18n.t('imageNotAvailable')}</SmallItalic>
   </View>
 );
 
@@ -343,13 +343,9 @@ class Carousel extends React.Component<
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
-                    <Text
-                      style={{
-                        color: theme.palette.grey.fog,
-                        textAlign: 'center',
-                      }}>
+                    <Small style={{ color: theme.palette.grey.fog, textAlign: 'center' }}>
                       {I18n.t('linkTo')}{' '}
-                      <A>
+                      <Small style={{ color: theme.palette.complementary.blue.regular }}>
                         {(() => {
                           const matches = item.linkTo.match(
                             // from https://stackoverflow.com/a/8498629/6111343
@@ -357,8 +353,8 @@ class Carousel extends React.Component<
                           );
                           return matches && matches[1];
                         })()}
-                      </A>
-                    </Text>
+                      </Small>
+                    </Small>
                     <NamedSVG
                       name="ui-externalLink"
                       width={16}

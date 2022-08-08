@@ -5,14 +5,13 @@ import { ActivityIndicator, StyleSheet, TextStyle, View, ViewStyle } from 'react
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
+import { SmallBold } from '~/framework/components/text';
 
 import { Row, RowProperties } from './Grid';
-import { Weight } from './Typography';
 import { Icon } from './icons/Icon';
 
 export interface ValidTextIconProps {
   disabled?: boolean;
-  fontSize?: number;
   leftName?: string;
   onPress?: any;
   rightName?: string | PictureProps;
@@ -93,7 +92,6 @@ const ButtonStyleComponent = styled.TouchableOpacity(
   {
     borderRadius: 38 * 0.5,
     paddingHorizontal: UI_SIZES.spacing.large,
-    paddingVertical: 9, // ToDo remove magic number
   },
   ({ disabled }) => ({
     backgroundColor: disabled ? 'transparent' : theme.palette.primary.regular,
@@ -102,14 +100,8 @@ const ButtonStyleComponent = styled.TouchableOpacity(
   }),
 );
 
-const TextStyleComponent = styled.Text<{ disabled: boolean }>(
-  {
-    fontFamily: 'OpenSans-Regular',
-    fontSize: 14,
-    fontWeight: Weight.SemiBold,
-    textAlignVertical: 'center',
-  },
-  ({ disabled }) => ({
-    color: disabled ? theme.palette.primary.regular : theme.ui.text.inverse,
-  }),
+const TextStyleComponent = props => (
+  <SmallBold style={[{ color: props.disabled ? theme.palette.primary.regular : theme.ui.text.inverse }, props.style]}>
+    {props.children}
+  </SmallBold>
 );

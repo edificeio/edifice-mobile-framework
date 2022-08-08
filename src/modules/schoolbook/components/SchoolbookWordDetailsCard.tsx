@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { HeadingS, Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { HeadingS, Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { UserType } from '~/framework/util/session';
 import {
   IConcernedStudent,
@@ -159,9 +159,9 @@ const SchoolbookWordDetailsCard = (
         headerIndicator={
           isTeacher ? (
             <TouchableOpacity style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }} onPress={action}>
-              <TextSemiBold style={{ color: theme.palette.primary.regular }}>
+              <SmallBold style={{ color: theme.palette.primary.regular }}>
                 {acknowledgementsString(word?.ackNumber, word?.total)}
-              </TextSemiBold>
+              </SmallBold>
               <Picture
                 cached
                 type="NamedSvg"
@@ -198,16 +198,16 @@ const SchoolbookWordDetailsCard = (
                 />
               }
               text={
-                <Text style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+                <Small style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
                   {`${I18n.t(`common.${isTeacher ? 'forRecipients' : 'from'}`)} `}
-                  <TextSemiBold
+                  <SmallBold
                     style={{
                       ...TextSizeStyle.Small,
                       color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.primary.regular,
                     }}>
                     {isTeacher ? recipientsString(report) : word?.ownerName}
-                  </TextSemiBold>
-                </Text>
+                  </SmallBold>
+                </Small>
               }
               date={word?.sendingDate}
             />
@@ -232,24 +232,24 @@ const SchoolbookWordDetailsCard = (
                 fill={theme.palette.primary.regular}
                 style={{ marginRight: UI_SIZES.spacing.minor }}
               />
-              <TextSemiBold style={{ color: theme.palette.primary.regular }}>
+              <SmallBold style={{ color: theme.palette.primary.regular }}>
                 {responsesString(schoolbookWordResponsesNumber)}
-              </TextSemiBold>
+              </SmallBold>
             </TouchableOpacity>
           ) : undefined
         }>
         {isAuthorOtherTeacher ? (
           <View style={{ marginTop: UI_SIZES.spacing.medium, flexDirection: 'row', alignItems: 'center' }}>
             <SingleAvatar size={36} userId={word?.ownerId} />
-            <Text style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }} numberOfLines={usersTextMaxLines}>
+            <Small style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }} numberOfLines={usersTextMaxLines}>
               {`${I18n.t('common.from')} `}
-              <TextSemiBold>{word?.ownerName}</TextSemiBold>
-            </Text>
+              <SmallBold>{word?.ownerName}</SmallBold>
+            </Small>
           </View>
         ) : !isTeacher && !isWordAcknowledged ? (
-          <TextSemiBold style={{ marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning }}>
+          <SmallBold style={{ marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning }}>
             {unacknowledgedString(userType)}
-          </TextSemiBold>
+          </SmallBold>
         ) : null}
         {word?.category ? (
           <View
@@ -268,7 +268,7 @@ const SchoolbookWordDetailsCard = (
         {word?.title ? <HeadingS style={{ marginTop: UI_SIZES.spacing.small }}>{word?.title}</HeadingS> : null}
         {word?.text ? (
           <View style={{ marginTop: UI_SIZES.spacing.minor, marginBottom: UI_SIZES.spacing.small }}>
-            <HtmlContentView html={word?.text} opts={{ globalTextStyle: { ...TextSizeStyle.SlightBig } }} />
+            <HtmlContentView html={word?.text} opts={{ globalTextStyle: { ...TextSizeStyle.Medium } }} />
           </View>
         ) : null}
       </ResourceView>
@@ -367,12 +367,12 @@ const SchoolbookWordDetailsCard = (
         ref={modalBoxRef}
         content={
           <View style={{ flexGrow: 1, flexShrink: 1 }}>
-            <TextSemiBold style={{ ...TextSizeStyle.SlightBigPlus, marginBottom: UI_SIZES.spacing.tiny }}>
+            <SmallBold style={{ ...TextSizeStyle.Big, marginBottom: UI_SIZES.spacing.tiny }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
-            </TextSemiBold>
-            <Text style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
+            </SmallBold>
+            <Small style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
-            </Text>
+            </Small>
             <UserList
               ref={flatListModalRef}
               data={studentsForTeacher}

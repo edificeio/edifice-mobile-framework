@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 import { renderIcon } from '~/modules/workspace/components/image';
 import { IFile } from '~/modules/workspace/reducer';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
@@ -56,7 +56,7 @@ export const WorkspaceFileListItem = ({ item, disabled, isSelected, onLongPress,
       borderBottomWidth={0}>
       <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>
-        <Text numberOfLines={1}>{name}</Text>
+        <Small numberOfLines={1}>{name}</Small>
         <View style={style.dateContainer}>
           {date ? (
             <View style={style.dateText}>
@@ -64,9 +64,9 @@ export const WorkspaceFileListItem = ({ item, disabled, isSelected, onLongPress,
             </View>
           ) : null}
           {ownerName.length > 0 ? (
-            <Text numberOfLines={1} style={style.authorText}>
+            <Small numberOfLines={1} style={style.authorText}>
               {longOwnerName}
-            </Text>
+            </Small>
           ) : null}
         </View>
       </CenterPanel>

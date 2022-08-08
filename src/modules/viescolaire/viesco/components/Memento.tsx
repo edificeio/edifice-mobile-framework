@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 
 const styles = StyleSheet.create({
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20, // MO-142 use UI_SIZES.spacing here
   },
   studentName: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   studentGroups: {
@@ -61,32 +61,34 @@ const styles = StyleSheet.create({
 export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
   return (
     <View style={[styles.relativesInfos, styles.shadow]}>
-      <Text style={styles.relativesTitleText}>{I18n.t('viesco-memento-relatives')}</Text>
+      <Small style={styles.relativesTitleText}>{I18n.t('viesco-memento-relatives')}</Small>
 
       {props.relatives &&
         props.relatives.map(relative => {
           return (
             <View style={styles.relativesContainer}>
-              {relative.name ? <TextBold style={styles.relativesIdentity}>{relative.title + ' ' + relative.name}</TextBold> : null}
+              {relative.name ? (
+                <SmallBold style={styles.relativesIdentity}>{relative.title + ' ' + relative.name}</SmallBold>
+              ) : null}
 
               <View style={styles.infoLine}>
                 <Icon style={styles.iconDisplay} size={20} name="email" />
-                {relative.name && relative.email !== '' ? <Text>{relative.email}</Text> : <Text>-</Text>}
+                {relative.name && relative.email !== '' ? <Small>{relative.email}</Small> : <Small>-</Small>}
               </View>
 
               <View style={styles.infoLine}>
                 <Icon style={styles.iconDisplay} size={20} name="cellphone" />
-                {relative.mobile && relative.mobile !== '' ? <Text>{relative.mobile}</Text> : <Text>-</Text>}
+                {relative.mobile && relative.mobile !== '' ? <Small>{relative.mobile}</Small> : <Small>-</Small>}
               </View>
 
               <View style={styles.infoLine}>
                 <Icon style={styles.iconDisplay} size={20} name="phone" />
-                {relative.phone && relative.phone !== '' ? <Text>{relative.phone}</Text> : <Text>-</Text>}
+                {relative.phone && relative.phone !== '' ? <Small>{relative.phone}</Small> : <Small>-</Small>}
               </View>
 
               <View style={styles.infoLine}>
                 <Icon style={styles.iconDisplay} size={20} name="home" />
-                {relative.address && relative.address !== '' ? <Text>{relative.address}</Text> : <Text>-</Text>}
+                {relative.address && relative.address !== '' ? <Small>{relative.address}</Small> : <Small>-</Small>}
               </View>
             </View>
           );
@@ -98,32 +100,32 @@ export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
 export const StudentInfos = (props: { memento: IMemento }) => {
   return (
     <View style={styles.studentInfos}>
-      {props.memento.name ? <TextBold style={styles.studentName}>{props.memento.name}</TextBold> : null}
+      {props.memento.name ? <SmallBold style={styles.studentName}>{props.memento.name}</SmallBold> : null}
 
       <View style={styles.infoLine}>
         <Icon style={styles.iconDisplay} size={20} name="cake-variant" />
         {props.memento.birth_date ? (
-          <Text>
+          <Small>
             {I18n.t('viesco-memento-born-date')} {moment(props.memento.birth_date).format('L')}
-          </Text>
+          </Small>
         ) : (
-          <Text>-</Text>
+          <Small>-</Small>
         )}
       </View>
 
       <View style={styles.infoLine}>
         <Icon style={styles.iconDisplay} size={20} name="school" />
         {props.memento.classes ? (
-          props.memento.classes.length > 0 && <Text>{props.memento.classes.join(', ')}</Text>
+          props.memento.classes.length > 0 && <Small>{props.memento.classes.join(', ')}</Small>
         ) : (
-          <Text>-</Text>
+          <Small>-</Small>
         )}
       </View>
-      {props.memento.groups.length > 0 && <Text style={styles.studentGroups}>{props.memento.groups.join(', ')}</Text>}
+      {props.memento.groups.length > 0 && <Small style={styles.studentGroups}>{props.memento.groups.join(', ')}</Small>}
 
       <View style={styles.infoLine}>
         <Icon style={styles.iconDisplay} size={20} name="silverware" />
-        {props.memento.accommodation ? <Text>{props.memento.accommodation.toLocaleLowerCase()}</Text> : <Text>-</Text>}
+        {props.memento.accommodation ? <Small>{props.memento.accommodation.toLocaleLowerCase()}</Small> : <Small>-</Small>}
       </View>
     </View>
   );

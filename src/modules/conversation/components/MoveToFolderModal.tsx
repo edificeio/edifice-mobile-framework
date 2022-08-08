@@ -5,7 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextBold, TextSemiBold } from '~/framework/components/text';
+import { SmallBold, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
@@ -66,9 +66,9 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
             width: undefined,
             justifyContent: 'space-between',
           }}>
-          <TextBold>{I18n.t(modalTitle)}</TextBold>
+          <SmallBold>{I18n.t(modalTitle)}</SmallBold>
           {isMoveImpossible ? (
-            <TextSemiBold>{I18n.t('conversation.moveImpossible')}</TextSemiBold>
+            <SmallBold>{I18n.t('conversation.moveImpossible')}</SmallBold>
           ) : (
             <DropDownPicker
               open={openDropdown}
@@ -77,8 +77,8 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
               setOpen={() => this.setState({ openDropdown: !openDropdown })}
               setValue={callback => selectFolder(callback(selectedFolder))}
               placeholder={I18n.t('conversation.moveSelect')}
-              placeholderStyle={{ color: theme.ui.text.light }}
-              textStyle={{ color: theme.palette.primary.regular, fontWeight: 'bold' }}
+              placeholderStyle={{ color: theme.ui.text.light, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
+              textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
               style={{ borderColor: theme.palette.primary.regular, borderWidth: 1 }}
               dropDownContainerStyle={{
                 borderColor: theme.palette.primary.regular,
@@ -100,7 +100,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
                 borderRadius: 20,
                 width: 150,
               }}
-              textStyle={{ color: theme.palette.primary.regular, fontWeight: 'bold' }}
+              textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
             />
             <DialogButtonOk
               onPress={() => {
@@ -112,7 +112,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
                 borderRadius: 20,
                 width: 150,
               }}
-              textStyle={{ fontWeight: 'bold' }}
+              textStyle={{ ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
               disabled={isMoveImpossible || !selectedFolder}
               label={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
             />

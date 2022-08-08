@@ -7,7 +7,7 @@ import Toast from 'react-native-tiny-toast';
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
@@ -69,7 +69,7 @@ interface IBigCardProps {
 const ActionButton: React.FunctionComponent<IActionButtonProps> = (props: IActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
     <Icon size={20} color={props.color || theme.palette.primary.regular} name={props.icon} />
-    <Text style={styles.actionText}>{props.text}</Text>
+    <Small style={styles.actionText}>{props.text}</Small>
   </TouchableOpacity>
 );
 

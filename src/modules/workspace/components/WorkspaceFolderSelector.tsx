@@ -1,10 +1,11 @@
 import I18n from 'i18n-js';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import { Small } from '~/framework/components/text';
 import { IFile, IFolder } from '~/modules/workspace/reducer';
 import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 
@@ -17,7 +18,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   nameText: {
-    fontSize: layoutSize.LAYOUT_14,
     marginLeft: UI_SIZES.spacing.tiny,
   },
   searchBarInput: {
@@ -127,7 +127,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
               size={layoutSize.LAYOUT_24}
               color={theme.palette.secondary.regular}
             />
-            <Text style={styles.nameText}>{item.name}</Text>
+            <Small style={styles.nameText}>{item.name}</Small>
           </TouchableOpacity>
           {isExpanded ? (
             <FlatList
@@ -142,7 +142,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
     }
     return (
       <TouchableOpacity onPress={() => onTapFolder({ item })} style={[styles.rowContainer, { backgroundColor }]}>
-        <Text style={styles.nameText}>{item.name} </Text>
+        <Small style={styles.nameText}>{item.name} </Small>
       </TouchableOpacity>
     );
   };

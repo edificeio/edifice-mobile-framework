@@ -12,7 +12,7 @@ import theme from '~/app/theme';
 import { ActionButton, ActionButtonProps } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 
 type OptionalDropDownPickerProps =
   | 'open'
@@ -57,7 +57,7 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
       }}>
       <View style={DropdownSelectorTemplate.styles.container}>
         {props.picture ? <Picture {...props.picture} /> : null}
-        {props.message ? <Text style={DropdownSelectorTemplate.styles.text}>{props.message}</Text> : null}
+        {props.message ? <Small style={DropdownSelectorTemplate.styles.text}>{props.message}</Small> : null}
         <View>
           <DropDownPicker
             open={open ?? dropdownOpen}
@@ -118,7 +118,7 @@ DropdownSelectorTemplate.styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     color: theme.palette.grey.black,
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     marginVertical: UI_SIZES.spacing.large,
   },
 });

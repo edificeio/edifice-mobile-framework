@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
-import { FontStyle } from '~/framework/components/text';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { APPBADGES } from '~/framework/modules/timelinev2/appBadges';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import { IUserSession, getUserSession } from '~/framework/util/session';
@@ -52,13 +52,11 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
             images: false,
             ignoreLineBreaks: true,
             globalTextStyle: {
-              color: theme.ui.text.regular,
-              fontSize: 12,
-              fontWeight: '400',
+              ...TextFontStyle.Regular,
+              ...TextSizeStyle.Small,
             },
             linkTextStyle: {
-              ...FontStyle.SemiBold,
-              color: theme.ui.text.heavy,
+              ...TextFontStyle.Bold,
             },
           }}
         />

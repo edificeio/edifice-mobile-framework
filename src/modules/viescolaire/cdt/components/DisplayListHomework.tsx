@@ -6,7 +6,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -30,13 +30,13 @@ const style = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   title: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   homeworksView: {
     marginBottom: 40, // MO-142 use UI_SIZES.spacing here
   },
   homeworkType: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     marginTop: UI_SIZES.spacing.medium,
   },
   subtitle: {
@@ -69,25 +69,25 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
               {homeworkList && homeworkList[0]?.due_date ? (
                 <>
                   <Icon size={20} color="#FA9700" name="date_range" />
-                  <Text>&emsp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</Text>
+                  <Small>&emsp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</Small>
                 </>
               ) : null}
-              {subject ? <TextBold style={style.course}>{subject}</TextBold> : null}
+              {subject ? <SmallBold style={style.course}>{subject}</SmallBold> : null}
             </LeftColoredItem>
           </View>
 
           <View style={style.homeworkPart}>
-            <TextBold style={style.title}>{I18n.t('viesco-homework-home')}</TextBold>
+            <SmallBold style={style.title}>{I18n.t('viesco-homework-home')}</SmallBold>
             <FlatList
               data={homeworkList}
               renderItem={({ item }) => (
                 <View style={style.homeworksView}>
-                  {item?.type && <TextBold style={style.homeworkType}>{item?.type}</TextBold>}
+                  {item?.type && <SmallBold style={style.homeworkType}>{item?.type}</SmallBold>}
                   {item && item?.subject && (
-                    <Text style={style.subtitle}>
+                    <Small style={style.subtitle}>
                       {item.subject.charAt(0).toLocaleUpperCase() + item.subject.substring(1).toLocaleLowerCase()} -{' '}
                       {item?.audience}
-                    </Text>
+                    </Small>
                   )}
                   {this.props.homeworkList && item?.description && <HtmlContentView html={item.description} opts={htmlOpts} />}
                 </View>

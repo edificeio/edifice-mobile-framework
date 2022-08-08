@@ -5,7 +5,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { Small } from '~/framework/components/text';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
@@ -150,7 +150,7 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
             <View style={[styles.tick, this.getCheckColor()]} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.props.mementoNavigation()}>
-            <Text style={styles.studentName}>{student.name}</Text>
+            <Small style={styles.studentName}>{student.name}</Small>
           </TouchableOpacity>
           <View style={styles.iconsView}>
             {student.last_course_absent && (

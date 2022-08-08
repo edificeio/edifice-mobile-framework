@@ -4,7 +4,7 @@ import React from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -55,18 +55,18 @@ export default ({
       <View style={styles.itemContent}>
         <View style={styles.itemRowStyle}>
           <Icon style={styles.iconMarginRight} size={20} name="access_time" />
-          <Text>
+          <Small>
             {moment(item.startDate).format('LT')} - {moment(item.endDate).format('LT')}
-          </Text>
+          </Small>
         </View>
-        <TextBold style={styles.itemClassGroupText}>{item.classes[0] !== undefined ? item.classes : item.groups}</TextBold>
+        <SmallBold style={styles.itemClassGroupText}>{item.classes[0] !== undefined ? item.classes : item.groups}</SmallBold>
 
         {item.roomLabels[0] !== '' && (
           <View style={styles.itemRowStyle}>
             <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
-            <Text>
+            <Small>
               {I18n.t('viesco-room')} {item.roomLabels}
-            </Text>
+            </Small>
           </View>
         )}
       </View>

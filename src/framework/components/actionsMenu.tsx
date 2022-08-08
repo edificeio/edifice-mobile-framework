@@ -6,10 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { TextColorStyle } from '~/framework/components/text';
-import { Text } from '~/ui/Typography';
 
 import { Picture, PictureProps } from './picture';
+import { Small } from './text';
 
 const style = StyleSheet.create({
   actions: {
@@ -64,7 +63,7 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
               style={style.actions}
               data={data}
               renderItem={({ item }) => {
-                const itemColorStyle = item.icon === 'delete' ? TextColorStyle.Error : {};
+                const itemColorStyle = item.icon === 'delete' ? { color: theme.palette.status.failure } : {};
                 return (
                   <TouchableOpacity onPress={item.onPress}>
                     <View
@@ -75,7 +74,7 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
                         paddingVertical: UI_SIZES.spacing.small,
                         paddingHorizontal: UI_SIZES.spacing.medium,
                       }}>
-                      <Text style={{ ...itemColorStyle }}>{item.text}</Text>
+                      <Small style={{ ...itemColorStyle }}>{item.text}</Small>
                       {typeof item.icon === 'string' ? (
                         <Icon name={item.icon} size={22} style={{ marginLeft: UI_SIZES.spacing.small, ...itemColorStyle }} />
                       ) : (

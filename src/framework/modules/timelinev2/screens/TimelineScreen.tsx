@@ -16,7 +16,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
-import { Text } from '~/framework/components/text';
+import { Small } from '~/framework/components/text';
 import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
@@ -138,8 +138,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   renderError() {
     return (
-      <Text>{`Error: ${this.props.notifications.error?.name}
-    ${this.props.notifications.error?.name}`}</Text>
+      <Small>{`Error: ${this.props.notifications.error?.name}
+    ${this.props.notifications.error?.name}`}</Small>
     ); // ToDo: great error screen here
   }
 
@@ -159,7 +159,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               width: 140,
             }}>
             <Icon name={actionIcon} size={16} color={color} />
-            <Text style={{ color, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Text>
+            <Small style={{ color, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Small>
           </View>
         </TouchableOpacity>
       </View>,

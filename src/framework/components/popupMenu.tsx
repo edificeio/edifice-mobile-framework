@@ -15,7 +15,7 @@ import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { UI_SIZES } from './constants';
 import { DEPRECATED_HeaderPrimaryAction } from './header';
 import { Icon } from './icon';
-import { Text } from './text';
+import { Small } from './text';
 
 export interface IPopupMenuProps {
   iconName: string;
@@ -128,16 +128,13 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
           mainNavNavigate(item.goTo.routeName, item.goTo);
         }}>
         <Icon
-          color={theme.ui.text.heavy}
           size={26}
           name={item.icon}
           style={{
             paddingHorizontal: UI_SIZES.spacing.small,
           }}
         />
-        <Text numberOfLines={1} style={{ color: theme.ui.text.heavy }}>
-          {I18n.t(item.i18n)}
-        </Text>
+        <Small numberOfLines={1}>{I18n.t(item.i18n)}</Small>
       </Action>
     );
   }

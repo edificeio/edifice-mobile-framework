@@ -16,7 +16,7 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextLight, TextSemiBold } from '~/framework/components/text';
+import { Caption, CaptionBold, Small } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -173,9 +173,9 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
               <Icon name="new_comment" color={theme.ui.text.light} size={16} style={{ marginRight: UI_SIZES.spacing.minor }} />
             }
             rightElement={
-              <TextLight>
+              <Small>
                 {newsComments!.length} {I18n.t(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
-              </TextLight>
+              </Small>
             }
           />
         ) : null}
@@ -196,10 +196,10 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
         rightElement={
           <View style={{ marginLeft: UI_SIZES.spacing.medium }}>
             <View style={{ flexDirection: 'row' }}>
-              <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: UI_SIZES.spacing.minor, maxWidth: '70%' }}>
+              <CaptionBold numberOfLines={2} style={{ marginRight: UI_SIZES.spacing.minor, maxWidth: '70%' }}>
                 {newsComment.username}
-              </TextSemiBold>
-              <TextLight style={{ fontSize: 10 }}>{moment(newsComment.created).fromNow()}</TextLight>
+              </CaptionBold>
+              <Caption>{moment(newsComment.created).fromNow()}</Caption>
             </View>
             <TextPreview textContent={newsComment.comment} />
           </View>

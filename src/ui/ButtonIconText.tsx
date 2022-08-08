@@ -4,7 +4,7 @@ import { ColorValue, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { TextBold } from '~/framework/components/text';
+import { SmallBold } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
 
 const styles = StyleSheet.create({
@@ -17,9 +17,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     alignItems: 'center',
     justifyContent: 'space-evenly',
-  },
-  text: {
-    fontSize: 15,
   },
 });
 
@@ -56,7 +53,7 @@ export const ButtonIconText = ({
 }: IButtonTextIconProps) => (
   <View style={styles.mainContainer}>
     <ButtonIcon {...rest} style={[styles.buttonWithShadow, style]} />
-    <TextBold style={[styles.text, { color: colorText }]}>{children}</TextBold>
+    <SmallBold style={{ color: colorText }}>{children}</SmallBold>
   </View>
 );
 

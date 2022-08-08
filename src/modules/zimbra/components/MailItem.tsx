@@ -1,25 +1,14 @@
-import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
-import theme from '~/app/theme';
-import { FontStyle } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
 
-export const Author = styled.Text<{ nb: number }>(
-  {
-    color: theme.ui.text.regular,
-    fontFamily: 'OpenSans-Regular',
-    fontSize: 14,
-  },
-  ({ nb }) => ({
-    ...(nb > 0 ? FontStyle.SemiBold : FontStyle.Regular),
-  }),
-);
+export const Author = props => (props.nb > 0 ? <SmallBold>{props.children}</SmallBold> : <Small>{props.children}</Small>);
 
 export const findReceivers2 = (to, from, cc) => {
   cc = cc || [];

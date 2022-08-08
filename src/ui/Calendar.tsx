@@ -1,11 +1,12 @@
 import moment from 'moment';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Small } from '~/framework/components/text';
 import { IHomework } from '~/modules/viescolaire/types/homework';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -30,12 +31,6 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.tiny,
     paddingHorizontal: UI_SIZES.spacing.small,
     overflow: 'hidden',
-  },
-  whiteText: {
-    color: theme.ui.text.inverse,
-  },
-  blackText: {
-    color: theme.ui.text.heavy,
   },
   columnContainer: {},
   slot: {
@@ -134,10 +129,10 @@ const TopDay = ({ day, onPress, color = '#000', selected = false }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.topDay, { backgroundColor: selected ? color : undefined }]}>
-        <Text style={selected ? styles.whiteText : { color: theme.ui.text.light }}>
+        <Small style={selected ? { color: theme.ui.text.inverse } : { color: theme.ui.text.light }}>
           {day.format('ddd').charAt(0).toUpperCase()}
-        </Text>
-        <Text style={selected ? styles.whiteText : styles.blackText}>{day.format('DD')}</Text>
+        </Small>
+        <Small style={selected ? { color: theme.ui.text.inverse } : {}}>{day.format('DD')}</Small>
       </View>
     </TouchableOpacity>
   );
@@ -386,7 +381,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
       <ScrollView contentContainerStyle={{ height: numberOfHours! * slotHeight! }} showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {hours.map((hour, i) => (
-            <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{hour.format('HH:mm')}</Text>
+            <Small style={[styles.slotDisplay, { top: slotHeight! * i }]}>{hour.format('HH:mm')}</Small>
           ))}
           {hours!.map((hour, i) => (
             <EmptySlot height={slotHeight!} top={slotHeight! * i} />
@@ -418,9 +413,11 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
       <ScrollView contentContainerStyle={{ height: (slots!.length + 2) * slotHeight! }} showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {slots!.map((slot, i) => (
-            <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('HH:mm')}</Text>
+            <Small style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('HH:mm')}</Small>
           ))}
-          <Text style={[styles.slotDisplay, { top: slotHeight! * slots!.length }]}>{moment(lastSlot.endHour).format('HH:mm')}</Text>
+          <Small style={[styles.slotDisplay, { top: slotHeight! * slots!.length }]}>
+            {moment(lastSlot.endHour).format('HH:mm')}
+          </Small>
           {slots!.map((slot, i) => (
             <EmptySlot height={slotHeight! - 5} top={slotHeight! * i} />
           ))}

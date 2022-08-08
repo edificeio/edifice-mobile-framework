@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text, TextSemiBold } from '~/framework/components/text';
+import { Small, SmallBold, SmallItalic } from '~/framework/components/text';
 import { FlatButton } from '~/ui/FlatButton';
 
 // TYPES ---------------------------------------------------------------------------
@@ -41,10 +41,10 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                     <PFLogo />
                   </LogoWrapper>
                   <View style={{ flexGrow: 4, justifyContent: 'flex-start' }}>
-                    <TextSemiBold>{I18n.t('federatedAccount-instructions')}</TextSemiBold>
-                    <Text style={{ marginLeft: UI_SIZES.spacing.big, marginTop: UI_SIZES.spacing.medium }}>
+                    <SmallBold>{I18n.t('federatedAccount-instructions')}</SmallBold>
+                    <Small style={{ marginLeft: UI_SIZES.spacing.big, marginTop: UI_SIZES.spacing.medium }}>
                       {I18n.t('federatedAccount-instructions-details')}
-                    </Text>
+                    </Small>
                   </View>
                   <View
                     style={{

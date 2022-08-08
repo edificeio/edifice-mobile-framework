@@ -1,7 +1,7 @@
 import CookieManager from '@react-native-cookies/cookies';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
@@ -14,13 +14,13 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
+import { Small } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IOAuthToken, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, OAuthErrorType } from '~/infra/oauth';
 import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
-import { ErrorMessage } from '~/ui/Typography';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
@@ -145,13 +145,21 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       return (
         <View style={WAYFPage.STYLES.container}>
           <PFLogo />
-          <ErrorMessage>
+          <Small
+            style={{
+              flexGrow: 0,
+              marginTop: UI_SIZES.spacing.medium,
+              padding: UI_SIZES.spacing.tiny,
+              textAlign: 'center',
+              alignSelf: 'center',
+              color: theme.palette.status.failure,
+            }}>
             {I18n.t('auth-error-' + this.error, {
               version: DeviceInfo.getVersion(),
               errorcode: this.error,
               currentplatform: DEPRECATED_getCurrentPlatform()!.url,
             })}
-          </ErrorMessage>
+          </Small>
           <FlatButton title={I18n.t('login-wayf-error-retry')} onPress={() => this.displayWebview()} />
         </View>
       );
@@ -162,7 +170,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       return (
         <View style={WAYFPage.STYLES.container}>
           <PFLogo />
-          <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</Text>
+          <Small style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</Small>
           <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
@@ -177,7 +185,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
             this.setState({ dropdownOpened: false });
           }}>
           <View style={WAYFPage.STYLES.container}>
-            <Text style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-select-text')}</Text>
+            <Small style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-select-text')}</Small>
             <DropDownPicker
               dropDownContainerStyle={WAYFPage.STYLES.selectContainer}
               items={this.dropdownItems}
@@ -201,7 +209,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
                 disabled={this.dropdownValue === null}
                 onPress={() => this.loginWithCustomToken()}
               />
-              {/*<Text style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Text>*/}
+              {/*<Small style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Small>*/}
             </View>
           </View>
         </TouchableWithoutFeedback>

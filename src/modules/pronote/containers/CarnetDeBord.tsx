@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { PageView } from '~/framework/components/page';
 import { PictureProps } from '~/framework/components/picture';
-import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { tryAction } from '~/framework/util/redux/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
@@ -24,7 +24,6 @@ import moduleConfig from '~/modules/pronote/moduleConfig';
 import { CarnetDeBordSection, ICarnetDeBord } from '~/modules/pronote/state/carnetDeBord';
 import { loadCarnetDeBordAction } from '~/modules/pronote/state/carnetDeBord/actions';
 import { ICarnetDeBordStateData } from '~/modules/pronote/state/carnetDeBord/reducer';
-import { TextBold } from '~/ui/Typography';
 import { IUserInfoState } from '~/user/state/info';
 
 export interface CarnetDeBordDataProps {
@@ -123,9 +122,9 @@ CarnetDeBord.getRenderContent =
           <View style={CarnetDeBord.styles.card} /> // for top-page spacing
         )}
         {isStructureShown ? (
-          <Text style={[CarnetDeBord.styles.card, FontStyle.Bold, TextSizeStyle.SlightBig]}>
+          <Small style={[CarnetDeBord.styles.card, TextFontStyle.Bold, TextSizeStyle.Medium]}>
             {structures.find(s => s.id === data?.structureId)?.name ?? ' '}
-          </Text>
+          </Small>
         ) : null}
         {data ? (
           <>
@@ -263,16 +262,16 @@ CarnetDeBord.SectionContent = function (props: {
     <CC picture={props.picture} title={props.title} style={CarnetDeBord.styles.card} onPress={goToDetails}>
       {isNotEmpty ? (
         <View style={CarnetDeBord.styles.textRow}>
-          <TextBold numberOfLines={1} style={CarnetDeBord.styles.textLabel}>
+          <SmallBold numberOfLines={1} style={CarnetDeBord.styles.textLabel}>
             {props.textLabel}
-          </TextBold>
-          <Text numberOfLines={1}>{props.valueLabel}</Text>
+          </SmallBold>
+          <Small numberOfLines={1}>{props.valueLabel}</Small>
         </View>
       ) : (
         <View style={CarnetDeBord.styles.emptyRow}>
-          <Text numberOfLines={1} style={TextColorStyle.Light}>
+          <Small numberOfLines={1} style={{ color: theme.ui.text.light }}>
             {props.emptyLabel}
-          </Text>
+          </Small>
         </View>
       )}
     </CC>

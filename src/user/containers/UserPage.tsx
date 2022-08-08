@@ -10,6 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
+import { Small } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -24,7 +25,6 @@ import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth
 import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
-import { Label } from '~/ui/Typography';
 import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
@@ -244,10 +244,12 @@ export class UserPage extends React.PureComponent<
           <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
           <ContainerSpacer />
           <ContainerView>
-            <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
+            <Small
+              style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}
+              onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
               {I18n.t('version-number')} {DeviceInfo.getVersion()}
               {showVersionType ? `-(${DeviceInfo.getBuildNumber()})-${versionType}-${versionOverride}` : ''}
-            </Label>
+            </Small>
           </ContainerView>
           <ContainerSpacer />
           <ButtonLine

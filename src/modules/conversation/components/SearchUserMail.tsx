@@ -3,9 +3,9 @@ import { FlatList, TextInput, TouchableOpacity, View, ViewStyle } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/modules/conversation/service/newMail';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -61,14 +61,13 @@ export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }
 
 export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key }) => {
   const textInputStyle = {
+    ...TextFontStyle.Regular,
+    ...TextSizeStyle.Normal,
     flex: 0,
     paddingVertical: UI_SIZES.spacing.tiny,
     color: theme.ui.text.regular,
-    ...FontStyle.Regular,
-    ...TextSizeStyle.Normal,
-    ...TextColorStyle.Normal,
     marginVertical: -2, // Hack to compensate the position of TextInput baseline compared to regular text.
-    height: UI_SIZES.getResponsiveLineHeight(14) * 1.5, // Some magic here.
+    height: getScaleDimension(20, 'font') * 1.5, // Some magic here.
   } as ViewStyle;
 
   return (
@@ -116,9 +115,9 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
         }}
         onPress={onPress}>
         <SingleAvatar userId={id} />
-        <Text numberOfLines={1} lineHeight={30} ellipsizeMode="tail" style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
+        <Small numberOfLines={1} ellipsizeMode="tail" style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
           {displayName}
-        </Text>
+        </Small>
       </TouchableOpacity>
     );
   };
@@ -168,7 +167,7 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
-        <Text style={userLabel}>{displayName}</Text>
+        <Small style={userLabel}>{displayName}</Small>
         <Icon
           name="close"
           size={12}

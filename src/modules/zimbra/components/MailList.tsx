@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { IInit } from '~/modules/zimbra/components/DrawerMenuContainer';
 import { DraftType } from '~/modules/zimbra/screens/NewMail';
 import { IMail } from '~/modules/zimbra/state/mailContent';
@@ -192,20 +192,20 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           <CenterPanel>
             <View style={styles.mailInfoRow}>
               {mail.unread ? (
-                <TextBold style={styles.displayNameText} numberOfLines={1}>
+                <SmallBold style={styles.displayNameText} numberOfLines={1}>
                   {displayName}
-                </TextBold>
+                </SmallBold>
               ) : (
-                <Text style={styles.displayNameText} numberOfLines={1}>
+                <Small style={styles.displayNameText} numberOfLines={1}>
                   {displayName}
-                </Text>
+                </Small>
               )}
-              <Text style={styles.greyColor}>{date}</Text>
+              <Small style={styles.greyColor}>{date}</Small>
             </View>
             <View style={styles.mailInfoRow}>
-              <Text style={styles.greyColor} numberOfLines={1}>
+              <Small style={styles.greyColor} numberOfLines={1}>
                 {mail.subject}
-              </Text>
+              </Small>
               {mail.hasAttachment ? <Icon name="attached" size={18} color="black" /> : null}
             </View>
           </CenterPanel>

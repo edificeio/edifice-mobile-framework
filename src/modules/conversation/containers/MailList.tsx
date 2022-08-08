@@ -20,10 +20,9 @@ import {
 import { fetchMailListAction, fetchMailListFromFolderAction } from '~/modules/conversation/actions/mailList';
 import MailList from '~/modules/conversation/components/MailList';
 import moduleConfig from '~/modules/conversation/moduleConfig';
-import { getCountListState, ICountMailboxes } from '~/modules/conversation/state/count';
-import { getInitMailListState, IFolder, IInitMail } from '~/modules/conversation/state/initMails';
+import { ICountMailboxes, getCountListState } from '~/modules/conversation/state/count';
+import { IFolder, IInitMail, getInitMailListState } from '~/modules/conversation/state/initMails';
 import { getMailListState } from '~/modules/conversation/state/mailList';
-import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 
 // ------------------------------------------------------------------------------------------------
 
@@ -76,7 +75,6 @@ type MailListContainerState = {
 };
 
 class MailListContainer extends React.PureComponent<MailListContainerProps, MailListContainerState> {
-
   constructor(props) {
     super(props);
 

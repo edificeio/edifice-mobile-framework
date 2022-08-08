@@ -7,7 +7,7 @@ import Toast from 'react-native-tiny-toast';
 import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
@@ -107,17 +107,17 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
     return (
       <TouchCard onPress={this.openUrlCallback}>
         <View style={styles.upperContentContainer}>
-          <TextBold numberOfLines={1} style={styles.titleText}>
+          <SmallBold numberOfLines={1} style={styles.titleText}>
             {resource.title}
-          </TextBold>
+          </SmallBold>
           {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={18} /> : null}
         </View>
         <View style={styles.lowerContentContainer}>
           <ResourceImage image={resource.image} style={styles.imageContainer} />
           <View style={styles.secondaryContainer}>
-            <Text numberOfLines={2} style={styles.descriptionText}>
+            <Small numberOfLines={2} style={styles.descriptionText}>
               {resource.source === Source.SIGNET ? resource.authors : resource.editors}
-            </Text>
+            </Small>
             <View style={styles.actionsContainer}>
               <FavoriteIcon {...this.props} />
               <IconButton icon="link" size={20} onPress={this.copyToClipboard} />

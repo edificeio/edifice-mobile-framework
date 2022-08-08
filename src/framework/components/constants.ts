@@ -8,7 +8,7 @@ const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 const SCALE_DIMENSION_MAX = 1.5;
 const SCALE_DIMENSION_MIN = 0.75;
 
-const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
+export const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
   Math.round(
     dimension *
       Math.max(
@@ -97,10 +97,6 @@ export const UI_SIZES = {
     major: getScaleDimension(48, 'width'),
     huge: getScaleDimension(64, 'width'),
   },
-  getResponsiveFontSize: (dimension: number) => getScaleDimension(dimension, 'font'),
-  getResponsiveLineHeight: (dimension: number) => getScaleDimension(dimension + 6, 'font'),
-  getResponsiveStyledLineHeight: (textStyle: TextStyle | undefined = undefined) =>
-    getScaleDimension((textStyle?.fontSize || 14) + 6, 'height'),
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (

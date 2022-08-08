@@ -21,7 +21,7 @@ import theme from '~/app/theme';
 
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
-import { FontWeightIOS, TextInverse, TextSizeStyle } from './text';
+import { BodyBold, Small, SmallInverse } from './text';
 
 /**
  * FakeHeader_Container
@@ -151,7 +151,7 @@ interface IHeaderActionCustomProps extends IHeaderActionCommonProps {
   customComponent?: JSX.Element;
 }
 
-const HeaderActionText = styled(TextInverse)({
+const HeaderActionText = styled(SmallInverse)({
   paddingHorizontal: 18, // Value in px ! Measured to fit icons at left & right.
   justifyContent: 'center',
   alignItems: 'center',
@@ -198,18 +198,18 @@ export const HeaderBackAction = ({
   />
 );
 
-export const HeaderTitle_Style = styled(TextInverse)({
+export const HeaderTitle_Style = styled(BodyBold)({
   textAlign: 'center',
   textAlignVertical: 'center',
-  fontWeight: FontWeightIOS.Bold,
-  fontSize: TextSizeStyle.SlightBig.fontSize,
+  color: theme.ui.text.inverse,
 });
 export const HeaderTitle = (props: TextProps) => {
   return <HeaderTitle_Style numberOfLines={1} {...props} />;
 };
-export const HeaderSubtitle_Style = styled(HeaderTitle_Style)({
-  fontWeight: FontWeightIOS.Normal,
-  fontSize: TextSizeStyle.Normal.fontSize,
+export const HeaderSubtitle_Style = styled(Small)({
+  textAlign: 'center',
+  textAlignVertical: 'center',
+  color: theme.ui.text.inverse,
 });
 export const HeaderSubtitle = (props: TextProps) => {
   return <HeaderSubtitle_Style numberOfLines={1} {...props} />;

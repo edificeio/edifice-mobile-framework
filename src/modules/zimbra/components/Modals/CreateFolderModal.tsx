@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextBold } from '~/framework/components/text';
+import { SmallBold } from '~/framework/components/text';
 import { fetchRootFoldersAction, postFolderAction } from '~/modules/zimbra/actions/folders';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
@@ -72,7 +72,7 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
       <ModalBox isVisible={show} backdropOpacity={0.5}>
         <ModalContent style={styles.modalContainer}>
           <ModalContentBlock>
-            <TextBold>{I18n.t('zimbra-create-directory')}</TextBold>
+            <SmallBold>{I18n.t('zimbra-create-directory')}</SmallBold>
           </ModalContentBlock>
 
           <View style={styles.directoryNameContainer}>

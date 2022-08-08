@@ -6,7 +6,7 @@ import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
-import { TextBold } from '~/framework/components/text';
+import { SmallBold } from '~/framework/components/text';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { Icon } from '~/ui/icons/Icon';
 
@@ -88,9 +88,9 @@ const DropdownIOS = ({ keyId, title, renderItem, keyExtractor, style, data, plac
   return (
     <View style={styles.fullView}>
       <TouchableWithoutFeedback style={[selectedStyle, styles.dropdownButton, style]} onPress={() => toggleModal(true)}>
-        <TextBold style={styles.fullView} numberOfLines={1}>
+        <SmallBold style={styles.fullView} numberOfLines={1}>
           {placeholder ? placeholder : value ? getItemRenderer(data.find(item => getItemKeyExtractor(item) === value)) : ' '}
-        </TextBold>
+        </SmallBold>
         <Icon size={20} name="arrow_down" />
       </TouchableWithoutFeedback>
       <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>

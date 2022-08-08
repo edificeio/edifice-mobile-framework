@@ -1,13 +1,13 @@
 import styled from '@emotion/native';
+import * as React from 'react';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
+import { Caption } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-
-import { Weight } from './Typography';
 
 export const ArticleContainer = styled.View({
   paddingHorizontal: pageGutterSize,
@@ -83,18 +83,10 @@ export const RightPanel = styled.View({
   width: layoutSize.LAYOUT_50,
 });
 
-export const Content = styled.Text<{ nb: number }>(
-  {
-    color: theme.ui.text.light,
-    fontFamily: 'OpenSans-Regular',
-    fontSize: layoutSize.LAYOUT_12,
-    fontWeight: Weight.Light,
-    marginTop: UI_SIZES.spacing.small,
-  },
-  ({ nb = 0 }) => ({
-    color: nb > 0 ? theme.ui.text.regular : theme.ui.text.light,
-    fontWeight: nb > 0 ? Weight.Normal : Weight.Light,
-  }),
+export const Content = props => (
+  <Caption style={{ marginTop: UI_SIZES.spacing.small, color: props.nb > 0 ? theme.ui.text.regular : theme.ui.text.light }}>
+    {props.children}
+  </Caption>
 );
 
 export const PageContainer = styled.View({

@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { Small, TextSizeStyle } from '~/framework/components/text';
 import { putSignatureAction } from '~/modules/zimbra/actions/signature';
 import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
   },
   titleText: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   textZone: {
     marginHorizontal: UI_SIZES.spacing.small,
@@ -112,7 +112,7 @@ class SignatureModal extends React.Component<SignatureModalProps, SignatureModal
         <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
           <View style={styles.containerView}>
             <View style={styles.titleContainer}>
-              <Text style={styles.titleText}>{I18n.t('zimbra-signature')}</Text>
+              <Small style={styles.titleText}>{I18n.t('zimbra-signature')}</Small>
             </View>
             <TextInput
               textAlignVertical="top"
@@ -124,7 +124,7 @@ class SignatureModal extends React.Component<SignatureModalProps, SignatureModal
             />
             <View style={styles.infosView}>
               <Checkbox checked={this.state.isGlobalSignature} onPress={this.toggleGlobal} />
-              <Text style={styles.useSignatureText}>{I18n.t('zimbra-signature-use')}</Text>
+              <Small style={styles.useSignatureText}>{I18n.t('zimbra-signature-use')}</Small>
             </View>
             <View style={styles.actionsButtonsContainer}>
               <DialogButtonOk label={I18n.t('zimbra-add')} onPress={this.confirm} />

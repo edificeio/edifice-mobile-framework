@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,11 +15,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { TextSizeStyle } from '~/framework/components/text';
+import { SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { splitWords } from '~/framework/util/string';
 import { CarnetDeBordSection, ICarnetDeBord } from '~/modules/pronote/state/carnetDeBord';
-import { TextBold, TextSemiBold } from '~/ui/Typography';
 
 export interface CarnetDeBordDetailsDataProps {}
 
@@ -51,24 +50,24 @@ function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
           index + 1 < itemArray.length ? CarnetDeBordDetails.styles.sectionWithBorder : {},
         ]}>
         <View style={CarnetDeBordDetails.styles.sectionLeft}>
-          {item.title ? <TextBold numberOfLines={1}>{item.title}</TextBold> : null}
+          {item.title ? <SmallBold numberOfLines={1}>{item.title}</SmallBold> : null}
           {item.date ? (
-            <TextSemiBold
+            <SmallBold
               style={[
                 CarnetDeBordDetails.styles.textDate,
                 item.label || item.description ? CarnetDeBordDetails.styles.textDateMargin : undefined,
               ]}
               numberOfLines={1}>
               {item.date}
-            </TextSemiBold>
+            </SmallBold>
           ) : null}
-          {item.label ? <TextBold numberOfLines={1}>{item.label}</TextBold> : null}
-          {item.description ? <Text numberOfLines={1}>{extractTextFromHtml(item.description)}</Text> : null}
+          {item.label ? <SmallBold numberOfLines={1}>{item.label}</SmallBold> : null}
+          {item.description ? <Small numberOfLines={1}>{extractTextFromHtml(item.description)}</Small> : null}
         </View>
         {item.value ? (
-          <Text numberOfLines={2} style={CarnetDeBordDetails.styles.sectionRight}>
+          <Small numberOfLines={2} style={CarnetDeBordDetails.styles.sectionRight}>
             {item.value}
-          </Text>
+          </Small>
         ) : null}
       </View>
     ));
@@ -95,7 +94,7 @@ function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
       }}>
       <ScrollView alwaysBounceVertical={false}>
         {type === CarnetDeBordSection.NOTES && data.PageReleveDeNotes.Message ? (
-          <Text style={CarnetDeBordDetails.styles.message}>{data.PageReleveDeNotes.Message}</Text>
+          <Small style={CarnetDeBordDetails.styles.message}>{data.PageReleveDeNotes.Message}</Small>
         ) : null}
         <CardWithoutPadding style={CarnetDeBordDetails.styles.card}>{items}</CardWithoutPadding>
         <ActionButton

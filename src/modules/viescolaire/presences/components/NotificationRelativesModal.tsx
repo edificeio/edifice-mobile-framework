@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { NestedText, NestedTextBold, Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { IChildArray } from '~/modules/viescolaire/viesco/state/children';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
@@ -14,7 +14,7 @@ import { ModalBox } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
   modalTitle: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     marginBottom: 10, // MO-142 use UI_SIZES.spacing here
   },
   modalSubsection: {
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     marginVertical: 2, // MO-142 use UI_SIZES.spacing here
   },
   eventNestedText: {
-    ...TextSizeStyle.Tiny,
+    ...TextSizeStyle.Small,
   },
   modalContainerView: {
     flex: 1,
@@ -76,15 +76,15 @@ const renderChild = (key: string, event) => {
   }
   return (
     <>
-      <Text style={styles.eventTitle}>{title}</Text>
-      <Text style={styles.eventTextContainer}>
+      <Small style={styles.eventTitle}>{title}</Small>
+      <Small style={styles.eventTextContainer}>
         <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
-        <TextBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</TextBold>
-        <Text>{' - '}</Text>
-        <Text style={{ color }}>{moment(event.start_date).format('HH:mm')}</Text>
-        <Text style={{ color }}> - {moment(event.end_date).format('HH:mm')}</Text>
+        <SmallBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</SmallBold>
+        <Small>{' - '}</Small>
+        <Small style={{ color }}>{moment(event.start_date).format('HH:mm')}</Small>
+        <Small style={{ color }}> - {moment(event.end_date).format('HH:mm')}</Small>
         {duration > 0 ? <NestedTextBold style={{ color }}>{' - ' + duration + 'mn'}</NestedTextBold> : null}
-      </Text>
+      </Small>
     </>
   );
 };
@@ -129,7 +129,7 @@ export const NotificationRelativesModal = ({
     <ModalBox backdropOpacity={0.5} isVisible={visible}>
       <View style={styles.modalContainerView}>
         <View style={styles.modalContentView}>
-          <Text style={styles.modalTitle}>{I18n.t('viesco-notifications')}</Text>
+          <Small style={styles.modalTitle}>{I18n.t('viesco-notifications')}</Small>
           {childrenArray?.map(child =>
             childrenEvents.data &&
             childrenEvents?.data?.studentsEvents &&
@@ -137,7 +137,7 @@ export const NotificationRelativesModal = ({
             childrenEvents?.data?.studentsEvents[child.id] &&
             !checkIsEmptyEvents(childrenEvents?.data?.studentsEvents[child.id].all) ? (
               <View>
-                <TextBold>{child.firstName + ' ' + child.lastName}</TextBold>
+                <SmallBold>{child.firstName + ' ' + child.lastName}</SmallBold>
                 <View style={styles.modalSubsection}>
                   <>{renderEvents(childrenEvents?.data?.studentsEvents[child.id]?.all)}</>
                 </View>

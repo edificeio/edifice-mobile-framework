@@ -8,16 +8,17 @@ import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { Caption, Small } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
 import { signURISource } from '~/infra/oauth';
-import { ButtonLine, ContainerLabel, ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
+import { ButtonLine, ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
 import { PageContainer } from '~/ui/ContainerContent';
-import { Label } from '~/ui/Typography';
 import { changePasswordResetAction } from '~/user/actions/changePassword';
 import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
@@ -107,7 +108,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
 
               {!this.props.userinfo.federated ? (
                 <View {...(isEditMode ? { style: { opacity: 0.33 } } : {})}>
-                  <ContainerLabel>{I18n.t('Password')}</ContainerLabel>
+                  <Caption style={{ paddingHorizontal: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.medium }}>
+                    {I18n.t('Password')}
+                  </Caption>
                   <ButtonLine
                     title="PasswordChange"
                     disabled={isEditMode}
@@ -197,7 +200,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     placeholderTextColor?: string;
   }) {
     const isEditMode = this.props.navigation.getParam('edit', false);
-    const label = <ContainerLabel>{title}</ContainerLabel>;
+    const label = (
+      <Caption style={{ paddingHorizontal: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.medium }}>{title}</Caption>
+    );
     let box: JSX.Element | null = null;
 
     /*if (editable && !setter) {
@@ -214,8 +219,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           {...(keyboardType ? { keyboardType } : {})}
           {...(placeholder ? { placeholder } : {})}
           {...(placeholderTextColor ? { placeholderTextColor } : {})}>
-          <Label
+          <Small
             style={{
+              textAlignVertical: 'center',
               color: validator
                 ? this.state[validator.key]
                   ? theme.ui.text.regular
@@ -223,17 +229,17 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 : theme.ui.text.regular,
             }}>
             {getter()}
-          </Label>
+          </Small>
         </ContainerTextInput>
       ) : (
         <ContainerView>
-          <Label>{getter()}</Label>
+          <Small style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</Small>
         </ContainerView>
       );
     } else {
       box = (
         <ContainerView>
-          <Label>{getter()}</Label>
+          <Small style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</Small>
         </ContainerView>
       );
     }

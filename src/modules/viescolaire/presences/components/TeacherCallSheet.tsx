@@ -5,7 +5,7 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import StudentRow from '~/modules/viescolaire/presences/components/StudentRow';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
@@ -163,16 +163,16 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
     return (
       <View style={style.classesView}>
         <LeftColoredItem shadow style={style.topItem} color={viescoTheme.palette.presences}>
-          <Text>
+          <Small>
             {moment(this.state.callData.start_date).format('LT')} - {moment(this.state.callData.end_date).format('LT')}
-          </Text>
+          </Small>
           {this.state.course.classroom !== '' && (
-            <Text style={style.classroomText}>
+            <Small style={style.classroomText}>
               <Icon name="pin_drop" size={18} />
               {I18n.t('viesco-room') + ' ' + this.state.course.classroom}
-            </Text>
+            </Small>
           )}
-          <TextBold style={style.gradeText}>{this.state.course.grade}</TextBold>
+          <SmallBold style={style.gradeText}>{this.state.course.grade}</SmallBold>
         </LeftColoredItem>
       </View>
     );

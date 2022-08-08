@@ -12,6 +12,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { Trackers } from '~/framework/util/tracker';
 import MailListItem from '~/modules/conversation/components/MailListItem';
 import CreateFolderModal from '~/modules/conversation/containers/CreateFolderModal';
@@ -23,7 +24,6 @@ import { ICountMailboxes } from '~/modules/conversation/state/count';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { Loading } from '~/ui/Loading';
-import { Weight } from '~/ui/Typography';
 
 interface IMailListDataProps {
   notifications: any;
@@ -273,19 +273,52 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         }
       }) || [];
     const drawerMailboxes = [
-      { name: I18n.t('conversation.inbox').toUpperCase(), value: 'inbox', iconName: 'messagerie-on', count: mailboxesCount.INBOX },
-      { name: I18n.t('conversation.sendMessages').toUpperCase(), value: 'sendMessages', iconName: 'send' },
-      { name: I18n.t('conversation.drafts').toUpperCase(), value: 'drafts', iconName: 'pencil', count: mailboxesCount.DRAFT },
-      { name: I18n.t('conversation.trash').toUpperCase(), value: 'trash', iconName: 'delete' },
+      {
+        name: I18n.t('conversation.inbox').toUpperCase(),
+        value: 'inbox',
+        iconName: 'messagerie-on',
+        count: mailboxesCount.INBOX,
+        labelStyle: {
+          ...TextFontStyle.Regular,
+          ...TextSizeStyle.Normal,
+        },
+      },
+      {
+        name: I18n.t('conversation.sendMessages').toUpperCase(),
+        value: 'sendMessages',
+        iconName: 'send',
+        labelStyle: {
+          ...TextFontStyle.Regular,
+          ...TextSizeStyle.Normal,
+        },
+      },
+      {
+        name: I18n.t('conversation.drafts').toUpperCase(),
+        value: 'drafts',
+        iconName: 'pencil',
+        count: mailboxesCount.DRAFT,
+        labelStyle: {
+          ...TextFontStyle.Regular,
+          ...TextSizeStyle.Normal,
+        },
+      },
+      {
+        name: I18n.t('conversation.trash').toUpperCase(),
+        value: 'trash',
+        iconName: 'delete',
+        labelStyle: {
+          ...TextFontStyle.Regular,
+          ...TextSizeStyle.Normal,
+        },
+      },
     ];
     const createFolderItem = {
       name: I18n.t('conversation.createDirectory'),
       value: 'createDirectory',
       iconName: 'create_new_folder',
       labelStyle: {
-        fontSize: 12,
-        color: theme.ui.text.light,
-        fontWeight: Weight.SemiBold,
+        ...TextFontStyle.Regular,
+        ...TextSizeStyle.Small,
       },
       closeAfterSelecting: false,
     };
@@ -297,6 +330,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         iconName: 'folder',
         count: folder.unread,
         depth: folder.depth - 1,
+        labelStyle: {
+          ...TextFontStyle.Regular,
+          ...TextSizeStyle.Normal,
+        },
       }));
     drawerFolders && drawerFolders.push(createFolderItem);
     const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;

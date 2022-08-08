@@ -12,7 +12,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingS, TextSemiBold } from '~/framework/components/text';
+import { HeadingL, HeadingS, SmallBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
@@ -70,16 +70,15 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
           paddingVertical: UI_SIZES.spacing.big,
         }}>
         <View style={{ flex: 4 }}>
-          <HeadingS
+          <HeadingL
             style={{
               color: theme.palette.primary.regular,
               alignSelf: 'center',
-              fontSize: 24,
               height: 80,
               lineHeight: undefined,
             }}>
             {showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
-          </HeadingS>
+          </HeadingL>
           <Swiper
             autoplay
             autoplayTimeout={5}
@@ -108,7 +107,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
                   width: '80%',
                 }}>
                 <NamedSVG name={`onboarding-${index}`} style={imageStyle} />
-                <TextSemiBold style={{ textAlign: 'center', fontSize: 18 }}>{onboardingText}</TextSemiBold>
+                <HeadingS style={{ textAlign: 'center' }}>{onboardingText}</HeadingS>
               </View>
             ))}
           </Swiper>

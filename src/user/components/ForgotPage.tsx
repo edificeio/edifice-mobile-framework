@@ -8,9 +8,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingS, Text, TextColorStyle } from '~/framework/components/text';
+import { HeadingS, Small } from '~/framework/components/text';
 import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
@@ -126,10 +125,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
-                      <HeadingS style={{ ...TextColorStyle.Light }}>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeadingS>
-                      <Text style={{ ...TextColorStyle.Light }}>
+                      <HeadingS style={{ color: theme.ui.text.light }}>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeadingS>
+                      <Small style={{ color: theme.ui.text.light }}>
                         {I18n.t(`forgot-${forgotId ? 'id' : 'password'}-instructions`)}
-                      </Text>
+                      </Small>
                     </LogoWrapper>
                     {!isSuccess ? (
                       <TextInputLine
@@ -153,14 +152,31 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         spellCheck={false}
                       />
                     ) : null}
-                    {(hasStructures && !isSuccess) || (isError && !editing) ? <ErrorMessage>{errorText}</ErrorMessage> : null}
-                    {isSuccess ? (
-                      <InfoMessage
+                    {(hasStructures && !isSuccess) || (isError && !editing) ? (
+                      <Small
                         style={{
+                          flexGrow: 0,
+                          marginTop: UI_SIZES.spacing.medium,
+                          padding: UI_SIZES.spacing.tiny,
+                          textAlign: 'center',
+                          alignSelf: 'center',
+                          color: theme.palette.status.failure,
+                        }}>
+                        {errorText}
+                      </Small>
+                    ) : null}
+                    {isSuccess ? (
+                      <Small
+                        style={{
+                          alignSelf: 'center',
+                          flexGrow: 0,
+                          marginTop: UI_SIZES.spacing.medium,
+                          padding: UI_SIZES.spacing.tiny,
+                          textAlign: 'center',
                           height: 38,
                         }}>
                         {editing ? '' : isSuccess && I18n.t('forgot-success')}
-                      </InfoMessage>
+                      </Small>
                     ) : null}
                     {forgotId && hasStructures && !isSuccess ? (
                       <>
@@ -244,7 +260,19 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           loading={fetching}
                         />
                       ) : null}
-                      {hasStructures && errorMsg ? <ErrorMessage>{I18n.t('forgot-several-emails-no-match')}</ErrorMessage> : null}
+                      {hasStructures && errorMsg ? (
+                        <Small
+                          style={{
+                            flexGrow: 0,
+                            marginTop: UI_SIZES.spacing.medium,
+                            padding: UI_SIZES.spacing.tiny,
+                            textAlign: 'center',
+                            alignSelf: 'center',
+                            color: theme.palette.status.failure,
+                          }}>
+                          {I18n.t('forgot-several-emails-no-match')}
+                        </Small>
+                      ) : null}
                     </View>
                   </FormContainer>
                 </FormWrapper>

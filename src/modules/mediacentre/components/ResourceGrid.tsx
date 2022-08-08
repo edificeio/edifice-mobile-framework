@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
-import { Text, TextBold } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
 
 import { SmallCard } from './SmallCard';
@@ -47,10 +47,10 @@ export class ResourceGrid extends React.PureComponent<IResourcesGridProps> {
     return (
       <View style={styles.mainContainer}>
         <View style={styles.headerContainer}>
-          <TextBold style={styles.titleText}>{title.toLocaleUpperCase()}</TextBold>
+          <SmallBold style={styles.titleText}>{title.toLocaleUpperCase()}</SmallBold>
           {resources.length > size ? (
             <TouchableOpacity onPress={this.onShowAll}>
-              <Text style={styles.displayAllText}>{I18n.t('mediacentre.display-all')}</Text>
+              <Small style={styles.displayAllText}>{I18n.t('mediacentre.display-all')}</Small>
             </TouchableOpacity>
           ) : null}
         </View>

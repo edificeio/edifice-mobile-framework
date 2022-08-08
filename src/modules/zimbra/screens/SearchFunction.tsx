@@ -10,6 +10,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import MailListContainer from '~/modules/zimbra/components/MailListContainer';
 
 const styles = StyleSheet.create({
@@ -28,7 +29,8 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     color: theme.palette.grey.white,
-    fontSize: 16,
+    ...TextFontStyle.Regular,
+    ...TextSizeStyle.Medium,
   },
 });
 

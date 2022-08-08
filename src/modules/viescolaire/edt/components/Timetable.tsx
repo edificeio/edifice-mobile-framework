@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, SmallBoldItalic, TextSizeStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
@@ -45,7 +45,7 @@ const style = StyleSheet.create({
     maxWidth: '56%',
   },
   classText: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   roomView: {
     flexDirection: 'row',
@@ -64,14 +64,11 @@ const style = StyleSheet.create({
     flex: 1,
   },
   halfClassText: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
   },
   halfRoomLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  tagsLabel: {
-    fontStyle: 'italic',
   },
   greyishBackground: {
     backgroundColor: theme.palette.grey.fog,
@@ -106,20 +103,20 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.subjectView}>
-          <TextBold style={isTeacher && style.classText}>{firstText}</TextBold>
-          <Text numberOfLines={1}>{secondText}</Text>
+          <SmallBold style={isTeacher && style.classText}>{firstText}</SmallBold>
+          <Small numberOfLines={1}>{secondText}</Small>
         </View>
         <View>
           {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 ? (
             <View style={style.roomView}>
               <Icon name="pin_drop" size={16} />
-              <Text>
+              <Small>
                 &nbsp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
-              </Text>
+              </Small>
             </View>
           ) : null}
           {course.tags && course.tags !== undefined && course.tags.length > 0 ? (
-            <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
+            <SmallBoldItalic>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalic>
           ) : null}
         </View>
       </View>
@@ -136,21 +133,21 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
       <View
         style={[style.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.halfSplitLineView}>
-          <TextBold style={[style.halfTextStyle, isTeacher && style.halfClassText]} numberOfLines={1}>
+          <SmallBold style={[style.halfTextStyle, isTeacher && style.halfClassText]} numberOfLines={1}>
             {firstText}
-          </TextBold>
+          </SmallBold>
           {isCourseWithRoomLabel ? (
             <View style={style.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
-              <Text numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</Text>
+              <Small numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</Small>
             </View>
           ) : null}
         </View>
         <View style={style.halfSplitLineView}>
-          <Text style={style.halfTextStyle} numberOfLines={1}>
+          <Small style={style.halfTextStyle} numberOfLines={1}>
             {secondText}
-          </Text>
-          {isCourseWithTags ? <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold> : null}
+          </Small>
+          {isCourseWithTags ? <SmallBoldItalic>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalic> : null}
         </View>
       </View>
     );
@@ -170,7 +167,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
       <View style={style.refreshContainer}>
         {userType === 'Relative' ? <ChildPicker /> : null}
         <View style={style.weekPickerView}>
-          <Text style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Text>
+          <Small style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Small>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.timetable} />
         </View>
         {courses !== undefined &&

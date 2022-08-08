@@ -4,9 +4,9 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, responsiveStyle } from '~/framework/components/text';
+import { Small, SmallBold } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   timePickerDate: {
-    ...responsiveStyle(24),
+    fontSize: getScaleDimension(24, 'font'),
+    lineHeight: getScaleDimension(30, 'font'),
     padding: 10, // MO-142 use UI_SIZES.spacing here
   },
   inputContainer: {
@@ -154,15 +155,15 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
         onPress={() => this.setState({ switchState: SwitchState.SEVERAL })}>
         {this.state.switchState === SwitchState.SINGLE ? (
           <View style={styles.rightSwitchSingle}>
-            <Text>{I18n.t('viesco-several-days')}</Text>
-            <TextBold style={styles.rightSwitchSingleText}>+</TextBold>
+            <Small>{I18n.t('viesco-several-days')}</Small>
+            <SmallBold style={styles.rightSwitchSingleText}>+</SmallBold>
           </View>
         ) : (
           <View>
-            <Text>{I18n.t('viesco-several-days')}</Text>
-            <TextBold>
+            <Small>{I18n.t('viesco-several-days')}</Small>
+            <SmallBold>
               {I18n.t('viesco-from')} {startDate.format('DD/MM')} {I18n.t('viesco-to')} {endDate.format('DD/MM')}
-            </TextBold>
+            </SmallBold>
           </View>
         )}
       </TouchableOpacity>
@@ -172,8 +173,8 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
       <TouchableOpacity
         style={[styles.switchPart, styles.leftSwitch, this.state.switchState === SwitchState.SINGLE && styles.selected]}
         onPress={() => this.setState({ switchState: SwitchState.SINGLE })}>
-        <Text>{I18n.t('viesco-single-day')}</Text>
-        <TextBold>{startDate.format('DD/MM')}</TextBold>
+        <Small>{I18n.t('viesco-single-day')}</Small>
+        <SmallBold>{startDate.format('DD/MM')}</SmallBold>
       </TouchableOpacity>
     );
 
@@ -184,9 +185,9 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
         renderDate={date => (
           <>
             <View style={styles.timePickerRender}>
-              <Text style={styles.timePickerTitleText}>{title}</Text>
+              <Small style={styles.timePickerTitleText}>{title}</Small>
             </View>
-            <TextBold style={styles.timePickerDate}>{date.format('HH    :    mm')}</TextBold>
+            <SmallBold style={styles.timePickerDate}>{date.format('HH    :    mm')}</SmallBold>
           </>
         )}
         mode="time"
@@ -232,7 +233,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
             <TimePickerComponent title={I18n.t('viesco-to-hour')} time={endDate} onChange={updateEndDate} />
           </View>
           <View style={[styles.row, styles.inputContainer]}>
-            <TextBold style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</TextBold>
+            <SmallBold style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</SmallBold>
             <TextInput
               multiline
               placeholder={I18n.t('viesco-enter-text')}
@@ -243,7 +244,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
             {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
               <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
                 <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-                <Text>{I18n.t('viesco-attachment')}</Text>
+                <Small>{I18n.t('viesco-attachment')}</Small>
               </FilePicker>
             ) : null}
           </View>

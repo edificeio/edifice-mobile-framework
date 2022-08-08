@@ -4,6 +4,7 @@ import PasswordInputText from 'react-native-hide-show-password-input';
 import { TextField } from 'react-native-material-textfield';
 
 import theme from '~/app/theme';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
 export type TextInputLineProps = {
   hasError: boolean;
@@ -13,7 +14,6 @@ export type TextInputLineProps = {
   inputRef: (ref: TextInput) => void;
   style?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<ViewStyle>;
-  fontSize?: number;
   isPasswordField?: boolean;
   placeholderTextColor?: string;
   textColor?: string;
@@ -28,18 +28,18 @@ export class TextInputLine extends React.Component<
     inputRef: (ref: TextInput) => void;
     style?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<ViewStyle>;
-    fontSize?: number;
     isPasswordField?: boolean;
     placeholderTextColor?: string;
     textColor?: string;
   } & TextInputProps
 > {
   public render() {
-    const { hasError, style, inputStyle, inputRef, fontSize, isPasswordField, onBlur, onFocus, placeholderTextColor, textColor } =
-      this.props;
+    const { hasError, style, inputStyle, inputRef, isPasswordField, onBlur, onFocus, placeholderTextColor, textColor } = this.props;
 
     const inputProps = {
       ...this.props,
+      ...TextFontStyle.Regular,
+      ...TextSizeStyle.Medium,
       innerRef: r => inputRef(r),
       onBlur: () => onBlur && onBlur(),
       onFocus: () => onFocus && onFocus(),
@@ -49,7 +49,6 @@ export class TextInputLine extends React.Component<
       autoCapitalize: 'none',
       containerStyle: style,
       inputContainerStyle: inputStyle,
-      fontSize: fontSize || 16,
       lineWidth: hasError ? 2 : 1,
       activeLineWidth: 2,
       baseColor: hasError ? theme.palette.status.failure : theme.ui.border.input,

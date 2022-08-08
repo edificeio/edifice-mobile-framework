@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { TextBold } from '~/framework/components/text';
+import { SmallBold } from '~/framework/components/text';
 
 const style = StyleSheet.create({
   mainContainer: {
@@ -35,9 +35,9 @@ export const ButtonGroup = ({ buttons, selectedButton, onPress, containerStyle }
         onPress={() => onPress(index)}
         style={[style.buttonContainer, index === selectedButton && { backgroundColor: theme.palette.primary.regular }]}
         key={index}>
-        <TextBold style={[style.buttonText, index !== selectedButton && { color: theme.palette.primary.regular }]}>
+        <SmallBold style={[style.buttonText, index !== selectedButton && { color: theme.palette.primary.regular }]}>
           {button}
-        </TextBold>
+        </SmallBold>
       </TouchableOpacity>
     ))}
   </View>

@@ -7,17 +7,11 @@ import { withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { SmallInverse, SmallItalic } from '~/framework/components/text';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
 import ImageOptional from './ImageOptional';
-import { Italic } from './Typography';
-
-const BubbleText = styled.Text({
-  color: theme.ui.text.inverse,
-  marginHorizontal: -UI_SIZES.spacing.small,
-  textAlign: 'center',
-});
 
 const ContainerImage = styled.View({});
 
@@ -72,7 +66,7 @@ const UnavailableImage = () => (
       paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
-    <Italic>{I18n.t('imageNotAvailable')}</Italic>
+    <SmallItalic>{I18n.t('imageNotAvailable')}</SmallItalic>
   </View>
 );
 
@@ -186,13 +180,15 @@ class Images extends React.Component<
               {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(3)} />}
               {images.length > 4 && (
                 <BubbleView style={{ bottom: heightRatio / 4 - 15 }}>
-                  <BubbleText onPress={() => this.openImage(3)}>
+                  <SmallInverse
+                    style={{ marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center' }}
+                    onPress={() => this.openImage(3)}>
                     +
                     {
                       images.length - 3
                       /* -3 instead of -4 because of the last one has the dark foreground*/
                     }
-                  </BubbleText>
+                  </SmallInverse>
                 </BubbleView>
               )}
             </QuarterImage>

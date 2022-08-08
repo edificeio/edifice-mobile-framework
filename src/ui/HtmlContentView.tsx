@@ -10,6 +10,7 @@ import * as React from 'react';
 import { View, ViewProps } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
+import { SmallItalic } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -17,7 +18,6 @@ import { Loading } from '~/ui/Loading';
 
 import { IRemoteAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
-import { Italic } from './Typography';
 
 export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;
@@ -138,16 +138,16 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
     if (error) {
       return (
         <View {...this.props}>
-          <Italic>{I18n.t('common-ErrorLoadingResource')}</Italic>
+          <SmallItalic>{I18n.t('common-ErrorLoadingResource')}</SmallItalic>
         </View>
       );
     } else if (!loading && !hasContent) {
       return typeof emptyMessage === 'string' ? (
         <View {...this.props}>
-          <Italic>{emptyMessage}</Italic>
+          <SmallItalic>{emptyMessage}</SmallItalic>
         </View>
       ) : (
-        emptyMessage || <Italic>{I18n.t('noContent')}</Italic>
+        emptyMessage || <SmallItalic>{I18n.t('noContent')}</SmallItalic>
       );
     } else {
       return (
