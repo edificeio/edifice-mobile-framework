@@ -1,4 +1,5 @@
 import { Dimensions, Platform, StatusBar, TextStyle } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const screenDimensions = Dimensions.get('window');
@@ -78,7 +79,7 @@ export const UI_SIZES = {
     bottomInset: initialWindowMetrics?.insets?.bottom || 0,
     height: screenDimensions.height,
     scale: screenDimensions.scale,
-    topInset: initialWindowMetrics?.insets?.top || 0,
+    topInset: hasNotch() ? initialWindowMetrics?.insets?.top || 0 : 0,
     width: screenDimensions.width,
   },
   spacing: {
