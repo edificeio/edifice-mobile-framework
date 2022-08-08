@@ -90,6 +90,8 @@ const SchoolbookWordDetailsCard = (
   const isBottomSheetVisible = isParent && (!isWordAcknowledged || (word?.reply && !isWordRepliedToForParent));
   const doesContentExceedView = contentHeight && viewHeight ? contentHeight > viewHeight : undefined;
 
+  const editorOffsetRef = React.useRef<number>(0);
+
   const scrollToEnd = () => {
     setTimeout(() => {
       flatListRef.current?.scrollToOffset({
@@ -107,7 +109,7 @@ const SchoolbookWordDetailsCard = (
 
   const showSubscriptionRef = React.useRef<EmitterSubscription>();
   React.useEffect(() => {
-    showSubscriptionRef.current = Keyboard.addListener('keyboardDidShow', () => {
+    showSubscriptionRef.current = Keyboard.addListener('keyboardDidShow', event => {
       setTimeout(() => {
         const commentIndex = responses?.findIndex(r => r.id?.toString() === editedCommentId);
         if (commentIndex !== undefined && commentIndex > -1) {
@@ -116,6 +118,17 @@ const SchoolbookWordDetailsCard = (
               index: commentIndex,
               viewPosition: 1,
               viewOffset: -UI_SIZES.spacing.medium,
+            });
+          } else {
+            flatListRef.current?.scrollToIndex({
+              index: commentIndex,
+              viewPosition: 0,
+              viewOffset:
+                UI_SIZES.screen.height -
+                UI_SIZES.elements.navbarHeight -
+                event.endCoordinates.height -
+                (editorOffsetRef.current ?? 0) -
+                UI_SIZES.spacing.medium,
             });
           }
         }
@@ -319,6 +332,9 @@ const SchoolbookWordDetailsCard = (
                 commentAuthor={item.parentName}
                 commentDate={item.modified}
                 isResponse
+                onEditableLayoutHeight={val => {
+                  editorOffsetRef.current = val;
+                }}
               />
             </View>
           );

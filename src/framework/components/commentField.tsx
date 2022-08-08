@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { Alert, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View, ViewProps } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -27,6 +27,7 @@ export interface CommentFieldProps {
   commentDate?: string | Moment;
   index?: number;
   isResponse?: boolean;
+  onEditableLayoutHeight?: (val: number) => void;
 }
 
 // STYLES =========================================================================================
@@ -152,6 +153,16 @@ const CommentField = (props: CommentFieldProps, ref) => {
     }
   }, [isEditing]);
 
+  const { onEditableLayoutHeight } = props;
+  const onLayoutCallback = React.useCallback(
+    (event: LayoutChangeEvent) => {
+      if (isEditing) {
+        onEditableLayoutHeight?.(event.nativeEvent.layout.height ?? 0);
+      }
+    },
+    [isEditing, onEditableLayoutHeight],
+  );
+
   const wrapperStyle = React.useMemo(
     () => [
       styles.wrapper,
@@ -203,7 +214,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
   );
 
   return (
-    <View style={wrapperStyle}>
+    <View style={wrapperStyle} onLayout={onLayoutCallback}>
       {/* 1st row : comment content // editor */}
       <View style={[styles.row, { alignItems: props.commentId ? 'flex-start' : 'flex-end' }]}>
         <SingleAvatar size={isIdleExistingComment ? 24 : 36} userId={props.commentAuthorId || session.user.id} />

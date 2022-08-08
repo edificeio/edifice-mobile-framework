@@ -118,6 +118,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   event: string | null = null;
   showSubscription: EmitterSubscription | undefined;
   hideSubscription: EmitterSubscription | undefined;
+  editorOffsetRef = React.createRef<number>(0);
 
   state: IBlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
@@ -439,6 +440,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         commentAuthorId={blogPostComment.author.userId}
         commentAuthor={blogPostComment.author.username}
         commentDate={blogPostComment.created}
+        onEditableLayoutHeight={val => {
+          this.editorOffsetRef.current = val;
+        }}
       />
     );
   }
@@ -458,23 +462,36 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       });
     } else this.doInit();
 
-    this.showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!, () => {
-      const { blogPostData } = this.state;
-      if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
-        this.setState({ isCommentFieldFocused: true });
-      setTimeout(() => {
-        if (!this.editedCommentId) return;
-        const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
-        if (commentIndex !== undefined && commentIndex > -1) {
-          if (Platform.OS === 'ios') {
-            this.flatListRef.current?.scrollToIndex({
-              index: commentIndex,
-              viewPosition: 1,
-            });
+    this.showSubscription = Keyboard.addListener(
+      Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!,
+      event => {
+        const { blogPostData } = this.state;
+        if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
+          this.setState({ isCommentFieldFocused: true });
+        setTimeout(() => {
+          if (!this.editedCommentId) return;
+          const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
+          if (commentIndex !== undefined && commentIndex > -1) {
+            if (Platform.OS === 'ios') {
+              this.flatListRef.current?.scrollToIndex({
+                index: commentIndex,
+                viewPosition: 1,
+              });
+            } else {
+              this.flatListRef.current?.scrollToIndex({
+                index: commentIndex,
+                viewPosition: 0,
+                viewOffset:
+                  UI_SIZES.screen.height -
+                  UI_SIZES.elements.navbarHeight -
+                  event.endCoordinates.height -
+                  (this.editorOffsetRef.current ?? 0),
+              });
+            }
           }
-        }
-      }, 50);
-    });
+        }, 50);
+      },
+    );
 
     this.hideSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
       if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
