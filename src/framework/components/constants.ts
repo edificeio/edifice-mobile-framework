@@ -79,7 +79,10 @@ export const UI_SIZES = {
     bottomInset: initialWindowMetrics?.insets?.bottom || 0,
     height: screenDimensions.height,
     scale: screenDimensions.scale,
-    topInset: hasNotch() ? initialWindowMetrics?.insets?.top || 0 : 0,
+    topInset: Platform.select({
+      ios: initialWindowMetrics?.insets?.top || 0,
+      default: hasNotch() ? initialWindowMetrics?.insets?.top || 0 : 0,
+    }),
     width: screenDimensions.width,
   },
   spacing: {
