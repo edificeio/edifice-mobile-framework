@@ -30,8 +30,21 @@ const overrideTranslations = unflatten({
 });
 
 // Finale translations
+const arrayMerge = (a: [], b: []) => {
+  const destination = a.slice();
+  for (const i in b) {
+    destination[i] = b[i];
+  }
+  return destination;
+};
+
 const finaleTranslations = Object.fromEntries(
-  Object.keys(builtInTranslations).map(k => [k, deepmerge<object>(builtInTranslations[k], overrideTranslations[k])]),
+  Object.keys(builtInTranslations).map(k => [
+    k,
+    deepmerge<object>(builtInTranslations[k], overrideTranslations[k], {
+      arrayMerge,
+    }),
+  ]),
 );
 
 // Translation setup

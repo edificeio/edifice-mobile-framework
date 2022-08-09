@@ -1,19 +1,17 @@
 /**
  * @format
  */
-
-import "./wdyr";
-
-import {AppRegistry} from 'react-native';
-import App from './src/App';
-import {name as appName} from './app.json';
-
+import { AppRegistry } from 'react-native';
 // Add URLSearchParams polyfill as it is not implemented in React Native.
 // @see https://github.com/facebook/react-native/issues/23922#issuecomment-648096619
 import 'react-native-url-polyfill/auto';
 
-if (process.env.NODE_ENV === "development") {
-    require('react-native-console-time-polyfill');
+import { name as appName } from './app.json';
+import App from './src/App';
+import './wdyr';
+
+if (process.env.NODE_ENV === 'development') {
+  require('react-native-console-time-polyfill');
 }
 // from https://stackoverflow.com/a/35305611/6111343
 // in React Native, `proess.nextTick` doesn't exist.
