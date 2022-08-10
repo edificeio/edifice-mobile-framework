@@ -1,9 +1,9 @@
 {
   "major": 1,
-  "minor": 8,
-  "rev": 4,
-  "build": 7,
-  "alpha": 7,
+  "minor": 9,
+  "rev": 0,
+  "build": 0,
+  "alpha": 0,
   "rc": 0,
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
