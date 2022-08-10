@@ -434,7 +434,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     //   - No SAMLResponse has been detected
     //   - WAYF redirects to web standard login page
     const url = request.url;
-    if (this.isFirstLoadFinished && this.pfUrl && url.startsWith(this.pfUrl)) {
+    if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
       if (!this.samlResponse) this.props.navigation.navigate('LoginHome');
       return false;
     }
@@ -456,7 +456,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         navigation={this.props.navigation}
         {...(mode === WAYFPageMode.LOADING
           ? { navBar: navBarInfo }
-          : { navBarWithBack: navBarInfo, onBack: () => this.backActions[mode]() })}>
+          : { navBarWithBack: navBarInfo, onBack: () => this.onBack(mode) })}>
         <SafeAreaView style={WAYFPage.STYLES.safeView}>{this.contentComponents[mode](dropdownOpened)}</SafeAreaView>
       </PageView>
     );
