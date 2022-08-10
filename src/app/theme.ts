@@ -108,6 +108,13 @@ export interface ITheme {
         various: ColorValue;
       };
     };
+    profileTypes: {
+      student: ColorValue;
+      relative: ColorValue;
+      personnel: ColorValue;
+      teacher: ColorValue;
+      guest: ColorValue;
+    };
   };
 
   // Legacy values
@@ -321,6 +328,13 @@ export const defaultTheme: ThemeInitializer = {
           outing: this.palette.complementary.green.regular,
           various: this.palette.complementary.indigo.regular,
         },
+      },
+      profileTypes: {
+        student: this.palette.complementary.orange.regular,
+        relative: this.palette.complementary.blue.regular,
+        personnel: this.palette.complementary.purple.regular,
+        teacher: this.palette.complementary.green.regular,
+        guest: this.palette.complementary.pink.regular,
       },
     };
 

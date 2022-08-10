@@ -7,6 +7,7 @@ import { Image, ImageURISource, Platform, TouchableOpacity, View, ViewStyle } fr
 import VideoPlayer from 'react-native-video';
 import VideoPlayerAndroid from 'react-native-video-player';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextItalic } from '~/framework/components/text';
 
@@ -77,7 +78,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
                   disableFullscreen={isAudio}
                   loaded={loaded}
                   type={type}
-                  style={{ ...playerStyle, alignSelf: 'center', backgroundColor: loaded ? '#000' : undefined }}
+                  style={{ ...playerStyle, alignSelf: 'center', backgroundColor: loaded ? theme.palette.grey.black : undefined }}
                   customStyles={isAudio ? { controls: { backgroundColor: undefined } } : undefined}
                 />
               ),
@@ -107,7 +108,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
                 top: undefined,
                 right: undefined,
                 paddingLeft: UI_SIZES.spacing.tiny,
-                backgroundColor: 'rgba(63,63,63,0.8)',
+                backgroundColor: theme.palette.grey.graphite,
               }}
             />
           </TouchableOpacity>
@@ -122,7 +123,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
           alignItems: 'center',
           height: !type || (isVideo && !source) ? thirdOfScreenHeight : isAudio ? 84 : undefined,
           maxHeight: isVideo ? thirdOfScreenHeight : undefined,
-          backgroundColor: '#000',
+          backgroundColor: theme.palette.grey.black,
           ...style,
         }}>
         {loadMedia ? getPlayer() : getPreview()}

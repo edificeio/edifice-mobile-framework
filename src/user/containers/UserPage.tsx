@@ -8,6 +8,7 @@ import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -254,7 +255,7 @@ export class UserPage extends React.PureComponent<
           <ButtonLine
             title="directory-disconnectButton"
             hideIcon
-            color="#F64D68"
+            color={theme.palette.complementary.red.regular}
             onPress={() => this.setState({ showDisconnect: true })}
           />
         </ScrollView>

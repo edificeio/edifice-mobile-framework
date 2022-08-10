@@ -69,7 +69,7 @@ const LinkStyle = styled.Text<{ color: ColorValue }>(
     flex: 1,
   },
   ({ color }) => ({
-    color: color || '#414355',
+    color: color || theme.palette.grey.black,
   }),
 );
 

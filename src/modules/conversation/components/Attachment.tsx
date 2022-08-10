@@ -35,7 +35,7 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
       />
       <Text style={{ flex: 1, color: theme.palette.complementary.blue.regular }}>{fileName}</Text>
       <TouchableOpacity onPress={onRemove}>
-        <Icon name="close" style={{ margin: UI_SIZES.spacing.small }} color="red" />
+        <Icon name="close" style={{ margin: UI_SIZES.spacing.small }} color={theme.palette.status.failure} />
       </TouchableOpacity>
     </View>
   );

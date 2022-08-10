@@ -155,7 +155,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
           {isSommeNumerique ? (
             <View
               style={{
-                backgroundColor: '#FCEEEA',
+                backgroundColor: theme.palette.complementary.red.pale,
                 justifyContent: 'center',
                 alignItems: 'center',
                 padding: UI_SIZES.spacing.minor,
@@ -262,7 +262,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                       textDecorationLine: 'underline',
                       marginTop: UI_SIZES.spacing.major,
                       textAlign: 'center',
-                      color: error ? CommonStyles.profileTypes.Student : theme.ui.text.light,
+                      color: error ? theme.palette.complementary.orange.regular : theme.ui.text.light,
                     }}
                     onPress={() => {
                       navigate('FederatedAccount');
