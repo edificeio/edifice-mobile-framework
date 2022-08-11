@@ -7,7 +7,6 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
 import { TextBold } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { Icon } from '~/ui/icons/Icon';
 
@@ -49,7 +48,7 @@ interface IDropdownProps {
 
 const selectedStyle = {
   borderRadius: 5,
-  borderColor: CommonStyles.grey,
+  borderColor: theme.palette.grey.stone,
   borderWidth: 2,
   borderStyle: 'solid',
   backgroundColor: theme.ui.background.card,

@@ -3,10 +3,10 @@ import * as React from 'react';
 import { SectionList, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NestedText, Text, TextColorStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
 import { ContainerView } from '~/ui/ButtonLine';
 import { H4 } from '~/ui/Typography';
 
@@ -59,7 +59,7 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps & N
                   marginRight: UI_SIZES.spacing.medium,
                   marginVertical: UI_SIZES.spacing.small,
                 }}>
-                <NestedText style={{ color: CommonStyles.profileTypes.Student }}>◆ </NestedText>
+                <NestedText style={{ color: theme.palette.complementary.orange.regular }}>◆ </NestedText>
                 {classe}
               </Text>
             )}

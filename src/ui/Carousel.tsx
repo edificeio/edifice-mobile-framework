@@ -260,7 +260,7 @@ class Carousel extends React.Component<
 
     return (
       <View
-        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.90)' }}
+        style={{ flex: 1, backgroundColor: theme.palette.grey.black }}
         onLayout={() => {
           this.setState({
             viewport: {
@@ -269,7 +269,7 @@ class Carousel extends React.Component<
             },
           });
         }}>
-        <StatusBar backgroundColor="rgba(0,0,0,0.90)" barStyle="light-content" />
+        <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />
         <RNCarousel
           data={images}
           renderItem={({ item, index }: { item: { src: ImageURISource; alt: string; linkTo?: string }; index: number }) => (
@@ -336,7 +336,7 @@ class Carousel extends React.Component<
                   <TouchableOpacity
                     onPress={() => openUrl(item.linkTo)}
                     style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                      backgroundColor: theme.palette.grey.graphite,
                       padding: UI_SIZES.spacing.small,
                       width: '100%',
                       flexDirection: 'row',

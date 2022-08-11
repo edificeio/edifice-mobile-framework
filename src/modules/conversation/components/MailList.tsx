@@ -184,7 +184,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     Toast.show(I18n.t('conversation.messageMoved'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
+      containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
     });
   };
 
@@ -215,7 +215,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       Toast.show(I18n.t(`conversation.message${isTrashedOrDraft ? 'Deleted' : 'Trashed'}`), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
       });
     } catch (error) {
       // TODO: Manage error

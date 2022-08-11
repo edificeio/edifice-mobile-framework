@@ -15,7 +15,6 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
-import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';

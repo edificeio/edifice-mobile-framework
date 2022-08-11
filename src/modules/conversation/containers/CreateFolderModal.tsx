@@ -38,7 +38,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       Toast.show(I18n.t('conversation.createDirectoryConfirm'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
       });
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
@@ -46,7 +46,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       Toast.show(I18n.t(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
       });
     } finally {
       this.setState({ name: '' });
@@ -71,7 +71,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
               value={name}
               onChangeText={this.onNameChange}
               placeholder={I18n.t('conversation.directoryName')}
-              underlineColorAndroid="grey"
+              underlineColorAndroid={theme.palette.grey.grey}
               style={textInputStyle}
             />
           </View>

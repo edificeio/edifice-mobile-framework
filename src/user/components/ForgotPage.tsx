@@ -193,7 +193,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                                 ? theme.palette.status.failure
                                 : showStructurePicker
                                 ? theme.palette.complementary.blue.regular
-                                : CommonStyles.entryfieldBorder,
+                                : theme.palette.grey.grey,
                           }}>
                           <TextInputLine
                             editable={false}
@@ -206,7 +206,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           />
                           <Icon
                             name="arrow_down"
-                            color={structureName ? theme.ui.text.inverse : 'black'}
+                            color={structureName ? theme.ui.text.inverse : theme.palette.grey.black}
                             style={[
                               { marginTop: UI_SIZES.spacing.small },
                               showStructurePicker && { transform: [{ rotate: '180deg' }] },
@@ -220,7 +220,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         {showStructurePicker ? (
                           <Picker
                             selectedValue={structureName}
-                            style={{ width: '100%', borderWidth: 1, borderColor: CommonStyles.entryfieldBorder, borderTopWidth: 0 }}
+                            style={{ width: '100%', borderWidth: 1, borderColor: theme.palette.grey.grey, borderTopWidth: 0 }}
                             onValueChange={itemValue => this.setState({ structureName: itemValue, editing: true })}>
                             <Picker.Item label="" value={null} />
                             {structures &&

@@ -109,11 +109,11 @@ export interface ITheme {
       };
     };
     profileTypes: {
-      student: ColorValue;
-      relative: ColorValue;
-      personnel: ColorValue;
-      teacher: ColorValue;
-      guest: ColorValue;
+      Student: ColorValue;
+      Relative: ColorValue;
+      Personnel: ColorValue;
+      Teacher: ColorValue;
+      Guest: ColorValue;
     };
   };
 
@@ -330,11 +330,11 @@ export const defaultTheme: ThemeInitializer = {
         },
       },
       profileTypes: {
-        student: this.palette.complementary.orange.regular,
-        relative: this.palette.complementary.blue.regular,
-        personnel: this.palette.complementary.purple.regular,
-        teacher: this.palette.complementary.green.regular,
-        guest: this.palette.complementary.pink.regular,
+        Student: this.palette.complementary.orange.regular,
+        Relative: this.palette.complementary.blue.regular,
+        Personnel: this.palette.complementary.purple.regular,
+        Teacher: this.palette.complementary.green.regular,
+        Guest: this.palette.complementary.pink.regular,
       },
     };
 

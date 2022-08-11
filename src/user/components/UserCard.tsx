@@ -8,7 +8,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
-import { CommonStyles } from '~/styles/common/styles';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
@@ -52,7 +51,7 @@ export const UserCard = ({
           height: 6,
           borderRadius: 3,
           marginRight: UI_SIZES.spacing.tiny,
-          backgroundColor: CommonStyles.profileTypes[type] || theme.palette.grey.fog,
+          backgroundColor: theme.color.profileTypes[type] || theme.palette.grey.fog,
         }}
         key={type}
       />

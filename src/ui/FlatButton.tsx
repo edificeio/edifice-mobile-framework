@@ -5,7 +5,6 @@ import { ActivityIndicator, StyleSheet, TextStyle, View, ViewStyle } from 'react
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { CommonStyles } from '~/styles/common/styles';
 
 import { Row, RowProperties } from './Grid';
 import { Weight } from './Typography';
@@ -98,7 +97,7 @@ const ButtonStyleComponent = styled.TouchableOpacity(
   },
   ({ disabled }) => ({
     backgroundColor: disabled ? 'transparent' : theme.palette.primary.regular,
-    borderColor: disabled ? theme.palette.primary.regular : CommonStyles.lightGrey,
+    borderColor: disabled ? theme.palette.primary.regular : theme.palette.grey.grey,
     borderWidth: disabled ? 1 : 0,
   }),
 );

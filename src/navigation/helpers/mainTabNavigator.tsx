@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { CommonStyles } from '~/styles/common/styles';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
 
 export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
@@ -25,7 +24,7 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
       // Style
       style: {
         backgroundColor: theme.ui.background.card,
-        borderTopColor: CommonStyles.borderColorLighter,
+        borderTopColor: theme.palette.grey.cloudy,
         borderTopWidth: 1,
         elevation: 1,
         height: UI_SIZES.elements.tabbarHeight,

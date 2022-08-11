@@ -23,17 +23,17 @@ export const getUserColor = async (userId: string) => {
 export const getProfileColor = (role?) => {
   switch (role?.toUpperCase()) {
     case UserRole.STUDENT:
-      return theme.color.profileTypes.student;
+      return theme.color.profileTypes.Student;
     case UserRole.RELATIVE:
-      return theme.color.profileTypes.relative;
+      return theme.color.profileTypes.Relative;
     case UserRole.TEACHER:
-      return theme.color.profileTypes.teacher;
+      return theme.color.profileTypes.Teacher;
     case UserRole.PERSONNEL:
-      return theme.color.profileTypes.personnel;
+      return theme.color.profileTypes.Personnel;
     case 'PrincTeacherGroup':
       return theme.palette.grey.graphite;
     case UserRole.GUEST:
-      return theme.color.profileTypes.guest;
+      return theme.color.profileTypes.Guest;
     default:
       return theme.palette.grey.grey;
   }

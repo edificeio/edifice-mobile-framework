@@ -6,7 +6,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
-import { CommonStyles } from '~/styles/common/styles';
 
 const attachmentStyle = {
   flexDirection: 'row',
@@ -21,7 +20,7 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
         style={[
           StyleSheet.absoluteFill,
           {
-            backgroundColor: CommonStyles.primaryLight,
+            backgroundColor: theme.palette.complementary.blue.pale,
             right: undefined,
             width: uploadSuccess ? '100%' : `${uploadProgress}%`,
           },

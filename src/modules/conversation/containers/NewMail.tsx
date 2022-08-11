@@ -196,7 +196,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         Toast.show(I18n.t('conversation.missingReceiver'), {
           position: Toast.position.BOTTOM,
           mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
+          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         });
         return;
       } else if (this.state.tempAttachment && this.state.tempAttachment !== null) {
@@ -204,7 +204,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
           position: Toast.position.BOTTOM,
           mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
+          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         });
         return;
       }
@@ -219,7 +219,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         Toast.show(I18n.t('conversation.sendMail'), {
           position: Toast.position.BOTTOM,
           mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
+          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         });
 
         const navParams = navigation.state;
@@ -241,7 +241,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           Toast.show(I18n.t('conversation.messageDeleted'), {
             position: Toast.position.BOTTOM,
             mask: false,
-            containerStyle: { width: '95%', backgroundColor: 'black' },
+            containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
           });
         } catch (error) {
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
@@ -268,7 +268,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
           position: Toast.position.BOTTOM,
           mask: false,
-          containerStyle: { width: '95%', backgroundColor: 'black' },
+          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         });
       } else if (!isDraftEmpty) {
         const textToDisplay = {

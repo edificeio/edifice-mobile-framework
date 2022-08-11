@@ -7,7 +7,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { TextColorStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
 import { Text } from '~/ui/Typography';
 
 import { Picture, PictureProps } from './picture';
@@ -37,7 +36,7 @@ const style = StyleSheet.create({
     top: 0,
   },
   separator: {
-    borderBottomColor: CommonStyles.borderColorVeryLighter,
+    borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 1,
     width: '100%',
   },

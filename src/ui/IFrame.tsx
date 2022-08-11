@@ -38,7 +38,7 @@ export class IFrame extends React.Component<
     return (
       // "overflow: hidden" prevents a display bug on Android
       <SafeAreaView style={{ flex: 1, overflow: 'hidden', ...style }}>
-        {fullScreenSource ? <StatusBar backgroundColor="rgba(0,0,0,0.90)" barStyle="dark-content" /> : null}
+        {fullScreenSource ? <StatusBar backgroundColor={theme.palette.grey.black} barStyle="dark-content" /> : null}
         <TouchableOpacity
           activeOpacity={1}
           style={{
@@ -107,7 +107,7 @@ export class IFrame extends React.Component<
             iconName="fullscreen-off"
             action={() => navigation.goBack()}
             customStyle={{
-              backgroundColor: 'rgba(63,63,63,0.8)',
+              backgroundColor: theme.palette.grey.graphite,
               top: UI_SIZES.screen.topInset,
             }}
           />
@@ -135,7 +135,7 @@ export class IFrame extends React.Component<
                 position: 'relative',
                 top: undefined,
                 right: undefined,
-                backgroundColor: 'rgba(63,63,63,0.8)',
+                backgroundColor: theme.palette.grey.graphite,
               }}
               customIconSize={30}
             />

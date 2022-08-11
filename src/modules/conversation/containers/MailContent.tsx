@@ -107,7 +107,7 @@ class MailContentContainer extends React.PureComponent<
     Toast.show(I18n.t('conversation.messageMoved'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
+      containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
     });
   };
 
@@ -138,7 +138,7 @@ class MailContentContainer extends React.PureComponent<
       Toast.show(I18n.t(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
       });
     } catch (error) {
       // TODO: Manage error

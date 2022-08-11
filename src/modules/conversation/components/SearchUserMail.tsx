@@ -7,7 +7,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/modules/conversation/service/newMail';
-import { CommonStyles, IOSShadowStyle } from '~/styles/common/styles';
+import { IOSShadowStyle } from '~/styles/common/styles';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
@@ -149,7 +149,7 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
 export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
   const SelectedUserOrGroup = ({ onClick, displayName }) => {
     const itemStyle = {
-      backgroundColor: CommonStyles.primaryLight,
+      backgroundColor: theme.palette.complementary.blue.pale,
       borderRadius: 3,
       paddingVertical: UI_SIZES.spacing.tiny,
       paddingHorizontal: UI_SIZES.spacing.tiny,
