@@ -192,9 +192,7 @@ export class UserPage extends React.PureComponent<
         signedURISource && signedURISource.uri
       }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
-    const appName = I18n.t('common.appName');
-    const isAppOnePocket = appName.includes('ONE Pocket');
-    const isPlatformSAASOne = session.platform.name === 'prod-one' || session.platform.name === 'preprod-one';
+    const showWhoAreWe = session.platform.showWhoAreWe;
 
     return (
       <PageView
@@ -237,7 +235,7 @@ export class UserPage extends React.PureComponent<
           ) : null}
           <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
           <ContainerSpacer />
-          {isAppOnePocket && isPlatformSAASOne ? (
+          {showWhoAreWe ? (
             <>
               <ButtonLine title={'directory-whoAreWeTitle'} onPress={() => this.props.navigation.navigate('WhoAreWe')} />
               <ContainerSpacer />

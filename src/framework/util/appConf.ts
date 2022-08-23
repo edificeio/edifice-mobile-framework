@@ -22,6 +22,7 @@ export type IPlatformAccessDeclaration = {
   wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
   webTheme: string; // web theme applied to the activated accounts
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
+  showWhoAreWe?: boolean; // To show of not the team link in profile page
 };
 
 export class Platform {
@@ -47,6 +48,8 @@ export class Platform {
 
   webTheme!: IPlatformAccessDeclaration['webTheme'];
 
+  showWhoAreWe!: IPlatformAccessDeclaration['showWhoAreWe'];
+
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
   constructor(pf: IPlatformAccessDeclaration) {
@@ -61,6 +64,7 @@ export class Platform {
     this.url = pf.url;
     this.wayf = pf.wayf;
     this.webTheme = pf.webTheme;
+    this.showWhoAreWe = pf.showWhoAreWe;
     this._webviewIdentifier = pf.webviewIdentifier;
   }
 
