@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform, View } from 'react-native';
+import deviceInfoModule from 'react-native-device-info';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Swiper from 'react-native-swiper';
 import { NavigationInjectedProps } from 'react-navigation';
@@ -49,10 +50,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
     const { discoverButtonWidth, joinMyNetworkButtonWidth, measuredDiscoverButton, measuredJoinMyNetworkButton } = this.state;
     const largestButtonWidth = Math.max(joinMyNetworkButtonWidth, discoverButtonWidth);
     const areAllButtonsMeasured = measuredDiscoverButton && measuredJoinMyNetworkButton;
-    const isPlatformIos = Platform.OS === 'ios';
-    const appName = I18n.t('common.appName');
-    const isAppOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
-    const hideDiscoveryButton = isPlatformIos && isAppOneOrNeo;
+    const hideDiscoveryButton = !Platform.select(appConf.onboarding.showDiscoverLink);
+    const showAppName = appConf.onboarding.showAppName;
     const svgSize = UI_SIZES.screen.width * 0.8;
     const imageStyle = {
       width: svgSize,
@@ -79,7 +78,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
               height: 80,
               lineHeight: undefined,
             }}>
-            {I18n.t('common.appName').toUpperCase()}
+            {showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
           </HeadingS>
           <Swiper
             autoplay

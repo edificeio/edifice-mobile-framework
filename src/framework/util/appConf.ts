@@ -2,7 +2,7 @@
  * AppConfTool
  * AppConf Loader
  */
-import { ImageStyle } from 'react-native';
+import { ImageStyle, PlatformOSType, Platform as RNPlatform } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
 import { PictureProps } from '~/framework/components/picture';
@@ -26,16 +26,27 @@ export type IPlatformAccessDeclaration = {
 
 export class Platform {
   displayName!: IPlatformAccessDeclaration['displayName'];
+
   federation: IPlatformAccessDeclaration['federation'];
+
   hidden: IPlatformAccessDeclaration['hidden'];
+
   logo: IPlatformAccessDeclaration['logo'];
+
   logoStyle: IPlatformAccessDeclaration['logoStyle'];
+
   logoType: Required<IPlatformAccessDeclaration>['logoType'];
+
   name!: IPlatformAccessDeclaration['name'];
+
   _oauth!: IPlatformAccessDeclaration['oauth'];
+
   url!: IPlatformAccessDeclaration['url'];
+
   wayf: IPlatformAccessDeclaration['wayf'];
+
   webTheme!: IPlatformAccessDeclaration['webTheme'];
+
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
   constructor(pf: IPlatformAccessDeclaration) {
@@ -56,6 +67,7 @@ export class Platform {
   get webviewIdentifier() {
     return this._webviewIdentifier ?? appConf.webviewIdentifier;
   }
+
   get oauth() {
     return {
       client_id: this._oauth[0],
@@ -73,17 +85,53 @@ export interface IAppConfDeclaration {
   };
   webviewIdentifier: string;
   platforms: IPlatformAccessDeclaration[];
+  level?: '1d' | '2d';
+  onboarding?: {
+    showDiscoverLink?: PlatformOSType[];
+    showAppName?: boolean;
+  };
 }
 
 export class AppConf {
   matomo: { url: string; siteId: number };
+
   webviewIdentifier: string;
+
   platforms: Platform[];
+
   constructor(opts: IAppConfDeclaration) {
     this.matomo = opts.matomo;
     this.webviewIdentifier = opts.webviewIdentifier;
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
+    if (opts.level) this.level = opts.level;
+
+    const onboarding: Partial<AppConf['onboarding']> = {};
+    if (opts.onboarding?.showDiscoverLink) {
+      onboarding.showDiscoverLink = {};
+      for (const ptf of opts.onboarding.showDiscoverLink) {
+        onboarding.showDiscoverLink[ptf] = true;
+      }
+    } else {
+      onboarding.showDiscoverLink = { ios: true, android: true };
+    }
+    onboarding.showAppName = opts.onboarding?.showAppName ?? false;
+    this.onboarding = onboarding as AppConf['onboarding'];
   }
+
+  level: '1d' | '2d' = '2d'; // 2d by default
+
+  get is1d() {
+    return this.level === '1d';
+  }
+
+  get is2d() {
+    return this.level === '2d';
+  }
+
+  onboarding: {
+    showDiscoverLink: { [p in PlatformOSType]?: boolean };
+    showAppName: boolean;
+  };
 }
 
 const appConf = new AppConf(AppConfValues as IAppConfDeclaration);
