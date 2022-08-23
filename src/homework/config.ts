@@ -1,14 +1,10 @@
-import deviceInfoModule from 'react-native-device-info';
-
 import theme from '~/app/theme';
+import appConf from '~/framework/util/appConf';
 import FunctionalModuleConfig from '~/infra/moduleTool';
 
 // tslint:disable:object-literal-sort-keys
 
-// Yeah, it's ugly. Sorry. We must port this module into frameworkV2 to make this happier.
-console.log('deviceInfoModule.getBundleId()', deviceInfoModule.getBundleId());
-const isAppOne = deviceInfoModule.getBundleId() === 'com.ode.one';
-export const fillName = theme.palette.complementary[isAppOne ? 'blue' : 'green'].regular;
+export const fillName = theme.palette.complementary[appConf.is1d ? 'blue' : 'green'].regular;
 
 export default new FunctionalModuleConfig({
   name: 'homework',
