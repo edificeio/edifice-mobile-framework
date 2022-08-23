@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Picture } from '~/framework/components/picture';
+import { PFLogo } from '~/framework/components/pfLogo';
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -126,13 +126,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     }
     return (
       <View style={{ flexGrow: 2, justifyContent: 'center', width: '100%' }}>
-        <Picture
-          type={DEPRECATED_getCurrentPlatform()!.logoType}
-          source={DEPRECATED_getCurrentPlatform()!.logo}
-          name={DEPRECATED_getCurrentPlatform()!.logo}
-          style={logoStyle}
-          resizeMode="contain"
-        />
+        <PFLogo />
       </View>
     );
   };
