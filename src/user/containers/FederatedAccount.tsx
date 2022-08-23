@@ -14,7 +14,7 @@ const mapDispatchToProps: (dispatch) => IFederatedAccountPageEventProps = dispat
     dispatch,
     onLink() {
       Trackers.trackEvent('Auth', 'GO TO', 'OTP Generation');
-      return openUrl(fedeUrl);
+      return openUrl(fedeUrl, undefined, false, true, false);
     },
   };
 };
