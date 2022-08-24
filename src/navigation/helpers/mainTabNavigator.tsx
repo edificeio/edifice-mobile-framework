@@ -101,7 +101,7 @@ const MainTabNavigationLabel = styled.Text(
     marginTop: -UI_SIZES.spacing.small,
   },
   ({ focused }) => ({
-    color: focused ? theme.palette.primary.regular : theme.legacy.neutral.subtleLight,
+    color: focused ? theme.palette.primary.regular : theme.ui.text.light,
   }),
 );
 

@@ -24,7 +24,7 @@ const style = StyleSheet.create({
   },
   authorText: {
     ...TextSizeStyle.Small,
-    color: theme.legacy.neutral.subtleLight,
+    color: theme.ui.text.light,
     maxWidth: '50%',
   },
 });

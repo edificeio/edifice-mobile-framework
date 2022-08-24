@@ -281,9 +281,9 @@ export const defaultTheme: ThemeInitializer = {
         listItem: this.palette.grey.cloudy,
       },
       text: {
-        regular: this.legacy.neutral.subtleShadow,
-        heavy: this.legacy.neutral.shadow,
-        light: this.legacy.neutral.subtleLight,
+        regular: this.palette.grey.black,
+        heavy: this.palette.grey.black, // ToDo remove
+        light: this.palette.grey.graphite,
         inverse: this.palette.grey.white,
       },
     };

@@ -132,9 +132,7 @@ export const UserCard = ({
         <TextBold>{displayName}</TextBold>
         {Array.isArray(type) ? type.map(item => renderUserType(item)) : renderUserType(type)}
       </View>
-      {touchable ? (
-        <Icon name="arrow_down" color={theme.legacy.neutral.regular} style={{ transform: [{ rotate: '270deg' }] }} />
-      ) : undefined}
+      {touchable ? <Icon name="arrow_down" color={theme.ui.text.light} style={{ transform: [{ rotate: '270deg' }] }} /> : undefined}
     </WrapperComponent>
   );
 };

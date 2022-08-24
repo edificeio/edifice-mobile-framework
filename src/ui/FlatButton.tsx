@@ -71,7 +71,7 @@ export const FlatButton = ({
         </TextStyleComponent>
         {rightName !== undefined && typeof rightName !== 'string' ? (
           <Picture
-            fill={customTextStyle?.color ?? disabled ? theme.palette.primary.regular : theme.legacy.neutral.light}
+            fill={customTextStyle?.color ?? disabled ? theme.palette.primary.regular : theme.ui.text.light}
             {...rightName}
             style={{ marginHorizontal: UI_SIZES.spacing._LEGACY_small }}
             width={22}
@@ -110,6 +110,6 @@ const TextStyleComponent = styled.Text<{ disabled: boolean }>(
     textAlignVertical: 'center',
   },
   ({ disabled }) => ({
-    color: disabled ? theme.palette.primary.regular : theme.legacy.neutral.light,
+    color: disabled ? theme.palette.primary.regular : theme.ui.text.light,
   }),
 );
