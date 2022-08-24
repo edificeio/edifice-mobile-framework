@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
-import { navigate } from '~/navigation/helpers/navHelper';
+import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
+import { resetNavigation } from '~/navigation/helpers/navHelper';
 
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
@@ -19,7 +19,9 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
-        navigate(getLoginRouteName());
+        const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
+        resetNavigation(stack, stack.length - 1);
+        throw err;
       }
     }
     const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
