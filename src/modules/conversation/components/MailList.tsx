@@ -179,13 +179,17 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   mailRestored = async () => {
     const { fetchInit } = this.props;
-    await this.refreshMailList();
-    await fetchInit();
-    Toast.show(I18n.t('conversation.messageMoved'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-    });
+    try {
+      await this.refreshMailList();
+      await fetchInit();
+      Toast.show(I18n.t('conversation.messageMoved'), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+      });
+    } catch (e) {
+      // TODO: Manage error
+    }
   };
 
   toggleRead = async (unread: boolean, mailId: string) => {
