@@ -147,9 +147,9 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         iconName="new_post"
         options={workflows}
         ref={this.popupMenuRef}
-        // onPress={() => {
-        // this.listRef.current?.recenter();
-        // }}
+      // onPress={() => {
+      // this.listRef.current?.recenter();
+      // }}
       />
     );
   }
@@ -220,29 +220,33 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             right: this.rights.notification.report
               ? item.type === ITimelineItemType.NOTIFICATION
                 ? [
-                    {
-                      action: async row => {
+                  {
+                    action: async row => {
+                      try {
                         await this.doReportConfirm(item.data as ITimelineNotification);
                         row[item.data.id]?.closeRow();
-                      },
-                      actionColor: theme.palette.status.warning,
-                      actionText: I18n.t('timeline.reportAction.button'),
-                      actionIcon: 'ui-warning',
+                      } catch (e) { } // Do nothing, just to prevent error
                     },
-                  ]
+                    actionColor: theme.palette.status.warning,
+                    actionText: I18n.t('timeline.reportAction.button'),
+                    actionIcon: 'ui-warning',
+                  },
+                ]
                 : item.type === ITimelineItemType.FLASHMSG
-                ? [
+                  ? [
                     {
                       action: async row => {
-                        await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
-                        row[item.data.id]?.closeRow();
+                        try {
+                          await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
+                          row[item.data.id]?.closeRow();
+                        } catch (e) { } // Do nothing, just to prevent error
                       },
                       actionColor: theme.palette.status.failure,
                       actionText: I18n.t('common.close'),
                       actionIcon: 'ui-close',
                     },
                   ]
-                : undefined
+                  : undefined
               : undefined,
           };
         }}
