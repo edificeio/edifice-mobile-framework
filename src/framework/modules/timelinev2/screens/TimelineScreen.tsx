@@ -202,8 +202,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                   item.type === ITimelineItemType.NOTIFICATION
                     ? renderSwipeButton(
                         async () => {
-                          await this.doReportConfirm(item.data as ITimelineNotification);
-                          this.listRef.current?.recenter();
+                          try {
+                            await this.doReportConfirm(item.data as ITimelineNotification);
+                            this.listRef.current?.recenter();
+                          } catch (e) {} // Do nothing, juste to prevent error
                         },
                         'warning',
                         I18n.t('timeline.reportAction.button'),

@@ -23,7 +23,7 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       }
     }
     const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
-    return fetch(req);
+    return await fetch(req);
   } catch (err) {
     throw err;
   }
@@ -39,7 +39,7 @@ export async function signedFetchJson(url: string | Request, init?: RequestInit)
   try {
     const response = await signedFetch(url, init);
     // TODO check if response is OK
-    return response.json();
+    return await response.json();
   } catch (err) {
     throw err;
   }
