@@ -7,7 +7,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/modules/conversation/service/newMail';
-import { IOSShadowStyle } from '~/styles/common/styles';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
@@ -97,7 +96,13 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
   const absoluteListStyle = {
     backgroundColor: theme.ui.background.card,
     flex: 1,
-    ...IOSShadowStyle,
+    shadowColor: theme.ui.shadowColor,
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
   } as ViewStyle;
 
   const FoundUserOrGroup = ({ id, displayName, onPress }) => {

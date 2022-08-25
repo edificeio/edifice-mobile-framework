@@ -9,7 +9,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingS, Text, TextColorStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui/FlatButton';
 import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
@@ -146,7 +145,6 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         hasError={isError && !editing && !(hasStructures && errorMsg)}
                         keyboardType={forgotId ? 'email-address' : undefined}
                         editable={!hasStructures}
-                        inputStyle={hasStructures && { color: CommonStyles.placeholderColor, fontWeight: 'bold' }}
                         returnKeyLabel={I18n.t('forgot-submit')}
                         returnKeyType="done"
                         onSubmitEditing={() => this.handleSubmit()}

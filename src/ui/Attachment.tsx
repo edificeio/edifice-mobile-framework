@@ -18,7 +18,6 @@ import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
-import { CommonStyles } from '~/styles/common/styles';
 
 import { IconButton } from './IconButton';
 
@@ -211,7 +210,7 @@ class Attachment extends React.PureComponent<
             </View>
             <View style={{ flex: 1, flexDirection: 'row' }}>
               {downloadState === DownloadState.Error ? (
-                <Text style={{ color: CommonStyles.errorColor }}>{I18n.t('download-error') + ' '}</Text>
+                <Text style={{ color: theme.palette.status.failure }}>{I18n.t('download-error') + ' '}</Text>
               ) : null}
               <Text style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
                 <Text
@@ -260,7 +259,7 @@ class Attachment extends React.PureComponent<
                   <IconButton
                     iconName="download"
                     iconColor={theme.palette.grey.black}
-                    buttonStyle={{ backgroundColor: CommonStyles.lightGrey }}
+                    buttonStyle={{ backgroundColor: theme.palette.grey.fog }}
                   />
                 </RNGHTouchableOpacity>
               ) : null}
