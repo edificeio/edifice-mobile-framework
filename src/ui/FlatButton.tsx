@@ -110,6 +110,6 @@ const TextStyleComponent = styled.Text<{ disabled: boolean }>(
     textAlignVertical: 'center',
   },
   ({ disabled }) => ({
-    color: disabled ? theme.palette.primary.regular : theme.ui.text.light,
+    color: disabled ? theme.palette.primary.regular : theme.ui.text.inverse,
   }),
 );
