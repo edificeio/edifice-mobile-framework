@@ -83,9 +83,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
 
   // LOADER =======================================================================================
 
-  const fetchFiles = () => {
-    props.fetchFiles(props.filter, props.parentId);
-    if (!props.folderTree.data.length && !props.folderTree.isFetching) {
+  const fetchFiles = (parentId: string = props.parentId, shouldRefreshFolderList?: boolean) => {
+    props.fetchFiles(props.filter, parentId);
+    if ((!props.folderTree.data.length && !props.folderTree.isFetching) || shouldRefreshFolderList) {
       props.listFolders();
     }
   };
@@ -164,25 +164,25 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
     switch (modalType) {
       case WorkspaceModalType.CREATE_FOLDER:
         props.modalEvents.createFolder(value, parentId);
-        return props.fetchFiles(props.filter, parentId);
+        return fetchFiles(parentId, true);
       case WorkspaceModalType.DELETE:
         props.modalEvents.deleteFiles(parentId, files);
-        return props.fetchFiles(props.filter, parentId);
+        return fetchFiles(parentId, true);
       case WorkspaceModalType.DOWNLOAD:
         return props.modalEvents.downloadFiles(files);
       case WorkspaceModalType.DUPLICATE:
         props.modalEvents.duplicateFiles(parentId, files, destinationId);
-        return props.fetchFiles(props.filter, destinationId);
+        return fetchFiles(destinationId, true);
       case WorkspaceModalType.EDIT:
         props.modalEvents.renameFile(files[0], value);
-        return props.fetchFiles(props.filter, parentId);
+        return fetchFiles(parentId, true);
       case WorkspaceModalType.MOVE:
         props.modalEvents.moveFiles(parentId, files, destinationId);
         props.fetchFiles(props.filter, destinationId);
-        return props.fetchFiles(props.filter, parentId);
+        return fetchFiles(parentId, true);
       case WorkspaceModalType.TRASH:
         props.modalEvents.trashFiles(parentId, files);
-        return props.fetchFiles(props.filter, parentId);
+        return fetchFiles(parentId, true);
     }
   };
 
