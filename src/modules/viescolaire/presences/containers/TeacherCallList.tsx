@@ -55,7 +55,19 @@ type ICallListContainerProps = {
   fetchRegisterId: (any: any) => void;
 } & NavigationFocusInjectedProps;
 
-class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
+type ICallListContainerState = {
+  isFetchData: boolean;
+};
+
+class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICallListContainerState> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isFetchData: false,
+    };
+  }
+
   componentDidMount() {
     this.props.getMultipleSlots(this.props.structureId);
     this.props.getRegisterPreferences();
@@ -66,7 +78,12 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
   componentDidUpdate(prevProps) {
     const { isFocused, structureId, multipleSlots, registerPreferences } = this.props;
 
-    if (
+    if (this.state.isFetchData) {
+      this.props.getRegisterPreferences();
+      this.props.getMultipleSlots(this.props.structureId);
+      this.fetchTodayCourses();
+      this.setState({ isFetchData: false });
+    } else if (
       (isFocused && prevProps.isFocused !== isFocused) ||
       prevProps.structureId !== structureId ||
       prevProps.multipleSlots.data !== multipleSlots.data ||
@@ -78,9 +95,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
 
   private handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
-      this.props.getRegisterPreferences();
-      this.props.getMultipleSlots(this.props.structureId);
-      this.fetchTodayCourses();
+      this.setState({ isFetchData: true });
     }
   };
 
@@ -103,30 +118,34 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
     this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today, multipleSlot);
   };
 
+  setCoursesRegisterId = (course: ICourses) => {
+    const rawCourseData = {
+      course_id: course.id,
+      structure_id: course.structureId,
+      start_date: moment(course.startDate).format('YYYY-MM-DD HH:mm:ss'),
+      end_date: moment(course.endDate).format('YYYY-MM-DD HH:mm:ss'),
+      subject_id: course.subjectId,
+      groups: course.groups,
+      classes: course.classes !== undefined ? course.classes : course.groups,
+      teacherIds: [this.props.teacherId],
+      split_slot: this.props.multipleSlots.data.allow_multiple_slots,
+    } as ICourseData;
+    const courseData = JSON.stringify(rawCourseData) as string;
+
+    this.props.fetchRegisterId(courseData);
+  };
+
   openCall = (course: ICourses) => {
+    if (course.registerId === null || course.registerId === undefined) {
+      this.setCoursesRegisterId(course);
+    }
+
     const courseRegisterInfos = {
       id: course.id,
       classroom: course.roomLabels[0],
       grade: course.classes[0] !== undefined ? course.classes[0] : course.groups[0],
       registerId: course.registerId,
     } as ICourse;
-
-    if (course.registerId === null) {
-      const rawCourseData = {
-        course_id: course.id,
-        structure_id: course.structureId,
-        start_date: moment(course.startDate).format('YYYY-MM-DD HH:mm:ss'),
-        end_date: moment(course.endDate).format('YYYY-MM-DD HH:mm:ss'),
-        subject_id: course.subjectId,
-        groups: course.groups,
-        classes: course.classes !== undefined ? course.classes : course.groups,
-        teacherIds: [this.props.teacherId],
-        split_slot: this.props.multipleSlots.data.allow_multiple_slots,
-      } as ICourseData;
-      const courseData = JSON.stringify(rawCourseData) as string;
-
-      this.props.fetchRegisterId(courseData);
-    }
 
     this.props.navigation.navigate('CallSheetPage', { courseInfos: courseRegisterInfos });
   };

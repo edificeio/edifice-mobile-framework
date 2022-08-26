@@ -65,13 +65,20 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
   }
 
   componentDidMount() {
-    const { registerId } = this.props.course;
-    if (registerId !== null && registerId !== undefined) this.props.getClasses(registerId);
+    if (
+      this.props.registerId &&
+      this.props.registerId !== null &&
+      this.props.registerId !== undefined &&
+      this.props.registerId !== ''
+    ) {
+      this.props.getClasses(this.props.registerId);
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const { registerId } = this.props.course;
-    if (prevProps.course.registerId !== registerId) this.props.getClasses(registerId);
+    if (prevProps.registerId && prevProps.registerId !== this.props.registerId) {
+      this.props.getClasses(this.props.registerId);
+    }
     const { callList } = this.props;
     const fetching = callList.isFetching;
     this.setState({
@@ -82,15 +89,14 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
   }
 
   onRefreshStudentsList = () => {
-    const { registerId } = this.props.course;
     this.setState({ refreshing: true });
-    this.props.getClasses(registerId);
+    this.props.getClasses(this.props.registerId);
   };
 
   private StudentsList() {
     const { students } = this.state.callData;
     const studentsList = students.sort((a, b) => a.name.localeCompare(b.name));
-    const { registerId } = this.props.course;
+    const { registerId } = this.props;
     const { postAbsentEvent, deleteEvent, navigation } = this.props;
     return (
       <View style={style.fullView}>
