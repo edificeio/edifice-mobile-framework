@@ -163,7 +163,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     const { mails } = this.state;
     const newMails = mails.map(mail => (mail.isChecked = false));
 
-    this.setState({ mails: newMails, isHeaderSelectVisible: false });
+    this.setState({ mails: newMails, isHeaderSelectVisible: false, isDropdownMenuVisible: false });
     if (this.props.isSearch) this.props.setSearchHeaderVisibility(false);
     this.props.navigation.setParams({ selectedMails: false });
     if (!goBack) this.fetchMails(0);
@@ -305,7 +305,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         ]
       : [
           { icon: this.checkMailReadState() ? 'email' : 'email-open', onPress: this.markSelectedMailsAsUnread },
-          { icon: 'more_vert', onPress: this.showMenu },
+          { icon: 'more_vert', onPress: !this.state.isDropdownMenuVisible ? this.showMenu : this.hideMenu },
         ];
   };
 
