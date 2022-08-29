@@ -2,7 +2,7 @@ import moment from 'moment';
 import querystring from 'querystring';
 
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { ICoursesRegister } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
+import { ICoursesRegisterInfos } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
 import { ICoursesList } from '~/modules/viescolaire/presences/state/teacherCourses';
 
 export type ICoursesListBackend = {
@@ -65,8 +65,8 @@ export type ICoursesRegisterBackend = {
   councellor_input: boolean;
 };
 
-const coursesRegisterAdapter: (data: ICoursesRegisterBackend) => ICoursesRegister = data => {
-  let result = {} as ICoursesRegister;
+const coursesRegisterAdapter: (data: ICoursesRegisterBackend) => ICoursesRegisterInfos = data => {
+  let result = {} as ICoursesRegisterInfos;
   if (!data) return result;
   result = {
     id: data.id,
