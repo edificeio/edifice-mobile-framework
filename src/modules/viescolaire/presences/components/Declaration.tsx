@@ -240,10 +240,12 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               style={styles.motiveTextInput}
               onChangeText={updateComment}
             />
-            <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
-              <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-              <Text>{I18n.t('viesco-attachment')}</Text>
-            </FilePicker>
+            {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
+              <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
+                <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
+                <Text>{I18n.t('viesco-attachment')}</Text>
+              </FilePicker>
+            ) : null}
           </View>
           {attachment ? (
             <Attachment

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { StyleSheet, Switch, View } from 'react-native';
+import { Platform, StyleSheet, Switch, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -82,9 +82,9 @@ enum SwitchState {
 }
 
 enum ScreenDisplay {
-  DASHBOARD,
-  PERIOD,
-  DISCIPLINE,
+  DASHBOARD, // Home (neither period nor discipline selected)
+  PERIOD, // Only period selected
+  DISCIPLINE, // Discipline selected (with or without period)
 }
 
 type ISelectedPeriod = { type: string; value: string | undefined };
@@ -206,6 +206,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     }
   };
 
+  // DISPLAY MOYENNES OR NOTES ------------------------------------------------
+
   private renderDevoirsByPeriod() {
     const { devoirsMoyennesList } = this.props;
     const { devoirs, selectedPeriod } = this.state;
@@ -264,6 +266,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
                   this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
                   this.setSwitchDefaultPosition(value);
                 }}
+                style={Platform.OS !== 'ios' ? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : null}
                 value={!value}
               />
             </View>
@@ -272,6 +275,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       </>
     );
   };
+
+  // DISPLAY LOADER OR LIST OF DEVOIRS ----------------------------------------
 
   private renderDevoirsList() {
     const { devoirsList, levels } = this.props;
@@ -290,6 +295,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       </View>
     );
   }
+
+  // MANAGE DROPDOWN ----------------------------------------------------------
 
   private initDevoirsByDisciplines(discipline) {
     const { structureId, childId } = this.props;
@@ -365,6 +372,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       />
     );
   }
+
+  // BASE RENDER --------------------------------------------------------------
 
   public render() {
     return (
