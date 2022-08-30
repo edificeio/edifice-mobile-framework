@@ -107,7 +107,7 @@ export const WorkspaceModal = ({
   const settings = getModalSettings(type);
   const isDisabled =
     (settings.hasInput && inputValue === '') ||
-    (settings.hasDestinationSelector && filter === Filter.OWNER && destination === parentId);
+    (type === WorkspaceModalType.MOVE && filter === Filter.OWNER && destination === parentId);
   const action = () => onAction(selectedFiles, inputValue + fileExtension, destination);
 
   useEffect(() => {

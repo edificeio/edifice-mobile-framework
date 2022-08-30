@@ -5,7 +5,7 @@ import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
-export interface ICoursesRegister {
+export interface ICoursesRegisterInfos {
   id: string;
   course_id: string;
   structure_id: string;
@@ -15,13 +15,19 @@ export interface ICoursesRegister {
   councellor_input: boolean;
 }
 
-export type ICoursesRegisterInfos = ICoursesRegister[];
-
 // THE STATE --------------------------------------------------------------------------------------
 
 export type ICoursesRegisterInfosState = AsyncState<ICoursesRegisterInfos>;
 
-export const initialStateRegister: ICoursesRegisterInfos = [];
+export const initialStateRegister: ICoursesRegisterInfos = {
+  id: '',
+  course_id: '',
+  structure_id: '',
+  state_id: 0,
+  start_date: moment(),
+  end_date: moment(),
+  councellor_input: false,
+};
 
 export const getCoursesRegisterState = (globalState: any) =>
   viescoConfig.getState(globalState).presences.coursesRegister as ICoursesRegisterInfosState;

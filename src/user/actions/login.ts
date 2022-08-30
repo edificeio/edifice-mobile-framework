@@ -10,8 +10,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
-import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
-import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
+import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { userService } from '~/user/service';
 
@@ -226,7 +225,6 @@ export function loginAction(
       // In case of error...
       let routeToGo;
       let routeParams;
-
       // === 1: Check if user is in activation mode
       if (err.type === OAuthErrorType.BAD_CREDENTIALS) {
         try {
@@ -274,7 +272,7 @@ export function loginAction(
         if (credentials) {
           navigate(routeToGo, routeParams);
         } else {
-          resetNavigation(
+          /*resetNavigation(
             [
               ...(AppConf.platforms && AppConf.platforms.length > 1
                 ? [NavigationActions.navigate({ routeName: 'PlatformSelect' })]
@@ -283,7 +281,10 @@ export function loginAction(
               NavigationActions.navigate({ routeName: routeToGo }),
             ],
             2,
-          );
+          );*/
+          const stack = getLoginStackToDisplay(pf!.name);
+          stack.push(NavigationActions.navigate({ routeName: routeToGo }));
+          resetNavigation(stack, stack.length - 1);
         }
         dispatch({
           type: actionTypeLoggedInPartial,
@@ -306,7 +307,7 @@ export function loginAction(
 
         // === 3: Redirect if asked
         if (redirectOnError) {
-          resetNavigation(
+          /*resetNavigation(
             [
               ...(AppConf.platforms && AppConf.platforms.length > 1
                 ? [NavigationActions.navigate({ routeName: 'PlatformSelect' })]
@@ -314,7 +315,9 @@ export function loginAction(
               NavigationActions.navigate({ routeName: getLoginRouteName() }),
             ],
             1,
-          );
+          );*/
+          const stack = getLoginStackToDisplay(pf!.name);
+          resetNavigation(stack, stack.length - 1);
         }
       }
     } finally {
@@ -380,11 +383,13 @@ export async function redirectAfterChangePassword(dispatch) {
     errmsg: 'must_log_again',
     errtype: 'warning',
   });
-  resetNavigation(
+  /*resetNavigation(
     [
       ...(AppConf.platforms && AppConf.platforms.length > 1 ? [NavigationActions.navigate({ routeName: 'PlatformSelect' })] : []),
       NavigationActions.navigate({ routeName: getLoginRouteName() }),
     ],
     1,
-  );
+  );*/
+  const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
+  resetNavigation(stack, stack.length - 1);
 }

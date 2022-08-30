@@ -2,11 +2,11 @@ import { Dispatch } from 'redux';
 
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { coursesRegisterService } from '~/modules/viescolaire/presences/services/teacherCourses';
-import { ICoursesRegister, actionTypes } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
+import { ICoursesRegisterInfos, actionTypes } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const dataActions = createAsyncActionCreators<ICoursesRegister>(actionTypes);
+export const dataActions = createAsyncActionCreators<ICoursesRegisterInfos>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 

@@ -13,6 +13,7 @@ const imports = {
   // Platform logos
   'logo-moncollege': import('ASSETS/platforms/logo-moncollege.svg'),
   'logo-monecole': import('ASSETS/platforms/logo-monecole.svg'),
+  'logo-porto-vecchio': import('ASSETS/platforms/logo-porto-vecchio.svg'),
   // UI Icons
   'ui-answer': import('ASSETS/icons/uiIcons/answer.svg'),
   'ui-arrowDown': import('ASSETS/icons/uiIcons/arrowDown.svg'),

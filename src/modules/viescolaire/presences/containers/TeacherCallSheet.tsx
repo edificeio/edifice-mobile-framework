@@ -12,10 +12,18 @@ import { getClassesCallListState } from '~/modules/viescolaire/presences/state/t
 import { getCoursesListState } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
+import { getCoursesRegisterState } from '../state/teacherCourseRegister';
+
 class CallSheet extends React.PureComponent<any> {
   public render() {
     const courseInfos = this.props.navigation.state.params.courseInfos;
-    const course = this.props.courses.find(elem => elem.id === courseInfos.id && elem.registerId === courseInfos.registerId);
+    let registerId = null;
+    if (courseInfos?.registerId && courseInfos?.registerId !== null && courseInfos?.registerId !== undefined) {
+      registerId = courseInfos?.registerId;
+    } else {
+      registerId = this.props.registerCourse.data?.id;
+    }
+    const course = this.props.courses.find(elem => elem.id === courseInfos.id && elem.registerId === registerId);
 
     return (
       <PageView
@@ -26,7 +34,9 @@ class CallSheet extends React.PureComponent<any> {
             backgroundColor: viescoTheme.palette.presences,
           },
         }}>
-        <TeacherCallSheet {...this.props} course={course} />
+        {registerId !== null && registerId !== undefined && registerId !== '' ? (
+          <TeacherCallSheet {...this.props} course={course} registerId={registerId} />
+        ) : null}
       </PageView>
     );
   }
@@ -36,12 +46,18 @@ const mapStateToProps: (state: any) => any = state => {
   return {
     callList: getClassesCallListState(state),
     courses: getCoursesListState(state).data,
+    registerCourse: getCoursesRegisterState(state),
   };
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
-    { getClasses: fetchClassesCallAction, postAbsentEvent, deleteEvent, validateRegister: validateRegisterAction },
+    {
+      getClasses: fetchClassesCallAction,
+      postAbsentEvent,
+      deleteEvent,
+      validateRegister: validateRegisterAction,
+    },
     dispatch,
   );
 };
