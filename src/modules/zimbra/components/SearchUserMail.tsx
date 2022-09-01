@@ -155,29 +155,30 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
   }, [search]);
 
   const removeUser = id => onChange(selectedUsersOrGroups.filter(user => user.id !== id));
+
   const addUser = userOrGroup => {
     onChange([...selectedUsersOrGroups, { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id }]);
     updateSearch('');
   };
-  const hasAtChar = search.includes('@') as boolean;
 
-  const inputValidateAction = (onBlur: boolean = false) => {
-    if (!onBlur && !hasAtChar) {
-      addUser({ displayName: search, id: search });
-    } else if (hasRightToSendExternalMails) {
-      hasAtChar && addUser({ displayName: search, id: search });
-    } else {
-      if (search !== '') {
-        updateSearch('');
-        Toast.show(I18n.t('zimbra-external-mail-right-error'));
-      }
+  const removeExternalRecipient = () => {
+    if (search.includes('@') && !hasRightToSendExternalMails) {
+      updateSearch('');
+      return Toast.show(I18n.t('zimbra-external-mail-right-error'));
+    }
+  };
+
+  const emptyInput = () => {
+    removeExternalRecipient();
+    if (search !== '') {
+      updateSearch('');
     }
   };
 
   return (
     <View style={styles.userOrGroupSearchContainer}>
       <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-      <Input value={search} onChangeText={updateSearch} onSubmit={inputValidateAction} onBlur={() => inputValidateAction(true)} />
+      <Input value={search} onChangeText={updateSearch} onSubmit={emptyInput} onBlur={removeExternalRecipient} />
       <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
     </View>
   );
