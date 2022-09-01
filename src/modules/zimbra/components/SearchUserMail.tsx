@@ -80,15 +80,13 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
   };
 
   return foundUserOrGroup.length > 0 ? (
-    <View>
-      <FlatList
-        style={absoluteListStyle}
-        data={foundUserOrGroup}
-        renderItem={({ item }) => (
-          <FoundUserOrGroup profile={item.profile} displayName={item.name || item.displayName} onPress={() => addUser(item)} />
-        )}
-      />
-    </View>
+    <FlatList
+      style={absoluteListStyle}
+      data={foundUserOrGroup}
+      renderItem={({ item }) => (
+        <FoundUserOrGroup profile={item.profile} displayName={item.name || item.displayName} onPress={() => addUser(item)} />
+      )}
+    />
   ) : (
     <View />
   );
@@ -161,15 +159,13 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
     updateSearch('');
   };
 
-  const removeExternalRecipient = () => {
-    if (search.includes('@') && !hasRightToSendExternalMails) {
+  const manageExternalRecipient = () => {
+    if (search.includes('@') && hasRightToSendExternalMails) {
+      addUser({ displayName: search, id: search });
+    } else if (search.includes('@') && !hasRightToSendExternalMails) {
       updateSearch('');
       return Toast.show(I18n.t('zimbra-external-mail-right-error'));
     }
-  };
-
-  const emptyInput = () => {
-    removeExternalRecipient();
     if (search !== '') {
       updateSearch('');
     }
@@ -178,7 +174,7 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
   return (
     <View style={styles.userOrGroupSearchContainer}>
       <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-      <Input value={search} onChangeText={updateSearch} onSubmit={emptyInput} onBlur={removeExternalRecipient} />
+      <Input value={search} onChangeText={updateSearch} onSubmit={manageExternalRecipient} onBlur={manageExternalRecipient} />
       <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
     </View>
   );
