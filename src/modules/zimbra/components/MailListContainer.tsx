@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import Toast from 'react-native-tiny-toast';
+import { withNavigationFocus } from 'react-navigation';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -417,7 +418,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(MailListContainer);
+const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
 
 export default withViewTracking((props: MailListContainerProps) => {
   const currentFolder = props.navigation.getParam('key');
