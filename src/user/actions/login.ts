@@ -153,11 +153,12 @@ export function loginAction(
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
-      } else if (userinfo2.needRevalidateTerms) {
+      } // Tmp Workaround : we bypass this flag detection
+      /* else if (userinfo2.needRevalidateTerms) {
         const err = new Error('[loginAction]: User must revalidate terms.');
         (err as any).type = LoginFlowErrorType.MUST_REVALIDATE_TERMS;
         throw err;
-      }
+      } */
       // === 4: Gather another user information
       let userdata: any, userPublicInfo: any;
       try {

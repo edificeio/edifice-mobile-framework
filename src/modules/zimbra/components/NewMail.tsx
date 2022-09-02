@@ -318,7 +318,7 @@ export default ({
         {isFetching ? (
           <LoadingIndicator />
         ) : (
-          <ScrollView contentContainerStyle={styles.fullGrowView} bounces={false} keyboardShouldPersistTaps="never">
+          <ScrollView contentContainerStyle={styles.fullGrowView} bounces={false} keyboardShouldPersistTaps="handled">
             <Headers
               style={styles.newMailHeaders}
               headers={headers}

@@ -17,7 +17,7 @@ const getRedirectUrl = (session: IUserSession, connectorAddress: string, pageId?
   };
   let link = `${DEPRECATED_getCurrentPlatform()!.url}/cas/oauth/login?service=${encodeURIComponent(connectorAddress)}`;
   const role = profileMap[session.user.type.toUpperCase()];
-  link += `${getSlash(link)}${role}.html`;
+  link += `${getSlash(link)}mobile.${role}.html`;
   if (pageId) {
     link += encodeURIComponent(`?page=${pageId}`);
   }
