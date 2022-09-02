@@ -86,6 +86,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
       renderItem={({ item }) => (
         <FoundUserOrGroup profile={item.profile} displayName={item.name || item.displayName} onPress={() => addUser(item)} />
       )}
+      keyboardShouldPersistTaps="handled"
     />
   ) : (
     <View />
