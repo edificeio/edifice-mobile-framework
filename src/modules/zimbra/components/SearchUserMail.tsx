@@ -8,6 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Text } from '~/framework/components/text';
 import { newMailService } from '~/modules/zimbra/service/newMail';
 import { getProfileColor } from '~/modules/zimbra/utils/userColor';
+import { IOSShadowStyle } from '~/styles/common/styles';
 
 const styles = StyleSheet.create({
   foundListButton: {
@@ -61,13 +62,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     elevation: 20,
     maxHeight: UI_SIZES.screen.height * 0.25,
     flexGrow: 1,
-    shadowColor: theme.ui.shadowColor,
-    shadowOffset: {
-      height: 2,
-      width: 0,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 2,
+    ...IOSShadowStyle,
   } as ViewStyle;
 
   const FoundUserOrGroup = ({ profile, displayName, onPress }) => {
@@ -91,6 +86,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
       renderItem={({ item }) => (
         <FoundUserOrGroup profile={item.profile} displayName={item.name || item.displayName} onPress={() => addUser(item)} />
       )}
+      keyboardShouldPersistTaps="handled"
     />
   ) : (
     <View />
