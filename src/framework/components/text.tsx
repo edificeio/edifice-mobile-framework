@@ -5,22 +5,21 @@
  * Don't forget to use <NestedText> instead of <Text> for nested text styles.
  */
 import styled from '@emotion/native';
-import I18n from 'i18n-js';
 import { Platform, Text as RNText, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import appConf from '~/framework/util/appConf';
 
 import { getScaleDimension } from './constants';
 
 /**
  * Base font properties
  */
-const appName = I18n.t('common.appName');
-const isAppOne = appName.includes('ONE Pocket');
+const isApp1D = appConf.is1d;
 const headingFontFamilyIOS = 'Comfortaa';
 const headingFontFamilyPrefixAndroid = 'comfortaa_';
-const textFontFamilyIOS = isAppOne ? 'Arimo' : 'Roboto';
-const textFontFamilyPrefixAndroid = isAppOne ? 'arimo_' : 'roboto_';
+const textFontFamilyIOS = isApp1D ? 'Arimo' : 'Roboto';
+const textFontFamilyPrefixAndroid = isApp1D ? 'arimo_' : 'roboto_';
 
 /**
  * Font variations
