@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { SectionList, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import SectionList from '~/framework/components/sectionList';
 import { NestedText, Small } from '~/framework/components/text';
 import { ContainerView } from '~/ui/ButtonLine';
 
@@ -62,7 +62,6 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps & N
                 {classe}
               </Small>
             )}
-            ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
             ListHeaderComponent={
               <Small style={{ marginTop: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
                 {I18n.t('structuresTitle')}

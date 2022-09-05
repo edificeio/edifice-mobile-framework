@@ -1,10 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { SectionList, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import SectionList from '~/framework/components/sectionList';
 import { Small } from '~/framework/components/text';
 
 import { UserCard } from './UserCard';
@@ -67,7 +68,6 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps & Navig
                 </View>
               );
             }}
-            ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
           />
         ) : null}
       </PageView>

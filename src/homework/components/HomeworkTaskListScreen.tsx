@@ -1,8 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, SectionList, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
 import { NavigationInjectedProps } from 'react-navigation';
 
@@ -14,6 +13,7 @@ import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { PageView } from '~/framework/components/page';
+import SectionList from '~/framework/components/sectionList';
 import { Small, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { computeRelativePath } from '~/framework/util/navigation';
@@ -154,7 +154,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
       <View style={{ flex: 1 }}>
         {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.medium + UI_SIZES.spacing.minor} />}
         <SectionList
-          scrollIndicatorInsets={{ right: 0.001 }}
           contentContainerStyle={{
             padding: hasHomework ? UI_SIZES.spacing.medium : undefined,
             paddingTop: hasHomework ? undefined : 0,
@@ -254,7 +253,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               </TouchableOpacity>
             ) : null;
           }}
-          ListFooterComponent={<SafeAreaView edges={['bottom']} />}
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
               <EmptyScreen
