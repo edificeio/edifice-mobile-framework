@@ -1,59 +1,70 @@
-import I18n from 'i18n-js';
-
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { Trackers } from '~/framework/util/tracker';
-import { NotificationHandlerFactory } from '~/infra/pushNotification';
+/**
+ * Workspace notif handler
+ */
+import { computeRelativePath } from '~/framework/util/navigation';
+import { IAbstractNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
+import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
-import { Filter, IFile } from './types';
+import moduleConfig from './moduleConfig';
+import { Filter } from './reducer';
 
-const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, trackCategory) => {
-  if (!notificationData?.resourceUri?.startsWith('/workspace')) {
-    return false;
-  }
-  const split = notificationData.resourceUri.split('/');
-  const parentId = split[split.length - 1];
+interface IWorkspaceShareFolderNotification extends IAbstractNotification {
+  resourceName: string;
+}
 
-  if (!DEPRECATED_getCurrentPlatform()) {
-    throw new Error('must specify a platform');
-  }
+interface IWorkspaceShareNotification extends IAbstractNotification {
+  resourceFolderName: string;
+  resourceFolderUri: string;
+}
 
-  const name = (notificationData as any).resourceName;
-  const isFolder = notificationData.resourceUri.indexOf('/folder/') > 0;
-
-  if (isFolder) {
-    mainNavNavigate('Workspace', {
-      filter: Filter.ROOT,
-      parentId: Filter.ROOT,
-      title: I18n.t('workspace.tabName'),
-      childRoute: 'Workspace',
-      childParams: { parentId, filter: Filter.SHARED, title: name },
+const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
+  (notification, trackCategory, navState) => async (dispatch, getState) => {
+    const workspaceNotif = getAsResourceUriNotification(notification);
+    if (!workspaceNotif) return { managed: 0 };
+    const index = workspaceNotif.resource.uri.indexOf('folder/');
+    if (index === -1) return { managed: 0 };
+    const parentId = workspaceNotif.resource.uri.substring(index + 7);
+    mainNavNavigate(computeRelativePath(moduleConfig.routeName, navState), {
+      filter: Filter.SHARED,
+      parentId,
+      title: (notification as IWorkspaceShareFolderNotification).resourceName,
+      notification,
     });
-  } else {
-    const item: IFile = {
-      contentType: 'plain/text',
-      date: Date.now(),
-      id: parentId,
-      isFolder: false,
-      name,
-      filename: name,
-      owner: '',
-      ownerName: '',
-      size: 0,
-      url: `/workspace/document/${parentId}`,
+    return {
+      managed: 1,
+      trackInfo: { action: 'Workspace', name: `${notification.type}.${notification['event-type']}` },
     };
-    mainNavNavigate('Workspace', {
-      filter: Filter.ROOT,
-      parentId: Filter.ROOT,
-      title: I18n.t('workspace.tabName'),
-      childRoute: 'WorkspaceDetails',
-      childParams: { item, title: name },
+  };
+
+const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
+  (notification, trackCategory, navState) => async (dispatch, getState) => {
+    const workspaceNotif = notification as IWorkspaceShareNotification;
+    if (!workspaceNotif) return { managed: 0 };
+    const index = workspaceNotif.resourceFolderUri.indexOf('folder/');
+    const parentId = index > 0 ? workspaceNotif.resourceFolderUri.substring(index + 7) : 'shared';
+    mainNavNavigate(computeRelativePath(moduleConfig.routeName, navState), {
+      filter: Filter.SHARED,
+      parentId,
+      title: workspaceNotif.resourceFolderName,
+      notification,
     });
-  }
+    return {
+      managed: 1,
+      trackInfo: { action: 'Workspace', name: `${notification.type}.${notification['event-type']}` },
+    };
+  };
 
-  trackCategory && Trackers.trackEvent(trackCategory, 'Workspace', '/workspace');
-
-  return true;
-};
-
-export default notifHandlerFactory;
+export default () =>
+  registerNotifHandlers([
+    {
+      type: 'WORKSPACE',
+      'event-type': 'SHARE-FOLDER',
+      notifHandlerAction: handleWorkspaceShareFolderNotificationAction,
+    },
+    {
+      type: 'WORKSPACE',
+      'event-type': 'SHARE',
+      notifHandlerAction: handleWorkspaceShareNotificationAction,
+    },
+  ]);
