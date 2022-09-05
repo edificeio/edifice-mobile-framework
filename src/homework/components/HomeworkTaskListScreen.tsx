@@ -154,6 +154,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
       <View style={{ flex: 1 }}>
         {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.medium + UI_SIZES.spacing.minor} />}
         <SectionList
+          scrollIndicatorInsets={{ right: 0.001 }}
           contentContainerStyle={{
             padding: hasHomework ? UI_SIZES.spacing.medium : undefined,
             paddingTop: hasHomework ? undefined : 0,
