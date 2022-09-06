@@ -23,7 +23,7 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { Badge } from './badge';
 import { UI_SIZES, getScaleDimension } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
-import { Small, SmallItalic, TextFontStyle, TextSizeStyle } from './text';
+import { Small, SmallBold, SmallItalic, TextFontStyle, TextSizeStyle } from './text';
 
 export const cardPaddingV = UI_SIZES.spacing.medium;
 export const cardPaddingH = UI_SIZES.spacing.medium;
@@ -311,17 +311,16 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               marginTop: UI_SIZES.spacing.minor,
               height: getScaleDimension(20, 'height') * 2,
             }}>
-            <Small
+            <SmallBold
               numberOfLines={2}
               style={[
                 {
                   textAlign: 'center',
-                  ...TextFontStyle.Bold,
                 },
                 textStyle,
               ]}>
               {text}
-            </Small>
+            </SmallBold>
           </View>
         ) : (
           text

@@ -101,7 +101,8 @@ const ButtonStyleComponent = styled.TouchableOpacity(
 );
 
 const TextStyleComponent = props => (
-  <SmallBold style={[{ color: props.disabled ? theme.palette.primary.regular : theme.ui.text.inverse }, props.style]}>
+  <SmallBold
+    style={[{ color: props.disabled ? theme.palette.primary.regular : theme.ui.text.inverse, lineHeight: undefined }, props.style]}>
     {props.children}
   </SmallBold>
 );
