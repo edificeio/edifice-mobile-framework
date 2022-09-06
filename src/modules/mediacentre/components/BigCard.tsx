@@ -6,6 +6,7 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -16,12 +17,12 @@ import { ResourceImage, SourceImage } from './ResourceImage';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
   },
   contentContainer: {
     flexDirection: 'row',
-    marginTop: -20, // MO-142 use UI_SIZES.spacing here
+    marginTop: -UI_SIZES.spacing.big,
   },
   cardImage: {
     overflow: 'hidden',
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     flexGrow: 1,
-    marginLeft: 15, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.medium,
     justifyContent: 'space-between',
   },
   cardActionIcon: {
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     ...TextSizeStyle.Small,
-    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.tiny,
   },
 });
 

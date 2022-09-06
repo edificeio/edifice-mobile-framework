@@ -4,15 +4,16 @@ import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small } from '~/framework/components/text';
 import { IResource } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     backgroundColor: theme.ui.background.card,
-    borderRadius: 15,
+    borderRadius: UI_SIZES.radius.card,
     shadowColor: theme.ui.shadowColor,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.3,
@@ -25,28 +26,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
-    marginRight: 10, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.minor,
+  },
+  sectionsContainer: {
+    margin: UI_SIZES.spacing.tiny,
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
   },
-  itemTextContainer: {
-    flex: 1,
-    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
-  },
-  sectionContainer: {
-    paddingVertical: 5, // MO-142 use UI_SIZES.spacing here
+  itemText: {
+    marginLeft: UI_SIZES.spacing.tiny,
   },
   sectionHeaderContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  sectionUnderlineView: {
-    height: 1,
-    backgroundColor: theme.palette.grey.pearl,
+    marginBottom: UI_SIZES.spacing.tiny,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.pearl,
   },
 });
 
@@ -107,12 +106,10 @@ const FilterItem: React.FunctionComponent<IFilterItemProps> = (props: IFilterIte
     props.onChange(props.sectionTitle, props.item.value, !props.item.active);
   };
   return (
-    <View style={styles.itemContainer}>
+    <TouchableOpacity onPress={onCheck} style={styles.itemContainer}>
       <Checkbox checked={props.item.active} onPress={onCheck} />
-      <TouchableOpacity onPress={onCheck} style={styles.itemTextContainer}>
-        <Small>{props.item.value}</Small>
-      </TouchableOpacity>
-    </View>
+      <Small style={styles.itemText}>{props.item.value}</Small>
+    </TouchableOpacity>
   );
 };
 
@@ -124,12 +121,9 @@ const FilterSection: React.FunctionComponent<IFilterSectionProps> = (props: IFil
   };
   return (
     <View>
-      <TouchableOpacity style={styles.sectionContainer} onPress={expandSection}>
-        <View style={styles.sectionHeaderContainer}>
-          <Small>{I18n.t(`mediacentre.${props.title}`)}</Small>
-          <Icon name={iconName} size={30} />
-        </View>
-        <View style={styles.sectionUnderlineView} />
+      <TouchableOpacity style={styles.sectionHeaderContainer} onPress={expandSection}>
+        <Small>{I18n.t(`mediacentre.${props.title}`)}</Small>
+        <Icon name={iconName} size={30} />
       </TouchableOpacity>
       {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} key={item.value} />) : null}
     </View>
@@ -162,6 +156,7 @@ export const SearchFilter: React.FunctionComponent<ISearchFilterProps> = (props:
           data={filters}
           keyExtractor={(item, index) => item.title + index}
           renderItem={({ item }) => <FilterSection title={item.title} items={item.items} onChange={onChange} />}
+          style={styles.sectionsContainer}
         />
       ) : null}
     </View>

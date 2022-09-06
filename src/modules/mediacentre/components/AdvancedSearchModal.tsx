@@ -15,6 +15,7 @@ import {
 
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/reducer';
@@ -22,6 +23,9 @@ import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 
 const styles = StyleSheet.create({
+  buttonGroupContainer: {
+    marginBottom: UI_SIZES.spacing.tiny,
+  },
   criteriaContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -30,7 +34,7 @@ const styles = StyleSheet.create({
   criteriaInput: {
     width: '75%',
     height: 45,
-    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.small,
     borderWidth: 2,
     borderRadius: 5,
     borderColor: theme.palette.primary.regular,
@@ -38,12 +42,12 @@ const styles = StyleSheet.create({
   sourceCheckBoxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.minor,
   },
   sourceImage: {
     width: 30,
     height: 30,
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.minor,
   },
   safeAreaContainer: {
     flex: 1,
@@ -54,7 +58,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.regular,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   headerTitle: {
     ...TextSizeStyle.Medium,
@@ -63,16 +67,16 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: 'space-between',
-    padding: 20, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.medium,
   },
   sourcesContainer: {
-    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   sourcesContentContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
   },
   dialogButtonsContainer: {
     flexDirection: 'row',
@@ -155,7 +159,12 @@ const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICri
   return (
     <View>
       {props.field.name !== 'title' ? (
-        <ButtonGroup buttons={buttons} selectedButton={props.field.operand} onPress={onChangeOperand} />
+        <ButtonGroup
+          buttons={buttons}
+          selectedButton={props.field.operand}
+          onPress={onChangeOperand}
+          containerStyle={styles.buttonGroupContainer}
+        />
       ) : null}
       <View style={styles.criteriaContainer}>
         <Small>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Small>
@@ -233,7 +242,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         <View style={styles.headerContainer}>
           <SmallBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</SmallBold>
           <TouchableOpacity onPress={props.closeModal}>
-            <Icon name="close" color={theme.ui.text.inverse} size={24} />
+            <Icon name="close" color={theme.ui.text.inverse} size={20} />
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">

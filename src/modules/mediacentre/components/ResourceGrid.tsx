@@ -4,6 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Small, SmallBold } from '~/framework/components/text';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
 
@@ -11,12 +12,12 @@ import { SmallCard } from './SmallCard';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginBottom: 25, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.medium,
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.small,
   },
   titleText: {
     flexShrink: 1,
@@ -58,8 +59,8 @@ export class ResourceGrid extends React.PureComponent<IResourcesGridProps> {
           data={resources.slice(0, size)}
           renderItem={({ item }) => <SmallCard {...this.props} resource={item} />}
           keyExtractor={item => item.uid || item.id}
-          gap={10}
-          gapOutside={10}
+          gap={UI_SIZES.spacing.small}
+          gapOutside={UI_SIZES.spacing.small}
         />
       </View>
     );

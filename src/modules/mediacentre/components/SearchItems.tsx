@@ -3,6 +3,7 @@ import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small } from '~/framework/components/text';
 
@@ -13,8 +14,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    paddingVertical: 10, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
     borderWidth: 2,
     borderRadius: 50,
     borderColor: theme.palette.primary.regular,
@@ -22,10 +23,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   buttonIcon: {
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
 });
 

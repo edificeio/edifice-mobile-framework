@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -17,11 +18,11 @@ import { SearchFilter } from './SearchFilter';
 const styles = StyleSheet.create({
   fieldContainer: {
     flexDirection: 'row',
-    marginRight: 10, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.small,
   },
   parametersContainer: {
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
   },
   upperContainer: {
     flexDirection: 'row',
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   sourceImage: {
     width: 24,
     height: 24,
-    marginRight: 10, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.small,
   },
   cancelButton: {
     backgroundColor: theme.palette.primary.regular,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
   fieldsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
   },
   mainContainer: {
     flex: 1,
@@ -51,8 +52,8 @@ const styles = StyleSheet.create({
     marginTop: '45%',
   },
   filterContainer: {
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
   },
 });
 

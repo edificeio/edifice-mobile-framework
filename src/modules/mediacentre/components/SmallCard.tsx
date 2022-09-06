@@ -6,6 +6,7 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -18,12 +19,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   titleText: {
     color: theme.palette.primary.regular,
     flexShrink: 1,
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   lowerContentContainer: {
     flexDirection: 'row',
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   secondaryContainer: {
     flex: 1,
     justifyContent: 'space-between',
-    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.minor,
   },
   descriptionText: {
     ...TextSizeStyle.Small,

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBold } from '~/framework/components/text';
 
 const style = StyleSheet.create({
@@ -11,10 +12,9 @@ const style = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     overflow: 'hidden',
-    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
   },
   buttonContainer: {
-    padding: 5, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.tiny,
   },
   buttonText: {
     color: theme.palette.grey.white,

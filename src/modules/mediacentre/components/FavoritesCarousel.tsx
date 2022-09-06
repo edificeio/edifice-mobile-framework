@@ -18,27 +18,27 @@ import { ResourceImage } from './ResourceImage';
 
 const styles = StyleSheet.create({
   mainContainer: {
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.medium,
   },
   titleText: {
-    marginLeft: 10, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.small,
   },
   cardListContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    margin: 10, // MO-142 use UI_SIZES.spacing here
+    margin: UI_SIZES.spacing.small,
   },
   cardSlideContainer: {
-    width: 145,
-    height: 150,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    width: 149,
+    height: 154,
+    padding: UI_SIZES.spacing.small,
   },
   cardContainer: {
     width: 125,
   },
   contentContainer: {
     marginLeft: UI_SIZES.spacing.small,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     backgroundColor: theme.ui.background.card,
     borderTopRightRadius: UI_SIZES.radius.card,
     borderBottomRightRadius: UI_SIZES.radius.card,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 60,
     alignSelf: 'center',
-    marginVertical: 5, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.tiny,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -86,7 +86,7 @@ const getCardColors = (length: number): string[] => {
   const cardColors: string[] = [];
 
   for (let index = 0; index < length; index += 1) {
-    cardColors.push(colors[Math.floor(Math.random() * colors.length)]);
+    cardColors.push(colors[Math.floor(Math.random() * colors.length)] as string);
   }
   return cardColors;
 };
