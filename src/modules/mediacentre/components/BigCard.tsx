@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     marginTop: -20, // MO-142 use UI_SIZES.spacing here
   },
   cardImage: {
+    overflow: 'hidden',
     height: 80,
     width: 80,
     alignSelf: 'center',
