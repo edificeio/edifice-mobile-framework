@@ -37,39 +37,47 @@ interface IWorkspaceFileListItemProps {
   onPress: (file: IFile) => void;
 }
 
-export const WorkspaceFileListItem = ({ item, disabled, isSelected, onLongPress, onPress }: IWorkspaceFileListItemProps) => {
-  const { id, isFolder, name, date, ownerName = '', contentType } = item;
-  const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
-  const onPressCallback = () => onPress(item);
-  const onLongPressCallback = () => {
+export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileListItemProps> {
+  onPressCallback = () => {
+    const { item, onPress } = this.props;
+    onPress(item);
+  };
+
+  onLongPressCallback = () => {
+    const { item, onLongPress } = this.props;
     if (item.parentId !== 'root') {
       onLongPress(item);
     }
   };
 
-  return (
-    <ListItem
-      onPress={onPressCallback}
-      onLongPress={onLongPressCallback}
-      disabled={disabled}
-      style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card }}
-      borderBottomWidth={0}>
-      <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
-      <CenterPanel style={style.centerPanel}>
-        <Small numberOfLines={1}>{name}</Small>
-        <View style={style.dateContainer}>
-          {date ? (
-            <View style={style.dateText}>
-              <DateView min date={date} />
-            </View>
-          ) : null}
-          {ownerName.length > 0 ? (
-            <Small numberOfLines={1} style={style.authorText}>
-              {longOwnerName}
-            </Small>
-          ) : null}
-        </View>
-      </CenterPanel>
-    </ListItem>
-  );
-};
+  public render() {
+    const { item, disabled, isSelected } = this.props;
+    const { id, isFolder, name, date, ownerName = '', contentType } = item;
+    const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
+    return (
+      <ListItem
+        onPress={this.onPressCallback}
+        onLongPress={this.onLongPressCallback}
+        disabled={disabled}
+        style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card }}
+        borderBottomWidth={0}>
+        <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
+        <CenterPanel style={style.centerPanel}>
+          <Small numberOfLines={1}>{name}</Small>
+          <View style={style.dateContainer}>
+            {date ? (
+              <View style={style.dateText}>
+                <DateView min date={date} />
+              </View>
+            ) : null}
+            {ownerName.length > 0 ? (
+              <Small numberOfLines={1} style={style.authorText}>
+                {longOwnerName}
+              </Small>
+            ) : null}
+          </View>
+        </CenterPanel>
+      </ListItem>
+    );
+  }
+}

@@ -20,6 +20,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginRight: UI_SIZES.spacing.small,
   },
+  fieldValueText: {
+    marginLeft: UI_SIZES.spacing.tiny,
+  },
   parametersContainer: {
     marginHorizontal: UI_SIZES.spacing.medium,
     marginBottom: UI_SIZES.spacing.small,
@@ -126,7 +129,7 @@ const AdvancedSearchField: React.FunctionComponent<IAdvancedSearchFieldProps> = 
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
       <SmallBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallBold>
-      <Small> {props.field.value}</Small>
+      <Small style={styles.fieldValueText}>{props.field.value}</Small>
     </View>
   ) : null;
 

@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface IResourcesGridProps {
+interface IResourceGridProps {
   resources: IResource[];
   size: number;
   title: string;
@@ -38,7 +38,7 @@ interface IResourcesGridProps {
   removeFavorite: (id: string, source: Source) => any;
 }
 
-export class ResourceGrid extends React.PureComponent<IResourcesGridProps> {
+export class ResourceGrid extends React.PureComponent<IResourceGridProps> {
   onShowAll = () => {
     this.props.onShowAll(this.props.resources);
   };
