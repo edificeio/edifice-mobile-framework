@@ -35,7 +35,7 @@ const style = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   grid: {
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.small,
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
@@ -46,7 +46,7 @@ const style = StyleSheet.create({
     alignItems: 'flex-end',
   },
   gridSwith: {
-    marginTop: 30, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.big,
     marginHorizontal: UI_SIZES.spacing.small,
   },
   gridSesionTitle: {

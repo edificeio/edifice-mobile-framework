@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import { getSessionInfo } from '~/App';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -133,12 +134,13 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
     }
 
     // on error
-    if (prevProps.events.error !== events.error)
+    if (prevProps.events.error !== events.error) {
       Toast.show(I18n.t('viesco-history-load-error'), {
         position: Toast.position.CENTER,
-        containerStyle: { padding: 30, backgroundColor: theme.palette.status.failure }, // MO-142 use UI_SIZES.spacing here
+        containerStyle: { padding: UI_SIZES.spacing.big, backgroundColor: theme.palette.status.failure },
         textStyle: {},
       });
+    }
 
     if (this.state.period !== undefined) {
       const { start_date, end_date } = this.state.period;

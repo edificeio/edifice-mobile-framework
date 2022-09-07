@@ -25,7 +25,7 @@ const styleConstant = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 5,
     backgroundColor: theme.palette.grey.white,
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
   },
   competencesList: {
     flexDirection: 'row',
@@ -35,13 +35,13 @@ const styleConstant = StyleSheet.create({
   coloredSquare: {
     backgroundColor: theme.palette.complementary.blue.regular,
     borderRadius: 5,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     minWidth: '29%',
   },
   coloredSquareNoteTextContainer: {
     alignSelf: 'center',
     color: theme.palette.grey.white,
-    marginVertical: UI_SIZES.spacing.minor, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.minor,
   },
   coloredSquareNoteText: {
     ...TextSizeStyle.Big,
@@ -80,14 +80,14 @@ const styleConstant = StyleSheet.create({
     width: '100%',
   },
   competenceRoundModalContentStyle: {
-    marginLeft: -20, // MO-142 use UI_SIZES.spacing here
-    marginRight: 20, // MO-142 use UI_SIZES.spacing here
+    marginLeft: -UI_SIZES.spacing.medium,
+    marginRight: UI_SIZES.spacing.medium,
   },
   competenceRoundModalText: {
     width: '85%',
   },
   round: {
-    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.tiny,
     height: 25,
     width: 25,
     borderRadius: UI_SIZES.spacing.medium,
@@ -96,7 +96,7 @@ const styleConstant = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    paddingBottom: 10, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: UI_SIZES.spacing.small,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   shadow: {
@@ -114,8 +114,8 @@ const styleConstant = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.minor,
   },
   gradesDevoirsMoyennesView: {
     flexGrow: 1,
@@ -139,13 +139,13 @@ const styleConstant = StyleSheet.create({
   },
   denseDevoirListMatiereText: {
     maxWidth: '65%',
-    paddingRight: 10, // MO-142 use UI_SIZES.spacing here
+    paddingRight: UI_SIZES.spacing.minor,
   },
   denseDevoirListNoteText: {
     ...TextSizeStyle.Medium,
     flexGrow: 1,
     textAlign: 'right',
-    paddingTop: 6, // MO-142 use UI_SIZES.spacing here
+    alignSelf: 'center',
   },
   denseDevoirListDiviseurText: {
     paddingTop: UI_SIZES.spacing.minor,

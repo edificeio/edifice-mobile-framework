@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 2,
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
   },
   coursesPartHeight: {
     height: 'auto',

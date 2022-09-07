@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dateText: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
   },
   renderContainer: {
     flex: 1,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 4,
-    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.minor,
     marginTop: UI_SIZES.spacing.tiny,
     marginBottom: UI_SIZES.spacing.tiny,
   },

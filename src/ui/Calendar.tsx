@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   daysHeader: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.minor,
   },
   topDay: {
     flexDirection: 'column',

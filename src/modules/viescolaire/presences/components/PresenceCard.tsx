@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { NestedText, NestedTextBold, Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { IPunishment } from '~/modules/viescolaire/presences/state/events';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: { flex: 1 },
   itemView: { flex: 1, justifyContent: 'center' },
-  childText: { marginVertical: 2 }, // MO-142 use UI_SIZES.spacing here
+  childText: { marginVertical: UI_SIZES.spacing.tiny },
   childNestedText: {
     ...TextSizeStyle.Small,
   },

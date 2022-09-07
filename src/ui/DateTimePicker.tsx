@@ -31,14 +31,13 @@ const styles = StyleSheet.create({
   pickerContainer: {
     width: '100%',
     flexDirection: 'row',
-    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.large,
     alignItems: 'center',
   },
   textPicker: {
     justifyContent: 'flex-end',
     width: '60%',
-    paddingLeft: 20, // MO-142 use UI_SIZES.spacing here
   },
   iosPickerContainer: {
     justifyContent: 'flex-start',

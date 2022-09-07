@@ -28,29 +28,28 @@ const style = StyleSheet.create({
     flex: 1,
   },
   recapHeader: {
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
     paddingVertical: UI_SIZES.spacing.small,
     alignSelf: 'flex-end',
     width: '90%',
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.medium,
   },
   recapHeaderView: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   recapHeaderText: {
-    marginHorizontal: 5, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.tiny,
   },
   underlinedText: {
     alignSelf: 'center',
     borderBottomWidth: 2,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
   },
   inputContainer: {
-    marginHorizontal: 30, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.large,
   },
   timeView: {
-    margin: 40, // MO-142 use UI_SIZES.spacing here
+    margin: UI_SIZES.spacing.large,
     alignItems: 'center',
     borderWidth: 2,
     borderStyle: 'solid',
@@ -60,7 +59,7 @@ const style = StyleSheet.create({
   timeViewText: {
     fontSize: getScaleDimension(55, 'font'),
     lineHeight: getScaleDimension(61, 'font'),
-    paddingVertical: 50, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.major,
     textDecorationLine: 'underline',
   },
   labelText: {
@@ -76,7 +75,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     flexWrap: 'nowrap',
-    marginVertical: 20, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.big,
   },
 });
 

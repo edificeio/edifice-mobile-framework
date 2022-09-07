@@ -4,46 +4,47 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 
 const styles = StyleSheet.create({
   studentInfos: {
-    padding: 10, // MO-142 use UI_SIZES.spacing here
-    paddingBottom: 20, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
+    paddingBottom: UI_SIZES.spacing.medium,
   },
   studentName: {
     ...TextSizeStyle.Medium,
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
   },
   studentGroups: {
-    marginTop: -5, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: -UI_SIZES.spacing.tiny,
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   infoLine: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
   },
   iconDisplay: {
-    marginRight: 10, // MO-142 use UI_SIZES.spacing here
-    marginTop: -3, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.small,
+    marginTop: -UI_SIZES.spacing.tiny,
   },
   relativesInfos: {
     flex: 1,
     borderStyle: 'solid',
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
   },
   relativesTitleText: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
   },
   relativesContainer: {
-    marginBottom: 20, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.big,
   },
   relativesIdentity: {
-    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   shadow: {
     backgroundColor: theme.palette.grey.white,
@@ -68,12 +69,14 @@ export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
           return (
             <View style={styles.relativesContainer}>
               {relative.name ? (
-                <SmallBold style={styles.relativesIdentity}>{relative.title + ' ' + relative.name}</SmallBold>
+                <SmallBold style={styles.relativesIdentity}>
+                  {relative.title ? relative.title + ' ' + relative.name : relative.name}
+                </SmallBold>
               ) : null}
 
               <View style={styles.infoLine}>
                 <Icon style={styles.iconDisplay} size={20} name="email" />
-                {relative.name && relative.email !== '' ? <Small>{relative.email}</Small> : <Small>-</Small>}
+                {relative.email && relative.email !== '' ? <Small>{relative.email}</Small> : <Small>-</Small>}
               </View>
 
               <View style={styles.infoLine}>
@@ -115,8 +118,8 @@ export const StudentInfos = (props: { memento: IMemento }) => {
 
       <View style={styles.infoLine}>
         <Icon style={styles.iconDisplay} size={20} name="school" />
-        {props.memento.classes ? (
-          props.memento.classes.length > 0 && <Small>{props.memento.classes.join(', ')}</Small>
+        {props.memento.classes && props.memento.classes.length > 0 ? (
+          <Small>{props.memento.classes.join(', ')}</Small>
         ) : (
           <Small>-</Small>
         )}

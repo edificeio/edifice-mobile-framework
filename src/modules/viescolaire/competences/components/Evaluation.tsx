@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.small,
     marginHorizontal: UI_SIZES.spacing.tiny,
   },
   dropdownStyle: {
@@ -40,14 +40,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headerGradeText: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
     maxWidth: '50%',
   },
   headerSelectedPeriodText: {
     color: theme.palette.grey.stone,
   },
   headerColorSwitchContainer: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     maxWidth: '50%',
   },
   selectedPeriodText: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
   },
 });
 

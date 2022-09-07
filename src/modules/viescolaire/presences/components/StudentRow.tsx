@@ -4,6 +4,7 @@ import Swipeable from 'react-native-swipeable';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small } from '~/framework/components/text';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -15,8 +16,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     elevation: 2,
-    paddingRight: 10, // MO-142 use UI_SIZES.spacing here
-    paddingVertical: 5, // MO-142 use UI_SIZES.spacing here
+    paddingRight: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
     backgroundColor: theme.palette.grey.white,
     flexWrap: 'wrap',
   },
@@ -25,14 +26,14 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 100,
     width: 45,
-    marginLeft: 10, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.small,
   },
   alignRightContainer: { flexGrow: 1, flexDirection: 'row-reverse' },
   dash: { height: 10, width: 30, borderRadius: 10 },
   swipeButtons: { flexDirection: 'row-reverse', flexGrow: 1 },
   swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
-  studentName: { marginLeft: 10, marginVertical: 15 }, // MO-142 use UI_SIZES.spacing here
-  iconsView: { flexDirection: 'row', marginLeft: 5 }, // MO-142 use UI_SIZES.spacing here
+  studentName: { marginLeft: UI_SIZES.spacing.small, marginVertical: UI_SIZES.spacing.medium },
+  iconsView: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny },
   grey: {
     backgroundColor: theme.palette.grey.grey,
   },

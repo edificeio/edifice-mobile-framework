@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     justifyContent: 'center',
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
   },
   switchPart: {
     flex: 1,
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: theme.palette.grey.cloudy,
-    padding: 15, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
     justifyContent: 'center',
   },
   leftSwitch: {
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   rightSwitchSingle: { flexDirection: 'row' },
-  rightSwitchSingleText: { marginHorizontal: 10 }, // MO-142 use UI_SIZES.spacing here
+  rightSwitchSingleText: { marginHorizontal: UI_SIZES.spacing.minor },
   selected: {
     backgroundColor: theme.palette.grey.white,
     elevation: 20,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   row: {
-    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.small,
     justifyContent: 'space-evenly',
     flexDirection: 'row',
   },
@@ -61,13 +61,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     backgroundColor: theme.palette.grey.white,
     alignItems: 'center',
-    margin: 10, // MO-142 use UI_SIZES.spacing here
+    margin: UI_SIZES.spacing.minor,
   },
   timePickerRender: {
     borderStyle: 'solid',
     borderBottomWidth: 2,
     borderColor: viescoTheme.palette.presences,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
   },
   timePickerTitleText: {
     color: viescoTheme.palette.presences,
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   timePickerDate: {
     fontSize: getScaleDimension(24, 'font'),
     lineHeight: getScaleDimension(30, 'font'),
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
   },
   inputContainer: {
     backgroundColor: theme.palette.grey.white,
@@ -94,10 +94,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: UI_SIZES.spacing.medium,
   },
-  iconAttMarginRight: { marginRight: 10 }, // MO-142 use UI_SIZES.spacing here
+  iconAttMarginRight: { marginRight: UI_SIZES.spacing.small },
   dialogButtonOk: {
     alignSelf: 'center',
-    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.minor,
   },
 });
 

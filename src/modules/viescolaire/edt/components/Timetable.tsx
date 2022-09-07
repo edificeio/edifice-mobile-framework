@@ -28,7 +28,7 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.minor,
   },
   weekText: {
     marginRight: UI_SIZES.spacing.tiny,

@@ -6,6 +6,7 @@ import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBold } from '~/framework/components/text';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { Icon } from '~/ui/icons/Icon';
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dropdownButton: {
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -28,8 +29,8 @@ const styles = StyleSheet.create({
   },
   dropdownPicker: {
     width: '100%',
-    marginBottom: 35, // MO-142 use UI_SIZES.spacing here
-    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
 });
 

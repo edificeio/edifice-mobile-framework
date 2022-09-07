@@ -33,7 +33,7 @@ const style = StyleSheet.create({
     ...TextSizeStyle.Medium,
   },
   homeworksView: {
-    marginBottom: 40, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.large,
   },
   homeworkType: {
     ...TextSizeStyle.Medium,

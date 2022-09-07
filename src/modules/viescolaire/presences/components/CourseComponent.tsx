@@ -3,6 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
@@ -22,9 +23,9 @@ const styles = StyleSheet.create({
     top: '20%',
     left: '30%',
   },
-  itemContent: { flex: 1, padding: 15, justifyContent: 'space-evenly' }, // MO-142 use UI_SIZES.spacing here
+  itemContent: { flex: 1, padding: UI_SIZES.spacing.medium, justifyContent: 'space-evenly' },
   itemRowStyle: { flexDirection: 'row' },
-  iconMarginRight: { marginRight: 10 }, // MO-142 use UI_SIZES.spacing here
+  iconMarginRight: { marginRight: UI_SIZES.spacing.small },
   itemClassGroupText: {
     ...TextSizeStyle.Big,
   },

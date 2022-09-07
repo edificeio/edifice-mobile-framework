@@ -15,18 +15,18 @@ import { ModalBox } from '~/ui/Modal';
 const styles = StyleSheet.create({
   modalTitle: {
     ...TextSizeStyle.Medium,
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
   },
   modalSubsection: {
-    paddingLeft: 15, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    paddingLeft: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
   },
   eventTitle: {
     textTransform: 'uppercase',
     color: theme.palette.grey.grey,
   },
   eventTextContainer: {
-    marginVertical: 2, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.tiny,
   },
   eventNestedText: {
     ...TextSizeStyle.Small,
