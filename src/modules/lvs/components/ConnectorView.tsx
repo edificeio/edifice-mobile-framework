@@ -3,9 +3,9 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Small } from '~/framework/components/text';
-import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 
 interface IConnectorViewDataProps {
@@ -46,7 +46,7 @@ class ConnectorView extends React.PureComponent<IConnectorViewProps> {
     return (
       <View style={styles.errorContainer}>
         <Small style={styles.errorText}>{I18n.t('connector-connectFailed')}</Small>
-        <FlatButton onPress={this.props.openConnector} title={I18n.t('tryagain')} loading={this.props.isLoading} />
+        <ActionButton action={this.props.openConnector} text={I18n.t('tryagain')} loading={this.props.isLoading} />
       </View>
     );
   }

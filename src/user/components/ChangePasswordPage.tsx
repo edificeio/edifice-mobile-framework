@@ -6,12 +6,12 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Small, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
-import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
@@ -260,10 +260,10 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
             </View>
             <View style={{ flexShrink: 0 }}>
               <ButtonWrapper error={hasErrorKey} typing={typing}>
-                <FlatButton
-                  onPress={() => this.handleSubmit()}
+                <ActionButton
+                  action={() => this.handleSubmit()}
                   disabled={isNotValid}
-                  title={I18n.t('Save')}
+                  text={I18n.t('Save')}
                   loading={isSubmitLoading}
                 />
               </ButtonWrapper>

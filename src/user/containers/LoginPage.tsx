@@ -7,15 +7,14 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
-import { FlatButton } from '~/ui/FlatButton';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~/user/actions/version';
@@ -221,22 +220,15 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
               }}>
               {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
-                <FlatButton
-                  onPress={() => this.handleGoToWeb()}
-                  disabled={false}
-                  title={I18n.t('LoginWeb')}
-                  loading={false}
-                  rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
-                />
+                <ActionButton text={I18n.t('LoginWeb')} url="/" />
               ) : (
-                <FlatButton
-                  onPress={() => this.handleLogin()}
+                <ActionButton
+                  text={I18n.t('Connect')}
                   disabled={this.isSubmitDisabled || !this.props.connected}
-                  title={I18n.t('Connect')}
+                  action={() => this.handleLogin()}
                   loading={loggingIn || loggedIn}
                 />
               )}
-
               <View
                 style={{
                   alignItems: 'center',
@@ -287,10 +279,6 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
       this.state.rememberMe,
     );
     this.setState({ typing: false });
-  }
-
-  protected handleGoToWeb() {
-    openUrl(DEPRECATED_getCurrentPlatform()!.url);
   }
 
   // Other public methods

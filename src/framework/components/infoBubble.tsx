@@ -3,9 +3,9 @@ import * as React from 'react';
 import { Image, ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
-import { FlatButton } from '~/ui/FlatButton';
 import { IconButton } from '~/ui/IconButton';
 
+import { ActionButton } from './ActionButton';
 import { Card, InfoCard } from './card';
 import { UI_SIZES } from './constants';
 import { Caption, Small, SmallBold } from './text';
@@ -87,7 +87,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
               />
             ) : null}
             <Small style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</Small>
-            <FlatButton title={I18n.t('common.infoBubble-understood')} onPress={() => this.doAcknowledge(true)} />
+            <ActionButton text={I18n.t('common.infoBubble-understood')} action={() => this.doAcknowledge(true)} />
           </View>
         ) : null}
         <TouchableOpacity

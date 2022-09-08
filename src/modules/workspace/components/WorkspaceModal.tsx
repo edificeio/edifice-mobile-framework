@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Small, TextSizeStyle } from '~/framework/components/text';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
-import { FlatButton } from '~/ui/FlatButton';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
 import { WorkspaceFolderSelector } from './WorkspaceFolderSelector';
@@ -154,7 +154,7 @@ export const WorkspaceModal = ({
               style={styles.textInput}
             />
           ) : null}
-          <FlatButton onPress={action} title={settings.buttonText} disabled={isDisabled} />
+          <ActionButton text={settings.buttonText} action={action} disabled={isDisabled} />
         </View>
       }
     />

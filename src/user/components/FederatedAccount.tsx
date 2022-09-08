@@ -4,11 +4,11 @@ import * as React from 'react';
 import { SafeAreaView, ScrollView, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small, SmallBold, SmallItalic } from '~/framework/components/text';
-import { FlatButton } from '~/ui/FlatButton';
+import { Small, SmallBold } from '~/framework/components/text';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -53,10 +53,10 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                       justifyContent: 'center',
                       marginTop: UI_SIZES.spacing.large,
                     }}>
-                    <FlatButton
-                      onPress={() => onLink()}
-                      title={I18n.t('federatedAccount-openLink')}
-                      rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+                    <ActionButton
+                      text={I18n.t('federatedAccount-openLink')}
+                      action={() => onLink()}
+                      iconName="pictos-external-link"
                     />
                   </View>
                 </FormContainer>

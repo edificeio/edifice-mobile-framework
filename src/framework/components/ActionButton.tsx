@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components//picture';
@@ -17,6 +17,7 @@ export interface ActionButtonProps {
   showConfirmation?: boolean;
   requireSession?: boolean;
   disabled?: boolean;
+  loading?: boolean;
   type?: 'primary' | 'secondary';
   style?: StyleProp<ViewStyle>;
   onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
@@ -31,6 +32,7 @@ export const ActionButton = ({
   requireSession = true,
   action,
   disabled,
+  loading,
   type,
   style,
   onLayout,
@@ -43,8 +45,9 @@ export const ActionButton = ({
     },
     secondary: {
       borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-      borderWidth: 2,
       opacity: disabled ? 0.5 : 1,
+      borderWidth: 2,
+      paddingVertical: UI_SIZES.spacing.tiny, // Note: we compendate for "borderWith: 2" so the text doesn't get cropped
     },
   };
   const textStyle = {
@@ -59,7 +62,10 @@ export const ActionButton = ({
     primary: theme.ui.text.inverse,
     secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
-  return (
+
+  return loading ? (
+    <ActivityIndicator size="large" color={theme.palette.primary.regular} />
+  ) : (
     <Component
       onLayout={e => onLayout && onLayout(e)}
       style={[ActionButton.Style.viewCommon, viewStyle[type ?? 'primary'], style]}

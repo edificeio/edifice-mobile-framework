@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
@@ -18,14 +19,11 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Caption, CaptionBold, Small } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
 import { getNewsDetailsAction } from '~/modules/news/actions';
 import type { INews, INewsComment } from '~/modules/news/reducer';
 import { newsUriCaptureFunction } from '~/modules/news/service';
-import { FlatButton } from '~/ui/FlatButton';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
@@ -138,20 +136,12 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           />
           {resourceUri ? (
             <View style={{ marginTop: UI_SIZES.spacing.small }}>
-              <FlatButton
-                title={I18n.t('common.openInBrowser')}
-                customButtonStyle={{ backgroundColor: theme.palette.grey.fog }}
-                customTextStyle={{ color: theme.palette.primary.regular }}
-                onPress={() => {
-                  //TODO: create generic function inside oauth (use in myapps, etc.)
-                  if (!DEPRECATED_getCurrentPlatform()) {
-                    return null;
-                  }
-                  const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                  openUrl(url);
-                  Trackers.trackEvent('News', 'GO TO', 'View in Browser');
-                }}
-                rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+              <ActionButton
+                text={I18n.t('common.openInBrowser')}
+                url={resourceUri}
+                action={() => Trackers.trackEvent('News', 'GO TO', 'View in Browser')}
+                type="secondary"
+                style={{ borderWidth: 0, backgroundColor: theme.palette.grey.fog }}
               />
             </View>
           ) : null}

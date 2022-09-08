@@ -4,18 +4,15 @@ import { Platform, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
-import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IAppModule } from '~/infra/moduleTool/types';
-import { FlatButton } from '~/ui/FlatButton';
 
 export interface MyAppGrid_Props extends NavigationInjectedProps {
   modules: NavigableModuleArray;
@@ -72,26 +69,7 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
   private renderFooter() {
     return (
       <View style={{ height: Platform.OS === 'android' ? 40 : undefined }}>
-        <FlatButton
-          title={I18n.t('myapp-accessWeb')}
-          loading={false}
-          customButtonStyle={{
-            backgroundColor: undefined,
-            borderColor: theme.palette.primary.regular,
-            borderWidth: 1.5,
-            paddingHorizontal: UI_SIZES.spacing.medium,
-            paddingVertical: UI_SIZES.spacing.minor,
-          }}
-          customTextStyle={{ color: theme.palette.primary.regular }}
-          onPress={() => {
-            if (!DEPRECATED_getCurrentPlatform()) {
-              return null;
-            }
-            const url = `${DEPRECATED_getCurrentPlatform()!.url}/welcome`;
-            openUrl(url);
-          }}
-          rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
-        />
+        <ActionButton text={I18n.t('myapp-accessWeb')} url="/welcome" type="secondary" />
         <InfoBubble
           infoText={I18n.t('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}
           infoTitle={I18n.t('myapp-infoBubbleTitle')}

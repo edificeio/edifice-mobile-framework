@@ -9,6 +9,7 @@ import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
@@ -19,7 +20,6 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { IOAuthToken, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, OAuthErrorType } from '~/infra/oauth';
-import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
@@ -160,7 +160,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
               currentplatform: DEPRECATED_getCurrentPlatform()!.url,
             })}
           </Small>
-          <FlatButton title={I18n.t('login-wayf-error-retry')} onPress={() => this.displayWebview()} />
+          <ActionButton text={I18n.t('login-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
       );
     },
@@ -204,10 +204,10 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
               value={this.dropdownValue}
             />
             <View>
-              <FlatButton
-                title={I18n.t('login-wayf-select-button')}
+              <ActionButton
+                text={I18n.t('login-wayf-select-button')}
                 disabled={this.dropdownValue === null}
-                onPress={() => this.loginWithCustomToken()}
+                action={() => this.loginWithCustomToken()}
               />
               {/*<Small style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Small>*/}
             </View>
