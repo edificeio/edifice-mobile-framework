@@ -7,7 +7,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 
@@ -128,8 +128,8 @@ const getSources = (resources: IResource[]) => {
 const AdvancedSearchField: React.FunctionComponent<IAdvancedSearchFieldProps> = (props: IAdvancedSearchFieldProps) =>
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
-      <SmallBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallBold>
-      <Small style={styles.fieldValueText}>{props.field.value}</Small>
+      <SmallBoldText>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallBoldText>
+      <SmallText style={styles.fieldValueText}>{props.field.value}</SmallText>
     </View>
   ) : null;
 

@@ -8,7 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 
 import { Picture, PictureProps } from './picture';
-import { Small } from './text';
+import { SmallText } from './text';
 
 const style = StyleSheet.create({
   actions: {
@@ -74,7 +74,7 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
                         paddingVertical: UI_SIZES.spacing.small,
                         paddingHorizontal: UI_SIZES.spacing.medium,
                       }}>
-                      <Small style={{ ...itemColorStyle }}>{item.text}</Small>
+                      <SmallText style={{ ...itemColorStyle }}>{item.text}</SmallText>
                       {typeof item.icon === 'string' ? (
                         <Icon name={item.icon} size={22} style={{ marginLeft: UI_SIZES.spacing.small, ...itemColorStyle }} />
                       ) : (

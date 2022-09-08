@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import Label from '~/framework/components/label';
 import { Picture } from '~/framework/components/picture';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { UserType } from '~/framework/util/session';
 import { isStringEmpty } from '~/framework/util/string';
@@ -118,10 +118,12 @@ export const SummaryCard = ({
               />
             }
             text={
-              <Small style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+              <SmallText style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
                 {`${I18n.t(`common.${isTeacher ? 'to' : 'from'}`)} `}
-                <SmallBold style={{ ...TextSizeStyle.Small }}>{isTeacher ? recipientsString(recipients) : ownerName}</SmallBold>
-              </Small>
+                <SmallBoldText style={{ ...TextSizeStyle.Small }}>
+                  {isTeacher ? recipientsString(recipients) : ownerName}
+                </SmallBoldText>
+              </SmallText>
             }
             date={sendingDate}
           />
@@ -139,7 +141,7 @@ export const SummaryCard = ({
         {title ? <ContentCardTitle style={{ marginTop: UI_SIZES.spacing.minor }}>{title}</ContentCardTitle> : null}
         {hasSchoolbookWordText ? (
           <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
-            <Small
+            <SmallText
               numberOfLines={contentTextMaxLines}
               onTextLayout={({ nativeEvent: { lines } }) => {
                 const isTextTruncatedWithBackspace =
@@ -147,8 +149,8 @@ export const SummaryCard = ({
                 setIsTextTruncatedWithBackspace(isTextTruncatedWithBackspace);
               }}>
               {schoolbookWordText}
-            </Small>
-            {isTextTruncatedWithBackspace ? <Small>...</Small> : null}
+            </SmallText>
+            {isTextTruncatedWithBackspace ? <SmallText>...</SmallText> : null}
           </View>
         ) : null}
         {hasSchoolbookWordMedia ? (
@@ -169,9 +171,9 @@ export const SummaryCard = ({
               fill={theme.palette.primary.regular}
               style={{ marginRight: UI_SIZES.spacing.minor }}
             />
-            <SmallBold style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
+            <SmallBoldText style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
               {responsesString(responsesNumber)}
-            </SmallBold>
+            </SmallBoldText>
           </View>
         ) : null}
       </TouchableResourceCard>

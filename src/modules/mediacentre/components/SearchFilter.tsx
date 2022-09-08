@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { IResource } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
@@ -108,7 +108,7 @@ const FilterItem: React.FunctionComponent<IFilterItemProps> = (props: IFilterIte
   return (
     <TouchableOpacity onPress={onCheck} style={styles.itemContainer}>
       <Checkbox checked={props.item.active} onPress={onCheck} />
-      <Small style={styles.itemText}>{props.item.value}</Small>
+      <SmallText style={styles.itemText}>{props.item.value}</SmallText>
     </TouchableOpacity>
   );
 };
@@ -122,7 +122,7 @@ const FilterSection: React.FunctionComponent<IFilterSectionProps> = (props: IFil
   return (
     <View>
       <TouchableOpacity style={styles.sectionHeaderContainer} onPress={expandSection}>
-        <Small>{I18n.t(`mediacentre.${props.title}`)}</Small>
+        <SmallText>{I18n.t(`mediacentre.${props.title}`)}</SmallText>
         <Icon name={iconName} size={30} />
       </TouchableOpacity>
       {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} key={item.value} />) : null}
@@ -149,7 +149,7 @@ export const SearchFilter: React.FunctionComponent<ISearchFilterProps> = (props:
     <View style={[styles.mainContainer, props.containerStyle]}>
       <TouchableOpacity style={styles.titleContainer} onPress={expand}>
         <Icon name="filter" size={16} style={styles.iconContainer} />
-        <Small>{I18n.t('mediacentre.filter').toUpperCase()}</Small>
+        <SmallText>{I18n.t('mediacentre.filter').toUpperCase()}</SmallText>
       </TouchableOpacity>
       {expanded ? (
         <FlatList

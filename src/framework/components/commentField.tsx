@@ -11,7 +11,7 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { RoundButton } from './RoundButton';
 import { UI_SIZES } from './constants';
-import { SmallBold, SmallItalic, TextSizeStyle } from './text';
+import { SmallBoldText, SmallItalicText, TextSizeStyle } from './text';
 
 // TYPES ==========================================================================================
 
@@ -221,13 +221,15 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={styles.col}>
           {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
             <View style={styles.row}>
-              <SmallBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
+              <SmallBoldText
+                numberOfLines={1}
+                style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
                 {props.commentAuthor}
-              </SmallBold>
-              <SmallItalic
+              </SmallBoldText>
+              <SmallItalicText
                 style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing._LEGACY_small, color: theme.palette.grey.graphite }}>
                 {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
-              </SmallItalic>
+              </SmallItalicText>
             </View>
           ) : null}
           {
@@ -252,14 +254,14 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <SmallBold style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</SmallBold>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <SmallBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
                 {I18n.t('common.delete')}
-              </SmallBold>
+              </SmallBoldText>
             </TouchableOpacity>
           ) : null}
         </View>

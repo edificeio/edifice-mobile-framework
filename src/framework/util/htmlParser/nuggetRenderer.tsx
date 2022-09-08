@@ -8,14 +8,14 @@ import { Image, ImageURISource, TextStyle, View, ViewStyle } from 'react-native'
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import {
+  NestedActionText,
+  NestedBoldText,
+  NestedItalicText,
   NestedText,
-  NestedTextAction,
-  NestedTextBold,
-  NestedTextItalic,
-  Small,
-  SmallAction,
-  SmallBold,
-  SmallItalic,
+  SmallActionText,
+  SmallBoldText,
+  SmallItalicText,
+  SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { DEPRECATED_signImageURISource, DEPRECATED_signImagesUrls, signURISource, transformedSrc } from '~/infra/oauth';
@@ -199,28 +199,28 @@ function renderParseText(
   // 2 - Compute nugget JSX tag
   switch ((nugget as ITextNugget).variant) {
     case HtmlParserJsxTextVariant.None:
-      const TextComp = nested ? NestedText : Small;
+      const TextComp = nested ? NestedText : SmallText;
       return (
         <TextComp key={key} selectable={selectable} style={{ ...style, ...textStyles.all }}>
           {children}
         </TextComp>
       );
     case HtmlParserJsxTextVariant.Bold:
-      const BoldTextComp = nested ? NestedTextBold : SmallBold;
+      const BoldTextComp = nested ? NestedBoldText : SmallBoldText;
       return (
         <BoldTextComp key={key} selectable={selectable} style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Bold] }}>
           {children}
         </BoldTextComp>
       );
     case HtmlParserJsxTextVariant.Italic:
-      const ItalicTextComp = nested ? NestedTextItalic : SmallItalic;
+      const ItalicTextComp = nested ? NestedItalicText : SmallItalicText;
       return (
         <ItalicTextComp key={key} selectable={selectable} style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Italic] }}>
           {children}
         </ItalicTextComp>
       );
     case HtmlParserJsxTextVariant.Underline:
-      const UnderlineTextComp = nested ? NestedText : Small;
+      const UnderlineTextComp = nested ? NestedText : SmallText;
       return (
         <UnderlineTextComp
           key={key}
@@ -236,11 +236,11 @@ function renderParseText(
     case HtmlParserJsxTextVariant.Link:
       const LinkTextComp = (nugget as ILinkTextNugget).url
         ? nested
-          ? NestedTextAction
-          : SmallAction
+          ? NestedActionText
+          : SmallActionText
         : nested
         ? NestedText
-        : Small;
+        : SmallText;
       return (
         <LinkTextComp
           key={key}
@@ -260,7 +260,7 @@ function renderParseText(
         </LinkTextComp>
       );
     case HtmlParserJsxTextVariant.Color:
-      const ColorTextComp = nested ? NestedText : Small;
+      const ColorTextComp = nested ? NestedText : SmallText;
       return (
         <ColorTextComp
           key={key}
@@ -273,7 +273,7 @@ function renderParseText(
         </ColorTextComp>
       );
     case HtmlParserJsxTextVariant.BgColor:
-      const BgColorTextComp = nested ? NestedText : Small;
+      const BgColorTextComp = nested ? NestedText : SmallText;
       return (
         <BgColorTextComp
           key={key}

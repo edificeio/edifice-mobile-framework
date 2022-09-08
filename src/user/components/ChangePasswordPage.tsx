@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Small, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { Loading } from '~/ui/Loading';
@@ -208,7 +208,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                     padding: UI_SIZES.spacing.tiny,
                     flex: 0,
                   }}>
-                  <Small style={{ ...TextSizeStyle.Medium, textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</Small>
+                  <SmallText style={{ ...TextSizeStyle.Medium, textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</SmallText>
                   <MiniSpacer />
                   <MiniSpacer />
                 </View>
@@ -224,9 +224,9 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                     borderRadius: 10,
                     flex: 0,
                   }}>
-                  <Small style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
+                  <SmallText style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
                     {I18n.t('common.idf.passwordRules')}
-                  </Small>
+                  </SmallText>
                 </View>
               ) : null}
             </View>
@@ -243,7 +243,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
               <MiniSpacer />
             </View>
             <View style={{ flexShrink: 0 }}>
-              <Small
+              <SmallText
                 style={{
                   flexGrow: 0,
                   padding: UI_SIZES.spacing.tiny,
@@ -256,7 +256,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}
-              </Small>
+              </SmallText>
             </View>
             <View style={{ flexShrink: 0 }}>
               <ButtonWrapper error={hasErrorKey} typing={typing}>

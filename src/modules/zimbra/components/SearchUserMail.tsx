@@ -5,7 +5,7 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { newMailService } from '~/modules/zimbra/service/newMail';
 import { getProfileColor } from '~/modules/zimbra/utils/userColor';
 import { IOSShadowStyle } from '~/styles/common/styles';
@@ -73,8 +73,8 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
 
     return (
       <TouchableOpacity style={styles.foundListButton} onPress={onPress}>
-        <Small style={{ color }}>{'\u25CF '}</Small>
-        <Small numberOfLines={1}>{displayName}</Small>
+        <SmallText style={{ color }}>{'\u25CF '}</SmallText>
+        <SmallText numberOfLines={1}>{displayName}</SmallText>
       </TouchableOpacity>
     );
   };
@@ -106,7 +106,7 @@ const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
-        <Small style={userLabel}>{displayName}</Small>
+        <SmallText style={userLabel}>{displayName}</SmallText>
       </TouchableOpacity>
     );
   };

@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBold, SmallItalic } from '~/framework/components/text';
+import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -52,7 +52,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             this.setState({ isExtended: true });
           }}
           headerIndicator={
-            <TouchableOpacity onPress={this.props.flashMessageAction}>
+            <TouchableOpacity onPress={flashMessageAction}>
               <Icon
                 name="close"
                 color={theme.ui.text.inverse}
@@ -102,12 +102,12 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 }}
               />
 
-              {signature ? <SmallItalic style={{ color: signatureColor }}>{signature}</SmallItalic> : null}
+              {signature ? <SmallItalicText style={{ color: signatureColor }}>{signature}</SmallItalicText> : null}
             </View>
           }>
           {longText && !isExtended ? (
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-              <SmallBold style={{ color: theme.ui.text.inverse }}>{I18n.t('seeMore')}</SmallBold>
+              <SmallBoldText style={{ color: theme.ui.text.inverse }}>{I18n.t('seeMore')}</SmallBoldText>
               <Icon
                 name="arrow_down"
                 color={theme.ui.text.inverse}

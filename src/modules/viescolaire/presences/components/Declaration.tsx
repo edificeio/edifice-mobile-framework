@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, Touc
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -155,15 +155,15 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
         onPress={() => this.setState({ switchState: SwitchState.SEVERAL })}>
         {this.state.switchState === SwitchState.SINGLE ? (
           <View style={styles.rightSwitchSingle}>
-            <Small>{I18n.t('viesco-several-days')}</Small>
-            <SmallBold style={styles.rightSwitchSingleText}>+</SmallBold>
+            <SmallText>{I18n.t('viesco-several-days')}</SmallText>
+            <SmallBoldText style={styles.rightSwitchSingleText}>+</SmallBoldText>
           </View>
         ) : (
           <View>
-            <Small>{I18n.t('viesco-several-days')}</Small>
-            <SmallBold>
+            <SmallText>{I18n.t('viesco-several-days')}</SmallText>
+            <SmallBoldText>
               {I18n.t('viesco-from')} {startDate.format('DD/MM')} {I18n.t('viesco-to')} {endDate.format('DD/MM')}
-            </SmallBold>
+            </SmallBoldText>
           </View>
         )}
       </TouchableOpacity>
@@ -173,8 +173,8 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
       <TouchableOpacity
         style={[styles.switchPart, styles.leftSwitch, this.state.switchState === SwitchState.SINGLE && styles.selected]}
         onPress={() => this.setState({ switchState: SwitchState.SINGLE })}>
-        <Small>{I18n.t('viesco-single-day')}</Small>
-        <SmallBold>{startDate.format('DD/MM')}</SmallBold>
+        <SmallText>{I18n.t('viesco-single-day')}</SmallText>
+        <SmallBoldText>{startDate.format('DD/MM')}</SmallBoldText>
       </TouchableOpacity>
     );
 
@@ -185,9 +185,9 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
         renderDate={date => (
           <>
             <View style={styles.timePickerRender}>
-              <Small style={styles.timePickerTitleText}>{title}</Small>
+              <SmallText style={styles.timePickerTitleText}>{title}</SmallText>
             </View>
-            <SmallBold style={styles.timePickerDate}>{date.format('HH    :    mm')}</SmallBold>
+            <SmallBoldText style={styles.timePickerDate}>{date.format('HH    :    mm')}</SmallBoldText>
           </>
         )}
         mode="time"
@@ -233,7 +233,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
             <TimePickerComponent title={I18n.t('viesco-to-hour')} time={endDate} onChange={updateEndDate} />
           </View>
           <View style={[styles.row, styles.inputContainer]}>
-            <SmallBold style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</SmallBold>
+            <SmallBoldText style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</SmallBoldText>
             <TextInput
               multiline
               placeholder={I18n.t('viesco-enter-text')}
@@ -244,7 +244,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
             {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
               <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
                 <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-                <Small>{I18n.t('viesco-attachment')}</Small>
+                <SmallText>{I18n.t('viesco-attachment')}</SmallText>
               </FilePicker>
             ) : null}
           </View>

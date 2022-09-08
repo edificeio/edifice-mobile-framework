@@ -22,7 +22,7 @@ import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { CaptionBold, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -322,7 +322,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       ) : (
         <BottomSheet
           content={
-            <SmallBold style={{ color: theme.palette.secondary.regular }}>{I18n.t('blog.post.waitingValidation')}</SmallBold>
+            <SmallBoldText style={{ color: theme.palette.secondary.regular }}>
+              {I18n.t('blog.post.waitingValidation')}
+            </SmallBoldText>
           }
         />
       )
@@ -343,7 +345,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
                 text={
                   blogPostData?.author.username ? (
-                    <SmallBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</SmallBold>
+                    <SmallBoldText numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</SmallBoldText>
                   ) : undefined
                 }
                 date={blogPostData?.modified}
@@ -358,13 +360,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                 style={{ marginVertical: UI_SIZES.spacing.tiny }}
               />
             ) : null}
-            <SmallBold style={{ color: theme.ui.text.light }}>{blogInfos?.title}</SmallBold>
+            <SmallBoldText style={{ color: theme.ui.text.light }}>{blogInfos?.title}</SmallBoldText>
             <ViewportAwareTitle
               style={{ marginBottom: UI_SIZES.spacing.medium }}
               onViewportEnter={() => this.updateVisible(true)}
               onViewportLeave={() => this.updateVisible(false)}
               innerRef={ref => (this._titleRef = ref)}>
-              <SmallBold style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</SmallBold>
+              <SmallBoldText style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</SmallBoldText>
             </ViewportAwareTitle>
             <HtmlContentView
               html={blogPostContent}
@@ -389,7 +391,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               borderBottomColor: theme.ui.border.input,
             }}>
             <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
-            <CaptionBold style={{ color: theme.ui.text.light }}>{commentsString(blogPostComments?.length || 0)}</CaptionBold>
+            <CaptionBoldText style={{ color: theme.ui.text.light }}>
+              {commentsString(blogPostComments?.length || 0)}
+            </CaptionBoldText>
           </View>
         ) : null}
       </View>

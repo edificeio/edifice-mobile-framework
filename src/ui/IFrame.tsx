@@ -4,7 +4,7 @@ import { Platform, SafeAreaView, StatusBar, TouchableOpacity, View, ViewStyle } 
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallItalic } from '~/framework/components/text';
+import { SmallItalicText } from '~/framework/components/text';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { Loading } from '~/ui/Loading';
 
@@ -49,7 +49,7 @@ export class IFrame extends React.Component<
             alignItems: httpError ? 'center' : undefined,
           }}>
           {httpError ? (
-            <SmallItalic>{I18n.t('common-ErrorLoadingResource')}</SmallItalic>
+            <SmallItalicText>{I18n.t('common-ErrorLoadingResource')}</SmallItalicText>
           ) : (
             <SafeWebView
               style={{ alignSelf: 'stretch' }}

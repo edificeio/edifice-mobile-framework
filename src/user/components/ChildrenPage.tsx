@@ -6,7 +6,7 @@ import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 
 import { UserCard } from './UserCard';
 
@@ -56,9 +56,9 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps & Navig
             keyExtractor={item => item.id}
             renderSectionHeader={({ section }) => {
               return (
-                <Small style={{ marginTop: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
+                <SmallText style={{ marginTop: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
                   {section.structureName}
-                </Small>
+                </SmallText>
               );
             }}
             renderItem={({ item: user }) => {

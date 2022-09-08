@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { Caption } from '~/framework/components/text';
+import { CaptionText } from '~/framework/components/text';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
 
 export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
@@ -93,7 +93,7 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
 };
 
 const MainTabNavigationLabel = props => (
-  <Caption
+  <CaptionText
     style={{
       alignSelf: 'center',
       marginBottom: UI_SIZES.spacing.tiny,
@@ -101,7 +101,7 @@ const MainTabNavigationLabel = props => (
       color: props.focused ? theme.palette.primary.regular : theme.ui.text.light,
     }}>
     {props.children}
-  </Caption>
+  </CaptionText>
 );
 
 export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {

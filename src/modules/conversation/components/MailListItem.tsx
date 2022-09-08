@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
@@ -61,7 +61,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
     <TouchableOpacity style={[styles.buttonContainer, style]} onPress={action}>
       <View style={styles.button}>
         <Icon name={actionIcon} size={16} color={theme.ui.text.inverse} />
-        <Small style={{ color: theme.ui.text.inverse, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Small>
+        <SmallText style={{ color: theme.ui.text.inverse, marginLeft: UI_SIZES.spacing.small }}>{actionText}</SmallText>
       </View>
     </TouchableOpacity>,
   ];
@@ -134,12 +134,12 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                 {/* Contact name */}
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                   {(() => {
-                    const TextContactComponent = isMailUnread ? SmallBold : SmallBold;
+                    const TextContactComponent = isMailUnread ? SmallBoldText : SmallBoldText;
                     const textContactPrefixColor = isMailUnread ? theme.ui.text.regular : theme.ui.text.light;
                     return (
                       <>
                         {isFolderOutbox || isFolderDrafts ? (
-                          <Small style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</Small>
+                          <SmallText style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</SmallText>
                         ) : null}
                         <TextContactComponent
                           numberOfLines={1}
@@ -150,15 +150,15 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                     );
                   })()}
                   {/* Date */}
-                  <Small style={styles.mailDate} numberOfLines={1}>
+                  <SmallText style={styles.mailDate} numberOfLines={1}>
                     {displayPastDate(moment(mailInfos.date))}
-                  </Small>
+                  </SmallText>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                   {/* Mail subjet & content */}
                   <View style={{ flex: 1 }}>
                     {(() => {
-                      const TextSubjectComponent = isMailUnread ? SmallBold : Small;
+                      const TextSubjectComponent = isMailUnread ? SmallBoldText : SmallText;
                       return (
                         <TextSubjectComponent
                           numberOfLines={1}

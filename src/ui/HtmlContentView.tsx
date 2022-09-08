@@ -10,7 +10,7 @@ import * as React from 'react';
 import { View, ViewProps } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallItalic } from '~/framework/components/text';
+import { SmallItalicText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -138,16 +138,16 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
     if (error) {
       return (
         <View {...this.props}>
-          <SmallItalic>{I18n.t('common-ErrorLoadingResource')}</SmallItalic>
+          <SmallItalicText>{I18n.t('common-ErrorLoadingResource')}</SmallItalicText>
         </View>
       );
     } else if (!loading && !hasContent) {
       return typeof emptyMessage === 'string' ? (
         <View {...this.props}>
-          <SmallItalic>{emptyMessage}</SmallItalic>
+          <SmallItalicText>{emptyMessage}</SmallItalicText>
         </View>
       ) : (
-        emptyMessage || <SmallItalic>{I18n.t('noContent')}</SmallItalic>
+        emptyMessage || <SmallItalicText>{I18n.t('noContent')}</SmallItalicText>
       );
     } else {
       return (

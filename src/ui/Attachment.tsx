@@ -12,7 +12,7 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
@@ -211,10 +211,10 @@ class Attachment extends React.PureComponent<
             </View>
             <View style={{ flex: 1, flexDirection: 'row' }}>
               {downloadState === DownloadState.Error ? (
-                <Small style={{ color: theme.palette.status.failure }}>{I18n.t('download-error') + ' '}</Small>
+                <SmallText style={{ color: theme.palette.status.failure }}>{I18n.t('download-error') + ' '}</SmallText>
               ) : null}
-              <Small style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
-                <Small
+              <SmallText style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
+                <SmallText
                   style={{
                     textDecorationColor: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
                     color: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
@@ -226,8 +226,8 @@ class Attachment extends React.PureComponent<
                     (att as IRemoteAttachment).displayName ||
                     I18n.t('download-untitled')}
                   {!this.attId && I18n.t('download-invalidUrl')}
-                </Small>
-                <Small style={{ color: theme.ui.text.light, flex: 0 }}>
+                </SmallText>
+                <SmallText style={{ color: theme.ui.text.light, flex: 0 }}>
                   {downloadState === DownloadState.Success
                     ? ' ' + I18n.t('download-open')
                     : downloadState === DownloadState.Error
@@ -235,8 +235,8 @@ class Attachment extends React.PureComponent<
                     : (this.props.attachment as IRemoteAttachment).size
                     ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
                     : ''}
-                </Small>
-              </Small>
+                </SmallText>
+              </SmallText>
             </View>
           </Pressable>
           {Platform.OS !== 'ios' ? (

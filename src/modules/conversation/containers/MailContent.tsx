@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -194,7 +194,7 @@ class MailContentContainer extends React.PureComponent<
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
-                      <SmallBold style={{ ...TextSizeStyle.Big }}>{this.props.mail.subject}</SmallBold>
+                      <SmallBoldText style={{ ...TextSizeStyle.Big }}>{this.props.mail.subject}</SmallBoldText>
                     </ViewportAwareSubject>
                     {this.props.mail.body !== undefined && this.mailContent()}
                   </ScrollView>

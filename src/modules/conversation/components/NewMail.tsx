@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
 import moduleConfig from '~/modules/conversation/moduleConfig';
@@ -306,7 +306,7 @@ const MailContactField = connect(state => ({
       <View style={{ flexGrow: 1 }}>
         <View style={{ flex: 0, alignItems: 'stretch' }}>
           <View style={[inputStyle, style]}>
-            <Small style={{ color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </Small>
+            <SmallText style={{ color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </SmallText>
             <View style={{ overflow: 'visible', marginHorizontal: UI_SIZES.spacing.tiny, flex: 1 }}>
               <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
               <Input
@@ -354,7 +354,7 @@ const HeaderUsers = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Small style={{ color: theme.ui.text.light }}>{title} : </Small>
+      <SmallText style={{ color: theme.ui.text.light }}>{title} : </SmallText>
       <SearchUserMail selectedUsersOrGroups={value} onChange={val => onChange(val)} autoFocus={autoFocus} />
       {children}
     </View>
@@ -396,7 +396,7 @@ const HeaderSubject = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Small style={{ color: theme.ui.text.light }}>{title} : </Small>
+      <SmallText style={{ color: theme.ui.text.light }}>{title} : </SmallText>
       <TextInput style={inputStyle} defaultValue={value} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />
     </View>
   );

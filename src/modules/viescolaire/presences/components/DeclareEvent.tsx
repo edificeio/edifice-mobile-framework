@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -213,25 +213,25 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
             <LeftColoredItem color={mainColor} style={style.recapHeader}>
               <View style={style.recapHeaderView}>
                 <Icon color="grey" size={12} name="access_time" />
-                <Small style={style.recapHeaderText}>
+                <SmallText style={style.recapHeaderText}>
                   {startDateString} - {endDateString}
-                </Small>
-                <SmallBold>{student.name}</SmallBold>
+                </SmallText>
+                <SmallBoldText>{student.name}</SmallBoldText>
               </View>
             </LeftColoredItem>
-            <Small style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Small>
+            <SmallText style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</SmallText>
             <DateTimePicker
               value={moment(date)}
               mode="time"
               onChange={this.onTimeChange}
               renderDate={dateItem => (
                 <View style={[style.timeView, { borderColor: lightColor }]}>
-                  <Small style={style.timeViewText}>{dateItem.format('HH : mm')}</Small>
+                  <SmallText style={style.timeViewText}>{dateItem.format('HH : mm')}</SmallText>
                 </View>
               )}
             />
             <View style={style.inputContainer}>
-              <Small style={style.labelText}>{inputLabel}</Small>
+              <SmallText style={style.labelText}>{inputLabel}</SmallText>
               <TextInput
                 defaultValue={event === undefined ? '' : event.comment}
                 placeholder={I18n.t('viesco-enter-text')}

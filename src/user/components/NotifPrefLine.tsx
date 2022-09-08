@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Line } from '~/ui/Grid';
 import { Toggle } from '~/ui/forms/Toggle';
@@ -29,9 +29,9 @@ export const NotifPrefLine = ({ i18nKey, value, onCheck, onUncheck }) => {
       }}
       onPress={() => (value ? onUncheck() : onCheck())}>
       <Line style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <Small style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
+        <SmallText style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
           {I18n.t(i18nKey.replace('.', '-'))}
-        </Small>
+        </SmallText>
         <Toggle checked={value} onCheck={() => onCheck()} onUncheck={() => onUncheck()} />
       </Line>
     </Container>

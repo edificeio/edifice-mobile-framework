@@ -5,7 +5,7 @@ import { NavigationActions } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import StructurePicker from '~/modules/viescolaire/viesco/containers/StructurePicker';
@@ -87,7 +87,7 @@ const ImageButtonModule = ({ imageSrc, color, text, onPress, disabled }: ImageBu
         onPress={onPress}
         disabled={disabled}>
         <Image source={imageSrc} style={styles.gridButtonImage} resizeMode="contain" />
-        <Small>{text}</Small>
+        <SmallText>{text}</SmallText>
       </BottomColoredItem>
     </View>
   );

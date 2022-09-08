@@ -5,7 +5,7 @@ import Carousel from 'react-native-snap-carousel';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Caption } from '~/framework/components/text';
+import { CaptionText } from '~/framework/components/text';
 
 import { Avatar, Size } from './Avatar';
 
@@ -100,7 +100,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
         ))}
         {skipped ? (
           <SkippedContainer>
-            <Caption style={{ color: theme.palette.status.warning, textAlign: 'center' }}>+{skipped}</Caption>
+            <CaptionText style={{ color: theme.palette.status.warning, textAlign: 'center' }}>+{skipped}</CaptionText>
           </SkippedContainer>
         ) : (
           <View />

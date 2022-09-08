@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -146,7 +146,7 @@ const User = ({ userId, userName }: { userId: string; userName: string }) => {
   return (
     <View style={styles.userContainer} key={userId}>
       <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
-      <Small>{userName}</Small>
+      <SmallText>{userName}</SmallText>
     </View>
   );
 };
@@ -156,12 +156,12 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
     <View>
       {inInbox || (
         <View style={styles.row}>
-          <Small style={styles.greyColor}>{I18n.t('zimbra-from-prefix')}</Small>
+          <SmallText style={styles.greyColor}>{I18n.t('zimbra-from-prefix')}</SmallText>
           <User userId={sender} userName={displayNames.find(item => item[0] === sender)[1]} />
         </View>
       )}
       <View style={styles.row}>
-        <Small style={styles.greyColor}>{I18n.t('zimbra-to-prefix')}</Small>
+        <SmallText style={styles.greyColor}>{I18n.t('zimbra-to-prefix')}</SmallText>
         <View style={styles.sendersContainer}>
           {receivers.map(receiver => (
             <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
@@ -170,7 +170,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
       </View>
       {cc && (
         <View style={styles.row}>
-          <Small style={styles.greyColor}>{I18n.t('zimbra-receiversCC')}</Small>
+          <SmallText style={styles.greyColor}>{I18n.t('zimbra-receiversCC')}</SmallText>
           <View style={styles.sendersContainer}>
             {cc.map(person => (
               <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
@@ -185,7 +185,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
 const IconButton = ({ icon, color, text, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.gridButton}>
-      <Small style={styles.gridButtonText}>{text}</Small>
+      <SmallText style={styles.gridButtonText}>{text}</SmallText>
       <Icon size={12} color={color} name={icon} />
     </TouchableOpacity>
   );
@@ -233,9 +233,9 @@ const HeaderMailInfos = ({
         />
       </CenterPanel>
       {!isDetails ? (
-        <Small style={styles.detailsDateText}>{moment(mailInfos.date).format('LL - LT')}</Small>
+        <SmallText style={styles.detailsDateText}>{moment(mailInfos.date).format('LL - LT')}</SmallText>
       ) : (
-        <Small style={styles.detailsDateText}>{moment(mailInfos.date).format('dddd LL')}</Small>
+        <SmallText style={styles.detailsDateText}>{moment(mailInfos.date).format('dddd LL')}</SmallText>
       )}
     </Header>
   );
@@ -265,8 +265,8 @@ export const HeaderMailDetails = ({
 
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={styles.row}>
-          <Small style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Small>
-          <SmallBold style={styles.fullView}>{mailInfos.subject}</SmallBold>
+          <SmallText style={styles.greyColor}>{I18n.t('zimbra-subject')} : </SmallText>
+          <SmallBoldText style={styles.fullView}>{mailInfos.subject}</SmallBoldText>
         </View>
       ) : (
         <View />
@@ -282,8 +282,8 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
 
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={styles.row}>
-          <Small style={styles.greyColor}>{I18n.t('zimbra-subject')} : </Small>
-          <SmallBold style={styles.fullView}>{mailInfos.subject}</SmallBold>
+          <SmallText style={styles.greyColor}>{I18n.t('zimbra-subject')} : </SmallText>
+          <SmallBoldText style={styles.fullView}>{mailInfos.subject}</SmallBoldText>
         </View>
       ) : (
         <View />
@@ -296,7 +296,7 @@ export const FooterButton = ({ icon, text, onPress }) => {
   return (
     <View style={styles.footerButtonContainer}>
       <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color="black" />
-      <Small>{text}</Small>
+      <SmallText>{text}</SmallText>
     </View>
   );
 };
@@ -333,9 +333,9 @@ export const RenderPJs = ({
             <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
               <View style={[styles.gridViewStyle, styles.attachmentGridViewChild]}>
                 <Icon size={25} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} />
-                <Small style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
+                <SmallText style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
                   {item.filename}
-                </Small>
+                </SmallText>
               </View>
 
               <View style={[styles.gridViewStyle, styles.attachmentDownloadContainer]}>
@@ -357,10 +357,10 @@ export const RenderPJs = ({
                 {index === 0 ? (
                   <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={styles.attachmentListButton}>
                     {attachments.length > 1 && (
-                      <Small style={styles.attachmentListText}>
+                      <SmallText style={styles.attachmentListText}>
                         {isVisible ? '-' : '+'}
                         {attachments.length - 1}
-                      </Small>
+                      </SmallText>
                     )}
                   </TouchableOpacity>
                 ) : (

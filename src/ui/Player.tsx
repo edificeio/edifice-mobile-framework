@@ -9,7 +9,7 @@ import VideoPlayerAndroid from 'react-native-video-player';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallItalic } from '~/framework/components/text';
+import { SmallItalicText } from '~/framework/components/text';
 
 import { Loading } from './Loading';
 import { MediaAction } from './MediaAction';
@@ -56,7 +56,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
           {!loaded ? (
             <Loading customStyle={{ position: 'absolute' }} />
           ) : error ? (
-            <SmallItalic style={{ position: 'absolute' }}>{I18n.t(`${type || 'media'}NotAvailable`)}</SmallItalic>
+            <SmallItalicText style={{ position: 'absolute' }}>{I18n.t(`${type || 'media'}NotAvailable`)}</SmallItalicText>
           ) : null}
           <TouchableOpacity activeOpacity={1}>
             {Platform.select({
@@ -91,7 +91,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
 
     const getPreview = () => {
       return !source || !type ? (
-        <SmallItalic>{I18n.t(`${type || 'media'}NotAvailable`)}</SmallItalic>
+        <SmallItalicText>{I18n.t(`${type || 'media'}NotAvailable`)}</SmallItalicText>
       ) : (
         <>
           {isVideo ? <Image source={posterSource || {}} style={playerStyle} resizeMode="contain" /> : null}

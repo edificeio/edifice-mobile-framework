@@ -8,7 +8,7 @@ import Toast from 'react-native-tiny-toast';
 import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallBold } from '~/framework/components/text';
+import { SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { FavoriteIcon, IconButton } from '~/modules/mediacentre/components/SmallCard';
@@ -106,9 +106,9 @@ const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
   return (
     <TouchCardWithoutPadding onPress={openUrlCallback} style={[styles.cardContainer, { backgroundColor: props.color }]}>
       <View style={styles.contentContainer}>
-        <SmallBold numberOfLines={1} style={styles.cardTitleText}>
+        <SmallBoldText numberOfLines={1} style={styles.cardTitleText}>
           {props.resource.title}
-        </SmallBold>
+        </SmallBoldText>
         <ResourceImage image={props.resource.image} style={styles.imageContainer} resizeMode="contain" />
         <View style={styles.actionsContainer}>
           <FavoriteIcon {...props} />
@@ -138,7 +138,7 @@ export const FavoritesCarousel: React.FunctionComponent<IFavoritesCarouselProps>
   }, [props.resources.length, cardColors]);
   return (
     <View style={styles.mainContainer}>
-      <SmallBold style={styles.titleText}>{I18n.t('mediacentre.favorites').toUpperCase()}</SmallBold>
+      <SmallBoldText style={styles.titleText}>{I18n.t('mediacentre.favorites').toUpperCase()}</SmallBoldText>
       {props.resources.length > 2 ? (
         <Carousel
           data={props.resources}

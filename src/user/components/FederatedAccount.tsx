@@ -8,7 +8,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small, SmallBold } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -41,10 +41,10 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                     <PFLogo />
                   </LogoWrapper>
                   <View style={{ flexGrow: 4, justifyContent: 'flex-start' }}>
-                    <SmallBold>{I18n.t('federatedAccount-instructions')}</SmallBold>
-                    <Small style={{ marginLeft: UI_SIZES.spacing.big, marginTop: UI_SIZES.spacing.medium }}>
+                    <SmallBoldText>{I18n.t('federatedAccount-instructions')}</SmallBoldText>
+                    <SmallText style={{ marginLeft: UI_SIZES.spacing.big, marginTop: UI_SIZES.spacing.medium }}>
                       {I18n.t('federatedAccount-instructions-details')}
-                    </Small>
+                    </SmallText>
                   </View>
                   <View
                     style={{

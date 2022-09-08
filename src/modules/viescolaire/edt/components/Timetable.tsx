@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, SmallBoldItalic, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldItalicText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
@@ -103,20 +103,20 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.subjectView}>
-          <SmallBold style={isTeacher && style.classText}>{firstText}</SmallBold>
-          <Small numberOfLines={1}>{secondText}</Small>
+          <SmallBoldText style={isTeacher && style.classText}>{firstText}</SmallBoldText>
+          <SmallText numberOfLines={1}>{secondText}</SmallText>
         </View>
         <View>
           {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 ? (
             <View style={style.roomView}>
               <Icon name="pin_drop" size={16} />
-              <Small>
+              <SmallText>
                 &nbsp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
-              </Small>
+              </SmallText>
             </View>
           ) : null}
           {course.tags && course.tags !== undefined && course.tags.length > 0 ? (
-            <SmallBoldItalic>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalic>
+            <SmallBoldItalicText>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText>
           ) : null}
         </View>
       </View>
@@ -133,21 +133,21 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
       <View
         style={[style.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? style.greyishBackground : style.whiteBackground]}>
         <View style={style.halfSplitLineView}>
-          <SmallBold style={[style.halfTextStyle, isTeacher && style.halfClassText]} numberOfLines={1}>
+          <SmallBoldText style={[style.halfTextStyle, isTeacher && style.halfClassText]} numberOfLines={1}>
             {firstText}
-          </SmallBold>
+          </SmallBoldText>
           {isCourseWithRoomLabel ? (
             <View style={style.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
-              <Small numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</Small>
+              <SmallText numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</SmallText>
             </View>
           ) : null}
         </View>
         <View style={style.halfSplitLineView}>
-          <Small style={style.halfTextStyle} numberOfLines={1}>
+          <SmallText style={style.halfTextStyle} numberOfLines={1}>
             {secondText}
-          </Small>
-          {isCourseWithTags ? <SmallBoldItalic>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalic> : null}
+          </SmallText>
+          {isCourseWithTags ? <SmallBoldItalicText>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText> : null}
         </View>
       </View>
     );
@@ -167,7 +167,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
       <View style={style.refreshContainer}>
         {userType === 'Relative' ? <ChildPicker /> : null}
         <View style={style.weekPickerView}>
-          <Small style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Small>
+          <SmallText style={style.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.timetable} />
         </View>
         {courses !== undefined &&

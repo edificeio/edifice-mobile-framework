@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
@@ -108,17 +108,17 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
     return (
       <TouchCard onPress={this.openUrlCallback}>
         <View style={styles.upperContentContainer}>
-          <SmallBold numberOfLines={1} style={styles.titleText}>
+          <SmallBoldText numberOfLines={1} style={styles.titleText}>
             {resource.title}
-          </SmallBold>
+          </SmallBoldText>
           {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={18} /> : null}
         </View>
         <View style={styles.lowerContentContainer}>
           <ResourceImage image={resource.image} style={styles.imageContainer} />
           <View style={styles.secondaryContainer}>
-            <Small numberOfLines={2} style={styles.descriptionText}>
+            <SmallText numberOfLines={2} style={styles.descriptionText}>
               {resource.source === Source.SIGNET ? resource.authors : resource.editors}
-            </Small>
+            </SmallText>
             <View style={styles.actionsContainer}>
               <FavoriteIcon {...this.props} />
               <IconButton icon="link" size={20} onPress={this.copyToClipboard} />

@@ -1,4 +1,3 @@
-import styled from '@emotion/native';
 import * as React from 'react';
 import { ColorValue, StyleSheet, View } from 'react-native';
 
@@ -7,7 +6,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
 import { Picture, PictureProps } from './picture';
-import { CaptionBold } from './text';
+import { CaptionBoldText } from './text';
 
 export interface IBadgeProps {
   content: number | string | PictureProps;
@@ -31,7 +30,7 @@ export const Badge = ({ content, color }: IBadgeProps) => {
     if (!content) {
       return null;
     } else if (typeof content === 'number') {
-      return <CaptionBold style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBold>;
+      return <CaptionBoldText style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBoldText>;
     } else if (typeof content === 'string') {
       return <Icon size={12} color={theme.ui.text.inverse} name={content} />;
     } else {

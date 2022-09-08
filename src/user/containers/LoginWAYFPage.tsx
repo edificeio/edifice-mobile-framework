@@ -8,7 +8,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -45,7 +45,7 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
               paddingVertical: UI_SIZES.spacing.huge * 1.5,
             }}>
             <PFLogo />
-            <Small style={{ textAlign: 'center' }}>{I18n.t('login-wayf-main-text')}</Small>
+            <SmallText style={{ textAlign: 'center' }}>{I18n.t('login-wayf-main-text')}</SmallText>
             <ActionButton
               text={I18n.t('login-wayf-main-button')}
               action={() => {

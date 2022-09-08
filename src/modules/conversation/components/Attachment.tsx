@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
 
 const attachmentStyle = {
@@ -33,7 +33,7 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
         color={theme.palette.complementary.blue.regular}
         name={getFileIcon(fileType)}
       />
-      <Small style={{ flex: 1, color: theme.palette.complementary.blue.regular }}>{fileName}</Small>
+      <SmallText style={{ flex: 1, color: theme.palette.complementary.blue.regular }}>{fileName}</SmallText>
       <TouchableOpacity onPress={onRemove}>
         <Icon name="close" style={{ margin: UI_SIZES.spacing.small }} color={theme.palette.status.failure} />
       </TouchableOpacity>

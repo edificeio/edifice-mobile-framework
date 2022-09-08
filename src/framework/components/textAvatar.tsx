@@ -5,7 +5,7 @@ import { Status } from '~/ui/avatars/Avatar';
 
 import { BadgeAvatar, BadgePosition } from './badgeAvatar';
 import { UI_SIZES } from './constants';
-import { Small } from './text';
+import { SmallText } from './text';
 
 export interface BadgeAvatarProps {
   text: string;
@@ -58,7 +58,7 @@ export const TextAvatar = ({
         status={status}
         size={size}
       />
-      <Small
+      <SmallText
         numberOfLines={1}
         style={[
           {
@@ -70,7 +70,7 @@ export const TextAvatar = ({
           textStyle,
         ]}>
         {text}
-      </Small>
+      </SmallText>
     </View>
   );
 };

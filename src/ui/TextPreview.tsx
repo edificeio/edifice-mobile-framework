@@ -6,7 +6,7 @@ import { LayoutEvent } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Caption, Small, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
 export interface ITextPreviewProps {
   textContent: string;
@@ -73,10 +73,12 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     const collapse = collapseMessage || I18n.t('seeLess');
     return (
       this.showExpansionLabels() && (
-        <Caption style={expansionTextStyle} onPress={() => (onExpand ? onExpand() : this.setState({ isExpanded: !isExpanded }))}>
+        <CaptionText
+          style={expansionTextStyle}
+          onPress={() => (onExpand ? onExpand() : this.setState({ isExpanded: !isExpanded }))}>
           {!numberOfLines && ' '}
           {isExpanded ? collapse : expand}
-        </Caption>
+        </CaptionText>
       )
     );
   }
@@ -86,24 +88,24 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     const { isExpanded } = this.state;
     return (
       <View>
-        <Caption
+        <CaptionText
           style={textStyle}
           numberOfLines={!numberOfLines || isExpanded ? undefined : numberOfLines}
           onLayout={this.measureText(numberOfLines)}>
           {textContent}
           {additionalText && !this.showExpansionLabels() && (
             <>
-              <Small> </Small>
+              <SmallText> </SmallText>
               {additionalText}
             </>
           )}
           {!numberOfLines && this.renderExpansionLabels()}
-        </Caption>
+        </CaptionText>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           {additionalText && this.showExpansionLabels() && (
             <>
               {additionalText}
-              <Small> </Small>
+              <SmallText> </SmallText>
             </>
           )}
           {numberOfLines && this.renderExpansionLabels()}

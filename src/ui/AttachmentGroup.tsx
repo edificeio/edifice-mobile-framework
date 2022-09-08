@@ -6,7 +6,7 @@ import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-h
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Caption, SmallBold } from '~/framework/components/text';
+import { CaptionText, SmallBoldText } from '~/framework/components/text';
 
 import Attachment, { IRemoteAttachment } from './Attachment';
 import { BubbleStyle } from './BubbleStyle';
@@ -62,9 +62,9 @@ export class AttachmentGroup extends React.PureComponent<
               justifyContent: 'space-between',
             }}>
             <View style={{ flexDirection: 'row' }}>
-              <SmallBold style={{ marginRight: UI_SIZES.spacing.tiny }}>
+              <SmallBoldText style={{ marginRight: UI_SIZES.spacing.tiny }}>
                 {I18n.t(`attachment${attachments.length > 1 ? 's' : ''}`)}
-              </SmallBold>
+              </SmallBoldText>
               <Icon
                 color={theme.ui.text.regular}
                 size={16}
@@ -78,7 +78,7 @@ export class AttachmentGroup extends React.PureComponent<
                   this.setState({ downloadAll: true });
                   onDownloadAll && onDownloadAll();
                 }}>
-                <Caption style={{ color: theme.palette.complementary.blue.regular }}>{I18n.t('download-all')}</Caption>
+                <CaptionText style={{ color: theme.palette.complementary.blue.regular }}>{I18n.t('download-all')}</CaptionText>
               </RNGHTouchableOpacity>
             ) : null}
           </BubbleStyle>

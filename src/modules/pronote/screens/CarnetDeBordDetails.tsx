@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { IUserSession, getUserSession } from '~/framework/util/session';
@@ -60,24 +60,24 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
           index + 1 < itemArray.length ? CarnetDeBordDetailsScreen.styles.sectionWithBorder : {},
         ]}>
         <View style={CarnetDeBordDetailsScreen.styles.sectionLeft}>
-          {item.title ? <SmallBold numberOfLines={1}>{item.title}</SmallBold> : null}
+          {item.title ? <SmallBoldText numberOfLines={1}>{item.title}</SmallBoldText> : null}
           {item.date ? (
-            <SmallBold
+            <SmallBoldText
               style={[
                 CarnetDeBordDetailsScreen.styles.textDate,
                 item.label || item.description ? CarnetDeBordDetailsScreen.styles.textDateMargin : undefined,
               ]}
               numberOfLines={1}>
               {item.date}
-            </SmallBold>
+            </SmallBoldText>
           ) : null}
-          {item.label ? <SmallBold numberOfLines={1}>{item.label}</SmallBold> : null}
-          {item.description ? <Small numberOfLines={1}>{extractTextFromHtml(item.description)}</Small> : null}
+          {item.label ? <SmallBoldText numberOfLines={1}>{item.label}</SmallBoldText> : null}
+          {item.description ? <SmallText numberOfLines={1}>{extractTextFromHtml(item.description)}</SmallText> : null}
         </View>
         {item.value ? (
-          <Small numberOfLines={2} style={CarnetDeBordDetailsScreen.styles.sectionRight}>
+          <SmallText numberOfLines={2} style={CarnetDeBordDetailsScreen.styles.sectionRight}>
             {item.value}
-          </Small>
+          </SmallText>
         ) : null}
       </View>
     ));
@@ -104,7 +104,7 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
       }}>
       <ScrollView alwaysBounceVertical={false}>
         {type === CarnetDeBordSection.NOTES && data.PageReleveDeNotes?.Message ? (
-          <Small style={CarnetDeBordDetailsScreen.styles.message}>{data.PageReleveDeNotes.Message}</Small>
+          <SmallText style={CarnetDeBordDetailsScreen.styles.message}>{data.PageReleveDeNotes.Message}</SmallText>
         ) : null}
         <CardWithoutPadding style={CarnetDeBordDetailsScreen.styles.card}>{items}</CardWithoutPadding>
         <ActionButton

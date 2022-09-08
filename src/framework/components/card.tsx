@@ -23,7 +23,7 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { Badge } from './badge';
 import { UI_SIZES, getScaleDimension } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
-import { Small, SmallBold, SmallItalic, TextFontStyle, TextSizeStyle } from './text';
+import { SmallBoldText, SmallItalicText, SmallText, TextFontStyle, TextSizeStyle } from './text';
 
 export const cardPaddingV = UI_SIZES.spacing.medium;
 export const cardPaddingH = UI_SIZES.spacing.medium;
@@ -151,7 +151,7 @@ export const ContentView = (props: IContentCardProps) => {
 /** Pre-configured title for ContentCard */
 export const ContentCardTitle = (props: TextProps) => {
   const { style, ...otherProps } = props;
-  const Comp = styled(Small)({ color: theme.palette.primary.regular, ...TextSizeStyle.Medium });
+  const Comp = styled(SmallText)({ color: theme.palette.primary.regular, ...TextSizeStyle.Medium });
   return <Comp numberOfLines={2} ellipsizeMode="tail" {...otherProps} style={style} />;
 };
 
@@ -178,15 +178,15 @@ export const ContentCardHeader = (props: IContentCardHeaderProps) => {
       <View style={{ flex: 1 }}>
         {props.text ? (
           typeof props.text === 'string' ? (
-            <Small style={{ ...TextSizeStyle.Small }}>{props.text}</Small>
+            <SmallText style={{ ...TextSizeStyle.Small }}>{props.text}</SmallText>
           ) : (
             props.text
           )
         ) : null}
         {props.date ? (
-          <SmallItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
+          <SmallItalicText style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
             {typeof props.date === 'string' ? props.date : displayPastDate(props.date)}
-          </SmallItalic>
+          </SmallItalicText>
         ) : null}
       </View>
     </View>
@@ -311,7 +311,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               marginTop: UI_SIZES.spacing.minor,
               height: getScaleDimension(20, 'height') * 2,
             }}>
-            <SmallBold
+            <SmallBoldText
               numberOfLines={2}
               style={[
                 {
@@ -320,7 +320,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
                 textStyle,
               ]}>
               {text}
-            </SmallBold>
+            </SmallBoldText>
           </View>
         ) : (
           text

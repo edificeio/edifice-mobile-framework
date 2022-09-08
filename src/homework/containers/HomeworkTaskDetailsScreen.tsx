@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -52,7 +52,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
           <NamedSVG name={dayImages[dayOfTheWeek]} style={styles.dayImage} />
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer}>
-          {title ? <SmallBold style={styles.title}>{title}</SmallBold> : null}
+          {title ? <SmallBoldText style={styles.title}>{title}</SmallBoldText> : null}
           {content ? (
             <HtmlContentView
               html={content}

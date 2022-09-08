@@ -9,7 +9,7 @@ import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
-import { Small, SmallItalic } from '~/framework/components/text';
+import { SmallItalicText, SmallText } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
@@ -27,7 +27,7 @@ const UnavailableImage = () => (
       paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
-    <SmallItalic>{I18n.t('imageNotAvailable')}</SmallItalic>
+    <SmallItalicText>{I18n.t('imageNotAvailable')}</SmallItalicText>
   </View>
 );
 
@@ -343,9 +343,9 @@ class Carousel extends React.Component<
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
-                    <Small style={{ color: theme.palette.grey.fog, textAlign: 'center' }}>
+                    <SmallText style={{ color: theme.palette.grey.fog, textAlign: 'center' }}>
                       {I18n.t('linkTo')}{' '}
-                      <Small style={{ color: theme.palette.complementary.blue.regular }}>
+                      <SmallText style={{ color: theme.palette.complementary.blue.regular }}>
                         {(() => {
                           const matches = item.linkTo.match(
                             // from https://stackoverflow.com/a/8498629/6111343
@@ -353,8 +353,8 @@ class Carousel extends React.Component<
                           );
                           return matches && matches[1];
                         })()}
-                      </Small>
-                    </Small>
+                      </SmallText>
+                    </SmallText>
                     <NamedSVG
                       name="ui-externalLink"
                       width={16}

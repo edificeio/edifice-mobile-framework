@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallInverse } from '~/framework/components/text';
+import { SmallInverseText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { NotifierState } from './state';
@@ -130,7 +130,7 @@ class Notifier extends React.Component<
         <NotifierWrapper style={{ backgroundColor: this.barColor }}>
           <View style={[{ flexDirection: 'row', flex: 1, ...style }, icon && !loading && { alignItems: 'center' }]}>
             {text ? (
-              <SmallInverse
+              <SmallInverseText
                 onTextLayout={this.measureText}
                 style={{
                   flex: 1,
@@ -142,7 +142,7 @@ class Notifier extends React.Component<
                   marginLeft,
                 }}>
                 {text}
-              </SmallInverse>
+              </SmallInverseText>
             ) : null}
             {loading ? (
               <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.big }} />

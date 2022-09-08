@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Caption } from '~/framework/components/text';
+import { CaptionText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { Icon } from './icons/Icon';
@@ -70,7 +70,7 @@ export const ButtonLine = ({
   return (
     <Comp {...(!disabled ? { onPress: () => onPress() } : {})}>
       {/* FIXME: a ButtonLine without onClick prop will raise an error. Fire an event up or use onPress={onPress}. */}
-      <Caption style={{ flex: 1, color: color || theme.palette.grey.black }}>{I18n.t(title)}</Caption>
+      <CaptionText style={{ flex: 1, color: color || theme.palette.grey.black }}>{I18n.t(title)}</CaptionText>
       {/* FIXME: This UI button force to use translation. It shouldn't. */}
       {!hideIcon && <Icon name="arrow_down" color={theme.ui.text.light} style={{ transform: [{ rotate: '270deg' }] }} />}
     </Comp>

@@ -82,84 +82,84 @@ export const TextSizeStyle = {
 /**
  * Font components
  */
-export const HeadingL = styled.Text({
+export const HeadingLText = styled.Text({
   ...HeadingFontStyle.Bold,
   ...TextSizeStyle.Huge,
 });
-export const HeadingS = styled.Text({
+export const HeadingSText = styled.Text({
   ...HeadingFontStyle.Bold,
   ...TextSizeStyle.Big,
 });
-export const HeadingXS = styled.Text({
+export const HeadingXSText = styled.Text({
   ...HeadingFontStyle.Bold,
   ...TextSizeStyle.Medium,
 });
 
-export const Body = styled.Text({
+export const BodyText = styled.Text({
   ...TextFontStyle.Regular,
   ...TextSizeStyle.Medium,
 });
-export const BodyBold = styled.Text({
+export const BodyBoldText = styled.Text({
   ...TextFontStyle.Bold,
   ...TextSizeStyle.Medium,
 });
-export const BodyItalic = styled.Text({
+export const BodyItalicText = styled.Text({
   ...TextFontStyle.Italic,
   ...TextSizeStyle.Medium,
 });
-export const BodyBoldItalic = styled.Text({
+export const BodyBoldItalicText = styled.Text({
   ...TextFontStyle.BoldItalic,
   ...TextSizeStyle.Medium,
 });
 
-export const Small = styled.Text({
+export const SmallText = styled.Text({
   ...TextFontStyle.Regular,
   ...TextSizeStyle.Normal,
 });
-export const SmallBold = styled.Text({
+export const SmallBoldText = styled.Text({
   ...TextFontStyle.Bold,
   ...TextSizeStyle.Normal,
 });
-export const SmallItalic = styled.Text({
+export const SmallItalicText = styled.Text({
   ...TextFontStyle.Italic,
   ...TextSizeStyle.Normal,
 });
-export const SmallBoldItalic = styled.Text({
+export const SmallBoldItalicText = styled.Text({
   ...TextFontStyle.BoldItalic,
   ...TextSizeStyle.Normal,
 });
 
-export const Caption = styled.Text({
+export const CaptionText = styled.Text({
   ...TextFontStyle.Regular,
   ...TextSizeStyle.Small,
 });
-export const CaptionBold = styled.Text({
+export const CaptionBoldText = styled.Text({
   ...TextFontStyle.Bold,
   ...TextSizeStyle.Small,
 });
-export const CaptionItalic = styled.Text({
+export const CaptionItalicText = styled.Text({
   ...TextFontStyle.Italic,
   ...TextSizeStyle.Small,
 });
-export const CaptionBoldItalic = styled.Text({
+export const CaptionBoldItalicText = styled.Text({
   ...TextFontStyle.BoldItalic,
   ...TextSizeStyle.Small,
 });
 
-export const SmallInverse = styled(Small)({
+export const SmallInverseText = styled(SmallText)({
   color: theme.ui.text.inverse,
 });
-export const SmallAction = styled(Small)({
+export const SmallActionText = styled(SmallText)({
   color: theme.palette.primary.regular,
 });
 
 export const NestedText = RNText;
-export const NestedTextBold = styled.Text({
+export const NestedBoldText = styled.Text({
   ...TextFontStyle.Bold,
 });
-export const NestedTextItalic = styled.Text({
+export const NestedItalicText = styled.Text({
   ...TextFontStyle.Italic,
 });
-export const NestedTextAction = styled.Text({
+export const NestedActionText = styled.Text({
   color: theme.palette.primary.regular,
 });

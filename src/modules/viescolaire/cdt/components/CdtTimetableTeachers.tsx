@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
@@ -133,10 +133,10 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const isEmpty = !homeworks.length;
     return (
       <View style={style.homeworksContainer}>
-        <SmallBold style={style.homeworksText}>
+        <SmallBoldText style={style.homeworksText}>
           {I18n.t('viesco-homework')}
           {homeworks.length > 1 && ' (' + homeworks.length + ')'}
-        </SmallBold>
+        </SmallBoldText>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))}
           disabled={isEmpty}>
@@ -195,10 +195,10 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     return (
       <View style={style.courseView}>
         <View style={[style.subjectView, !isHalfCourse && style.subjectPadding]}>
-          <SmallBold style={style.classText} numberOfLines={1}>
+          <SmallBoldText style={style.classText} numberOfLines={1}>
             {className}
-          </SmallBold>
-          <Small numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Small>
+          </SmallBoldText>
+          <SmallText numberOfLines={1}>{course.subject?.name || course.exceptionnal}</SmallText>
         </View>
         <View style={style.buttonsContainer}>
           {this.renderSessionsIconButton(course, isHalfCourse)}
@@ -218,7 +218,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
       <PageContainer>
         <View style={style.refreshContainer}>
           <View style={style.weekPickerView}>
-            <Small style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Small>
+            <SmallText style={style.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
             <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.diary} />
           </View>
           {courses.isFetching || courses.isPristine ? (

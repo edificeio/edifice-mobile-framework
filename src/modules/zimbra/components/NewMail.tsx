@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import Notifier from '~/infra/notifier/container';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -95,7 +95,7 @@ const HeaderUsers = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Small style={{ color: theme.ui.text.light }}>{title} : </Small>
+      <SmallText style={{ color: theme.ui.text.light }}>{title} : </SmallText>
       <SearchUserMail
         selectedUsersOrGroups={value}
         onChange={val => onChange(val)}
@@ -142,7 +142,7 @@ const HeaderSubject = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <Small style={{ color: theme.ui.text.regular }}>{title} : </Small>
+      <SmallText style={{ color: theme.ui.text.regular }}>{title} : </SmallText>
       <TextInput
         style={inputStyle}
         defaultValue={value}
@@ -258,7 +258,7 @@ const Signature = ({ signatureText }: { signatureText: string }) => (
   <View style={styles.signatureZone}>
     <View style={styles.lineSeparator} />
     <ScrollView style={styles.signatureZone} contentContainerStyle={styles.signatureZoneContainer}>
-      <Small>{signatureText}</Small>
+      <SmallText>{signatureText}</SmallText>
     </ScrollView>
   </View>
 );

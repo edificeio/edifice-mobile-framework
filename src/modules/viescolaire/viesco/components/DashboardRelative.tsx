@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomework, IHomeworkList, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
@@ -112,7 +112,7 @@ const IconButtonModule = ({ disabled, icon, color, text, onPress, nbModules }: I
       style={[styles.gridButton, disabled ? styles.gridButtonDefaultColor : { backgroundColor: color }]}>
       <View style={[styles.viewButton, nbModules === 4 ? styles.gridButtonAllModules : styles.gridButtonLineModules]}>
         <Icon size={20} color={theme.ui.text.inverse} name={icon} />
-        <Small style={styles.gridButtonText}>{text}</Small>
+        <SmallText style={styles.gridButtonText}>{text}</SmallText>
       </View>
     </TouchableOpacity>
   </View>
@@ -198,7 +198,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
 
     return (
       <View style={styles.dashboardPart}>
-        <SmallBold style={styles.title}>{I18n.t('viesco-homework')}</SmallBold>
+        <SmallBoldText style={styles.title}>{I18n.t('viesco-homework')}</SmallBoldText>
         {Object.values(homeworks.data).length === 0 && (
           <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
         )}
@@ -206,11 +206,11 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
           <>
             {moment(date).isAfter(moment()) && (
               <>
-                <Small style={styles.subtitle}>
+                <SmallText style={styles.subtitle}>
                   {moment(date).isSame(tomorrowDate, 'day')
                     ? I18n.t('viesco-homework-fortomorrow')
                     : `${I18n.t('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
-                </Small>
+                </SmallText>
                 {homeworksByDate[date].map(homework => (
                   <HomeworkItem
                     disabled
@@ -254,7 +254,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
     const evaluationList = evaluations ? this.getSortedEvaluationList(evaluations) : [];
     return (
       <View style={styles.dashboardPart}>
-        <SmallBold style={styles.title}>{I18n.t('viesco-lasteval')}</SmallBold>
+        <SmallBoldText style={styles.title}>{I18n.t('viesco-lasteval')}</SmallBoldText>
         {evaluations && evaluations.data.devoirs.length > 0 ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
@@ -272,7 +272,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
         <ChildPicker>
           {hasRightToCreateAbsence && (
             <TouchableOpacity onPress={() => this.props.navigation.navigate('Declaration')} style={styles.declareAbsenceButton}>
-              <SmallBold style={styles.declareAbscenceText}>{I18n.t('viesco-declareAbsence')}</SmallBold>
+              <SmallBoldText style={styles.declareAbscenceText}>{I18n.t('viesco-declareAbsence')}</SmallBoldText>
             </TouchableOpacity>
           )}
         </ChildPicker>

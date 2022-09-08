@@ -5,7 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallBold, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { IFolder } from '~/modules/conversation/state/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
@@ -66,9 +66,9 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
             width: undefined,
             justifyContent: 'space-between',
           }}>
-          <SmallBold>{I18n.t(modalTitle)}</SmallBold>
+          <SmallBoldText>{I18n.t(modalTitle)}</SmallBoldText>
           {isMoveImpossible ? (
-            <SmallBold>{I18n.t('conversation.moveImpossible')}</SmallBold>
+            <SmallBoldText>{I18n.t('conversation.moveImpossible')}</SmallBoldText>
           ) : (
             <DropDownPicker
               open={openDropdown}

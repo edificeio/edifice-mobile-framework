@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
@@ -14,7 +15,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { PictureProps } from '~/framework/components/picture';
-import { Small, SmallBold, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { displayDate } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -130,9 +131,9 @@ CarnetDeBordScreen.getRenderContent =
           />
         ) : null}
         {isStructureShown ? (
-          <Small style={[CarnetDeBordScreen.styles.card, TextFontStyle.Bold, TextSizeStyle.Medium]}>
+          <SmallText style={[CarnetDeBordScreen.styles.card, TextFontStyle.Bold, TextSizeStyle.Medium]}>
             {structures.find(s => s.id === data?.structureId)?.name ?? ' '}
-          </Small>
+          </SmallText>
         ) : null}
         {data && data.idPronote && data.address && data.structureId ? (
           <>
@@ -318,16 +319,16 @@ CarnetDeBordScreen.SectionContent = function (props: {
     <CC picture={props.picture} title={props.title} style={CarnetDeBordScreen.styles.card} onPress={goToDetails}>
       {isNotEmpty ? (
         <View style={CarnetDeBordScreen.styles.textRow}>
-          <SmallBold numberOfLines={1} style={CarnetDeBordScreen.styles.textLabel}>
+          <SmallBoldText numberOfLines={1} style={CarnetDeBordScreen.styles.textLabel}>
             {props.textLabel || I18n.t('pronote.carnetDeBord.noInfo')}
-          </SmallBold>
-          <Small numberOfLines={1}>{props.valueLabel || I18n.t('pronote.carnetDeBord.noInfo')}</Small>
+          </SmallBoldText>
+          <SmallText numberOfLines={1}>{props.valueLabel || I18n.t('pronote.carnetDeBord.noInfo')}</SmallText>
         </View>
       ) : (
         <View style={CarnetDeBordScreen.styles.emptyRow}>
-          <Small numberOfLines={1} style={{ color: theme.ui.text.light }}>
+          <SmallText numberOfLines={1} style={{ color: theme.ui.text.light }}>
             {props.emptyLabel}
-          </Small>
+          </SmallText>
         </View>
       )}
     </CC>

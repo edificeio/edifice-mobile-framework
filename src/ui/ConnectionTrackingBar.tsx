@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallInverse } from '~/framework/components/text';
+import { SmallInverseText } from '~/framework/components/text';
 import { checkConnection, watchConnection } from '~/infra/actions/connectionTracker';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
@@ -126,7 +126,7 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         }}>
         <TrackingContainer style={{ backgroundColor: this.barColor }} onPress={() => this.props.check()}>
           <View style={{ flexDirection: 'row', flex: 1 }}>
-            <SmallInverse
+            <SmallInverseText
               style={{
                 flex: 1,
                 textAlign: 'center',
@@ -134,7 +134,7 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
                 alignSelf: 'center',
               }}>
               {I18n.t(this.text)}
-            </SmallInverse>
+            </SmallInverseText>
             {this.props.loading ? (
               <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.huge }} />
             ) : (

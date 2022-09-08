@@ -15,7 +15,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -145,7 +145,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       return (
         <View style={WAYFPage.STYLES.container}>
           <PFLogo />
-          <Small
+          <SmallText
             style={{
               flexGrow: 0,
               marginTop: UI_SIZES.spacing.medium,
@@ -159,7 +159,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
               errorcode: this.error,
               currentplatform: DEPRECATED_getCurrentPlatform()!.url,
             })}
-          </Small>
+          </SmallText>
           <ActionButton text={I18n.t('login-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
       );
@@ -170,7 +170,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       return (
         <View style={WAYFPage.STYLES.container}>
           <PFLogo />
-          <Small style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</Small>
+          <SmallText style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</SmallText>
           <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
@@ -185,7 +185,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
             this.setState({ dropdownOpened: false });
           }}>
           <View style={WAYFPage.STYLES.container}>
-            <Small style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-select-text')}</Small>
+            <SmallText style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-select-text')}</SmallText>
             <DropDownPicker
               dropDownContainerStyle={WAYFPage.STYLES.selectContainer}
               items={this.dropdownItems}
@@ -209,7 +209,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
                 disabled={this.dropdownValue === null}
                 action={() => this.loginWithCustomToken()}
               />
-              {/*<Small style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Small>*/}
+              {/*<SmallText style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</SmallText>*/}
             </View>
           </View>
         </TouchableWithoutFeedback>

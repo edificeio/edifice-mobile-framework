@@ -17,7 +17,7 @@ import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -167,7 +167,7 @@ const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICri
         />
       ) : null}
       <View style={styles.criteriaContainer}>
-        <Small>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Small>
+        <SmallText>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallText>
         <TextInput
           defaultValue={props.field.value}
           placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
@@ -240,7 +240,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         keyboardVerticalOffset={60}
         style={styles.safeAreaContainer}>
         <View style={styles.headerContainer}>
-          <SmallBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</SmallBold>
+          <SmallBoldText style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</SmallBoldText>
           <TouchableOpacity onPress={props.closeModal}>
             <Icon name="close" color={theme.ui.text.inverse} size={20} />
           </TouchableOpacity>
@@ -250,7 +250,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
             <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
           ))}
           <View style={styles.sourcesContainer}>
-            <Small>{I18n.t('mediacentre.advancedSearch.sources')}</Small>
+            <SmallText>{I18n.t('mediacentre.advancedSearch.sources')}</SmallText>
             <View style={styles.sourcesContentContainer}>
               {props.availableSources.includes(Source.GAR) ? (
                 <SourceCheckbox

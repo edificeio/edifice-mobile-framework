@@ -5,7 +5,7 @@ import { ImageBackground, StyleSheet, View } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -56,18 +56,20 @@ export default ({
       <View style={styles.itemContent}>
         <View style={styles.itemRowStyle}>
           <Icon style={styles.iconMarginRight} size={20} name="access_time" />
-          <Small>
+          <SmallText>
             {moment(item.startDate).format('LT')} - {moment(item.endDate).format('LT')}
-          </Small>
+          </SmallText>
         </View>
-        <SmallBold style={styles.itemClassGroupText}>{item.classes[0] !== undefined ? item.classes : item.groups}</SmallBold>
+        <SmallBoldText style={styles.itemClassGroupText}>
+          {item.classes[0] !== undefined ? item.classes : item.groups}
+        </SmallBoldText>
 
         {item.roomLabels[0] !== '' && (
           <View style={styles.itemRowStyle}>
             <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
-            <Small>
+            <SmallText>
               {I18n.t('viesco-room')} {item.roomLabels}
-            </Small>
+            </SmallText>
           </View>
         )}
       </View>

@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   item: {
@@ -43,17 +43,17 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
       <TouchableOpacity style={touchableStyle} onPress={navigate} disabled={selected}>
         <Icon size={22} name={iconName} color={iconColor} />
         {selected ? (
-          <SmallBold numberOfLines={1} style={[styles.itemTextSelected, styles.itemText]}>
+          <SmallBoldText numberOfLines={1} style={[styles.itemTextSelected, styles.itemText]}>
             {label + countString}
-          </SmallBold>
+          </SmallBoldText>
         ) : count ? (
-          <SmallBold numberOfLines={1} style={styles.itemText}>
+          <SmallBoldText numberOfLines={1} style={styles.itemText}>
             {label + countString}
-          </SmallBold>
+          </SmallBoldText>
         ) : (
-          <Small numberOfLines={1} style={styles.itemText}>
+          <SmallText numberOfLines={1} style={styles.itemText}>
             {label}
-          </Small>
+          </SmallText>
         )}
       </TouchableOpacity>
     );

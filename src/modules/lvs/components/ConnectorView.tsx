@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { Loading } from '~/ui/Loading';
 
 interface IConnectorViewDataProps {
@@ -45,7 +45,7 @@ class ConnectorView extends React.PureComponent<IConnectorViewProps> {
   private renderError() {
     return (
       <View style={styles.errorContainer}>
-        <Small style={styles.errorText}>{I18n.t('connector-connectFailed')}</Small>
+        <SmallText style={styles.errorText}>{I18n.t('connector-connectFailed')}</SmallText>
         <ActionButton action={this.props.openConnector} text={I18n.t('tryagain')} loading={this.props.isLoading} />
       </View>
     );

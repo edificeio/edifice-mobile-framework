@@ -14,7 +14,7 @@ import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
-import { Small, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
@@ -302,9 +302,9 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             <Icon name="informations" color={theme.palette.grey.stone} size={TextSizeStyle.Huge.fontSize} />
           </View>
           <View style={{ flex: 1 }}>
-            <Small style={{ color: theme.palette.grey.graphite }}>
+            <SmallText style={{ color: theme.palette.grey.graphite }}>
               {I18n.t('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
-            </Small>
+            </SmallText>
           </View>
         </View>
       </>

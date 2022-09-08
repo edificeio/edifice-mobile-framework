@@ -3,7 +3,7 @@ import { StyleSheet, TextStyle, TouchableOpacity, ViewStyle } from 'react-native
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   buttonContainer: {
@@ -36,6 +36,6 @@ export const DialogButtonOk = ({ label, disabled, style, textStyle, onPress }: I
     onPress={onPress}
     disabled={disabled}
     style={[styles.buttonContainer, style, disabled && styles.disabledOpacity]}>
-    <Small style={[styles.text, textStyle]}>{label}</Small>
+    <SmallText style={[styles.text, textStyle]}>{label}</SmallText>
   </TouchableOpacity>
 );

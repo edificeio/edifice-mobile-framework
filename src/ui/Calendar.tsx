@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { IHomework } from '~/modules/viescolaire/types/homework';
 import { CommonStyles } from '~/styles/common/styles';
 
@@ -129,10 +129,10 @@ const TopDay = ({ day, onPress, color = '#000', selected = false }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.topDay, { backgroundColor: selected ? color : undefined }]}>
-        <Small style={selected ? { color: theme.ui.text.inverse } : { color: theme.ui.text.light }}>
+        <SmallText style={selected ? { color: theme.ui.text.inverse } : { color: theme.ui.text.light }}>
           {day.format('ddd').charAt(0).toUpperCase()}
-        </Small>
-        <Small style={selected ? { color: theme.ui.text.inverse } : {}}>{day.format('DD')}</Small>
+        </SmallText>
+        <SmallText style={selected ? { color: theme.ui.text.inverse } : {}}>{day.format('DD')}</SmallText>
       </View>
     </TouchableOpacity>
   );
@@ -381,7 +381,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
       <ScrollView contentContainerStyle={{ height: numberOfHours! * slotHeight! }} showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {hours.map((hour, i) => (
-            <Small style={[styles.slotDisplay, { top: slotHeight! * i }]}>{hour.format('HH:mm')}</Small>
+            <SmallText style={[styles.slotDisplay, { top: slotHeight! * i }]}>{hour.format('HH:mm')}</SmallText>
           ))}
           {hours!.map((hour, i) => (
             <EmptySlot height={slotHeight!} top={slotHeight! * i} />
@@ -413,11 +413,11 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
       <ScrollView contentContainerStyle={{ height: (slots!.length + 2) * slotHeight! }} showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {slots!.map((slot, i) => (
-            <Small style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('HH:mm')}</Small>
+            <SmallText style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('HH:mm')}</SmallText>
           ))}
-          <Small style={[styles.slotDisplay, { top: slotHeight! * slots!.length }]}>
+          <SmallText style={[styles.slotDisplay, { top: slotHeight! * slots!.length }]}>
             {moment(lastSlot.endHour).format('HH:mm')}
-          </Small>
+          </SmallText>
           {slots!.map((slot, i) => (
             <EmptySlot height={slotHeight! - 5} top={slotHeight! * i} />
           ))}

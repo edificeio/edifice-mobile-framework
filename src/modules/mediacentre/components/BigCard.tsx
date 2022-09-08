@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
@@ -71,7 +71,7 @@ interface IBigCardProps {
 const ActionButton: React.FunctionComponent<IActionButtonProps> = (props: IActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
     <Icon size={20} color={props.color || theme.palette.primary.regular} name={props.icon} />
-    <Small style={styles.actionText}>{props.text}</Small>
+    <SmallText style={styles.actionText}>{props.text}</SmallText>
   </TouchableOpacity>
 );
 

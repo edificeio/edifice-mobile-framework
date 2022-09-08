@@ -2,13 +2,14 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewStyle } from 'react-native';
 
-import { Small, SmallBold } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
 
-export const Author = props => (props.nb > 0 ? <SmallBold>{props.children}</SmallBold> : <Small>{props.children}</Small>);
+export const Author = props =>
+  props.nb > 0 ? <SmallBoldText>{props.children}</SmallBoldText> : <SmallText>{props.children}</SmallText>;
 
 export const findReceivers2 = (to, from, cc) => {
   cc = cc || [];

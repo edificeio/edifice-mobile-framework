@@ -8,7 +8,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -130,23 +130,23 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
                 {homeworkList && homeworkList[indexSelectedHomework]?.created_date ? (
                   <>
                     <Icon size={20} color="#FA9700" name="date_range" />
-                    <Small>&emsp;{moment(homeworkList[indexSelectedHomework].created_date).format('DD/MM/YY')}</Small>
+                    <SmallText>&emsp;{moment(homeworkList[indexSelectedHomework].created_date).format('DD/MM/YY')}</SmallText>
                   </>
                 ) : null}
                 {homeworkList && homeworkList[indexSelectedHomework]?.subject ? (
-                  <SmallBold style={style.course}>{homeworkList[indexSelectedHomework].subject}</SmallBold>
+                  <SmallBoldText style={style.course}>{homeworkList[indexSelectedHomework].subject}</SmallBoldText>
                 ) : null}
               </LeftColoredItem>
             </View>
 
             <ScrollView>
               <View style={style.homeworkPart}>
-                <SmallBold style={style.title}>{I18n.t('viesco-homework-home')}</SmallBold>
+                <SmallBoldText style={style.title}>{I18n.t('viesco-homework-home')}</SmallBoldText>
                 {homeworkList && homeworkList[indexSelectedHomework]?.due_date && (
-                  <Small style={style.subtitle}>
+                  <SmallText style={style.subtitle}>
                     {I18n.t('viesco-homework-fordate')}{' '}
                     {moment(homeworkList[indexSelectedHomework].due_date).format('Do MMMM YYYY')}
-                  </Small>
+                  </SmallText>
                 )}
                 {!isRemovedDescription && homeworkList && homeworkList[indexSelectedHomework]?.description && (
                   <HtmlContentView html={homeworkList[indexSelectedHomework].description} opts={htmlOpts} />

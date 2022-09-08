@@ -8,7 +8,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { Session } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -127,20 +127,20 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
                 {sessionList && sessionList[indexSelectedSession]?.date ? (
                   <>
                     <Icon size={20} color={viescoTheme.palette.diary} name="date_range" />
-                    <Small>&emsp;{moment(sessionList[indexSelectedSession].date).format('DD/MM/YY')}</Small>
+                    <SmallText>&emsp;{moment(sessionList[indexSelectedSession].date).format('DD/MM/YY')}</SmallText>
                   </>
                 ) : null}
                 {sessionList && sessionList[indexSelectedSession]?.subject ? (
-                  <SmallBold style={style.course}>{sessionList[indexSelectedSession].subject}</SmallBold>
+                  <SmallBoldText style={style.course}>{sessionList[indexSelectedSession].subject}</SmallBoldText>
                 ) : null}
               </LeftColoredItem>
             </View>
 
             <ScrollView>
               <View style={style.sessionPart}>
-                <Small style={style.pageTitle}>{I18n.t('viesco-session')}</Small>
+                <SmallText style={style.pageTitle}>{I18n.t('viesco-session')}</SmallText>
                 {sessionList && sessionList[indexSelectedSession]?.title && (
-                  <SmallBold style={style.title}>{sessionList[indexSelectedSession].title}</SmallBold>
+                  <SmallBoldText style={style.title}>{sessionList[indexSelectedSession].title}</SmallBoldText>
                 )}
                 {!isRemovedDescription && sessionList && sessionList[indexSelectedSession]?.description && (
                   <HtmlContentView html={sessionList[indexSelectedSession].description} opts={htmlOpts} />

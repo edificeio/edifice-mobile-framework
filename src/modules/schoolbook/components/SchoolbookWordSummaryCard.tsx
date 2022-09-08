@@ -8,7 +8,7 @@ import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/fr
 import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { Small, SmallBold, SmallItalic, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallItalicText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { UserType } from '~/framework/util/session';
 import {
@@ -90,10 +90,10 @@ export const SchoolbookWordSummaryCard = ({
             <ContentCardHeader
               icon={<SingleAvatar size={36} userId={owner} />}
               text={
-                <Small style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+                <SmallText style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
                   {`${I18n.t('common.from')} `}
-                  <SmallBold style={{ ...TextSizeStyle.Small }}>{ownerName}</SmallBold>
-                </Small>
+                  <SmallBoldText style={{ ...TextSizeStyle.Small }}>{ownerName}</SmallBoldText>
+                </SmallText>
               }
             />
           )
@@ -110,7 +110,7 @@ export const SchoolbookWordSummaryCard = ({
                 fill={theme.palette.primary.regular}
                 style={{ marginRight: UI_SIZES.spacing.minor }}
               />
-              <SmallBold style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</SmallBold>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</SmallBoldText>
             </View>
           ) : undefined
         }>
@@ -126,14 +126,15 @@ export const SchoolbookWordSummaryCard = ({
           ) : (
             <View />
           )}
-          <SmallBold style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.palette.status.warning }}>
+          <SmallBoldText style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.palette.status.warning }}>
             {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
-          </SmallBold>
+          </SmallBoldText>
         </View>
         {sendingDate ? (
-          <SmallItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.minor }}>
+          <SmallItalicText
+            style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.minor }}>
             {displayPastDate(sendingDate)}
-          </SmallItalic>
+          </SmallItalicText>
         ) : null}
         {title ? (
           <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.tiny, color: theme.ui.text.regular }}>

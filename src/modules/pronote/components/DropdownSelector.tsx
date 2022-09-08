@@ -12,7 +12,7 @@ import theme from '~/app/theme';
 import { ActionButton, ActionButtonProps } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { Small, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 
 type OptionalDropDownPickerProps =
   | 'open'
@@ -57,7 +57,7 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
       }}>
       <View style={DropdownSelectorTemplate.styles.container}>
         {props.picture ? <Picture {...props.picture} /> : null}
-        {props.message ? <Small style={DropdownSelectorTemplate.styles.text}>{props.message}</Small> : null}
+        {props.message ? <SmallText style={DropdownSelectorTemplate.styles.text}>{props.message}</SmallText> : null}
         <View>
           <DropDownPicker
             open={open ?? dropdownOpen}

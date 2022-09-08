@@ -17,7 +17,7 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { Caption, CaptionBold, Small } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
@@ -163,9 +163,9 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
               <Icon name="new_comment" color={theme.ui.text.light} size={16} style={{ marginRight: UI_SIZES.spacing.minor }} />
             }
             rightElement={
-              <Small>
+              <SmallText>
                 {newsComments!.length} {I18n.t(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
-              </Small>
+              </SmallText>
             }
           />
         ) : null}
@@ -186,10 +186,10 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
         rightElement={
           <View style={{ marginLeft: UI_SIZES.spacing.medium }}>
             <View style={{ flexDirection: 'row' }}>
-              <CaptionBold numberOfLines={2} style={{ marginRight: UI_SIZES.spacing.minor, maxWidth: '70%' }}>
+              <CaptionBoldText numberOfLines={2} style={{ marginRight: UI_SIZES.spacing.minor, maxWidth: '70%' }}>
                 {newsComment.username}
-              </CaptionBold>
-              <Caption>{moment(newsComment.created).fromNow()}</Caption>
+              </CaptionBoldText>
+              <CaptionText>{moment(newsComment.created).fromNow()}</CaptionText>
             </View>
             <TextPreview textContent={newsComment.comment} />
           </View>

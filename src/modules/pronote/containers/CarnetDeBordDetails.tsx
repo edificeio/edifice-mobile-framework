@@ -15,7 +15,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { splitWords } from '~/framework/util/string';
 import { CarnetDeBordSection, ICarnetDeBord } from '~/modules/pronote/state/carnetDeBord';
@@ -50,18 +50,18 @@ function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
           index + 1 < itemArray.length ? CarnetDeBordDetails.styles.sectionWithBorder : {},
         ]}>
         <View style={CarnetDeBordDetails.styles.sectionLeft}>
-          {item.title ? <SmallBold numberOfLines={1}>{item.title}</SmallBold> : null}
+          {item.title ? <SmallBoldText numberOfLines={1}>{item.title}</SmallBoldText> : null}
           {item.date ? (
-            <SmallBold
+            <SmallBoldText
               style={[
                 CarnetDeBordDetails.styles.textDate,
                 item.label || item.description ? CarnetDeBordDetails.styles.textDateMargin : undefined,
               ]}
               numberOfLines={1}>
               {item.date}
-            </SmallBold>
+            </SmallBoldText>
           ) : null}
-          {item.label ? <SmallBold numberOfLines={1}>{item.label}</SmallBold> : null}
+          {item.label ? <SmallBoldText numberOfLines={1}>{item.label}</SmallBoldText> : null}
           {item.description ? <Small numberOfLines={1}>{extractTextFromHtml(item.description)}</Small> : null}
         </View>
         {item.value ? (

@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { Caption, Small } from '~/framework/components/text';
+import { CaptionText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -108,9 +108,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
 
               {!this.props.userinfo.federated ? (
                 <View {...(isEditMode ? { style: { opacity: 0.33 } } : {})}>
-                  <Caption style={{ paddingHorizontal: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.medium }}>
+                  <CaptionText style={{ paddingHorizontal: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.medium }}>
                     {I18n.t('Password')}
-                  </Caption>
+                  </CaptionText>
                   <ButtonLine
                     title="PasswordChange"
                     disabled={isEditMode}
@@ -201,7 +201,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
   }) {
     const isEditMode = this.props.navigation.getParam('edit', false);
     const label = (
-      <Caption style={{ paddingHorizontal: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.medium }}>{title}</Caption>
+      <CaptionText style={{ paddingHorizontal: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.medium }}>{title}</CaptionText>
     );
     let box: JSX.Element | null = null;
 
@@ -219,7 +219,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           {...(keyboardType ? { keyboardType } : {})}
           {...(placeholder ? { placeholder } : {})}
           {...(placeholderTextColor ? { placeholderTextColor } : {})}>
-          <Small
+          <SmallText
             style={{
               textAlignVertical: 'center',
               color: validator
@@ -229,17 +229,17 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 : theme.ui.text.regular,
             }}>
             {getter()}
-          </Small>
+          </SmallText>
         </ContainerTextInput>
       ) : (
         <ContainerView>
-          <Small style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</Small>
+          <SmallText style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</SmallText>
         </ContainerView>
       );
     } else {
       box = (
         <ContainerView>
-          <Small style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</Small>
+          <SmallText style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</SmallText>
         </ContainerView>
       );
     }

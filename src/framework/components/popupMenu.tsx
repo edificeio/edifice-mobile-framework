@@ -5,7 +5,7 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ColorValue, Platform, ViewStyle } from 'react-native';
+import { Platform, ViewStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { NavigationNavigateActionPayload } from 'react-navigation';
 
@@ -15,7 +15,7 @@ import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { UI_SIZES } from './constants';
 import { DEPRECATED_HeaderPrimaryAction } from './header';
 import { Icon } from './icon';
-import { Small } from './text';
+import { SmallText } from './text';
 
 export interface IPopupMenuProps {
   iconName: string;
@@ -134,7 +134,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
             paddingHorizontal: UI_SIZES.spacing.small,
           }}
         />
-        <Small numberOfLines={1}>{I18n.t(item.i18n)}</Small>
+        <SmallText numberOfLines={1}>{I18n.t(item.i18n)}</SmallText>
       </Action>
     );
   }

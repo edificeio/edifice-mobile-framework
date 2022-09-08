@@ -11,7 +11,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small, SmallAction } from '~/framework/components/text';
+import { SmallActionText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
@@ -163,12 +163,12 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         onPress={() => this.setState({ isCGUAccepted: !isCGUAccepted })}
                         customContainerStyle={{ marginRight: UI_SIZES.spacing.tiny }}
                       />
-                      <Small>{I18n.t('activation-cgu-accept')}</Small>
+                      <SmallText>{I18n.t('activation-cgu-accept')}</SmallText>
                       <TouchableOpacity onPress={this.handleOpenCGU}>
-                        <SmallAction>{I18n.t('activation-cgu')}</SmallAction>
+                        <SmallActionText>{I18n.t('activation-cgu')}</SmallActionText>
                       </TouchableOpacity>
                     </View>
-                    <Small
+                    <SmallText
                       style={{
                         flexGrow: 0,
                         marginTop: UI_SIZES.spacing.medium,
@@ -179,7 +179,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                       }}>
                       {' '}
                       {hasErrorKey && !typing ? errorText : ''}{' '}
-                    </Small>
+                    </SmallText>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
                       <ActionButton
                         text={I18n.t('Activate')}

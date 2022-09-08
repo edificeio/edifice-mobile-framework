@@ -11,7 +11,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
@@ -132,7 +132,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   protected renderForm() {
     const { loggingIn, loggedIn, error, errtype } = this.props.auth;
     const { login, password, typing, rememberMe } = this.state;
-    const FederationTextComponent = error ? SmallBold : Small;
+    const FederationTextComponent = error ? SmallBoldText : SmallText;
     const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
 
     return (
@@ -157,9 +157,9 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 alignSelf: 'center',
                 position: 'absolute',
               }}>
-              <SmallBold style={{ textAlign: 'center', color: theme.palette.status.failure }}>
+              <SmallBoldText style={{ textAlign: 'center', color: theme.palette.status.failure }}>
                 {I18n.t('common.sommeNumeriqueAlert_temp')}
-              </SmallBold>
+              </SmallBoldText>
             </View>
           ) : null}
           <FormContainer>
@@ -184,16 +184,16 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               hasError={(error && !typing && !errtype) as boolean}
             />
             <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium }}>
-              <Small style={{ marginRight: UI_SIZES.spacing.small, color: theme.ui.text.regular, ...TextSizeStyle.Small }}>
+              <SmallText style={{ marginRight: UI_SIZES.spacing.small, color: theme.ui.text.regular, ...TextSizeStyle.Small }}>
                 {I18n.t('AutoLogin')}
-              </Small>
+              </SmallText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <Small
+            <SmallText
               style={{
                 flexGrow: 0,
                 marginTop: UI_SIZES.spacing.medium,
@@ -210,7 +210,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                     errorcode: error,
                     currentplatform: DEPRECATED_getCurrentPlatform()!.url,
                   })}
-            </Small>
+            </SmallText>
 
             <View
               style={{
@@ -234,20 +234,20 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Small
+                <SmallText
                   style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, color: theme.ui.text.light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: false });
                   }}>
                   {I18n.t('forgot-password')}
-                </Small>
-                <Small
+                </SmallText>
+                <SmallText
                   style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.medium, color: theme.ui.text.light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: true });
                   }}>
                   {I18n.t('forgot-id')}
-                </Small>
+                </SmallText>
                 {DEPRECATED_getCurrentPlatform()!.federation && (
                   <FederationTextComponent
                     style={{

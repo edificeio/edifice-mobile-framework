@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
@@ -129,7 +129,7 @@ export const WorkspaceModal = ({
       ref={modalBoxRef}
       content={
         <View>
-          <Small style={styles.titleText}>{settings.title}</Small>
+          <SmallText style={styles.titleText}>{settings.title}</SmallText>
           {settings.hasDestinationSelector ? (
             <WorkspaceFolderSelector
               data={folderTree}

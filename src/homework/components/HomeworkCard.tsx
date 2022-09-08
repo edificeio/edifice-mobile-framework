@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import HtmlToText from '~/infra/htmlConverter/text';
 import today from '~/utils/today';
@@ -41,14 +41,14 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
       }}>
       <View style={{ flex: 1 }}>
         {title ? (
-          <SmallBold style={{ ...TextSizeStyle.Medium, color: theme.ui.text.regular }} numberOfLines={1}>
+          <SmallBoldText style={{ ...TextSizeStyle.Medium, color: theme.ui.text.regular }} numberOfLines={1}>
             {title}
-          </SmallBold>
+          </SmallBoldText>
         ) : null}
         {formattedContent ? (
-          <Small style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
+          <SmallText style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
             {formattedContent}
-          </Small>
+          </SmallText>
         ) : null}
       </View>
       <View style={{ justifyContent: 'center', marginLeft: UI_SIZES.spacing.small }}>

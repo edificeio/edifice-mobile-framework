@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
-import { NestedText, Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
@@ -27,7 +27,7 @@ const User = ({ userId, userName }) => {
   return (
     <View style={{ flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'baseline' }} key={userId}>
       <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
-      <Small style={{ ...TextSizeStyle.Small }}>{userName}</Small>
+      <SmallText style={{ ...TextSizeStyle.Small }}>{userName}</SmallText>
     </View>
   );
 };
@@ -39,12 +39,12 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
     <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
       {inInbox || (
         <View style={{ flexDirection: 'row' }}>
-          <Small style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</Small>
+          <SmallText style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</SmallText>
           <User userId={contacts.from[0]} userName={contacts.from[1]} />
         </View>
       )}
       <View style={{ flexDirection: 'row' }}>
-        <Small style={styles.greyColor}>{I18n.t('conversation.toPrefix')}</Small>
+        <SmallText style={styles.greyColor}>{I18n.t('conversation.toPrefix')}</SmallText>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {contacts.to.map(person => (
             <User userId={person[0]} userName={person[1]} />
@@ -53,7 +53,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       </View>
       {contacts.cc && contacts.cc.length > 0 && (
         <View style={{ flexDirection: 'row' }}>
-          <Small style={styles.greyColor}>{I18n.t('conversation.ccPrefix')}</Small>
+          <SmallText style={styles.greyColor}>{I18n.t('conversation.ccPrefix')}</SmallText>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             {contacts.cc.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -63,7 +63,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       )}
       {contacts.cci && contacts.cci.length > 0 && (
         <View style={{ flexDirection: 'row' }}>
-          <Small style={styles.greyColor}>{I18n.t('conversation.bccPrefix')}</Small>
+          <SmallText style={styles.greyColor}>{I18n.t('conversation.bccPrefix')}</SmallText>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             {contacts.cci.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -97,14 +97,14 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
         rightElement={
           <View style={styles.mailInfos}>
             {/* Date */}
-            <Small style={styles.mailDate} numberOfLines={1}>
+            <SmallText style={styles.mailDate} numberOfLines={1}>
               {displayPastDate(moment(mailInfos.date), true)}
-            </Small>
+            </SmallText>
             <View style={{ flex: 0 }}>
               {/* Contact name */}
               <View style={{ flex: 0, flexDirection: 'row' }}>
                 {(() => {
-                  const TextContactComponent = SmallBold;
+                  const TextContactComponent = SmallBoldText;
                   return (
                     <>
                       <TextContactComponent numberOfLines={1} style={{ flex: 1 }}>
@@ -121,7 +121,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   return isVisible ? (
                     <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
                   ) : (
-                    <Small
+                    <SmallText
                       style={{ marginTop: UI_SIZES.spacing.tiny, flex: 0, color: theme.ui.text.regular, ...TextSizeStyle.Small }}
                       numberOfLines={1}>
                       <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
@@ -129,7 +129,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                         {mailContacts.to[0][1]}
                         {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
                       </NestedText>
-                    </Small>
+                    </SmallText>
                   );
                 })()}
               </View>
@@ -156,7 +156,7 @@ export const FooterButton = ({ icon, text, onPress }) => {
         justifyContent: 'space-evenly',
       }}>
       <Icon name={icon} size={24} style={{ color: theme.ui.text.light }} />
-      <Small style={{ color: theme.ui.text.light, ...TextSizeStyle.Small }}>{text}</Small>
+      <SmallText style={{ color: theme.ui.text.light, ...TextSizeStyle.Small }}>{text}</SmallText>
     </TouchableOpacity>
   );
 };
@@ -192,16 +192,16 @@ export const RenderPJs = ({
             }}>
             <View style={{ flexDirection: 'row', flex: 0, alignItems: 'center', borderRadius: 6 }}>
               <Icon size={24} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} style={{ flex: 0 }} />
-              <Small style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
+              <SmallText style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
                 {item.filename}
-              </Small>
+              </SmallText>
               {index === 0 && (
                 <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: UI_SIZES.spacing.tiny, flex: 0 }}>
                   {attachments.length > 1 && (
-                    <Small style={styles.gridButtonTextPJnb}>
+                    <SmallText style={styles.gridButtonTextPJnb}>
                       {isVisible ? '-' : '+'}
                       {attachments.length - 1}
-                    </Small>
+                    </SmallText>
                   )}
                 </TouchableOpacity>
               )}

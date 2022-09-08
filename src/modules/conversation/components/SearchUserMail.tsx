@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { Small, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/modules/conversation/service/newMail';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -115,9 +115,9 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
         }}
         onPress={onPress}>
         <SingleAvatar userId={id} />
-        <Small numberOfLines={1} ellipsizeMode="tail" style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
+        <SmallText numberOfLines={1} ellipsizeMode="tail" style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
           {displayName}
-        </Small>
+        </SmallText>
       </TouchableOpacity>
     );
   };
@@ -167,7 +167,7 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
-        <Small style={userLabel}>{displayName}</Small>
+        <SmallText style={userLabel}>{displayName}</SmallText>
         <Icon
           name="close"
           size={12}

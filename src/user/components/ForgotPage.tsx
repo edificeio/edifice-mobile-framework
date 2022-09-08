@@ -9,7 +9,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingS, Small } from '~/framework/components/text';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
@@ -125,10 +125,12 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
-                      <HeadingS style={{ color: theme.ui.text.light }}>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeadingS>
-                      <Small style={{ color: theme.ui.text.light }}>
+                      <HeadingSText style={{ color: theme.ui.text.light }}>
+                        {I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}
+                      </HeadingSText>
+                      <SmallText style={{ color: theme.ui.text.light }}>
                         {I18n.t(`forgot-${forgotId ? 'id' : 'password'}-instructions`)}
-                      </Small>
+                      </SmallText>
                     </LogoWrapper>
                     {!isSuccess ? (
                       <TextInputLine
@@ -153,7 +155,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                       />
                     ) : null}
                     {(hasStructures && !isSuccess) || (isError && !editing) ? (
-                      <Small
+                      <SmallText
                         style={{
                           flexGrow: 0,
                           marginTop: UI_SIZES.spacing.medium,
@@ -163,10 +165,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           color: theme.palette.status.failure,
                         }}>
                         {errorText}
-                      </Small>
+                      </SmallText>
                     ) : null}
                     {isSuccess ? (
-                      <Small
+                      <SmallText
                         style={{
                           alignSelf: 'center',
                           flexGrow: 0,
@@ -176,7 +178,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           height: 38,
                         }}>
                         {editing ? '' : isSuccess && I18n.t('forgot-success')}
-                      </Small>
+                      </SmallText>
                     ) : null}
                     {forgotId && hasStructures && !isSuccess ? (
                       <>
@@ -261,7 +263,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         />
                       ) : null}
                       {hasStructures && errorMsg ? (
-                        <Small
+                        <SmallText
                           style={{
                             flexGrow: 0,
                             marginTop: UI_SIZES.spacing.medium,
@@ -271,7 +273,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             color: theme.palette.status.failure,
                           }}>
                           {I18n.t('forgot-several-emails-no-match')}
-                        </Small>
+                        </SmallText>
                       ) : null}
                     </View>
                   </FormContainer>

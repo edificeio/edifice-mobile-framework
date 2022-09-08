@@ -4,7 +4,7 @@ import { TextStyle, TouchableOpacityProps } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Icon } from './icons/Icon';
@@ -40,7 +40,7 @@ export const ButtonTextIcon = ({
 }: ButtonTextIconProps) => {
   return (
     <ButtonContainer style={style} onPress={onPress} disabled={disabled}>
-      <Small
+      <SmallText
         style={[
           {
             backgroundColor: 'transparent',
@@ -56,7 +56,7 @@ export const ButtonTextIcon = ({
         {title}
         {whiteSpace}
         {rightName.length > 0 && <Icon name={rightName} />}
-      </Small>
+      </SmallText>
     </ButtonContainer>
   );
 };

@@ -4,7 +4,7 @@ import * as React from 'react';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
-import { Caption } from '~/framework/components/text';
+import { CaptionText } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
 import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -84,9 +84,9 @@ export const RightPanel = styled.View({
 });
 
 export const Content = props => (
-  <Caption style={{ marginTop: UI_SIZES.spacing.small, color: props.nb > 0 ? theme.ui.text.regular : theme.ui.text.light }}>
+  <CaptionText style={{ marginTop: UI_SIZES.spacing.small, color: props.nb > 0 ? theme.ui.text.regular : theme.ui.text.light }}>
     {props.children}
-  </Caption>
+  </CaptionText>
 );
 
 export const PageContainer = styled.View({

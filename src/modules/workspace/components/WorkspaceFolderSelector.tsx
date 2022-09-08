@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-n
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { IFile, IFolder } from '~/modules/workspace/reducer';
 import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 
@@ -127,7 +127,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
               size={layoutSize.LAYOUT_24}
               color={theme.palette.secondary.regular}
             />
-            <Small style={styles.nameText}>{item.name}</Small>
+            <SmallText style={styles.nameText}>{item.name}</SmallText>
           </TouchableOpacity>
           {isExpanded ? (
             <FlatList
@@ -142,7 +142,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
     }
     return (
       <TouchableOpacity onPress={() => onTapFolder({ item })} style={[styles.rowContainer, { backgroundColor }]}>
-        <Small style={styles.nameText}>{item.name} </Small>
+        <SmallText style={styles.nameText}>{item.name} </SmallText>
       </TouchableOpacity>
     );
   };

@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -244,12 +244,12 @@ export class UserPage extends React.PureComponent<
           <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
           <ContainerSpacer />
           <ContainerView>
-            <Small
+            <SmallText
               style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}
               onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
               {I18n.t('version-number')} {DeviceInfo.getVersion()}
               {showVersionType ? `-(${DeviceInfo.getBuildNumber()})-${versionType}-${versionOverride}` : ''}
-            </Small>
+            </SmallText>
           </ContainerView>
           <ContainerSpacer />
           <ButtonLine

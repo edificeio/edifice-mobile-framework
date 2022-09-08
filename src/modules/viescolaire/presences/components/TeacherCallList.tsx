@@ -7,7 +7,7 @@ import Swiper from 'react-native-swiper';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, TextSizeStyle } from '~/framework/components/text';
 import CourseComponent from '~/modules/viescolaire/presences/components/CourseComponent';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -159,16 +159,16 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
     const { isFetching, courseList } = this.props;
     return (
       <View style={styles.container}>
-        <SmallBold style={styles.dateText}>
+        <SmallBoldText style={styles.dateText}>
           {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
-        </SmallBold>
+        </SmallBoldText>
         <View style={styles.renderContainer}>
           {isFetching ? (
             <LoadingIndicator />
           ) : courseList.length === 0 ? (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />
-              <SmallBold style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</SmallBold>
+              <SmallBoldText style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</SmallBoldText>
               <View style={[styles.noCallChip, styles.presentColor]} />
             </>
           ) : (

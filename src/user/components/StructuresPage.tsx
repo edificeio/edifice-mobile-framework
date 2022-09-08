@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
-import { NestedText, Small } from '~/framework/components/text';
+import { NestedText, SmallText } from '~/framework/components/text';
 import { ContainerView } from '~/ui/ButtonLine';
 
 // TYPES ------------------------------------------------------------------------------------------
@@ -48,11 +48,11 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps & N
             sections={data}
             renderSectionHeader={({ section }) => (
               <ContainerView>
-                <Small style={{ color: theme.ui.text.light }}>{section.name}</Small>
+                <SmallText style={{ color: theme.ui.text.light }}>{section.name}</SmallText>
               </ContainerView>
             )}
             renderItem={({ item: classe }) => (
-              <Small
+              <SmallText
                 style={{
                   marginLeft: UI_SIZES.spacing.medium,
                   marginRight: UI_SIZES.spacing.medium,
@@ -60,12 +60,12 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps & N
                 }}>
                 <NestedText style={{ color: theme.palette.complementary.orange.regular }}>◆ </NestedText>
                 {classe}
-              </Small>
+              </SmallText>
             )}
             ListHeaderComponent={
-              <Small style={{ marginTop: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
+              <SmallText style={{ marginTop: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
                 {I18n.t('structuresTitle')}
-              </Small>
+              </SmallText>
             }
             stickySectionHeadersEnabled={false}
             alwaysBounceVertical={false}

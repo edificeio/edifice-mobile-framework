@@ -37,7 +37,7 @@ import {
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 
 import { UI_SIZES } from './constants';
@@ -274,10 +274,10 @@ export const ResourceItem = (props: {
         <View style={{}}>
           {/* a resource item always has available space for 2 text lines,
           so we generate it and place the title/subtitle on top (as an absolute position) */}
-          <Small> </Small>
-          <Small> </Small>
+          <SmallText> </SmallText>
+          <SmallText> </SmallText>
           <View style={{ position: 'absolute', width: '100%' }}>
-            <SmallBold
+            <SmallBoldText
               numberOfLines={props.textProps?.numberOfLines}
               {...props.textProps}
               style={{
@@ -286,12 +286,12 @@ export const ResourceItem = (props: {
                 ...props.textStyle,
               }}>
               {props.title ?? null}
-            </SmallBold>
+            </SmallBoldText>
           </View>
           {props.subtitle ? (
             <View style={{ position: 'absolute', width: '100%' }}>
-              <Small> </Small>
-              <Small
+              <SmallText> </SmallText>
+              <SmallText
                 numberOfLines={props.textProps?.numberOfLines}
                 style={{
                   ...TextSizeStyle.Small,
@@ -299,7 +299,7 @@ export const ResourceItem = (props: {
                   ...props.textStyle,
                 }}>
                 {props.subtitle}
-              </Small>
+              </SmallText>
             </View>
           ) : null}
         </View>

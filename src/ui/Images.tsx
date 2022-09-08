@@ -7,7 +7,7 @@ import { withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallInverse, SmallItalic } from '~/framework/components/text';
+import { SmallInverseText, SmallItalicText } from '~/framework/components/text';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
@@ -66,7 +66,7 @@ const UnavailableImage = () => (
       paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
-    <SmallItalic>{I18n.t('imageNotAvailable')}</SmallItalic>
+    <SmallItalicText>{I18n.t('imageNotAvailable')}</SmallItalicText>
   </View>
 );
 
@@ -180,7 +180,7 @@ class Images extends React.Component<
               {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(3)} />}
               {images.length > 4 && (
                 <BubbleView style={{ bottom: heightRatio / 4 - 15 }}>
-                  <SmallInverse
+                  <SmallInverseText
                     style={{ marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center' }}
                     onPress={() => this.openImage(3)}>
                     +
@@ -188,7 +188,7 @@ class Images extends React.Component<
                       images.length - 3
                       /* -3 instead of -4 because of the last one has the dark foreground*/
                     }
-                  </SmallInverse>
+                  </SmallInverseText>
                 </BubbleView>
               )}
             </QuarterImage>
