@@ -242,7 +242,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               onChangeText={updateComment}
             />
             {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
-              <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
+              <FilePicker callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
                 <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
                 <SmallText>{I18n.t('viesco-attachment')}</SmallText>
               </FilePicker>
