@@ -8,7 +8,7 @@ import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/fr
 import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { SmallBoldText, SmallItalicText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, CaptionItalicText, CaptionText, SmallBoldText } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { UserType } from '~/framework/util/session';
 import {
@@ -90,10 +90,10 @@ export const SchoolbookWordSummaryCard = ({
             <ContentCardHeader
               icon={<SingleAvatar size={36} userId={owner} />}
               text={
-                <SmallText style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+                <CaptionText numberOfLines={usersTextMaxLines}>
                   {`${I18n.t('common.from')} `}
-                  <SmallBoldText style={{ ...TextSizeStyle.Small }}>{ownerName}</SmallBoldText>
-                </SmallText>
+                  <CaptionBoldText>{ownerName}</CaptionBoldText>
+                </CaptionText>
               }
             />
           )
@@ -131,10 +131,9 @@ export const SchoolbookWordSummaryCard = ({
           </SmallBoldText>
         </View>
         {sendingDate ? (
-          <SmallItalicText
-            style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.minor }}>
+          <CaptionItalicText style={{ color: theme.palette.grey.graphite, marginTop: UI_SIZES.spacing.minor }}>
             {displayPastDate(sendingDate)}
-          </SmallItalicText>
+          </CaptionItalicText>
         ) : null}
         {title ? (
           <ContentCardTitle style={{ marginVertical: UI_SIZES.spacing.tiny, color: theme.ui.text.regular }}>

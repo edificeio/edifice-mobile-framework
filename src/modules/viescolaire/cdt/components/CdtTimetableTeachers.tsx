@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
@@ -49,9 +49,6 @@ const style = StyleSheet.create({
   },
   subjectPadding: {
     paddingLeft: UI_SIZES.spacing.tiny,
-  },
-  classText: {
-    ...TextSizeStyle.Big,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -195,9 +192,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     return (
       <View style={style.courseView}>
         <View style={[style.subjectView, !isHalfCourse && style.subjectPadding]}>
-          <SmallBoldText style={style.classText} numberOfLines={1}>
-            {className}
-          </SmallBoldText>
+          <HeadingSText numberOfLines={1}>{className}</HeadingSText>
           <SmallText numberOfLines={1}>{course.subject?.name || course.exceptionnal}</SmallText>
         </View>
         <View style={style.buttonsContainer}>

@@ -5,7 +5,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    ...TextSizeStyle.Medium,
     marginLeft: UI_SIZES.spacing.minor,
   },
   messageContainer: {
@@ -37,7 +36,7 @@ export const ModalStorageWarning = ({ isVisible, closeModal }: { isVisible: bool
       <View style={styles.titleContainer}>
         <ModalContentBlock style={styles.row}>
           <Icon size={18} name="warning" color={theme.palette.secondary.regular} />
-          <SmallBoldText style={styles.text}>{I18n.t('zimbra-quota-overflowTitle')}</SmallBoldText>
+          <BodyBoldText style={styles.text}>{I18n.t('zimbra-quota-overflowTitle')}</BodyBoldText>
         </ModalContentBlock>
       </View>
       <View style={styles.messageContainer}>

@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
@@ -55,7 +55,7 @@ export const UserCard = ({
         }}
         key={type}
       />
-      <SmallText style={{ color: theme.ui.text.light, ...TextSizeStyle.Small }}>{I18n.t(`profileTypes.${type}`)}</SmallText>
+      <CaptionText style={{ color: theme.ui.text.light }}>{I18n.t(`profileTypes.${type}`)}</CaptionText>
     </View>
   );
 

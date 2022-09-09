@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import Label from '~/framework/components/label';
 import { Picture } from '~/framework/components/picture';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { UserType } from '~/framework/util/session';
 import { isStringEmpty } from '~/framework/util/string';
@@ -118,12 +118,10 @@ export const SummaryCard = ({
               />
             }
             text={
-              <SmallText style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+              <CaptionText numberOfLines={usersTextMaxLines}>
                 {`${I18n.t(`common.${isTeacher ? 'to' : 'from'}`)} `}
-                <SmallBoldText style={{ ...TextSizeStyle.Small }}>
-                  {isTeacher ? recipientsString(recipients) : ownerName}
-                </SmallBoldText>
-              </SmallText>
+                <CaptionBoldText>{isTeacher ? recipientsString(recipients) : ownerName}</CaptionBoldText>
+              </CaptionText>
             }
             date={sendingDate}
           />
@@ -171,9 +169,7 @@ export const SummaryCard = ({
               fill={theme.palette.primary.regular}
               style={{ marginRight: UI_SIZES.spacing.minor }}
             />
-            <SmallBoldText style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
-              {responsesString(responsesNumber)}
-            </SmallBoldText>
+            <CaptionBoldText style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</CaptionBoldText>
           </View>
         ) : null}
       </TouchableResourceCard>

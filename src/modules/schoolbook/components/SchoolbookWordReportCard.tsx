@@ -10,7 +10,7 @@ import { ResourceView } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import ScrollView from '~/framework/components/scrollView';
-import { SmallBoldText, SmallItalicText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { HeadingSText, SmallBoldText, SmallItalicText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IUserSession } from '~/framework/util/session';
 import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '~/modules/schoolbook/reducer';
@@ -60,13 +60,12 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
         <ResourceView>
           {hasAcknowledgedStudents ? (
             <>
-              <SmallBoldText
+              <HeadingSText
                 style={{
-                  ...TextSizeStyle.Big,
                   marginTop: UI_SIZES.spacing.tiny,
                 }}>
                 {acknowledgementsString(word?.ackNumber, word?.total)}
-              </SmallBoldText>
+              </HeadingSText>
               <SmallText style={{ marginTop: UI_SIZES.spacing.minor }}>
                 {I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidAcknowledge')}
               </SmallText>

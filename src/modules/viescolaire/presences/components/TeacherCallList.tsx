@@ -7,7 +7,7 @@ import Swiper from 'react-native-swiper';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { SmallBoldText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import CourseComponent from '~/modules/viescolaire/presences/components/CourseComponent';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   noCallText: {
-    ...TextSizeStyle.Medium,
     alignSelf: 'center',
     color: theme.palette.grey.grey,
   },
@@ -168,7 +167,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
           ) : courseList.length === 0 ? (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />
-              <SmallBoldText style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</SmallBoldText>
+              <BodyBoldText style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</BodyBoldText>
               <View style={[styles.noCallChip, styles.presentColor]} />
             </>
           ) : (

@@ -22,7 +22,7 @@ import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { CaptionBoldText, SmallBoldText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -366,7 +366,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               onViewportEnter={() => this.updateVisible(true)}
               onViewportLeave={() => this.updateVisible(false)}
               innerRef={ref => (this._titleRef = ref)}>
-              <SmallBoldText style={{ ...TextSizeStyle.Big }}>{blogPostData?.title}</SmallBoldText>
+              <HeadingSText>{blogPostData?.title}</HeadingSText>
             </ViewportAwareTitle>
             <HtmlContentView
               html={blogPostContent}

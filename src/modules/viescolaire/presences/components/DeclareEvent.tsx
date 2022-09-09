@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -63,7 +63,6 @@ const style = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   labelText: {
-    ...TextSizeStyle.Small,
     marginBottom: UI_SIZES.spacing.tiny,
   },
   reasonTextInput: {
@@ -231,7 +230,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
               )}
             />
             <View style={style.inputContainer}>
-              <SmallText style={style.labelText}>{inputLabel}</SmallText>
+              <CaptionText style={style.labelText}>{inputLabel}</CaptionText>
               <TextInput
                 defaultValue={event === undefined ? '' : event.comment}
                 placeholder={I18n.t('viesco-enter-text')}

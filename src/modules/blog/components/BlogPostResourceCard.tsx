@@ -73,7 +73,7 @@ export const BlogPostResourceCard = ({
                 labelSize="small"
               />
             ) : null}
-            <ContentCardTitle style={{ ...TextFontStyle.Bold }}>{title}</ContentCardTitle>
+            <ContentCardTitle>{title}</ContentCardTitle>
           </>
         }
         footer={

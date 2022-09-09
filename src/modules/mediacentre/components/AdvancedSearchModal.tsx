@@ -17,7 +17,7 @@ import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   headerTitle: {
-    ...TextSizeStyle.Medium,
     color: theme.palette.grey.white,
   },
   contentContainer: {
@@ -240,7 +239,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         keyboardVerticalOffset={60}
         style={styles.safeAreaContainer}>
         <View style={styles.headerContainer}>
-          <SmallBoldText style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</SmallBoldText>
+          <BodyBoldText style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</BodyBoldText>
           <TouchableOpacity onPress={props.closeModal}>
             <Icon name="close" color={theme.ui.text.inverse} size={20} />
           </TouchableOpacity>

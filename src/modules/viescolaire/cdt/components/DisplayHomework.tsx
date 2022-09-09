@@ -8,7 +8,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -29,9 +29,6 @@ const style = StyleSheet.create({
   homeworkPart: {
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-  title: {
-    ...TextSizeStyle.Medium,
   },
   subtitle: {
     color: theme.palette.grey.stone,
@@ -141,7 +138,7 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
 
             <ScrollView>
               <View style={style.homeworkPart}>
-                <SmallBoldText style={style.title}>{I18n.t('viesco-homework-home')}</SmallBoldText>
+                <BodyBoldText>{I18n.t('viesco-homework-home')}</BodyBoldText>
                 {homeworkList && homeworkList[indexSelectedHomework]?.due_date && (
                   <SmallText style={style.subtitle}>
                     {I18n.t('viesco-homework-fordate')}{' '}

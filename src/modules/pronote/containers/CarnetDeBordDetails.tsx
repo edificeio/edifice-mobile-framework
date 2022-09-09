@@ -15,7 +15,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { SmallBoldText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, SmallBoldText } from '~/framework/components/text';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { splitWords } from '~/framework/util/string';
 import { CarnetDeBordSection, ICarnetDeBord } from '~/modules/pronote/state/carnetDeBord';
@@ -52,14 +52,14 @@ function CarnetDeBordDetails(props: CarnetDeBordDetailsProps) {
         <View style={CarnetDeBordDetails.styles.sectionLeft}>
           {item.title ? <SmallBoldText numberOfLines={1}>{item.title}</SmallBoldText> : null}
           {item.date ? (
-            <SmallBoldText
+            <CaptionBoldText
               style={[
                 CarnetDeBordDetails.styles.textDate,
                 item.label || item.description ? CarnetDeBordDetails.styles.textDateMargin : undefined,
               ]}
               numberOfLines={1}>
               {item.date}
-            </SmallBoldText>
+            </CaptionBoldText>
           ) : null}
           {item.label ? <SmallBoldText numberOfLines={1}>{item.label}</SmallBoldText> : null}
           {item.description ? <Small numberOfLines={1}>{extractTextFromHtml(item.description)}</Small> : null}
@@ -217,7 +217,6 @@ CarnetDeBordDetails.styles = StyleSheet.create({
   },
   textDate: {
     color: theme.palette.grey.graphite,
-    ...TextSizeStyle.Small,
   },
   textDateMargin: {
     marginBottom: UI_SIZES.spacing.tiny,

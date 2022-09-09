@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { IHomework, IHomeworkList, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
@@ -66,9 +66,6 @@ const styles = StyleSheet.create({
   },
   gridButtonLineModules: {
     justifyContent: 'center',
-  },
-  title: {
-    ...TextSizeStyle.Medium,
   },
   subtitle: {
     color: theme.palette.grey.stone,
@@ -198,7 +195,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
 
     return (
       <View style={styles.dashboardPart}>
-        <SmallBoldText style={styles.title}>{I18n.t('viesco-homework')}</SmallBoldText>
+        <BodyBoldText>{I18n.t('viesco-homework')}</BodyBoldText>
         {Object.values(homeworks.data).length === 0 && (
           <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
         )}
@@ -254,7 +251,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
     const evaluationList = evaluations ? this.getSortedEvaluationList(evaluations) : [];
     return (
       <View style={styles.dashboardPart}>
-        <SmallBoldText style={styles.title}>{I18n.t('viesco-lasteval')}</SmallBoldText>
+        <BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>
         {evaluations && evaluations.data.devoirs.length > 0 ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (

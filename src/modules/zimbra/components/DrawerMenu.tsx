@@ -6,7 +6,7 @@ import { NavigationDrawerProp } from 'react-navigation-drawer';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, SmallText } from '~/framework/components/text';
 import CreateFolderModal from '~/modules/zimbra/components/Modals/CreateFolderModal';
 import { IFolder, IQuota } from '~/modules/zimbra/state/initMails';
 import { IRootFolderList } from '~/modules/zimbra/state/rootFolders';
@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.pale,
   },
   labelText: {
-    ...TextSizeStyle.Medium,
     marginLeft: UI_SIZES.spacing.small,
   },
   container: {
@@ -207,21 +206,21 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       <PageContainer style={styles.container}>
         <ScrollView>
           <View style={styles.labelContainer}>
-            <SmallText style={styles.labelText}>{I18n.t('zimbra-messages')}</SmallText>
+            <BodyText style={styles.labelText}>{I18n.t('zimbra-messages')}</BodyText>
           </View>
           {this.renderDrawerMessages()}
           <View style={styles.labelContainer}>
-            <SmallText style={styles.labelText}>{I18n.t('zimbra-directories')}</SmallText>
+            <BodyText style={styles.labelText}>{I18n.t('zimbra-directories')}</BodyText>
           </View>
           {this.renderDrawerFolders()}
           <TouchableOpacity onPress={this.onFolderCreationModalShow} style={[styles.labelContainer, styles.folderCreationButton]}>
             <Icon size={22} name="create_new_folder" />
-            <SmallText style={styles.labelText}>{I18n.t('zimbra-create-directory')}</SmallText>
+            <BodyText style={styles.labelText}>{I18n.t('zimbra-create-directory')}</BodyText>
           </TouchableOpacity>
         </ScrollView>
         <View style={styles.drawerBottom}>
           <View style={styles.labelContainer}>
-            <SmallText style={styles.labelText}>{I18n.t('zimbra-storage')}</SmallText>
+            <BodyText style={styles.labelText}>{I18n.t('zimbra-storage')}</BodyText>
           </View>
           {this.renderStorage()}
         </View>

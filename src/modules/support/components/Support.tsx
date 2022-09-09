@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/picture';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
     marginVertical: UI_SIZES.spacing.medium,
   },
   titleText: {
-    ...TextSizeStyle.Medium,
     marginBottom: UI_SIZES.spacing.tiny,
   },
   informationText: {
@@ -171,7 +170,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           style={styles.safeAreaContainer}>
           <ScrollView contentContainerStyle={styles.scrollStyle}>
             <View style={styles.textsContainer}>
-              <SmallBoldText style={styles.titleText}>{I18n.t('support-report-incident')}</SmallBoldText>
+              <BodyBoldText style={styles.titleText}>{I18n.t('support-report-incident')}</BodyBoldText>
               <SmallText style={styles.informationText}>{I18n.t('support-mobile-only')}</SmallText>
             </View>
             {this.renderForm()}

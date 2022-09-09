@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, TextSizeStyle } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionText: {
-    ...TextSizeStyle.Small,
     marginLeft: UI_SIZES.spacing.tiny,
   },
 });
@@ -71,7 +70,7 @@ interface IBigCardProps {
 const ActionButton: React.FunctionComponent<IActionButtonProps> = (props: IActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
     <Icon size={20} color={props.color || theme.palette.primary.regular} name={props.icon} />
-    <SmallText style={styles.actionText}>{props.text}</SmallText>
+    <CaptionText style={styles.actionText}>{props.text}</CaptionText>
   </TouchableOpacity>
 );
 

@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, SmallText } from '~/framework/components/text';
 import { putSignatureAction } from '~/modules/zimbra/actions/signature';
 import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -23,9 +23,6 @@ const styles = StyleSheet.create({
     alignSelf: 'baseline',
     paddingBottom: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
-  },
-  titleText: {
-    ...TextSizeStyle.Medium,
   },
   textZone: {
     marginHorizontal: UI_SIZES.spacing.small,
@@ -112,7 +109,7 @@ class SignatureModal extends React.Component<SignatureModalProps, SignatureModal
         <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
           <View style={styles.containerView}>
             <View style={styles.titleContainer}>
-              <SmallText style={styles.titleText}>{I18n.t('zimbra-signature')}</SmallText>
+              <BodyText>{I18n.t('zimbra-signature')}</BodyText>
             </View>
             <TextInput
               textAlignVertical="top"

@@ -5,7 +5,7 @@ import { ImageBackground, StyleSheet, View } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -26,9 +26,6 @@ const styles = StyleSheet.create({
   itemContent: { flex: 1, padding: UI_SIZES.spacing.medium, justifyContent: 'space-evenly' },
   itemRowStyle: { flexDirection: 'row' },
   iconMarginRight: { marginRight: UI_SIZES.spacing.small },
-  itemClassGroupText: {
-    ...TextSizeStyle.Big,
-  },
 });
 
 export default ({
@@ -60,9 +57,7 @@ export default ({
             {moment(item.startDate).format('LT')} - {moment(item.endDate).format('LT')}
           </SmallText>
         </View>
-        <SmallBoldText style={styles.itemClassGroupText}>
-          {item.classes[0] !== undefined ? item.classes : item.groups}
-        </SmallBoldText>
+        <HeadingSText>{item.classes[0] !== undefined ? item.classes : item.groups}</HeadingSText>
 
         {item.roomLabels[0] !== '' && (
           <View style={styles.itemRowStyle}>

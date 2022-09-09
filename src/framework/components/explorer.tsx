@@ -37,7 +37,7 @@ import {
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 
 import { UI_SIZES } from './constants';
@@ -277,29 +277,27 @@ export const ResourceItem = (props: {
           <SmallText> </SmallText>
           <SmallText> </SmallText>
           <View style={{ position: 'absolute', width: '100%' }}>
-            <SmallBoldText
+            <CaptionBoldText
               numberOfLines={props.textProps?.numberOfLines}
               {...props.textProps}
               style={{
-                ...TextSizeStyle.Small,
                 color: theme.ui.text.light,
                 ...props.textStyle,
               }}>
               {props.title ?? null}
-            </SmallBoldText>
+            </CaptionBoldText>
           </View>
           {props.subtitle ? (
             <View style={{ position: 'absolute', width: '100%' }}>
               <SmallText> </SmallText>
-              <SmallText
+              <CaptionText
                 numberOfLines={props.textProps?.numberOfLines}
                 style={{
-                  ...TextSizeStyle.Small,
                   color: theme.ui.text.light,
                   ...props.textStyle,
                 }}>
                 {props.subtitle}
-              </SmallText>
+              </CaptionText>
             </View>
           ) : null}
         </View>

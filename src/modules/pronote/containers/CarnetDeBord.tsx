@@ -15,7 +15,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { PageView } from '~/framework/components/page';
 import { PictureProps } from '~/framework/components/picture';
-import { SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { tryAction } from '~/framework/util/redux/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
@@ -123,9 +123,9 @@ CarnetDeBord.getRenderContent =
           <View style={CarnetDeBord.styles.card} /> // for top-page spacing
         )}
         {isStructureShown ? (
-          <SmallText style={[CarnetDeBord.styles.card, TextFontStyle.Bold, TextSizeStyle.Medium]}>
+          <BodyBoldText style={CarnetDeBord.styles.card}>
             {structures.find(s => s.id === data?.structureId)?.name ?? ' '}
-          </SmallText>
+          </BodyBoldText>
         ) : null}
         {data ? (
           <>

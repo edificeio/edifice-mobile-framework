@@ -8,7 +8,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { Session } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -34,9 +34,6 @@ const style = StyleSheet.create({
   pageTitle: {
     color: theme.palette.grey.stone,
     textTransform: 'uppercase',
-  },
-  title: {
-    ...TextSizeStyle.Medium,
   },
   course: {
     textTransform: 'uppercase',
@@ -140,7 +137,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
               <View style={style.sessionPart}>
                 <SmallText style={style.pageTitle}>{I18n.t('viesco-session')}</SmallText>
                 {sessionList && sessionList[indexSelectedSession]?.title && (
-                  <SmallBoldText style={style.title}>{sessionList[indexSelectedSession].title}</SmallBoldText>
+                  <BodyBoldText>{sessionList[indexSelectedSession].title}</BodyBoldText>
                 )}
                 {!isRemovedDescription && sessionList && sessionList[indexSelectedSession]?.description && (
                   <HtmlContentView html={sessionList[indexSelectedSession].description} opts={htmlOpts} />

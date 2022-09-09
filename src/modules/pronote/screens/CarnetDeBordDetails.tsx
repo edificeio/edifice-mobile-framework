@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { IUserSession, getUserSession } from '~/framework/util/session';
@@ -62,14 +62,14 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
         <View style={CarnetDeBordDetailsScreen.styles.sectionLeft}>
           {item.title ? <SmallBoldText numberOfLines={1}>{item.title}</SmallBoldText> : null}
           {item.date ? (
-            <SmallBoldText
+            <CaptionBoldText
               style={[
                 CarnetDeBordDetailsScreen.styles.textDate,
                 item.label || item.description ? CarnetDeBordDetailsScreen.styles.textDateMargin : undefined,
               ]}
               numberOfLines={1}>
               {item.date}
-            </SmallBoldText>
+            </CaptionBoldText>
           ) : null}
           {item.label ? <SmallBoldText numberOfLines={1}>{item.label}</SmallBoldText> : null}
           {item.description ? <SmallText numberOfLines={1}>{extractTextFromHtml(item.description)}</SmallText> : null}
@@ -217,7 +217,6 @@ CarnetDeBordDetailsScreen.styles = StyleSheet.create({
   },
   textDate: {
     color: theme.palette.grey.graphite,
-    ...TextSizeStyle.Small,
   },
   textDateMargin: {
     marginBottom: UI_SIZES.spacing.tiny,

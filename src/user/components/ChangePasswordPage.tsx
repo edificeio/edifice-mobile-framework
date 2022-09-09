@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { Loading } from '~/ui/Loading';
@@ -208,7 +208,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                     padding: UI_SIZES.spacing.tiny,
                     flex: 0,
                   }}>
-                  <SmallText style={{ ...TextSizeStyle.Medium, textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</SmallText>
+                  <BodyText style={{ textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</BodyText>
                   <MiniSpacer />
                   <MiniSpacer />
                 </View>
@@ -224,9 +224,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                     borderRadius: 10,
                     flex: 0,
                   }}>
-                  <SmallText style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
-                    {I18n.t('common.idf.passwordRules')}
-                  </SmallText>
+                  <CaptionText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.idf.passwordRules')}</CaptionText>
                 </View>
               ) : null}
             </View>

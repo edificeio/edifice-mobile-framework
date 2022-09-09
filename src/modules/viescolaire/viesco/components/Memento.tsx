@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 
 const styles = StyleSheet.create({
@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
     paddingBottom: UI_SIZES.spacing.medium,
   },
   studentName: {
-    ...TextSizeStyle.Medium,
     marginBottom: UI_SIZES.spacing.small,
   },
   studentGroups: {
@@ -103,7 +102,7 @@ export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
 export const StudentInfos = (props: { memento: IMemento }) => {
   return (
     <View style={styles.studentInfos}>
-      {props.memento.name ? <SmallBoldText style={styles.studentName}>{props.memento.name}</SmallBoldText> : null}
+      {props.memento.name ? <BodyBoldText style={styles.studentName}>{props.memento.name}</BodyBoldText> : null}
 
       <View style={styles.infoLine}>
         <Icon style={styles.iconDisplay} size={20} name="cake-variant" />

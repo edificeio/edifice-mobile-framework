@@ -11,7 +11,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
@@ -180,9 +180,9 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               hasError={(error && !typing && !errtype) as boolean}
             />
             <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium }}>
-              <SmallText style={{ marginRight: UI_SIZES.spacing.small, color: theme.ui.text.regular, ...TextSizeStyle.Small }}>
+              <CaptionText style={{ marginRight: UI_SIZES.spacing.small, color: theme.ui.text.regular }}>
                 {I18n.t('AutoLogin')}
-              </SmallText>
+              </CaptionText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}

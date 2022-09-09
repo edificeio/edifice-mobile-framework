@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
@@ -37,9 +37,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     marginLeft: UI_SIZES.spacing.minor,
-  },
-  descriptionText: {
-    ...TextSizeStyle.Small,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -116,9 +113,7 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
         <View style={styles.lowerContentContainer}>
           <ResourceImage image={resource.image} style={styles.imageContainer} />
           <View style={styles.secondaryContainer}>
-            <SmallText numberOfLines={2} style={styles.descriptionText}>
-              {resource.source === Source.SIGNET ? resource.authors : resource.editors}
-            </SmallText>
+            <CaptionText numberOfLines={2}>{resource.source === Source.SIGNET ? resource.authors : resource.editors}</CaptionText>
             <View style={styles.actionsContainer}>
               <FavoriteIcon {...this.props} />
               <IconButton icon="link" size={20} onPress={this.copyToClipboard} />

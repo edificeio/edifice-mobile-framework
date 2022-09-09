@@ -5,7 +5,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
-    ...TextSizeStyle.Medium,
     marginLeft: UI_SIZES.spacing.minor,
   },
   messageContainer: {
@@ -45,7 +44,7 @@ export const ModalPermanentDelete = ({
       <View style={styles.deleteTitleContainer}>
         <ModalContentBlock style={styles.row}>
           <Icon size={18} name="warning" color={theme.palette.secondary.regular} />
-          <SmallBoldText style={styles.titleText}>{I18n.t('zimbra-message-deleted-confirm')}</SmallBoldText>
+          <BodyBoldText style={styles.titleText}>{I18n.t('zimbra-message-deleted-confirm')}</BodyBoldText>
         </ModalContentBlock>
       </View>
       <View style={styles.messageContainer}>

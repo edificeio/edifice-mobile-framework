@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
-import { NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, NestedText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
@@ -27,7 +27,7 @@ const User = ({ userId, userName }) => {
   return (
     <View style={{ flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'baseline' }} key={userId}>
       <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
-      <SmallText style={{ ...TextSizeStyle.Small }}>{userName}</SmallText>
+      <CaptionText>{userName}</CaptionText>
     </View>
   );
 };
@@ -39,7 +39,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
     <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
       {inInbox || (
         <View style={{ flexDirection: 'row' }}>
-          <SmallText style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</SmallText>
+          <CaptionText style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</CaptionText>
           <User userId={contacts.from[0]} userName={contacts.from[1]} />
         </View>
       )}
@@ -121,15 +121,15 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   return isVisible ? (
                     <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
                   ) : (
-                    <SmallText
-                      style={{ marginTop: UI_SIZES.spacing.tiny, flex: 0, color: theme.ui.text.regular, ...TextSizeStyle.Small }}
+                    <CaptionText
+                      style={{ marginTop: UI_SIZES.spacing.tiny, flex: 0, color: theme.ui.text.regular }}
                       numberOfLines={1}>
                       <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
                       <NestedText style={{ color: theme.palette.primary.regular }}>
                         {mailContacts.to[0][1]}
                         {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
                       </NestedText>
-                    </SmallText>
+                    </CaptionText>
                   );
                 })()}
               </View>
@@ -156,7 +156,7 @@ export const FooterButton = ({ icon, text, onPress }) => {
         justifyContent: 'space-evenly',
       }}>
       <Icon name={icon} size={24} style={{ color: theme.ui.text.light }} />
-      <SmallText style={{ color: theme.ui.text.light, ...TextSizeStyle.Small }}>{text}</SmallText>
+      <CaptionText style={{ color: theme.ui.text.light }}>{text}</CaptionText>
     </TouchableOpacity>
   );
 };
@@ -254,7 +254,6 @@ const styles = StyleSheet.create({
   },
   greyColor: {
     color: theme.palette.grey.graphite,
-    ...TextSizeStyle.Small,
   },
   mailInfos: {
     paddingLeft: UI_SIZES.spacing.small,

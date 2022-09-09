@@ -6,16 +6,13 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText } from '~/framework/components/text';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
 import { WorkspaceFolderSelector } from './WorkspaceFolderSelector';
 
 const styles = StyleSheet.create({
-  titleText: {
-    ...TextSizeStyle.Medium,
-  },
   flatListContainer: {
     maxHeight: 400,
     marginVertical: UI_SIZES.spacing.small,
@@ -129,7 +126,7 @@ export const WorkspaceModal = ({
       ref={modalBoxRef}
       content={
         <View>
-          <SmallText style={styles.titleText}>{settings.title}</SmallText>
+          <BodyText>{settings.title}</BodyText>
           {settings.hasDestinationSelector ? (
             <WorkspaceFolderSelector
               data={folderTree}

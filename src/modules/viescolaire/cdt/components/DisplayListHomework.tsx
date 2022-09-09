@@ -6,7 +6,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { Homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -29,14 +29,10 @@ const style = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
-  title: {
-    ...TextSizeStyle.Medium,
-  },
   homeworksView: {
     marginBottom: UI_SIZES.spacing.large,
   },
   homeworkType: {
-    ...TextSizeStyle.Medium,
     marginTop: UI_SIZES.spacing.medium,
   },
   subtitle: {
@@ -77,12 +73,12 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
           </View>
 
           <View style={style.homeworkPart}>
-            <SmallBoldText style={style.title}>{I18n.t('viesco-homework-home')}</SmallBoldText>
+            <BodyBoldText>{I18n.t('viesco-homework-home')}</BodyBoldText>
             <FlatList
               data={homeworkList}
               renderItem={({ item }) => (
                 <View style={style.homeworksView}>
-                  {item?.type && <SmallBoldText style={style.homeworkType}>{item?.type}</SmallBoldText>}
+                  {item?.type && <BodyBoldText style={style.homeworkType}>{item?.type}</BodyBoldText>}
                   {item && item?.subject && (
                     <SmallText style={style.subtitle}>
                       {item.subject.charAt(0).toLocaleUpperCase() + item.subject.substring(1).toLocaleLowerCase()} -{' '}

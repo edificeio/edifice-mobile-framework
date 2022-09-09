@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallText } from '~/framework/components/text';
 import { renderIcon } from '~/modules/workspace/components/image';
 import { IFile } from '~/modules/workspace/reducer';
 import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
@@ -23,7 +23,6 @@ const style = StyleSheet.create({
     maxWidth: '50%',
   },
   authorText: {
-    ...TextSizeStyle.Small,
     color: theme.ui.text.light,
     maxWidth: '50%',
   },
@@ -71,9 +70,9 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
               </View>
             ) : null}
             {ownerName.length > 0 ? (
-              <SmallText numberOfLines={1} style={style.authorText}>
+              <CaptionText numberOfLines={1} style={style.authorText}>
                 {longOwnerName}
-              </SmallText>
+              </CaptionText>
             ) : null}
           </View>
         </CenterPanel>
