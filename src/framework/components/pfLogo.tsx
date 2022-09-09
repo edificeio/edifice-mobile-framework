@@ -8,7 +8,7 @@ import React from 'react';
 import { Picture } from '~/framework/components//picture';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
-const logoHeight = 100;
+const logoHeight = 64;
 const logoWidth = 300;
 
 const ImageLogo = styled.Image({

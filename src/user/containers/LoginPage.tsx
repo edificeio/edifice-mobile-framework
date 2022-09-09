@@ -118,12 +118,8 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   }
 
   protected renderLogo = () => {
-    const logoStyle = { height: 64, width: '100%' };
-    if (DEPRECATED_getCurrentPlatform()!.logoStyle) {
-      Object.assign(logoStyle, DEPRECATED_getCurrentPlatform()!.logoStyle!);
-    }
     return (
-      <View style={{ flexGrow: 2, justifyContent: 'center', width: '100%' }}>
+      <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
         <PFLogo />
       </View>
     );
