@@ -6,7 +6,7 @@ import { FlatList, FlexAlignType, StyleSheet, TouchableOpacity, View } from 'rea
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
 import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
@@ -44,14 +44,12 @@ const styleConstant = StyleSheet.create({
     marginVertical: UI_SIZES.spacing.minor,
   },
   coloredSquareNoteText: {
-    ...TextSizeStyle.Big,
     color: theme.palette.grey.white,
   },
   gradeDevoirsNoteContainer: {
     justifyContent: 'center',
   },
   gradeDevoirsNoteText: {
-    ...TextSizeStyle.Big,
     alignSelf: 'center',
     color: theme.palette.grey.white,
   },
@@ -73,7 +71,6 @@ const styleConstant = StyleSheet.create({
     justifyContent: 'center',
   },
   competenceRoundText: {
-    ...TextSizeStyle.Big,
     textAlign: 'center',
   },
   competenceRoundModalStyle: {
@@ -142,7 +139,6 @@ const styleConstant = StyleSheet.create({
     paddingRight: UI_SIZES.spacing.minor,
   },
   denseDevoirListNoteText: {
-    ...TextSizeStyle.Medium,
     flexGrow: 1,
     textAlign: 'right',
     alignSelf: 'center',
@@ -211,7 +207,7 @@ const CompetenceRound = ({
         <TouchableOpacity
           style={[styleConstant.competenceRound, styleConstant.shadow, { minHeight: size, minWidth: size }]}
           onPress={() => toggleVisible(!isVisible)}>
-          <SmallBoldText style={styleConstant.competenceRoundText}>C</SmallBoldText>
+          <HeadingSText style={styleConstant.competenceRoundText}>C</HeadingSText>
         </TouchableOpacity>
       )}
 
@@ -258,11 +254,11 @@ const ColoredSquare = ({
     <SmallText style={styleConstant.coloredSquareNoteTextContainer}>
       {!isNaN(Number(note)) ? (
         <>
-          <SmallBoldText style={styleConstant.coloredSquareNoteText}>{+parseFloat(Number(note).toFixed(2))}</SmallBoldText>
+          <HeadingSText style={styleConstant.coloredSquareNoteText}>{+parseFloat(Number(note).toFixed(2))}</HeadingSText>
           {!hideScore ? `/ ${diviseur}` : null}
         </>
       ) : (
-        <SmallBoldText style={styleConstant.coloredSquareNoteText}>{note}</SmallBoldText>
+        <HeadingSText style={styleConstant.coloredSquareNoteText}>{note}</HeadingSText>
       )}
     </SmallText>
     {coeff ? <SmallText style={styleConstant.coloredSquareText}>coeff : {coeff}</SmallText> : null}
@@ -295,11 +291,11 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
           {devoir.competences.length ? (
             <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} levels={levels} />
           ) : (
-            isNaN(Number(devoir.note)) && <SmallBoldText style={styleConstant.denseDevoirListNoteText}>{devoir.note}</SmallBoldText>
+            isNaN(Number(devoir.note)) && <BodyBoldText style={styleConstant.denseDevoirListNoteText}>{devoir.note}</BodyBoldText>
           )}
           {devoir.note && !isNaN(Number(devoir.note)) && (
             <>
-              <SmallBoldText style={styleConstant.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</SmallBoldText>
+              <BodyBoldText style={styleConstant.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</BodyBoldText>
               <SmallText style={styleConstant.denseDevoirListDiviseurText}>/{devoir.diviseur}</SmallText>
             </>
           )}
@@ -383,7 +379,7 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
             <CompetenceRound stateFullRound="flex-end" competences={item.competences} size={60} levels={levels} />
           ) : (
             <View style={[styleConstant.coloredSquare, styleConstant.gradeDevoirsNoteContainer]}>
-              <SmallBoldText style={styleConstant.gradeDevoirsNoteText}>{item.note}</SmallBoldText>
+              <HeadingSText style={styleConstant.gradeDevoirsNoteText}>{item.note}</HeadingSText>
             </View>
           )}
         </View>

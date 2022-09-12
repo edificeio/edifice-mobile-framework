@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextSizeStyle } from '~/framework/components/text';
+import { HeadingFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
@@ -84,7 +84,12 @@ export class ImagePicker extends React.PureComponent<
               <ModalContentBlock style={{ marginBottom: UI_SIZES.spacing.medium }} key={a.id}>
                 <ButtonTextIcon
                   style={{ width: 250 }}
-                  textStyle={{ ...TextSizeStyle.Big, padding: UI_SIZES.spacing.medium, marginTop: -UI_SIZES.spacing.small }}
+                  textStyle={{
+                    ...TextSizeStyle.Big,
+                    ...HeadingFontStyle.Bold,
+                    padding: UI_SIZES.spacing.medium,
+                    marginTop: -UI_SIZES.spacing.small,
+                  }}
                   title={a.title}
                   onPress={() => {
                     actions[a.id]();

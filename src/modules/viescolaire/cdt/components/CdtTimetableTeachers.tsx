@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, HeadingSText, SmallText } from '~/framework/components/text';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/cdt/containers/CdtTimetableTeachers';
 import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
@@ -61,9 +61,6 @@ const style = StyleSheet.create({
     height: 45,
     marginBottom: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.small,
-  },
-  homeworksText: {
-    ...TextSizeStyle.Medium,
   },
   halfSessionMargin: {
     marginHorizontal: UI_SIZES.spacing.minor,
@@ -130,10 +127,10 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     const isEmpty = !homeworks.length;
     return (
       <View style={style.homeworksContainer}>
-        <SmallBoldText style={style.homeworksText}>
+        <BodyBoldText>
           {I18n.t('viesco-homework')}
           {homeworks.length > 1 && ' (' + homeworks.length + ')'}
-        </SmallBoldText>
+        </BodyBoldText>
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))}
           disabled={isEmpty}>

@@ -11,7 +11,7 @@ import DocumentPicker, {
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextSizeStyle } from '~/framework/components/text';
+import { HeadingFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { assertPermissions } from '~/framework/util/permissions';
 import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
@@ -128,7 +128,12 @@ export class FilePicker extends React.PureComponent<
                 <ButtonTextIcon
                   disabled={!enabled}
                   style={{ width: 250 }}
-                  textStyle={{ ...TextSizeStyle.Big, padding: UI_SIZES.spacing.medium, marginTop: -UI_SIZES.spacing.small }}
+                  textStyle={{
+                    ...TextSizeStyle.Big,
+                    ...HeadingFontStyle.Bold,
+                    padding: UI_SIZES.spacing.medium,
+                    marginTop: -UI_SIZES.spacing.small,
+                  }}
                   title={a.title}
                   onPress={() => {
                     this.setState({ enabled: false });

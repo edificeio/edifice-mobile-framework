@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { UserType } from '~/framework/util/session';
 import {
   IConcernedStudent,
@@ -198,16 +198,15 @@ const SchoolbookWordDetailsCard = (
                 />
               }
               text={
-                <SmallText style={{ ...TextSizeStyle.Small }} numberOfLines={usersTextMaxLines}>
+                <CaptionText numberOfLines={usersTextMaxLines}>
                   {`${I18n.t(`common.${isTeacher ? 'forRecipients' : 'from'}`)} `}
-                  <SmallBoldText
+                  <CaptionBoldText
                     style={{
-                      ...TextSizeStyle.Small,
                       color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.primary.regular,
                     }}>
                     {isTeacher ? recipientsString(report) : word?.ownerName}
-                  </SmallBoldText>
-                </SmallText>
+                  </CaptionBoldText>
+                </CaptionText>
               }
               date={word?.sendingDate}
             />
@@ -367,9 +366,9 @@ const SchoolbookWordDetailsCard = (
         ref={modalBoxRef}
         content={
           <View style={{ flexGrow: 1, flexShrink: 1 }}>
-            <SmallBoldText style={{ ...TextSizeStyle.Big, marginBottom: UI_SIZES.spacing.tiny }}>
+            <HeadingSText style={{ marginBottom: UI_SIZES.spacing.tiny }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
-            </SmallBoldText>
+            </HeadingSText>
             <SmallText style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </SmallText>

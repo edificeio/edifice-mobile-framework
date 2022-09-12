@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { IChildArray } from '~/modules/viescolaire/viesco/state/children';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
@@ -14,7 +14,6 @@ import { ModalBox } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
   modalTitle: {
-    ...TextSizeStyle.Medium,
     marginBottom: UI_SIZES.spacing.minor,
   },
   modalSubsection: {
@@ -129,7 +128,7 @@ export const NotificationRelativesModal = ({
     <ModalBox backdropOpacity={0.5} isVisible={visible}>
       <View style={styles.modalContainerView}>
         <View style={styles.modalContentView}>
-          <SmallText style={styles.modalTitle}>{I18n.t('viesco-notifications')}</SmallText>
+          <BodyText style={styles.modalTitle}>{I18n.t('viesco-notifications')}</BodyText>
           {childrenArray?.map(child =>
             childrenEvents.data &&
             childrenEvents?.data?.studentsEvents &&

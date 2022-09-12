@@ -10,7 +10,15 @@ import { ResourceView } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import ScrollView from '~/framework/components/scrollView';
-import { HeadingSText, SmallBoldText, SmallItalicText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import {
+  BodyText,
+  CaptionBoldText,
+  CaptionItalicText,
+  CaptionText,
+  HeadingSText,
+  SmallBoldText,
+  SmallText,
+} from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IUserSession } from '~/framework/util/session';
 import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '~/modules/schoolbook/reducer';
@@ -90,11 +98,9 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                         <SingleAvatar size={24} userId={item.owner} />
                         <View style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }}>
                           <SmallText numberOfLines={1}>{item.ownerName}</SmallText>
-                          <SmallText
-                            numberOfLines={acknowledgedByTextMaxLines}
-                            style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
+                          <CaptionText numberOfLines={acknowledgedByTextMaxLines} style={{ color: theme.palette.grey.graphite }}>
                             {acknowledgedByString(item.acknowledgments)}
-                          </SmallText>
+                          </CaptionText>
                           {item.responses?.map((response, index) => {
                             const isLastItem = item.responses && item.responses.length - 1 === index;
                             return (
@@ -112,19 +118,18 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                                   <SingleAvatar size={24} userId={response.owner} />
                                   <View style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }}>
                                     <View style={{ flexDirection: 'row' }}>
-                                      <SmallBoldText numberOfLines={1} style={{ ...TextSizeStyle.Small, flexShrink: 1 }}>
+                                      <CaptionBoldText numberOfLines={1} style={{ flexShrink: 1 }}>
                                         {response.parentName}
-                                      </SmallBoldText>
-                                      <SmallItalicText
+                                      </CaptionBoldText>
+                                      <CaptionItalicText
                                         style={{
-                                          ...TextSizeStyle.Small,
                                           marginLeft: UI_SIZES.spacing.minor,
                                           color: theme.palette.grey.graphite,
                                         }}>
                                         {displayPastDate(response.modified)}
-                                      </SmallItalicText>
+                                      </CaptionItalicText>
                                     </View>
-                                    <SmallText style={{ ...TextSizeStyle.Small }}>{response.comment}</SmallText>
+                                    <CaptionText>{response.comment}</CaptionText>
                                   </View>
                                 </View>
                               </View>
@@ -147,9 +152,7 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
                   justifyContent: 'space-between',
                   marginTop: hasAcknowledgedStudents ? UI_SIZES.spacing.tiny + UI_SIZES.spacing.medium : UI_SIZES.spacing.tiny,
                 }}>
-                <SmallBoldText style={{ ...TextSizeStyle.Big }}>
-                  {unacknowledgementsString(word?.ackNumber, word?.total)}
-                </SmallBoldText>
+                <HeadingSText>{unacknowledgementsString(word?.ackNumber, word?.total)}</HeadingSText>
                 {hasSchoolbookWordResendRights ? (
                   <ActionButton
                     type="secondary"
@@ -185,12 +188,10 @@ const SchoolbookWordReportCard = ({ session, action, schoolbookWord }: ISchoolBo
         ref={modalBoxRef}
         content={
           <>
-            <SmallBoldText style={{ ...TextSizeStyle.Big }}>
-              {I18n.t('schoolbook.schoolbookWordReportScreen.reminderModal.title')}
-            </SmallBoldText>
-            <SmallText style={{ ...TextSizeStyle.Medium, marginTop: UI_SIZES.spacing.small }}>
+            <HeadingSText>{I18n.t('schoolbook.schoolbookWordReportScreen.reminderModal.title')}</HeadingSText>
+            <BodyText style={{ marginTop: UI_SIZES.spacing.small }}>
               {I18n.t('schoolbook.schoolbookWordReportScreen.reminderModal.text')}
-            </SmallText>
+            </BodyText>
             <View
               style={{
                 flexDirection: 'row',

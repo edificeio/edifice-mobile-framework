@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
@@ -158,11 +158,9 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                   {/* Mail subjet & content */}
                   <View style={{ flex: 1 }}>
                     {(() => {
-                      const TextSubjectComponent = isMailUnread ? SmallBoldText : SmallText;
+                      const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
                       return (
-                        <TextSubjectComponent
-                          numberOfLines={1}
-                          style={{ marginTop: UI_SIZES.spacing.tiny, flex: 1, ...TextSizeStyle.Small }}>
+                        <TextSubjectComponent numberOfLines={1} style={{ marginTop: UI_SIZES.spacing.tiny, flex: 1 }}>
                           {mailInfos.subject}
                         </TextSubjectComponent>
                       );

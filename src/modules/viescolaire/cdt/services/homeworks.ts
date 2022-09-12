@@ -90,7 +90,7 @@ export const homeworksService = {
   },
   updateProgress: async (homeworkId: number, isDone: boolean) => {
     const status = isDone ? 'done' : 'todo';
-    // const result = await fetchJSONWithCache(`/diary/homework/progress/${homeworkId}/${status}`, { method: 'post' });
+    const result = await fetchJSONWithCache(`/diary/homework/progress/${homeworkId}/${status}`, { method: 'post' });
     return { homeworkId, status };
   },
 };
