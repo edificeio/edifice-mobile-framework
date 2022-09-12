@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
-import { NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { IPunishment } from '~/modules/viescolaire/presences/state/events';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -19,7 +19,6 @@ interface PresenceCardProps {
 
 const styles = StyleSheet.create({
   title: {
-    ...TextSizeStyle.Medium,
     textTransform: 'uppercase',
     color: theme.palette.grey.graphite,
   },
@@ -75,7 +74,7 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
 
   return (
     <BottomColoredItem shadow color={color}>
-      <SmallText style={styles.title}>{title}</SmallText>
+      <BodyText style={styles.title}>{title}</BodyText>
       <View style={styles.row}>
         <View style={styles.leftColumn}>
           <NestedBoldText style={styles.leftColumnText}>{numberChildren}</NestedBoldText>

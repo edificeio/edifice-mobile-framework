@@ -100,7 +100,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
                 borderRadius: 20,
                 width: 150,
               }}
-              textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
+              textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold }}
             />
             <DialogButtonOk
               onPress={() => {
@@ -112,7 +112,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
                 borderRadius: 20,
                 width: 150,
               }}
-              textStyle={{ ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
+              textStyle={{ ...TextFontStyle.Bold }}
               disabled={isMoveImpossible || !selectedFolder}
               label={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
             />
