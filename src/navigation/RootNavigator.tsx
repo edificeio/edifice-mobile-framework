@@ -5,8 +5,7 @@ import { NavigationRouteConfigMap, createAppContainer, createSwitchNavigator } f
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 
-import { setUpModulesAccess } from '~/app/modules';
-import AllModules from '~/app/modules';
+import AllModules, { setUpModulesAccess } from '~/app/modules';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { IAppModule } from '~/infra/moduleTool/types';

@@ -1,8 +1,7 @@
 import moment from 'moment';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State, TouchableOpacity } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';

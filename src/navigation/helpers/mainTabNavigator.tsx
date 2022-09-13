@@ -18,6 +18,11 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
       // Colors
       activeTintColor: theme.palette.primary.regular,
       inactiveTintColor: theme.palette.primary.regular,
+      // Insets
+      safeAreaInset: {
+        bottom: UI_SIZES.screen.bottomInset,
+        top: UI_SIZES.screen.topInset,
+      },
       // Label and icon
       showIcon: true,
       showLabel: true,

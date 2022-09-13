@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, ScrollView, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';

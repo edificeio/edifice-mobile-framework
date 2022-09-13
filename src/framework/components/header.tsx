@@ -270,7 +270,7 @@ export const DEPRECATED_HeaderPrimaryAction = (props: IHeaderActionGenericProps 
         zIndex: 100,
         elevation: 6,
         right: 20,
-        top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
+        top: 14 + Platform.select({ ios: UI_SIZES.screen.topInset, default: 0 }),
         ...iconStyle,
       }}
       {...otherProps}
