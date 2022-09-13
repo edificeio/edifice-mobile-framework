@@ -32,7 +32,7 @@ const Input = ({ value, onChangeText, onSubmit, onBlur }) => {
   const textInputStyle = {
     flex: 1,
     height: 40,
-    color: theme.legacy.neutral.subtleShadow,
+    color: theme.ui.text.regular,
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 2,
   } as ViewStyle;

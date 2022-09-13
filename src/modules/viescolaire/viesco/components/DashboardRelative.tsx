@@ -58,9 +58,6 @@ const styles = StyleSheet.create({
   gridButtonTextWidthHalf: {
     width: '50%',
   },
-  gridButtonDefaultColor: {
-    backgroundColor: theme.legacy.neutral.regular,
-  },
   gridButtonAllModules: {
     justifyContent: 'flex-start',
   },
@@ -101,12 +98,9 @@ interface IIconButtonProps {
   nbModules: number;
 }
 
-const IconButtonModule = ({ disabled, icon, color, text, onPress, nbModules }: IIconButtonProps) => (
+const IconButtonModule = ({ icon, color, text, onPress, nbModules }: IIconButtonProps) => (
   <View style={[styles.gridButtonContainer, nbModules === 4 ? styles.gridButtonTextWidthHalf : styles.gridButtonTextWidthFull]}>
-    <TouchableOpacity
-      disabled={disabled}
-      onPress={onPress}
-      style={[styles.gridButton, disabled ? styles.gridButtonDefaultColor : { backgroundColor: color }]}>
+    <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>
       <View style={[styles.viewButton, nbModules === 4 ? styles.gridButtonAllModules : styles.gridButtonLineModules]}>
         <Icon size={20} color={theme.ui.text.inverse} name={icon} />
         <SmallText style={styles.gridButtonText}>{text}</SmallText>

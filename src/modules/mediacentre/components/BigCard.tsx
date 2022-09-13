@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CaptionText, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { IResource, Source } from '~/modules/mediacentre/reducer';

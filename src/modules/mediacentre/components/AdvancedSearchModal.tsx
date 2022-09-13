@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   headerTitle: {
-    color: theme.palette.grey.white,
+    color: theme.ui.text.inverse,
   },
   contentContainer: {
     flexGrow: 1,

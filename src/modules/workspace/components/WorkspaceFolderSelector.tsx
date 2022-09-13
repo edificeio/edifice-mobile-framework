@@ -142,7 +142,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
     }
     return (
       <TouchableOpacity onPress={() => onTapFolder({ item })} style={[styles.rowContainer, { backgroundColor }]}>
-        <SmallText style={styles.nameText}>{item.name} </SmallText>
+        <SmallText style={styles.nameText}>{item.name}</SmallText>
       </TouchableOpacity>
     );
   };
