@@ -28,16 +28,12 @@
 		745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 745D891422DE014D0038F1FA /* GoogleService-Info.plist */; };
 		74660EAE247BE64C00F74D20 /* DummySwiftFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */; };
 		74EC2C4926E63F04008EB301 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74EC2C4026E63F04008EB301 /* icomoon.ttf */; };
+		91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF628D0D33A00A1A1C2 /* Font-Italic.ttf */; };
+		91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */; };
+		91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */; };
+		91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */; };
 		F000939826CFA6F600BDA5D3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F000939726CFA6F600BDA5D3 /* LaunchScreen.xib */; };
-		F0440EED28AF98A50065A34A /* Arimo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EE428AF98A50065A34A /* Arimo-Regular.ttf */; };
-		F0440EEE28AF98A50065A34A /* Arimo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EE528AF98A50065A34A /* Arimo-Bold.ttf */; };
-		F0440EEF28AF98A50065A34A /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EE628AF98A50065A34A /* Roboto-Italic.ttf */; };
-		F0440EF028AF98A50065A34A /* Arimo-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EE728AF98A50065A34A /* Arimo-BoldItalic.ttf */; };
-		F0440EF128AF98A50065A34A /* Arimo-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EE828AF98A50065A34A /* Arimo-Italic.ttf */; };
-		F0440EF228AF98A50065A34A /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EE928AF98A50065A34A /* Roboto-Bold.ttf */; };
 		F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */; };
-		F0440EF428AF98A50065A34A /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEB28AF98A50065A34A /* Roboto-Regular.ttf */; };
-		F0440EF528AF98A50065A34A /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEC28AF98A50065A34A /* Roboto-BoldItalic.ttf */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
@@ -65,21 +61,17 @@
 		74EC2C4026E63F04008EB301 /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		7DFD5F26543B345536ED6D5D /* Pods-appeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appeTests.debug.xcconfig"; path = "Target Support Files/Pods-appeTests/Pods-appeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8513074532BD790A5E39FCEF /* Pods-appeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appeTests.release.xcconfig"; path = "Target Support Files/Pods-appeTests/Pods-appeTests.release.xcconfig"; sourceTree = "<group>"; };
+		91D2CEF628D0D33A00A1A1C2 /* Font-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Italic.ttf"; sourceTree = "<group>"; };
+		91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-BoldItalic.ttf"; sourceTree = "<group>"; };
+		91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Bold.ttf"; sourceTree = "<group>"; };
+		91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Regular.ttf"; sourceTree = "<group>"; };
 		95CC73870D22D38A2E17B6AA /* libPods-appe-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4A5206ADA9B3A8E0AD26FB7 /* Pods-appe-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-appe-tvOSTests/Pods-appe-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		DAAB12508AD5F6829B136F0F /* Pods-appe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe.release.xcconfig"; path = "Target Support Files/Pods-appe/Pods-appe.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F000939726CFA6F600BDA5D3 /* LaunchScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
-		F0440EE428AF98A50065A34A /* Arimo-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arimo-Regular.ttf"; sourceTree = "<group>"; };
-		F0440EE528AF98A50065A34A /* Arimo-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arimo-Bold.ttf"; sourceTree = "<group>"; };
-		F0440EE628AF98A50065A34A /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Italic.ttf"; sourceTree = "<group>"; };
-		F0440EE728AF98A50065A34A /* Arimo-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arimo-BoldItalic.ttf"; sourceTree = "<group>"; };
-		F0440EE828AF98A50065A34A /* Arimo-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Arimo-Italic.ttf"; sourceTree = "<group>"; };
-		F0440EE928AF98A50065A34A /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Comfortaa-Bold.ttf"; sourceTree = "<group>"; };
-		F0440EEB28AF98A50065A34A /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
-		F0440EEC28AF98A50065A34A /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
 		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -141,15 +133,11 @@
 		74EC2C3F26E63F04008EB301 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				F0440EE528AF98A50065A34A /* Arimo-Bold.ttf */,
-				F0440EE728AF98A50065A34A /* Arimo-BoldItalic.ttf */,
-				F0440EE828AF98A50065A34A /* Arimo-Italic.ttf */,
-				F0440EE428AF98A50065A34A /* Arimo-Regular.ttf */,
 				F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */,
-				F0440EE928AF98A50065A34A /* Roboto-Bold.ttf */,
-				F0440EEC28AF98A50065A34A /* Roboto-BoldItalic.ttf */,
-				F0440EE628AF98A50065A34A /* Roboto-Italic.ttf */,
-				F0440EEB28AF98A50065A34A /* Roboto-Regular.ttf */,
+				91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */,
+				91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */,
+				91D2CEF628D0D33A00A1A1C2 /* Font-Italic.ttf */,
+				91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */,
 				74EC2C4026E63F04008EB301 /* icomoon.ttf */,
 			);
 			path = Fonts;
@@ -279,20 +267,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0440EEE28AF98A50065A34A /* Arimo-Bold.ttf in Resources */,
-				F0440EEF28AF98A50065A34A /* Roboto-Italic.ttf in Resources */,
-				F0440EF228AF98A50065A34A /* Roboto-Bold.ttf in Resources */,
-				F0440EF528AF98A50065A34A /* Roboto-BoldItalic.ttf in Resources */,
 				F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */,
 				7404C07422E8B012008546A8 /* Assets.xcassets in Resources */,
 				F0625946264574A4001AE555 /* InfoPlist.strings in Resources */,
-				F0440EF028AF98A50065A34A /* Arimo-BoldItalic.ttf in Resources */,
 				741ACC0D23B632380075BCE4 /* AppCenter-Config.plist in Resources */,
-				F0440EF428AF98A50065A34A /* Roboto-Regular.ttf in Resources */,
-				F0440EF128AF98A50065A34A /* Arimo-Italic.ttf in Resources */,
 				745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */,
+				91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */,
+				91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */,
+				91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */,
 				74EC2C4926E63F04008EB301 /* icomoon.ttf in Resources */,
-				F0440EED28AF98A50065A34A /* Arimo-Regular.ttf in Resources */,
+				91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */,
 				F000939826CFA6F600BDA5D3 /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

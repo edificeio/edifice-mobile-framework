@@ -70,6 +70,8 @@ const _override_copyMergePaths = {
   'android/google-services.json': 'android/app/google-services.json', // Firebase Android config
   'ios/Assets.xcassets': 'ios/appe/Assets.xcassets', // iOS specific native assets
   'android/res': 'android/app/src/main/res', // Android specific native assets
+  'ios/Fonts': 'ios/Fonts', // iOS specific fonts
+  'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
 };
 
 // Manual proceeded files

@@ -8,18 +8,16 @@ import styled from '@emotion/native';
 import { Platform, Text as RNText, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import appConf from '~/framework/util/appConf';
 
 import { getScaleDimension } from './constants';
 
 /**
  * Base font properties
  */
-const isApp1D = appConf.is1d;
 const headingFontFamilyIOS = 'Comfortaa';
 const headingFontFamilyPrefixAndroid = 'comfortaa_';
-const textFontFamilyIOS = isApp1D ? 'Arimo' : 'Roboto';
-const textFontFamilyPrefixAndroid = isApp1D ? 'arimo_' : 'roboto_';
+const textFontFamilyIOS = 'Font';
+const textFontFamilyPrefixAndroid = 'font_';
 
 /**
  * Font variations

@@ -75,14 +75,10 @@
 	<array>
 		<string>icomoon.ttf</string>
 		<string>MaterialIcons.ttf</string>
-		<string>Roboto-Bold.ttf</string>
-		<string>Roboto-BoldItalic.ttf</string>
-		<string>Roboto-Italic.ttf</string>
-		<string>Roboto-Regular.ttf</string>
-		<string>Arimo-Bold.ttf</string>
-		<string>Arimo-BoldItalic.ttf</string>
-		<string>Arimo-Italic.ttf</string>
-		<string>Arimo-Regular.ttf</string>
+		<string>Font-Bold.ttf</string>
+		<string>Font-BoldItalic.ttf</string>
+		<string>Font-Italic.ttf</string>
+		<string>Font-Regular.ttf</string>
 		<string>Comfortaa-Bold.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
