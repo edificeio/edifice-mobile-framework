@@ -104,7 +104,7 @@ export const NoReasonCard = ({ elements }) => {
   );
   return (
     <PresenceCard
-      color={viescoTheme.palette.presencesEvents.no_reason}
+      color={viescoTheme.palette.presencesEvents.noReason}
       title={I18n.t('viesco-history-noreason')}
       renderItem={renderItem}
       elements={elements}

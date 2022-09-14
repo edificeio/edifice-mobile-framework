@@ -171,7 +171,7 @@ const getColorFromNote = (note: number, moy: number, diviseur: number) => {
   } else if (note === moy) {
     return theme.palette.complementary.orange.regular;
   } else if (note < moy) {
-    return viescoTheme.palette.presencesEvents.no_reason;
+    return viescoTheme.palette.presencesEvents.noReason;
   }
 };
 

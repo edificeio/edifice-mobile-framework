@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     width: 60,
     borderRadius: 10,
   },
-  absentColor: { backgroundColor: viescoTheme.palette.presencesEvents.no_reason },
+  absentColor: { backgroundColor: viescoTheme.palette.presencesEvents.noReason },
   presentColor: { backgroundColor: viescoTheme.palette.presences },
   carouselContainer: {
     flex: 1,

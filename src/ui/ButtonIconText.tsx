@@ -5,7 +5,6 @@ import { ColorValue, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText } from '~/framework/components/text';
-import { layoutSize } from '~/styles/common/layoutSize';
 
 const styles = StyleSheet.create({
   buttonWithShadow: {
@@ -23,9 +22,9 @@ const styles = StyleSheet.create({
 const TouchableOpacity = styled.TouchableOpacity({
   alignItems: 'center',
   justifyContent: 'center',
-  width: layoutSize.LAYOUT_50,
-  height: layoutSize.LAYOUT_50,
-  borderRadius: layoutSize.LAYOUT_25,
+  width: 50,
+  height: 50,
+  borderRadius: 25,
   backgroundColor: theme.palette.secondary.regular,
 });
 
@@ -41,7 +40,7 @@ interface IButtonTextIconProps {
 
 export const ButtonIcon = ({ name, size, style, color = theme.ui.text.inverse, onPress }: IButtonTextIconProps) => (
   <TouchableOpacity onPress={onPress} style={[styles.buttonWithShadow, style]}>
-    <Icon color={color} size={size ? size : layoutSize.LAYOUT_25} name={name} />
+    <Icon color={color} size={size ?? 24} name={name} />
   </TouchableOpacity>
 );
 

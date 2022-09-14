@@ -7,13 +7,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import { IFile, IFolder } from '~/modules/workspace/reducer';
-import { DEVICE_HEIGHT, layoutSize } from '~/styles/common/layoutSize';
 
 const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: layoutSize.LAYOUT_30,
+    height: 30,
     marginBottom: UI_SIZES.spacing.tiny / 2,
     borderRadius: 5,
   },
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
     color: theme.ui.text.regular,
   },
   listContainer: {
-    maxHeight: DEVICE_HEIGHT() - layoutSize.LAYOUT_250,
+    maxHeight: UI_SIZES.screen.height - 250,
     marginBottom: UI_SIZES.spacing.medium,
   },
 });
@@ -122,11 +121,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
       return (
         <View>
           <TouchableOpacity onPress={() => onTapFolder({ item })} style={[styles.rowContainer, { backgroundColor }]}>
-            <Icon
-              name={isExpanded ? 'menu-down' : 'menu-right'}
-              size={layoutSize.LAYOUT_24}
-              color={theme.palette.secondary.regular}
-            />
+            <Icon name={isExpanded ? 'menu-down' : 'menu-right'} size={24} color={theme.palette.secondary.regular} />
             <SmallText style={styles.nameText}>{item.name}</SmallText>
           </TouchableOpacity>
           {isExpanded ? (

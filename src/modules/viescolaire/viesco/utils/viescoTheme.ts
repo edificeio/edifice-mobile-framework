@@ -8,7 +8,7 @@ export const viescoTheme = {
       forgotNotebook: '#B0EAD5',
       incident: '#D6D6D6',
       lateness: '#9C29B7',
-      no_reason: '#E61610',
+      noReason: '#E61610',
       regularized: '#72bb53',
       unregularized: '#FA8A85',
     },

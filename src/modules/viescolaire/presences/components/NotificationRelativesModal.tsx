@@ -61,7 +61,7 @@ const renderChild = (key: string, event) => {
       break;
     case 'NO_REASON':
       title = I18n.t('viesco-history-noreason');
-      color = viescoTheme.palette.presencesEvents.no_reason;
+      color = viescoTheme.palette.presencesEvents.noReason;
       break;
     case 'UNREGULARIZED':
       title = I18n.t('viesco-history-unregularized');
