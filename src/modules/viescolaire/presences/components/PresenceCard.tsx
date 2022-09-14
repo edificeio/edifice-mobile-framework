@@ -273,7 +273,7 @@ export const PunishmentCard = ({ elements }) => {
 
   return (
     <PresenceCard
-      color={viescoTheme.palette.presencesEvents.punishment}
+      color={viescoTheme.palette.presences}
       title={I18n.t('viesco-history-punishments')}
       renderItem={renderItem}
       elements={elements}

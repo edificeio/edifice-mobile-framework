@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { ColorValue, StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -25,7 +25,7 @@ const styleConstant = StyleSheet.create({
 
 type ItemProps = {
   style?: StyleProp<ViewStyle>;
-  color?: string;
+  color?: ColorValue;
   selected?: boolean;
   onPress?: () => any;
   disabled?: boolean;
@@ -38,7 +38,7 @@ enum SidedComponentDirection {
   Bottom,
 }
 
-type SidedItemProps = ItemProps & { shadow?: boolean; color: string; side: SidedComponentDirection };
+type SidedItemProps = ItemProps & { shadow?: boolean; color: ColorValue; side: SidedComponentDirection };
 
 /**
  * Item for VieSco.

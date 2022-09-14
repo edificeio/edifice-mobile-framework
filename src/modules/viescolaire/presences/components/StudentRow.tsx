@@ -155,7 +155,12 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
           </TouchableOpacity>
           <View style={styles.iconsView}>
             {student.last_course_absent && (
-              <Icon style={{ transform: [{ rotateY: '180deg' }] }} color="red" size={20} name="refresh" />
+              <Icon
+                style={{ transform: [{ rotateY: '180deg' }] }}
+                color={theme.palette.complementary.red.regular}
+                size={20}
+                name="refresh"
+              />
             )}
             {student.forgotten_notebook && (
               <Icon color={viescoTheme.palette.presencesEvents.forgotNotebook} size={20} name="bookmark-remove" />

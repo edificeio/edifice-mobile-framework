@@ -3,6 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
@@ -44,7 +45,7 @@ export default ({
     disabled={!isCourseEditable}
     onPress={onPress}
     style={[styles.itemContainer, isCourseNow ? styles.itemContainerOpacityFull : styles.itemContainerOpacityScaledDown]}
-    color={isCourseEditable ? viescoTheme.palette.presences : 'dimgrey'}>
+    color={isCourseEditable ? viescoTheme.palette.presences : theme.palette.grey.graphite}>
     <ImageBackground
       source={isCourseEditable ? require('ASSETS/viesco/presences.png') : require('ASSETS/viesco/presence_gris.png')}
       style={styles.imageBackgroundContainer}

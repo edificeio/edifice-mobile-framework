@@ -259,15 +259,13 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
             <View style={styles.headerColorSwitchContainer}>
               <SmallText>{I18n.t('viesco-colors')}&ensp;</SmallText>
               <Switch
-                trackColor={{ false: '#D1D1D1', true: '#A1DED5' }}
-                thumbColor={value ? '#EFEFEF' : '#46BFAF'}
-                ios_backgroundColor={value ? '#DDDDDD' : '#46BFAF'}
+                value={!value}
                 onValueChange={() => {
                   this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
                   this.setSwitchDefaultPosition(value);
                 }}
+                trackColor={{ false: theme.palette.grey.fog, true: theme.palette.complementary.green.regular }}
                 style={Platform.OS !== 'ios' ? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : null}
-                value={!value}
               />
             </View>
           ) : null}

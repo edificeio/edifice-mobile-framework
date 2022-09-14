@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
 // COMPONENTS
 
 const User = ({ userId, userName }: { userId: string; userName: string }) => {
-  const [dotColor, setDotColor] = React.useState('white');
+  const [dotColor, setDotColor] = React.useState(theme.palette.grey.white);
 
   getUserColor(userId).then(setDotColor);
 
@@ -295,7 +295,7 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
 export const FooterButton = ({ icon, text, onPress }) => {
   return (
     <View style={styles.footerButtonContainer}>
-      <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color="black" />
+      <ButtonIcon name={icon} onPress={onPress} style={[styles.footerButton, styles.shadow]} color={theme.palette.grey.black} />
       <SmallText>{text}</SmallText>
     </View>
   );

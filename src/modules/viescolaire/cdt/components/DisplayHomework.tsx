@@ -123,10 +123,10 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
           <View style={style.mainView}>
             <View style={style.homeworkInfoBar}>
-              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color="#FA9700">
+              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
                 {homeworkList && homeworkList[indexSelectedHomework]?.created_date ? (
                   <>
-                    <Icon size={20} color="#FA9700" name="date_range" />
+                    <Icon size={20} color={theme.palette.complementary.orange.regular} name="date_range" />
                     <SmallText>&emsp;{moment(homeworkList[indexSelectedHomework].created_date).format('DD/MM/YY')}</SmallText>
                   </>
                 ) : null}

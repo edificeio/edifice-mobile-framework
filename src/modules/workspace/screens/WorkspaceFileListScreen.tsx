@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { FlatList, Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { FlatList, Platform, RefreshControl, StyleSheet } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -34,14 +34,9 @@ import { WorkspaceFileListItem } from '~/modules/workspace/components/WorkspaceF
 import { IWorkspaceModalEventProps, WorkspaceModal, WorkspaceModalType } from '~/modules/workspace/components/WorkspaceModal';
 import moduleConfig from '~/modules/workspace/moduleConfig';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
-import { CommonStyles } from '~/styles/common/styles';
 import { DropdownMenu, DropdownMenuAction } from '~/ui/DropdownMenu';
 
 const styles = StyleSheet.create({
-  separator: {
-    borderBottomColor: CommonStyles.borderColorLighter,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
   listContainer: {
     backgroundColor: theme.palette.grey.fog,
     flexGrow: 1,
@@ -321,7 +316,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
             onLongPress={selectFile}
           />
         )}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
         keyExtractor={(item: IFile) => item.id}
         refreshControl={<RefreshControl refreshing={props.isFetching} onRefresh={fetchFiles} />}
         ListEmptyComponent={renderEmpty()}

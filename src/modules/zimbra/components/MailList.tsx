@@ -206,7 +206,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               <SmallText style={styles.greyColor} numberOfLines={1}>
                 {mail.subject}
               </SmallText>
-              {mail.hasAttachment ? <Icon name="attached" size={18} color="black" /> : null}
+              {mail.hasAttachment ? <Icon name="attached" size={18} color={theme.palette.grey.black} /> : null}
             </View>
           </CenterPanel>
         </Header>

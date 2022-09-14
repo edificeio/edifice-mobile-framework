@@ -61,10 +61,10 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
       <PageContainer>
         <View style={style.mainView}>
           <View style={style.homeworksInfoBar}>
-            <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color="#FA9700">
+            <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
               {homeworkList && homeworkList[0]?.due_date ? (
                 <>
-                  <Icon size={20} color="#FA9700" name="date_range" />
+                  <Icon size={20} color={theme.palette.complementary.orange.regular} name="date_range" />
                   <SmallText>&emsp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</SmallText>
                 </>
               ) : null}

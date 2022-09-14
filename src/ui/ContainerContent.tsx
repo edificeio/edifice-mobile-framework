@@ -1,39 +1,15 @@
 import styled from '@emotion/native';
-import * as React from 'react';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
-import { CaptionText } from '~/framework/components/text';
 import { layoutSize } from '~/styles/common/layoutSize';
-import { CommonStyles } from '~/styles/common/styles';
-import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export const ArticleContainer = styled.View({
   paddingHorizontal: pageGutterSize,
   paddingVertical: pageGutterSize,
   paddingTop: 0,
 });
-
-export const ListItem = styled(TouchableOpacity)<{
-  borderBottomWidth: number;
-  full: boolean;
-  nb: number;
-}>(
-  {
-    backgroundColor: theme.ui.background.card,
-    paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing.small,
-    borderBottomColor: CommonStyles.borderBottomItem,
-    flexDirection: 'row',
-  },
-  ({ borderBottomWidth = 1, full = false, nb = 0 }) => ({
-    borderLeftWidth: full ? 4 : 0,
-    borderLeftColor: full ? CommonStyles.hightlightColor : 'transparent',
-    backgroundColor: nb > 0 ? CommonStyles.nonLue : theme.ui.background.card,
-    borderBottomWidth,
-  }),
-);
 
 export const Header = styled.View({
   alignItems: 'stretch',
@@ -82,12 +58,6 @@ export const RightPanel = styled.View({
   justifyContent: 'flex-end',
   width: layoutSize.LAYOUT_50,
 });
-
-export const Content = props => (
-  <CaptionText style={{ marginTop: UI_SIZES.spacing.small, color: props.nb > 0 ? theme.ui.text.regular : theme.ui.text.light }}>
-    {props.children}
-  </CaptionText>
-);
 
 export const PageContainer = styled.View({
   backgroundColor: theme.ui.background.page,

@@ -171,7 +171,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     switch (type) {
       case 'late':
         result.mainColor = viescoTheme.palette.presencesEvents.lateness;
-        result.lightColor = 'rgb(179, 0, 179)';
+        result.lightColor = viescoTheme.palette.presencesEvents.lateness;
         result.title = I18n.t('viesco-lateness');
         result.mainText = I18n.t('viesco-arrived');
         result.inputLabel = I18n.t('viesco-arrived-motive');

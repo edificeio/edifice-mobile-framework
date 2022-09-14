@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 interface IActionButtonProps {
-  color?: string;
+  color?: ColorValue;
   icon: string;
   text: string;
 
@@ -69,7 +69,7 @@ interface IBigCardProps {
 
 const ActionButton: React.FunctionComponent<IActionButtonProps> = (props: IActionButtonProps) => (
   <TouchableOpacity style={styles.cardActionIcon} onPress={props.onPress}>
-    <Icon size={20} color={props.color || theme.palette.primary.regular} name={props.icon} />
+    <Icon size={20} color={props.color ?? theme.palette.primary.regular} name={props.icon} />
     <CaptionText style={styles.actionText}>{props.text}</CaptionText>
   </TouchableOpacity>
 );
@@ -84,9 +84,14 @@ const FavoriteAction: React.FunctionComponent<IFavoriteActionProps> = (props: IF
     props.resource.favorite = true;
   };
   return props.resource.favorite ? (
-    <ActionButton icon="star" color="#FEC63D" text={I18n.t('mediacentre.remove-favorite')} onPress={removeFavorite} />
+    <ActionButton
+      icon="star"
+      color={theme.palette.complementary.yellow.regular}
+      text={I18n.t('mediacentre.remove-favorite')}
+      onPress={removeFavorite}
+    />
   ) : (
-    <ActionButton icon="star" color="#D6D6D6" text={I18n.t('mediacentre.add-favorite')} onPress={addFavorite} />
+    <ActionButton icon="star" color={theme.palette.grey.grey} text={I18n.t('mediacentre.add-favorite')} onPress={addFavorite} />
   );
 };
 

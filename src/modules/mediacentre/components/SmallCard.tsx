@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 });
 
 interface IIconButtonProps {
-  color?: string;
+  color?: ColorValue;
   icon: string;
   size: number;
 
@@ -68,7 +68,7 @@ interface ISmallCardProps {
 
 export const IconButton: React.FunctionComponent<IIconButtonProps> = (props: IIconButtonProps) => (
   <TouchableOpacity onPress={props.onPress}>
-    <Icon size={props.size} color={props.color || theme.palette.primary.regular} name={props.icon} />
+    <Icon size={props.size} color={props.color ?? theme.palette.primary.regular} name={props.icon} />
   </TouchableOpacity>
 );
 
@@ -80,9 +80,9 @@ export const FavoriteIcon: React.FunctionComponent<IFavoriteIconProps> = (props:
     props.addFavorite(props.resource.id, props.resource);
   };
   return props.resource.favorite ? (
-    <IconButton icon="star" size={20} color="#FEC63D" onPress={removeFavorite} />
+    <IconButton icon="star" size={20} color={theme.palette.complementary.yellow.regular} onPress={removeFavorite} />
   ) : (
-    <IconButton icon="star" size={20} color="#D6D6D6" onPress={addFavorite} />
+    <IconButton icon="star" size={20} color={theme.palette.grey.grey} onPress={addFavorite} />
   );
 };
 

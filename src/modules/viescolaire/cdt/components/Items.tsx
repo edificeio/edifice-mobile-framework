@@ -54,12 +54,18 @@ export const HomeworkItem = ({
   onChange: () => void;
   hideCheckbox: boolean;
 }) => (
-  <LeftColoredItem shadow onPress={onPress} style={styles.homeworkLeftColoredItem} color="#FA9700">
+  <LeftColoredItem
+    shadow
+    onPress={onPress}
+    style={styles.homeworkLeftColoredItem}
+    color={theme.palette.complementary.orange.regular}>
     <View style={styles.homeworkView}>
       <SmallBoldText>{title}</SmallBoldText>
       <SmallText>{subtitle.label}</SmallText>
     </View>
-    {hideCheckbox || <SquareCheckbox disabled={disabled} value={checked} color="#FA9700" onChange={onChange} />}
+    {hideCheckbox || (
+      <SquareCheckbox disabled={disabled} value={checked} color={theme.palette.complementary.orange.regular} onChange={onChange} />
+    )}
   </LeftColoredItem>
 );
 

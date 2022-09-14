@@ -162,14 +162,14 @@ const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
     const color = cycleLevels[evaluation].couleur;
     return color ? color : cycleLevels[evaluation].default;
   }
-  return '#DDDDDD';
+  return theme.palette.grey.cloudy;
 };
 
 const getColorFromNote = (note: number, moy: number, diviseur: number) => {
   if (note === diviseur || note > moy) {
-    return '#46BFAF';
+    return theme.palette.complementary.green.regular;
   } else if (note === moy) {
-    return '#FA9701';
+    return theme.palette.complementary.orange.regular;
   } else if (note < moy) {
     return viescoTheme.palette.presencesEvents.no_reason;
   }
@@ -280,7 +280,7 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
 export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; levels: ILevelsList }) => (
   <>
     {devoirs.map((devoir, index) => (
-      <LeftColoredItem shadow color="#F95303" key={index}>
+      <LeftColoredItem shadow color={viescoTheme.palette.competences} key={index}>
         <View style={styleConstant.denseDevoirListContainer}>
           <View style={styleConstant.denseDevoirListMatiereContainer}>
             <SmallBoldText style={styleConstant.denseDevoirListMatiereText} numberOfLines={1}>

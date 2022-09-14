@@ -1,18 +1,19 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { ListItem } from '~/framework/components/listItem';
 import { CaptionText, SmallText } from '~/framework/components/text';
 import { renderIcon } from '~/modules/workspace/components/image';
 import { IFile } from '~/modules/workspace/reducer';
-import { CenterPanel, LeftIconPanel, ListItem } from '~/ui/ContainerContent';
 import { DateView } from '~/ui/DateView';
 
 const style = StyleSheet.create({
   centerPanel: {
-    alignItems: 'stretch',
-    justifyContent: 'center',
+    flex: 1,
+    marginLeft: UI_SIZES.spacing.small,
   },
   dateContainer: {
     flexDirection: 'row',
@@ -54,29 +55,29 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
     const { id, isFolder, name, date, ownerName = '', contentType } = item;
     const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
     return (
-      <ListItem
-        onPress={this.onPressCallback}
-        onLongPress={this.onLongPressCallback}
-        disabled={disabled}
-        style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card }}
-        borderBottomWidth={0}>
-        <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
-        <CenterPanel style={style.centerPanel}>
-          <SmallText numberOfLines={1}>{name}</SmallText>
-          <View style={style.dateContainer}>
-            {date ? (
-              <View style={style.dateText}>
-                <DateView min date={date} />
+      <TouchableOpacity onPress={this.onPressCallback} onLongPress={this.onLongPressCallback} disabled={disabled}>
+        <ListItem
+          style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card }}
+          leftElement={renderIcon(id, isFolder, name, contentType)}
+          rightElement={
+            <View style={style.centerPanel}>
+              <SmallText numberOfLines={1}>{name}</SmallText>
+              <View style={style.dateContainer}>
+                {date ? (
+                  <View style={style.dateText}>
+                    <DateView min date={date} />
+                  </View>
+                ) : null}
+                {ownerName.length > 0 ? (
+                  <CaptionText numberOfLines={1} style={style.authorText}>
+                    {longOwnerName}
+                  </CaptionText>
+                ) : null}
               </View>
-            ) : null}
-            {ownerName.length > 0 ? (
-              <CaptionText numberOfLines={1} style={style.authorText}>
-                {longOwnerName}
-              </CaptionText>
-            ) : null}
-          </View>
-        </CenterPanel>
-      </ListItem>
+            </View>
+          }
+        />
+      </TouchableOpacity>
     );
   }
 }

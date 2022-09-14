@@ -134,7 +134,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
         <TouchableOpacity
           onPress={() => this.props.navigation.navigate('HomeworkPage', homeworkListDetailsTeacherAdapter(homeworks))}
           disabled={isEmpty}>
-          <Icon name="inbox" size={24} color={isEmpty ? 'lightgrey' : '#FF9700'} />
+          <Icon name="inbox" size={24} color={isEmpty ? theme.palette.grey.cloudy : theme.palette.complementary.orange.regular} />
         </TouchableOpacity>
       </View>
     );
@@ -163,7 +163,11 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
     };
     return (
       <TouchableOpacity style={!isHalfCourse && style.homeworkMargin} onPress={navigateToHomeworks} disabled={!isHomeWorkPublished}>
-        <Icon name="inbox" size={24} color={isHomeWorkPublished ? '#FF9700' : 'lightgrey'} />
+        <Icon
+          name="inbox"
+          size={24}
+          color={isHomeWorkPublished ? theme.palette.complementary.orange.regular : theme.palette.grey.cloudy}
+        />
       </TouchableOpacity>
     );
   };
@@ -178,7 +182,11 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
         style={isHalfCourse ? style.halfSessionMargin : style.sessionMargin}
         onPress={() => navigation.navigate('SessionPage', sessionListDetailsTeacherAdapter(course.session || course))}
         disabled={!isSessionPublished}>
-        <Icon name="insert_drive_file1" size={24} color={isSessionPublished ? viescoTheme.palette.diary : 'lightgrey'} />
+        <Icon
+          name="insert_drive_file1"
+          size={24}
+          color={isSessionPublished ? viescoTheme.palette.diary : theme.palette.grey.cloudy}
+        />
       </TouchableOpacity>
     );
   };

@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
+import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { DEPRECATED_signImageURISource } from '~/infra/oauth';
 import { Filter, IFile } from '~/modules/workspace/reducer';
 import { DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
-import { CommonStyles } from '~/styles/common/styles';
 import ImageOptional from '~/ui/ImageOptional';
 
 const height = () => {
@@ -29,11 +29,11 @@ const styles = StyleSheet.create({
 
 const UnavailableImage = () => (
   <View style={styles.iconContainer}>
-    <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_200} name="picture" />
+    <Icon color={theme.palette.grey.cloudy} size={layoutSize.LAYOUT_200} name="picture" />
   </View>
 );
 
-const UnavailableIcon = () => <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_46} name="picture" />;
+const UnavailableIcon = () => <Icon color={theme.palette.grey.cloudy} size={layoutSize.LAYOUT_46} name="picture" />;
 
 const getIcon = (id: string | null, isFolder: boolean, pName: string | null, contentType: string | undefined): string | null => {
   if (isFolder) {
@@ -110,7 +110,7 @@ export const renderIcon = (id: string | null, isFolder: boolean, name: string, c
   const icon = getIcon(id, isFolder, name, contentType);
 
   if (icon) {
-    return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_50} name={icon} />;
+    return <Icon color={theme.palette.grey.grey} size={layoutSize.LAYOUT_50} name={icon} />;
   } else {
     const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
     const style = { width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50 };
@@ -132,7 +132,7 @@ export const renderImage = (item: IFile, isFolder: boolean, name: string): any =
   if (icon) {
     return (
       <View style={styles.iconContainer}>
-        <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon} />
+        <Icon color={theme.palette.grey.grey} size={layoutSize.LAYOUT_200} name={icon} />
       </View>
     );
   }

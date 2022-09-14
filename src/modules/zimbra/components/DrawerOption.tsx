@@ -36,7 +36,7 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
   public render() {
     const { label, selected, iconName, count, navigate } = this.props;
     const touchableStyle = selected ? [styles.item, styles.selectedItem] : styles.item;
-    const iconColor = selected ? theme.ui.text.inverse : '#000';
+    const iconColor = selected ? theme.palette.grey.white : theme.palette.grey.black;
     const countString = count ? ` (${count})` : '';
     return (
       <TouchableOpacity style={touchableStyle} onPress={navigate} disabled={selected}>

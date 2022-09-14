@@ -7,7 +7,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
 import { IHomework } from '~/modules/viescolaire/types/homework';
-import { CommonStyles } from '~/styles/common/styles';
 
 /* STYLE */
 
@@ -31,15 +30,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
     overflow: 'hidden',
   },
-  columnContainer: {},
   slot: {
     position: 'absolute',
     left: '15%',
     width: '85%',
-    borderRadius: 10,
-    borderBottomColor: 'rgba(0, 0, 0, 0)',
-    borderBottomWidth: 2,
-    borderStyle: 'solid',
   },
   slotBackground: {
     backgroundColor: theme.ui.background.card,
@@ -47,16 +41,14 @@ const styles = StyleSheet.create({
   lineSeparator: {
     top: 10,
     width: '100%',
-    borderColor: CommonStyles.missingGrey,
+    borderColor: theme.palette.grey.cloudy,
     borderStyle: 'dotted',
     borderWidth: 1,
     borderRadius: 1,
   },
   elementContainer: {
     position: 'absolute',
-    borderStyle: 'solid',
-    borderRadius: 10,
-    borderColor: 'rgba(0, 0, 0, 0)',
+    borderRadius: UI_SIZES.radius.medium,
     overflow: 'hidden',
   },
   elementContainerFull: {
@@ -124,7 +116,7 @@ type CalendarState = {
 
 /* FUNCTIONNAL COMPONENTS  */
 
-const TopDay = ({ day, onPress, color = '#000', selected = false }) => {
+const TopDay = ({ day, onPress, color = theme.palette.grey.black, selected = false }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={[styles.topDay, { backgroundColor: selected ? color : undefined }]}>
@@ -153,7 +145,7 @@ const Slot = ({ height, top }) => {
 
 export default class Calendar extends React.PureComponent<CalendarProps, CalendarState> {
   public static defaultProps = {
-    mainColor: '#00F',
+    mainColor: theme.palette.grey.grey,
     slotHeight: 55,
     numberOfHours: 10,
     startTime: moment('2000-01-01 08:00'),
@@ -378,7 +370,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     const { organizedColumns, hours } = this.state;
     return (
       <ScrollView contentContainerStyle={{ height: numberOfHours! * slotHeight! }} showsHorizontalScrollIndicator={false}>
-        <SafeAreaView style={styles.columnContainer}>
+        <SafeAreaView>
           {hours.map((hour, i) => (
             <SmallText style={[styles.slotDisplay, { top: slotHeight! * i }]}>{hour.format('HH:mm')}</SmallText>
           ))}
@@ -410,7 +402,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
 
     return (
       <ScrollView contentContainerStyle={{ height: (slots!.length + 2) * slotHeight! }} showsHorizontalScrollIndicator={false}>
-        <SafeAreaView style={styles.columnContainer}>
+        <SafeAreaView>
           {slots!.map((slot, i) => (
             <SmallText style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format('HH:mm')}</SmallText>
           ))}
