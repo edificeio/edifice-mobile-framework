@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
@@ -20,7 +20,10 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
       inactiveTintColor: theme.palette.primary.regular,
       // Insets
       safeAreaInset: {
-        bottom: UI_SIZES.screen.bottomInset,
+        bottom: Platform.select({
+          ios: UI_SIZES.screen.bottomInset,
+          default: 0,
+        }),
         top: UI_SIZES.screen.topInset,
       },
       // Label and icon
