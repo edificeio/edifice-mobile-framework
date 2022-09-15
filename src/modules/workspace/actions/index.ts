@@ -22,7 +22,7 @@ export const workspaceUploadActionsCreators = createAsyncActionCreators(actionTy
 export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => async (dispatch, getState) => {
   try {
     dispatch(workspaceUploadActionsCreators.request());
-    const file = await uploadService.startUploadFile(getUserSession(), lf, {
+    const file = await uploadService.uploadFile(getUserSession(), lf, {
       parent: parentId as IWorkspaceUploadParams['parent'],
     });
     dispatch(workspaceUploadActionsCreators.receipt(file));
