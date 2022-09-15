@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { CaptionText, HeadingXLText, SmallBoldText, SmallText } from '~/framework/components/text';
 import {
   deleteEvent,
   postLateEvent,
@@ -49,7 +49,8 @@ const style = StyleSheet.create({
     marginHorizontal: UI_SIZES.spacing.large,
   },
   timeView: {
-    margin: UI_SIZES.spacing.large,
+    marginHorizontal: UI_SIZES.spacing.huge,
+    marginVertical: UI_SIZES.spacing.small,
     alignItems: 'center',
     borderWidth: 2,
     borderStyle: 'solid',
@@ -57,8 +58,6 @@ const style = StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
   },
   timeViewText: {
-    fontSize: getScaleDimension(55, 'font'),
-    lineHeight: getScaleDimension(61, 'font'),
     paddingVertical: UI_SIZES.spacing.major,
     textDecorationLine: 'underline',
   },
@@ -225,7 +224,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
               onChange={this.onTimeChange}
               renderDate={dateItem => (
                 <View style={[style.timeView, { borderColor: lightColor }]}>
-                  <SmallText style={style.timeViewText}>{dateItem.format('HH : mm')}</SmallText>
+                  <HeadingXLText style={style.timeViewText}>{dateItem.format('HH : mm')}</HeadingXLText>
                 </View>
               )}
             />

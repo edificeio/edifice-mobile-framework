@@ -4,9 +4,9 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { HeadingLText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -74,8 +74,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   timePickerDate: {
-    fontSize: getScaleDimension(24, 'font'),
-    lineHeight: getScaleDimension(30, 'font'),
     padding: UI_SIZES.spacing.small,
   },
   inputContainer: {
@@ -187,7 +185,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
             <View style={styles.timePickerRender}>
               <SmallText style={styles.timePickerTitleText}>{title}</SmallText>
             </View>
-            <SmallBoldText style={styles.timePickerDate}>{date.format('HH    :    mm')}</SmallBoldText>
+            <HeadingLText style={styles.timePickerDate}>{date.format('HH : mm')}</HeadingLText>
           </>
         )}
         mode="time"

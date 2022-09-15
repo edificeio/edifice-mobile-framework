@@ -3,8 +3,16 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
-import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { UI_SIZES } from '~/framework/components/constants';
+import {
+  BodyText,
+  HeadingXLText,
+  NestedBoldText,
+  NestedText,
+  SmallBoldText,
+  SmallText,
+  TextSizeStyle,
+} from '~/framework/components/text';
 import { IPunishment } from '~/modules/viescolaire/presences/state/events';
 import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
@@ -24,10 +32,6 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row' },
   leftColumn: { width: '30%', alignItems: 'center' },
-  leftColumnText: {
-    fontSize: getScaleDimension(48, 'font'),
-    lineHeight: getScaleDimension(54, 'font'),
-  },
   itemContainer: { flex: 1 },
   itemView: { flex: 1, justifyContent: 'center' },
   childText: { marginVertical: UI_SIZES.spacing.tiny },
@@ -77,7 +81,7 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
       <BodyText style={styles.title}>{title}</BodyText>
       <View style={styles.row}>
         <View style={styles.leftColumn}>
-          <NestedBoldText style={styles.leftColumnText}>{numberChildren}</NestedBoldText>
+          <HeadingXLText>{numberChildren}</HeadingXLText>
           {subNumber && <SmallText>{subNumber}</SmallText>}
         </View>
         <View style={styles.itemContainer}>
