@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const renderChild = (key: string, event) => {
+const renderChild = (key: string, previousKey: string, event) => {
   let title = '' as string;
   let color = '' as string;
   let duration = 0 as number;
@@ -75,7 +75,7 @@ const renderChild = (key: string, event) => {
   }
   return (
     <>
-      <SmallText style={styles.eventTitle}>{title}</SmallText>
+      {previousKey !== key ? <SmallText style={styles.eventTitle}>{title}</SmallText> : null}
       <SmallText style={styles.eventTextContainer}>
         <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
         <SmallBoldText style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</SmallBoldText>
@@ -89,10 +89,18 @@ const renderChild = (key: string, event) => {
 };
 
 const renderEvents = (events: any) => {
+  const sortedEvents = Object.entries(events) as any;
+  let previousKey = '' as string;
   const formatedEvents = [] as any;
-  for (const [key, value] of Object.entries(events)) {
+  sortedEvents.sort((a, b) => String(a?.key?.toLocaleLowerCase() ?? '').localeCompare(String(b?.key?.toLocaleLowerCase() ?? '')));
+  for (const [key, value] of sortedEvents) {
     if (value && value !== undefined && value.length > 0) {
-      formatedEvents.push(events[key] ? value.map(event => renderChild(key, event)) : null);
+      if (events[key]) {
+        for (const event of value) {
+          formatedEvents.push(renderChild(key, previousKey, event));
+          previousKey = key;
+        }
+      }
     }
   }
   return formatedEvents;
