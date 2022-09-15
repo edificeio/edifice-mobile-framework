@@ -53,7 +53,7 @@ export const HeadingFontStyle = Platform.select({
   },
 })! as { [key in HeadingFontStyleKey]: TextStyle };
 
-type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Huge';
+type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Huge' | 'Giant';
 export const TextSizeStyle = {
   Small: {
     fontSize: getScaleDimension(12, 'font'),
@@ -106,7 +106,7 @@ export const HeadingXSText = styled.Text({
 });
 
 /**
- * Body
+ * Body Text
  */
 
 export const BodyText = styled.Text({
@@ -156,6 +156,7 @@ export const SmallBoldItalicText = styled.Text({
 /**
  * Caption
  */
+
 export const CaptionText = styled.Text({
   ...TextFontStyle.Regular,
   ...TextSizeStyle.Small,
@@ -189,7 +190,7 @@ export const SmallActionText = styled(SmallText)({
 });
 
 /**
- * Neswted Text
+ * Nested Text
  */
 
 export const NestedText = RNText;
