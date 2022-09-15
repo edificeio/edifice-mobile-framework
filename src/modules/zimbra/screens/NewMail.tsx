@@ -27,9 +27,9 @@ import {
   sendMailAction,
   updateDraftMailAction,
 } from '~/modules/zimbra/actions/newMail';
-import { getSignatureAction } from '~/modules/zimbra/actions/signature';
+import { getSignatureAction, putSignatureAction } from '~/modules/zimbra/actions/signature';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
-import SignatureModal from '~/modules/zimbra/components/Modals/SignatureModal';
+import { SignatureModal } from '~/modules/zimbra/components/Modals/SignatureModal';
 import NewMailComponent from '~/modules/zimbra/components/NewMail';
 import moduleConfig from '~/modules/zimbra/moduleConfig';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
@@ -78,6 +78,7 @@ interface ICreateMailEventProps {
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
   getSignature: () => any;
+  putSignature: (signatureData: string, isGlobalSignature: boolean) => any;
 }
 
 interface ICreateMailOtherProps {
@@ -536,6 +537,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
+  setSignatureText = (signatureText: string) => {
+    const { useGlobal } = this.state.signature;
+    this.setState({ signature: { text: signatureText, useGlobal } });
+  };
+
+  setSignatureAPI = async () => {
+    await this.props.putSignature(this.state.signature.text, this.state.signature.useGlobal);
+    this.setSignatureState(true, true);
+  };
+
   public showSignatureModal = () => this.setState({ isShownSignatureModal: true });
 
   public closeSignatureModal = () => this.setState({ isShownSignatureModal: false });
@@ -597,6 +608,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           prevBody={this.state.prevBody}
           signature={signature}
           isNewSignature={this.state.isNewSignature}
+          onSignatureTextChange={text => this.setSignatureText(text)}
+          onSignatureAPIChange={this.setSignatureAPI}
           hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
         />
         <DropdownMenu data={menuData} isVisible={this.state.isShownHeaderMenu} onTapOutside={showMenu} />
@@ -606,10 +619,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           actionsDeleteSuccess={this.actionsDeleteSuccess}
         />
         <SignatureModal
-          signature={signature.text}
-          signatureData={this.props.signatureMail.data}
           show={isShownSignatureModal}
+          signatureText={signature.text}
+          signatureData={this.props.signatureMail.data}
           closeModal={this.closeSignatureModal}
+          putSignature={this.props.putSignature}
           successCallback={() => this.setSignatureState(true, true)}
         />
       </PageView>
@@ -649,6 +663,7 @@ const mapDispatchToProps = (dispatch: any) => {
       clearContent: clearMailContentAction,
       fetchMailContent: fetchMailContentAction,
       getSignature: getSignatureAction,
+      putSignature: putSignatureAction,
     },
     dispatch,
   );

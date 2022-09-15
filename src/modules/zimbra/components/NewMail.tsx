@@ -254,14 +254,38 @@ const PrevBody = ({ prevBody }) => (
   </View>
 );
 
-const Signature = ({ signatureText }: { signatureText: string }) => (
-  <View style={styles.signatureZone}>
-    <View style={styles.lineSeparator} />
-    <ScrollView style={styles.signatureZone} contentContainerStyle={styles.signatureZoneContainer}>
-      <SmallText>{signatureText}</SmallText>
-    </ScrollView>
-  </View>
-);
+const Signature = ({
+  signatureText,
+  onSignatureTextChange,
+  onSignatureAPIChange,
+}: {
+  signatureText: string;
+  onSignatureTextChange: (text: string) => void;
+  onSignatureAPIChange: () => void;
+}) => {
+  const textUpdateTimeout = React.useRef();
+  const [currentValue, updateCurrentValue] = React.useState(signatureText);
+
+  React.useEffect(() => {
+    window.clearTimeout(textUpdateTimeout.current);
+    textUpdateTimeout.current = window.setTimeout(() => onSignatureTextChange(currentValue), 500);
+
+    return () => {
+      window.clearTimeout(textUpdateTimeout.current);
+    };
+  }, [currentValue]);
+
+  return (
+    <View style={styles.signatureZone}>
+      <View style={styles.lineSeparator} />
+      <ScrollView style={styles.signatureZone} contentContainerStyle={styles.signatureZoneContainer}>
+        <TextInput onChangeText={text => updateCurrentValue(text)} onEndEditing={() => onSignatureAPIChange()}>
+          {signatureText}
+        </TextInput>
+      </ScrollView>
+    </View>
+  );
+};
 
 // TYPES & INTERFACES
 
@@ -287,6 +311,8 @@ interface NewMailComponentProps {
   prevBody: any;
   signature: { text: string; useGlobal: boolean };
   isNewSignature: boolean;
+  onSignatureTextChange: (text: string) => void;
+  onSignatureAPIChange: () => void;
   hasRightToSendExternalMails: boolean;
 }
 
@@ -305,6 +331,8 @@ export default ({
   prevBody,
   signature,
   isNewSignature,
+  onSignatureTextChange,
+  onSignatureAPIChange,
   hasRightToSendExternalMails,
 }: NewMailComponentProps) => {
   return (
@@ -336,7 +364,11 @@ export default ({
             <Body style={styles.newMailBody} value={body} onChange={onBodyChange} onSave={onDraftSave} />
             {!!prevBody && prevBody !== '' && <PrevBody prevBody={prevBody} />}
             {!!signature && (signature.useGlobal || isNewSignature) && signature.text !== '' && (
-              <Signature signatureText={signature.text} />
+              <Signature
+                signatureText={signature.text}
+                onSignatureTextChange={onSignatureTextChange}
+                onSignatureAPIChange={onSignatureAPIChange}
+              />
             )}
           </ScrollView>
         )}
