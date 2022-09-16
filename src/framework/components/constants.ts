@@ -61,6 +61,7 @@ export const UI_SIZES = {
   },
   elements: {
     actionButtonSize: 20,
+    logoSize: { height: 64, width: 300 },
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
