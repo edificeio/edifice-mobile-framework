@@ -6,7 +6,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -236,11 +235,11 @@ const mapStateToProps = (state: any) => {
   const childId = userType === 'Student' ? getUserSession().user.id : getSelectedChild(state).id;
   const groupId =
     userType === 'Student'
-      ? getSessionInfo().classes[0]
+      ? state.user.info.classes[0]
       : getUserChildrenState(state).data.find(child => child.id === childId)?.structures[0].classes[0].id;
   const structureId =
     userType === 'Student'
-      ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
+      ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
       : getSelectedChildStructure(state)?.id;
 
   const childrenInfos = getUserChildrenState(state);

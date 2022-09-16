@@ -3,7 +3,6 @@ import { withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import DashboardComponent from '~/modules/viescolaire/viesco/components/DashboardTeacher';
 
@@ -14,7 +13,7 @@ class Dashboard extends React.PureComponent<any> {
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
+  const structureId = state.user.info.administrativeStructures[0].id || state.user.info.structures[0];
 
   return {
     structureId,

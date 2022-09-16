@@ -4,7 +4,6 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchHomeworkListAction, updateHomeworkProgressAction } from '~/modules/viescolaire/cdt/actions/homeworks';
@@ -62,7 +61,7 @@ class Dashboard extends React.PureComponent<{
 const mapStateToProps: (state: any) => any = state => {
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
-  const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
+  const structureId = state.user.info.administrativeStructures[0].id || state.user.info.structures[0];
   const childId = getUserSession().user.id;
   const evaluations = getDevoirListState(state);
   const levels = getLevelsListState(state).data;

@@ -4,7 +4,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
@@ -84,7 +83,7 @@ const mapStateToProps: (state: any) => any = state => {
   const childId = userType === 'Student' ? userId : getSelectedChild(state)?.id;
   const structureId =
     userType === 'Student'
-      ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
+      ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
       : getSelectedChildStructure(state)?.id;
 
   // get groups and childClasses
@@ -92,7 +91,7 @@ const mapStateToProps: (state: any) => any = state => {
   const groups = [] as string[];
   const childGroups = getGroupsListState(state).data;
   if (getUserSession().user.type === 'Student') {
-    childClasses = getSessionInfo().classes[0];
+    childClasses = state.user.info.classes[0];
   } else {
     childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasse!;
   }
@@ -100,7 +99,7 @@ const mapStateToProps: (state: any) => any = state => {
     if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);
     childGroups[0]?.nameGroups?.forEach(item => groups.push(item));
   } else if (getUserSession().user.type === 'Student') {
-    groups.push(getSessionInfo().realClassesNames[0]);
+    groups.push(state.user.info.realClassesNames[0]);
   }
 
   return {

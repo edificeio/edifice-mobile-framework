@@ -4,7 +4,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -89,7 +88,7 @@ const mapStateToProps: (state: any) => any = state => {
     childId: getSelectedChild(state).id,
     structureId:
       getUserSession().user.type === 'Student'
-        ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
+        ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
         : getSelectedChildStructure(state)?.id,
   };
 };

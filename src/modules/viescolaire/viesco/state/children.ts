@@ -1,4 +1,3 @@
-import { getSessionInfo } from '~/App';
 import viescoConfig from '~/modules/viescolaire/moduleConfig';
 import userConfig from '~/user/config';
 
@@ -42,11 +41,11 @@ export const getChildrenList = (globalState: any): IChildArray => {
 };
 
 export const getSelectedChildStructure = (globalState: any) => {
-  const infos = getSessionInfo();
-  return infos.schools?.find(
+  return globalState.user.info.schools?.find(
     school =>
-      infos.childrenStructure?.find(elem => elem.children.some(child => child.id === getSelectedChild(globalState).id))
-        ?.structureName === school.name,
+      globalState.user.info.childrenStructure?.find(elem =>
+        elem.children.some(child => child.id === getSelectedChild(globalState).id),
+      )?.structureName === school.name,
   );
 };
 

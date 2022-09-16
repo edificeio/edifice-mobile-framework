@@ -5,7 +5,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '~/App';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import { fetchEdtCourseListAction, fetchEdtCourseListFromTeacherAction } from '~/modules/viescolaire/edt/actions/edtCourses';
@@ -154,7 +153,7 @@ const mapStateToProps = (state: any): any => {
   // get groups and childClasses
   if (getUserSession().user.type === 'Student') {
     childId = getUserSession().user.id;
-    childClasses = getSessionInfo().classes[0];
+    childClasses = state.user.info.classes[0];
     const childGroups = getGroupsListState(state).data;
     if (childGroups !== undefined && childGroups[0] !== undefined) {
       childGroups.forEach(groupsStructures => {
@@ -169,7 +168,7 @@ const mapStateToProps = (state: any): any => {
       });
     } else {
       groupsIds.push(getUserSession().user.groupsIds);
-      group.push(getSessionInfo().realClassesNames[0]);
+      group.push(state.user.info.realClassesNames[0]);
     }
   } else if (getUserSession().user.type === 'Relative') {
     childId = getSelectedChild(state)?.id;
@@ -200,7 +199,7 @@ const mapStateToProps = (state: any): any => {
     slots: getSlotsListState(state),
     structureId:
       getUserSession().user.type === 'Student'
-        ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
+        ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
         : getUserSession().user.type === 'Relative'
         ? getSelectedChildStructure(state).id
         : getSelectedStructure(state),
