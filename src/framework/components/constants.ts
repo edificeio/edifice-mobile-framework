@@ -77,7 +77,10 @@ export const UI_SIZES = {
     extraLarge: 24,
   },
   screen: {
-    bottomInset: initialWindowMetrics?.insets?.bottom || 0,
+    bottomInset: Platform.select({
+      ios: initialWindowMetrics?.insets?.bottom || 0,
+      default: 0,
+    }),
     height: screenDimensions.height,
     scale: screenDimensions.scale,
     topInset: Platform.select({
