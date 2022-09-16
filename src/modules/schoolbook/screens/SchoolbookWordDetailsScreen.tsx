@@ -56,6 +56,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
   const [studentId, setStudentId] = React.useState('');
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const [isPublishingReply, setIsPublishingReply] = React.useState(false);
+  const [isAcknowledgingWord, setIsAcknowledgingWord] = React.useState(false);
   const isSchoolbookWordRendered =
     loadingState === AsyncPagedLoadingState.DONE ||
     loadingState === AsyncPagedLoadingState.REFRESH_SILENT ||
@@ -143,9 +144,11 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
 
   const acknowledgeSchoolbookWord = async () => {
     try {
+      setIsAcknowledgingWord(true);
       await schoolbookService.word.acknowledge(session, schoolbookWordId, studentId);
       refreshSilent();
     } catch (e) {
+      setIsAcknowledgingWord(false);
       Toast.show(I18n.t('common.error.text'));
     }
   };
@@ -244,6 +247,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
         studentId={studentId}
         schoolbookWord={schoolbookWord}
         isPublishingReply={isPublishingReply}
+        isAcknowledgingWord={isAcknowledgingWord}
         onPublishReply={(comment, commentId) => replyToSchoolbookWord(comment, commentId)}
       />
     );

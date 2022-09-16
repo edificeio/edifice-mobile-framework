@@ -44,6 +44,7 @@ export interface ISchoolBookWordDetailsCardProps {
   action: () => void;
   onPublishReply: (comment: string, commentId?: string) => any;
   isPublishingReply: boolean;
+  isAcknowledgingWord: boolean;
   userType: UserType;
   userId: string;
   studentId: string;
@@ -51,7 +52,16 @@ export interface ISchoolBookWordDetailsCardProps {
 }
 
 const SchoolbookWordDetailsCard = (
-  { action, onPublishReply, isPublishingReply, userType, userId, studentId, schoolbookWord }: ISchoolBookWordDetailsCardProps,
+  {
+    action,
+    onPublishReply,
+    isPublishingReply,
+    isAcknowledgingWord,
+    userType,
+    userId,
+    studentId,
+    schoolbookWord,
+  }: ISchoolBookWordDetailsCardProps,
   ref,
 ) => {
   const flatListRef = React.useRef<typeof FlatList>();
@@ -351,7 +361,12 @@ const SchoolbookWordDetailsCard = (
       />
       {isParent ? (
         !isWordAcknowledged ? (
-          <BottomButtonSheet displayShadow={doesContentExceedView} text={I18n.t('schoolbook.acknowledge')} action={action} />
+          <BottomButtonSheet
+            displayShadow={doesContentExceedView}
+            text={I18n.t('schoolbook.acknowledge')}
+            action={action}
+            loading={isAcknowledgingWord}
+          />
         ) : word.reply && !isWordRepliedToForParent ? (
           <BottomEditorSheet
             ref={bottomEditorSheetRef}
