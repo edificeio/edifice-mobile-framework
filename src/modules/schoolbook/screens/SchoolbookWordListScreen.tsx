@@ -62,14 +62,14 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
-    fetchFromStart()
+    fetchFromStart(true)
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
   const reload = () => {
     setLoadingState(AsyncPagedLoadingState.RETRY);
-    fetchFromStart()
+    fetchFromStart(true)
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
@@ -201,12 +201,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
     }
   };
 
-  const fetchFromStart = async () => {
+  const fetchFromStart = async (isFirstFetch?: boolean) => {
     if (isParent) {
-      const isFirstFetch =
-        loadingState === AsyncPagedLoadingState.PRISTINE ||
-        loadingState === AsyncPagedLoadingState.INIT ||
-        loadingState === AsyncPagedLoadingState.RETRY;
       const fetchedChildren = await fetchParentChildren();
       if (fetchedChildren?.length === 1) {
         const singleChildId = fetchedChildren[0]?.id;
