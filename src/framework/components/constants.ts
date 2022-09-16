@@ -65,6 +65,7 @@ export const UI_SIZES = {
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
+    tabbarIconSize: 24,
     textFieldMaxHeight: 105,
   },
   radius: {
