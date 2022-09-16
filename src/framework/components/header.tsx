@@ -14,7 +14,6 @@
 import styled from '@emotion/native';
 import * as React from 'react';
 import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
 
 import theme from '~/app/theme';
