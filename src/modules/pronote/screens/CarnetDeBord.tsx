@@ -101,7 +101,19 @@ function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structu
       navBarWithBack={{
         title: I18n.t(`CarnetDeBord`),
       }}>
-      <ContentLoader loadContent={loadData} renderContent={renderContent} />
+      <ContentLoader
+        renderError={refreshControl => (
+          <ScrollView refreshControl={refreshControl}>
+            <EmptyScreen
+              svgImage="empty-light"
+              title={I18n.t('pronote.carnetDeBord.noData.title')}
+              text={I18n.t('pronote.carnetDeBord.noData.text')}
+            />
+          </ScrollView>
+        )}
+        loadContent={loadData}
+        renderContent={renderContent}
+      />
     </PageView>
   );
 }
@@ -264,8 +276,8 @@ CarnetDeBordScreen.getRenderContent =
         ) : (
           <EmptyScreen
             svgImage="empty-timeline"
-            title={I18n.t('pronote.carnetDeBord.noData.title')}
-            text={I18n.t('pronote.carnetDeBord.noData.text')}
+            title={I18n.t('pronote.carnetDeBord.noDataChild.title')}
+            text={I18n.t('pronote.carnetDeBord.noDataChild.text')}
           />
         )}
       </ScrollView>
