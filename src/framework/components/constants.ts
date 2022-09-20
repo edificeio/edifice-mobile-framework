@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StatusBar, TextStyle } from 'react-native';
+import { Dimensions, Platform, StatusBar, StyleSheet, TextStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -118,3 +118,12 @@ export const UI_SIZES = {
 export const UI_VALUES = {
   modalOpacity: 0.4,
 };
+
+export const UI_STYLES = StyleSheet.create({
+  row: { flexDirection: 'row' },
+  rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
+  flex1: { flex: 1 },
+  flexGrow1: { flexGrow: 1 },
+  flexShrink1: { flexShrink: 1 },
+  justifyEnd: { justifyContent: 'flex-end' },
+});

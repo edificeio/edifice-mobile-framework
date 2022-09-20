@@ -1,36 +1,56 @@
 /**
  * Renders a FlatList with swipeable elements.
  * Gestures are recognized to automatically unswipe the selected elements whe other touches are involved.
- * Based on npm mobile `react-native-swipeable`
+ * Based on npm mobile `react-native-swipe-list-view`
  *
  * Usage :
  * - Same props as FlatList
- * - Same props as Swipeable (common Swipeable props for all list items)
- * - additional `itemSwipeableProps`, works like `renderItem` prop and returns specific Swipeable props for of each list item.
+ * - Same props as SwipeListView
+ * - additional `itemSwipeActionProps`, works like `renderItem` prop and returns specific Swipeable props for of each list item.
  *
  * Don't forget to store the Ref of the list. Call `listRef.recenter()` to recenter any swiped element.
  *
  * Example :
  * const listRef = React.createRef<SwipeableListHandle<IItemType>>();
  * <SwipeableList
- *     ref={listRef}
  *     data={data}
- *     rightButtonWidth={140} // Common prop applied to each swipeable list item
- *     itemSwipeableProps={({ item, index, separators }) => ({
- *         rightButtons: [
- *             <Pressable
- *                 onPress={() => {
- *                     doSomething(item);
- *                     listRef.current?.recenter(); // Call this to recenter item after activate swipe button
- *                 }}
- *             >{item.text}</Pressable>, ...
- *         ]
+ *     swipeActionWidth={140} // Width of one action button in px
+ *     rightOpenValue={-140} // Need to set this manually
+ *     // every props exposed from react-native-swipe-list-view
+ *     itemSwipeActionProps={({ item }) => ({
+ *       right : {
+ *         action: async row => {
+ *           Alert.alert(item.text);
+ *           row[item.id]?.closeRow();
+ *         },
+ *         actionColor: theme.palette.status.warning,
+ *         actionText: I18n.t('timeline.reportAction.button'),
+ *         actionIcon: 'ui-answer',
+ *       }
  *     })}
+ *     hiddenRowStyle={{margin: 10}} // styles for the row wrapper
+ *     hiddenItemStyle={UI_STYLES.justifyEnd} // style for every action
  * />
  */
 import * as React from 'react';
-import { FlatList, FlatListProps, ListRenderItemInfo, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
-import Swipeable from 'react-native-swipeable';
+import {
+  Animated,
+  ColorValue,
+  FlatListProps,
+  GestureResponderEvent,
+  ListRenderItemInfo,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
+import { IPropsSwipeListView, RowMap, SwipeListView } from 'react-native-swipe-list-view';
+
+import theme from '~/app/theme';
+
+import { UI_SIZES, UI_STYLES } from './constants';
+import { NamedSVG } from './picture';
+import { SmallText } from './text';
 
 // Redecalare forwardRef @see https://fettblog.eu/typescript-react-generic-forward-refs/#option-3%3A-augment-forwardref
 declare module 'react' {
@@ -39,193 +59,150 @@ declare module 'react' {
   ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
 }
 
-type SwipeableProps = { [prop in Swipeable.propTypes]: any };
-
-export interface SwipeableListProps<ItemT> extends FlatListProps<ItemT>, SwipeableProps {
-  itemSwipeableProps?: (info: ListRenderItemInfo<ItemT>) => SwipeableProps | null;
+export interface ISwipeAction<ItemT extends { key: string }> {
+  action: (row: RowMap<ItemT>, e: GestureResponderEvent) => void;
+  actionIcon?: string;
+  actionColor?: ColorValue;
+  actionText?: string;
+  backgroundColor?: ColorValue;
+  style?: ViewStyle;
 }
 
-export interface SwipeableList<ItemT> extends FlatList<ItemT> {
-  recenter: (filter?: (index: string, ref: React.Ref<Swipeable>) => boolean) => void;
+export interface ISwipeActionProps<ItemT extends { key: string }> {
+  left?: ISwipeAction<ItemT>[];
+  right?: ISwipeAction<ItemT>[];
 }
 
-const getTouchableViewStyle = (active: boolean) =>
-  ({
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: active ? -1 : 1,
-    width: '100%',
+const styles = StyleSheet.create({
+  swipeActionWrapper: {
+    flexDirection: 'row',
     height: '100%',
-  } as ViewStyle);
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  swipeAction: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: UI_SIZES.spacing.small,
+    flex: 0,
+  },
+});
 
-const SwipeableItem = <ItemT extends any>({
-  info,
-  refControl,
-  renderItem,
-  swipeableProps,
-}: {
-  // need to write "extends" because we're in a tsx file
-  info: ListRenderItemInfo<ItemT>;
-  refControl: {
-    init: (key: string, ref: React.Ref<Swipeable>, view: React.Ref<View>) => void;
-    on: (key: string, ref: React.Ref<Swipeable>) => void;
-    off: (key: string, ref?: React.Ref<Swipeable>) => void;
-  };
-  renderItem: SwipeableListProps<ItemT>['renderItem'];
-  swipeableProps?: SwipeableProps;
-}) => {
-  if (!renderItem) return null;
-  const swipeableRef = React.useRef<Swipeable>(null);
-  const touchableViewRef = React.useRef<View>(null);
-  React.useEffect(() => {
-    refControl.init(info.index.toString(), swipeableRef, touchableViewRef);
-  });
+const defaultSwipeActionWidth = 100;
+
+const SwipeAction = <ItemT extends { key: string }>(
+  props: ISwipeAction<ItemT> & {
+    ikey: string;
+    rowMap: RowMap<ItemT>;
+    animatedRefs?: { [key: string]: Animated.Value };
+    swipeActionWidth: number;
+  },
+) => {
+  if (props.animatedRefs && props.animatedRefs?.[props.ikey] === undefined) {
+    props.animatedRefs[props.ikey] = new Animated.Value(0);
+    props.animatedRefs[props.ikey].setOffset(props.swipeActionWidth);
+  }
+  const wrapperStyle = [
+    styles.swipeActionWrapper,
+    props.animatedRefs?.[props.ikey] ? { transform: [{ translateX: props.animatedRefs?.[props.ikey] }] } : {},
+  ];
+  const widthStyle = React.useMemo(() => ({ width: props.swipeActionWidth }), [props.swipeActionWidth]);
   return (
-    <Swipeable
-      ref={swipeableRef}
-      {...swipeableProps}
-      onLeftButtonsActivate={() => {
-        refControl.on(info.index.toString(), swipeableRef);
-        swipeableProps?.['onLeftButtonsActivate']?.();
-      }}
-      onRightButtonsActivate={() => {
-        refControl.on(info.index.toString(), swipeableRef);
-        swipeableProps?.['onLeftButtonsActivate']?.();
-      }}
-      onLeftButtonsDeactivate={() => {
-        refControl.off(info.index.toString(), swipeableRef);
-        swipeableProps?.['onLeftButtonsDeactivate']?.();
-      }}
-      onRightButtonsDeactivate={() => {
-        refControl.off(info.index.toString(), swipeableRef);
-        swipeableProps?.['onLeftButtonsDeactivate']?.();
-      }}>
-      <TouchableWithoutFeedback
-        onPress={() => {
-          refControl.off(info.index.toString(), undefined);
+    <Animated.View style={wrapperStyle}>
+      <TouchableOpacity
+        onPress={async e => {
+          return props.action(props.rowMap, e);
         }}>
-        <View ref={touchableViewRef} style={getTouchableViewStyle(true)} />
-      </TouchableWithoutFeedback>
-      {renderItem?.(info)}
-    </Swipeable>
+        <View style={[styles.swipeAction, props.style, widthStyle]}>
+          {props.actionIcon ? (
+            <NamedSVG
+              width={16}
+              height={16}
+              fill={props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular)}
+              name={props.actionIcon}
+            />
+          ) : // <SmallText>{props.actionIcon}</SmallText>
+          null}
+          {props.actionText ? (
+            <SmallText
+              style={{
+                color: props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular),
+                marginLeft: UI_SIZES.spacing.small,
+              }}>
+              {props.actionText}
+            </SmallText>
+          ) : null}
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
+export interface SwipeableListProps<ItemT extends { key: string }>
+  extends Partial<Omit<IPropsSwipeListView<ItemT>, 'renderHiddenItem'>> {
+  hiddenRowStyle?: ViewStyle;
+  hiddenItemStyle?: ViewStyle;
+  swipeActionWidth?: number;
+  itemSwipeActionProps?: (info: ListRenderItemInfo<ItemT>) => ISwipeActionProps<ItemT> | null;
+}
+
 export default React.forwardRef(
-  <ItemT extends any>( // need to write "extends" because we're in a tsx file
-    props: SwipeableListProps<ItemT>,
-    ref: React.Ref<SwipeableList<ItemT>>,
+  <ItemT extends { key: string }>( // need to write "extends" because we're in a tsx file
+    props: SwipeableListProps<ItemT> & FlatListProps<ItemT>,
+    ref: React.Ref<SwipeListView<ItemT>>,
   ) => {
-    const { renderItem, itemSwipeableProps, ...propsToPass } = props;
-    const flatListRef = React.useRef<FlatList<ItemT>>(null);
-    const activeSwipablesRefs: { [index: string]: React.Ref<Swipeable> } = {};
-    const allSwipeablesRefs: { [index: string]: { swip: React.Ref<Swipeable>; view: React.Ref<View> } } = {};
+    const { itemSwipeActionProps, hiddenRowStyle, hiddenItemStyle, swipeActionWidth, data, ...otherListProps } = props;
+    const animatedRefs = React.useRef<{ [key: string]: Animated.Value }>();
 
-    // Props to pass
-
-    const listSwipeableProps = Object.fromEntries(
-      Object.entries(propsToPass).filter(([propname, propvalue]) => Swipeable.propTypes[propname]),
-    ) as SwipeableProps;
-    const restProps = Object.fromEntries(
-      Object.entries(propsToPass).filter(([propname, propvalue]) => !Swipeable.propTypes[propname]),
-    ) as FlatListProps<ItemT>;
-
-    // List control
-
-    const commonSwipeableProps = {
-      onSwipeStart: () => {
-        flatListRef?.current?.setNativeProps({
-          scrollEnabled: false,
-        });
+    const renderHiddenItem = React.useCallback(
+      (info: ListRenderItemInfo<ItemT>, rowmap: RowMap<ItemT>) => {
+        const actions = itemSwipeActionProps?.(info);
+        if (!actions || (!actions.left && !actions.right)) return null;
+        if (animatedRefs.current === undefined) animatedRefs.current = {};
+        return (
+          <View style={[UI_STYLES.rowStretch, hiddenRowStyle]}>
+            {actions?.left?.map(p => (
+              <SwipeAction
+                {...p}
+                style={[hiddenItemStyle, p.style] as ViewStyle}
+                rowMap={rowmap}
+                ikey={info.item.key}
+                animatedRefs={animatedRefs.current}
+                swipeActionWidth={(swipeActionWidth ?? defaultSwipeActionWidth) * actions.left!.length}
+              />
+            ))}
+            <View style={UI_STYLES.flex1} />
+            {actions?.right?.map(p => (
+              <SwipeAction
+                {...p}
+                style={[hiddenItemStyle, p.style] as ViewStyle}
+                rowMap={rowmap}
+                ikey={info.item.key}
+                animatedRefs={animatedRefs.current}
+                swipeActionWidth={(swipeActionWidth ?? defaultSwipeActionWidth) * actions.right!.length}
+              />
+            ))}
+          </View>
+        );
       },
-      onSwipeRelease: () => {
-        flatListRef?.current?.setNativeProps({
-          scrollEnabled: true,
-        });
+      [hiddenItemStyle, hiddenRowStyle, itemSwipeActionProps, swipeActionWidth],
+    );
+
+    const onSwipeValueChange = React.useCallback(
+      (swipeData: { key: string; value: number; direction: 'left' | 'right'; isOpen: boolean }) => {
+        animatedRefs.current?.[swipeData.key]?.setValue(swipeData.value);
       },
-    };
-
-    const recenter = (filter?: (index: string, ref: React.Ref<Swipeable>) => boolean) => {
-      Object.entries(activeSwipablesRefs).forEach(([index, ref]) => {
-        if ((filter ?? (() => true))(index, ref)) {
-          (ref as null | React.MutableRefObject<Swipeable>)?.current?.recenter();
-          delete activeSwipablesRefs[index];
-        }
-      });
-      Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
-        (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({ style: getTouchableViewStyle(true) });
-      });
-    };
-
-    React.useImperativeHandle(
-      ref,
-      () =>
-        ({
-          recenter,
-        } as SwipeableList<ItemT>),
+      [],
     );
 
     return (
-      <FlatList
-        {...restProps}
-        ref={flatListRef}
-        contentContainerStyle={{ flexGrow: 1 }}
-        renderItem={info => {
-          const computedItemSwipeableProps = { ...listSwipeableProps, ...(itemSwipeableProps?.(info) ?? {}) };
-          let mergedCommonSwipeableProps = {};
-          for (const name in commonSwipeableProps) {
-            mergedCommonSwipeableProps[name] = () => {
-              commonSwipeableProps[name]();
-              computedItemSwipeableProps[name]?.();
-            };
-          }
-          const finalItemSwipeableProps = {
-            ...computedItemSwipeableProps,
-            ...mergedCommonSwipeableProps,
-          };
-          return (
-            <SwipeableItem
-              info={info}
-              refControl={{
-                init: (index, ref, view) => {
-                  allSwipeablesRefs[index] = {
-                    swip: ref,
-                    view,
-                  };
-                },
-                on: (index, ref) => {
-                  recenter((index2, ref2) => index !== index2);
-                  activeSwipablesRefs[index] = ref;
-                  Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
-                    (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({ style: getTouchableViewStyle(false) });
-                  });
-                },
-                off: (index, ref) => {
-                  if (!ref) {
-                    recenter();
-                  } else {
-                    delete activeSwipablesRefs[index];
-                    Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
-                      (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({
-                        style: getTouchableViewStyle(true),
-                      });
-                    });
-                  }
-                },
-              }}
-              renderItem={renderItem}
-              swipeableProps={finalItemSwipeableProps}
-            />
-          );
-        }}
-        onScrollBeginDrag={e => {
-          recenter();
-          Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
-            (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({ style: getTouchableViewStyle(true) });
-          });
-          restProps.onScrollBeginDrag?.(e);
-        }}
+      <SwipeListView
+        {...otherListProps}
+        data={data}
+        ref={ref}
+        renderHiddenItem={renderHiddenItem}
+        onSwipeValueChange={onSwipeValueChange}
       />
     );
   },
