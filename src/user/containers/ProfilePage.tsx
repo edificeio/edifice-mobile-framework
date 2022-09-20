@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, ScrollView, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, SafeAreaView, ScrollView, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
@@ -80,7 +80,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}>
           <ScrollView alwaysBounceVertical={false} overScrollMode="never">
-            <SafeAreaView edges={['bottom', 'left', 'right']}>
+            <SafeAreaView>
               <UserCard
                 id={
                   this.props.userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
