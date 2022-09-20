@@ -94,7 +94,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   setMails = mailList => this.setState({ mails: mailList });
 
-  private fetchMails = (page = 0, isRefreshStorage: boolean = false) => {
+  private fetchMails = (page = 0) => {
     const { isSearch, searchString } = this.props;
     const isSearchValid = (isSearch && searchString !== '' && searchString.length >= 3) as boolean;
 
@@ -119,7 +119,6 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       if (!folderName) this.props.fetchMailList(page, key);
       else this.props.fetchMailFromFolder(folderName, page);
     }
-    if (isRefreshStorage) this.props.fetchStorage();
   };
 
   fetchCompleted = () => {
@@ -128,7 +127,8 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   public componentDidMount() {
     if (this.props.navigation.getParam('key') === undefined) this.setState({ firstFetch: true });
-    this.fetchMails(0, true);
+    this.fetchMails(0);
+    this.props.fetchStorage();
   }
 
   componentDidUpdate(prevProps) {
@@ -246,9 +246,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   checkMailReadState = () => {
     const listSelected = this.getListSelectedMails();
-    const index = listSelected.findIndex(mail => mail.unread === true);
-    if (index === -1) return true;
-    return false;
+    return listSelected.some(mail => mail.unread === true);
   };
 
   getListSelectedMails = () => {
@@ -284,16 +282,9 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     this.fetchMails(0);
   };
 
-  showMenu = () => {
-    this.setState({
-      isDropdownMenuVisible: true,
-    });
-  };
-
-  hideMenu = () => {
-    this.setState({
-      isDropdownMenuVisible: false,
-    });
+  showDropdown = () => {
+    const { isDropdownMenuVisible } = this.state;
+    this.setState({ isDropdownMenuVisible: !isDropdownMenuVisible });
   };
 
   getNavBarActions = () => {
@@ -306,7 +297,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         ]
       : [
           { icon: this.checkMailReadState() ? 'email' : 'email-open', onPress: this.markSelectedMailsAsUnread },
-          { icon: 'more_vert', onPress: !this.state.isDropdownMenuVisible ? this.showMenu : this.hideMenu },
+          { icon: 'more_vert', onPress: this.showDropdown },
         ];
   };
 
@@ -355,7 +346,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         <DropdownMenu
           data={this.getDropdownActions(navigation.state.routeName)}
           isVisible={this.state.isDropdownMenuVisible}
-          onTapOutside={this.hideMenu}
+          onTapOutside={this.showDropdown}
           color={theme.palette.secondary.regular}
         />
         {this.isStorageFull() && (
