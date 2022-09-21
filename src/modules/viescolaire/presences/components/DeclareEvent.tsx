@@ -62,6 +62,7 @@ const style = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   labelText: {
+    marginTop: UI_SIZES.spacing.big,
     marginBottom: UI_SIZES.spacing.tiny,
   },
   reasonTextInput: {
