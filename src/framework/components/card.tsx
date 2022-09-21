@@ -310,6 +310,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               style={[
                 {
                   textAlign: 'center',
+                  lineHeight: undefined,
                 },
                 textStyle,
               ]}>
