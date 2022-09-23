@@ -44,12 +44,7 @@ export const ButtonIcon = ({ name, size, style, color = theme.ui.text.inverse, o
   </TouchableOpacity>
 );
 
-export const ButtonIconText = ({
-  style,
-  children,
-  colorText = theme.palette.grey.black as string,
-  ...rest
-}: IButtonTextIconProps) => (
+export const ButtonIconText = ({ style, children, colorText = theme.ui.text.regular as string, ...rest }: IButtonTextIconProps) => (
   <View style={styles.mainContainer}>
     <ButtonIcon {...rest} style={[styles.buttonWithShadow, style]} />
     <SmallBoldText style={{ color: colorText }}>{children}</SmallBoldText>

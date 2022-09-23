@@ -40,13 +40,9 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
         shadowRadius: 5,
       }}>
       <View style={{ flex: 1 }}>
-        {title ? (
-          <BodyBoldText style={{ color: theme.ui.text.regular }} numberOfLines={1}>
-            {title}
-          </BodyBoldText>
-        ) : null}
+        {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
         {formattedContent ? (
-          <SmallText style={{ color: theme.ui.text.regular, marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
+          <SmallText style={{ marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
             {formattedContent}
           </SmallText>
         ) : null}

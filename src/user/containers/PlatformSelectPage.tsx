@@ -66,7 +66,6 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
                   style={{
                     marginBottom: UI_SIZES.spacing.big,
                     marginTop: UI_SIZES.spacing.medium + UI_SIZES.screen.topInset,
-                    color: theme.ui.text.regular,
                     textAlign: 'center',
                   }}>
                   {I18n.t('welcome')}

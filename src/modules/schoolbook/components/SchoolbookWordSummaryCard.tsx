@@ -8,7 +8,7 @@ import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/fr
 import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { CaptionBoldText, CaptionItalicText, CaptionText, SmallBoldText } from '~/framework/components/text';
+import { CaptionBoldText, CaptionItalicText, CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { UserType } from '~/framework/util/session';
 import {
@@ -107,10 +107,10 @@ export const SchoolbookWordSummaryCard = ({
                 name="pictos-answer"
                 width={UI_SIZES.dimensions.width.large}
                 height={UI_SIZES.dimensions.height.large}
-                fill={theme.palette.primary.regular}
+                fill={theme.ui.text.regular}
                 style={{ marginRight: UI_SIZES.spacing.minor }}
               />
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{responsesString(responsesNumber)}</SmallBoldText>
+              <SmallText>{responsesString(responsesNumber)}</SmallText>
             </View>
           ) : undefined
         }>
@@ -126,7 +126,7 @@ export const SchoolbookWordSummaryCard = ({
           ) : (
             <View />
           )}
-          <SmallBoldText style={{ color: isTeacher || isWordAcknowledged ? undefined : theme.palette.status.warning }}>
+          <SmallBoldText style={{ color: isTeacher || isWordAcknowledged ? theme.ui.text.regular : theme.palette.status.warning }}>
             {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
           </SmallBoldText>
         </View>

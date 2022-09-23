@@ -30,26 +30,31 @@ const FontWeightIOS = {
 type TextFontStyleKey = 'Regular' | 'Italic' | 'Bold' | 'BoldItalic';
 export const TextFontStyle = Platform.select({
   ios: {
-    Regular: { fontFamily: textFontFamilyIOS },
-    Italic: { fontFamily: textFontFamilyIOS, fontStyle: 'italic' },
-    Bold: { fontFamily: textFontFamilyIOS, fontWeight: FontWeightIOS.Bold },
-    BoldItalic: { fontFamily: textFontFamilyIOS, fontWeight: FontWeightIOS.Bold, fontStyle: 'italic' },
+    Regular: { fontFamily: textFontFamilyIOS, color: theme.ui.text.regular },
+    Italic: { fontFamily: textFontFamilyIOS, color: theme.ui.text.regular, fontStyle: 'italic' },
+    Bold: { fontFamily: textFontFamilyIOS, color: theme.ui.text.regular, fontWeight: FontWeightIOS.Bold },
+    BoldItalic: {
+      fontFamily: textFontFamilyIOS,
+      color: theme.ui.text.regular,
+      fontWeight: FontWeightIOS.Bold,
+      fontStyle: 'italic',
+    },
   },
   android: {
-    Regular: { fontFamily: `${textFontFamilyPrefixAndroid}regular` },
-    Italic: { fontFamily: `${textFontFamilyPrefixAndroid}italic` },
-    Bold: { fontFamily: `${textFontFamilyPrefixAndroid}bold` },
-    BoldItalic: { fontFamily: `${textFontFamilyPrefixAndroid}bolditalic` },
+    Regular: { fontFamily: `${textFontFamilyPrefixAndroid}regular`, color: theme.ui.text.regular },
+    Italic: { fontFamily: `${textFontFamilyPrefixAndroid}italic`, color: theme.ui.text.regular },
+    Bold: { fontFamily: `${textFontFamilyPrefixAndroid}bold`, color: theme.ui.text.regular },
+    BoldItalic: { fontFamily: `${textFontFamilyPrefixAndroid}bolditalic`, color: theme.ui.text.regular },
   },
 })! as { [key in TextFontStyleKey]: TextStyle };
 
 type HeadingFontStyleKey = 'Bold';
 export const HeadingFontStyle = Platform.select({
   ios: {
-    Bold: { fontFamily: headingFontFamilyIOS, fontWeight: FontWeightIOS.Bold },
+    Bold: { fontFamily: headingFontFamilyIOS, color: theme.ui.text.regular, fontWeight: FontWeightIOS.Bold },
   },
   android: {
-    Bold: { fontFamily: `${headingFontFamilyPrefixAndroid}bold` },
+    Bold: { fontFamily: `${headingFontFamilyPrefixAndroid}bold`, color: theme.ui.text.regular },
   },
 })! as { [key in HeadingFontStyleKey]: TextStyle };
 

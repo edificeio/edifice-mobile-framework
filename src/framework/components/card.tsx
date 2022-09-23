@@ -23,7 +23,7 @@ import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { Badge } from './badge';
 import { UI_SIZES, getScaleDimension } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
-import { BodyBoldText, CaptionItalicText, CaptionText, SmallBoldText, TextFontStyle, TextSizeStyle } from './text';
+import { BodyText, CaptionItalicText, CaptionText, SmallText, TextFontStyle, TextSizeStyle } from './text';
 
 export const cardPaddingV = UI_SIZES.spacing.medium;
 export const cardPaddingH = UI_SIZES.spacing.medium;
@@ -151,7 +151,7 @@ export const ContentView = (props: IContentCardProps) => {
 /** Pre-configured title for ContentCard */
 export const ContentCardTitle = (props: TextProps) => {
   const { style, ...otherProps } = props;
-  const Comp = styled(BodyBoldText)({ color: theme.palette.primary.regular });
+  const Comp = styled(BodyText)({ color: theme.palette.primary.regular });
   return <Comp numberOfLines={2} ellipsizeMode="tail" {...otherProps} style={style} />;
 };
 
@@ -305,7 +305,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               marginTop: UI_SIZES.spacing.minor,
               height: getScaleDimension(20, 'height') * 2,
             }}>
-            <SmallBoldText
+            <SmallText
               numberOfLines={2}
               style={[
                 {
@@ -315,7 +315,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
                 textStyle,
               ]}>
               {text}
-            </SmallBoldText>
+            </SmallText>
           </View>
         ) : (
           text

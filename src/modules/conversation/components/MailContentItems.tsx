@@ -121,9 +121,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   return isVisible ? (
                     <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
                   ) : (
-                    <CaptionText
-                      style={{ marginTop: UI_SIZES.spacing.tiny, flex: 0, color: theme.ui.text.regular }}
-                      numberOfLines={1}>
+                    <CaptionText style={{ marginTop: UI_SIZES.spacing.tiny, flex: 0 }} numberOfLines={1}>
                       <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
                       <NestedText style={{ color: theme.palette.primary.regular }}>
                         {mailContacts.to[0][1]}

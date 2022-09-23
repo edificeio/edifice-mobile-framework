@@ -142,7 +142,7 @@ const HeaderSubject = ({
 
   return (
     <View style={[headerStyle, style]}>
-      <SmallText style={{ color: theme.ui.text.regular }}>{title} : </SmallText>
+      <SmallText>{title} : </SmallText>
       <TextInput
         style={inputStyle}
         defaultValue={value}

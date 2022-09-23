@@ -180,9 +180,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               hasError={(error && !typing && !errtype) as boolean}
             />
             <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium }}>
-              <CaptionText style={{ marginRight: UI_SIZES.spacing.small, color: theme.ui.text.regular }}>
-                {I18n.t('AutoLogin')}
-              </CaptionText>
+              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('AutoLogin')}</CaptionText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}

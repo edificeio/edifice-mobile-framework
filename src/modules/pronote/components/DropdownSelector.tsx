@@ -117,7 +117,6 @@ DropdownSelectorTemplate.styles = StyleSheet.create({
   selectText: { color: theme.ui.text.light },
   text: {
     textAlign: 'center',
-    color: theme.palette.grey.black,
     marginVertical: UI_SIZES.spacing.large,
   },
 });

@@ -35,10 +35,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     expandMessage: I18n.t('common.readMore'),
     numberOfLines: 5,
     expansionTextStyle: { color: theme.palette.complementary.blue.regular },
-    textStyle: {
-      color: theme.ui.text.regular,
-      marginTop: UI_SIZES.spacing.tiny,
-    },
+    textStyle: { marginTop: UI_SIZES.spacing.tiny },
   };
 
   public measureText = (numberOfLines: number | undefined) => async (evt: LayoutEvent) => {

@@ -90,7 +90,7 @@ export const BlogPostResourceCard = ({
         }>
         {hasBlogPostText ? (
           <SmallText
-            style={{ color: theme.ui.text.regular, marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
+            style={{ marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
             numberOfLines={contentTextMaxLines}>
             {blogPostText}
           </SmallText>
