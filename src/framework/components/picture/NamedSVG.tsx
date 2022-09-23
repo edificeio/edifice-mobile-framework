@@ -34,6 +34,11 @@ const imports = {
   'ui-skills': import('ASSETS/icons/uiIcons/skills.svg'),
   'ui-success': import('ASSETS/icons/uiIcons/success.svg'),
   'ui-users': import('ASSETS/icons/uiIcons/users.svg'),
+  'ui-warning': import('ASSETS/icons/uiIcons/warning.svg'),
+  'ui-eye': import('ASSETS/icons/uiIcons/eye.svg'),
+  'ui-eyeSlash': import('ASSETS/icons/uiIcons/eyeSlash.svg'),
+  'ui-trash': import('ASSETS/icons/uiIcons/trash.svg'),
+  'ui-unarchive': import('ASSETS/icons/uiIcons/unarchive.svg'),
   // ModuleIcons
   admin: import('ASSETS/icons/moduleIcons/admin.svg'),
   adressBook: import('ASSETS/icons/moduleIcons/adressBook.svg'),

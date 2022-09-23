@@ -212,9 +212,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
         // Swipeable props
-        rightOpenValue={-140}
         swipeActionWidth={140}
-        disableRightSwipe
         hiddenRowStyle={cardPaddingMerging}
         hiddenItemStyle={UI_STYLES.justifyEnd}
         itemSwipeActionProps={({ item }) => {
@@ -229,7 +227,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                       },
                       actionColor: theme.palette.status.warning,
                       actionText: I18n.t('timeline.reportAction.button'),
-                      actionIcon: 'ui-answer',
+                      actionIcon: 'ui-warning',
                     },
                   ]
                 : item.type === ITimelineItemType.FLASHMSG
