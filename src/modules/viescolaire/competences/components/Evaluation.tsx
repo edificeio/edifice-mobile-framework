@@ -264,7 +264,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
                   this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
                   this.setSwitchDefaultPosition(value);
                 }}
-                trackColor={{ false: theme.palette.grey.fog, true: theme.palette.complementary.green.regular }}
+                trackColor={{ false: theme.palette.grey.grey, true: theme.palette.complementary.green.regular }}
                 style={Platform.OS !== 'ios' ? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : null}
               />
             </View>
