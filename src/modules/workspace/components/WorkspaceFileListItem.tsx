@@ -10,7 +10,7 @@ import { renderIcon } from '~/modules/workspace/components/image';
 import { IFile } from '~/modules/workspace/reducer';
 import { DateView } from '~/ui/DateView';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   centerPanel: {
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
@@ -31,7 +31,7 @@ const style = StyleSheet.create({
 
 interface IWorkspaceFileListItemProps {
   item: IFile;
-  disabled?: boolean;
+  isDisabled?: boolean;
   isSelected?: boolean;
   onLongPress: (file: IFile) => void;
   onPress: (file: IFile) => void;
@@ -51,25 +51,26 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
   };
 
   public render() {
-    const { item, disabled, isSelected } = this.props;
+    const { item, isDisabled, isSelected } = this.props;
     const { id, isFolder, name, date, ownerName = '', contentType } = item;
+    const borderBottomWidth = isDisabled ? 0 : 1;
     const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
     return (
-      <TouchableOpacity onPress={this.onPressCallback} onLongPress={this.onLongPressCallback} disabled={disabled}>
+      <TouchableOpacity onPress={this.onPressCallback} onLongPress={this.onLongPressCallback} disabled={isDisabled}>
         <ListItem
-          style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card }}
+          style={{ backgroundColor: isSelected ? theme.palette.primary.pale : theme.ui.background.card, borderBottomWidth }}
           leftElement={renderIcon(id, isFolder, name, contentType)}
           rightElement={
-            <View style={style.centerPanel}>
+            <View style={styles.centerPanel}>
               <SmallText numberOfLines={1}>{name}</SmallText>
-              <View style={style.dateContainer}>
+              <View style={styles.dateContainer}>
                 {date ? (
-                  <View style={style.dateText}>
+                  <View style={styles.dateText}>
                     <DateView min date={date} />
                   </View>
                 ) : null}
                 {ownerName.length > 0 ? (
-                  <CaptionText numberOfLines={1} style={style.authorText}>
+                  <CaptionText numberOfLines={1} style={styles.authorText}>
                     {longOwnerName}
                   </CaptionText>
                 ) : null}

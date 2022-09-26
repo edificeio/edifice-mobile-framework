@@ -138,7 +138,7 @@ export const WorkspaceModal = ({
           {settings.hasFileList ? (
             <FlatList
               data={selectedFiles}
-              renderItem={({ item }) => <WorkspaceFileListItem item={item} disabled />}
+              renderItem={({ item }) => <WorkspaceFileListItem item={item} isDisabled />}
               keyExtractor={(item: IFile) => item.id}
               style={styles.flatListContainer}
             />
