@@ -175,8 +175,7 @@ export default class TeacherCdtTimetable extends React.PureComponent<TimetableCo
   /* Display sessions : check if it is a course or a session */
   renderSessionsIconButton = (course, isHalfCourse: boolean = false) => {
     const { navigation } = this.props;
-    const isSessionPublished =
-      ((course.session && course.session.is_published) || course.calendarType === 'session') && !course.session.is_empty;
+    const isSessionPublished = (course.session?.is_published || course.calendarType === 'session') && !course.session?.is_empty;
     return (
       <TouchableOpacity
         style={isHalfCourse ? style.halfSessionMargin : style.sessionMargin}
