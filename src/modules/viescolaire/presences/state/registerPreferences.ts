@@ -1,5 +1,5 @@
 import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
-import viescoConfig from '~/modules/viescolaire/moduleConfig';
+import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -16,8 +16,8 @@ export const initialState: IRegisterPreferences = {
 };
 
 export const getRegisterPreferencesState = (globalState: any) =>
-  viescoConfig.getState(globalState).presences.registerPreferences as IRegisterPreferencesState;
+  moduleConfig.getState(globalState).registerPreferences as IRegisterPreferencesState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('REGISTER_PREFERENCES'));
+export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('REGISTER_PREFERENCES'));

@@ -9,7 +9,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingLText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
 import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import DateTimePicker from '~/ui/DateTimePicker';

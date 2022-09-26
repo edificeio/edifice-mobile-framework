@@ -1,14 +1,20 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import Evaluation from './containers/Evaluation';
+import Competences from './containers/Evaluation';
+import moduleConfig from './moduleConfig';
 
-export default createStackNavigator(
-  {
-    EvaluationList: {
-      screen: Evaluation,
+export const competencesRoutes = {
+  [`${moduleConfig.routeName}`]: {
+    screen: Competences,
+  },
+};
+
+export default () =>
+  createStackNavigator(
+    {
+      ...competencesRoutes,
     },
-  },
-  {
-    headerMode: 'none',
-  },
-);
+    {
+      headerMode: 'none',
+    },
+  );

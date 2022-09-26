@@ -13,9 +13,9 @@ import {
   SmallText,
   TextSizeStyle,
 } from '~/framework/components/text';
+import { BottomColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { IPunishment } from '~/modules/viescolaire/presences/state/events';
-import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 interface PresenceCardProps {
   color: string;

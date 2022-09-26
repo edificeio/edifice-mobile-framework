@@ -9,9 +9,9 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldItalicText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
+import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
-import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
 

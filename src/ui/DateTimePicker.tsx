@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 
 import { ModalBox, ModalContent, ModalContentBlock } from './Modal';

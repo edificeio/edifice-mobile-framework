@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
-import viescoConfig from '~/modules/viescolaire/moduleConfig';
+import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 interface IEvents {
   id: number;
@@ -58,7 +58,6 @@ export type IClassesCallListState = AsyncState<IClassesCallList>;
 
 export const initialState: IClassesCallList = [];
 
-export const getClassesCallListState = (globalState: any) =>
-  viescoConfig.getState(globalState).presences.callList as IClassesCallListState;
+export const getClassesCallListState = (globalState: any) => moduleConfig.getState(globalState).callList as IClassesCallListState;
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('CLASSES_CALL'));
+export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('CLASSES_CALL'));

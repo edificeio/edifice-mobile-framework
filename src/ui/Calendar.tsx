@@ -6,7 +6,7 @@ import { PanGestureHandler, ScrollView, State, TouchableOpacity } from 'react-na
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
-import { IHomework } from '~/modules/viescolaire/types/homework';
+import { IHomework } from '~/modules/viescolaire/diary/state/homeworks';
 
 /* STYLE */
 

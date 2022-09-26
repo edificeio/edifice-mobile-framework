@@ -1,5 +1,5 @@
 import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
-import viescoConfig from '~/modules/viescolaire/moduleConfig';
+import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -16,8 +16,8 @@ export const initialState: IMultipleSlots = {
 };
 
 export const getMultipleSlotsState = (globalState: any) =>
-  viescoConfig.getState(globalState).presences.multipleSlots as IMultipleSlotsState;
+moduleConfig.getState(globalState).multipleSlots as IMultipleSlotsState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('MULTIPLE_SLOTS'));
+export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('MULTIPLE_SLOTS'));

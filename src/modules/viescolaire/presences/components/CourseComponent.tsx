@@ -1,15 +1,15 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { ImageBackground, StyleSheet, View } from 'react-native';
+import { ImageBackground, StyleSheet, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
+import { BottomColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
-import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 const styles = StyleSheet.create({
   itemContainer: { flex: 1, padding: 0 },
@@ -34,17 +34,19 @@ export default ({
   onPress,
   isCourseNow,
   isCourseEditable,
+  style,
 }: {
   item: ICourses;
   onPress: () => any;
   isCourseNow: boolean;
   isCourseEditable: boolean;
+  style?: ViewStyle;
 }) => (
   <BottomColoredItem
     shadow={isCourseNow}
     disabled={!isCourseEditable}
     onPress={onPress}
-    style={[styles.itemContainer, isCourseNow ? styles.itemContainerOpacityFull : styles.itemContainerOpacityScaledDown]}
+    style={[styles.itemContainer, isCourseNow ? styles.itemContainerOpacityFull : styles.itemContainerOpacityScaledDown, style]}
     color={isCourseEditable ? viescoTheme.palette.presences : theme.palette.grey.graphite}>
     <ImageBackground
       source={isCourseEditable ? require('ASSETS/viesco/presences.png') : require('ASSETS/viesco/presence_gris.png')}

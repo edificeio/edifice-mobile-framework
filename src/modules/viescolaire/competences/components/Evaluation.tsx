@@ -9,11 +9,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
-import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
-import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
-import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
+import { AsyncState } from '~/framework/util/redux/async';
+import { IDevoirsMatieres, ILevel, IMoyenne } from '~/modules/viescolaire/competences/reducer';
+import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
+import { IPeriodsList } from '~/modules/viescolaire/dashboard/state/periods';
 import { PageContainer } from '~/ui/ContainerContent';
 import Dropdown from '~/ui/Dropdown';
 
@@ -61,9 +60,9 @@ const styles = StyleSheet.create({
 });
 
 export type ICompetencesProps = {
-  devoirsList: IDevoirsMatieresState;
-  devoirsMoyennesList: IMoyenneListState;
-  levels: ILevelsList;
+  devoirsList: AsyncState<IDevoirsMatieres>;
+  devoirsMoyennesList: AsyncState<IMoyenne>;
+  levels: ILevel[];
   userType: string;
   periods: IPeriodsList;
   groups: any;
@@ -376,7 +375,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   public render() {
     return (
       <PageContainer>
-        {this.props.userType === 'Relative' && <ChildPicker hideButton />}
+        {this.props.userType === 'Relative' && <ChildPicker />}
         <View style={styles.dashboardPart}>
           <SmallText style={styles.subtitle}>{I18n.t('viesco-report-card')}</SmallText>
           <View style={styles.containerDropdowns}>

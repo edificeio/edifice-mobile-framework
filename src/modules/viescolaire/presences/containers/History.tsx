@@ -11,15 +11,15 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/dashboard/actions/periods';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
+import { getPeriodsListState, getYearState } from '~/modules/viescolaire/dashboard/state/periods';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events';
 import { fetchUserChildrenAction } from '~/modules/viescolaire/presences/actions/userChildren';
 import HistoryComponent from '~/modules/viescolaire/presences/components/History';
 import { getHistoryEvents } from '~/modules/viescolaire/presences/state/events';
 import { IPresencesUserChildrenState, getUserChildrenState } from '~/modules/viescolaire/presences/state/userChildren';
-import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/viesco/actions/periods';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
-import { getPeriodsListState, getYearState } from '~/modules/viescolaire/viesco/state/periods';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 interface HistoryProps extends NavigationInjectedProps {
   data: any;
@@ -32,6 +32,7 @@ interface HistoryProps extends NavigationInjectedProps {
   structureId: string;
   groupId: string;
   childrenInfos: IPresencesUserChildrenState;
+  hasRightToCreateAbsence: boolean;
   getEvents: (childId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => void;
   getPeriods: (structureId: string, groupId: string) => void;
   getChildInfos: (relativeId: string) => void;
@@ -245,6 +246,9 @@ const mapStateToProps = (state: any) => {
   const childrenInfos = getUserChildrenState(state);
   const isFetchingData = events.isFetching || periods.isFetching || year.isFetching;
   const isPristineData = events.isPristine || periods.isPristine || year.isPristine;
+  const authorizedActions = state.user.info.authorizedActions;
+  const hasRightToCreateAbsence =
+    authorizedActions && authorizedActions.some(action => action.displayName === 'presences.absence.statements.create');
 
   return {
     events,
@@ -258,6 +262,7 @@ const mapStateToProps = (state: any) => {
     childrenInfos,
     isFetchingData,
     isPristineData,
+    hasRightToCreateAbsence,
   };
 };
 

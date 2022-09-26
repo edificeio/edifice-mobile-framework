@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import { AsyncState } from '~/infra/redux/async2';
-import viescoConfig from '~/modules/viescolaire/moduleConfig';
+import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 export type ICallEvent = {
   id?: number;
@@ -50,8 +50,8 @@ export type IPunishmentsList = IPunishment[];
 
 export type ICallEventsListState = AsyncState<ICallEventsList>;
 
-const callPrefix = viescoConfig.namespaceActionType('CALL_EVENT');
-const historyPrefix = viescoConfig.namespaceActionType('HISTORY');
+const callPrefix = moduleConfig.namespaceActionType('CALL_EVENT');
+const historyPrefix = moduleConfig.namespaceActionType('HISTORY');
 
 export const initialState = {
   lateness: [],
@@ -81,4 +81,4 @@ export const studentEventsActionsTypes = {
   error: historyPrefix + '_ERROR',
 };
 
-export const getHistoryEvents = (globalState: any) => viescoConfig.getState(globalState).presences.history as ICallEventsListState;
+export const getHistoryEvents = (globalState: any) => moduleConfig.getState(globalState).history as ICallEventsListState;

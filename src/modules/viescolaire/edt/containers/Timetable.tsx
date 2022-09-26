@@ -3,25 +3,41 @@ import moment from 'moment';
 import * as React from 'react';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
+import { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
-import { fetchEdtCourseListAction, fetchEdtCourseListFromTeacherAction } from '~/modules/viescolaire/edt/actions/edtCourses';
-import { fetchSlotListAction } from '~/modules/viescolaire/edt/actions/slots';
-import { fetchUserChildrenAction } from '~/modules/viescolaire/edt/actions/userChildren';
+import { fetchGroupListAction } from '~/modules/viescolaire/dashboard/actions/group';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
+import { getChildrenGroupsState } from '~/modules/viescolaire/dashboard/state/childrenGroups';
+import { getGroupsListState } from '~/modules/viescolaire/dashboard/state/group';
+import { getPersonnelListState } from '~/modules/viescolaire/dashboard/state/personnel';
+import { getSelectedStructure } from '~/modules/viescolaire/dashboard/state/structure';
+import { getSubjectsListState } from '~/modules/viescolaire/dashboard/state/subjects';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
+import {
+  fetchEdtCoursesAction,
+  fetchEdtSlotsAction,
+  fetchEdtTeacherCoursesAction,
+  fetchEdtUserChildrenAction,
+} from '~/modules/viescolaire/edt/actions';
 import Timetable from '~/modules/viescolaire/edt/components/Timetable';
-import { getEdtCoursesListState } from '~/modules/viescolaire/edt/state/edtCourses';
-import { getSlotsListState } from '~/modules/viescolaire/edt/state/slots';
-import { getUserChildrenState } from '~/modules/viescolaire/edt/state/userChildren';
-import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
-import { getChildrenGroupsState } from '~/modules/viescolaire/viesco/state/childrenGroups';
-import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
-import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
-import { getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
-import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import moduleConfig from '~/modules/viescolaire/edt/moduleConfig';
+
+type TimetableEventProps = {
+  fetchChildInfos: () => void;
+  fetchChildGroups: (classes: string, student: string) => void;
+  fetchChildCourses: (
+    structureId: string,
+    startDate: moment.Moment,
+    endDate: moment.Moment,
+    groups: string[],
+    groupsIds: string[],
+  ) => void;
+  fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
+  fetchSlots: (structureId: string) => void;
+};
 
 export type TimetableProps = {
   courses: any;
@@ -31,22 +47,12 @@ export type TimetableProps = {
   structureId: string;
   childId: string;
   childClasses: string;
-  group: string;
+  group: string[];
   groupsIds: string[];
   teacherId: string;
   userType: string;
-  fetchChildInfos: () => void;
-  fetchChildGroups: (classes: string, student: string) => void;
-  fetchChildCourses: (
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    group: string,
-    groupsIds: string[],
-  ) => void;
-  fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
-  fetchSlots: (structureId: string) => void;
-} & NavigationInjectedProps;
+} & TimetableEventProps &
+  NavigationInjectedProps;
 
 export type TimetableState = {
   startDate: moment.Moment;
@@ -145,7 +151,8 @@ const filterGroups = (childClasses, initialGroups) => {
   return group;
 };
 
-const mapStateToProps = (state: any): any => {
+const mapStateToProps = (gs: any): any => {
+  const state = moduleConfig.getState(gs);
   let childId: string | undefined = '';
   let childClasses: string = '';
   const group = [] as string[];
@@ -153,8 +160,8 @@ const mapStateToProps = (state: any): any => {
   // get groups and childClasses
   if (getUserSession().user.type === 'Student') {
     childId = getUserSession().user.id;
-    childClasses = state.user.info.classes[0];
-    const childGroups = getGroupsListState(state).data;
+    childClasses = gs.user.info.classes[0];
+    const childGroups = getGroupsListState(gs).data;
     if (childGroups !== undefined && childGroups[0] !== undefined) {
       childGroups.forEach(groupsStructures => {
         if (groupsStructures.idClass !== null && groupsStructures.idClass !== undefined) {
@@ -168,12 +175,12 @@ const mapStateToProps = (state: any): any => {
       });
     } else {
       groupsIds.push(getUserSession().user.groupsIds);
-      group.push(state.user.info.realClassesNames[0]);
+      group.push(gs.user.info.realClassesNames[0]);
     }
   } else if (getUserSession().user.type === 'Relative') {
-    childId = getSelectedChild(state)?.id;
-    childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
-    const childGroups = getGroupsListState(state);
+    childId = getSelectedChild(gs)?.id;
+    childClasses = state.userChildren.data.find(child => childId === child.id)?.idClasses!;
+    const childGroups = getGroupsListState(gs);
     if (childGroups !== undefined && childGroups.data[0] !== undefined) {
       childGroups.data.forEach(groupsStructures => {
         if (groupsStructures.idClass !== null && groupsStructures.idClass !== undefined) {
@@ -186,23 +193,23 @@ const mapStateToProps = (state: any): any => {
         groupsStructures?.nameGroups?.forEach(item => group.push(item));
       });
     } else {
-      const initialGroups = getChildrenGroupsState(state).data;
+      const initialGroups = getChildrenGroupsState(gs).data;
       groupsIds.push(filterGroups(childClasses, initialGroups).name);
       group.push(filterGroups(childClasses, initialGroups).id);
     }
   }
 
   return {
-    courses: getEdtCoursesListState(state),
-    subjects: getSubjectsListState(state),
-    teachers: getPersonnelListState(state),
-    slots: getSlotsListState(state),
+    courses: state.courses,
+    subjects: getSubjectsListState(gs),
+    teachers: getPersonnelListState(gs),
+    slots: state.slots,
     structureId:
       getUserSession().user.type === 'Student'
-        ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
+        ? gs.user.info.administrativeStructures[0].id || gs.user.info.structures[0]
         : getUserSession().user.type === 'Relative'
-        ? getSelectedChildStructure(state).id
-        : getSelectedStructure(state),
+        ? getSelectedChildStructure(gs).id
+        : getSelectedStructure(gs),
     childId,
     childClasses,
     group,
@@ -211,16 +218,32 @@ const mapStateToProps = (state: any): any => {
   };
 };
 
-const mapDispatchToProps = (dispatch: any): any =>
-  bindActionCreators(
-    {
-      fetchChildInfos: fetchUserChildrenAction,
-      fetchChildGroups: fetchGroupListAction,
-      fetchChildCourses: fetchEdtCourseListAction,
-      fetchTeacherCourses: fetchEdtCourseListFromTeacherAction,
-      fetchSlots: fetchSlotListAction,
-    },
-    dispatch,
-  );
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => TimetableEventProps = (
+  dispatch,
+  getState,
+) => ({
+  fetchChildInfos: async () => {
+    return dispatch(fetchEdtUserChildrenAction());
+  },
+  fetchChildGroups: async (classes: string, student: string) => {
+    return dispatch(fetchGroupListAction(classes, student));
+  },
+  fetchChildCourses: async (
+    structureId: string,
+    startDate: moment.Moment,
+    endDate: moment.Moment,
+    groups: string[],
+    groupsIds: string[],
+  ) => {
+    return dispatch(fetchEdtCoursesAction(structureId, startDate, endDate, groups, groupsIds));
+  },
+  fetchTeacherCourses: async (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => {
+    return dispatch(fetchEdtTeacherCoursesAction(structureId, startDate, endDate, teacherId));
+  },
+  fetchSlots: async (structureId: string) => {
+    return dispatch(fetchEdtSlotsAction(structureId));
+  },
+  dispatch,
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimetableContainer);

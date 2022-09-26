@@ -1,12 +1,20 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
 import Timetable from './containers/Timetable';
+import moduleConfig from './moduleConfig';
 
-export default createStackNavigator(
-  {
-    Timetable,
+export const edtRoutes = {
+  [moduleConfig.routeName]: {
+    screen: Timetable,
   },
-  {
-    headerMode: 'none',
-  },
-);
+};
+
+export default () =>
+  createStackNavigator(
+    {
+      ...edtRoutes,
+    },
+    {
+      headerMode: 'none',
+    },
+  );

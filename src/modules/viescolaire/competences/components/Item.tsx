@@ -7,11 +7,9 @@ import { FlatList, FlexAlignType, StyleSheet, TouchableOpacity, View } from 'rea
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
-import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
-import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
-import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import { IDevoir, ILevel, IMoyenne } from '~/modules/viescolaire/competences/reducer';
+import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
@@ -154,7 +152,7 @@ const styleConstant = StyleSheet.create({
 
 // COMPONENTS
 
-const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
+const getColorfromCompetence = (evaluation: number, levels: ILevel[]) => {
   const cycleLevels = levels.filter(obj => {
     return obj.cycle === 'Cycle 3';
   });
@@ -175,7 +173,7 @@ const getColorFromNote = (note: number, moy: number, diviseur: number) => {
   }
 };
 
-const CompetenceRoundModal = (competence: any, index: number, levels: ILevelsList) => (
+const CompetenceRoundModal = (competence: any, index: number, levels: ILevel[]) => (
   <ModalContentBlock style={styleConstant.modalBlock} key={index}>
     <SmallText style={styleConstant.competenceRoundModalText}>{competence.nom}</SmallText>
     <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
@@ -191,7 +189,7 @@ const CompetenceRound = ({
   competences: any;
   stateFullRound: FlexAlignType;
   size: number;
-  levels: ILevelsList;
+  levels: ILevel[];
 }) => {
   const [isVisible, toggleVisible] = useState(false);
   return (
@@ -277,7 +275,7 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
 
 // EXPORTED COMPONENTS
 
-export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; levels: ILevelsList }) => (
+export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoir[]; levels: ILevel[] }) => (
   <>
     {devoirs.map((devoir, index) => (
       <LeftColoredItem shadow color={viescoTheme.palette.competences} key={index}>
@@ -305,7 +303,7 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
   </>
 );
 
-export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) => (
+export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenne[] }) => (
   <FlatList
     contentContainerStyle={styleConstant.gradesDevoirsMoyennesView}
     data={devoirs}
@@ -346,7 +344,7 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
   />
 );
 
-export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList; levels: ILevelsList; color?: boolean }) => (
+export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoir[]; levels: ILevel[]; color?: boolean }) => (
   <FlatList
     showsVerticalScrollIndicator={false}
     data={devoirs}
@@ -388,7 +386,7 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
   />
 );
 
-export const getSortedEvaluationList = (evaluations: IDevoirList) => {
+export const getSortedEvaluationList = (evaluations: IDevoir[]) => {
   return evaluations.sort(
     (a, b) =>
       moment(b.date).diff(moment(a.date)) ||

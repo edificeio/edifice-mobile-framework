@@ -6,11 +6,12 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import StudentRow from '~/modules/viescolaire/presences/components/StudentRow';
-import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallList';
+import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallListOld';
+import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
-import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { PageContainer } from '~/ui/ContainerContent';
 
@@ -108,9 +109,11 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
               renderItem={({ item }) => (
                 <StudentRow
                   student={item}
-                  mementoNavigation={() => this.props.navigation.navigate('Memento', { studentId: item.id })}
+                  mementoNavigation={() =>
+                    this.props.navigation.navigate(`${presencesConfig.routeName}/memento`, { studentId: item.id })
+                  }
                   lateCallback={event =>
-                    this.props.navigation.navigate('DeclareEvent', {
+                    this.props.navigation.navigate(`${presencesConfig.routeName}/declaration/teacher`, {
                       type: 'late',
                       registerId,
                       student: item,
@@ -120,7 +123,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                     })
                   }
                   leavingCallback={event =>
-                    this.props.navigation.navigate('DeclareEvent', {
+                    this.props.navigation.navigate(`${presencesConfig.routeName}/declaration/teacher`, {
                       type: 'leaving',
                       registerId,
                       student: item,

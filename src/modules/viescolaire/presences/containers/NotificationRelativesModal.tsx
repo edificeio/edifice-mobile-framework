@@ -3,18 +3,18 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import {
+  IChildArray,
+  getChildrenList,
+  getSelectedChild,
+  getSelectedChildStructure,
+} from '~/modules/viescolaire/dashboard/state/children';
 import { fetchChildrenEventsAction } from '~/modules/viescolaire/presences/actions/relativesNotificationModal';
 import { NotificationRelativesModal } from '~/modules/viescolaire/presences/components/NotificationRelativesModal';
 import {
   IChildEventsNotificationState,
   getRelativesNotification,
 } from '~/modules/viescolaire/presences/state/relativesNotificationModal';
-import {
-  IChildArray,
-  getChildrenList,
-  getSelectedChild,
-  getSelectedChildStructure,
-} from '~/modules/viescolaire/viesco/state/children';
 
 type NotificationRelativesModalProps = {
   childId: string;

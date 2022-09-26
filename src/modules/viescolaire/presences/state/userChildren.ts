@@ -1,5 +1,5 @@
 import { AsyncActionTypes, AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
-import viescoConfig from '~/modules/viescolaire/moduleConfig';
+import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -50,8 +50,8 @@ export const initialState: IUserChildren = [
 ];
 
 export const getUserChildrenState = (globalState: any) =>
-  viescoConfig.getState(globalState).presences.userChildren as IPresencesUserChildrenState;
+  moduleConfig.getState(globalState).userChildren as IPresencesUserChildrenState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('PRESENCES_USER_CHILDREN'));
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('PRESENCES_USER_CHILDREN'));

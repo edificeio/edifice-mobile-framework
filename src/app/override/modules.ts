@@ -7,7 +7,11 @@ export default [
   require('~/modules/pronote'),
   require('~/modules/schoolbook'),
   require('~/modules/support'),
-  require('~/modules/viescolaire'),
+  require('~/modules/viescolaire/competences'),
+  require('~/modules/viescolaire/edt'),
+  require('~/modules/viescolaire/dashboard'),
+  require('~/modules/viescolaire/diary'),
+  require('~/modules/viescolaire/presences'),
   require('~/modules/workspace'),
   require('~/modules/zimbra'),
 ];

@@ -7,8 +7,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
-import { IChildArray } from '~/modules/viescolaire/viesco/state/children';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import { IChildArray } from '~/modules/viescolaire/dashboard/state/children';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { ModalBox } from '~/ui/Modal';
 
