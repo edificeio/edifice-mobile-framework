@@ -45,7 +45,7 @@ export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) 
     routes[`${moduleConfig.routeName}/declaration/relative`] = {
       screen: Declaration,
     };
-  } else if (role === UserType.Teacher) {
+  } else {
     routes[`${moduleConfig.routeName}/calls`] = {
       screen: CallList,
     };
