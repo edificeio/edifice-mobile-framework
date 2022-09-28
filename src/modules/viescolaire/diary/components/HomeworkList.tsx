@@ -16,6 +16,7 @@ import diaryConfig from '~/modules/viescolaire/diary/moduleConfig';
 import { IHomework, IHomeworkMap, ISession } from '~/modules/viescolaire/diary/reducer';
 import {
   getTeacherName,
+  hasEmptyDescription,
   homeworkListDetailsAdapter,
   isHomeworkDone,
   sessionListDetailsAdapter,
@@ -74,17 +75,6 @@ type HomeworkListProps = {
   onRefreshSessions: any;
   childId: string;
 } & NavigationInjectedProps;
-
-const hasEmptyDescription = (session: ISession) => {
-  // retrieve html description tag and search "body" tag
-  const regexp = /<(\w+)>[^<]+<\/\1>|[^<>]+/g;
-  const htmlTags = session.description.match(regexp) as string[];
-  if (!htmlTags) return true;
-  const index = htmlTags.findIndex(item => item === 'body') as number;
-
-  if (session.description === '' || index === -1 || htmlTags[index + 1] === '/body') return true;
-  return false;
-};
 
 const EmptyComponent = ({ title }) => <EmptyScreen svgImage="empty-homework" title={title} />;
 

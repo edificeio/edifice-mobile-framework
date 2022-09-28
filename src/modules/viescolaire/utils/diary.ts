@@ -102,9 +102,22 @@ export const sessionDetailsAdapter = (session: ISession, teachersList?: IPersonn
   } as Session;
 };
 
+export const hasEmptyDescription = (session: ISession) => {
+  // retrieve html description tag and search "body" tag
+  const regexp = /<(\w+)>[^<]+<\/\1>|[^<>]+/g;
+  const htmlTags = session.description.match(regexp) as string[];
+  if (!htmlTags) return true;
+  const index = htmlTags.findIndex(item => item === 'body') as number;
+
+  if (session.description === '' || index === -1 || htmlTags[index + 1] === '/body') return true;
+  return false;
+};
+
 export const sessionListDetailsAdapter = (session: ISession, teachersList: IPersonnelList, sessionList?: ISession[]) => {
   const reformatedSessionArray = [] as Session[];
-  sessionList?.forEach(item => reformatedSessionArray.push(sessionDetailsAdapter(item, teachersList)));
+  sessionList?.forEach(
+    item => !hasEmptyDescription(item) && reformatedSessionArray.push(sessionDetailsAdapter(item, teachersList)),
+  );
 
   return {
     session: sessionDetailsAdapter(session, teachersList),
