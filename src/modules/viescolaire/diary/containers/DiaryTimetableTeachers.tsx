@@ -20,9 +20,9 @@ import { ISlot } from '~/modules/viescolaire/edt/reducer';
 
 export type TimetableProps = {
   courses: ICourseListState;
-  sessions: AsyncState<ISession>;
+  sessions: AsyncState<ISession[]>;
   homeworks: AsyncState<IHomeworkMap>;
-  slots: AsyncState<ISlot>;
+  slots: AsyncState<ISlot[]>;
   structure: { id: string };
   teacherId: string;
   fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;

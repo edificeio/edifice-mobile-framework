@@ -127,13 +127,13 @@ const initialState: IDiary_StateData = {
 
 export const actionTypes = {
   homeworks: createAsyncActionTypes(moduleConfig.namespaceActionType('HOMEWORKS')),
-  updateHomework: createAsyncActionTypes(moduleConfig.namespaceActionType('UPDATE_HOMEWORK')),
   sessions: createAsyncActionTypes(moduleConfig.namespaceActionType('SESSIONS')),
   slots: createAsyncActionTypes(moduleConfig.namespaceActionType('TIME_SLOTS')),
+  updateHomework: createAsyncActionTypes(moduleConfig.namespaceActionType('UPDATE_HOMEWORK')),
 };
 
 const homeworksActionHandler = {
-  [actionTypes.homeworks.receipt]: (state, action) => {
+  [actionTypes.updateHomework.receipt]: (state, action) => {
     const stateUpdated = Object.assign({}, state);
     if (stateUpdated[action.data.homeworkId].progress === null) stateUpdated[action.data.homeworkId].progress = {};
     stateUpdated[action.data.homeworkId].progress.state_label = action.data.status;
