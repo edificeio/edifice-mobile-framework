@@ -133,8 +133,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   fetchChildGroups: async (classes: string, student: string) => {
     return dispatch(fetchGroupListAction(classes, student));
   },
-  getDevoirs: async (structureId: string, studentId: string) => {
-    return dispatch(fetchCompetencesDevoirsAction(structureId, studentId));
+  getDevoirs: async (structureId: string, studentId: string, periods?: string, matiere?: string) => {
+    return dispatch(fetchCompetencesDevoirsAction(structureId, studentId, periods, matiere));
   },
   getDevoirsMoyennes: async (structureId: string, studentId: string, period?: string) => {
     return dispatch(fetchCompetencesMoyennesAction(structureId, studentId, period));

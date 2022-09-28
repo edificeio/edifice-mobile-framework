@@ -71,7 +71,7 @@ type IBackendUserChild = {
   lastName: string;
 };
 
-type IBackendMoyenneList = IBackendMoyenne[];
+type IBackendMoyenneList = { [key: string]: IBackendMoyenne };
 type IBackendLevelList = IBackendLevel[];
 type IBackendUserChildren = IBackendUserChild[];
 
@@ -88,11 +88,13 @@ const devoirsMatieresAdapter = (data: IBackendDevoirsMatieres): IDevoirsMatieres
       moyenne: item.moyenne,
       competences: item.competences,
     })),
-    matieres: data.matieres.map(item => ({
-      id: item.id,
-      externalId: item.externalId,
-      name: item.name,
-    })),
+    matieres: data.matieres
+      ? data.matieres.map(item => ({
+          id: item.id,
+          externalId: item.externalId,
+          name: item.name,
+        }))
+      : [],
   } as IDevoirsMatieres;
 };
 
@@ -112,15 +114,20 @@ const levelAdapter = (data: IBackendLevel): ILevel => {
   } as ILevel;
 };
 
-const moyenneAdapter = (data: IBackendMoyenne): IMoyenne => {
-  return {
-    matiere: data.matiere,
-    matiere_coeff: data.matiere_coeff,
-    matiere_rank: data.matiere_rank,
-    teacher: data.teacher,
-    moyenne: data.moyenne,
-    devoirs: data.devoirs,
-  } as IMoyenne;
+const moyennesAdapter = (data: IBackendMoyenneList): IMoyenne[] => {
+  const moyennes = [] as IMoyenne[];
+  for (const key in data) {
+    const moyenne = data[key];
+    moyennes.push({
+      matiere: moyenne.matiere,
+      matiere_coeff: moyenne.matiere_coeff,
+      matiere_rank: moyenne.matiere_rank,
+      teacher: moyenne.teacher,
+      moyenne: moyenne.moyenne,
+      devoirs: moyenne.devoirs,
+    } as IMoyenne);
+  }
+  return moyennes;
 };
 
 const userChildAdapter = (data: IBackendUserChild): IUserChild => {
@@ -162,7 +169,7 @@ export const competencesService = {
         api += `&idPeriode=${idPeriode}`;
       }
       const moyennes = (await fetchJSONWithCache(api)) as IBackendMoyenneList;
-      return moyennes.map(moyenne => moyenneAdapter(moyenne)) as IMoyenne[];
+      return moyennesAdapter(moyennes) as IMoyenne[];
     },
   },
   userChildren: {
