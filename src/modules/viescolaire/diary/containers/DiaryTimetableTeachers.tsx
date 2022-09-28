@@ -9,6 +9,7 @@ import { PageView } from '~/framework/components/page';
 import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/dashboard/actions/courses';
+import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
 import { ICourseListState, getCoursesListState } from '~/modules/viescolaire/dashboard/state/courses';
 import { getSelectedStructure } from '~/modules/viescolaire/dashboard/state/structure';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -90,6 +91,7 @@ class TeacherTimetableContainer extends React.PureComponent<TimetableProps, Time
             backgroundColor: viescoTheme.palette.diary,
           },
         }}>
+        <StructurePicker />
         <DiaryTeacherTimetable
           {...this.props}
           startDate={this.state.startDate}

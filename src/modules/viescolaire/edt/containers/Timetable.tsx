@@ -9,6 +9,7 @@ import { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import { fetchGroupListAction } from '~/modules/viescolaire/dashboard/actions/group';
+import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
 import { getChildrenGroupsState } from '~/modules/viescolaire/dashboard/state/childrenGroups';
 import { getGroupsListState } from '~/modules/viescolaire/dashboard/state/group';
@@ -127,6 +128,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
             backgroundColor: viescoTheme.palette.timetable,
           },
         }}>
+        <StructurePicker />
         <Timetable
           {...this.props}
           startDate={this.state.startDate}
