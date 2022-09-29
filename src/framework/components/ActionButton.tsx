@@ -39,6 +39,8 @@ export const ActionButton = ({
   style,
   onLayout,
 }: ActionButtonProps) => {
+  const [isButtonMeasured, setIsButtonMeasured] = React.useState(false);
+  const [buttonWidth, setButtonWidth] = React.useState(0);
   const Component = disabled ? View : TouchableOpacity;
   const viewStyle = {
     primary: {
@@ -64,13 +66,22 @@ export const ActionButton = ({
     primary: theme.ui.text.inverse,
     secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
-
-  return loading ? (
-    <ActivityIndicator size="large" color={theme.palette.primary.regular} />
-  ) : (
+  return (
     <Component
-      onLayout={e => onLayout && onLayout(e)}
-      style={[ActionButton.Style.viewCommon, viewStyle[type ?? 'primary'], style]}
+      onLayout={e => {
+        if (onLayout) {
+          onLayout(e);
+        } else if (!isButtonMeasured) {
+          setButtonWidth(e.nativeEvent.layout.width);
+          setIsButtonMeasured(true);
+        }
+      }}
+      style={[
+        ActionButton.Style.viewCommon,
+        viewStyle[type ?? 'primary'],
+        { width: isButtonMeasured ? buttonWidth : undefined },
+        style,
+      ]}
       {...(!disabled
         ? {
             onPress: () => {
@@ -82,26 +93,37 @@ export const ActionButton = ({
               }
             },
           }
+        : {})}
+      {...(loading
+        ? {
+            disabled: true,
+          }
         : {})}>
-      <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined }, textStyle[type ?? 'primary']]}>
-        {text}
-      </SmallBoldText>
-      {showIcon ? (
-        url || iconName ? (
-          <Picture
-            type="NamedSvg"
-            name={iconName || 'pictos-external-link'}
-            width={UI_SIZES.dimensions.width.large}
-            height={UI_SIZES.dimensions.height.large}
-            fill={pictureFill[type ?? 'primary']}
-            style={ActionButton.Style.picture}
-          />
-        ) : emoji ? (
-          <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined, marginBottom: 1 }]}>
-            {` ${emoji}`}
+      {loading ? (
+        <ActivityIndicator size="small" color={textStyle[type ?? 'primary'].color} />
+      ) : (
+        <>
+          <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined }, textStyle[type ?? 'primary']]}>
+            {text}
           </SmallBoldText>
-        ) : null
-      ) : null}
+          {showIcon ? (
+            url || iconName ? (
+              <Picture
+                type="NamedSvg"
+                name={iconName || 'pictos-external-link'}
+                width={UI_SIZES.dimensions.width.large}
+                height={UI_SIZES.dimensions.height.large}
+                fill={pictureFill[type ?? 'primary']}
+                style={ActionButton.Style.picture}
+              />
+            ) : emoji ? (
+              <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined, marginBottom: 1 }]}>
+                {' ' + emoji}
+              </SmallBoldText>
+            ) : null
+          ) : null}
+        </>
+      )}
     </Component>
   );
 };

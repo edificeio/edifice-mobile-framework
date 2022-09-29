@@ -79,6 +79,7 @@
     "react-native-codegen": "0.71.0",
     "react-native-color-matrix-image-filters": "5.2.14",
     "react-native-config-reader": "4.1.1",
+    "react-native-confirmation-code-field": "7.3.1",
     "react-native-device-info": "10.2.1",
     "react-native-document-picker": "8.1.2",
     "react-native-dropdown-picker": "5.4.2",

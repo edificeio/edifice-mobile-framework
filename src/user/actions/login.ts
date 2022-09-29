@@ -5,12 +5,11 @@ import { NavigationActions } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import AppConf from '~/framework/util/appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
-import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
+import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { userService } from '~/user/service';
 
@@ -35,6 +34,7 @@ enum LoginFlowErrorType {
   PRE_DELETED = 'pre_deleted',
   MUST_CHANGE_PASSWORD = 'must-change-password',
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
+  MUST_VERIFY_EMAIL = 'must-verify-email',
 }
 export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
 
@@ -139,7 +139,15 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 3: check user validity
+      // === 3: Gather user email validation infos
+      let emailValidationInfos;
+      try {
+        emailValidationInfos = await userService.getEmailValidationInfos();
+      } catch (err) {
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
+      }
+
+      // === 4: check user validity
       if (userinfo2.deletePending) {
         const err = new Error('[loginAction]: User is predeleted.');
         (err as any).type = LoginFlowErrorType.PRE_DELETED;
@@ -153,13 +161,18 @@ export function loginAction(
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
+      } else if (emailValidationInfos?.emailState?.state !== 'valid') {
+        const err = new Error('[loginAction]: User must verify email.');
+        (err as any).type = LoginFlowErrorType.MUST_VERIFY_EMAIL;
+        (err as any).emailValidationInfos = emailValidationInfos;
+        throw err;
       } // Tmp Workaround : we bypass this flag detection
       /* else if (userinfo2.needRevalidateTerms) {
         const err = new Error('[loginAction]: User must revalidate terms.');
         (err as any).type = LoginFlowErrorType.MUST_REVALIDATE_TERMS;
         throw err;
       } */
-      // === 4: Gather another user information
+      // === 5: Gather another user information
       let userdata: any, userPublicInfo: any;
       try {
         userdata = (await fetchJSONWithCache(`/directory/user/${userinfo2.userId}`)) as any;
@@ -173,7 +186,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
       }
 
-      // === 5: Get firebase device token and store it in the backend
+      // === 6: Get firebase device token and store it in the backend
       try {
         const authorizationStatus = await messaging().requestPermission();
         if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
@@ -183,7 +196,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err);
       }
 
-      // === 6: validate login
+      // === 7: validate login
       try {
         dispatch({
           type: actionTypeLoggedIn,
@@ -196,7 +209,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
       }
 
-      // === 7: Tracking reporting (only on success)
+      // === 8: Tracking reporting (only on success)
 
       // ToDo
       await Promise.all([
@@ -217,10 +230,10 @@ export function loginAction(
       // Track manual login (with credentials)
       else await Trackers.trackDebugEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
-      // === 8: Store Curreet Platform
+      // === 9: Store Curreet Platform
       await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, pf.name);
 
-      // === 9: navigate back to the main screen
+      // === 10: navigate back to the main screen
       navigate('Main');
     } catch (err) {
       // In case of error...
@@ -267,6 +280,9 @@ export function loginAction(
       } else if (err.type === LoginFlowErrorType.MUST_REVALIDATE_TERMS) {
         routeToGo = 'RevalidateTerms';
         routeParams = { credentials };
+      } else if (err.type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
+        routeToGo = 'SendEmailVerificationCode';
+        routeParams = { credentials, defaultEmail: err?.emailValidationInfos?.email };
       }
 
       if (routeToGo) {

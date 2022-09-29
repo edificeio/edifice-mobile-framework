@@ -55,6 +55,7 @@ export interface ILoginPageState {
   password?: string;
   typing: boolean;
   rememberMe: boolean;
+  isLoggingIn: boolean;
 }
 
 const initialState: ILoginPageState = {
@@ -62,6 +63,7 @@ const initialState: ILoginPageState = {
   password: undefined,
   typing: false,
   rememberMe: true,
+  isLoggingIn: false,
 };
 
 // Main component ---------------------------------------------------------------------------------
@@ -126,8 +128,8 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   };
 
   protected renderForm() {
-    const { loggingIn, loggedIn, error, errtype } = this.props.auth;
-    const { login, password, typing, rememberMe } = this.state;
+    const { error, errtype } = this.props.auth;
+    const { login, password, typing, rememberMe, isLoggingIn } = this.state;
     const FederationTextComponent = error ? SmallBoldText : SmallText;
     const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
 
@@ -220,7 +222,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                   text={I18n.t('Connect')}
                   disabled={this.isSubmitDisabled || !this.props.connected}
                   action={() => this.handleLogin()}
-                  loading={loggingIn || loggedIn}
+                  loading={isLoggingIn && !error}
                 />
               )}
               <View
@@ -267,6 +269,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   // Event handlers
 
   protected async handleLogin() {
+    this.setState({ isLoggingIn: true });
     await this.props.onLogin(
       this.state.login || this.props.auth.login, // ToDo: fix this TS issue
       this.state.password,

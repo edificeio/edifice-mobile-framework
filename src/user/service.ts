@@ -20,6 +20,23 @@ export interface IEntcoreParentChildrenByStructure {
 
 export type IEntcoreParentChildrenByStructureList = IEntcoreParentChildrenByStructure[];
 
+export interface IEntcoreEmailValidationInfos {
+  displayName: string; // User display name
+  email: string; // Current email address of the user (possibly not verified)
+  emailState: IEntcoreEmailValidationState | null; // State of the current email address
+  firstName: string; // User first name
+  lastName: string; // User last name
+  waitInSeconds: number; // Suggested time to wait for the validation email to be sent (platform configuration)
+}
+
+export interface IEntcoreEmailValidationState {
+  state: 'unchecked' | 'outdated' | 'pending' | 'valid'; // Validation state
+  valid: string; // Last known valid email address (or empty string)
+  pending?: string; // (optional) Current pending (or outdated) email address being checked
+  ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
+  tries?: number; // (optional) Remaining number of times a validation code can be typed in
+}
+
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
   if (version1 === version2) {
@@ -217,6 +234,34 @@ class UserService {
       });
     } catch (e) {
       // console.warn('[UserService] revalidateTerms: could not revalidate terms', e);
+    }
+  }
+  async getEmailValidationInfos() {
+    try {
+      const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
+      return emailValidationInfos;
+    } catch (e) {
+      // console.warn('[UserService] getEmailValidationInfos: could not get email validation infos', e);
+    }
+  }
+  async sendEmailVerificationCode(email: string) {
+    try {
+      await fetchJSONWithCache('/directory/user/mailstate', {
+        method: 'PUT',
+        body: JSON.stringify({ email }),
+      });
+    } catch (e) {
+      // console.warn('[UserService] sendEmailVerificationCode: could not send email verification code', e);
+    }
+  }
+  async verifyEmailCode(key: string) {
+    try {
+      await fetchJSONWithCache('/directory/user/mailstate', {
+        method: 'POST',
+        body: JSON.stringify({ key }),
+      });
+    } catch (e) {
+      // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
     }
   }
 }
