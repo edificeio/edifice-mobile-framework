@@ -20,6 +20,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+ios/.xcode.env.local
 
 # VS Code
 .vscode/
@@ -31,8 +32,8 @@ build/
 local.properties
 *.iml
 *.hprof
+.cxx/
 android/app/release
-# Seems to be a bug with react-native. If bundle is in `generated` folder, it's not included in the apk.
 android/app/src/main/assets/index.android.bundle
 
 # node.js / npm / yarn
@@ -47,9 +48,10 @@ buck-out/
 !debug.keystore
 
 # Fastlane
-*/fastlane/report.xml
-*/fastlane/Preview.html
-*/fastlane/screenshots
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
 fastlane
 
 # CREDENTIALS for AppCenter & Google Firebase.

@@ -1,0 +1,29 @@
+diff --git a/node_modules/react-native-tiny-toast/lib/ToastContainer.js b/node_modules/react-native-tiny-toast/lib/ToastContainer.js
+index e95eb98..c9091e4 100644
+--- a/node_modules/react-native-tiny-toast/lib/ToastContainer.js
++++ b/node_modules/react-native-tiny-toast/lib/ToastContainer.js
+@@ -1,7 +1,7 @@
++import { ViewPropTypes } from 'deprecated-react-native-prop-types';
+ import React, {Component} from 'react'
+-import PropTypes from 'prop-types'
++import PropTypes, { any } from 'prop-types'
+ import {
+-  ViewPropTypes,
+   StyleSheet,
+   View,
+   Text,
+@@ -38,12 +38,12 @@ class ToastContainer extends Component {
+     shadowColor: PropTypes.string,
+     showText: PropTypes.bool,
+     textColor: PropTypes.string,
+-    textStyle: Text.propTypes.style,
++    textStyle: PropTypes.style,
+     mask: PropTypes.bool,
+     maskColor: PropTypes.string,
+     maskStyle: ViewPropTypes.style,
+     imgSource: PropTypes.any,
+-    imgStyle: Image.propTypes.style,
++    imgStyle: PropTypes.style,
+     loading: PropTypes.bool,
+     indicatorSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+     onHidden: PropTypes.func,

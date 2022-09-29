@@ -8,6 +8,7 @@
  * - Handle keyboard
  */
 import styled from '@emotion/native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import * as React from 'react';
 import {
   BackHandler,
@@ -20,7 +21,6 @@ import {
   StatusBar,
   StyleSheet,
   View,
-  ViewProps,
 } from 'react-native';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 
@@ -31,7 +31,7 @@ import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { UI_SIZES } from './constants';
 import { FakeHeader, FakeHeaderProps, HeaderBackAction } from './header';
 
-export interface PageViewProps extends ViewProps {
+export interface PageViewProps extends ViewPropTypes {
   navigation: NavigationInjectedProps['navigation'];
   // Navbar setup.
   navBar?: FakeHeaderProps; // Forwared as FakeHeader props...

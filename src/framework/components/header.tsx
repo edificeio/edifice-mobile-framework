@@ -12,8 +12,9 @@
  * If `children` prop is given, it will override all `left`, `right` and `title` props.
  */
 import styled from '@emotion/native';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import * as React from 'react';
-import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
+import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
 
 import theme from '~/app/theme';
@@ -41,7 +42,7 @@ export const FakeHeader_Row = styled.View({
   alignItems: 'center',
 });
 
-export interface FakeHeaderProps extends ViewProps {
+export interface FakeHeaderProps extends ViewPropTypes {
   left?: React.ReactNode;
   right?: React.ReactNode;
   title?: React.ReactNode | string;
@@ -157,7 +158,7 @@ const HeaderActionText = styled(SmallInverseText)({
 });
 
 export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
-  const ActionComponent: React.ComponentClass<ViewProps> = props.disabled ? View : TouchableOpacity;
+  const ActionComponent: React.ComponentClass<ViewPropTypes> = props.disabled ? View : TouchableOpacity;
   return (
     <ActionComponent
       {...(props.disabled ? {} : { onPress: props.onPress })}

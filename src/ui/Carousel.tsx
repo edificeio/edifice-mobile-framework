@@ -76,7 +76,7 @@ class Carousel extends React.Component<
   public onPanXSpringEvent = () => {
     Animated.spring(this.baseOffsetX, {
       toValue: this.lastOffsetX > 0 ? this.sideHiddenWidth : -this.sideHiddenWidth,
-      useNativeDriver: true,
+      useNativeDriver: false,
       friction: 10,
     }).start();
     this.lastOffsetX = this.lastOffsetX > 0 ? this.sideHiddenWidth : -this.sideHiddenWidth;
@@ -85,7 +85,7 @@ class Carousel extends React.Component<
   public onPanYSpringEvent = () => {
     Animated.spring(this.baseOffsetY, {
       toValue: this.lastOffsetY > 0 ? this.sideHiddenHeight : -this.sideHiddenHeight,
-      useNativeDriver: true,
+      useNativeDriver: false,
       friction: 10,
     }).start();
     this.lastOffsetY = this.lastOffsetY > 0 ? this.sideHiddenHeight : -this.sideHiddenHeight;
@@ -98,7 +98,7 @@ class Carousel extends React.Component<
     return gestures;
   };
 
-  public onPanGestureEvent = () => Animated.event([{ nativeEvent: this.allowedPanGestures() }], { useNativeDriver: true });
+  public onPanGestureEvent = () => Animated.event([{ nativeEvent: this.allowedPanGestures() }], { useNativeDriver: false });
 
   public onPanStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -139,7 +139,7 @@ class Carousel extends React.Component<
   sideHiddenWidth = 0;
   sideHiddenHeight = 0;
 
-  public onZoomEvent = Animated.event([{ nativeEvent: { scale: this.pinchScale } }], { useNativeDriver: true });
+  public onZoomEvent = Animated.event([{ nativeEvent: { scale: this.pinchScale } }], { useNativeDriver: false });
 
   public onZoomStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -192,13 +192,13 @@ class Carousel extends React.Component<
         this.lastScale = maxScale;
         Animated.spring(this.baseScale, {
           toValue: maxScale,
-          useNativeDriver: true,
+          useNativeDriver: false,
           friction: 10,
         }).start();
       } else if (this.lastScale < minScale) {
         Animated.spring(this.baseScale, {
           toValue: 1,
-          useNativeDriver: true,
+          useNativeDriver: false,
           friction: 10,
         }).start();
         this.lastScale = 1;

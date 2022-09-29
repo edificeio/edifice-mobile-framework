@@ -1,6 +1,7 @@
 {
   "arrowParens": "avoid",
-  "importOrder": ["^[~/]","^[./]"],
+  "bracketSameLine": true,
+  "importOrder": ["^[~/]", "^[./]"],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "jsxBracketSameLine": true,

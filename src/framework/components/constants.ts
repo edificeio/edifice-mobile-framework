@@ -25,7 +25,7 @@ export const getScaleDimension = (dimension: number, type: 'height' | 'width' | 
 export const UI_ANIMATIONS = {
   fade: {
     duration: 300,
-    useNativeDriver: true,
+    useNativeDriver: false,
   },
   size: {
     duration: 300,

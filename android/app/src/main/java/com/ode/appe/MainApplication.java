@@ -8,7 +8,10 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
+
+import com.ode.appe.newarchitecture.MainApplicationReactNativeHost;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -33,14 +36,17 @@ public class MainApplication extends Application implements ReactApplication {
     }
   };
 
+  private final ReactNativeHost mNewArchitectureNativeHost = new MainApplicationReactNativeHost(this);
+
   @Override
   public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
+    return (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) ? mNewArchitectureNativeHost : mReactNativeHost;
   }
 
   @Override
   public void onCreate() {
     super.onCreate();
+    ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
     MainApplication.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
@@ -50,8 +56,8 @@ public class MainApplication extends Application implements ReactApplication {
       try {
         Class<?> aClass = Class.forName("com.ode.appe.ReactNativeFlipper");
         aClass
-                .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
-                .invoke(null, context, reactInstanceManager);
+          .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+          .invoke(null, context, reactInstanceManager);
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       } catch (NoSuchMethodException e) {
