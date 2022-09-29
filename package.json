@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "private": true,
   "scripts": {
     "add-dev": "yarn add --dev --exact",
@@ -65,7 +65,6 @@
     "flat": "5.0.2",
     "hoist-non-react-statics": "3.3.2",
     "html-entities": "2.3.3",
-    "i18n-js": "¡¡¡ DON'T UPGRADE i18n-js !!!",
     "i18n-js": "3.9.2",
     "mime": "3.0.0",
     "moment": "2.29.4",
@@ -90,7 +89,6 @@
     "react-native-global-props": "1.1.5",
     "react-native-gradle-plugin": "0.71.2",
     "react-native-hide-show-password-input": "1.2.0",
-    "react-native-image-picker": "¡¡¡ DON'T UPGRADE react-native-image-picker !!!",
     "react-native-image-picker": "4.8.5",
     "react-native-keyboard-avoiding-scroll-view": "1.0.1",
     "react-native-layout-debug": "1.1.1",
