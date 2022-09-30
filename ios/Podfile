@@ -1,11 +1,8 @@
-platform :ios, '12.0'
-
-#source 'https://github.com/CocoaPods/Specs.git'
-
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '12.4'
+
 install! 'cocoapods', :deterministic_uuids => false
 
 production = ENV["PRODUCTION"] == "1"
@@ -14,21 +11,13 @@ target 'appe' do
 
   config = use_native_modules!
   flags = get_default_flags()
-
-  use_react_native!(
-    :path => config[:reactNativePath],
-    :production => production,
-    :hermes_enabled => flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => FlipperConfiguration.enabled,
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
-  )
+  $RNFirebaseAsStaticFramework = true
 
   #
   # Static libraries => use modular headers
   #
+  pod 'Firebase', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
-  pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
 
   #
@@ -55,14 +44,27 @@ target 'appe' do
   #pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition"
   #pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit"
 
+  #
+  # React Native Stuff
+  #
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :production => production,
+    :hermes_enabled => flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+    :flipper_configuration => FlipperConfiguration.enabled,
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
   post_install do |installer|
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+    # Xcode 14 stuff
     installer.generated_projects.each do |project|
       project.targets.each do |target|
-        target.build_configurations.each do |config|
-            config.build_settings["DEVELOPMENT_TEAM"] = "3RYA6A26JC"
-        end
+          target.build_configurations.each do |config|
+              config.build_settings["DEVELOPMENT_TEAM"] = "3RYA6A26JC"
+           end
       end
     end
   end
