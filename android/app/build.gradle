@@ -4,7 +4,6 @@ import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: "com.android.application"
 
 project.ext.react = [
-    entryFile: "index.js",
     enableHermes: true,
 ]
 
@@ -13,7 +12,6 @@ project.ext.vectoricons = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 def enableHermes = project.ext.react.get("enableHermes", false)
