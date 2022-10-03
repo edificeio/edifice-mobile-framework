@@ -32,9 +32,9 @@ export const yearInitialState: IYear = {
   end_date: moment(),
 };
 
-export const getPeriodsListState = (globalState: any) => viescoConfig.getState(globalState).viesco.periods as IPeriodsListState;
+export const getPeriodsListState = (globalState: any) => viescoConfig.getState(globalState).periods as IPeriodsListState;
 
-export const getYearState = (globalState: any) => viescoConfig.getState(globalState).viesco.year as IYearState;
+export const getYearState = (globalState: any) => viescoConfig.getState(globalState).year as IYearState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

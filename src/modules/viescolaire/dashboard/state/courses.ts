@@ -33,7 +33,7 @@ export type ICourseListState = AsyncState<ICourseList>;
 
 export const initialState: ICourseList = [];
 
-export const getCoursesListState = (globalState: any) => viescoConfig.getState(globalState).viesco.coursesList as ICourseListState;
+export const getCoursesListState = (globalState: any) => viescoConfig.getState(globalState).coursesList as ICourseListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

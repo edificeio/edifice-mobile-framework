@@ -18,8 +18,7 @@ export type IPersonnelListState = AsyncState<IPersonnelList>;
 
 export const initialState: IPersonnelList = [];
 
-export const getPersonnelListState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.personnelList as IPersonnelListState;
+export const getPersonnelListState = (globalState: any) => viescoConfig.getState(globalState).personnelList as IPersonnelListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

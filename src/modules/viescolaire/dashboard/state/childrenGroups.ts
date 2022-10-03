@@ -21,7 +21,7 @@ export type IChildrenGroupsState = AsyncState<IChildrenGroups>;
 export const initialState: IChildrenGroups = [];
 
 export const getChildrenGroupsState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.childrenGroups as IChildrenGroupsState;
+  viescoConfig.getState(globalState).childrenGroups as IChildrenGroupsState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
