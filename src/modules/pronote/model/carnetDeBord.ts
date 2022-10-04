@@ -231,3 +231,9 @@ export function formatCarnetDeBordCompetencesValue(value?: number) {
     ? I18n.t(carnetDeBordCompetencesValueI18n[value])
     : I18n.t('pronote.carnetDeBord.noInfo');
 }
+
+export class PronoteCdbInitError extends Error {
+  constructor(...args: Parameters<typeof Error>) {
+    super(...args);
+  }
+}
