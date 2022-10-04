@@ -22,7 +22,7 @@ export const initialState: IStructureState = {
   selectedStructure: null,
 };
 
-export const getSelectedStructure = (globalState: any) => viescoConfig.getState(globalState).viesco.structure.selectedStructure;
+export const getSelectedStructure = (globalState: any) => viescoConfig.getState(globalState).structure.selectedStructure;
 
 export const getStructuresList = (globalState: any) => userConfig.getLocalState(globalState).info.schools;
 

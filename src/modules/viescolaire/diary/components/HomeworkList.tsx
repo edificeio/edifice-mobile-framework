@@ -1,12 +1,13 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
+import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/flatList';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
@@ -28,12 +29,11 @@ import { HomeworkItem, SessionItem } from './Items';
 
 const style = StyleSheet.create({
   mainView: {
-    flex: 1,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   homeworkPart: {
     flex: 1,
     paddingBottom: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   grid: {
     marginTop: UI_SIZES.spacing.small,

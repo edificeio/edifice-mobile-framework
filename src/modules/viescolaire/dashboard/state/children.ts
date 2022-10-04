@@ -22,7 +22,7 @@ export const initialState: IChildState = {
 };
 
 export const getSelectedChild = (globalState: any) => {
-  const selectedChildId = viescoConfig.getState(globalState).viesco.children.selectedChild;
+  const selectedChildId = viescoConfig.getState(globalState).children.selectedChild;
   const selectedChild = userConfig.getLocalState(globalState).info.children[selectedChildId];
   return { id: selectedChildId, ...selectedChild };
 };

@@ -17,8 +17,7 @@ export type ISubjectListState = AsyncState<ISubjectList>;
 
 export const initialState: ISubjectList = [];
 
-export const getSubjectsListState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.subjectsList as ISubjectListState;
+export const getSubjectsListState = (globalState: any) => viescoConfig.getState(globalState).subjectsList as ISubjectListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

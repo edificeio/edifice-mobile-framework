@@ -109,9 +109,7 @@ const DateTimePickerIOS: React.FunctionComponent<IDateTimePickerProps> = ({
               value={tempTime.toDate()}
               style={styles.iosPickerContainer}
               onChange={(event, newDate) => {
-                if (event.type === 'dismissed') {
-                  setModalVisible(false);
-                } else {
+                if (event.type === 'set') {
                   setTempTime(moment(newDate));
                 }
               }}

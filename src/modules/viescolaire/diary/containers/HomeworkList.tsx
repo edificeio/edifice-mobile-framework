@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchPersonnelListAction } from '~/modules/viescolaire/dashboard/actions/personnel';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
 import { IPersonnelList, getPersonnelListState } from '~/modules/viescolaire/dashboard/state/personnel';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -27,6 +28,7 @@ type HomeworkListProps = {
   childId: string;
   structureId: string;
   fetchHomeworks: any;
+  fetchPersonnel: any;
   fetchSessions: any;
   fetchChildHomeworks: any;
   fetchChildSessions: any;
@@ -36,6 +38,10 @@ type HomeworkListProps = {
 } & NavigationInjectedProps;
 
 class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps> {
+  componentDidMount() {
+    this.props.fetchPersonnel(this.props.structureId);
+  }
+
   private fetchHomeworks = (startDate, endDate) =>
     getUserSession().user.type === 'Student'
       ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)
@@ -98,6 +104,7 @@ const mapDispatchToProps = (dispatch: any, props: HomeworkListProps) => {
       fetchChildHomeworks: fetchDiaryHomeworksFromChildAction,
       fetchChildSessions: fetchDiarySessionsFromChildAction,
       fetchHomeworks: fetchDiaryHomeworksAction,
+      fetchPersonnel: fetchPersonnelListAction,
       fetchSessions: fetchDiarySessionsAction,
       updateHomeworkProgress: updateDiaryHomeworkProgressAction,
     },

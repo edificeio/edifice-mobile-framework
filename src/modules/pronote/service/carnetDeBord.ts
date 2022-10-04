@@ -5,8 +5,9 @@
 import { XMLParser } from 'fast-xml-parser';
 import moment from 'moment';
 
+import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { fetchWithCache } from '~/infra/fetchWithCache';
 import {
   ICarnetDeBord,
   ICarnetDeBordCahierDeTextesTravailAFaire,
@@ -21,8 +22,11 @@ import {
   ICarnetDeBordVieScolaireRetard,
   ICarnetDeBordVieScolaireSanction,
   IPronoteConnectorInfo,
+  PronoteCdbInitError,
   sortCarnetDeBordItems,
 } from '~/modules/pronote/model/carnetDeBord';
+
+import redirect from './redirect';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {
   xmlResponse: string;
@@ -422,9 +426,31 @@ export type IChildrenInfo = {
 }[];
 
 export default {
-  get: async (session: IUserSession, children: IChildrenInfo) => {
+  get: async (session: IUserSession, children: IChildrenInfo, matchingApps: IEntcoreApp[]) => {
+    let json: ICarnetDeBordBackend | undefined = undefined;
     const api = `/sso/pronote`;
-    const data = (await fetchJSONWithCache(api)) as ICarnetDeBordBackend;
-    return carnetDeBordAdapter(data, children);
+    // const api = `https://f537a7fc-92ae-4727-95a6-2f630cd37c77.mock.pstmn.io/sso/pronote`; // MOCK error 500
+    let data = await fetchWithCache(api, undefined, undefined, undefined, async r => r);
+    // let data = await fetch(api);
+    if (!data || typeof data === 'string') throw new Error('[carnetDeBord] received data is not Response.');
+    if (data.status >= 500 && data.status < 600) {
+      // If 50x, call every connector manually
+      await Promise.all(
+        matchingApps.map(async app => {
+          const url = await redirect(session, app.address, undefined, true);
+          if (url) await fetch(url); // No signature needed here, it's external url containing a custom ticket
+        }),
+      );
+      // Then, retry
+      data = await fetchWithCache(api, undefined, undefined, undefined, async r => r);
+      // let data = await fetch(api);
+      if (!data || typeof data === 'string') throw new Error('[carnetDeBord] received data is not Response.');
+      if (data.status >= 500 && data.status < 600) {
+        throw new PronoteCdbInitError('[carnetDeBord] 50x encourntered after trying to init connectors');
+      }
+    }
+    json = (await (data as Response).json()) as ICarnetDeBordBackend;
+    return carnetDeBordAdapter(json, children);
+    // Every other encountered error will be thrown.
   },
 };

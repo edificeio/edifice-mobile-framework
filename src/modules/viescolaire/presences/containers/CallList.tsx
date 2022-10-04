@@ -1,13 +1,14 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { AppState, AppStateStatus, FlatList, StyleSheet } from 'react-native';
+import { AppState, AppStateStatus, RefreshControl, StyleSheet } from 'react-native';
 import { NavigationFocusInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
@@ -168,21 +169,6 @@ class CallList extends React.PureComponent<ICallListContainerProps, ICallListCon
     this.props.navigation.navigate(`${presencesConfig.routeName}/call`, { courseInfos: courseRegisterInfos });
   };
 
-  renderCourse = (item: ICourses) => {
-    const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
-    const isCourseEditable = !moment(item.startDate).subtract(15, 'minutes').isAfter(moment());
-
-    return (
-      <CallCard
-        onPress={() => this.openCall(item)}
-        course={item}
-        isCourseEditable={isCourseEditable}
-        isCourseNow={isCourseNow}
-        style={styles.courseContainer}
-      />
-    );
-  };
-
   render() {
     const { isFetching, courses } = this.props;
     const dateText = `${I18n.t('viesco-register-date')} ${moment().format('DD MMMM YYYY')}`;
@@ -198,14 +184,17 @@ class CallList extends React.PureComponent<ICallListContainerProps, ICallListCon
         style={styles.mainContainer}>
         <StructurePicker />
         <SmallBoldText style={styles.dateText}>{dateText}</SmallBoldText>
-        <FlatList
-          data={courses}
-          renderItem={({ item }) => this.renderCourse(item)}
-          keyExtractor={item => item.id}
-          ListEmptyComponent={
-            isFetching ? <LoadingIndicator /> : <EmptyScreen svgImage="empty-absences" title={I18n.t('viesco-no-register-today')} />
-          }
-        />
+        {!courses.length && isFetching ? (
+          <LoadingIndicator />
+        ) : (
+          <FlatList
+            data={courses}
+            renderItem={({ item }) => <CallCard course={item} onPress={() => this.openCall(item)} style={styles.courseContainer} />}
+            keyExtractor={item => item.id + item.startDate}
+            refreshControl={<RefreshControl refreshing={isFetching} onRefresh={this.fetchTodayCourses} />}
+            ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.t('viesco-no-register-today')} />}
+          />
+        )}
       </PageView>
     );
   }

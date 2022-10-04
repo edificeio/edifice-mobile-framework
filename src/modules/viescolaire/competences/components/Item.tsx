@@ -2,10 +2,11 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { useState } from 'react';
-import { FlatList, FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import FlatList from '~/framework/components/flatList';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { IDevoir, ILevel, IMoyenne } from '~/modules/viescolaire/competences/reducer';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';

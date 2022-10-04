@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { FlatList, Platform, RefreshControl, StyleSheet } from 'react-native';
+import { Platform, RefreshControl, StyleSheet } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -10,6 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/flatList';
 import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';

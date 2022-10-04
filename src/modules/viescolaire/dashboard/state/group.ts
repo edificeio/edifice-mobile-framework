@@ -18,7 +18,7 @@ export type IGroupListState = AsyncState<IGroupList>;
 
 export const initialState: IGroupList = [];
 
-export const getGroupsListState = (globalState: any) => viescoConfig.getState(globalState).viesco.group as IGroupListState;
+export const getGroupsListState = (globalState: any) => viescoConfig.getState(globalState).group as IGroupListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

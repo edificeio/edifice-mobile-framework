@@ -17,11 +17,19 @@ export default (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) 
   if (matchingWidgets.length > 0) {
     routes[`${moduleConfig.routeName}/carnetDeBord`] = {
       screen: CarnetDeBordScreen,
+      params: {
+        connectors: matchingApps,
+      },
     };
     routes[`${moduleConfig.routeName}/carnetDeBord/details`] = {
       screen: CarnetDeBordDetailsScreen,
+      params: {
+        connectors: matchingApps,
+      },
     };
-  } else if (matchingApps.length > 1) {
+  }
+  
+  if (matchingApps.length > 1) {
     // Many connectors => show connector select
     routes[`${moduleConfig.routeName}/select`] = {
       screen: ConnectorSelectorScreen,

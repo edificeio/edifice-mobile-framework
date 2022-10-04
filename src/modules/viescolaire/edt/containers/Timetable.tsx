@@ -9,6 +9,7 @@ import { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import { fetchGroupListAction } from '~/modules/viescolaire/dashboard/actions/group';
+import { fetchPersonnelListAction } from '~/modules/viescolaire/dashboard/actions/personnel';
 import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
 import { getChildrenGroupsState } from '~/modules/viescolaire/dashboard/state/childrenGroups';
@@ -36,6 +37,7 @@ type TimetableEventProps = {
     groups: string[],
     groupsIds: string[],
   ) => void;
+  fetchPersonnel: (structureId: string) => void;
   fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
   fetchSlots: (structureId: string) => void;
 };
@@ -80,6 +82,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   initComponent = async () => {
     const { structureId, childId, childClasses, group } = this.props;
     if (getUserSession().user.type === 'Relative') await this.props.fetchChildInfos();
+    await this.props.fetchPersonnel(structureId);
     await this.props.fetchChildGroups(childClasses, childId);
     if (getUserSession().user.type === 'Teacher' || (group && group.length > 0)) this.fetchCourses();
     this.props.fetchSlots(structureId);
@@ -238,6 +241,9 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     groupsIds: string[],
   ) => {
     return dispatch(fetchEdtCoursesAction(structureId, startDate, endDate, groups, groupsIds));
+  },
+  fetchPersonnel: async (structureId: string) => {
+    return dispatch(fetchPersonnelListAction(structureId));
   },
   fetchTeacherCourses: async (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => {
     return dispatch(fetchEdtTeacherCoursesAction(structureId, startDate, endDate, teacherId));

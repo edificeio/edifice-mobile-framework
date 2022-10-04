@@ -22,6 +22,7 @@ export const EmptyScreen = ({
   buttonText,
   buttonUrl,
   buttonAction,
+  buttonIcon,
   customStyle,
 }: {
   svgImage: string;
@@ -30,6 +31,7 @@ export const EmptyScreen = ({
   buttonText?: string;
   buttonUrl?: string;
   buttonAction?: () => void;
+  buttonIcon?: string;
   customStyle?: ViewStyle;
 }) => {
   const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.big;
@@ -70,7 +72,7 @@ export const EmptyScreen = ({
       ) : null}
       {hasButton ? (
         <View style={{ marginTop: UI_SIZES.spacing.large }}>
-          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} />
+          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} iconName={buttonIcon}/>
         </View>
       ) : null}
     </PageViewStyle>
