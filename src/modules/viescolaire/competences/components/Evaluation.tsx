@@ -20,7 +20,11 @@ import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from '.
 
 const styles = StyleSheet.create({
   subtitle: { color: theme.palette.grey.stone, paddingVertical: UI_SIZES.spacing.minor },
-  dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium, flex: 1 },
+  dashboardPart: {
+    paddingTop: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    flex: 1,
+  },
   containerDropdowns: {
     flexDirection: 'row',
     justifyContent: 'space-between',
