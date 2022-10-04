@@ -4,22 +4,19 @@ import { ColorValue, StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from '
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
-const styleConstant = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    borderRadius: 10,
-    marginVertical: UI_SIZES.spacing.tiny,
-    backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.minor,
+    marginVertical: UI_SIZES.spacing.tiny,
+    backgroundColor: theme.ui.background.card,
+    borderRadius: UI_SIZES.radius.card,
   },
   containerShadow: {
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: {
-      height: 2,
-      width: 0,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 2,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 1,
+    elevation: 1,
   },
 });
 
@@ -53,10 +50,7 @@ export const Item: React.FunctionComponent<ItemProps> = ({ style, selected, colo
   const selectedStyle = color && selected ? { borderWidth: 2, borderColor: color } : {};
 
   return (
-    <TouchableOpacity
-      disabled={onPress == null || disabled}
-      style={[styleConstant.container, selectedStyle, style]}
-      onPress={onPress}>
+    <TouchableOpacity disabled={onPress == null || disabled} style={[styles.container, selectedStyle, style]} onPress={onPress}>
       {children}
     </TouchableOpacity>
   );
@@ -67,7 +61,7 @@ export const Item: React.FunctionComponent<ItemProps> = ({ style, selected, colo
  * @param props
  */
 const ShadowedItem: React.FunctionComponent<ItemProps> = ({ style, ...rest }) => (
-  <Item style={[styleConstant.containerShadow, style]} {...rest} />
+  <Item style={[styles.containerShadow, style]} {...rest} />
 );
 
 /**
