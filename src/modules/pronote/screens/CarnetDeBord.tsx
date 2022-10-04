@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ScrollView, ScrollViewProps, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, ScrollViewProps, StyleSheet, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -28,16 +28,19 @@ import {
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   getSummaryItem,
+  PronoteCdbInitError,
 } from '~/modules/pronote/model/carnetDeBord';
 import moduleConfig from '~/modules/pronote/moduleConfig';
 import redirect from '~/modules/pronote/service/redirect';
 import { loadCarnetDeBordAction } from '~/modules/pronote/state/carnetDeBord/actions';
 import { ICarnetDeBordStateData } from '~/modules/pronote/state/carnetDeBord/reducer';
 import { IUserInfoState } from '~/user/state/info';
+import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export interface CarnetDeBordScreenDataProps {
   session: IUserSession;
   data: ICarnetDeBordStateData;
+  error?: Error | PronoteCdbInitError;
   structures: IUserInfoState['structureNodes'];
 }
 export interface CarnetDeBordScreenEventProps {
@@ -45,7 +48,7 @@ export interface CarnetDeBordScreenEventProps {
 }
 export type CarnetDeBordScreenProps = CarnetDeBordScreenDataProps & CarnetDeBordScreenEventProps & NavigationInjectedProps;
 
-function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structures }: CarnetDeBordScreenProps) {
+function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, structures }: CarnetDeBordScreenProps) {
   // UserList info & selected user
   const getUsers = React.useCallback(
     (_data: typeof data) => _data.map(cdb => ({ id: cdb.idPronote ?? cdb.id, avatarId: cdb.id, name: cdb.firstName })),
@@ -95,6 +98,8 @@ function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structu
     [selectedCdbData, users, selectedId, selectUser, isUserListShown, isStructureShown, navigation, structures, session],
   );
 
+  const is50xError = React.useMemo(() => error instanceof PronoteCdbInitError, [error]);
+
   return (
     <PageView
       navigation={navigation}
@@ -102,15 +107,33 @@ function CarnetDeBordScreen({ data, session, handleLoadData, navigation, structu
         title: I18n.t(`CarnetDeBord`),
       }}>
       <ContentLoader
-        renderError={refreshControl => (
-          <ScrollView refreshControl={refreshControl}>
-            <EmptyScreen
-              svgImage="empty-light"
-              title={I18n.t('pronote.carnetDeBord.noData.title')}
-              text={I18n.t('pronote.carnetDeBord.noData.text')}
-            />
-          </ScrollView>
-        )}
+        renderError={refreshControl => {
+          const matchingApps = navigation.getParam('connectors') as IEntcoreApp[] | undefined;
+          return <ScrollView refreshControl={refreshControl}>
+          {is50xError ? <EmptyScreen
+            svgImage="empty-pronote-uri"
+            title={I18n.t('pronote.carnetDeBord.initFailed.title')}
+            text={I18n.t('pronote.carnetDeBord.initFailed.text')}
+            buttonText={I18n.t('pronote.carnetDeBord.initFailed.button')}
+            buttonIcon={matchingApps && matchingApps.length === 1 ? 'ui-externalLink' : undefined}
+            buttonAction={() => {
+              if (!matchingApps || matchingApps.length < 1) {
+                Alert.alert(I18n.t('common.redirect.browser.error'))
+              } else {
+                if (matchingApps.length === 1) {
+                  navigation.navigate(`${moduleConfig.routeName}/redirect`, {connector: matchingApps[0]});
+                } else {
+                  navigation.navigate(`${moduleConfig.routeName}/select`, {connectors: matchingApps});
+                }
+              }
+            }}
+          /> : <EmptyScreen
+            svgImage="empty-light"
+            title={I18n.t('pronote.carnetDeBord.noData.title')}
+            text={I18n.t('pronote.carnetDeBord.noData.text')}
+          />}
+        </ScrollView>
+        }}
         loadContent={loadData}
         renderContent={renderContent}
       />
@@ -351,6 +374,7 @@ export default connect(
   (state: IGlobalState) => {
     return {
       data: moduleConfig.getState(state).carnetDeBord.data,
+      error: moduleConfig.getState(state).carnetDeBord.error,
       session: getUserSession(),
       structures: state.user.info.structureNodes,
     };

@@ -24,8 +24,9 @@ const getRedirectUrl = (session: IUserSession, connectorAddress: string, pageId?
   return link;
 };
 
-export default async (session: IUserSession, connectorAddress: string, pageId?: string) => {
+export default async (session: IUserSession, connectorAddress: string, pageId?: string, dryRun?: boolean) => {
   const intermediateResponse = await signedFetch(getRedirectUrl(session, connectorAddress, pageId));
   const finalUrl = intermediateResponse.headers.get('location');
+  if (dryRun) return finalUrl ?? undefined;
   openUrl(finalUrl ?? undefined);
 };
