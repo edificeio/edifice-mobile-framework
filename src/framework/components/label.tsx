@@ -2,9 +2,8 @@
  * Display a label in a chip-shape.
  */
 import styled from '@emotion/native';
-import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import * as React from 'react';
-import { ColorValue, TextProps, TextStyle, View } from 'react-native';
+import { ColorValue, TextProps, TextStyle, View, ViewProps } from 'react-native';
 
 import theme from '~/app/theme';
 
@@ -14,7 +13,7 @@ import { SmallBoldText, TextSizeStyle } from './text';
 
 // PROPS ==========================================================================================
 
-export interface ILabelProps extends React.PropsWithChildren<{}>, ViewPropTypes {
+export interface ILabelProps extends React.PropsWithChildren<{}>, ViewProps {
   text?: string;
   icon?: string;
   iconStyle?: TextStyle;
