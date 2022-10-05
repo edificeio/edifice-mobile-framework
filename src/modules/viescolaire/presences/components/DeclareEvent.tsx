@@ -10,7 +10,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CaptionText, HeadingXLText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import {
   deleteEvent,
   postLateEvent,
@@ -18,8 +20,6 @@ import {
   updateLateEvent,
   updateLeavingEvent,
 } from '~/modules/viescolaire/presences/actions/events';
-import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -40,26 +40,17 @@ const style = StyleSheet.create({
   recapHeaderText: {
     marginHorizontal: UI_SIZES.spacing.tiny,
   },
-  underlinedText: {
-    alignSelf: 'center',
-    borderBottomWidth: 2,
-    padding: UI_SIZES.spacing.minor,
+  timePickerRowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: UI_SIZES.spacing.small,
+  },
+  timePickerText: {
+    marginRight: UI_SIZES.spacing.minor,
   },
   inputContainer: {
     marginHorizontal: UI_SIZES.spacing.large,
-  },
-  timeView: {
-    marginHorizontal: UI_SIZES.spacing.huge,
-    marginVertical: UI_SIZES.spacing.small,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderRadius: 3,
-    backgroundColor: theme.palette.grey.white,
-  },
-  timeViewText: {
-    paddingVertical: UI_SIZES.spacing.major,
-    textDecorationLine: 'underline',
   },
   labelText: {
     marginTop: UI_SIZES.spacing.big,
@@ -190,7 +181,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
   public render() {
     const { date } = this.state;
     const { type, event, student, startDate, endDate } = this.props.navigation.state.params;
-    const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties(type);
+    const { mainColor, mainText, inputLabel } = this.getSpecificProperties(type);
     const startDateString = moment(startDate).format('HH:mm');
     const endDateString = moment(endDate).format('HH:mm');
 
@@ -218,17 +209,10 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
                 <SmallBoldText>{student.name}</SmallBoldText>
               </View>
             </LeftColoredItem>
-            <SmallText style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</SmallText>
-            <DateTimePicker
-              value={moment(date)}
-              mode="time"
-              onChange={this.onTimeChange}
-              renderDate={dateItem => (
-                <View style={[style.timeView, { borderColor: lightColor }]}>
-                  <HeadingXLText style={style.timeViewText}>{dateItem.format('HH : mm')}</HeadingXLText>
-                </View>
-              )}
-            />
+            <View style={style.timePickerRowContainer}>
+              <SmallText style={[style.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
+              <DateTimePicker mode="time" value={moment(date)} onChange={this.onTimeChange} color={mainColor} />
+            </View>
             <View style={style.inputContainer}>
               <CaptionText style={style.labelText}>{inputLabel}</CaptionText>
               <TextInput

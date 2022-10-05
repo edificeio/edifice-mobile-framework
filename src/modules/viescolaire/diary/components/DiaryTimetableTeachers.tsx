@@ -30,7 +30,7 @@ const style = StyleSheet.create({
     marginTop: UI_SIZES.spacing.minor,
   },
   weekText: {
-    marginRight: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.minor,
   },
   calendarContainer: {
     height: 1,
