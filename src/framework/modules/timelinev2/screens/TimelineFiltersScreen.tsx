@@ -12,7 +12,7 @@ import FlatList from '~/framework/components/flatList';
 import { HeaderAction } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
-import { CaptionText } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
@@ -100,7 +100,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
           notifFilters.length < 2 ? null : (
             <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
               <ListItem
-                leftElement={<CaptionText>{I18n.t('common.all')}</CaptionText>}
+                leftElement={<SmallText>{I18n.t('common.all')}</SmallText>}
                 rightElement={
                   <Checkbox
                     customCheckboxColor={!someNotSet ? theme.ui.text.light : undefined}
@@ -127,7 +127,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     return (
       <TouchableOpacity onPress={() => this.doToggleFilter(item)}>
         <ListItem
-          leftElement={<CaptionText>{I18n.t(item.i18n)}</CaptionText>}
+          leftElement={<SmallText>{I18n.t(item.i18n)}</SmallText>}
           rightElement={<Checkbox checked={selectedFilters[item.type]} onPress={() => this.doToggleFilter(item)} />}
         />
       </TouchableOpacity>
