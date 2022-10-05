@@ -40,7 +40,7 @@ class Dashboard extends React.PureComponent<{
     this.state = {
       // fetching next month homeworks only, when screen is focused
       focusListener: this.props.navigation.addListener('willFocus', () => {
-        getHomeworks(structureId, moment().format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD'));
+        getHomeworks(structureId, moment().add(1, 'days').format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD'));
         this.props.getDevoirs(structureId, childId);
       }),
     };
