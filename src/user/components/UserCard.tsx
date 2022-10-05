@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
@@ -55,7 +55,7 @@ export const UserCard = ({
         }}
         key={type}
       />
-      <CaptionText style={{ color: theme.ui.text.light }}>{I18n.t(`profileTypes.${type}`)}</CaptionText>
+      <SmallText style={{ color: theme.ui.text.light }}>{I18n.t(`profileTypes.${type}`)}</SmallText>
     </View>
   );
 
@@ -129,7 +129,7 @@ export const UserCard = ({
           marginRight: 'auto',
           paddingLeft: UI_SIZES.spacing.medium,
         }}>
-        <SmallBoldText>{displayName}</SmallBoldText>
+        <BodyBoldText>{displayName}</BodyBoldText>
         {Array.isArray(type) ? type.map(item => renderUserType(item)) : renderUserType(type)}
       </View>
       {touchable ? <Icon name="arrow_down" color={theme.ui.text.light} style={{ transform: [{ rotate: '270deg' }] }} /> : undefined}
