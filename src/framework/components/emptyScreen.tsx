@@ -64,7 +64,7 @@ export const EmptyScreen = ({
       </TextSemiBold>
       {text ? (
         <Text
-          numberOfLines={3}
+          // numberOfLines={5}
           style={{
             textAlign: 'center',
             marginTop: UI_SIZES.spacing.small,
