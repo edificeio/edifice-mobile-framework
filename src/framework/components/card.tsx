@@ -1,5 +1,4 @@
 import styled from '@emotion/native';
-import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import { Moment } from 'moment';
 import * as React from 'react';
 import {
@@ -12,6 +11,7 @@ import {
   TextStyle,
   TouchableOpacityProps,
   View,
+  ViewProps,
   ViewStyle,
 } from 'react-native';
 
@@ -53,7 +53,7 @@ export const TouchCardWithoutPadding = styled.TouchableOpacity(cardStyle, cardSh
 export const TouchCardPaddingEqual = styled.TouchableOpacity(cardStyle, cardPaddingEqual);
 export const InfoCard = styled.View(cardStyle, cardPadding, { backgroundColor: theme.palette.primary.light });
 
-export interface IContentCardProps extends ViewPropTypes {
+export interface IContentCardProps extends ViewProps {
   header?: React.ReactElement;
   footer?: React.ReactElement;
 }
@@ -202,7 +202,7 @@ export const ContentCardIcon = (props: IContentCardIconProps) => {
   );
 };
 
-export interface IResourceCardProps extends ViewPropTypes, Omit<Partial<IContentCardProps>, 'header'> {
+export interface IResourceCardProps extends ViewProps, Omit<Partial<IContentCardProps>, 'header'> {
   icon?: IContentCardIconProps;
   header?: string | React.ReactElement;
   headerHtml?: string;
@@ -288,9 +288,9 @@ export type PictureCardProps = {
   textStyle?: TextStyle;
   picture: PictureProps;
   pictureStyle?: ViewStyle;
-} & ViewPropTypes;
+} & ViewProps;
 
-function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewPropTypes> }) {
+function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
   const { cardComponent, text, textStyle, picture, style, ...viewProps } = props;
   const CC = cardComponent ?? CardWithoutPadding;
   return (
@@ -331,7 +331,7 @@ export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityP
   return <PictureCard_Base cardComponent={TouchCard} {...props} />;
 }
 
-function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewPropTypes> }) {
+function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
   const { style, picture, pictureStyle, ...rest } = props;
   picture['style'] = { maxWidth: '100%', ...pictureStyle };
   picture['resizeMode'] = 'contain';
@@ -355,7 +355,7 @@ export type OverviewCardProps = {
   picture?: PictureProps;
   pictureStyle?: PictureProps['style'];
   pictureWrapperStyle?: ViewStyle;
-} & ViewPropTypes;
+} & ViewProps;
 
 function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.ComponentType<IContentCardProps> }) {
   const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;
