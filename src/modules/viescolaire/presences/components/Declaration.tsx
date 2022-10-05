@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, Touc
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingLText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -56,25 +56,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     flexDirection: 'row',
   },
-  timePickerContainer: {
-    flex: 1,
+  timePickerMainContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-evenly',
-    backgroundColor: theme.palette.grey.white,
+    marginVertical: UI_SIZES.spacing.small,
+  },
+  timePickerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    margin: UI_SIZES.spacing.minor,
   },
-  timePickerRender: {
-    borderStyle: 'solid',
-    borderBottomWidth: 2,
-    borderColor: viescoTheme.palette.presences,
-    padding: UI_SIZES.spacing.minor,
-  },
-  timePickerTitleText: {
-    color: viescoTheme.palette.presences,
-    textTransform: 'uppercase',
-  },
-  timePickerDate: {
-    padding: UI_SIZES.spacing.small,
+  timePickerText: {
+    marginRight: UI_SIZES.spacing.minor,
   },
   inputContainer: {
     backgroundColor: theme.palette.grey.white,
@@ -176,37 +168,33 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
       </TouchableOpacity>
     );
 
-    const TimePickerComponent = ({ time, onChange, title }) => (
-      <DateTimePicker
-        value={time}
-        style={styles.timePickerContainer}
-        renderDate={date => (
-          <>
-            <View style={styles.timePickerRender}>
-              <SmallText style={styles.timePickerTitleText}>{title}</SmallText>
-            </View>
-            <HeadingLText style={styles.timePickerDate}>{date.format('HH : mm')}</HeadingLText>
-          </>
-        )}
-        mode="time"
-        onChange={onChange}
-      />
-    );
-
     const DatePickers = () => (
       <>
         {this.state.switchState === SwitchState.SINGLE ? (
-          <DateTimePicker mode="date" value={startDate} minimumDate={moment().startOf('day')} onChange={updateStartDate} />
+          <DateTimePicker
+            mode="date"
+            value={startDate}
+            onChange={updateStartDate}
+            minimumDate={moment().startOf('day')}
+            color={viescoTheme.palette.presences}
+          />
         ) : (
           <>
             <DateTimePicker
               mode="date"
               value={startDate}
-              minimumDate={moment().startOf('day')}
-              maximumDate={endDate}
               onChange={updateStartDate}
+              maximumDate={endDate}
+              minimumDate={moment().startOf('day')}
+              color={viescoTheme.palette.presences}
             />
-            <DateTimePicker mode="date" value={endDate} minimumDate={startDate} onChange={updateEndDate} />
+            <DateTimePicker
+              mode="date"
+              value={endDate}
+              onChange={updateEndDate}
+              minimumDate={startDate}
+              color={viescoTheme.palette.presences}
+            />
           </>
         )}
       </>
@@ -226,9 +214,15 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
           <View style={styles.row}>
             <DatePickers />
           </View>
-          <View style={styles.row}>
-            <TimePickerComponent title={I18n.t('viesco-from-hour')} time={startDate} onChange={updateStartDate} />
-            <TimePickerComponent title={I18n.t('viesco-to-hour')} time={endDate} onChange={updateEndDate} />
+          <View style={styles.timePickerMainContainer}>
+            <View style={styles.timePickerContainer}>
+              <SmallText style={styles.timePickerText}>{I18n.t('viesco-from-hour')}</SmallText>
+              <DateTimePicker mode="time" value={startDate} onChange={updateStartDate} color={viescoTheme.palette.presences} />
+            </View>
+            <View style={styles.timePickerContainer}>
+              <SmallText style={styles.timePickerText}>{I18n.t('viesco-to-hour')}</SmallText>
+              <DateTimePicker mode="time" value={endDate} onChange={updateEndDate} color={viescoTheme.palette.presences} />
+            </View>
           </View>
           <View style={[styles.row, styles.inputContainer]}>
             <SmallBoldText style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</SmallBoldText>

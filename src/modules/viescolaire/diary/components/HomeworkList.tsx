@@ -55,7 +55,7 @@ const style = StyleSheet.create({
     alignItems: 'flex-start',
   },
   datePicker: {
-    marginHorizontal: UI_SIZES.spacing.small,
+    marginHorizontal: UI_SIZES.spacing.minor,
   },
 });
 
