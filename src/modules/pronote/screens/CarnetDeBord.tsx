@@ -108,25 +108,11 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
       }}>
       <ContentLoader
         renderError={refreshControl => {
-          const matchingApps = navigation.getParam('connectors') as IEntcoreApp[] | undefined;
           return <ScrollView refreshControl={refreshControl}>
           {is50xError ? <EmptyScreen
             svgImage="empty-pronote-uri"
             title={I18n.t('pronote.carnetDeBord.initFailed.title')}
             text={I18n.t('pronote.carnetDeBord.initFailed.text')}
-            buttonText={I18n.t('pronote.carnetDeBord.initFailed.button')}
-            buttonIcon={matchingApps && matchingApps.length === 1 ? 'ui-externalLink' : undefined}
-            buttonAction={() => {
-              if (!matchingApps || matchingApps.length < 1) {
-                Alert.alert(I18n.t('common.redirect.browser.error'))
-              } else {
-                if (matchingApps.length === 1) {
-                  navigation.navigate(`${moduleConfig.routeName}/redirect`, {connector: matchingApps[0]});
-                } else {
-                  navigation.navigate(`${moduleConfig.routeName}/select`, {connectors: matchingApps});
-                }
-              }
-            }}
           /> : <EmptyScreen
             svgImage="empty-light"
             title={I18n.t('pronote.carnetDeBord.noData.title')}

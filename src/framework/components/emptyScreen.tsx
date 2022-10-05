@@ -62,7 +62,7 @@ export const EmptyScreen = ({
       </HeadingSText>
       {text ? (
         <SmallText
-          numberOfLines={5}
+          // numberOfLines={5}
           style={{
             textAlign: 'center',
             marginTop: UI_SIZES.spacing.small,
