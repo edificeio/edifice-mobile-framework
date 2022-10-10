@@ -90,6 +90,7 @@ const imports = {
   'empty-trash': import('ASSETS/images/empty-screen/empty-trash.svg'),
   'empty-viesco': import('ASSETS/images/empty-screen/empty-viesco.svg'),
   'empty-workspace': import('ASSETS/images/empty-screen/empty-workspace.svg'),
+  'empty-pronote-uri': import('ASSETS/images/empty-screen/pronote-error-uri.svg'),
   'onboarding-0': import('ASSETS/images/onboarding/onboarding_0.svg'),
   'onboarding-1': import('ASSETS/images/onboarding/onboarding_1.svg'),
   'onboarding-2': import('ASSETS/images/onboarding/onboarding_2.svg'),

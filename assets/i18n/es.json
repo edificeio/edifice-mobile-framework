@@ -514,6 +514,8 @@
   "pronote.carnetDeBord.competences.value.6": "No se adquirió",
   "pronote.carnetDeBord.competences.value.7": "Ausente",
   "pronote.carnetDeBord.competences.value.8": "No calificado",
+  "pronote.carnetDeBord.initFailed.text": "Parece que no hay datos de Pronote disponibles con respecto a su hijo/a.",
+  "pronote.carnetDeBord.initFailed.title": "Sin datos de Pronote",
   "pronote.carnetDeBord.noData.text": "Parece que no hay datos de Pronote disponibles con respecto a su hijo/a.",
   "pronote.carnetDeBord.noData.title": "Nada qué ver aquí...",
   "pronote.carnetDeBord.noInfo": " –– ",

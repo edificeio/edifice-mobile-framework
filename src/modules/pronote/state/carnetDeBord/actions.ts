@@ -5,6 +5,7 @@ import { getUserSession } from '~/framework/util/session';
 import carnetDeBordService, { IChildrenInfo } from '~/modules/pronote/service/carnetDeBord';
 import { actions as carnetDeBordAsyncActions } from '~/modules/pronote/state/carnetDeBord/reducer';
 import { IUserInfoState } from '~/user/state/info';
+import moduleConfig from '../../moduleConfig';
 
 export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState: () => IGlobalState) => {
   try {
@@ -30,12 +31,12 @@ export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState:
 
     // 2. Call !
     dispatch(carnetDeBordAsyncActions.request());
-    const data = await carnetDeBordService.get(session, children);
+    const matchingApps = moduleConfig.getMatchingEntcoreApps(session.user.entcoreApps);
+    const data = await carnetDeBordService.get(session, children, matchingApps);
     dispatch(carnetDeBordAsyncActions.receipt(data));
     return data;
   } catch (e) {
     dispatch(carnetDeBordAsyncActions.error(e as Error));
-    console.log('ERRROR');
     throw e;
   }
 };
