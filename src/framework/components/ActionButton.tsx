@@ -101,7 +101,6 @@ export const ActionButton = ({
 ActionButton.Style = StyleSheet.create({
   viewCommon: {
     height: UI_SIZES.dimensions.height.largePlus,
-    paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
     borderRadius: UI_SIZES.radius.extraLarge,
     flexDirection: 'row',
