@@ -2,7 +2,7 @@
  * AppConfTool
  * AppConf Loader
  */
-import { ImageStyle, PlatformOSType, Platform as RNPlatform } from 'react-native';
+import { ImageStyle, PlatformOSType } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
 import { PictureProps } from '~/framework/components/picture';
@@ -22,7 +22,8 @@ export type IPlatformAccessDeclaration = {
   wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
   webTheme: string; // web theme applied to the activated accounts
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
-  showWhoAreWe?: boolean; // To show of not the team link in profile page
+  showWhoAreWe?: boolean; // To show or not the team link in profile page
+  showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
 };
 
 export class Platform {
@@ -50,6 +51,8 @@ export class Platform {
 
   showWhoAreWe!: IPlatformAccessDeclaration['showWhoAreWe'];
 
+  showVieScolaireDashboard!: IPlatformAccessDeclaration['showVieScolaireDashboard'];
+
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
   constructor(pf: IPlatformAccessDeclaration) {
@@ -65,6 +68,7 @@ export class Platform {
     this.wayf = pf.wayf;
     this.webTheme = pf.webTheme;
     this.showWhoAreWe = pf.showWhoAreWe;
+    this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this._webviewIdentifier = pf.webviewIdentifier;
   }
 

@@ -1,3 +1,4 @@
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IDashboard_State } from './reducer';
@@ -11,6 +12,7 @@ export default new NavigableModuleConfig<'viescolaire', IDashboard_State>({
   name: 'viescolaire',
   entcoreScope: ['viescolaire'],
   matchEntcoreApp: entcoreApp => hasViescoApp(entcoreApp),
+  hasRight: matchingApps => matchingApps.length > 0 && (DEPRECATED_getCurrentPlatform()?.showVieScolaireDashboard ?? false),
 
   displayI18n: 'viesco',
   displayAs: 'tabModule',
