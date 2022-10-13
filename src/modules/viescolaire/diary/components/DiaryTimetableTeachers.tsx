@@ -18,7 +18,7 @@ import Calendar from '~/ui/Calendar';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   refreshContainer: {
     height: '100%',
     zIndex: 0,
@@ -126,7 +126,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
   renderDaysHomeworks = (homeworks: IHomework[]) => {
     const isEmpty = !homeworks.length;
     return (
-      <View style={style.homeworksContainer}>
+      <View style={styles.homeworksContainer}>
         <BodyBoldText>
           {I18n.t('viesco-homework')}
           {homeworks.length > 1 && ' (' + homeworks.length + ')'}
@@ -164,7 +164,10 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
       );
     };
     return (
-      <TouchableOpacity style={!isHalfCourse && style.homeworkMargin} onPress={navigateToHomeworks} disabled={!isHomeWorkPublished}>
+      <TouchableOpacity
+        style={!isHalfCourse && styles.homeworkMargin}
+        onPress={navigateToHomeworks}
+        disabled={!isHomeWorkPublished}>
         <Icon
           name="inbox"
           size={24}
@@ -180,7 +183,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     const isSessionPublished = (course.session?.is_published || course.calendarType === 'session') && !course.session?.is_empty;
     return (
       <TouchableOpacity
-        style={isHalfCourse ? style.halfSessionMargin : style.sessionMargin}
+        style={isHalfCourse ? styles.halfSessionMargin : styles.sessionMargin}
         onPress={() =>
           navigation.navigate(`${diaryConfig.routeName}/session`, sessionListDetailsTeacherAdapter(course.session || course))
         }
@@ -198,12 +201,12 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
 
     return (
-      <View style={style.courseView}>
-        <View style={[style.subjectView, !isHalfCourse && style.subjectPadding]}>
+      <View style={styles.courseView}>
+        <View style={[styles.subjectView, !isHalfCourse && styles.subjectPadding]}>
           <HeadingSText numberOfLines={1}>{className}</HeadingSText>
           <SmallText numberOfLines={1}>{course.subject?.name || course.exceptionnal}</SmallText>
         </View>
-        <View style={style.buttonsContainer}>
+        <View style={styles.buttonsContainer}>
           {this.renderSessionsIconButton(course, isHalfCourse)}
           {this.renderHomeworksIconButton(course, isHalfCourse)}
         </View>
@@ -219,15 +222,15 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
 
     return (
       <PageContainer>
-        <View style={style.refreshContainer}>
-          <View style={style.weekPickerView}>
-            <SmallText style={style.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
+        <View style={styles.refreshContainer}>
+          <View style={styles.weekPickerView}>
+            <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
             <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.diary} />
           </View>
           {courses.isFetching || courses.isPristine ? (
             <LoadingIndicator />
           ) : (
-            <View style={style.calendarContainer}>
+            <View style={styles.calendarContainer}>
               <Calendar
                 startDate={startDate}
                 data={slotEvents.calendarList}

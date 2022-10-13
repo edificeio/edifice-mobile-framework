@@ -23,7 +23,7 @@ import {
 import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
   },
@@ -198,32 +198,32 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
           enabled={Platform.OS === 'ios'}
           behavior="padding"
           keyboardVerticalOffset={60}
-          style={style.safeAreaContainer}>
+          style={styles.safeAreaContainer}>
           <ScrollView>
-            <LeftColoredItem color={mainColor} style={style.recapHeader}>
-              <View style={style.recapHeaderView}>
+            <LeftColoredItem color={mainColor} style={styles.recapHeader}>
+              <View style={styles.recapHeaderView}>
                 <Icon color="grey" size={12} name="access_time" />
-                <SmallText style={style.recapHeaderText}>
+                <SmallText style={styles.recapHeaderText}>
                   {startDateString} - {endDateString}
                 </SmallText>
                 <SmallBoldText>{student.name}</SmallBoldText>
               </View>
             </LeftColoredItem>
-            <View style={style.timePickerRowContainer}>
-              <SmallText style={[style.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
+            <View style={styles.timePickerRowContainer}>
+              <SmallText style={[styles.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
               <DateTimePicker mode="time" value={moment(date)} onChange={this.onTimeChange} color={mainColor} />
             </View>
-            <View style={style.inputContainer}>
-              <CaptionText style={style.labelText}>{inputLabel}</CaptionText>
+            <View style={styles.inputContainer}>
+              <CaptionText style={styles.labelText}>{inputLabel}</CaptionText>
               <TextInput
                 defaultValue={event === undefined ? '' : event.comment}
                 placeholder={I18n.t('viesco-enter-text')}
-                style={style.reasonTextInput}
+                style={styles.reasonTextInput}
                 multiline
                 onChangeText={this.onReasonChange}
               />
             </View>
-            <View style={style.buttonOkContainer}>
+            <View style={styles.buttonOkContainer}>
               {event !== undefined && <DialogButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
               <DialogButtonOk
                 disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}

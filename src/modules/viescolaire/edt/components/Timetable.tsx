@@ -15,7 +15,7 @@ import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/contai
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   refreshContainer: {
     height: '100%',
     zIndex: 0,
@@ -101,14 +101,14 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const secondText = isTeacher ? course.subject?.name || course.exceptionnal : course.teacher;
 
     return (
-      <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
-        <View style={style.subjectView}>
-          <SmallBoldText style={isTeacher && style.classText}>{firstText}</SmallBoldText>
+      <View style={[styles.courseView, isCourseWithTags ? styles.greyishBackground : styles.whiteBackground]}>
+        <View style={styles.subjectView}>
+          <SmallBoldText style={isTeacher && styles.classText}>{firstText}</SmallBoldText>
           <SmallText numberOfLines={1}>{secondText}</SmallText>
         </View>
         <View>
           {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 ? (
-            <View style={style.roomView}>
+            <View style={styles.roomView}>
               <Icon name="pin_drop" size={16} />
               <SmallText>
                 &nbsp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
@@ -131,20 +131,20 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
 
     return (
       <View
-        style={[style.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? style.greyishBackground : style.whiteBackground]}>
-        <View style={style.halfSplitLineView}>
-          <SmallBoldText style={[style.halfTextStyle, isTeacher && style.halfClassText]} numberOfLines={1}>
+        style={[styles.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? styles.greyishBackground : styles.whiteBackground]}>
+        <View style={styles.halfSplitLineView}>
+          <SmallBoldText style={[styles.halfTextStyle, isTeacher && styles.halfClassText]} numberOfLines={1}>
             {firstText}
           </SmallBoldText>
           {isCourseWithRoomLabel ? (
-            <View style={style.halfRoomLabelContainer}>
+            <View style={styles.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
               <SmallText numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</SmallText>
             </View>
           ) : null}
         </View>
-        <View style={style.halfSplitLineView}>
-          <SmallText style={style.halfTextStyle} numberOfLines={1}>
+        <View style={styles.halfSplitLineView}>
+          <SmallText style={styles.halfTextStyle} numberOfLines={1}>
             {secondText}
           </SmallText>
           {isCourseWithTags ? <SmallBoldItalicText>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText> : null}
@@ -164,17 +164,17 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   public render() {
     const { startDate, selectedDate, courses, teachers, slots, userType, updateSelectedDate } = this.props;
     return (
-      <View style={style.refreshContainer}>
+      <View style={styles.refreshContainer}>
         {userType === 'Relative' ? <ChildPicker /> : null}
-        <View style={style.weekPickerView}>
-          <SmallText style={style.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
+        <View style={styles.weekPickerView}>
+          <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.timetable} />
         </View>
         {courses !== undefined &&
           (courses.isFetching || courses.isPristine ? (
             <LoadingIndicator />
           ) : (
-            <View style={style.calendarContainer}>
+            <View style={styles.calendarContainer}>
               <Calendar
                 startDate={startDate}
                 data={adaptCourses(courses.data, teachers.data)}

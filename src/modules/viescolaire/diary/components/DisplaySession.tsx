@@ -15,7 +15,7 @@ import { Session } from '~/modules/viescolaire/utils/diary';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   mainView: {
     flex: 1,
   },
@@ -118,9 +118,9 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
     return (
       <PageContainer>
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
-          <View style={style.mainView}>
-            <View style={style.sessionInfoBar}>
-              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color={viescoTheme.palette.diary}>
+          <View style={styles.mainView}>
+            <View style={styles.sessionInfoBar}>
+              <LeftColoredItem shadow style={styles.LeftColoredItemInfoBar} color={viescoTheme.palette.diary}>
                 {sessionList && sessionList[indexSelectedSession]?.date ? (
                   <>
                     <Icon size={20} color={viescoTheme.palette.diary} name="date_range" />
@@ -128,14 +128,14 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
                   </>
                 ) : null}
                 {sessionList && sessionList[indexSelectedSession]?.subject ? (
-                  <SmallBoldText style={style.course}>{sessionList[indexSelectedSession].subject}</SmallBoldText>
+                  <SmallBoldText style={styles.course}>{sessionList[indexSelectedSession].subject}</SmallBoldText>
                 ) : null}
               </LeftColoredItem>
             </View>
 
             <ScrollView>
-              <View style={style.sessionPart}>
-                <SmallText style={style.pageTitle}>{I18n.t('viesco-session')}</SmallText>
+              <View style={styles.sessionPart}>
+                <SmallText style={styles.pageTitle}>{I18n.t('viesco-session')}</SmallText>
                 {sessionList && sessionList[indexSelectedSession]?.title && (
                   <BodyBoldText>{sessionList[indexSelectedSession].title}</BodyBoldText>
                 )}

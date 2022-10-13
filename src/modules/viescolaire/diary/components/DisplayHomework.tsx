@@ -14,7 +14,7 @@ import { Homework } from '~/modules/viescolaire/utils/diary';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   mainView: {
     flex: 1,
   },
@@ -121,9 +121,9 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
     return (
       <PageContainer>
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
-          <View style={style.mainView}>
-            <View style={style.homeworkInfoBar}>
-              <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
+          <View style={styles.mainView}>
+            <View style={styles.homeworkInfoBar}>
+              <LeftColoredItem shadow style={styles.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
                 {homeworkList && homeworkList[indexSelectedHomework]?.created_date ? (
                   <>
                     <Icon size={20} color={theme.palette.complementary.orange.regular} name="date_range" />
@@ -131,16 +131,16 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
                   </>
                 ) : null}
                 {homeworkList && homeworkList[indexSelectedHomework]?.subject ? (
-                  <SmallBoldText style={style.course}>{homeworkList[indexSelectedHomework].subject}</SmallBoldText>
+                  <SmallBoldText style={styles.course}>{homeworkList[indexSelectedHomework].subject}</SmallBoldText>
                 ) : null}
               </LeftColoredItem>
             </View>
 
             <ScrollView>
-              <View style={style.homeworkPart}>
+              <View style={styles.homeworkPart}>
                 <BodyBoldText>{I18n.t('viesco-homework-home')}</BodyBoldText>
                 {homeworkList && homeworkList[indexSelectedHomework]?.due_date && (
-                  <SmallText style={style.subtitle}>
+                  <SmallText style={styles.subtitle}>
                     {I18n.t('viesco-homework-fordate')}{' '}
                     {moment(homeworkList[indexSelectedHomework].due_date).format('Do MMMM YYYY')}
                   </SmallText>
