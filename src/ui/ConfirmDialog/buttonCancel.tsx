@@ -8,15 +8,16 @@ import { SmallText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    borderRadius: 2,
     backgroundColor: theme.palette.grey.grey,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
+    borderRadius: UI_SIZES.radius.small,
+    marginLeft: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    color: theme.palette.grey.white,
+    color: theme.ui.text.inverse,
   },
 });
 

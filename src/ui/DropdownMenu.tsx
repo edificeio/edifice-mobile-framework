@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   itemIcon: {
     marginRight: UI_SIZES.spacing.minor,
