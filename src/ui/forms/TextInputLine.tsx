@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import PasswordInputText from 'react-native-hide-show-password-input';
-import { TextField } from 'react-native-material-textfield';
+import { TextField } from 'rn-material-ui-textfield';
 
 import theme from '~/app/theme';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';

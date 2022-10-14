@@ -554,6 +554,7 @@ export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ..
  * @param src
  */
 export function transformedSrc(src: string) {
+  if (!src) return src;
   return src.startsWith('//') ? `https:${src}` : src.startsWith('/') ? `${DEPRECATED_getCurrentPlatform()!.url}${src}` : src;
 }
 

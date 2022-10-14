@@ -533,7 +533,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     } else {
       // B - 1 - Build image object representation
       let src = tag.attrs.src;
-      if (src.indexOf('file://') === -1) {
+      if (src && src.indexOf('file://') === -1) {
         // TODO : Better parse image url and detect cases
         if (src.indexOf('://') === -1) {
           if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
@@ -570,7 +570,9 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
 
     // 1 - Build iframe ojbect representation
     let src = tag.attrs.src;
-    src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
+    if(src) {
+      src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
+    }
     const iframeNugget: IIframeNugget = {
       src,
       type: HtmlParserNuggetTypes.Iframe,
@@ -588,7 +590,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
   protected parseAudioTag(tag: ISaxTagOpen): void {
     if (!this.opts.audio) return;
     let src = tag.attrs.src;
-    if (src.indexOf('file://') === -1) {
+    if (src && src.indexOf('file://') === -1) {
       // TODO : Better parse audio url and detect cases
       if (src.indexOf('://') === -1) {
         if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
@@ -613,7 +615,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     if (!this.opts.video) return;
     // Parse src
     let src = tag.attrs.src;
-    if (src.indexOf('file://') === -1) {
+    if (src && src.indexOf('file://') === -1) {
       // TODO : Better parse video url and detect cases
       if (src.indexOf('://') === -1) {
         if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');

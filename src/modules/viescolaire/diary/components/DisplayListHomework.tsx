@@ -12,7 +12,7 @@ import { Homework } from '~/modules/viescolaire/utils/diary';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   mainView: {
     flex: 1,
   },
@@ -59,28 +59,28 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
 
     return (
       <PageContainer>
-        <View style={style.mainView}>
-          <View style={style.homeworksInfoBar}>
-            <LeftColoredItem shadow style={style.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
+        <View style={styles.mainView}>
+          <View style={styles.homeworksInfoBar}>
+            <LeftColoredItem shadow style={styles.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
               {homeworkList && homeworkList[0]?.due_date ? (
                 <>
                   <Icon size={20} color={theme.palette.complementary.orange.regular} name="date_range" />
                   <SmallText>&emsp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</SmallText>
                 </>
               ) : null}
-              {subject ? <SmallBoldText style={style.course}>{subject}</SmallBoldText> : null}
+              {subject ? <SmallBoldText style={styles.course}>{subject}</SmallBoldText> : null}
             </LeftColoredItem>
           </View>
 
-          <View style={style.homeworkPart}>
+          <View style={styles.homeworkPart}>
             <BodyBoldText>{I18n.t('viesco-homework-home')}</BodyBoldText>
             <FlatList
               data={homeworkList}
               renderItem={({ item }) => (
-                <View style={style.homeworksView}>
-                  {item?.type && <BodyBoldText style={style.homeworkType}>{item?.type}</BodyBoldText>}
+                <View style={styles.homeworksView}>
+                  {item?.type && <BodyBoldText style={styles.homeworkType}>{item?.type}</BodyBoldText>}
                   {item && item?.subject && (
-                    <SmallText style={style.subtitle}>
+                    <SmallText style={styles.subtitle}>
                       {item.subject.charAt(0).toLocaleUpperCase() + item.subject.substring(1).toLocaleLowerCase()} -{' '}
                       {item?.audience}
                     </SmallText>

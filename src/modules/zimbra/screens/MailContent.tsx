@@ -34,7 +34,6 @@ type MailContentContainerProps = {
 } & NavigationInjectedProps<any>;
 
 type MailContentContainerState = {
-  mailId: string;
   showMenu: boolean;
   showMoveModal: boolean;
   deleteModal: { isShown: boolean; mailsIds: string[] };
@@ -47,7 +46,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     super(props);
 
     this.state = {
-      mailId: this.props.navigation.state.params.mailId,
       showMenu: false,
       showMoveModal: false,
       deleteModal: { isShown: false, mailsIds: [] },
@@ -59,12 +57,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   public componentDidMount() {
     this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
     this.props.fetchStorage();
-  }
-
-  public componentDidUpdate() {
-    if (this.props.navigation.state.params.mailId !== this.state.mailId && !this.state.showMoveModal) {
-      this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
-    }
   }
 
   public showMenu = () => {

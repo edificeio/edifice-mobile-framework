@@ -27,7 +27,7 @@ import DateTimePicker from '~/ui/DateTimePicker';
 
 import { HomeworkItem, SessionItem } from './Items';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   mainView: {
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
@@ -89,7 +89,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
 
   return (
     <FlatList
-      style={style.mainView}
+      style={styles.mainView}
       refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}
       data={homeworksArray}
       renderItem={({ item, index }) => (
@@ -122,7 +122,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
 
   return (
     <FlatList
-      style={style.mainView}
+      style={styles.mainView}
       refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshSessions} />}
       data={sessionList}
       renderItem={({ item, index }) => (
@@ -170,11 +170,11 @@ export default (props: HomeworkListProps) => {
   }, []);
 
   const DatePickers = React.memo(({ startDate, endDate }) => (
-    <View style={style.grid}>
+    <View style={styles.grid}>
       <SmallText>{I18n.t('viesco-from')}</SmallText>
-      <DateTimePicker mode="date" style={style.datePicker} value={startDate} maximumDate={endDate} onChange={setStartDate} />
+      <DateTimePicker mode="date" style={styles.datePicker} value={startDate} maximumDate={endDate} onChange={setStartDate} />
       <SmallText>{I18n.t('viesco-to')}</SmallText>
-      <DateTimePicker mode="date" style={style.datePicker} value={endDate} minimumDate={startDate} onChange={setEndDate} />
+      <DateTimePicker mode="date" style={styles.datePicker} value={endDate} minimumDate={startDate} onChange={setEndDate} />
     </View>
   ));
 
@@ -200,19 +200,19 @@ export default (props: HomeworkListProps) => {
     }
 
     return (
-      <View style={style.grid}>
-        <View style={style.gridHomeworkTitle}>
+      <View style={styles.grid}>
+        <View style={styles.gridHomeworkTitle}>
           <SmallText>{I18n.t('viesco-homework')}</SmallText>
         </View>
         <Switch
-          style={style.gridSwith}
+          style={styles.gridSwith}
           onValueChange={() => {
             toggleSwitch(switchValue === SwitchState.SESSION ? SwitchState.HOMEWORK : SwitchState.SESSION);
           }}
           value={switchValue === SwitchState.SESSION}
           {...newProps}
         />
-        <View style={style.gridSesionTitle}>
+        <View style={styles.gridSesionTitle}>
           <SmallText>{I18n.t('viesco-session')}</SmallText>
         </View>
       </View>
@@ -224,7 +224,7 @@ export default (props: HomeworkListProps) => {
   return (
     <PageContainer>
       {getUserSession().user.type === 'Relative' && <ChildPicker />}
-      <View style={style.homeworkPart}>
+      <View style={styles.homeworkPart}>
         <DatePickers startDate={startDate} endDate={endDate} />
         <PlatformSpecificSwitch value={switchValue} />
         {switchValue === SwitchState.HOMEWORK ? (

@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -17,6 +16,7 @@ import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
@@ -36,7 +36,8 @@ const styles = StyleSheet.create({
     height: 45,
     paddingHorizontal: UI_SIZES.spacing.small,
     borderWidth: 2,
-    borderRadius: 5,
+    borderRadius: UI_SIZES.radius.small,
+    backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.primary.regular,
   },
   sourceCheckBoxContainer: {
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
   },
   safeAreaContainer: {
     flex: 1,
+    backgroundColor: theme.ui.background.page,
   },
   headerContainer: {
     flexDirection: 'row',
