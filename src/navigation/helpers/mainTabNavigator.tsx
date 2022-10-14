@@ -1,3 +1,4 @@
+import styled from '@emotion/native';
 import * as React from 'react';
 import { View } from 'react-native';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
@@ -6,7 +7,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { CaptionText, TextSizeStyle } from '~/framework/components/text';
+import { TextSizeStyle } from '~/framework/components/text';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
 
 export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
@@ -125,13 +126,14 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
   }
 };
 
+const TabBarText = styled.Text({
+  alignSelf: 'center',
+  fontSize: 10,
+  lineHeight: UI_SIZES.screen.bottomInset ? getScaleDimension(14, 'height') : TextSizeStyle.Small.lineHeight,
+});
+
 const MainTabNavigationLabel = props => (
-  <CaptionText
-    style={{
-      alignSelf: 'center',
-      color: props.focused ? theme.palette.primary.regular : theme.ui.text.light,
-      lineHeight: UI_SIZES.screen.bottomInset ? getScaleDimension(14, 'height') : TextSizeStyle.Small.lineHeight,
-    }}>
+  <TabBarText numberOfLines={1} style={{ color: props.focused ? theme.palette.primary.regular : theme.ui.text.light }}>
     {props.children}
-  </CaptionText>
+  </TabBarText>
 );
