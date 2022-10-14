@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
   },
   infosView: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginTop: UI_SIZES.spacing.small,
     marginHorizontal: UI_SIZES.spacing.small,
   },
   useSignatureText: {
-    paddingTop: UI_SIZES.spacing.tiny,
-    paddingLeft: UI_SIZES.spacing.small,
+    marginLeft: UI_SIZES.spacing.minor,
   },
   actionsButtonsContainer: {
     flexDirection: 'row-reverse',
