@@ -5,19 +5,26 @@ import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { TextSizeStyle } from '~/framework/components/text';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
 
-export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
-  let tabBarVisible = true;
-  if (navigation.state.index > 0) {
-    tabBarVisible = false;
-  }
+const TabBarText = styled.Text({
+  alignSelf: 'center',
+  fontSize: UI_SIZES.screen.height < UI_SIZES.standardScreen.height ? 10 : 12,
+  paddingBottom: UI_SIZES.screen.bottomInset ? 0 : 4,
+  lineHeight: UI_SIZES.screen.bottomInset ? 14 : 16,
+});
 
+const MainTabNavigationLabel = props => (
+  <TabBarText numberOfLines={1} style={{ color: props.focused ? theme.palette.primary.regular : theme.ui.text.light }}>
+    {props.children}
+  </TabBarText>
+);
+
+export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
   return {
-    tabBarVisible,
+    tabBarVisible: !(navigation.state.index > 0),
   };
 };
 
@@ -56,22 +63,22 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
 
 // ToDo : remove magic values here, replace with RN6
 export const createMainTabNavOption = (title: string, icon?: string | PictureProps, iconFocus?: PictureProps) => {
-  const computePicture = (icon: PictureProps) => {
-    if (icon.type === 'NamedSvg') {
-      icon.height = UI_SIZES.elements.tabbarIconSize;
-      icon.width = UI_SIZES.elements.tabbarIconSize;
+  const computePicture = (icn: PictureProps) => {
+    if (icn.type === 'NamedSvg') {
+      icn.height = UI_SIZES.elements.tabbarIconSize;
+      icn.width = UI_SIZES.elements.tabbarIconSize;
       // icon.style = { marginBottom: UI_SIZES.spacing.small };
-    } else if (icon.type === 'Image') {
-      icon.style = {
+    } else if (icn.type === 'Image') {
+      icn.style = {
         height: UI_SIZES.elements.tabbarIconSize,
         // marginBottom: UI_SIZES.spacing.small,
         width: UI_SIZES.elements.tabbarIconSize,
       };
-    } else if (icon.type === 'Icon') {
-      icon.size = UI_SIZES.elements.tabbarIconSize;
+    } else if (icn.type === 'Icon') {
+      icn.size = UI_SIZES.elements.tabbarIconSize;
       // icon.style = { marginBottom: UI_SIZES.spacing.small };
     }
-    return icon;
+    return icn;
   };
   if (!icon) {
     return {
@@ -125,15 +132,3 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
       };
   }
 };
-
-const TabBarText = styled.Text({
-  alignSelf: 'center',
-  fontSize: 10,
-  lineHeight: UI_SIZES.screen.bottomInset ? getScaleDimension(14, 'height') : TextSizeStyle.Small.lineHeight,
-});
-
-const MainTabNavigationLabel = props => (
-  <TabBarText numberOfLines={1} style={{ color: props.focused ? theme.palette.primary.regular : theme.ui.text.light }}>
-    {props.children}
-  </TabBarText>
-);

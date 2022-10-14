@@ -102,6 +102,7 @@ export const UI_SIZES = {
     major: getScaleDimension(48, 'width'),
     huge: getScaleDimension(64, 'width'),
   },
+  standardScreen: standardScreenDimensions,
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (
