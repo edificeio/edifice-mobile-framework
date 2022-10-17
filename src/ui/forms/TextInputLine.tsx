@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
-import PasswordInputText from 'react-native-hide-show-password-input';
 import { TextField } from 'rn-material-ui-textfield';
 
 import theme from '~/app/theme';
+import PasswordInput from '~/framework/components/passwordInput';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
 export type TextInputLineProps = {
@@ -58,7 +58,7 @@ export class TextInputLine extends React.Component<
       iconSize: 25,
       invertVisibilityIcon: true,
     };
-    const TextComponent = isPasswordField ? PasswordInputText : TextField;
+    const TextComponent = isPasswordField ? PasswordInput : TextField;
     return (
       <View style={{ alignSelf: 'stretch' }}>
         <TextComponent {...inputProps} />
