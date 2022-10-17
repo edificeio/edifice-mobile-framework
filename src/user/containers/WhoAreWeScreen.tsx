@@ -29,6 +29,7 @@ class WhoAreWeScreen extends React.PureComponent<NavigationInjectedProps<object>
           <ActionButton
             style={{ marginTop: UI_SIZES.spacing.large }}
             text={I18n.t('user.whoAreWeScreen.reviewApp')}
+            emoji="⭐️"
             action={() => {
               const options = {
                 AppleAppID: '1450246545',

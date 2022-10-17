@@ -11,6 +11,7 @@ import { transformedSrc } from '~/infra/oauth';
 export interface ActionButtonProps {
   text: string;
   iconName?: string;
+  emoji?: string;
   showIcon?: boolean;
   action?: () => void;
   url?: string;
@@ -26,6 +27,7 @@ export interface ActionButtonProps {
 export const ActionButton = ({
   text,
   iconName,
+  emoji,
   showIcon = true,
   url,
   showConfirmation = true,
@@ -84,15 +86,21 @@ export const ActionButton = ({
       <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined }, textStyle[type ?? 'primary']]}>
         {text}
       </SmallBoldText>
-      {showIcon && (url || iconName) ? (
-        <Picture
-          type="NamedSvg"
-          name={iconName || 'pictos-external-link'}
-          width={UI_SIZES.dimensions.width.large}
-          height={UI_SIZES.dimensions.height.large}
-          fill={pictureFill[type ?? 'primary']}
-          style={ActionButton.Style.picture}
-        />
+      {showIcon ? (
+        url || iconName ? (
+          <Picture
+            type="NamedSvg"
+            name={iconName || 'pictos-external-link'}
+            width={UI_SIZES.dimensions.width.large}
+            height={UI_SIZES.dimensions.height.large}
+            fill={pictureFill[type ?? 'primary']}
+            style={ActionButton.Style.picture}
+          />
+        ) : emoji ? (
+          <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined, marginBottom: 1 }]}>
+            {` ${emoji}`}
+          </SmallBoldText>
+        ) : null
       ) : null}
     </Component>
   );
