@@ -4,10 +4,10 @@ import { View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { IFolder } from '~/modules/conversation/state/initMails';
-import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
 
 type MoveToFolderModalProps = {
@@ -88,33 +88,22 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
             />
           )}
           <View style={{ flexDirection: 'row' }}>
-            <DialogButtonCancel
-              onPress={() => {
+            <ActionButton
+              text={I18n.t('Cancel')}
+              type="secondary"
+              action={() => {
                 selectFolder('');
                 closeModal();
               }}
-              style={{
-                backgroundColor: theme.ui.background.card,
-                borderColor: theme.palette.primary.regular,
-                borderWidth: 1,
-                borderRadius: 20,
-                width: 150,
-              }}
-              textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold }}
             />
-            <DialogButtonOk
-              onPress={() => {
+            <ActionButton
+              text={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
+              style={{ marginLeft: UI_SIZES.spacing.medium }}
+              disabled={isMoveImpossible || !selectedFolder}
+              action={() => {
                 selectFolder('');
                 confirm();
               }}
-              style={{
-                backgroundColor: isMoveImpossible || !selectedFolder ? theme.ui.text.light : theme.palette.primary.regular,
-                borderRadius: 20,
-                width: 150,
-              }}
-              textStyle={{ ...TextFontStyle.Bold }}
-              disabled={isMoveImpossible || !selectedFolder}
-              label={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
             />
           </View>
         </ModalContent>
