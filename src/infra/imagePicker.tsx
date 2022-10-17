@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { HeadingFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
@@ -85,8 +85,8 @@ export class ImagePicker extends React.PureComponent<
                 <ButtonTextIcon
                   style={{ width: 250 }}
                   textStyle={{
-                    ...TextSizeStyle.Big,
-                    ...HeadingFontStyle.Bold,
+                    ...TextFontStyle.Regular,
+                    ...TextSizeStyle.Medium,
                     padding: UI_SIZES.spacing.medium,
                     marginTop: -UI_SIZES.spacing.small,
                   }}
