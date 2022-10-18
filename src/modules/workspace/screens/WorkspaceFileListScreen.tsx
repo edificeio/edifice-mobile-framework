@@ -14,6 +14,7 @@ import FlatList from '~/framework/components/flatList';
 import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import { DocumentPicked } from '~/infra/filePicker';
@@ -135,9 +136,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
     const { id, name: title, isFolder } = file;
     if (isFolder) {
       const filter = props.filter === Filter.ROOT ? id : props.filter;
-      props.navigation.push(moduleConfig.routeName, { filter, parentId: id, title });
+      props.navigation.push(computeRelativePath(moduleConfig.routeName, props.navigation.state), { filter, parentId: id, title });
     } else {
-      props.navigation.navigate(`${moduleConfig.routeName}/details`, { file, title });
+      props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), { file, title });
     }
   };
 
