@@ -43,6 +43,7 @@ export const periodsListService = {
   getYear: async (structureId: string) => {
     const year = await fetchJSONWithCache(`/viescolaire/settings/periode/schoolyear?structureId=${structureId}`);
     const result = yearAdapter(year);
-    return result;
+    // AMVS-329 - hard coded values until api fix
+    return { start_date: moment('2022-08-01'), end_date: moment('2023-08-05') };
   },
 };
