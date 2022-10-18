@@ -4,6 +4,7 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
@@ -11,7 +12,6 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
-import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
@@ -248,12 +248,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               onRemove={this.props.removeAttachment}
             />
           ) : null}
-          <DialogButtonOk
-            style={styles.dialogButtonOk}
-            disabled={!this.props.validate()}
-            label={I18n.t('viesco-validate')}
-            onPress={submit}
-          />
+          <ActionButton text={I18n.t('viesco-validate')} action={submit} disabled={!this.props.validate()} />
         </ScrollView>
       </KeyboardAvoidingView>
     );

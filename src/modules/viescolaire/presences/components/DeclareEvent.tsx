@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -20,7 +21,6 @@ import {
   updateLateEvent,
   updateLeavingEvent,
 } from '~/modules/viescolaire/presences/actions/events';
-import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
@@ -66,6 +66,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexWrap: 'nowrap',
     marginVertical: UI_SIZES.spacing.big,
+  },
+  deleteButton: {
+    marginRight: UI_SIZES.spacing.medium,
   },
 });
 
@@ -224,11 +227,13 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
               />
             </View>
             <View style={styles.buttonOkContainer}>
-              {event !== undefined && <DialogButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
-              <DialogButtonOk
+              {event !== undefined ? (
+                <ActionButton text={I18n.t('delete')} type="secondary" action={this.onCancel} style={styles.deleteButton} />
+              ) : null}
+              <ActionButton
+                text={I18n.t('viesco-confirm')}
+                action={this.onSubmit}
                 disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
-                label={I18n.t('viesco-confirm')}
-                onPress={this.onSubmit}
               />
             </View>
           </ScrollView>

@@ -4,12 +4,12 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { IChildArray } from '~/modules/viescolaire/dashboard/state/children';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
-import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { ModalBox } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
@@ -151,7 +151,7 @@ export const NotificationRelativesModal = ({
               </View>
             ) : null,
           )}
-          <DialogButtonOk label={I18n.t('common-ok')} onPress={onClose} />
+          <ActionButton text={I18n.t('common-ok')} action={onClose} />
         </View>
       </View>
     </ModalBox>

@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
@@ -10,7 +10,6 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
-import { DialogButtonOk } from '~/ui/ConfirmDialog';
 
 import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
@@ -40,9 +39,6 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: UI_SIZES.spacing.small,
-  },
-  cancelButton: {
-    backgroundColor: theme.palette.primary.regular,
   },
   fieldsContainer: {
     flexDirection: 'row',
@@ -143,7 +139,7 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
         {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
         {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
-      <DialogButtonOk style={styles.cancelButton} label={I18n.t('common.cancel')} onPress={props.onCancelSearch} />
+      <ActionButton text={I18n.t('common.cancel')} type="secondary" action={props.onCancelSearch} />
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>

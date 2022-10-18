@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
@@ -12,18 +13,15 @@ import StudentRow from '~/modules/viescolaire/presences/components/StudentRow';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallListOld';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
-import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import { PageContainer } from '~/ui/ContainerContent';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   fullView: {
     flex: 1,
   },
   validateButton: {
     alignSelf: 'center',
-    width: '40%',
-    height: 50,
-    margin: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.big,
   },
   classesView: {
     justifyContent: 'flex-end',
@@ -100,7 +98,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
     const { registerId } = this.props;
     const { postAbsentEvent, deleteEvent, navigation } = this.props;
     return (
-      <View style={style.fullView}>
+      <View style={styles.fullView}>
         {studentsList.length > 0 ? (
           <>
             <FlatList
@@ -146,16 +144,14 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                 />
               )}
             />
-
-            <View style={style.validateButton}>
-              <DialogButtonOk
-                label={I18n.t('viesco-validate')}
-                onPress={() => {
-                  this.props.validateRegister(registerId);
-                  navigation.goBack(null);
-                }}
-              />
-            </View>
+            <ActionButton
+              text={I18n.t('viesco-validate')}
+              action={() => {
+                this.props.validateRegister(registerId);
+                navigation.goBack(null);
+              }}
+              style={styles.validateButton}
+            />
           </>
         ) : null}
       </View>
@@ -164,18 +160,18 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
 
   private ClassesInfos() {
     return (
-      <View style={style.classesView}>
-        <LeftColoredItem shadow style={style.topItem} color={viescoTheme.palette.presences}>
+      <View style={styles.classesView}>
+        <LeftColoredItem shadow style={styles.topItem} color={viescoTheme.palette.presences}>
           <SmallText>
             {moment(this.state.callData.start_date).format('LT')} - {moment(this.state.callData.end_date).format('LT')}
           </SmallText>
           {this.state.course.classroom !== '' && (
-            <SmallText style={style.classroomText}>
+            <SmallText style={styles.classroomText}>
               <Icon name="pin_drop" size={18} />
               {I18n.t('viesco-room') + ' ' + this.state.course.classroom}
             </SmallText>
           )}
-          <SmallBoldText style={style.gradeText}>{this.state.course.grade}</SmallBoldText>
+          <SmallBoldText style={styles.gradeText}>{this.state.course.grade}</SmallBoldText>
         </LeftColoredItem>
       </View>
     );
