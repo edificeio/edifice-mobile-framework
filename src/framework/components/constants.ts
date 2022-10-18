@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StatusBar, StyleSheet, TextStyle } from 'react-native';
+import { Dimensions, Platform, StatusBar, StyleSheet } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -45,6 +45,7 @@ export const UI_SIZES = {
       mediumPlus: 20,
       large: 22,
       larger: 24,
+      largerPlus: 28,
       largePlus: 36,
       huge: 38,
     },

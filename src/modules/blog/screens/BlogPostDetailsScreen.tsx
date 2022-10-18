@@ -19,7 +19,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
-import Label from '~/framework/components/label';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
@@ -352,13 +351,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               />
             }>
             {blogPostData?.state === 'SUBMITTED' ? (
-              <Label
-                text={I18n.t('blog.post.needValidation')}
-                color={theme.palette.status.warning}
-                labelStyle="outline"
-                labelSize="small"
-                style={{ marginVertical: UI_SIZES.spacing.tiny }}
-              />
+              <SmallBoldText style={{ color: theme.palette.status.warning }}>{I18n.t('blog.post.needValidation')}</SmallBoldText>
             ) : null}
             <SmallBoldText style={{ color: theme.ui.text.light }}>{blogInfos?.title}</SmallBoldText>
             <ViewportAwareTitle
