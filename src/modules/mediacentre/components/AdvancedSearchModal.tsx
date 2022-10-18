@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -20,7 +21,6 @@ import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
-import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 
 const styles = StyleSheet.create({
   buttonGroupContainer: {
@@ -79,12 +79,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: UI_SIZES.spacing.tiny,
   },
-  dialogButtonsContainer: {
+  buttonsContainer: {
     flexDirection: 'row',
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
   },
   searchButton: {
-    backgroundColor: theme.palette.primary.regular,
+    marginLeft: UI_SIZES.spacing.medium,
   },
 });
 
@@ -283,14 +283,9 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
               ) : null}
             </View>
           </View>
-          <View style={styles.dialogButtonsContainer}>
-            <DialogButtonCancel onPress={props.closeModal} />
-            <DialogButtonOk
-              onPress={onSearch}
-              disabled={areFieldsEmpty}
-              label={I18n.t('common.search')}
-              style={styles.searchButton}
-            />
+          <View style={styles.buttonsContainer}>
+            <ActionButton text={I18n.t('common.cancel')} type="secondary" action={props.closeModal} />
+            <ActionButton text={I18n.t('common.search')} action={onSearch} disabled={areFieldsEmpty} style={styles.searchButton} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
