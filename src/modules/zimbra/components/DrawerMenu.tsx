@@ -154,6 +154,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
                 navigation.closeDrawer();
               }}
               count={folder.unread}
+              key={folder.id}
             />
           ))}
       </View>

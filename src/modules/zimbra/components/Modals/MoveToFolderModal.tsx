@@ -115,21 +115,19 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
       ? { color: theme.ui.text.inverse, margin: UI_SIZES.spacing.small }
       : { margin: UI_SIZES.spacing.small };
     return (
-      <>
-        <TouchableOpacity
-          onPress={() => {
-            this.selectFolder(id);
-          }}
-          style={touchableStyle}>
-          <View style={styles.rowView}>
-            <Icon name={iconName} size={20} style={iconStyle} />
-            <BodyText numberOfLines={1} style={textStyle}>
-              {displayName}
-            </BodyText>
-          </View>
-        </TouchableOpacity>
-        <View style={styles.separator} />
-      </>
+      <TouchableOpacity
+        onPress={() => {
+          this.selectFolder(id);
+        }}
+        style={[touchableStyle, styles.separator]}
+        key={id}>
+        <View style={styles.rowView}>
+          <Icon name={iconName} size={20} style={iconStyle} />
+          <BodyText numberOfLines={1} style={textStyle}>
+            {displayName}
+          </BodyText>
+        </View>
+      </TouchableOpacity>
     );
   };
 
