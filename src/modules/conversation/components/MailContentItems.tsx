@@ -186,7 +186,11 @@ export const RenderPJs = ({
             style={{ flex: 0 }}
             onPress={async () => {
               const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
-              await sf.open();
+              try {
+                await sf.open();
+              } catch (e) {
+                Toast.show(I18n.t('download-error-generic'));
+              }
             }}>
             <View style={{ flexDirection: 'row', flex: 0, alignItems: 'center', borderRadius: 6 }}>
               <Icon size={24} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} style={{ flex: 0 }} />
