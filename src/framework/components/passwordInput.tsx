@@ -3,6 +3,8 @@ import { StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { TextField } from 'rn-material-ui-textfield';
 
+import theme from '~/app/theme';
+
 const styles = StyleSheet.create({
   icon: {
     position: 'absolute',
@@ -11,9 +13,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const PasswordInput = ({ iconSize, iconColor, invertVisibilityIcon, label, style, getRef, ...rest }) => {
-  const getVisibilityIcon = isPassword =>
-    isPassword ? (invertVisibilityIcon ? 'visibility-off' : 'visibility') : invertVisibilityIcon ? 'visibility' : 'visibility-off';
+const PasswordInput = ({ iconSize = 25, iconColor = theme.ui.text.light, label = '', style, getRef, ...rest }) => {
+  const getVisibilityIcon = isPassword => (isPassword ? 'visibility-off' : 'visibility');
 
   const [eyeIcon, setEyeIcon] = useState(getVisibilityIcon(false));
   const [isPassword, setIsPassword] = useState(true);
@@ -34,19 +35,5 @@ const PasswordInput = ({ iconSize, iconColor, invertVisibilityIcon, label, style
     </View>
   );
 };
-
-PasswordInput.defaultProps = {
-  iconSize: 25,
-  invertVisibilityIcon: false,
-  label: 'Password',
-  iconColor: '#222222',
-};
-
-/*PasswordInput.propTypes = {
-  iconSize: number,
-  invertVisibilityIcon: boolean,
-  label: string,
-  iconColor: string,
-};*/
 
 export default PasswordInput;
