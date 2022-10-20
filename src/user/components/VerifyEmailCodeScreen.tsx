@@ -193,8 +193,7 @@ export const VerifyEmailCodeScreen = ({
             onChangeText={setCode}
             onBlur={() => verifyCode()}
           />
-          {/* Note: the CodeField's "editable" prop is not sufficient to prevent the user from typing (when isVerifyingActive or isCodeCorrect are true),
-          so an invisible absolute View is used instead.*/}
+          {/* Note: the CodeField's "editable" prop is not sufficient to prevent the user from typing, so an invisible absolute View is used instead.*/}
           {isCodeComplete ? (
             <TouchableWithoutFeedback
               disabled={isVerifyingActive || isCodeCorrect || isCodeStateUnknown}
