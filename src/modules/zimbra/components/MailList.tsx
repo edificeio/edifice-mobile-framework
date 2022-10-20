@@ -246,8 +246,12 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   public render() {
     const { isFetching, firstFetch } = this.props;
     const { isChangingPage, isRefreshing, mails, nextPageCallable } = this.state;
-    const uniqueMails = mails.filter((mail: IMail, index, self) => {
-      return index === self.indexOf(mail);
+    const uniqueId: string[] = [];
+    const uniqueMails = mails.filter((mail: IMail) => {
+      if (uniqueId.indexOf(mail.id) === -1) {
+        uniqueId.push(mail.id);
+        return true;
+      }
     });
     return (
       <FlatList

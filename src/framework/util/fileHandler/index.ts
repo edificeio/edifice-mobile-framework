@@ -205,15 +205,15 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   /**
    * Opens the file with the native device's reader.
    */
-  open() {
-    FileViewer.open(this._filepathNative, {
-      showOpenWithDialog: true,
-      showAppsSuggestions: true,
-    })
-      .then(() => {})
-      .catch(error => {
-        throw error;
+  async open() {
+    try {
+      await FileViewer.open(this._filepathNative, {
+        showOpenWithDialog: true,
+        showAppsSuggestions: true,
       });
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**

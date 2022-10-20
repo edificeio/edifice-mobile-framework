@@ -92,7 +92,11 @@ const getAttachmentTypeByExt = (filename: string) => {
 const openFile = (notifierId: string, file?: SyncedFile) => {
   return dispatch => {
     if (file) {
-      file.open();
+      try {
+        file.open();
+      } catch (e) {
+        Toast.show(I18n.t('download-error-generic'));
+      }
     }
   };
 };
