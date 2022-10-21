@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: 'space-between',
-    padding: UI_SIZES.spacing.medium,
+    marginHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
   },
   sourcesContainer: {
     marginBottom: UI_SIZES.spacing.tiny,
@@ -82,6 +83,7 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: 'row',
     alignSelf: 'center',
+    paddingBottom: UI_SIZES.spacing.medium,
   },
   searchButton: {
     marginLeft: UI_SIZES.spacing.medium,
