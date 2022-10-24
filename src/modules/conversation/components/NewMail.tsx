@@ -2,8 +2,10 @@ import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
 import { Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
+import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
+import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -48,6 +50,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
   },
+  body: { zIndex: 1, flex: 1 },
 });
 
 export default (props: NewMailComponentProps) => {
@@ -55,7 +58,7 @@ export default (props: NewMailComponentProps) => {
   const [keyboardHeight, setkeyboardHeight] = React.useState(0);
   const [showExtraFields, toggleExtraFields] = React.useState(false);
 
-  const isSearchingUsersFinal = Object.values(isSearchingUsers).includes(true);
+  const isSearchingUsersFinal = React.useMemo(() => Object.values(isSearchingUsers).includes(true), [isSearchingUsers]);
 
   const setIsSearchingUsers = (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => {
     toggleIsSearchingUsers({ ...isSearchingUsers, ...val });
@@ -149,7 +152,7 @@ const Fields = ({
         onSave={onDraftSave}
         key="attachments"
       />
-      <Body style={{ zIndex: 1, flex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
+      <Body style={styles.body} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
       {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
     </SafeAreaView>
   );
@@ -192,7 +195,7 @@ const Fields = ({
   );
 };
 
-const MailContactField = connect(state => ({
+const MailContactField = connect((state: IGlobalState) => ({
   visibles: state[moduleConfig.reducerName].visibles as IVisiblesState,
 }))(
   ({
@@ -222,7 +225,7 @@ const MailContactField = connect(state => ({
     const [search, updateSearch] = React.useState('');
     const previousVisibles = React.useRef<IVisiblesState>();
     const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<(IVisibleUser | IVisibleGroup)[]>([]);
-    const searchTimeout = React.useRef();
+    const searchTimeout = React.useRef<NodeJS.Timeout>();
     const inputRef: { current: TextInput | undefined } = { current: undefined };
 
     // Update search results whenever visibles are loaded
@@ -274,8 +277,8 @@ const MailContactField = connect(state => ({
       if (s.length >= 3) {
         updateFoundUsersOrGroups([]);
         onOpenSearch?.(true);
-        searchTimeout.current && window.clearTimeout(searchTimeout.current);
-        searchTimeout.current = window.setTimeout(() => {
+        searchTimeout.current && clearTimeout(searchTimeout.current);
+        searchTimeout.current = setTimeout(() => {
           // This commented area is the old searching method that query the backend
           // newMailService.searchUsers(search).then(({ groups, users }) => {
           //   const filteredUsers = users.filter(filterUsersOrGroups);
@@ -288,7 +291,7 @@ const MailContactField = connect(state => ({
       } else {
         updateFoundUsersOrGroups([]);
         onOpenSearch?.(false);
-        window.clearTimeout(searchTimeout.current);
+        clearTimeout(searchTimeout.current);
       }
     };
 
@@ -382,15 +385,15 @@ const HeaderSubject = ({
     color: theme.ui.text.regular,
   } as ViewStyle;
 
-  const textUpdateTimeout = React.useRef();
+  const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const [currentValue, updateCurrentValue] = React.useState(value);
 
   React.useEffect(() => {
-    window.clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
+    clearTimeout(textUpdateTimeout.current);
+    textUpdateTimeout.current = setTimeout(() => onChange(currentValue), 500);
 
     return () => {
-      window.clearTimeout(textUpdateTimeout.current);
+      clearTimeout(textUpdateTimeout.current);
     };
   }, [currentValue]);
 
@@ -480,7 +483,7 @@ const Attachments = ({
 };
 
 const Body = ({ style, value, onChange, autofocus }) => {
-  const textUpdateTimeout = React.useRef();
+  const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
   // const removeWrapper = (text: string) => {
   //   return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
   // }
@@ -495,11 +498,11 @@ const Body = ({ style, value, onChange, autofocus }) => {
   const [keyboardStatus, setKeyboardStatus] = React.useState(0); // State used just to force-update the component whenever it changes
 
   React.useEffect(() => {
-    window.clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
+    clearTimeout(textUpdateTimeout.current);
+    textUpdateTimeout.current = setTimeout(() => onChange(currentValue), 500);
 
     return () => {
-      window.clearTimeout(textUpdateTimeout.current);
+      clearTimeout(textUpdateTimeout.current);
     };
   }, [currentValue]);
 
@@ -513,10 +516,15 @@ const Body = ({ style, value, onChange, autofocus }) => {
     };
   }, []);
 
+  const textInputRef = React.useRef<TextInput>();
+  React.useEffect(() => {
+    if (autofocus) textInputRef.current?.focus();
+  }, [autofocus]);
+
   return (
     <View style={[styles.mailPart, style, { flexGrow: 1 }]}>
       <TextInput
-        autoFocus={autofocus}
+        ref={textInputRef}
         placeholder={I18n.t('conversation.typeMessage')}
         textAlignVertical="top"
         multiline
