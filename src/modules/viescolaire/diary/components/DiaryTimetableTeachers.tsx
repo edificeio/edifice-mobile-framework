@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { BodyBoldText, HeadingSText, SmallText } from '~/framework/components/text';
+import { BodyBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
 import { ICourse } from '~/modules/viescolaire/dashboard/state/courses';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/diary/containers/DiaryTimetableTeachers';
@@ -203,7 +203,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     return (
       <View style={styles.courseView}>
         <View style={[styles.subjectView, !isHalfCourse && styles.subjectPadding]}>
-          <HeadingSText numberOfLines={1}>{className}</HeadingSText>
+          <HeadingXSText numberOfLines={1}>{className}</HeadingXSText>
           <SmallText numberOfLines={1}>{course.subject?.name || course.exceptionnal}</SmallText>
         </View>
         <View style={styles.buttonsContainer}>

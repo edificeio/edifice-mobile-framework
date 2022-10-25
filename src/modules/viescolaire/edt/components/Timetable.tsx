@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldItalicText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
 import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -44,9 +44,6 @@ const styles = StyleSheet.create({
   subjectView: {
     maxWidth: '56%',
   },
-  classText: {
-    ...TextSizeStyle.Medium,
-  },
   roomView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -62,9 +59,6 @@ const styles = StyleSheet.create({
   },
   halfTextStyle: {
     flex: 1,
-  },
-  halfClassText: {
-    ...TextSizeStyle.Medium,
   },
   halfRoomLabelContainer: {
     flexDirection: 'row',
@@ -103,7 +97,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={[styles.courseView, isCourseWithTags ? styles.greyishBackground : styles.whiteBackground]}>
         <View style={styles.subjectView}>
-          <SmallBoldText style={isTeacher && styles.classText}>{firstText}</SmallBoldText>
+          <HeadingXSText>{firstText}</HeadingXSText>
           <SmallText numberOfLines={1}>{secondText}</SmallText>
         </View>
         <View>
@@ -127,15 +121,14 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const isCourseWithTags = !!(course.tags && course.tags !== undefined && course.tags.length > 0);
     const isCourseTagNotUlis = !!(course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS');
     const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
-    const isTeacher = this.props.userType === 'Teacher';
 
     return (
       <View
         style={[styles.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? styles.greyishBackground : styles.whiteBackground]}>
         <View style={styles.halfSplitLineView}>
-          <SmallBoldText style={[styles.halfTextStyle, isTeacher && styles.halfClassText]} numberOfLines={1}>
+          <HeadingXSText style={styles.halfTextStyle} numberOfLines={1}>
             {firstText}
-          </SmallBoldText>
+          </HeadingXSText>
           {isCourseWithRoomLabel ? (
             <View style={styles.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
