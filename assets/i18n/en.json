@@ -77,7 +77,7 @@
   "auth-error-platform_unavailable": "Your educational network is temporarily unavailable, our team is doing its utmost to resolve these disturbances as quickly as possible.",
   "auth-error-pre_deleted": "Your account is now pre-deleted. You can only sign in to {{currentplatform}} from a web browser to recover your content.",
   "auth-error-runtime_error": "A problem has occurred. Try Again.",
-  "auth-error-too_load": "Due to the large number of connections, we must temporarily restrict access to the service. Try again in a few minutes.",
+  "auth-error-too_load": "Your educational network is temporarily unavailable, our team is doing its utmost to resolve these disturbances as quickly as possible.",
   "auth-error-too_many_tries": "For security reasons, your account has been temporarily blocked due to too many sign-in attempts. Please try again later.",
   "auth-error-unknown_denied": "A problem has occurred. Try Again. (Code 1)",
   "auth-error-unknown_response": "A problem has occurred. Try Again. (Code 2)",

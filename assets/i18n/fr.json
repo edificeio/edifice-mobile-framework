@@ -77,7 +77,7 @@
   "auth-error-platform_unavailable": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
   "auth-error-pre_deleted": "Votre compte est en pré-suppression. Vous pouvez seulement vous connecter via un navigateur web à l'adresse {{currentplatform}} pour récupérer vos contenus.",
   "auth-error-runtime_error": "Un problème est survenu. Veuillez réessayer.",
-  "auth-error-too_load": "En raison d'un grand nombre de connexions simultanées, nous devons temporairement restreindre l'accès au service. Essayez à nouveau d'ici quelques minutes.",
+  "auth-error-too_load": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
   "auth-error-too_many_tries": "Pour des raisons de sécurité, votre compte est bloqué temporairement suite à un trop grand nombre de tentatives de connexion. Veuillez réessayer ultérieurement.",
   "auth-error-unknown_denied": "Un problème est survenu. Veuillez réessayer. (Code 1)",
   "auth-error-unknown_response": "Un problème est survenu. Veuillez réessayer. (Code 2)",
