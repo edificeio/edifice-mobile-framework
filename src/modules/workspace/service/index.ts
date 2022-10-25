@@ -105,6 +105,9 @@ export const workspaceService = {
       if (!Object.values(Filter).includes(parentId as Filter)) {
         params += `&parentId=${parentId}`;
       }
+      if (filter === Filter.SHARED && parentId === 'shared') {
+        params += '&directShared=true';
+      }
       params += '&includeall=true';
       const api = `/workspace/documents${params}`;
       const files = (await fetchJSONWithCache(api)) as IEntcoreWorkspaceFileList;
