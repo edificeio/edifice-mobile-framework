@@ -161,7 +161,7 @@ export function loginAction(
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
-      } else if (emailValidationInfos?.emailState?.state !== 'valid') {
+      } else if (!emailValidationInfos?.emailState?.valid) {
         const err = new Error('[loginAction]: User must verify email.');
         (err as any).type = LoginFlowErrorType.MUST_VERIFY_EMAIL;
         (err as any).emailValidationInfos = emailValidationInfos;

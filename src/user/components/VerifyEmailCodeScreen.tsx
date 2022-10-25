@@ -68,7 +68,7 @@ export const VerifyEmailCodeScreen = ({
   isVerifying,
   resendAction,
   isResending,
-  loginAction,
+  redirectUserAction,
 }: {
   email: string;
   codeState: CodeState;
@@ -76,7 +76,7 @@ export const VerifyEmailCodeScreen = ({
   isVerifying: boolean;
   resendAction: () => Promise<ResendResponse>;
   isResending: boolean;
-  loginAction: () => void;
+  redirectUserAction: () => void;
 }) => {
   const [code, setCode] = React.useState('');
   const [isCodeStateHidden, setIsCodeStateHidden] = React.useState(true);
@@ -146,13 +146,13 @@ export const VerifyEmailCodeScreen = ({
           onHidden: () => setCode(''),
         });
       } else if (isCodeCorrect) {
-        const loginTimer = setTimeout(() => {
-          loginAction();
+        const redirectUserTimer = setTimeout(() => {
+          redirectUserAction();
         }, 500);
-        return () => clearTimeout(loginTimer);
+        return () => clearTimeout(redirectUserTimer);
       }
     }
-  }, [isVerifyingActive, isCodeStateUnknown, isCodeCorrect, loginAction]);
+  }, [isVerifyingActive, isCodeStateUnknown, isCodeCorrect, redirectUserAction]);
 
   return (
     <View style={styles.container}>

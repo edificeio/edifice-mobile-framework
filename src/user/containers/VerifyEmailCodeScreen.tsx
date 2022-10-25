@@ -3,12 +3,14 @@
  */
 import I18n from 'i18n-js';
 import React from 'react';
+import { Alert } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { KeyboardPageView } from '~/framework/components/page';
+import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { userService } from '~/user/service';
 
 import { checkVersionThenLogin } from '../actions/version';
@@ -18,6 +20,7 @@ import { VerifyEmailCodeScreen } from '../components/VerifyEmailCodeScreen';
 
 export interface IVerifyEmailCodeScreenEventProps {
   onLogin(credentials?: { username: string; password: string; rememberMe: boolean }): void;
+  onSaveNewEmail: (updatedProfileValues: IUpdatableProfileValues) => void;
 }
 export type IVerifyEmailCodeScreenProps = IVerifyEmailCodeScreenEventProps & NavigationInjectedProps;
 
@@ -41,6 +44,8 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
 
   const credentials = props.navigation.getParam('credentials');
   const email = props.navigation.getParam('email');
+  const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
+  const modifyString = isModifyingEmail ? 'Modify' : '';
   const [isVerifyingEmailCode, setIsVerifyingEmailCode] = React.useState(false);
   const [isResendingEmailVerificationCode, setIsResendingEmailVerificationCode] = React.useState(false);
   const [codeState, setCodeState] = React.useState<CodeState>(CodeState.PRISTINE);
@@ -78,18 +83,40 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
     }
   };
 
-  const login = async () => {
+  const redirectUser = async () => {
     try {
-      props.onLogin(credentials);
+      if (isModifyingEmail) {
+        props.navigation.navigate('MyProfile');
+        props.onSaveNewEmail({ email });
+      } else {
+        props.onLogin(credentials);
+      }
     } catch {
-      // console.warn('login: could not login');
+      // console.warn('redirectUser: could not redirect user');
     }
   };
+
+  const displayConfirmationAlert = () =>
+    Alert.alert(
+      I18n.t('user.sendEmailVerificationCodeScreen.alertTitle'),
+      I18n.t('user.sendEmailVerificationCodeScreen.alertContent'),
+      [
+        {
+          text: I18n.t('common.discard'),
+          onPress: () => props.navigation.navigate('MyProfile'),
+          style: 'destructive',
+        },
+        {
+          text: I18n.t('common.continue'),
+          style: 'cancel',
+        },
+      ],
+    );
 
   // HEADER =====================================================================================
 
   const navBarInfo = {
-    title: I18n.t('user.verifyEmailCodeScreen.title'),
+    title: I18n.t(`user.verifyEmailCodeScreen.title${modifyString}`),
   };
 
   // RENDER =======================================================================================
@@ -99,7 +126,8 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       style={{ backgroundColor: theme.ui.background.card }}
       scrollable
       navigation={props.navigation}
-      navBarWithBack={navBarInfo}>
+      navBarWithBack={navBarInfo}
+      onBack={isModifyingEmail ? () => displayConfirmationAlert() : undefined}>
       <VerifyEmailCodeScreen
         email={email}
         verifyAction={code => verifyEmailCode(code)}
@@ -107,7 +135,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
         codeState={codeState}
         resendAction={() => resendEmailVerificationCode()}
         isResending={isResendingEmailVerificationCode}
-        loginAction={() => login()}
+        redirectUserAction={() => redirectUser()}
       />
     </KeyboardPageView>
   );
@@ -122,6 +150,9 @@ export default connect(
       {
         onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
           dispatch<any>(checkVersionThenLogin(false, credentials));
+        },
+        onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
+          dispatch(profileUpdateAction(updatedProfileValues));
         },
       },
       dispatch,

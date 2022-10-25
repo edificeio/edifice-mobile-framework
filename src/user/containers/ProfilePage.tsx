@@ -138,11 +138,8 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               })}
               {this.renderItem({
                 title: I18n.t('EmailAddress'),
-                getter: () => this.state.email,
-                setter: email => this.setState({ email }),
-                modifyAction: () => {
-                  this.props.navigation.navigate('SendEmailVerificationCode');
-                },
+                getter: () => this.props.userinfo.email,
+                modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
               })}
               {this.renderItem({
                 title: I18n.t('Phone'),

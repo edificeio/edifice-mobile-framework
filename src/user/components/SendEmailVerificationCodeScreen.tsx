@@ -11,7 +11,6 @@ import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { ValidatorBuilder } from '~/utils/form';
 
 const imageWidth = getScaleDimension(150, 'width');
 const imageHeight = getScaleDimension(150, 'height');
@@ -36,31 +35,45 @@ const styles = StyleSheet.create({
   logoutText: { color: theme.palette.status.failure },
 });
 
+export enum EmailState {
+  PRISTINE = 'pristine',
+  EMAIL_FORMAT_INVALID = 'emailFormatInvalid',
+  EMAIL_ALREADY_VERIFIED = 'emailAlreadyVerified',
+}
+
 export const SendEmailVerificationCodeScreen = ({
   defaultEmail,
   sendAction,
   isSending,
   refuseAction,
+  isModifyingEmail,
 }: {
   defaultEmail: string;
-  sendAction: (email: string) => void;
+  sendAction: (email: string) => Promise<EmailState | undefined>;
   isSending: boolean;
   refuseAction: () => void;
+  isModifyingEmail: boolean;
 }) => {
   const [email, setEmail] = React.useState(defaultEmail || '');
-  const [isEmailValid, setIsEmailValid] = React.useState(true);
-  const emailValidator = new ValidatorBuilder().withEmail().build<string>();
-  const isEmailFormatValid = emailValidator.isValid(email);
+  const [emailState, setEmailState] = React.useState<EmailState>(EmailState.PRISTINE);
   const isEmailEmpty = email === '';
+  const isEmailStatePristine = emailState === EmailState.PRISTINE;
+  const isEmailStateAlreadyVerified = emailState === EmailState.EMAIL_ALREADY_VERIFIED;
+  const modifyString = isModifyingEmail ? 'Modify' : '';
+  const errorString = I18n.t(
+    isEmailStatePristine
+      ? 'common.space'
+      : `user.sendEmailVerificationCodeScreen.invalidEmailFormat${isEmailStateAlreadyVerified ? 'Modify' : ''}`,
+  );
+  const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure;
 
   const changeEmail = (text: string) => {
-    if (!isEmailFormatValid) setIsEmailValid(true);
+    if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
     setEmail(text);
   };
-  const sendEmail = () => {
-    if (isEmailFormatValid) {
-      sendAction(email);
-    } else setIsEmailValid(false);
+  const sendEmail = async () => {
+    const sendResponse = await sendAction(email);
+    if (sendResponse) setEmailState(sendResponse);
   };
 
   return (
@@ -70,26 +83,28 @@ export const SendEmailVerificationCodeScreen = ({
           <NamedSVG name="empty-email" width={imageWidth} height={imageHeight} />
         </View>
       </View>
-      <HeadingSText style={styles.title}>{I18n.t('user.sendEmailVerificationCodeScreen.emailVerification')}</HeadingSText>
-      <SmallText style={styles.content}>{I18n.t('user.sendEmailVerificationCodeScreen.mustVerify')}</SmallText>
+      <HeadingSText style={styles.title}>
+        {I18n.t(`user.sendEmailVerificationCodeScreen.emailVerification${modifyString}`)}
+      </HeadingSText>
+      <SmallText style={styles.content}>{I18n.t(`user.sendEmailVerificationCodeScreen.mustVerify${modifyString}`)}</SmallText>
       <View style={styles.inputTitleContainer}>
         <Icon name="messagerie-off" size={22} color={theme.palette.grey.black} />
-        <SmallBoldText style={styles.inputTitle}>{I18n.t('user.sendEmailVerificationCodeScreen.emailAddress')}</SmallBoldText>
+        <SmallBoldText style={styles.inputTitle}>
+          {I18n.t(`user.sendEmailVerificationCodeScreen.emailAddress${modifyString}`)}
+        </SmallBoldText>
       </View>
       <TextInput
         autoCorrect={false}
-        keyboardType="email-address"
         autoCapitalize="none"
+        keyboardType="email-address"
         placeholder={I18n.t('user.sendEmailVerificationCodeScreen.typeEmailAddress')}
         placeholderTextColor={theme.palette.grey.black}
         underlineColorAndroid={theme.palette.grey.grey}
-        style={[styles.input, { borderColor: isEmailValid ? theme.palette.grey.stone : theme.palette.status.failure }]}
+        style={[styles.input, { borderColor }]}
         value={email}
         onChangeText={text => changeEmail(text)}
       />
-      <CaptionItalicText style={styles.errorText}>
-        {I18n.t(isEmailValid ? 'common.space' : 'user.sendEmailVerificationCodeScreen.invalidEmailFormat')}
-      </CaptionItalicText>
+      <CaptionItalicText style={styles.errorText}>{errorString}</CaptionItalicText>
       <ActionButton
         style={styles.sendButton}
         text={I18n.t('user.sendEmailVerificationCodeScreen.verifyMyEmail')}
@@ -97,11 +112,13 @@ export const SendEmailVerificationCodeScreen = ({
         loading={isSending}
         action={() => sendEmail()}
       />
-      <TouchableOpacity style={styles.logoutButton} onPress={() => refuseAction()}>
-        <SmallBoldText style={styles.logoutText}>
-          {I18n.t('user.sendEmailVerificationCodeScreen.refuseAndDisconnect')}
-        </SmallBoldText>
-      </TouchableOpacity>
+      {isModifyingEmail ? null : (
+        <TouchableOpacity style={styles.logoutButton} onPress={() => refuseAction()}>
+          <SmallBoldText style={styles.logoutText}>
+            {I18n.t('user.sendEmailVerificationCodeScreen.refuseAndDisconnect')}
+          </SmallBoldText>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
