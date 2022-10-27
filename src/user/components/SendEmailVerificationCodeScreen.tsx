@@ -99,7 +99,6 @@ export const SendEmailVerificationCodeScreen = ({
         keyboardType="email-address"
         placeholder={I18n.t('user.sendEmailVerificationCodeScreen.typeEmailAddress')}
         placeholderTextColor={theme.palette.grey.black}
-        underlineColorAndroid={theme.palette.grey.grey}
         style={[styles.input, { borderColor }]}
         value={email}
         onChangeText={text => changeEmail(text)}
