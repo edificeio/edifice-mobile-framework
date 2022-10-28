@@ -493,7 +493,6 @@ export class NavigableModule<
     this.#root = this.getRoot(matchingApps, matchingWidgets);
     this.#route = this.createModuleRoute(matchingApps, matchingWidgets);
     if (this.config.displayBadges) {
-      // console.log('UPDATE APP BADGES', this.config.displayBadges);
       updateAppBadges(this.config.displayBadges);
     }
   }

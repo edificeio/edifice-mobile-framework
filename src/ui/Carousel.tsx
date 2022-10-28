@@ -266,7 +266,6 @@ class Carousel extends React.Component<
       <View
         style={{ flex: 1, backgroundColor: theme.palette.grey.black }}
         onLayout={() => {
-          console.log("ONLAYOUT");
           this.setState({
             viewport: {
               height: UI_SIZES.screen.height,

@@ -127,7 +127,6 @@ CarnetDeBordDetailsScreen.pageTiteI18n = {
   [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote.carnetDeBord.vieScolaire.title',
 };
 CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) => {
-  console.log('type', type, data);
   switch (type) {
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
       return [...(data.PageCahierDeTextes?.TravailAFairePast ?? []), ...(data.PageCahierDeTextes?.TravailAFaireFuture ?? [])].map(
