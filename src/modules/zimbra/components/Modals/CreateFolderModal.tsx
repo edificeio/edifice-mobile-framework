@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
 import { fetchRootFoldersAction, postFolderAction } from '~/modules/zimbra/actions/folders';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -56,7 +56,7 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
     await this.props.fetchRootFolders();
     this.props.onClose();
 
-    Toast.show(I18n.t('zimbra-create-directory-confirm'));
+    Toast.show(I18n.t('zimbra-create-directory-confirm'), { ...UI_ANIMATIONS.toast });
     this.setState({ name: '' });
   };
 

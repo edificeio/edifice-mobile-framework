@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -175,10 +175,11 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreen_Props) => {
       Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
         position: Toast.position.BOTTOM,
         mask: false,
+        ...UI_ANIMATIONS.toast,
       });
       props.fetchFavorites();
     } catch (err) {
-      Toast.show(I18n.t('common.error.text'));
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 
@@ -188,10 +189,11 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreen_Props) => {
       Toast.showSuccess(I18n.t('mediacentre.favorite-removed'), {
         position: Toast.position.BOTTOM,
         mask: false,
+        ...UI_ANIMATIONS.toast,
       });
       props.fetchFavorites();
     } catch (err) {
-      Toast.show(I18n.t('common.error.text'));
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 

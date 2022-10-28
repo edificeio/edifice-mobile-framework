@@ -6,7 +6,7 @@ import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, NestedText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -189,7 +189,7 @@ export const RenderPJs = ({
               try {
                 await sf.open();
               } catch (e) {
-                Toast.show(I18n.t('download-error-generic'));
+                Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
               }
             }}>
             <View style={{ flexDirection: 'row', flex: 0, alignItems: 'center', borderRadius: 6 }}>
@@ -213,9 +213,9 @@ export const RenderPJs = ({
                     try {
                       const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                       await sf.mirrorToDownloadFolder();
-                      Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
+                      Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }), { ...UI_ANIMATIONS.toast });
                     } catch (e) {
-                      Toast.show(I18n.t('download-error-generic'));
+                      Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
                     }
                   }}
                   style={{ paddingHorizontal: UI_SIZES.spacing.small }}>

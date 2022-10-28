@@ -4,7 +4,7 @@ import { FlatList, StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } fr
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
 import { newMailService } from '~/modules/zimbra/service/newMail';
 import { getProfileColor } from '~/modules/zimbra/utils/userColor';
@@ -167,7 +167,7 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
       addUser({ displayName: search, id: search });
     } else if (search.includes('@') && !hasRightToSendExternalMails) {
       updateSearch('');
-      return Toast.show(I18n.t('zimbra-external-mail-right-error'));
+      return Toast.show(I18n.t('zimbra-external-mail-right-error'), { ...UI_ANIMATIONS.toast });
     }
     if (search !== '') {
       updateSearch('');

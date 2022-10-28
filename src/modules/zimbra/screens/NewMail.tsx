@@ -9,6 +9,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
@@ -190,10 +191,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getSendDraft: async () => {
       if (this.state.mail.to.length === 0) {
-        Toast.show(I18n.t('zimbra-missing-receiver'));
+        Toast.show(I18n.t('zimbra-missing-receiver'), { ...UI_ANIMATIONS.toast });
         return;
       } else if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
-        Toast.show(I18n.t('zimbra-send-attachment-progress'));
+        Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
         return;
       }
 
@@ -202,7 +203,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
         this.props.sendMail(this.getMailData(), this.state.id!, this.state.replyTo!);
 
-        Toast.show(I18n.t('zimbra-send-mail'));
+        Toast.show(I18n.t('zimbra-send-mail'), { ...UI_ANIMATIONS.toast });
 
         const navParams = this.props.navigation.state;
         if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
@@ -231,15 +232,15 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     getGoBack: () => {
       const draftType = this.props.navigation.getParam('type');
       if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
-        Toast.show(I18n.t('zimbra-send-attachment-progress'));
+        Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
         return;
       }
       if (!this.checkIsMailEmpty()) {
         this.saveDraft();
         if (draftType === DraftType.DRAFT) {
-          Toast.showSuccess(I18n.t('zimbra-draft-updated'));
+          Toast.showSuccess(I18n.t('zimbra-draft-updated'), { ...UI_ANIMATIONS.toast });
         } else {
-          Toast.showSuccess(I18n.t('zimbra-draft-created'));
+          Toast.showSuccess(I18n.t('zimbra-draft-created'), { ...UI_ANIMATIONS.toast });
         }
       }
 
@@ -467,7 +468,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         tempAttachment: null,
       }));
     } catch (e) {
-      Toast.show(I18n.t('zimbra-attachment-error'));
+      Toast.show(I18n.t('zimbra-attachment-error'), { ...UI_ANIMATIONS.toast });
       this.setState({ tempAttachment: null });
     }
   };
@@ -482,7 +483,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
 
     this.props.navigation.goBack();
-    Toast.show(I18n.t('zimbra-message-deleted'));
+    Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
   };
 
   forwardDraft = async () => {

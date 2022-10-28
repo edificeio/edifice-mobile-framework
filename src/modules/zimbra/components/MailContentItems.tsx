@@ -6,7 +6,7 @@ import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -345,9 +345,9 @@ export const RenderPJs = ({
                       try {
                         const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                         await sf.mirrorToDownloadFolder();
-                        Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
+                        Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }), { ...UI_ANIMATIONS.toast });
                       } catch (e) {
-                        Toast.show(I18n.t('download-error-generic'));
+                        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
                       }
                     }}
                     style={styles.attachmentDownloadButton}>

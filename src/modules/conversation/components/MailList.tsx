@@ -6,7 +6,7 @@ import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
@@ -187,6 +187,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+        ...UI_ANIMATIONS.toast,
       });
     } catch (e) {
       // TODO: Manage error
@@ -221,6 +222,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+        ...UI_ANIMATIONS.toast,
       });
     } catch (error) {
       // TODO: Manage error

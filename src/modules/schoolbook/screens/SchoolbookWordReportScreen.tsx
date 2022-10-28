@@ -9,6 +9,7 @@ import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navi
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -102,9 +103,9 @@ const SchoolbookWordReportScreen = (props: ISchoolbookWordReportScreen_Props) =>
     try {
       reportCardRef?.current?.cardModalBoxRef()?.doDismissModal();
       await schoolbookService.word.resend(session, schoolbookWordId);
-      Toast.show(I18n.t('schoolbook.schoolbookWordReportScreen.reminderToast.text'));
+      Toast.show(I18n.t('schoolbook.schoolbookWordReportScreen.reminderToast.text'), { ...UI_ANIMATIONS.toast });
     } catch (e) {
-      Toast.show(I18n.t('common.error.text'));
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 

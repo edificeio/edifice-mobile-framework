@@ -7,6 +7,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -82,7 +83,7 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
       await this.props.declareAbsenceWithFileAction(startDate, endDate, comment, attachment);
     } else await this.props.declareAbsenceAction(startDate, endDate, comment);
     this.props.navigation.goBack();
-    Toast.showSuccess(I18n.t('viesco-absence-declared'));
+    Toast.showSuccess(I18n.t('viesco-absence-declared'), { ...UI_ANIMATIONS.toast });
   };
 
   validate = () => {

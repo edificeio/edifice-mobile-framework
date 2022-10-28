@@ -7,6 +7,7 @@ import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { IUserSession } from '~/framework/util/session';
@@ -96,7 +97,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
         tempAttachment: null,
       }));
     } catch (e) {
-      Toast.show(I18n.t('support-attachment-error'));
+      Toast.show(I18n.t('support-attachment-error'), { ...UI_ANIMATIONS.toast });
       this.setState({ tempAttachment: file });
     }
   };
@@ -119,13 +120,13 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
   sendTicket = async (reset: (() => void)[]) => {
     const error = this.checkTicket();
     if (error) {
-      Toast.show(I18n.t(error));
+      Toast.show(I18n.t(error), { ...UI_ANIMATIONS.toast });
     } else {
       try {
         const response = await this.props.createTicket(this.state.ticket);
 
         Toast.showSuccess(I18n.t('support-ticket-success-id') + response.id + I18n.t('support-ticket-success-info'), {
-          duration: 5000,
+          ...UI_ANIMATIONS.toast,
         });
         this.setState(prevState => ({
           ticket: { ...prevState.ticket, subject: '', description: '', attachments: [] },
@@ -133,7 +134,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
         }));
         reset.forEach(reset => reset());
       } catch (e) {
-        Toast.show(I18n.t('support-ticket-failure'));
+        Toast.show(I18n.t('support-ticket-failure'), { ...UI_ANIMATIONS.toast });
       }
     }
   };

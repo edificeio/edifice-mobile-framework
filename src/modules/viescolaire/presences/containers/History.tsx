@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -139,6 +139,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
         position: Toast.position.CENTER,
         containerStyle: { padding: UI_SIZES.spacing.big, backgroundColor: theme.palette.status.failure },
         textStyle: {},
+        ...UI_ANIMATIONS.toast,
       });
     }
 

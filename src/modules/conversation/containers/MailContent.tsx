@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import ActionsMenu from '~/framework/components/actionsMenu';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
@@ -108,6 +108,7 @@ class MailContentContainer extends React.PureComponent<
       position: Toast.position.BOTTOM,
       mask: false,
       containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+      ...UI_ANIMATIONS.toast,
     });
   };
 
@@ -139,6 +140,7 @@ class MailContentContainer extends React.PureComponent<
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+        ...UI_ANIMATIONS.toast,
       });
     } catch (error) {
       // TODO: Manage error

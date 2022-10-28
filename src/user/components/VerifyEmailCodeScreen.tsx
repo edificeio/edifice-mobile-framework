@@ -8,7 +8,7 @@ import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
@@ -132,9 +132,12 @@ export const VerifyEmailCodeScreen = ({
     if (resendResponse === ResendResponse.FAIL) {
       Toast.show(I18n.t('common.error.text'), {
         onHidden: () => setIsResendDisabled(false),
+        ...UI_ANIMATIONS.toast,
       });
     } else if (resendResponse === ResendResponse.SUCCESS) {
-      Toast.show(I18n.t('user.verifyEmailCodeScreen.codeResent'));
+      Toast.show(I18n.t('user.verifyEmailCodeScreen.codeResent'), {
+        ...UI_ANIMATIONS.toast,
+      });
     }
   };
 
@@ -144,6 +147,7 @@ export const VerifyEmailCodeScreen = ({
       if (isCodeStateUnknown) {
         Toast.show(I18n.t('common.error.text'), {
           onHidden: () => setCode(''),
+          ...UI_ANIMATIONS.toast,
         });
       } else if (isCodeCorrect) {
         const redirectUserTimer = setTimeout(() => {
@@ -221,7 +225,7 @@ export const VerifyEmailCodeScreen = ({
         <SmallText style={styles.issueText}>{I18n.t('user.verifyEmailCodeScreen.codeIssue')}</SmallText>
         <TouchableOpacity
           style={[styles.resendButton, { opacity: isResendInactive ? 0.5 : 1 }]}
-          disabled={isResendInactive}
+          disabled={false}
           onPress={() => resendCode()}>
           <Icon name="refresh" size={22} color={theme.palette.grey.black} />
           <BodyBoldText style={styles.resendText}>{I18n.t('user.verifyEmailCodeScreen.resendCode')}</BodyBoldText>

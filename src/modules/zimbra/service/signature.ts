@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
 import Toast from 'react-native-tiny-toast';
 
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { ISignature } from '~/modules/zimbra/state/signature';
 
@@ -39,9 +40,9 @@ export const signatureService = {
         method: 'PUT',
         body: JSON.stringify(bodyData),
       });
-      Toast.show(I18n.t('zimbra-signature-added'));
+      Toast.show(I18n.t('zimbra-signature-added'), { ...UI_ANIMATIONS.toast });
     } catch (e) {
-      Toast.show(I18n.t('zimbra-signature-error'));
+      Toast.show(I18n.t('zimbra-signature-error'), { ...UI_ANIMATIONS.toast });
     }
   },
 };
