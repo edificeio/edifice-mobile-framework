@@ -3,19 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { BodyText } from '~/framework/components/text';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
-import { FlatButton } from '~/ui/FlatButton';
 
 import { WorkspaceFileListItem } from './WorkspaceFileListItem';
 import { WorkspaceFolderSelector } from './WorkspaceFolderSelector';
 
 const styles = StyleSheet.create({
-  titleText: {
-    ...TextSizeStyle.SlightBig,
-  },
   flatListContainer: {
     maxHeight: 400,
     marginVertical: UI_SIZES.spacing.small,
@@ -129,7 +126,7 @@ export const WorkspaceModal = ({
       ref={modalBoxRef}
       content={
         <View>
-          <Text style={styles.titleText}>{settings.title}</Text>
+          <BodyText>{settings.title}</BodyText>
           {settings.hasDestinationSelector ? (
             <WorkspaceFolderSelector
               data={folderTree}
@@ -141,7 +138,7 @@ export const WorkspaceModal = ({
           {settings.hasFileList ? (
             <FlatList
               data={selectedFiles}
-              renderItem={({ item }) => <WorkspaceFileListItem item={item} disabled />}
+              renderItem={({ item }) => <WorkspaceFileListItem item={item} isDisabled />}
               keyExtractor={(item: IFile) => item.id}
               style={styles.flatListContainer}
             />
@@ -154,7 +151,7 @@ export const WorkspaceModal = ({
               style={styles.textInput}
             />
           ) : null}
-          <FlatButton onPress={action} title={settings.buttonText} disabled={isDisabled} />
+          <ActionButton text={settings.buttonText} action={action} disabled={isDisabled} />
         </View>
       }
     />

@@ -6,7 +6,8 @@ import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { Weight } from '~/ui/Typography';
+
+import { TextFontStyle, TextSizeStyle } from './text';
 
 const ITEM_HEIGHT = 45;
 const LIST_RADIUS = 20;
@@ -208,8 +209,9 @@ const styles = StyleSheet.create({
     paddingLeft: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny, // A little random here but it looks cool
   },
   placeholder: {
+    ...TextFontStyle.Italic,
+    ...TextSizeStyle.Normal,
     color: theme.palette.secondary.regular,
-    fontStyle: 'italic',
   },
   style: {
     borderBottomColor: theme.ui.border.listItem,
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   text: {
-    fontWeight: Weight.Bold,
+    ...TextFontStyle.Bold,
     overflow: 'hidden',
   },
 });

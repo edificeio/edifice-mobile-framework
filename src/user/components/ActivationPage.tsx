@@ -5,17 +5,16 @@ import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Toucha
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text, TextAction } from '~/framework/components/text';
+import { SmallActionText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
-import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
-import { ErrorMessage } from '~/ui/Typography';
 import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 
@@ -164,17 +163,28 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         onPress={() => this.setState({ isCGUAccepted: !isCGUAccepted })}
                         customContainerStyle={{ marginRight: UI_SIZES.spacing.tiny }}
                       />
-                      <Text>{I18n.t('activation-cgu-accept')}</Text>
+                      <SmallText>{I18n.t('activation-cgu-accept')}</SmallText>
                       <TouchableOpacity onPress={this.handleOpenCGU}>
-                        <TextAction>{I18n.t('activation-cgu')}</TextAction>
+                        <SmallActionText>{I18n.t('activation-cgu')}</SmallActionText>
                       </TouchableOpacity>
                     </View>
-                    <ErrorMessage> {hasErrorKey && !typing ? errorText : ''} </ErrorMessage>
+                    <SmallText
+                      style={{
+                        flexGrow: 0,
+                        marginTop: UI_SIZES.spacing.medium,
+                        padding: UI_SIZES.spacing.tiny,
+                        textAlign: 'center',
+                        alignSelf: 'center',
+                        color: theme.palette.status.failure,
+                      }}>
+                      {' '}
+                      {hasErrorKey && !typing ? errorText : ''}{' '}
+                    </SmallText>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
-                      <FlatButton
-                        onPress={() => this.handleActivation()}
+                      <ActionButton
+                        text={I18n.t('Activate')}
                         disabled={isNotValid}
-                        title={I18n.t('Activate')}
+                        action={() => this.handleActivation()}
                         loading={isSubmitLoading}
                       />
                     </ButtonWrapper>

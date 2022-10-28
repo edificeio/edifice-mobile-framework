@@ -1,6 +1,6 @@
 /**
  * ODE Mobile UI - Loading
- * Just dusplay a custom activity indicator
+ * Just display a custom activity indicator
  */
 import * as React from 'react';
 import { ActivityIndicator, ColorValue, View, ViewStyle } from 'react-native';

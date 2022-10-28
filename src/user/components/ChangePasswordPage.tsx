@@ -1,20 +1,18 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Alert, Pressable, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { ActionButton } from '~/framework/components/ActionButton';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
-import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
-import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
@@ -210,7 +208,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                     padding: UI_SIZES.spacing.tiny,
                     flex: 0,
                   }}>
-                  <Text style={{ ...TextSizeStyle.SlightBig, textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</Text>
+                  <BodyText style={{ textAlign: 'center' }}>{I18n.t('PasswordChangeWarning')}</BodyText>
                   <MiniSpacer />
                   <MiniSpacer />
                 </View>
@@ -226,9 +224,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                     borderRadius: 10,
                     flex: 0,
                   }}>
-                  <Text style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
-                    {I18n.t('common.idf.passwordRules')}
-                  </Text>
+                  <CaptionText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.idf.passwordRules')}</CaptionText>
                 </View>
               ) : null}
             </View>
@@ -245,18 +241,27 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
               <MiniSpacer />
             </View>
             <View style={{ flexShrink: 0 }}>
-              <ErrorMessage style={{ marginTop: 0, minHeight: UI_SIZES.getResponsiveStyledLineHeight() * 3 }}>
+              <SmallText
+                style={{
+                  flexGrow: 0,
+                  padding: UI_SIZES.spacing.tiny,
+                  textAlign: 'center',
+                  alignSelf: 'center',
+                  color: theme.palette.status.failure,
+                  marginTop: 0,
+                  minHeight: getScaleDimension(20, 'height') * 3,
+                }}>
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}
-              </ErrorMessage>
+              </SmallText>
             </View>
             <View style={{ flexShrink: 0 }}>
               <ButtonWrapper error={hasErrorKey} typing={typing}>
-                <FlatButton
-                  onPress={() => this.handleSubmit()}
+                <ActionButton
+                  action={() => this.handleSubmit()}
                   disabled={isNotValid}
-                  title={I18n.t('Save')}
+                  text={I18n.t('Save')}
                   loading={isSubmitLoading}
                 />
               </ButtonWrapper>

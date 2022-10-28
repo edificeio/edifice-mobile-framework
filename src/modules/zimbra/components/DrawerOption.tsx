@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, BodyText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   item: {
@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.secondary.regular,
   },
   itemText: {
-    ...TextSizeStyle.SlightBig,
     marginHorizontal: UI_SIZES.spacing.small,
   },
   itemTextSelected: {
@@ -37,23 +36,23 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
   public render() {
     const { label, selected, iconName, count, navigate } = this.props;
     const touchableStyle = selected ? [styles.item, styles.selectedItem] : styles.item;
-    const iconColor = selected ? theme.ui.text.inverse : '#000';
+    const iconColor = selected ? theme.palette.grey.white : theme.palette.grey.black;
     const countString = count ? ` (${count})` : '';
     return (
       <TouchableOpacity style={touchableStyle} onPress={navigate} disabled={selected}>
         <Icon size={22} name={iconName} color={iconColor} />
         {selected ? (
-          <TextBold numberOfLines={1} style={[styles.itemTextSelected, styles.itemText]}>
+          <BodyBoldText numberOfLines={1} style={[styles.itemTextSelected, styles.itemText]}>
             {label + countString}
-          </TextBold>
+          </BodyBoldText>
         ) : count ? (
-          <TextSemiBold numberOfLines={1} style={styles.itemText}>
+          <BodyBoldText numberOfLines={1} style={styles.itemText}>
             {label + countString}
-          </TextSemiBold>
+          </BodyBoldText>
         ) : (
-          <Text numberOfLines={1} style={styles.itemText}>
+          <BodyText numberOfLines={1} style={styles.itemText}>
             {label}
-          </Text>
+          </BodyText>
         )}
       </TouchableOpacity>
     );

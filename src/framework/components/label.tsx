@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
-import { TextBold, TextSizeStyle } from './text';
+import { SmallBoldText, TextSizeStyle } from './text';
 
 // PROPS ==========================================================================================
 
@@ -31,7 +31,7 @@ export const LabelView = styled.View({
   paddingVertical: UI_SIZES.spacing._LEGACY_small,
   paddingHorizontal: UI_SIZES.spacing.small,
 });
-export const LabelText = styled(TextBold)({
+export const LabelText = styled(SmallBoldText)({
   // No common style except bold
 });
 

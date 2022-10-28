@@ -1,10 +1,9 @@
 import styled from '@emotion/native';
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ColorValue, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const TapCircle = styled(TouchableOpacity)<{ checked: boolean }>(
@@ -35,7 +34,7 @@ const squareCheckboxStyle = StyleSheet.create({
     borderRadius: 3,
     height: 25,
     width: 25,
-    borderColor: CommonStyles.grey,
+    borderColor: theme.palette.grey.grey,
   },
 });
 
@@ -48,7 +47,7 @@ export const SquareCheckbox = ({
   value: boolean;
   onChange?: () => void;
   disabled?: boolean;
-  color?: string;
+  color?: ColorValue;
 }) => {
   const checkedStyle = value
     ? { backgroundColor: color, borderWidth: 0 }

@@ -1,34 +1,28 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { FakeHeader_Container, FakeHeader_Row, HeaderAction, HeaderRight } from '~/framework/components/header';
+import { FakeHeader_Container, FakeHeader_Row, HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import MailListContainer from '~/modules/zimbra/components/MailListContainer';
 
 const styles = StyleSheet.create({
-  headerRow: {
-    alignItems: 'stretch',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    marginRight: UI_SIZES.spacing.huge,
-  },
   searchIcon: {
     marginHorizontal: UI_SIZES.spacing.medium,
   },
   textInput: {
     flex: 1,
-    color: theme.palette.grey.white,
-    fontSize: 16,
+    ...TextFontStyle.Regular,
+    ...TextSizeStyle.Medium,
+    lineHeight: 22,
+    color: theme.ui.text.inverse,
   },
 });
 
@@ -56,7 +50,7 @@ const Input = ({ value, onChange }: { value: string; onChange: (text: string) =>
     <TextInput
       style={styles.textInput}
       placeholder={I18n.t('Search')}
-      placeholderTextColor={theme.palette.grey.white}
+      placeholderTextColor={theme.ui.text.inverse}
       numberOfLines={1}
       defaultValue={currentValue}
       onChangeText={text => updateCurrentValue(text)}
@@ -86,14 +80,10 @@ export class SearchContainer extends React.PureComponent<SearchProps, SearchStat
         navBarNode={
           this.state.isShownHeader ? (
             <FakeHeader_Container>
-              <FakeHeader_Row style={styles.headerRow}>
-                <View style={styles.searchContainer}>
-                  <Icon name="search2" size={20} color={theme.ui.text.inverse} style={styles.searchIcon} />
-                  <Input value={this.state.searchText} onChange={text => this.setState({ searchText: text })} />
-                </View>
-                <HeaderRight>
-                  <HeaderAction iconName="close2" onPress={() => navigation.goBack()} />
-                </HeaderRight>
+              <FakeHeader_Row>
+                <Icon name="search2" size={20} color={theme.ui.text.inverse} style={styles.searchIcon} />
+                <Input value={this.state.searchText} onChange={text => this.setState({ searchText: text })} />
+                <HeaderAction iconName="close2" onPress={() => navigation.goBack()} />
               </FakeHeader_Row>
             </FakeHeader_Container>
           ) : null

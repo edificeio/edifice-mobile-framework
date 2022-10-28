@@ -2,10 +2,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
-import { FlatButton } from '~/ui/FlatButton';
+import { SmallText } from '~/framework/components/text';
 import { Loading } from '~/ui/Loading';
-import { ErrorMessage } from '~/ui/Typography';
 
 interface IConnectorViewDataProps {
   error: string;
@@ -27,6 +28,12 @@ const styles = StyleSheet.create({
   errorText: {
     marginBottom: UI_SIZES.spacing.big,
     width: '70%',
+    flexGrow: 0,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: theme.palette.status.failure,
   },
 });
 
@@ -38,8 +45,8 @@ class ConnectorView extends React.PureComponent<IConnectorViewProps> {
   private renderError() {
     return (
       <View style={styles.errorContainer}>
-        <ErrorMessage style={styles.errorText}>{I18n.t('connector-connectFailed')}</ErrorMessage>
-        <FlatButton onPress={this.props.openConnector} title={I18n.t('tryagain')} loading={this.props.isLoading} />
+        <SmallText style={styles.errorText}>{I18n.t('connector-connectFailed')}</SmallText>
+        <ActionButton action={this.props.openConnector} text={I18n.t('tryagain')} loading={this.props.isLoading} />
       </View>
     );
   }

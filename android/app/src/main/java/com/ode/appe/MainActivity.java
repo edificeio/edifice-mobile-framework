@@ -28,7 +28,13 @@ public class MainActivity extends ReactActivity {
         return new ReactActivityDelegate(this, getMainComponentName()) {
             @Override
             protected ReactRootView createRootView() {
-                return new RNGestureHandlerEnabledRootView(MainActivity.this);
+                ReactRootView reactRootView = new ReactRootView(getContext()); //  RNGestureHandlerEnabledRootView(MainActivity.this);
+                reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+                return reactRootView;
+            }
+            @Override
+            protected boolean isConcurrentRootEnabled() {
+                return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
             }
         };
     }
@@ -38,4 +44,5 @@ public class MainActivity extends ReactActivity {
         super.onNewIntent(intent);
         setIntent(intent);
     }
+
 }

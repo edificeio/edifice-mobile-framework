@@ -4,8 +4,7 @@ import { ColorValue } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-
-import { Weight } from './Typography';
+import { CaptionBoldText } from '~/framework/components/text';
 
 export interface BadgeProps {
   content: number | string;
@@ -31,13 +30,6 @@ const ViewEmpty = styled.View({
   marginBottom: 7, // Magic number here
 });
 
-const Text = styled.Text({
-  color: theme.ui.text.inverse,
-  fontFamily: 'OpenSans-Regular',
-  fontSize: 10,
-  fontWeight: Weight.SemiBold,
-});
-
 export const Badge = ({ content, color }: BadgeProps) => {
   if (!content) {
     return <ViewEmpty />;
@@ -46,7 +38,7 @@ export const Badge = ({ content, color }: BadgeProps) => {
   return (
     <ViewBadge color={color}>
       {typeof content === 'number' ? (
-        <Text>{content > 99 ? '99+' : content}</Text>
+        <CaptionBoldText style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBoldText>
       ) : typeof content === 'string' ? (
         <Icon size={10} color={theme.ui.text.inverse} name={content} />
       ) : (

@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { SectionList, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
-import { H4 } from '~/ui/Typography';
+import SectionList from '~/framework/components/sectionList';
+import { SmallText } from '~/framework/components/text';
 
 import { UserCard } from './UserCard';
 
@@ -54,7 +55,11 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps & Navig
             sections={data}
             keyExtractor={item => item.id}
             renderSectionHeader={({ section }) => {
-              return <H4>{section.structureName}</H4>;
+              return (
+                <SmallText style={{ marginTop: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
+                  {section.structureName}
+                </SmallText>
+              );
             }}
             renderItem={({ item: user }) => {
               return (
@@ -63,7 +68,6 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps & Navig
                 </View>
               );
             }}
-            ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
           />
         ) : null}
       </PageView>

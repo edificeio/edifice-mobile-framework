@@ -2,31 +2,41 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { getSessionInfo } from '~/App';
+import { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
+import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
-import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
-import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
-import { fetchDevoirMoyennesListAction } from '~/modules/viescolaire/competences/actions/moyennes';
-import { fetchUserChildrenAction } from '~/modules/viescolaire/competences/actions/userChildren';
+import {
+  fetchCompetencesDevoirsAction,
+  fetchCompetencesLevelsAction,
+  fetchCompetencesMoyennesAction,
+  fetchCompetencesUserChildrenAction,
+} from '~/modules/viescolaire/competences/actions';
 import Competences from '~/modules/viescolaire/competences/components/Evaluation';
-import { ILevelsList, getLevelsListState } from '~/modules/viescolaire/competences/state/competencesLevels';
-import { IDevoirsMatieresState, getDevoirListState } from '~/modules/viescolaire/competences/state/devoirs';
-import { IMoyenneListState, getMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
-import { getUserChildrenState } from '~/modules/viescolaire/competences/state/userChildren';
-import { fetchGroupListAction } from '~/modules/viescolaire/viesco/actions/group';
-import { fetchPeriodsListAction } from '~/modules/viescolaire/viesco/actions/periods';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
-import { getGroupsListState } from '~/modules/viescolaire/viesco/state/group';
-import { IPeriodsList, getPeriodsListState } from '~/modules/viescolaire/viesco/state/periods';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import moduleConfig from '~/modules/viescolaire/competences/moduleConfig';
+import { IDevoirsMatieres, ILevel, IMoyenne } from '~/modules/viescolaire/competences/reducer';
+import { fetchGroupListAction } from '~/modules/viescolaire/dashboard/actions/group';
+import { fetchPeriodsListAction } from '~/modules/viescolaire/dashboard/actions/periods';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
+import { getGroupsListState } from '~/modules/viescolaire/dashboard/state/group';
+import { IPeriodsList, getPeriodsListState } from '~/modules/viescolaire/dashboard/state/periods';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
+
+type CompetenceEventProps = {
+  fetchChildInfos: (userId: string) => void;
+  fetchChildGroups: (classes: string, student: string) => any;
+  getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
+  getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
+  getPeriods: (structureId: string, groupId: string) => void;
+  getLevels: (structureIs: string) => void;
+};
 
 export type CompetencesProps = {
-  devoirsList: IDevoirsMatieresState;
-  devoirsMoyennesList: IMoyenneListState;
-  levels: ILevelsList;
+  devoirsList: AsyncState<IDevoirsMatieres>;
+  devoirsMoyennesList: AsyncState<IMoyenne[]>;
+  levels: ILevel[];
   userType: string;
   userId: string;
   periods: IPeriodsList;
@@ -34,13 +44,8 @@ export type CompetencesProps = {
   childClasses: string;
   structureId: string;
   childId: string;
-  fetchChildInfos: (userId: string) => void;
-  fetchChildGroups: (classes: string, student: string) => any;
-  getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
-  getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
-  getPeriods: (structureId: string, groupId: string) => void;
-  getLevels: (structureIs: string) => void;
-} & NavigationInjectedProps;
+} & CompetenceEventProps &
+  NavigationInjectedProps;
 
 export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   componentDidMount = async () => {
@@ -78,57 +83,69 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   }
 }
 
-const mapStateToProps: (state: any) => any = state => {
+const mapStateToProps = (gs: any): any => {
+  const state = moduleConfig.getState(gs);
   const userType = getUserSession().user.type;
   const userId = getUserSession().user.id;
-  const childId = userType === 'Student' ? userId : getSelectedChild(state)?.id;
+  const childId = userType === 'Student' ? userId : getSelectedChild(gs)?.id;
   const structureId =
     userType === 'Student'
-      ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
-      : getSelectedChildStructure(state)?.id;
+      ? gs.user.info.administrativeStructures[0].id || gs.user.info.structures[0]
+      : getSelectedChildStructure(gs)?.id;
 
   // get groups and childClasses
   let childClasses: string = '';
   const groups = [] as string[];
-  const childGroups = getGroupsListState(state).data;
+  const childGroups = getGroupsListState(gs).data;
   if (getUserSession().user.type === 'Student') {
-    childClasses = getSessionInfo().classes[0];
+    childClasses = gs.user.info.classes[0];
   } else {
-    childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasse!;
+    childClasses = state.userChildren.data!.find(child => childId === child.id)?.idClasse!;
   }
   if (childGroups !== undefined && childGroups[0] !== undefined) {
     if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);
     childGroups[0]?.nameGroups?.forEach(item => groups.push(item));
   } else if (getUserSession().user.type === 'Student') {
-    groups.push(getSessionInfo().realClassesNames[0]);
+    groups.push(gs.user.info.realClassesNames[0]);
   }
 
   return {
-    devoirsList: getDevoirListState(state),
-    devoirsMoyennesList: getMoyenneListState(state),
-    levels: getLevelsListState(state).data,
+    devoirsList: state.devoirsMatieres,
+    devoirsMoyennesList: state.moyennes,
+    levels: state.levels.data,
     userType,
     userId,
-    periods: getPeriodsListState(state).data,
-    groups: getGroupsListState(state).data,
+    periods: getPeriodsListState(gs).data,
+    groups: getGroupsListState(gs).data,
     structureId,
     childId,
     childClasses,
   };
 };
 
-const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators(
-    {
-      fetchChildInfos: fetchUserChildrenAction,
-      fetchChildGroups: fetchGroupListAction,
-      getDevoirs: fetchDevoirListAction,
-      getDevoirsMoyennes: fetchDevoirMoyennesListAction,
-      getPeriods: fetchPeriodsListAction,
-      getLevels: fetchLevelsAction,
-    },
-    dispatch,
-  );
-};
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => CompetenceEventProps = (
+  dispatch,
+  getState,
+) => ({
+  fetchChildInfos: async (userId: string) => {
+    return dispatch(fetchCompetencesUserChildrenAction(userId));
+  },
+  fetchChildGroups: async (classes: string, student: string) => {
+    return dispatch(fetchGroupListAction(classes, student));
+  },
+  getDevoirs: async (structureId: string, studentId: string, periods?: string, matiere?: string) => {
+    return dispatch(fetchCompetencesDevoirsAction(structureId, studentId, periods, matiere));
+  },
+  getDevoirsMoyennes: async (structureId: string, studentId: string, period?: string) => {
+    return dispatch(fetchCompetencesMoyennesAction(structureId, studentId, period));
+  },
+  getPeriods: async (structureId: string, groupId: string) => {
+    return dispatch(fetchPeriodsListAction(structureId, groupId));
+  },
+  getLevels: async (structureId: string) => {
+    return dispatch(fetchCompetencesLevelsAction(structureId));
+  },
+  dispatch,
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Evaluation);

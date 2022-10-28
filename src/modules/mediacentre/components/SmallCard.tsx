@@ -1,13 +1,14 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
@@ -18,12 +19,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   titleText: {
     color: theme.palette.primary.regular,
     flexShrink: 1,
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
   lowerContentContainer: {
     flexDirection: 'row',
@@ -35,10 +36,7 @@ const styles = StyleSheet.create({
   secondaryContainer: {
     flex: 1,
     justifyContent: 'space-between',
-    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
-  },
-  descriptionText: {
-    ...TextSizeStyle.Small,
+    marginLeft: UI_SIZES.spacing.minor,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -47,7 +45,7 @@ const styles = StyleSheet.create({
 });
 
 interface IIconButtonProps {
-  color?: string;
+  color?: ColorValue;
   icon: string;
   size: number;
 
@@ -70,7 +68,7 @@ interface ISmallCardProps {
 
 export const IconButton: React.FunctionComponent<IIconButtonProps> = (props: IIconButtonProps) => (
   <TouchableOpacity onPress={props.onPress}>
-    <Icon size={props.size} color={props.color || theme.palette.primary.regular} name={props.icon} />
+    <Icon size={props.size} color={props.color ?? theme.palette.primary.regular} name={props.icon} />
   </TouchableOpacity>
 );
 
@@ -82,9 +80,9 @@ export const FavoriteIcon: React.FunctionComponent<IFavoriteIconProps> = (props:
     props.addFavorite(props.resource.id, props.resource);
   };
   return props.resource.favorite ? (
-    <IconButton icon="star" size={20} color="#FEC63D" onPress={removeFavorite} />
+    <IconButton icon="star" size={20} color={theme.palette.complementary.yellow.regular} onPress={removeFavorite} />
   ) : (
-    <IconButton icon="star" size={20} color="#D6D6D6" onPress={addFavorite} />
+    <IconButton icon="star" size={20} color={theme.palette.grey.grey} onPress={addFavorite} />
   );
 };
 
@@ -107,17 +105,15 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
     return (
       <TouchCard onPress={this.openUrlCallback}>
         <View style={styles.upperContentContainer}>
-          <TextBold numberOfLines={1} style={styles.titleText}>
+          <SmallBoldText numberOfLines={1} style={styles.titleText}>
             {resource.title}
-          </TextBold>
+          </SmallBoldText>
           {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={18} /> : null}
         </View>
         <View style={styles.lowerContentContainer}>
           <ResourceImage image={resource.image} style={styles.imageContainer} />
           <View style={styles.secondaryContainer}>
-            <Text numberOfLines={2} style={styles.descriptionText}>
-              {resource.source === Source.SIGNET ? resource.authors : resource.editors}
-            </Text>
+            <CaptionText numberOfLines={2}>{resource.source === Source.SIGNET ? resource.authors : resource.editors}</CaptionText>
             <View style={styles.actionsContainer}>
               <FavoriteIcon {...this.props} />
               <IconButton icon="link" size={20} onPress={this.copyToClipboard} />

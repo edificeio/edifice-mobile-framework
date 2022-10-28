@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
@@ -14,7 +15,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { PictureProps } from '~/framework/components/picture';
-import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { displayDate } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -33,7 +34,6 @@ import moduleConfig from '~/modules/pronote/moduleConfig';
 import redirect from '~/modules/pronote/service/redirect';
 import { loadCarnetDeBordAction } from '~/modules/pronote/state/carnetDeBord/actions';
 import { ICarnetDeBordStateData } from '~/modules/pronote/state/carnetDeBord/reducer';
-import { TextBold } from '~/ui/Typography';
 import { IUserInfoState } from '~/user/state/info';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
 
@@ -152,9 +152,9 @@ CarnetDeBordScreen.getRenderContent =
           />
         ) : null}
         {isStructureShown ? (
-          <Text style={[CarnetDeBordScreen.styles.card, FontStyle.Bold, TextSizeStyle.SlightBig]}>
+          <BodyBoldText style={CarnetDeBordScreen.styles.card}>
             {structures.find(s => s.id === data?.structureId)?.name ?? ' '}
-          </Text>
+          </BodyBoldText>
         ) : null}
         {data && data.idPronote && data.address && data.structureId ? (
           <>
@@ -285,8 +285,8 @@ CarnetDeBordScreen.getRenderContent =
         ) : (
           <EmptyScreen
             svgImage="empty-timeline"
-            title={I18n.t('pronote.carnetDeBord.noData.title')}
-            text={I18n.t('pronote.carnetDeBord.noData.text')}
+            title={I18n.t('pronote.carnetDeBord.noDataChild.title')}
+            text={I18n.t('pronote.carnetDeBord.noDataChild.text')}
           />
         )}
       </ScrollView>
@@ -340,16 +340,16 @@ CarnetDeBordScreen.SectionContent = function (props: {
     <CC picture={props.picture} title={props.title} style={CarnetDeBordScreen.styles.card} onPress={goToDetails}>
       {isNotEmpty ? (
         <View style={CarnetDeBordScreen.styles.textRow}>
-          <TextBold numberOfLines={1} style={CarnetDeBordScreen.styles.textLabel}>
+          <SmallBoldText numberOfLines={1} style={CarnetDeBordScreen.styles.textLabel}>
             {props.textLabel || I18n.t('pronote.carnetDeBord.noInfo')}
-          </TextBold>
-          <Text numberOfLines={1}>{props.valueLabel || I18n.t('pronote.carnetDeBord.noInfo')}</Text>
+          </SmallBoldText>
+          <SmallText numberOfLines={1}>{props.valueLabel || I18n.t('pronote.carnetDeBord.noInfo')}</SmallText>
         </View>
       ) : (
         <View style={CarnetDeBordScreen.styles.emptyRow}>
-          <Text numberOfLines={1} style={TextColorStyle.Light}>
+          <SmallText numberOfLines={1} style={{ color: theme.ui.text.light }}>
             {props.emptyLabel}
-          </Text>
+          </SmallText>
         </View>
       )}
     </CC>

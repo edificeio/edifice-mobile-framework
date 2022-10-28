@@ -1,17 +1,16 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text, TextSizeStyle } from '~/framework/components/text';
-import { putSignatureAction } from '~/modules/zimbra/actions/signature';
-import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
+import { BodyText, SmallText } from '~/framework/components/text';
+import { ISignature } from '~/modules/zimbra/state/signature';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent } from '~/ui/Modal';
+
+// STYLE ----------------------------------------------------------------------
 
 const styles = StyleSheet.create({
   containerView: {
@@ -24,9 +23,6 @@ const styles = StyleSheet.create({
     paddingBottom: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
   },
-  titleText: {
-    ...TextSizeStyle.SlightBig,
-  },
   textZone: {
     marginHorizontal: UI_SIZES.spacing.small,
     borderBottomWidth: 0.5,
@@ -35,12 +31,12 @@ const styles = StyleSheet.create({
   },
   infosView: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginTop: UI_SIZES.spacing.small,
     marginHorizontal: UI_SIZES.spacing.small,
   },
   useSignatureText: {
-    paddingTop: UI_SIZES.spacing.tiny,
-    paddingLeft: UI_SIZES.spacing.small,
+    marginLeft: UI_SIZES.spacing.minor,
   },
   actionsButtonsContainer: {
     flexDirection: 'row-reverse',
@@ -49,109 +45,92 @@ const styles = StyleSheet.create({
   },
 });
 
-type SignatureModalProps = {
+// COMPONENTS -----------------------------------------------------------------
+
+const setGlobal = (signatureData: ISignature) => {
+  const { preference } = signatureData;
+  let signatureCheck = false;
+  if (preference !== undefined) {
+    if (typeof preference === 'object') signatureCheck = preference.useSignature;
+    else signatureCheck = JSON.parse(preference).useSignature;
+  }
+  return signatureCheck;
+};
+
+const confirm = async (
+  text: string,
+  global: boolean,
+  closeModal: () => any,
+  putSignature: (signatureData: string, isGlobalSignature: boolean) => any,
+  successCallback: () => any,
+) => {
+  closeModal();
+  await putSignature(text, global);
+  successCallback();
+};
+
+// EXPORTED COMPONENT AND TYPE ------------------------------------------------
+
+type SignatureModalType = {
   show: boolean;
-  signature: string;
+  signatureText: string;
   signatureData: ISignature;
   closeModal: () => any;
   putSignature: (signatureData: string, isGlobalSignature: boolean) => any;
   successCallback: () => any;
 };
 
-type SignatureModalState = {
-  isGlobalSignature: boolean;
-  isUpdated: boolean;
-  signature: string;
-};
+export const SignatureModal = ({
+  show,
+  signatureText,
+  signatureData,
+  closeModal,
+  putSignature,
+  successCallback,
+}: SignatureModalType) => {
+  const [currentGlobal, toggleGlobal] = React.useState(setGlobal(signatureData));
+  const textUpdateTimeout = React.useRef();
+  const [currentText, updateCurrentText] = React.useState(signatureText);
 
-class SignatureModal extends React.Component<SignatureModalProps, SignatureModalState> {
-  constructor(props) {
-    super(props);
+  React.useEffect(() => toggleGlobal(setGlobal(signatureData)), [signatureData]);
 
-    const { preference } = this.props.signatureData;
-    let signatureCheck = false;
-    if (preference !== undefined) {
-      if (typeof preference === 'object') signatureCheck = preference.useSignature;
-      else signatureCheck = JSON.parse(preference).useSignature;
-    }
+  React.useEffect(() => {
+    window.clearTimeout(textUpdateTimeout.current);
+    textUpdateTimeout.current = window.setTimeout(() => updateCurrentText(currentText), 500);
 
-    this.state = {
-      signature: this.props.signature,
-      isGlobalSignature: signatureCheck,
-      isUpdated: false,
+    return () => {
+      window.clearTimeout(textUpdateTimeout.current);
     };
-  }
+  }, [currentText]);
 
-  componentDidUpdate = () => {
-    if (!this.state.isUpdated && this.props.signature !== this.state.signature)
-      this.setState({ isUpdated: true, signature: this.props.signature });
-  };
-
-  setSignature = (text: string) => {
-    this.setState({ signature: text });
-  };
-
-  toggleGlobal = () => {
-    const { isGlobalSignature } = this.state;
-    this.setState({ isGlobalSignature: !isGlobalSignature });
-  };
-
-  confirm = async () => {
-    const { putSignature, successCallback } = this.props;
-    const { signature, isGlobalSignature } = this.state;
-    this.props.closeModal();
-
-    await putSignature(signature, isGlobalSignature);
-    successCallback();
-  };
-
-  public render() {
-    const { show, closeModal } = this.props;
-    return (
-      <ModalBox isVisible={show}>
-        <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
-          <View style={styles.containerView}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.titleText}>{I18n.t('zimbra-signature')}</Text>
-            </View>
-            <TextInput
-              textAlignVertical="top"
-              multiline
-              scrollEnabled
-              style={styles.textZone}
-              defaultValue={this.state.signature}
-              onChangeText={(text: string) => this.setSignature(text)}
-            />
-            <View style={styles.infosView}>
-              <Checkbox checked={this.state.isGlobalSignature} onPress={this.toggleGlobal} />
-              <Text style={styles.useSignatureText}>{I18n.t('zimbra-signature-use')}</Text>
-            </View>
-            <View style={styles.actionsButtonsContainer}>
-              <DialogButtonOk label={I18n.t('zimbra-add')} onPress={this.confirm} />
-              <DialogButtonCancel onPress={closeModal} />
-            </View>
+  return (
+    <ModalBox isVisible={show}>
+      <ModalContent style={{ width: UI_SIZES.screen.width - 80 }}>
+        <View style={styles.containerView}>
+          <View style={styles.titleContainer}>
+            <BodyText>{I18n.t('zimbra-signature')}</BodyText>
           </View>
-        </ModalContent>
-      </ModalBox>
-    );
-  }
-}
-
-const mapStateToProps = (state: any) => {
-  const { data, isFetching } = getSignatureState(state);
-  return {
-    signatureMail: data.preference,
-    isFetching,
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators(
-    {
-      putSignature: putSignatureAction,
-    },
-    dispatch,
+          <TextInput
+            textAlignVertical="top"
+            multiline
+            scrollEnabled
+            style={styles.textZone}
+            defaultValue={signatureText}
+            onChangeText={(text: string) => updateCurrentText(text)}
+          />
+          <View style={styles.infosView}>
+            <Checkbox checked={currentGlobal} onPress={() => toggleGlobal(!currentGlobal)} />
+            <SmallText style={styles.useSignatureText}>{I18n.t('zimbra-signature-use')}</SmallText>
+          </View>
+          <View style={styles.actionsButtonsContainer}>
+            <DialogButtonOk
+              label={I18n.t('zimbra-add')}
+              onPress={() => confirm(currentText, currentGlobal, closeModal, putSignature, successCallback)}
+            />
+            <DialogButtonCancel onPress={closeModal} />
+          </View>
+        </View>
+      </ModalContent>
+    </ModalBox>
   );
 };
-
-export default connect(mapStateToProps, mapDispatchToProps)(SignatureModal);

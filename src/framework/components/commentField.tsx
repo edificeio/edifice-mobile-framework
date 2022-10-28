@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { Alert, LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View, ViewProps } from 'react-native';
+import { Alert, LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -11,7 +11,7 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { RoundButton } from './RoundButton';
 import { UI_SIZES } from './constants';
-import { TextItalic, TextSemiBold, TextSizeStyle } from './text';
+import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
 
 // TYPES ==========================================================================================
 
@@ -221,13 +221,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={styles.col}>
           {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
             <View style={styles.row}>
-              <TextSemiBold numberOfLines={1} style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
+              <CaptionBoldText numberOfLines={1} style={{ marginLeft: UI_SIZES.spacing.small, flexShrink: 1 }}>
                 {props.commentAuthor}
-              </TextSemiBold>
-              <TextItalic
-                style={{ ...TextSizeStyle.Small, marginLeft: UI_SIZES.spacing._LEGACY_small, color: theme.palette.grey.graphite }}>
+              </CaptionBoldText>
+              <CaptionItalicText style={{ marginLeft: UI_SIZES.spacing._LEGACY_small, color: theme.palette.grey.graphite }}>
                 {typeof props.commentDate === 'string' ? props.commentDate : displayPastDate(props.commentDate)}
-              </TextItalic>
+              </CaptionItalicText>
             </View>
           ) : null}
           {
@@ -252,14 +251,14 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <TextSemiBold style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</TextSemiBold>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
-              <TextSemiBold style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
                 {I18n.t('common.delete')}
-              </TextSemiBold>
+              </SmallBoldText>
             </TouchableOpacity>
           ) : null}
         </View>

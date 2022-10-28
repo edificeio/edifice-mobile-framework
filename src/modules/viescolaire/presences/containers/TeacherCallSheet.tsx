@@ -5,14 +5,13 @@ import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { deleteEvent, postAbsentEvent, validateRegisterAction } from '~/modules/viescolaire/presences/actions/events';
 import { fetchClassesCallAction } from '~/modules/viescolaire/presences/actions/teacherClassesCall';
 import TeacherCallSheet from '~/modules/viescolaire/presences/components/TeacherCallSheet';
 import { getClassesCallListState } from '~/modules/viescolaire/presences/state/teacherClassesCall';
+import { getCoursesRegisterState } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
 import { getCoursesListState } from '~/modules/viescolaire/presences/state/teacherCourses';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
-
-import { getCoursesRegisterState } from '../state/teacherCourseRegister';
 
 class CallSheet extends React.PureComponent<any> {
   public render() {

@@ -3,6 +3,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { AppState, AppStateStatus, StatusBar, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+// import needed for side-effects https://docs.swmansion.com/react-native-gesture-handler/docs/installation#ios
 import 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';

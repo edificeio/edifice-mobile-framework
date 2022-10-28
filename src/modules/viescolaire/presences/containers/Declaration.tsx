@@ -12,10 +12,10 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';
 import { DocumentPicked, ImagePicked } from '~/infra/filePicker';
+import { getSelectedChild } from '~/modules/viescolaire/dashboard/state/children';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { declareAbsenceAction, declareAbsenceWithFileAction } from '~/modules/viescolaire/presences/actions/declaration';
 import DeclarationComponent from '~/modules/viescolaire/presences/components/Declaration';
-import { getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;

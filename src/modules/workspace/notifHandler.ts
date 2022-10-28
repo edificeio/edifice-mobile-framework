@@ -1,59 +1,64 @@
+/**
+ * Workspace notif handler
+ */
 import I18n from 'i18n-js';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { Trackers } from '~/framework/util/tracker';
-import { NotificationHandlerFactory } from '~/infra/pushNotification';
+import { computeRelativePath } from '~/framework/util/navigation';
+import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
-import { Filter, IFile } from './types';
+import moduleConfig from './moduleConfig';
+import { Filter } from './reducer';
 
-const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, trackCategory) => {
-  if (!notificationData?.resourceUri?.startsWith('/workspace')) {
-    return false;
-  }
-  const split = notificationData.resourceUri.split('/');
-  const parentId = split[split.length - 1];
-
-  if (!DEPRECATED_getCurrentPlatform()) {
-    throw new Error('must specify a platform');
-  }
-
-  const name = (notificationData as any).resourceName;
-  const isFolder = notificationData.resourceUri.indexOf('/folder/') > 0;
-
-  if (isFolder) {
-    mainNavNavigate('Workspace', {
-      filter: Filter.ROOT,
-      parentId: Filter.ROOT,
-      title: I18n.t('workspace.tabName'),
-      childRoute: 'Workspace',
-      childParams: { parentId, filter: Filter.SHARED, title: name },
+const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction =
+  (notification, trackCategory, navState) => async (dispatch, getState) => {
+    const resourceUri = notification.backupData.params.resourceUri;
+    if (!resourceUri) return { managed: 0 };
+    const index = resourceUri.indexOf('folder/');
+    if (index === -1) return { managed: 0 };
+    const parentId = resourceUri.substring(index + 7);
+    mainNavNavigate(computeRelativePath(moduleConfig.routeName, navState), {
+      filter: Filter.SHARED,
+      parentId,
+      title: notification.backupData.params.resourceName,
     });
-  } else {
-    const item: IFile = {
-      contentType: 'plain/text',
-      date: Date.now(),
-      id: parentId,
-      isFolder: false,
-      name,
-      filename: name,
-      owner: '',
-      ownerName: '',
-      size: 0,
-      url: `/workspace/document/${parentId}`,
+    return {
+      managed: 1,
+      trackInfo: { action: 'Workspace', name: `${notification.type}.${notification['event-type']}` },
     };
-    mainNavNavigate('Workspace', {
-      filter: Filter.ROOT,
-      parentId: Filter.ROOT,
-      title: I18n.t('workspace.tabName'),
-      childRoute: 'WorkspaceDetails',
-      childParams: { item, title: name },
+  };
+
+const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
+  (notification, trackCategory, navState) => async (dispatch, getState) => {
+    const folderUri = notification.backupData.params.resourceFolderUri;
+    if (!folderUri) return { managed: 0 };
+    const index = folderUri.indexOf('folder/');
+    const parentId = index > 0 ? folderUri.substring(index + 7) : 'shared';
+    const title =
+      notification.backupData.params.resourceFolderName === 'Documents personnels'
+        ? I18n.t('shared')
+        : notification.backupData.params.resourceFolderName;
+    mainNavNavigate(computeRelativePath(moduleConfig.routeName, navState), {
+      filter: Filter.SHARED,
+      parentId,
+      title,
     });
-  }
+    return {
+      managed: 1,
+      trackInfo: { action: 'Workspace', name: `${notification.type}.${notification['event-type']}` },
+    };
+  };
 
-  trackCategory && Trackers.trackEvent(trackCategory, 'Workspace', '/workspace');
-
-  return true;
-};
-
-export default notifHandlerFactory;
+export default () =>
+  registerNotifHandlers([
+    {
+      type: 'WORKSPACE',
+      'event-type': 'SHARE-FOLDER',
+      notifHandlerAction: handleWorkspaceShareFolderNotificationAction,
+    },
+    {
+      type: 'WORKSPACE',
+      'event-type': 'SHARE',
+      notifHandlerAction: handleWorkspaceShareNotificationAction,
+    },
+  ]);

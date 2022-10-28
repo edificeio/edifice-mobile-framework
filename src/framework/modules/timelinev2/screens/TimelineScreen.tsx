@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationFocusInjectedProps, NavigationInjectedProps, NavigationState, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -8,15 +8,16 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { cardPaddingMerging } from '~/framework/components/card';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
-import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
-import { Text } from '~/framework/components/text';
+import SwipeableList from '~/framework/components/swipeableList';
+import { SmallText } from '~/framework/components/text';
 import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
@@ -84,6 +85,21 @@ export interface ITimelineItem {
   data: ITimelineNotification | IEntcoreFlashMessage;
 }
 
+// UTILS ==========================================================================================
+
+const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: INotifications_State) => {
+  const msgs = flashMessages && flashMessages.data ? flashMessages.data : [];
+  const notifs = notifications && notifications.data ? notifications.data : [];
+  const ret = [] as (ITimelineItem & { key: string })[];
+  for (const fm of msgs) {
+    ret.push({ type: ITimelineItemType.FLASHMSG, data: fm, key: fm.id.toString() });
+  }
+  for (const n of notifs) {
+    ret.push({ type: ITimelineItemType.NOTIFICATION, data: n, key: n.id });
+  }
+  return ret;
+};
+
 // COMPONENT ======================================================================================
 
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
@@ -94,7 +110,9 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   };
 
   popupMenuRef = React.createRef<PopupMenu>();
-  listRef = React.createRef<SwipeableListHandle<ITimelineItem>>();
+
+  // listRef = React.createRef<SwipeableListHandle<ITimelineItem>>();
+
   rights = getTimelineWorkflowInformation(this.props.session);
 
   // RENDER =======================================================================================
@@ -129,17 +147,17 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         iconName="new_post"
         options={workflows}
         ref={this.popupMenuRef}
-        onPress={() => {
-          this.listRef.current?.recenter();
-        }}
+      // onPress={() => {
+      // this.listRef.current?.recenter();
+      // }}
       />
     );
   }
 
   renderError() {
     return (
-      <Text>{`Error: ${this.props.notifications.error?.name}
-    ${this.props.notifications.error?.name}`}</Text>
+      <SmallText>{`Error: ${this.props.notifications.error?.name}
+    ${this.props.notifications.error?.name}`}</SmallText>
     ); // ToDo: great error screen here
   }
 
@@ -159,20 +177,20 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               width: 140,
             }}>
             <Icon name={actionIcon} size={16} color={color} />
-            <Text style={{ color, marginLeft: UI_SIZES.spacing.small }}>{actionText}</Text>
+            <SmallText style={{ color, marginLeft: UI_SIZES.spacing.small }}>{actionText}</SmallText>
           </View>
         </TouchableOpacity>
       </View>,
     ];
 
     return (
-      <SwipeableList
-        ref={this.listRef}
+      <SwipeableList<ITimelineItem & { key: string }>
+        // ref={this.listRef}
         // data
         data={items}
         keyExtractor={n => n.data.id.toString()}
-        contentContainerStyle={isEmpty ? { flex: 1 } : undefined}
-        renderItem={({ item }) =>
+        contentContainerStyle={isEmpty ? UI_STYLES.flex1 : undefined}
+        renderItem={({ item }: ListRenderItemInfo<ITimelineItem>) =>
           item.type === ITimelineItemType.NOTIFICATION
             ? this.renderNotificationItem(item.data as ITimelineNotification)
             : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)
@@ -194,35 +212,41 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
         // Swipeable props
-        rightButtonWidth={140}
-        itemSwipeableProps={({ item }) => {
+        swipeActionWidth={140}
+        hiddenRowStyle={cardPaddingMerging}
+        hiddenItemStyle={UI_STYLES.justifyEnd}
+        itemSwipeActionProps={({ item }) => {
           return {
-            rightButtons: this.rights.notification.report
-              ? [
-                  item.type === ITimelineItemType.NOTIFICATION
-                    ? renderSwipeButton(
-                        async () => {
-                          await this.doReportConfirm(item.data as ITimelineNotification);
-                          this.listRef.current?.recenter();
-                        },
-                        'warning',
-                        I18n.t('timeline.reportAction.button'),
-                        theme.palette.status.warning,
-                        item.data.id,
-                      )
-                    : item.type === ITimelineItemType.FLASHMSG
-                    ? renderSwipeButton(
-                        async () => {
-                          await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
-                          this.listRef.current?.recenter();
-                        },
-                        'close',
-                        I18n.t('common.close'),
-                        theme.palette.status.failure,
-                        item.data.id,
-                      )
-                    : undefined,
+            right: this.rights.notification.report
+              ? item.type === ITimelineItemType.NOTIFICATION
+                ? [
+                  {
+                    action: async row => {
+                      try {
+                        await this.doReportConfirm(item.data as ITimelineNotification);
+                        row[item.data.id]?.closeRow();
+                      } catch (e) { } // Do nothing, just to prevent error
+                    },
+                    actionColor: theme.palette.status.warning,
+                    actionText: I18n.t('timeline.reportAction.button'),
+                    actionIcon: 'ui-warning',
+                  },
                 ]
+                : item.type === ITimelineItemType.FLASHMSG
+                  ? [
+                    {
+                      action: async row => {
+                        try {
+                          await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
+                          row[item.data.id]?.closeRow();
+                        } catch (e) { } // Do nothing, just to prevent error
+                      },
+                      actionColor: theme.palette.status.failure,
+                      actionText: I18n.t('common.close'),
+                      actionIcon: 'ui-close',
+                    },
+                  ]
+                  : undefined
               : undefined,
           };
         }}
@@ -325,7 +349,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   goToFilters() {
-    this.listRef.current?.recenter();
+    // this.listRef.current?.recenter();
     this.props.navigation.navigate('timeline/filters');
   }
 
@@ -358,21 +382,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     });
   }
 }
-
-// UTILS ==========================================================================================
-
-const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: INotifications_State) => {
-  const msgs = flashMessages && flashMessages.data ? flashMessages.data : [];
-  const notifs = notifications && notifications.data ? notifications.data : [];
-  const ret = [] as ITimelineItem[];
-  for (const fm of msgs) {
-    ret.push({ type: ITimelineItemType.FLASHMSG, data: fm });
-  }
-  for (const n of notifs) {
-    ret.push({ type: ITimelineItemType.NOTIFICATION, data: n });
-  }
-  return ret;
-};
 
 // MAPPING ========================================================================================
 

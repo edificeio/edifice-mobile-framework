@@ -4,32 +4,31 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { NestedText, NestedTextBold, Text, TextBold, TextSizeStyle } from '~/framework/components/text';
-import { IChildArray } from '~/modules/viescolaire/viesco/state/children';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
-import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
+import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import { IChildArray } from '~/modules/viescolaire/dashboard/state/children';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { ModalBox } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
   modalTitle: {
-    ...TextSizeStyle.SlightBig,
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
   },
   modalSubsection: {
-    paddingLeft: 15, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    paddingLeft: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
   },
   eventTitle: {
     textTransform: 'uppercase',
     color: theme.palette.grey.grey,
   },
   eventTextContainer: {
-    marginVertical: 2, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.tiny,
   },
   eventNestedText: {
-    ...TextSizeStyle.Tiny,
+    ...TextSizeStyle.Small,
   },
   modalContainerView: {
     flex: 1,
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const renderChild = (key: string, event) => {
+const renderChild = (key: string, previousKey: string, event) => {
   let title = '' as string;
   let color = '' as string;
   let duration = 0 as number;
@@ -62,7 +61,7 @@ const renderChild = (key: string, event) => {
       break;
     case 'NO_REASON':
       title = I18n.t('viesco-history-noreason');
-      color = viescoTheme.palette.presencesEvents.no_reason;
+      color = viescoTheme.palette.presencesEvents.noReason;
       break;
     case 'UNREGULARIZED':
       title = I18n.t('viesco-history-unregularized');
@@ -76,24 +75,32 @@ const renderChild = (key: string, event) => {
   }
   return (
     <>
-      <Text style={styles.eventTitle}>{title}</Text>
-      <Text style={styles.eventTextContainer}>
+      {previousKey !== key ? <SmallText style={styles.eventTitle}>{title}</SmallText> : null}
+      <SmallText style={styles.eventTextContainer}>
         <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
-        <TextBold style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</TextBold>
-        <Text>{' - '}</Text>
-        <Text style={{ color }}>{moment(event.start_date).format('HH:mm')}</Text>
-        <Text style={{ color }}> - {moment(event.end_date).format('HH:mm')}</Text>
-        {duration > 0 ? <NestedTextBold style={{ color }}>{' - ' + duration + 'mn'}</NestedTextBold> : null}
-      </Text>
+        <SmallBoldText style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</SmallBoldText>
+        <SmallText>{' - '}</SmallText>
+        <SmallText style={{ color }}>{moment(event.start_date).format('HH:mm')}</SmallText>
+        <SmallText style={{ color }}> - {moment(event.end_date).format('HH:mm')}</SmallText>
+        {duration > 0 ? <NestedBoldText style={{ color }}>{' - ' + duration + 'mn'}</NestedBoldText> : null}
+      </SmallText>
     </>
   );
 };
 
 const renderEvents = (events: any) => {
+  const sortedEvents = Object.entries(events) as any;
+  let previousKey = '' as string;
   const formatedEvents = [] as any;
-  for (const [key, value] of Object.entries(events)) {
+  sortedEvents.sort((a, b) => String(a?.key?.toLocaleLowerCase() ?? '').localeCompare(String(b?.key?.toLocaleLowerCase() ?? '')));
+  for (const [key, value] of sortedEvents) {
     if (value && value !== undefined && value.length > 0) {
-      formatedEvents.push(events[key] ? value.map(event => renderChild(key, event)) : null);
+      if (events[key]) {
+        for (const event of value) {
+          formatedEvents.push(renderChild(key, previousKey, event));
+          previousKey = key;
+        }
+      }
     }
   }
   return formatedEvents;
@@ -129,7 +136,7 @@ export const NotificationRelativesModal = ({
     <ModalBox backdropOpacity={0.5} isVisible={visible}>
       <View style={styles.modalContainerView}>
         <View style={styles.modalContentView}>
-          <Text style={styles.modalTitle}>{I18n.t('viesco-notifications')}</Text>
+          <BodyText style={styles.modalTitle}>{I18n.t('viesco-notifications')}</BodyText>
           {childrenArray?.map(child =>
             childrenEvents.data &&
             childrenEvents?.data?.studentsEvents &&
@@ -137,14 +144,14 @@ export const NotificationRelativesModal = ({
             childrenEvents?.data?.studentsEvents[child.id] &&
             !checkIsEmptyEvents(childrenEvents?.data?.studentsEvents[child.id].all) ? (
               <View>
-                <TextBold>{child.firstName + ' ' + child.lastName}</TextBold>
+                <SmallBoldText>{child.firstName + ' ' + child.lastName}</SmallBoldText>
                 <View style={styles.modalSubsection}>
                   <>{renderEvents(childrenEvents?.data?.studentsEvents[child.id]?.all)}</>
                 </View>
               </View>
             ) : null,
           )}
-          <DialogButtonOk label={I18n.t('common-ok')} onPress={onClose} />
+          <ActionButton text={I18n.t('common-ok')} action={onClose} />
         </View>
       </View>
     </ModalBox>

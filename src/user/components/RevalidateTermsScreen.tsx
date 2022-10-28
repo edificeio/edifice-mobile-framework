@@ -11,7 +11,7 @@ import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingS, Text, TextAction, TextSemiBold } from '~/framework/components/text';
+import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAction: () => void; acceptAction: () => void }) => {
@@ -34,7 +34,7 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
           <NamedSVG name={'empty-eula'} width={imageWidth} height={imageHeight} />
         </View>
       </View>
-      <HeadingS
+      <HeadingSText
         numberOfLines={2}
         style={{
           textAlign: 'center',
@@ -42,18 +42,18 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
           marginTop: UI_SIZES.spacing.large,
         }}>
         {I18n.t('user.revalidateTermsScreen.newEULA')}
-      </HeadingS>
-      <Text numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
+      </HeadingSText>
+      <SmallText numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
         {`${I18n.t('user.revalidateTermsScreen.mustAccept')} `}
-        <TextAction onPress={() => setIsModalVisible(true)} style={{ textDecorationLine: 'underline' }}>
+        <SmallActionText onPress={() => setIsModalVisible(true)} style={{ textDecorationLine: 'underline' }}>
           {I18n.t('user.revalidateTermsScreen.newEndUserLicenseAgreement')}
-        </TextAction>
-      </Text>
+        </SmallActionText>
+      </SmallText>
       <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.t('common.accept')} action={acceptAction} />
       <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={refuseAction}>
-        <TextSemiBold style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
+        <SmallBoldText style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
           {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
-        </TextSemiBold>
+        </SmallBoldText>
       </TouchableOpacity>
       <BackdropPdfReader
         handleClose={() => setIsModalVisible(false)}

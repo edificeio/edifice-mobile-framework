@@ -8,7 +8,9 @@ import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
+import { SmallText } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -23,7 +25,6 @@ import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth
 import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
-import { Label } from '~/ui/Typography';
 import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
@@ -191,9 +192,7 @@ export class UserPage extends React.PureComponent<
         signedURISource && signedURISource.uri
       }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
-    const appName = I18n.t('common.appName');
-    const isAppOnePocket = appName.includes('ONE Pocket');
-    const isPlatformSAASOne = session.platform.name === 'prod-one' || session.platform.name === 'preprod-one';
+    const showWhoAreWe = session.platform.showWhoAreWe;
 
     return (
       <PageView
@@ -236,7 +235,7 @@ export class UserPage extends React.PureComponent<
           ) : null}
           <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
           <ContainerSpacer />
-          {isAppOnePocket && isPlatformSAASOne ? (
+          {showWhoAreWe ? (
             <>
               <ButtonLine title={'directory-whoAreWeTitle'} onPress={() => this.props.navigation.navigate('WhoAreWe')} />
               <ContainerSpacer />
@@ -245,16 +244,18 @@ export class UserPage extends React.PureComponent<
           <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
           <ContainerSpacer />
           <ContainerView>
-            <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
+            <SmallText
+              style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}
+              onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
               {I18n.t('version-number')} {DeviceInfo.getVersion()}
               {showVersionType ? `-(${DeviceInfo.getBuildNumber()})-${versionType}-${versionOverride}` : ''}
-            </Label>
+            </SmallText>
           </ContainerView>
           <ContainerSpacer />
           <ButtonLine
             title="directory-disconnectButton"
             hideIcon
-            color="#F64D68"
+            color={theme.palette.complementary.red.regular}
             onPress={() => this.setState({ showDisconnect: true })}
           />
         </ScrollView>

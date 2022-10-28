@@ -4,7 +4,7 @@ import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-nat
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { getFileIcon } from '~/modules/zimbra/utils/fileIcon';
 
 const styles = StyleSheet.create({
@@ -47,9 +47,9 @@ export const Attachment = ({ name, type, uploadSuccess, onRemove }: IAttachmentP
           <ActivityIndicator color={theme.palette.primary.regular} />
         )}
       </View>
-      <Text numberOfLines={2} style={styles.nameText}>
+      <SmallText numberOfLines={2} style={styles.nameText}>
         {name}
-      </Text>
+      </SmallText>
       <Icon name="close" size={14} color={theme.palette.complementary.red.regular} style={styles.iconMargin} />
     </TouchableOpacity>
   );

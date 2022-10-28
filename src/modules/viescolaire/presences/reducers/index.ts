@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 
 import history from './history';
+import memento from './memento';
 import multipleSlots from './multipleSlots';
 import registerPreferences from './registerPreferences';
 import relativesNotification from './relativesNotificationModal';
@@ -14,6 +15,7 @@ const combinedReducer = combineReducers({
   callList,
   coursesRegister,
   history,
+  memento,
   multipleSlots,
   registerPreferences,
   relativesNotification,

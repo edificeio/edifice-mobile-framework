@@ -4,8 +4,7 @@ import { ColorValue, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
-import { TextBold } from '~/framework/components/text';
-import { layoutSize } from '~/styles/common/layoutSize';
+import { SmallBoldText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   buttonWithShadow: {
@@ -18,17 +17,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
   },
-  text: {
-    fontSize: 15,
-  },
 });
 
 const TouchableOpacity = styled.TouchableOpacity({
   alignItems: 'center',
   justifyContent: 'center',
-  width: layoutSize.LAYOUT_50,
-  height: layoutSize.LAYOUT_50,
-  borderRadius: layoutSize.LAYOUT_25,
+  width: 50,
+  height: 50,
+  borderRadius: 25,
   backgroundColor: theme.palette.secondary.regular,
 });
 
@@ -44,14 +40,14 @@ interface IButtonTextIconProps {
 
 export const ButtonIcon = ({ name, size, style, color = theme.ui.text.inverse, onPress }: IButtonTextIconProps) => (
   <TouchableOpacity onPress={onPress} style={[styles.buttonWithShadow, style]}>
-    <Icon color={color} size={size ? size : layoutSize.LAYOUT_25} name={name} />
+    <Icon color={color} size={size ?? 24} name={name} />
   </TouchableOpacity>
 );
 
-export const ButtonIconText = ({ style, children, colorText = 'black', ...rest }: IButtonTextIconProps) => (
+export const ButtonIconText = ({ style, children, colorText = theme.ui.text.regular as string, ...rest }: IButtonTextIconProps) => (
   <View style={styles.mainContainer}>
     <ButtonIcon {...rest} style={[styles.buttonWithShadow, style]} />
-    <TextBold style={[styles.text, { color: colorText }]}>{children}</TextBold>
+    <SmallBoldText style={{ color: colorText }}>{children}</SmallBoldText>
   </View>
 );
 

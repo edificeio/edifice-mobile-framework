@@ -8,7 +8,7 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native', 'jest'],
   rules: {
     '@typescript-eslint/naming-convention': ['error'],
     'import/extensions': [

@@ -1,19 +1,26 @@
 buildscript {
     ext {
-        compileSdkVersion = 30
-        targetSdkVersion = 30
+        compileSdkVersion = 31
+        targetSdkVersion = 31
         minSdkVersion = 21
-        buildToolsVersion = "30.0.2"
-        supportLibVersion = "30.0.2"
-        ndkVersion = "21.4.7075529"
+        buildToolsVersion = "31.0.0"
+        supportLibVersion = "31.0.0"
+        if (System.properties['os.arch'] == "aarch64") {
+            ndkVersion = "24.0.8215888"
+        } else {
+            ndkVersion = "21.4.7075529"
+        }
     }
     repositories {
         google()
+        mavenCentral()
         maven { url 'https://jcenter.bintray.com'}
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:4.2.2')
-        classpath 'com.google.gms:google-services:4.3.10'
+        classpath("com.android.tools.build:gradle:7.1.1")
+        classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("de.undercouch:gradle-download-task:5.0.1")
+        classpath("com.google.gms:google-services:4.3.14")
     }
 }
 

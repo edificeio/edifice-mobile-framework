@@ -1,9 +1,9 @@
+import com.android.build.OutputFile
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: "com.android.application"
 
-import com.android.build.OutputFile
-
 project.ext.react = [
-    entryFile: "index.js",
     enableHermes: true,
 ]
 
@@ -12,14 +12,18 @@ project.ext.vectoricons = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 def enableHermes = project.ext.react.get("enableHermes", false)
 def enableProguardInReleaseBuilds = true
 def enableSeparateBuildPerCPUArchitecture = false
 def jscFlavor = 'org.webkit:android-jsc:+'
-def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitectures")
+
+def reactNativeArchitectures() {
+    def value = project.getProperties().get("reactNativeArchitectures")
+    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
 def runTasks = gradle.startParameter.taskNames
 
 if ('assembleDebug' in runTasks) {
@@ -36,14 +40,70 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1080412
-        versionName "1.8.4"
+        versionCode 1080506
+        versionName "1.8.5"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.2\""
+        buildConfigField "String", "BundleVersionType", "\"rc.6\""
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
         ndk {
             debugSymbolLevel 'FULL'
+        }
+        if (isNewArchitectureEnabled()) {
+            externalNativeBuild {
+                cmake {
+                    arguments "-DPROJECT_BUILD_DIR=$buildDir",
+                        "-DREACT_ANDROID_DIR=$rootDir/../node_modules/react-native/ReactAndroid",
+                        "-DREACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build",
+                        "-DNODE_MODULES_DIR=$rootDir/../node_modules",
+                        "-DANDROID_STL=c++_shared"
+                }
+            }
+            if (!enableSeparateBuildPerCPUArchitecture) {
+                ndk {
+                    abiFilters (*reactNativeArchitectures())
+                }
+            }
+        }
+    }
+    if (isNewArchitectureEnabled()) {
+        externalNativeBuild {
+            cmake {
+                path "$projectDir/src/main/jni/CMakeLists.txt"
+            }
+        }
+        def reactAndroidProjectDir = project(':ReactAndroid').projectDir
+        def packageReactNdkDebugLibs = tasks.register("packageReactNdkDebugLibs", Copy) {
+            dependsOn(":ReactAndroid:packageReactNdkDebugLibsForBuck")
+            from("$reactAndroidProjectDir/src/main/jni/prebuilt/lib")
+            into("$buildDir/react-ndk/exported")
+        }
+        def packageReactNdkReleaseLibs = tasks.register("packageReactNdkReleaseLibs", Copy) {
+            dependsOn(":ReactAndroid:packageReactNdkReleaseLibsForBuck")
+            from("$reactAndroidProjectDir/src/main/jni/prebuilt/lib")
+            into("$buildDir/react-ndk/exported")
+        }
+        afterEvaluate {
+            // If you wish to add a custom TurboModule or component locally,
+            // you should uncomment this line.
+            // preBuild.dependsOn("generateCodegenArtifactsFromSchema")
+            preDebugBuild.dependsOn(packageReactNdkDebugLibs)
+            preReleaseBuild.dependsOn(packageReactNdkReleaseLibs)
+
+            // Due to a bug inside AGP, we have to explicitly set a dependency
+            // between configureCMakeDebug* tasks and the preBuild tasks.
+            // This can be removed once this is solved: https://issuetracker.google.com/issues/207403732
+            configureCMakeRelWithDebInfo.dependsOn(preReleaseBuild)
+            configureCMakeDebug.dependsOn(preDebugBuild)
+            reactNativeArchitectures().each { architecture ->
+                tasks.findByName("configureCMakeDebug[${architecture}]")?.configure {
+                    dependsOn("preDebugBuild")
+                }
+                tasks.findByName("configureCMakeRelWithDebInfo[${architecture}]")?.configure {
+                    dependsOn("preReleaseBuild")
+                }
+            }
         }
     }
     splits {
@@ -51,7 +111,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false
-            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
+            include (*reactNativeArchitectures())
         }
     }
     signingConfigs {
@@ -64,11 +124,6 @@ android {
     }
     buildTypes {
         debug {
-            if (nativeArchitectures) {
-                ndk {
-                    abiFilters nativeArchitectures.split(',')
-                }
-            }
         }
         release {
             minifyEnabled enableProguardInReleaseBuilds
@@ -92,22 +147,23 @@ android {
         pickFirst '**/libjsc.so'
         pickFirst '**/libc++_shared.so'
     }
-    dexOptions {
+    /*dexOptions {
         javaMaxHeapSize "4G"
-    }
+    }*/
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
+     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     if (enableHermes) {
-      def hermesPath = "../../node_modules/hermes-engine/android/"
-      debugImplementation files(hermesPath + "hermes-debug.aar")
-      releaseImplementation files(hermesPath + "hermes-release.aar")
+        //noinspection GradleDynamicVersion
+        implementation("com.facebook.react:hermes-engine:+") {
+            exclude group:'com.facebook.fbjni'
+        }
     } else {
-      implementation jscFlavor
+        implementation jscFlavor
     }
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
@@ -115,18 +171,28 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
-    debugImplementation ("com.facebook.flipper:flipper-leakcanary-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.facebook.flipper'
-    }
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
-    implementation "com.google.android.gms:play-services-base:18.0.1"
+    implementation "com.google.android.gms:play-services-base:18.1.0"
     implementation "com.fasterxml.jackson.core:jackson-core:2.11.1"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     implementation project(':react-native-action-sheet')
+
+}
+
+if (isNewArchitectureEnabled()) {
+    configurations.all {
+        resolutionStrategy.dependencySubstitution {
+            substitute(module("com.facebook.react:react-native"))
+                    .using(project(":ReactAndroid"))
+                    .because("On New Architecture we're building React Native from source")
+            substitute(module("com.facebook.react:hermes-engine"))
+                    .using(project(":ReactAndroid:hermes-engine"))
+                    .because("On New Architecture we're building Hermes from source")
+        }
+    }
 }
 
 task copyDownloadableDepsToLibs(type: Copy) {
@@ -137,3 +203,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
 apply plugin: 'com.google.gms.google-services'
+
+def isNewArchitectureEnabled() {
+    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}

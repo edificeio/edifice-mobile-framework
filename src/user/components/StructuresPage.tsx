@@ -1,14 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { SectionList, View } from 'react-native';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
-import { NestedText, Text, TextColorStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
+import SectionList from '~/framework/components/sectionList';
+import { NestedText, SmallText } from '~/framework/components/text';
 import { ContainerView } from '~/ui/ButtonLine';
-import { H4 } from '~/ui/Typography';
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -49,22 +48,25 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps & N
             sections={data}
             renderSectionHeader={({ section }) => (
               <ContainerView>
-                <Text style={{ ...TextColorStyle.Light }}>{section.name}</Text>
+                <SmallText style={{ color: theme.ui.text.light }}>{section.name}</SmallText>
               </ContainerView>
             )}
             renderItem={({ item: classe }) => (
-              <Text
+              <SmallText
                 style={{
                   marginLeft: UI_SIZES.spacing.medium,
                   marginRight: UI_SIZES.spacing.medium,
                   marginVertical: UI_SIZES.spacing.small,
                 }}>
-                <NestedText style={{ color: CommonStyles.profileTypes.Student }}>◆ </NestedText>
+                <NestedText style={{ color: theme.palette.complementary.orange.regular }}>◆ </NestedText>
                 {classe}
-              </Text>
+              </SmallText>
             )}
-            ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
-            ListHeaderComponent={<H4>{I18n.t('structuresTitle')}</H4>}
+            ListHeaderComponent={
+              <SmallText style={{ marginTop: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
+                {I18n.t('structuresTitle')}
+              </SmallText>
+            }
             stickySectionHeadersEnabled={false}
             alwaysBounceVertical={false}
             overScrollMode="never"

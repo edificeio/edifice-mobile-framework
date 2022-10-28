@@ -1,8 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, SectionList, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
 import { NavigationInjectedProps } from 'react-navigation';
 
@@ -14,7 +13,8 @@ import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { PageView } from '~/framework/components/page';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import SectionList from '~/framework/components/sectionList';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
@@ -253,7 +253,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               </TouchableOpacity>
             ) : null;
           }}
-          ListFooterComponent={<SafeAreaView edges={['bottom']} />}
           ListEmptyComponent={
             noFutureHomeworkHiddenPast ? (
               <EmptyScreen
@@ -303,9 +302,9 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             <Icon name="informations" color={theme.palette.grey.stone} size={TextSizeStyle.Huge.fontSize} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: theme.palette.grey.graphite }}>
+            <SmallText style={{ color: theme.palette.grey.graphite }}>
               {I18n.t('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
-            </Text>
+            </SmallText>
           </View>
         </View>
       </>

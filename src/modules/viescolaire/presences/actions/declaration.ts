@@ -4,9 +4,9 @@ import { Dispatch } from 'redux';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
 import { absenceDeclarationService } from '~/modules/viescolaire/presences/services/declaration';
 import { declarationActionsTypes } from '~/modules/viescolaire/presences/state/declaration';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
 
 export const declarationActions = {
   isPosting: () => ({ type: declarationActionsTypes.isPosting }),

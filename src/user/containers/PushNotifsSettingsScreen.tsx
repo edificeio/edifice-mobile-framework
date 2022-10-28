@@ -21,7 +21,7 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { Text, TextAction, TextSizeStyle } from '~/framework/components/text';
+import { SmallActionText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { loadPushNotifsSettingsAction, updatePushNotifsSettingsAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import {
@@ -198,15 +198,15 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
           );
         }}>
         <ListItem
-          leftElement={<Text>{translateMainItem(item)}</Text>}
+          leftElement={<SmallText>{translateMainItem(item)}</SmallText>}
           rightElement={
             <View style={{ flexDirection: 'row' }}>
-              <TextAction style={{ ...TextSizeStyle.Small }}>
+              <SmallActionText style={{ ...TextSizeStyle.Small }}>
                 {I18n.t(`user.pushNotifsSettingsScreen.countOutOfTotal`, {
                   count: totalOn,
                   total,
                 })}
-              </TextAction>
+              </SmallActionText>
               <Icon
                 name="arrow_down"
                 color={theme.palette.primary.regular}
@@ -250,7 +250,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
           hasEmptySubListData ? null : (
             <TouchableOpacity onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}>
               <ListItem
-                leftElement={<Text>{I18n.t('common.all')}</Text>}
+                leftElement={<SmallText>{I18n.t('common.all')}</SmallText>}
                 rightElement={
                   <Checkbox
                     customCheckboxColor={areAllChecked ? theme.ui.text.light : undefined}
@@ -275,7 +275,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<IPushNotifsSet
     return (
       <TouchableOpacity onPress={() => this.doTogglePushNotifSetting([item[0], !item[1]])}>
         <ListItem
-          leftElement={<Text>{I18n.t(`timeline.notifType.${item[0]}`, {})}</Text>}
+          leftElement={<SmallText>{I18n.t(`timeline.notifType.${item[0]}`, {})}</SmallText>}
           rightElement={
             <Checkbox
               checked={item[1]}

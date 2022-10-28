@@ -1,14 +1,15 @@
 import I18n from 'i18n-js';
 import React, { useState } from 'react';
-import { FlatList, Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IResource, Source } from '~/modules/mediacentre/reducer';
-import { DialogButtonOk } from '~/ui/ConfirmDialog';
 
 import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
@@ -17,11 +18,14 @@ import { SearchFilter } from './SearchFilter';
 const styles = StyleSheet.create({
   fieldContainer: {
     flexDirection: 'row',
-    marginRight: 10, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.small,
+  },
+  fieldValueText: {
+    marginLeft: UI_SIZES.spacing.tiny,
   },
   parametersContainer: {
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
   },
   upperContainer: {
     flexDirection: 'row',
@@ -34,15 +38,12 @@ const styles = StyleSheet.create({
   sourceImage: {
     width: 24,
     height: 24,
-    marginRight: 10, // MO-142 use UI_SIZES.spacing here
-  },
-  cancelButton: {
-    backgroundColor: theme.palette.primary.regular,
+    marginRight: UI_SIZES.spacing.small,
   },
   fieldsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
   },
   mainContainer: {
     flex: 1,
@@ -51,8 +52,8 @@ const styles = StyleSheet.create({
     marginTop: '45%',
   },
   filterContainer: {
-    marginHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.small,
   },
 });
 
@@ -124,8 +125,8 @@ const getSources = (resources: IResource[]) => {
 const AdvancedSearchField: React.FunctionComponent<IAdvancedSearchFieldProps> = (props: IAdvancedSearchFieldProps) =>
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
-      <TextBold>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</TextBold>
-      <Text> {props.field.value}</Text>
+      <SmallBoldText>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallBoldText>
+      <SmallText style={styles.fieldValueText}>{props.field.value}</SmallText>
     </View>
   ) : null;
 
@@ -138,7 +139,7 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
         {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
         {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
-      <DialogButtonOk style={styles.cancelButton} label={I18n.t('common.cancel')} onPress={props.onCancelSearch} />
+      <ActionButton text={I18n.t('common.cancel')} type="secondary" action={props.onCancelSearch} />
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>

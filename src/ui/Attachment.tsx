@@ -1,7 +1,7 @@
 import Filesize from 'filesize';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ActivityIndicator, Platform, Pressable, Text, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Toast from 'react-native-tiny-toast';
@@ -12,13 +12,13 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
+import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
-import { CommonStyles } from '~/styles/common/styles';
 
 import { IconButton } from './IconButton';
 
@@ -92,7 +92,11 @@ const getAttachmentTypeByExt = (filename: string) => {
 const openFile = (notifierId: string, file?: SyncedFile) => {
   return dispatch => {
     if (file) {
-      file.open();
+      try {
+        file.open();
+      } catch (e) {
+        Toast.show(I18n.t('download-error-generic'));
+      }
     }
   };
 };
@@ -211,10 +215,10 @@ class Attachment extends React.PureComponent<
             </View>
             <View style={{ flex: 1, flexDirection: 'row' }}>
               {downloadState === DownloadState.Error ? (
-                <Text style={{ color: CommonStyles.errorColor }}>{I18n.t('download-error') + ' '}</Text>
+                <SmallText style={{ color: theme.palette.status.failure }}>{I18n.t('download-error') + ' '}</SmallText>
               ) : null}
-              <Text style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
-                <Text
+              <SmallText style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
+                <SmallText
                   style={{
                     textDecorationColor: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
                     color: downloadState === DownloadState.Success ? theme.ui.text.regular : theme.ui.text.light,
@@ -226,12 +230,8 @@ class Attachment extends React.PureComponent<
                     (att as IRemoteAttachment).displayName ||
                     I18n.t('download-untitled')}
                   {!this.attId && I18n.t('download-invalidUrl')}
-                </Text>
-                <Text
-                  style={{
-                    color: theme.ui.text.light,
-                    flex: 0,
-                  }}>
+                </SmallText>
+                <SmallText style={{ color: theme.ui.text.light, flex: 0 }}>
                   {downloadState === DownloadState.Success
                     ? ' ' + I18n.t('download-open')
                     : downloadState === DownloadState.Error
@@ -239,8 +239,8 @@ class Attachment extends React.PureComponent<
                     : (this.props.attachment as IRemoteAttachment).size
                     ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
                     : ''}
-                </Text>
-              </Text>
+                </SmallText>
+              </SmallText>
             </View>
           </Pressable>
           {Platform.OS !== 'ios' ? (
@@ -260,7 +260,7 @@ class Attachment extends React.PureComponent<
                   <IconButton
                     iconName="download"
                     iconColor={theme.palette.grey.black}
-                    buttonStyle={{ backgroundColor: CommonStyles.lightGrey }}
+                    buttonStyle={{ backgroundColor: theme.palette.grey.fog }}
                   />
                 </RNGHTouchableOpacity>
               ) : null}

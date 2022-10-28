@@ -9,10 +9,9 @@ import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
 import { logout } from '~/user/actions/login';
-
-import { checkVersionThenLogin } from '../actions/version';
-import { RevalidateTermsScreen } from '../components/RevalidateTermsScreen';
-import { userService } from '../service';
+import { checkVersionThenLogin } from '~/user/actions/version';
+import { RevalidateTermsScreen } from '~/user/components/RevalidateTermsScreen';
+import { userService } from '~/user/service';
 
 // TYPES ==========================================================================================
 

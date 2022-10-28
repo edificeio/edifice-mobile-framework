@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Text } from 'react-native';
 
-import theme from '~/app/theme';
 import { ResourceCard, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
+import { SmallText } from '~/framework/components/text';
 import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
@@ -27,9 +26,7 @@ export class TimelineNotification extends React.PureComponent<ITimelineNotificat
       text || media
         ? [
             text && /\S/.test(text) ? (
-              <Text style={{ color: theme.ui.text.regular, marginBottom: media?.length ? UI_SIZES.spacing.small : undefined }}>
-                {text}
-              </Text>
+              <SmallText style={{ marginBottom: media?.length ? UI_SIZES.spacing.small : undefined }}>{text}</SmallText>
             ) : null,
             media ? renderMediaPreview(media) : null,
           ]

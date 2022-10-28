@@ -6,11 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { TextColorStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
-import { Text } from '~/ui/Typography';
 
 import { Picture, PictureProps } from './picture';
+import { SmallText } from './text';
 
 const style = StyleSheet.create({
   actions: {
@@ -37,7 +35,7 @@ const style = StyleSheet.create({
     top: 0,
   },
   separator: {
-    borderBottomColor: CommonStyles.borderColorVeryLighter,
+    borderBottomColor: theme.palette.grey.cloudy,
     borderBottomWidth: 1,
     width: '100%',
   },
@@ -65,7 +63,7 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
               style={style.actions}
               data={data}
               renderItem={({ item }) => {
-                const itemColorStyle = item.icon === 'delete' ? TextColorStyle.Error : {};
+                const itemColorStyle = item.icon === 'delete' ? { color: theme.palette.status.failure } : {};
                 return (
                   <TouchableOpacity onPress={item.onPress}>
                     <View
@@ -76,7 +74,7 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
                         paddingVertical: UI_SIZES.spacing.small,
                         paddingHorizontal: UI_SIZES.spacing.medium,
                       }}>
-                      <Text style={{ ...itemColorStyle }}>{item.text}</Text>
+                      <SmallText style={{ ...itemColorStyle }}>{item.text}</SmallText>
                       {typeof item.icon === 'string' ? (
                         <Icon name={item.icon} size={22} style={{ marginLeft: UI_SIZES.spacing.small, ...itemColorStyle }} />
                       ) : (

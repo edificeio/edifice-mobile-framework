@@ -5,10 +5,9 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { newMailService } from '~/modules/zimbra/service/newMail';
 import { getProfileColor } from '~/modules/zimbra/utils/userColor';
-import { IOSShadowStyle } from '~/styles/common/styles';
 
 const styles = StyleSheet.create({
   foundListButton: {
@@ -32,7 +31,7 @@ const Input = ({ value, onChangeText, onSubmit, onBlur }) => {
   const textInputStyle = {
     flex: 1,
     height: 40,
-    color: theme.legacy.neutral.subtleShadow,
+    color: theme.ui.text.regular,
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: 2,
   } as ViewStyle;
@@ -62,7 +61,10 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     elevation: 20,
     maxHeight: UI_SIZES.screen.height * 0.25,
     flexGrow: 1,
-    ...IOSShadowStyle,
+    shadowColor: theme.ui.shadowColor,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.8,
   } as ViewStyle;
 
   const FoundUserOrGroup = ({ profile, displayName, onPress }) => {
@@ -73,8 +75,8 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
 
     return (
       <TouchableOpacity style={styles.foundListButton} onPress={onPress}>
-        <Text style={{ color }}>{'\u25CF '}</Text>
-        <Text numberOfLines={1}>{displayName}</Text>
+        <SmallText style={{ color }}>{'\u25CF '}</SmallText>
+        <SmallText numberOfLines={1}>{displayName}</SmallText>
       </TouchableOpacity>
     );
   };
@@ -106,7 +108,7 @@ const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
-        <Text style={userLabel}>{displayName}</Text>
+        <SmallText style={userLabel}>{displayName}</SmallText>
       </TouchableOpacity>
     );
   };

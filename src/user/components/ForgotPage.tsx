@@ -5,13 +5,11 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingS, Text, TextColorStyle } from '~/framework/components/text';
-import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage, InfoMessage } from '~/ui/Typography';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
@@ -127,10 +125,12 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
-                      <HeadingS style={{ ...TextColorStyle.Light }}>{I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}</HeadingS>
-                      <Text style={{ ...TextColorStyle.Light }}>
+                      <HeadingSText style={{ color: theme.ui.text.light }}>
+                        {I18n.t(`forgot-${forgotId ? 'id' : 'password'}`)}
+                      </HeadingSText>
+                      <SmallText style={{ color: theme.ui.text.light }}>
                         {I18n.t(`forgot-${forgotId ? 'id' : 'password'}-instructions`)}
-                      </Text>
+                      </SmallText>
                     </LogoWrapper>
                     {!isSuccess ? (
                       <TextInputLine
@@ -146,7 +146,6 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         hasError={isError && !editing && !(hasStructures && errorMsg)}
                         keyboardType={forgotId ? 'email-address' : undefined}
                         editable={!hasStructures}
-                        inputStyle={hasStructures && { color: CommonStyles.placeholderColor, fontWeight: 'bold' }}
                         returnKeyLabel={I18n.t('forgot-submit')}
                         returnKeyType="done"
                         onSubmitEditing={() => this.handleSubmit()}
@@ -155,14 +154,31 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         spellCheck={false}
                       />
                     ) : null}
-                    {(hasStructures && !isSuccess) || (isError && !editing) ? <ErrorMessage>{errorText}</ErrorMessage> : null}
-                    {isSuccess ? (
-                      <InfoMessage
+                    {(hasStructures && !isSuccess) || (isError && !editing) ? (
+                      <SmallText
                         style={{
+                          flexGrow: 0,
+                          marginTop: UI_SIZES.spacing.medium,
+                          padding: UI_SIZES.spacing.tiny,
+                          textAlign: 'center',
+                          alignSelf: 'center',
+                          color: theme.palette.status.failure,
+                        }}>
+                        {errorText}
+                      </SmallText>
+                    ) : null}
+                    {isSuccess ? (
+                      <SmallText
+                        style={{
+                          alignSelf: 'center',
+                          flexGrow: 0,
+                          marginTop: UI_SIZES.spacing.medium,
+                          padding: UI_SIZES.spacing.tiny,
+                          textAlign: 'center',
                           height: 38,
                         }}>
                         {editing ? '' : isSuccess && I18n.t('forgot-success')}
-                      </InfoMessage>
+                      </SmallText>
                     ) : null}
                     {forgotId && hasStructures && !isSuccess ? (
                       <>
@@ -193,7 +209,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                                 ? theme.palette.status.failure
                                 : showStructurePicker
                                 ? theme.palette.complementary.blue.regular
-                                : CommonStyles.entryfieldBorder,
+                                : theme.palette.grey.grey,
                           }}>
                           <TextInputLine
                             editable={false}
@@ -206,7 +222,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           />
                           <Icon
                             name="arrow_down"
-                            color={structureName ? theme.ui.text.inverse : 'black'}
+                            color={structureName ? theme.ui.text.inverse : theme.palette.grey.black}
                             style={[
                               { marginTop: UI_SIZES.spacing.small },
                               showStructurePicker && { transform: [{ rotate: '180deg' }] },
@@ -220,7 +236,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         {showStructurePicker ? (
                           <Picker
                             selectedValue={structureName}
-                            style={{ width: '100%', borderWidth: 1, borderColor: CommonStyles.entryfieldBorder, borderTopWidth: 0 }}
+                            style={{ width: '100%', borderWidth: 1, borderColor: theme.palette.grey.grey, borderTopWidth: 0 }}
                             onValueChange={itemValue => this.setState({ structureName: itemValue, editing: true })}>
                             <Picker.Item label="" value={null} />
                             {structures &&
@@ -239,14 +255,26 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                         marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
                       }}>
                       {!isSuccess || editing ? (
-                        <FlatButton
-                          onPress={() => this.handleSubmit()}
+                        <ActionButton
+                          text={I18n.t('forgot-submit')}
                           disabled={canSubmit}
-                          title={I18n.t('forgot-submit')}
+                          action={() => this.handleSubmit()}
                           loading={fetching}
                         />
                       ) : null}
-                      {hasStructures && errorMsg ? <ErrorMessage>{I18n.t('forgot-several-emails-no-match')}</ErrorMessage> : null}
+                      {hasStructures && errorMsg ? (
+                        <SmallText
+                          style={{
+                            flexGrow: 0,
+                            marginTop: UI_SIZES.spacing.medium,
+                            padding: UI_SIZES.spacing.tiny,
+                            textAlign: 'center',
+                            alignSelf: 'center',
+                            color: theme.palette.status.failure,
+                          }}>
+                          {I18n.t('forgot-several-emails-no-match')}
+                        </SmallText>
+                      ) : null}
                     </View>
                   </FormContainer>
                 </FormWrapper>

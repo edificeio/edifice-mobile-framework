@@ -26,7 +26,8 @@ export const MediaAction = ({ iconName, action, customStyle, customIconSize, cus
         width: 40,
         right: 5,
         top: UI_SIZES.screen.topInset,
-        backgroundColor: 'rgba(0,0,0,0.3)',
+        backgroundColor: theme.palette.grey.black,
+        opacity: 0.8,
       },
       customStyle,
     ]}>

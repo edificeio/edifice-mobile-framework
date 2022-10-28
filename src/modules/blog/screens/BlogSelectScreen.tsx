@@ -13,7 +13,7 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextLight, TextSemiBold } from '~/framework/components/text';
+import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession, getUserSession } from '~/framework/util/session';
@@ -86,7 +86,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
   }
 
   renderError() {
-    return <TextSemiBold>Error</TextSemiBold>; // ToDo: great error screen here
+    return <SmallBoldText>Error</SmallBoldText>; // ToDo: great error screen here
   }
 
   renderList() {
@@ -144,12 +144,12 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
                 fallback={require('ASSETS/images/resource-avatar.png')}
               />
               <View style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
-                <TextSemiBold numberOfLines={1}>{blog.title}</TextSemiBold>
-                <TextLight style={{ fontSize: 12, marginTop: UI_SIZES.spacing.minor }}>
+                <SmallBoldText numberOfLines={1}>{blog.title}</SmallBoldText>
+                <CaptionText style={{ marginTop: UI_SIZES.spacing.minor }}>
                   {I18n.t(`blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? '' : 's'}`, {
                     nb: blogShareNumber || 0,
                   })}
-                </TextLight>
+                </CaptionText>
               </View>
             </View>
           }

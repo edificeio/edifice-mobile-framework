@@ -58,6 +58,7 @@ try {
 //
 
 let buildNumber = null;
+let fullBuildType = null;
 let fullVersion = null;
 let versionNumber = null;
 
@@ -65,7 +66,7 @@ try {
   if (['alpha', 'rc'].includes(buildType)) {
     versionContent.build += 1;
     versionContent[buildType] += 1;
-    buildType = `${buildType}.${versionContent[buildType]}`;
+    fullBuildType = `${buildType}.${versionContent[buildType]}`;
   } else {
     switch (buildType) {
       case 'major':
@@ -83,13 +84,13 @@ try {
     versionContent.alpha = 0;
     versionContent.build = 0;
     versionContent.rc = 0;
-    buildType = '';
+    fullBuildType = '';
   }
   const major = versionContent.major;
   const minor = versionContent.minor;
   const rev = versionContent.rev;
   const build = versionContent.build;
-  const type = buildType.length ? `-${buildType}` : '';
+  const type = fullBuildType.length ? `-${fullBuildType}` : '';
   // eslint-disable-next-line prettier/prettier
   buildNumber = `${major}${minor.toString().padStart(2, '0')}${rev.toString().padStart(2, '0')}${build
     .toString()
@@ -181,7 +182,7 @@ try {
   plistContent = plistContent
     .replace(/(<key>CFBundleShortVersionString<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + versionNumber + '$3')
     .replace(/(<key>CFBundleVersion<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + buildNumber + '$3')
-    .replace(/(<key>BundleVersionType<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + buildType + '$3');
+    .replace(/(<key>BundleVersionType<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + fullBuildType + '$3');
 } catch (error) {
   console.error('!!! Unable to update Info.plist !!!');
   console.log(error);
@@ -223,7 +224,7 @@ try {
   gradleContent = gradleContent
     .replace(/(versionCode )(.*)/, '$1' + buildNumber)
     .replace(/(versionName ")(.*)(")/, '$1' + versionNumber + '$3')
-    .replace(/(buildConfigField "String", "BundleVersionType", "\\")(.*)(\\"")/, '$1' + buildType + '$3');
+    .replace(/(buildConfigField "String", "BundleVersionType", "\\")(.*)(\\"")/, '$1' + fullBuildType + '$3');
 } catch (error) {
   console.error('!!! Unable to update build.gradle !!!');
   console.log(error);

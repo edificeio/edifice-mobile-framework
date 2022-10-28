@@ -1,6 +1,7 @@
 /**
  * Sub-module Presences Reducer
  */
+import { IMementoState } from './state/memento';
 import { IMultipleSlotsState } from './state/multipleSlots';
 import { IRegisterPreferencesState } from './state/registerPreferences';
 import { IChildEventsNotificationState } from './state/relativesNotificationModal';
@@ -17,6 +18,7 @@ export interface IPresences_State {
   coursesRegister: ICoursesRegisterInfosState;
   relativesNotification: IChildEventsNotificationState;
   history: any;
+  memento: IMementoState;
   multipleSlots: IMultipleSlotsState;
   registerPreferences: IRegisterPreferencesState;
   userChildren: IPresencesUserChildrenState;

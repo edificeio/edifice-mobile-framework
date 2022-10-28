@@ -104,7 +104,7 @@ export function activationAccount(model: IActivationModel, rememberMe?: boolean)
       }
       // === 2 - Send activation information
       dispatch(activationSubmitRequested(model));
-      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/activation`, {
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/activation/no-login`, {
         body: formdata,
         headers: {
           Accept: 'application/json',

@@ -1,10 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { SmallText } from '~/framework/components/text';
 import { ButtonsOkCancelReverse, ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
-import { LightP, Paragraph } from '~/ui/Typography';
 
 export default function VersionModal(props: {
   version: string;
@@ -22,12 +23,12 @@ export default function VersionModal(props: {
       <ModalBox backdropOpacity={0.5} isVisible={visibility}>
         <ModalContent>
           <ModalContentBlock>
-            <LightP>{I18n.t('common-VersionTitle')}</LightP>
+            <SmallText style={{ color: theme.ui.text.light }}>{I18n.t('common-VersionTitle')}</SmallText>
           </ModalContentBlock>
           <ModalContentBlock>
-            <Paragraph style={{ textAlign: 'center', paddingTop: UI_SIZES.spacing.small }}>
+            <SmallText style={{ textAlign: 'center', paddingTop: UI_SIZES.spacing.small }}>
               {I18n.t('common-VersionContentMandatory', { version })}
-            </Paragraph>
+            </SmallText>
           </ModalContentBlock>
           <ModalContentBlock>
             <ButtonsOkOnly onValid={onSubmit} title={I18n.t('common-VersionUpdate')} />
@@ -40,7 +41,7 @@ export default function VersionModal(props: {
       <ModalBox backdropOpacity={0.5} isVisible={visibility}>
         <ModalContent>
           <ModalContentBlock>
-            <LightP>{I18n.t('common-VersionTitle')}</LightP>
+            <SmallText style={{ color: theme.ui.text.light }}>{I18n.t('common-VersionTitle')}</SmallText>
           </ModalContentBlock>
           <ModalContentBlock>
             <Paragraph style={{ textAlign: 'center', paddingTop: UI_SIZES.spacing.small }}>

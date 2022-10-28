@@ -4,14 +4,14 @@ import { SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { FlatButton } from '~/ui/FlatButton';
 
 export interface ILoginWAYFPageProps {
   navigation?: any;
@@ -45,10 +45,10 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
               paddingVertical: UI_SIZES.spacing.huge * 1.5,
             }}>
             <PFLogo />
-            <Text style={{ textAlign: 'center' }}>{I18n.t('login-wayf-main-text')}</Text>
-            <FlatButton
-              title={I18n.t('login-wayf-main-button')}
-              onPress={() => {
+            <SmallText style={{ textAlign: 'center' }}>{I18n.t('login-wayf-main-text')}</SmallText>
+            <ActionButton
+              text={I18n.t('login-wayf-main-button')}
+              action={() => {
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
                 navigation.navigate('WAYF');
               }}

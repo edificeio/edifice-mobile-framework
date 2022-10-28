@@ -7,15 +7,15 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
 import { getUserSession } from '~/framework/util/session';
+import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { TimetableProps, TimetableState } from '~/modules/viescolaire/edt/containers/Timetable';
-import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
 import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   refreshContainer: {
     height: '100%',
     zIndex: 0,
@@ -28,10 +28,10 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.minor,
   },
   weekText: {
-    marginRight: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.minor,
   },
   courseView: {
     flexDirection: 'row',
@@ -43,9 +43,6 @@ const style = StyleSheet.create({
   },
   subjectView: {
     maxWidth: '56%',
-  },
-  classText: {
-    ...TextSizeStyle.SlightBig,
   },
   roomView: {
     flexDirection: 'row',
@@ -63,15 +60,9 @@ const style = StyleSheet.create({
   halfTextStyle: {
     flex: 1,
   },
-  halfClassText: {
-    ...TextSizeStyle.SlightBig,
-  },
   halfRoomLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  tagsLabel: {
-    fontStyle: 'italic',
   },
   greyishBackground: {
     backgroundColor: theme.palette.grey.fog,
@@ -104,22 +95,22 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const secondText = isTeacher ? course.subject?.name || course.exceptionnal : course.teacher;
 
     return (
-      <View style={[style.courseView, isCourseWithTags ? style.greyishBackground : style.whiteBackground]}>
-        <View style={style.subjectView}>
-          <TextBold style={isTeacher && style.classText}>{firstText}</TextBold>
-          <Text numberOfLines={1}>{secondText}</Text>
+      <View style={[styles.courseView, isCourseWithTags ? styles.greyishBackground : styles.whiteBackground]}>
+        <View style={styles.subjectView}>
+          <HeadingXSText>{firstText}</HeadingXSText>
+          <SmallText numberOfLines={1}>{secondText}</SmallText>
         </View>
         <View>
           {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 ? (
-            <View style={style.roomView}>
+            <View style={styles.roomView}>
               <Icon name="pin_drop" size={16} />
-              <Text>
+              <SmallText>
                 &nbsp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
-              </Text>
+              </SmallText>
             </View>
           ) : null}
           {course.tags && course.tags !== undefined && course.tags.length > 0 ? (
-            <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold>
+            <SmallBoldItalicText>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText>
           ) : null}
         </View>
       </View>
@@ -130,27 +121,26 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const isCourseWithTags = !!(course.tags && course.tags !== undefined && course.tags.length > 0);
     const isCourseTagNotUlis = !!(course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS');
     const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
-    const isTeacher = this.props.userType === 'Teacher';
 
     return (
       <View
-        style={[style.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? style.greyishBackground : style.whiteBackground]}>
-        <View style={style.halfSplitLineView}>
-          <TextBold style={[style.halfTextStyle, isTeacher && style.halfClassText]} numberOfLines={1}>
+        style={[styles.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? styles.greyishBackground : styles.whiteBackground]}>
+        <View style={styles.halfSplitLineView}>
+          <HeadingXSText style={styles.halfTextStyle} numberOfLines={1}>
             {firstText}
-          </TextBold>
+          </HeadingXSText>
           {isCourseWithRoomLabel ? (
-            <View style={style.halfRoomLabelContainer}>
+            <View style={styles.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
-              <Text numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</Text>
+              <SmallText numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</SmallText>
             </View>
           ) : null}
         </View>
-        <View style={style.halfSplitLineView}>
-          <Text style={style.halfTextStyle} numberOfLines={1}>
+        <View style={styles.halfSplitLineView}>
+          <SmallText style={styles.halfTextStyle} numberOfLines={1}>
             {secondText}
-          </Text>
-          {isCourseWithTags ? <TextBold style={style.tagsLabel}>{course.tags[0]?.label.toLocaleUpperCase()}</TextBold> : null}
+          </SmallText>
+          {isCourseWithTags ? <SmallBoldItalicText>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText> : null}
         </View>
       </View>
     );
@@ -167,17 +157,17 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   public render() {
     const { startDate, selectedDate, courses, teachers, slots, userType, updateSelectedDate } = this.props;
     return (
-      <View style={style.refreshContainer}>
+      <View style={styles.refreshContainer}>
         {userType === 'Relative' ? <ChildPicker /> : null}
-        <View style={style.weekPickerView}>
-          <Text style={style.weekText}>{I18n.t('viesco-edt-week-of')}</Text>
+        <View style={styles.weekPickerView}>
+          <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.timetable} />
         </View>
         {courses !== undefined &&
           (courses.isFetching || courses.isPristine ? (
             <LoadingIndicator />
           ) : (
-            <View style={style.calendarContainer}>
+            <View style={styles.calendarContainer}>
               <Calendar
                 startDate={startDate}
                 data={adaptCourses(courses.data, teachers.data)}

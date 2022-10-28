@@ -21,9 +21,9 @@ import { HtmlContentView } from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { Badge } from './badge';
-import { UI_SIZES } from './constants';
+import { UI_SIZES, getScaleDimension } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
-import { FontStyle, Text, TextColorStyle, TextItalic, TextSizeStyle } from './text';
+import { BodyText, CaptionItalicText, CaptionText, SmallText, TextFontStyle, TextSizeStyle } from './text';
 
 export const cardPaddingV = UI_SIZES.spacing.medium;
 export const cardPaddingH = UI_SIZES.spacing.medium;
@@ -151,7 +151,7 @@ export const ContentView = (props: IContentCardProps) => {
 /** Pre-configured title for ContentCard */
 export const ContentCardTitle = (props: TextProps) => {
   const { style, ...otherProps } = props;
-  const Comp = styled(Text)({ ...TextColorStyle.Action, ...TextSizeStyle.SlightBig });
+  const Comp = styled(BodyText)({ color: theme.palette.primary.regular });
   return <Comp numberOfLines={2} ellipsizeMode="tail" {...otherProps} style={style} />;
 };
 
@@ -176,17 +176,11 @@ export const ContentCardHeader = (props: IContentCardHeaderProps) => {
         </>
       ) : null}
       <View style={{ flex: 1 }}>
-        {props.text ? (
-          typeof props.text === 'string' ? (
-            <Text style={{ ...TextSizeStyle.Small }}>{props.text}</Text>
-          ) : (
-            props.text
-          )
-        ) : null}
+        {props.text ? typeof props.text === 'string' ? <CaptionText>{props.text}</CaptionText> : props.text : null}
         {props.date ? (
-          <TextItalic style={{ color: theme.palette.grey.graphite, ...TextSizeStyle.Small }}>
+          <CaptionItalicText style={{ color: theme.palette.grey.graphite }}>
             {typeof props.date === 'string' ? props.date : displayPastDate(props.date)}
-          </TextItalic>
+          </CaptionItalicText>
         ) : null}
       </View>
     </View>
@@ -243,13 +237,11 @@ const ResourceCard_base = (props: IResourceCardProps_base) => {
                 images: false,
                 ignoreLineBreaks: true,
                 globalTextStyle: {
-                  color: theme.ui.text.regular,
-                  fontSize: 12,
-                  fontWeight: '400',
+                  ...TextFontStyle.Regular,
+                  ...TextSizeStyle.Small,
                 },
                 linkTextStyle: {
-                  ...FontStyle.SemiBold,
-                  color: theme.ui.text.heavy,
+                  ...TextFontStyle.Bold,
                 },
               }}
             />
@@ -311,19 +303,19 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               justifyContent: 'center',
               alignItems: 'center',
               marginTop: UI_SIZES.spacing.minor,
-              height: UI_SIZES.getResponsiveStyledLineHeight() * 2,
+              height: getScaleDimension(20, 'height') * 2,
             }}>
-            <Text
+            <SmallText
               numberOfLines={2}
               style={[
                 {
                   textAlign: 'center',
-                  ...FontStyle.SemiBold,
+                  lineHeight: undefined,
                 },
                 textStyle,
               ]}>
               {text}
-            </Text>
+            </SmallText>
           </View>
         ) : (
           text
@@ -383,13 +375,7 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
               <Picture style={[OverviewCardBase.styles.picture, pictureStyle] as ImageStyle} {...picture} />
             </View>
           ) : null}
-          {title ? (
-            typeof title === 'string' ? (
-              <ContentCardTitle style={FontStyle.SemiBold}>{title}</ContentCardTitle>
-            ) : (
-              title
-            )
-          ) : null}
+          {title ? typeof title === 'string' ? <ContentCardTitle>{title}</ContentCardTitle> : title : null}
         </View>
       }>
       {children}

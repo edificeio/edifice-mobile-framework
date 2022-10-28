@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { Text, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 
 const ViewDate = styled.View<{ min: boolean }>(
@@ -15,10 +15,10 @@ const ViewDate = styled.View<{ min: boolean }>(
 
 export const DateView = ({ date, min = false, strong = false }) => (
   <ViewDate min={min}>
-    <Text
+    <SmallText
       numberOfLines={1}
       style={[{ color: strong ? theme.ui.text.regular : theme.ui.text.light }, !strong && { ...TextSizeStyle.Small }]}>
       {displayPastDate(moment(date))}
-    </Text>
+    </SmallText>
   </ViewDate>
 );

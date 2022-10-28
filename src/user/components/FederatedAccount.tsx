@@ -4,11 +4,11 @@ import * as React from 'react';
 import { SafeAreaView, ScrollView, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text, TextSemiBold } from '~/framework/components/text';
-import { FlatButton } from '~/ui/FlatButton';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -41,10 +41,10 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                     <PFLogo />
                   </LogoWrapper>
                   <View style={{ flexGrow: 4, justifyContent: 'flex-start' }}>
-                    <TextSemiBold>{I18n.t('federatedAccount-instructions')}</TextSemiBold>
-                    <Text style={{ marginLeft: UI_SIZES.spacing.big, marginTop: UI_SIZES.spacing.medium }}>
+                    <SmallBoldText>{I18n.t('federatedAccount-instructions')}</SmallBoldText>
+                    <SmallText style={{ marginLeft: UI_SIZES.spacing.big, marginTop: UI_SIZES.spacing.medium }}>
                       {I18n.t('federatedAccount-instructions-details')}
-                    </Text>
+                    </SmallText>
                   </View>
                   <View
                     style={{
@@ -53,10 +53,10 @@ export class FederatedAccountPage extends React.PureComponent<IFederatedAccountP
                       justifyContent: 'center',
                       marginTop: UI_SIZES.spacing.large,
                     }}>
-                    <FlatButton
-                      onPress={() => onLink()}
-                      title={I18n.t('federatedAccount-openLink')}
-                      rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+                    <ActionButton
+                      text={I18n.t('federatedAccount-openLink')}
+                      action={() => onLink()}
+                      iconName="pictos-external-link"
                     />
                   </View>
                 </FormContainer>

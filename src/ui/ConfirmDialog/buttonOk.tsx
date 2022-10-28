@@ -3,15 +3,15 @@ import { StyleSheet, TextStyle, TouchableOpacity, ViewStyle } from 'react-native
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   buttonContainer: {
     backgroundColor: theme.palette.secondary.regular,
-    borderRadius: 2,
+    borderRadius: UI_SIZES.radius.small,
     marginLeft: UI_SIZES.spacing.medium,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    color: theme.palette.grey.white,
+    color: theme.ui.text.inverse,
   },
 });
 
@@ -36,6 +36,6 @@ export const DialogButtonOk = ({ label, disabled, style, textStyle, onPress }: I
     onPress={onPress}
     disabled={disabled}
     style={[styles.buttonContainer, style, disabled && styles.disabledOpacity]}>
-    <Text style={[styles.text, textStyle]}>{label}</Text>
+    <SmallText style={[styles.text, textStyle]}>{label}</SmallText>
   </TouchableOpacity>
 );

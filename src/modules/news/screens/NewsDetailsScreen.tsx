@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
@@ -16,16 +17,13 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { TextLight, TextSemiBold } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { Trackers } from '~/framework/util/tracker';
 import { getNewsDetailsAction } from '~/modules/news/actions';
 import type { INews, INewsComment } from '~/modules/news/reducer';
 import { newsUriCaptureFunction } from '~/modules/news/service';
-import { FlatButton } from '~/ui/FlatButton';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
@@ -138,20 +136,12 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           />
           {resourceUri ? (
             <View style={{ marginTop: UI_SIZES.spacing.small }}>
-              <FlatButton
-                title={I18n.t('common.openInBrowser')}
-                customButtonStyle={{ backgroundColor: theme.palette.grey.fog }}
-                customTextStyle={{ color: theme.palette.primary.regular }}
-                onPress={() => {
-                  //TODO: create generic function inside oauth (use in myapps, etc.)
-                  if (!DEPRECATED_getCurrentPlatform()) {
-                    return null;
-                  }
-                  const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                  openUrl(url);
-                  Trackers.trackEvent('News', 'GO TO', 'View in Browser');
-                }}
-                rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+              <ActionButton
+                text={I18n.t('common.openInBrowser')}
+                url={resourceUri}
+                action={() => Trackers.trackEvent('News', 'GO TO', 'View in Browser')}
+                type="secondary"
+                style={{ borderWidth: 0, backgroundColor: theme.palette.grey.fog }}
               />
             </View>
           ) : null}
@@ -173,9 +163,9 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
               <Icon name="new_comment" color={theme.ui.text.light} size={16} style={{ marginRight: UI_SIZES.spacing.minor }} />
             }
             rightElement={
-              <TextLight>
+              <SmallText>
                 {newsComments!.length} {I18n.t(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
-              </TextLight>
+              </SmallText>
             }
           />
         ) : null}
@@ -196,10 +186,10 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
         rightElement={
           <View style={{ marginLeft: UI_SIZES.spacing.medium }}>
             <View style={{ flexDirection: 'row' }}>
-              <TextSemiBold numberOfLines={2} style={{ fontSize: 12, marginRight: UI_SIZES.spacing.minor, maxWidth: '70%' }}>
+              <CaptionBoldText numberOfLines={2} style={{ marginRight: UI_SIZES.spacing.minor, maxWidth: '70%' }}>
                 {newsComment.username}
-              </TextSemiBold>
-              <TextLight style={{ fontSize: 10 }}>{moment(newsComment.created).fromNow()}</TextLight>
+              </CaptionBoldText>
+              <CaptionText>{moment(newsComment.created).fromNow()}</CaptionText>
             </View>
             <TextPreview textContent={newsComment.comment} />
           </View>

@@ -13,7 +13,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { ActionButton } from './ActionButton';
 import { UI_SIZES } from './constants';
 import { PageViewStyle } from './page';
-import { Text, TextSemiBold } from './text';
+import { HeadingSText, SmallText } from './text';
 
 export const EmptyScreen = ({
   svgImage,
@@ -41,7 +41,6 @@ export const EmptyScreen = ({
     <PageViewStyle
       style={[
         {
-          backgroundColor: theme.ui.background.empty,
           paddingTop: UI_SIZES.spacing.huge,
           paddingHorizontal: UI_SIZES.spacing.big,
         },
@@ -52,25 +51,24 @@ export const EmptyScreen = ({
           <NamedSVG name={svgImage} width={imageWidth} height={imageHeight} />
         </View>
       </View>
-      <TextSemiBold
+      <HeadingSText
         numberOfLines={2}
         style={{
           textAlign: 'center',
-          fontSize: 18,
           color: theme.palette.primary.regular,
           marginTop: UI_SIZES.spacing.large,
         }}>
         {title}
-      </TextSemiBold>
+      </HeadingSText>
       {text ? (
-        <Text
+        <SmallText
           // numberOfLines={5}
           style={{
             textAlign: 'center',
             marginTop: UI_SIZES.spacing.small,
           }}>
           {text}
-        </Text>
+        </SmallText>
       ) : null}
       {hasButton ? (
         <View style={{ marginTop: UI_SIZES.spacing.large }}>

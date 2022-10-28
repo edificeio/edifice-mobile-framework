@@ -2,20 +2,21 @@
  * These tools are used in htmlParser/rn for the second step of parsing.
  * The aim is to render a React Native Element from INugget array.
  */
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { Image, ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import {
+  NestedActionText,
+  NestedBoldText,
+  NestedItalicText,
   NestedText,
-  NestedTextAction,
-  NestedTextBold,
-  NestedTextItalic,
-  Text,
-  TextAction,
-  TextBold,
-  TextColorStyle,
-  TextItalic,
+  SmallActionText,
+  SmallBoldText,
+  SmallItalicText,
+  SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { DEPRECATED_signImageURISource, DEPRECATED_signImagesUrls, signURISource, transformedSrc } from '~/infra/oauth';
@@ -174,7 +175,7 @@ function renderParseText(
 ): JSX.Element {
   // -1 - Default opts
   textStyles = {
-    [HtmlParserJsxTextVariant.Link]: { ...TextColorStyle.Action },
+    [HtmlParserJsxTextVariant.Link]: { color: theme.palette.primary.regular },
     ...textStyles,
   };
   // 0 - If the text is acually an inline image, render it elsewhere.
@@ -199,28 +200,28 @@ function renderParseText(
   // 2 - Compute nugget JSX tag
   switch ((nugget as ITextNugget).variant) {
     case HtmlParserJsxTextVariant.None:
-      const TextComp = nested ? NestedText : Text;
+      const TextComp = nested ? NestedText : SmallText;
       return (
         <TextComp key={key} selectable={selectable} style={{ ...style, ...textStyles.all }}>
           {children}
         </TextComp>
       );
     case HtmlParserJsxTextVariant.Bold:
-      const BoldTextComp = nested ? NestedTextBold : TextBold;
+      const BoldTextComp = nested ? NestedBoldText : SmallBoldText;
       return (
         <BoldTextComp key={key} selectable={selectable} style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Bold] }}>
           {children}
         </BoldTextComp>
       );
     case HtmlParserJsxTextVariant.Italic:
-      const ItalicTextComp = nested ? NestedTextItalic : TextItalic;
+      const ItalicTextComp = nested ? NestedItalicText : SmallItalicText;
       return (
         <ItalicTextComp key={key} selectable={selectable} style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Italic] }}>
           {children}
         </ItalicTextComp>
       );
     case HtmlParserJsxTextVariant.Underline:
-      const UnderlineTextComp = nested ? NestedText : Text;
+      const UnderlineTextComp = nested ? NestedText : SmallText;
       return (
         <UnderlineTextComp
           key={key}
@@ -234,7 +235,13 @@ function renderParseText(
         </UnderlineTextComp>
       );
     case HtmlParserJsxTextVariant.Link:
-      const LinkTextComp = (nugget as ILinkTextNugget).url ? (nested ? NestedTextAction : TextAction) : nested ? NestedText : Text;
+      const LinkTextComp = (nugget as ILinkTextNugget).url
+        ? nested
+          ? NestedActionText
+          : SmallActionText
+        : nested
+        ? NestedText
+        : SmallText;
       return (
         <LinkTextComp
           key={key}
@@ -254,7 +261,7 @@ function renderParseText(
         </LinkTextComp>
       );
     case HtmlParserJsxTextVariant.Color:
-      const ColorTextComp = nested ? NestedText : Text;
+      const ColorTextComp = nested ? NestedText : SmallText;
       return (
         <ColorTextComp
           key={key}
@@ -267,7 +274,7 @@ function renderParseText(
         </ColorTextComp>
       );
     case HtmlParserJsxTextVariant.BgColor:
-      const BgColorTextComp = nested ? NestedText : Text;
+      const BgColorTextComp = nested ? NestedText : SmallText;
       return (
         <BgColorTextComp
           key={key}
@@ -332,6 +339,13 @@ function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle 
  * @param style
  */
 function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = {}): JSX.Element {
+  if (!nugget.src) {
+    return (
+      <TextItalic style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
+        {I18n.t(`audioNotAvailable`)}
+      </TextItalic>
+    );
+  }
   return (
     <View key={key}>
       <Player type="audio" source={signURISource(transformedSrc(nugget.src))} style={style} />
@@ -346,6 +360,13 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
  * @param style
  */
 function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = {}): JSX.Element {
+  if (!nugget.src) {
+    return (
+      <TextItalic style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
+        {I18n.t(`videoNotAvailable`)}
+      </TextItalic>
+    );
+  }
   return (
     <View key={key}>
       <Player

@@ -2,18 +2,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { StyleSheet, Switch, View } from 'react-native';
+import { Platform, StyleSheet, Switch, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { Text, TextBold } from '~/framework/components/text';
-import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
-import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
-import { IMoyenneListState } from '~/modules/viescolaire/competences/state/moyennes';
-import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { IPeriodsList } from '~/modules/viescolaire/viesco/state/periods';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { AsyncState } from '~/framework/util/redux/async';
+import { IDevoirsMatieres, ILevel, IMoyenne } from '~/modules/viescolaire/competences/reducer';
+import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
+import { IPeriodsList } from '~/modules/viescolaire/dashboard/state/periods';
 import { PageContainer } from '~/ui/ContainerContent';
 import Dropdown from '~/ui/Dropdown';
 
@@ -21,12 +20,16 @@ import { GradesDevoirs, GradesDevoirsMoyennes, getSortedEvaluationList } from '.
 
 const styles = StyleSheet.create({
   subtitle: { color: theme.palette.grey.stone, paddingVertical: UI_SIZES.spacing.minor },
-  dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium, flex: 1 },
+  dashboardPart: {
+    paddingTop: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    flex: 1,
+  },
   containerDropdowns: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.small,
     marginHorizontal: UI_SIZES.spacing.tiny,
   },
   dropdownStyle: {
@@ -40,14 +43,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headerGradeText: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
     maxWidth: '50%',
   },
   headerSelectedPeriodText: {
     color: theme.palette.grey.stone,
   },
   headerColorSwitchContainer: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -56,14 +59,14 @@ const styles = StyleSheet.create({
     maxWidth: '50%',
   },
   selectedPeriodText: {
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
   },
 });
 
 export type ICompetencesProps = {
-  devoirsList: IDevoirsMatieresState;
-  devoirsMoyennesList: IMoyenneListState;
-  levels: ILevelsList;
+  devoirsList: AsyncState<IDevoirsMatieres>;
+  devoirsMoyennesList: AsyncState<IMoyenne>;
+  levels: ILevel[];
   userType: string;
   periods: IPeriodsList;
   groups: any;
@@ -82,9 +85,9 @@ enum SwitchState {
 }
 
 enum ScreenDisplay {
-  DASHBOARD,
-  PERIOD,
-  DISCIPLINE,
+  DASHBOARD, // Home (neither period nor discipline selected)
+  PERIOD, // Only period selected
+  DISCIPLINE, // Discipline selected (with or without period)
 }
 
 type ISelectedPeriod = { type: string; value: string | undefined };
@@ -206,16 +209,18 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     }
   };
 
+  // DISPLAY MOYENNES OR NOTES ------------------------------------------------
+
   private renderDevoirsByPeriod() {
     const { devoirsMoyennesList } = this.props;
     const { devoirs, selectedPeriod } = this.state;
     return (
       <View style={styles.mainView}>
         <View style={styles.renderDevoirsByPeriodView}>
-          <TextBold style={styles.selectedPeriodText} numberOfLines={1}>
+          <SmallBoldText style={styles.selectedPeriodText} numberOfLines={1}>
             {selectedPeriod.type}
-          </TextBold>
-          <Text> - {I18n.t('viesco-average').toUpperCase()}</Text>
+          </SmallBoldText>
+          <SmallText> - {I18n.t('viesco-average').toUpperCase()}</SmallText>
         </View>
         {devoirsMoyennesList.isFetching ? (
           <LoadingIndicator />
@@ -244,27 +249,26 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     return (
       <>
-        {screenDisplay === ScreenDisplay.DISCIPLINE && <TextBold numberOfLines={1}>{selectedDiscipline}</TextBold>}
+        {screenDisplay === ScreenDisplay.DISCIPLINE && <SmallBoldText numberOfLines={1}>{selectedDiscipline}</SmallBoldText>}
         <View style={styles.headerView}>
           {screenDisplay === ScreenDisplay.DASHBOARD ? (
-            <TextBold style={styles.headerGradeText} numberOfLines={1}>
+            <SmallBoldText style={styles.headerGradeText} numberOfLines={1}>
               {I18n.t('viesco-last-grades')}
-            </TextBold>
+            </SmallBoldText>
           ) : (
-            <Text style={styles.headerSelectedPeriodText}>{selectedPeriod.type}</Text>
+            <SmallText style={styles.headerSelectedPeriodText}>{selectedPeriod.type}</SmallText>
           )}
           {isDevoirsNoted ? (
             <View style={styles.headerColorSwitchContainer}>
-              <Text>{I18n.t('viesco-colors')}&ensp;</Text>
+              <SmallText>{I18n.t('viesco-colors')}&ensp;</SmallText>
               <Switch
-                trackColor={{ false: '#D1D1D1', true: '#A1DED5' }}
-                thumbColor={value ? '#EFEFEF' : '#46BFAF'}
-                ios_backgroundColor={value ? '#DDDDDD' : '#46BFAF'}
+                value={!value}
                 onValueChange={() => {
                   this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
                   this.setSwitchDefaultPosition(value);
                 }}
-                value={!value}
+                trackColor={{ false: theme.palette.grey.grey, true: theme.palette.complementary.green.regular }}
+                style={Platform.OS !== 'ios' ? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : null}
               />
             </View>
           ) : null}
@@ -272,6 +276,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       </>
     );
   };
+
+  // DISPLAY LOADER OR LIST OF DEVOIRS ----------------------------------------
 
   private renderDevoirsList() {
     const { devoirsList, levels } = this.props;
@@ -290,6 +296,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       </View>
     );
   }
+
+  // MANAGE DROPDOWN ----------------------------------------------------------
 
   private initDevoirsByDisciplines(discipline) {
     const { structureId, childId } = this.props;
@@ -366,12 +374,14 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     );
   }
 
+  // BASE RENDER --------------------------------------------------------------
+
   public render() {
     return (
       <PageContainer>
-        {this.props.userType === 'Relative' && <ChildPicker hideButton />}
+        {this.props.userType === 'Relative' && <ChildPicker />}
         <View style={styles.dashboardPart}>
-          <Text style={styles.subtitle}>{I18n.t('viesco-report-card')}</Text>
+          <SmallText style={styles.subtitle}>{I18n.t('viesco-report-card')}</SmallText>
           <View style={styles.containerDropdowns}>
             {this.displayPeriodsDropdown()}
             {this.displayDisciplinesDropdown()}

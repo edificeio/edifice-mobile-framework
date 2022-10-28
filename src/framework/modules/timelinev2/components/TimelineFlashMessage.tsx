@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -41,7 +42,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const contentsLanguages = contents && Object.keys(contents);
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];
     const maxLines = 4,
-      maxHeight = UI_SIZES.getResponsiveStyledLineHeight() * maxLines;
+      maxHeight = getScaleDimension(20, 'height') * maxLines;
 
     return contents && contentsLanguages.length > 0 ? (
       <ArticleContainer style={{ width: '100%', opacity: measuredText ? 1 : 0 }}>
@@ -51,7 +52,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             this.setState({ isExtended: true });
           }}
           headerIndicator={
-            <TouchableOpacity onPress={this.props.flashMessageAction}>
+            <TouchableOpacity onPress={flashMessageAction}>
               <Icon
                 name="close"
                 color={theme.ui.text.inverse}
@@ -72,7 +73,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                   ? {}
                   : longText
                   ? {
-                      maxHeight: UI_SIZES.getResponsiveStyledLineHeight() * (4 + 1),
+                      maxHeight: getScaleDimension(20, 'height') * (4 + 1),
                       overflow: 'hidden',
                     }
                   : {}
@@ -101,18 +102,12 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 }}
               />
 
-              {signature ? <Text style={{ fontStyle: 'italic', color: signatureColor }}>{signature}</Text> : null}
+              {signature ? <SmallItalicText style={{ color: signatureColor }}>{signature}</SmallItalicText> : null}
             </View>
           }>
           {longText && !isExtended ? (
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  color: theme.ui.text.inverse,
-                }}>
-                {I18n.t('seeMore')}
-              </Text>
+              <SmallBoldText style={{ color: theme.ui.text.inverse }}>{I18n.t('seeMore')}</SmallBoldText>
               <Icon
                 name="arrow_down"
                 color={theme.ui.text.inverse}

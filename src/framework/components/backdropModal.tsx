@@ -5,7 +5,7 @@ import Modal from 'react-native-modal';
 import theme from '~/app/theme';
 
 import { UI_SIZES } from './constants';
-import { TextBold } from './text';
+import { SmallBoldText } from './text';
 
 export interface IBackdropModalProps {
   content: JSX.Element;
@@ -72,7 +72,7 @@ export const BackdropModal = ({
             justifyContent: 'center',
             paddingBottom: UI_SIZES.spacing.medium,
           }}>
-          <TextBold>{title}</TextBold>
+          <SmallBoldText>{title}</SmallBoldText>
         </View>
       ) : null}
       {propagateSwipe ? <TouchableWithoutFeedback>{content}</TouchableWithoutFeedback> : content}

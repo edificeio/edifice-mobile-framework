@@ -2,22 +2,21 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { useState } from 'react';
-import { FlatList, FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
-import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
-import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
-import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
-import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import FlatList from '~/framework/components/flatList';
+import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { IDevoir, ILevel, IMoyenne } from '~/modules/viescolaire/competences/reducer';
+import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
 // STYLE
 
-const styleConstant = StyleSheet.create({
+const styles = StyleSheet.create({
   coloredSquareText: { color: theme.palette.grey.white },
   devoirsList: {
     width: '100%',
@@ -25,7 +24,7 @@ const styleConstant = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 5,
     backgroundColor: theme.palette.grey.white,
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.small,
   },
   competencesList: {
     flexDirection: 'row',
@@ -35,23 +34,21 @@ const styleConstant = StyleSheet.create({
   coloredSquare: {
     backgroundColor: theme.palette.complementary.blue.regular,
     borderRadius: 5,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.minor,
     minWidth: '29%',
   },
   coloredSquareNoteTextContainer: {
     alignSelf: 'center',
     color: theme.palette.grey.white,
-    marginVertical: UI_SIZES.spacing.minor, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.minor,
   },
   coloredSquareNoteText: {
-    ...TextSizeStyle.Big,
     color: theme.palette.grey.white,
   },
   gradeDevoirsNoteContainer: {
     justifyContent: 'center',
   },
   gradeDevoirsNoteText: {
-    ...TextSizeStyle.Big,
     alignSelf: 'center',
     color: theme.palette.grey.white,
   },
@@ -73,21 +70,20 @@ const styleConstant = StyleSheet.create({
     justifyContent: 'center',
   },
   competenceRoundText: {
-    ...TextSizeStyle.Big,
     textAlign: 'center',
   },
   competenceRoundModalStyle: {
     width: '100%',
   },
   competenceRoundModalContentStyle: {
-    marginLeft: -20, // MO-142 use UI_SIZES.spacing here
-    marginRight: 20, // MO-142 use UI_SIZES.spacing here
+    marginLeft: -UI_SIZES.spacing.medium,
+    marginRight: UI_SIZES.spacing.medium,
   },
   competenceRoundModalText: {
     width: '85%',
   },
   round: {
-    marginLeft: 5, // MO-142 use UI_SIZES.spacing here
+    marginLeft: UI_SIZES.spacing.tiny,
     height: 25,
     width: 25,
     borderRadius: UI_SIZES.spacing.medium,
@@ -96,7 +92,7 @@ const styleConstant = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    paddingBottom: 10, // MO-142 use UI_SIZES.spacing here
+    paddingBottom: UI_SIZES.spacing.small,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
   shadow: {
@@ -114,8 +110,8 @@ const styleConstant = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10, // MO-142 use UI_SIZES.spacing here
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.minor,
   },
   gradesDevoirsMoyennesView: {
     flexGrow: 1,
@@ -139,13 +135,12 @@ const styleConstant = StyleSheet.create({
   },
   denseDevoirListMatiereText: {
     maxWidth: '65%',
-    paddingRight: 10, // MO-142 use UI_SIZES.spacing here
+    paddingRight: UI_SIZES.spacing.minor,
   },
   denseDevoirListNoteText: {
-    ...TextSizeStyle.SlightBig,
     flexGrow: 1,
     textAlign: 'right',
-    paddingTop: 6, // MO-142 use UI_SIZES.spacing here
+    alignSelf: 'center',
   },
   denseDevoirListDiviseurText: {
     paddingTop: UI_SIZES.spacing.minor,
@@ -158,7 +153,7 @@ const styleConstant = StyleSheet.create({
 
 // COMPONENTS
 
-const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
+const getColorfromCompetence = (evaluation: number, levels: ILevel[]) => {
   const cycleLevels = levels.filter(obj => {
     return obj.cycle === 'Cycle 3';
   });
@@ -166,23 +161,23 @@ const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
     const color = cycleLevels[evaluation].couleur;
     return color ? color : cycleLevels[evaluation].default;
   }
-  return '#DDDDDD';
+  return theme.palette.grey.cloudy;
 };
 
 const getColorFromNote = (note: number, moy: number, diviseur: number) => {
   if (note === diviseur || note > moy) {
-    return '#46BFAF';
+    return theme.palette.complementary.green.regular;
   } else if (note === moy) {
-    return '#FA9701';
+    return theme.palette.complementary.orange.regular;
   } else if (note < moy) {
-    return viescoTheme.palette.presencesEvents.no_reason;
+    return viescoTheme.palette.presencesEvents.noReason;
   }
 };
 
-const CompetenceRoundModal = (competence: any, index: number, levels: ILevelsList) => (
-  <ModalContentBlock style={styleConstant.modalBlock} key={index}>
-    <Text style={styleConstant.competenceRoundModalText}>{competence.nom}</Text>
-    <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
+const CompetenceRoundModal = (competence: any, index: number, levels: ILevel[]) => (
+  <ModalContentBlock style={styles.modalBlock} key={index}>
+    <SmallText style={styles.competenceRoundModalText}>{competence.nom}</SmallText>
+    <View style={[styles.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
   </ModalContentBlock>
 );
 
@@ -195,23 +190,21 @@ const CompetenceRound = ({
   competences: any;
   stateFullRound: FlexAlignType;
   size: number;
-  levels: ILevelsList;
+  levels: ILevel[];
 }) => {
   const [isVisible, toggleVisible] = useState(false);
   return (
     <View
       style={[
-        styleConstant.competenceRoundContainer,
-        stateFullRound === 'flex-end'
-          ? styleConstant.competenceRoundContainerWidthAuto
-          : styleConstant.competenceRoundContainerWidthQuarter,
+        styles.competenceRoundContainer,
+        stateFullRound === 'flex-end' ? styles.competenceRoundContainerWidthAuto : styles.competenceRoundContainerWidthQuarter,
         { alignItems: stateFullRound },
       ]}>
       {competences.length > 0 && (
         <TouchableOpacity
-          style={[styleConstant.competenceRound, styleConstant.shadow, { minHeight: size, minWidth: size }]}
+          style={[styles.competenceRound, styles.shadow, { minHeight: size, minWidth: size }]}
           onPress={() => toggleVisible(!isVisible)}>
-          <TextBold style={styleConstant.competenceRoundText}>C</TextBold>
+          <HeadingSText style={styles.competenceRoundText}>C</HeadingSText>
         </TouchableOpacity>
       )}
 
@@ -219,8 +212,8 @@ const CompetenceRound = ({
         <ModalBox isVisible={isVisible}>
           <ModalContent>
             <FlatList
-              style={styleConstant.competenceRoundModalStyle}
-              contentContainerStyle={styleConstant.competenceRoundModalContentStyle}
+              style={styles.competenceRoundModalStyle}
+              contentContainerStyle={styles.competenceRoundModalContentStyle}
               showsVerticalScrollIndicator={false}
               data={competences}
               renderItem={({ item, index }) => CompetenceRoundModal(item, index, levels)}
@@ -252,55 +245,55 @@ const ColoredSquare = ({
 }) => (
   <View
     style={[
-      styleConstant.coloredSquare,
+      styles.coloredSquare,
       { backgroundColor: backgroundColor ? backgroundColor : theme.palette.complementary.blue.regular },
     ]}>
-    <Text style={styleConstant.coloredSquareNoteTextContainer}>
+    <SmallText style={styles.coloredSquareNoteTextContainer}>
       {!isNaN(Number(note)) ? (
         <>
-          <TextBold style={styleConstant.coloredSquareNoteText}>{+parseFloat(Number(note).toFixed(2))}</TextBold>
+          <HeadingSText style={styles.coloredSquareNoteText}>{+parseFloat(Number(note).toFixed(2))}</HeadingSText>
           {!hideScore ? `/ ${diviseur}` : null}
         </>
       ) : (
-        <TextBold style={styleConstant.coloredSquareNoteText}>{note}</TextBold>
+        <HeadingSText style={styles.coloredSquareNoteText}>{note}</HeadingSText>
       )}
-    </Text>
-    {coeff ? <Text style={styleConstant.coloredSquareText}>coeff : {coeff}</Text> : null}
-    {moy ? <Text style={styleConstant.coloredSquareText}>moy : {moy}</Text> : null}
+    </SmallText>
+    {coeff ? <SmallText style={styles.coloredSquareText}>coeff : {coeff}</SmallText> : null}
+    {moy ? <SmallText style={styles.coloredSquareText}>moy : {moy}</SmallText> : null}
   </View>
 );
 
 const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
-  <View style={styleConstant.gradesDevoirsResumeContainer}>
-    <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
-    <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
-    <Text numberOfLines={1}>{devoir.title}</Text>
-    <Text>{moment(devoir.date).format('L')}</Text>
+  <View style={styles.gradesDevoirsResumeContainer}>
+    <SmallBoldText numberOfLines={1}>{devoir.matiere.toUpperCase()}</SmallBoldText>
+    <SmallText numberOfLines={1}>{devoir.teacher.toUpperCase()}</SmallText>
+    <SmallText numberOfLines={1}>{devoir.title}</SmallText>
+    <SmallText>{moment(devoir.date).format('L')}</SmallText>
   </View>
 );
 
 // EXPORTED COMPONENTS
 
-export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; levels: ILevelsList }) => (
+export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoir[]; levels: ILevel[] }) => (
   <>
     {devoirs.map((devoir, index) => (
-      <LeftColoredItem shadow color="#F95303" key={index}>
-        <View style={styleConstant.denseDevoirListContainer}>
-          <View style={styleConstant.denseDevoirListMatiereContainer}>
-            <TextBold style={styleConstant.denseDevoirListMatiereText} numberOfLines={1}>
+      <LeftColoredItem shadow color={viescoTheme.palette.competences} key={index}>
+        <View style={styles.denseDevoirListContainer}>
+          <View style={styles.denseDevoirListMatiereContainer}>
+            <SmallBoldText style={styles.denseDevoirListMatiereText} numberOfLines={1}>
               {devoir.matiere}
-            </TextBold>
-            <Text>{moment(devoir.date).format('L')}</Text>
+            </SmallBoldText>
+            <SmallText>{moment(devoir.date).format('L')}</SmallText>
           </View>
           {devoir.competences.length ? (
             <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} levels={levels} />
           ) : (
-            isNaN(Number(devoir.note)) && <TextBold style={styleConstant.denseDevoirListNoteText}>{devoir.note}</TextBold>
+            isNaN(Number(devoir.note)) && <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note}</BodyBoldText>
           )}
           {devoir.note && !isNaN(Number(devoir.note)) && (
             <>
-              <TextBold style={styleConstant.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</TextBold>
-              <Text style={styleConstant.denseDevoirListDiviseurText}>/{devoir.diviseur}</Text>
+              <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</BodyBoldText>
+              <SmallText style={styles.denseDevoirListDiviseurText}>/{devoir.diviseur}</SmallText>
             </>
           )}
         </View>
@@ -309,16 +302,16 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
   </>
 );
 
-export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) => (
+export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenne[] }) => (
   <FlatList
-    contentContainerStyle={styleConstant.gradesDevoirsMoyennesView}
+    contentContainerStyle={styles.gradesDevoirsMoyennesView}
     data={devoirs}
     renderItem={({ item, index }) => (
       <LeftColoredItem color={theme.palette.complementary.blue.regular} key={index}>
-        <View style={styleConstant.devoirsList}>
-          <View style={styleConstant.gradesDevoirsMoyennesItemView}>
-            <TextBold numberOfLines={1}>{item.matiere.toUpperCase()}</TextBold>
-            <Text numberOfLines={1}>{item.teacher.toUpperCase()}</Text>
+        <View style={styles.devoirsList}>
+          <View style={styles.gradesDevoirsMoyennesItemView}>
+            <SmallBoldText numberOfLines={1}>{item.matiere.toUpperCase()}</SmallBoldText>
+            <SmallText numberOfLines={1}>{item.teacher.toUpperCase()}</SmallText>
           </View>
           <ColoredSquare hideScore note={item.moyenne} />
         </View>
@@ -327,17 +320,17 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
             item.devoirs.map(
               (course, i) =>
                 course.is_evaluated && (
-                  <View style={styleConstant.subMatieres} key={i}>
-                    <Text style={styleConstant.gradesDevoirsMoyennesCourseNameText} numberOfLines={1}>
+                  <View style={styles.subMatieres} key={i}>
+                    <SmallText style={styles.gradesDevoirsMoyennesCourseNameText} numberOfLines={1}>
                       {course.name.toUpperCase()}
-                    </Text>
+                    </SmallText>
                     {course.note ? (
-                      <Text style={{ color: theme.palette.complementary.blue.regular }}>
+                      <SmallText style={{ color: theme.palette.complementary.blue.regular }}>
                         {course.note}/{course.diviseur}
-                      </Text>
+                      </SmallText>
                     ) : (
                       course.libelle_court && (
-                        <Text style={{ color: theme.palette.complementary.blue.regular }}>{course.libelle_court}</Text>
+                        <SmallText style={{ color: theme.palette.complementary.blue.regular }}>{course.libelle_court}</SmallText>
                       )
                     )}
                   </View>
@@ -350,14 +343,14 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
   />
 );
 
-export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList; levels: ILevelsList; color?: boolean }) => (
+export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoir[]; levels: ILevel[]; color?: boolean }) => (
   <FlatList
     showsVerticalScrollIndicator={false}
     data={devoirs}
     renderItem={({ item, index }) => (
-      <View style={styleConstant.devoirsList} key={index}>
+      <View style={styles.devoirsList} key={index}>
         <GradesDevoirsResume devoir={item} />
-        <View style={styleConstant.competencesList}>
+        <View style={styles.competencesList}>
           {item.note !== undefined && !isNaN(Number(item.note)) ? (
             <>
               {item.competences !== undefined && (
@@ -382,8 +375,8 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
           ) : item.competences !== undefined && item.competences.length ? (
             <CompetenceRound stateFullRound="flex-end" competences={item.competences} size={60} levels={levels} />
           ) : (
-            <View style={[styleConstant.coloredSquare, styleConstant.gradeDevoirsNoteContainer]}>
-              <TextBold style={styleConstant.gradeDevoirsNoteText}>{item.note}</TextBold>
+            <View style={[styles.coloredSquare, styles.gradeDevoirsNoteContainer]}>
+              <HeadingSText style={styles.gradeDevoirsNoteText}>{item.note}</HeadingSText>
             </View>
           )}
         </View>
@@ -392,7 +385,7 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
   />
 );
 
-export const getSortedEvaluationList = (evaluations: IDevoirList) => {
+export const getSortedEvaluationList = (evaluations: IDevoir[]) => {
   return evaluations.sort(
     (a, b) =>
       moment(b.date).diff(moment(a.date)) ||

@@ -11,8 +11,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { TextAction, TextBold, TextLight, TextSemiBold } from '~/framework/components/text';
+import { KeyboardPageView } from '~/framework/components/page';
+import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
@@ -21,7 +21,6 @@ import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { ImagePicked, ImagePicker, imagePickedToLocalFile } from '~/infra/imagePicker';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/modules/blog/actions';
-import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog } from '~/modules/blog/reducer';
 import {
   createBlogPostResourceRight,
@@ -130,7 +129,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
   }
 
   renderError() {
-    return <TextSemiBold>Error</TextSemiBold>; // ToDo: great error screen here
+    return <SmallBoldText>Error</SmallBoldText>; // ToDo: great error screen here
   }
 
   renderContent() {
@@ -151,8 +150,8 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
       <View style={{ marginBottom: UI_SIZES.spacing.big, flexDirection: 'row', alignItems: 'center' }}>
         <GridAvatars users={[id]} />
         <View style={{ flex: 1, justifyContent: 'center', marginLeft: UI_SIZES.spacing.minor }}>
-          <TextBold>{displayName}</TextBold>
-          <TextLight>{blog?.title}</TextLight>
+          <SmallBoldText>{displayName}</SmallBoldText>
+          <SmallText>{blog?.title}</SmallText>
         </View>
       </View>
     );
@@ -162,7 +161,9 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     const { title, content } = this.state;
     return (
       <>
-        <TextBold style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.t('blog.blogCreatePostScreen.postTitle')}</TextBold>
+        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>
+          {I18n.t('blog.blogCreatePostScreen.postTitle')}
+        </SmallBoldText>
         <TextInput
           placeholder={I18n.t('blog.blogCreatePostScreen.postTitlePlaceholder')}
           value={title}
@@ -177,7 +178,9 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             color: theme.ui.text.regular,
           }}
         />
-        <TextBold style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.t('blog.blogCreatePostScreen.postContent')}</TextBold>
+        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>
+          {I18n.t('blog.blogCreatePostScreen.postContent')}
+        </SmallBoldText>
         <TextInput
           placeholder={I18n.t('blog.blogCreatePostScreen.postContentPlaceholder')}
           value={content}
@@ -225,9 +228,9 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             }}
             // onPress={() => this.attachmentPickerRef.onPickAttachment()}
           >
-            <TextAction style={{ width: 300, marginRight: imagesAdded ? UI_SIZES.spacing.minor : 0, textAlign: 'center' }}>
+            <SmallActionText style={{ width: 300, marginRight: imagesAdded ? UI_SIZES.spacing.minor : 0, textAlign: 'center' }}>
               {I18n.t('createPost-create-mediaField')}
-            </TextAction>
+            </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>
         </ImagePicker>

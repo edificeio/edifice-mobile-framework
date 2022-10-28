@@ -1,10 +1,15 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
+import { SmallBoldText } from '~/framework/components/text';
+import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
+import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import Dropdown from '~/ui/Dropdown';
 
 import {
@@ -19,11 +24,22 @@ import {
 } from './PresenceCard';
 
 const styles = StyleSheet.create({
+  declareAbsenceButton: {
+    backgroundColor: viescoTheme.palette.presences,
+    marginLeft: UI_SIZES.spacing.small,
+    paddingHorizontal: UI_SIZES.spacing.tiny,
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+    borderRadius: 5,
+  },
+  declareAbscenceText: {
+    color: theme.ui.text.inverse,
+  },
   mainView: {
     flex: 1,
   },
   container: {
-    padding: 15, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.medium,
     alignItems: 'stretch',
   },
   dropdownStyle: {
@@ -41,9 +57,25 @@ type HistoryProps = {
   selected: number;
   isFetchingData: boolean;
   isPristineData: boolean;
+  userType: any;
+  hasRightToCreateAbsence: boolean;
 };
 
 class History extends React.PureComponent<HistoryProps> {
+  renderChildPicker = () => {
+    return this.props.hasRightToCreateAbsence ? (
+      <ChildPicker>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate(`${presencesConfig.routeName}/declaration/relative`)}
+          style={styles.declareAbsenceButton}>
+          <SmallBoldText style={styles.declareAbscenceText}>{I18n.t('viesco-declareAbsence')}</SmallBoldText>
+        </TouchableOpacity>
+      </ChildPicker>
+    ) : (
+      <ChildPicker />
+    );
+  };
+
   renderOption = option => {
     if (option.order === -1) return I18n.t('viesco-fullyear');
     else return I18n.t('viesco-trimester') + ' ' + option.order;
@@ -54,7 +86,7 @@ class History extends React.PureComponent<HistoryProps> {
 
     return (
       <View style={styles.mainView}>
-        {this.props.navigation.state.params.user_type === 'Relative' && <ChildPicker />}
+        {this.props.userType === 'Relative' ? this.renderChildPicker() : null}
         <ScrollView contentContainerStyle={styles.container}>
           {periods !== undefined && periods.length > 1 && periods[0].code !== 'YEAR' && (
             <Dropdown

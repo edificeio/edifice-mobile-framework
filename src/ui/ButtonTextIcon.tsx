@@ -4,6 +4,7 @@ import { TextStyle, TouchableOpacityProps } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { SmallText } from '~/framework/components/text';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Icon } from './icons/Icon';
@@ -18,15 +19,6 @@ export interface ButtonTextIconProps {
   style?: TouchableOpacityProps;
   textStyle?: TextStyle;
 }
-
-const ButtonText = styled.Text({
-  backgroundColor: 'transparent',
-  color: theme.palette.primary.regular,
-  fontWeight: '400',
-  marginHorizontal: UI_SIZES.spacing.medium,
-  textAlign: 'center',
-  textAlignVertical: 'center',
-});
 
 const ButtonContainer = styled(TouchableOpacity)({
   alignItems: 'center',
@@ -48,13 +40,23 @@ export const ButtonTextIcon = ({
 }: ButtonTextIconProps) => {
   return (
     <ButtonContainer style={style} onPress={onPress} disabled={disabled}>
-      <ButtonText style={textStyle}>
+      <SmallText
+        style={[
+          {
+            backgroundColor: 'transparent',
+            color: theme.palette.primary.regular,
+            marginHorizontal: UI_SIZES.spacing.medium,
+            textAlign: 'center',
+            textAlignVertical: 'center',
+          },
+          textStyle,
+        ]}>
         {leftName.length > 0 && <Icon name={leftName} />}
         {whiteSpace}
         {title}
         {whiteSpace}
         {rightName.length > 0 && <Icon name={rightName} />}
-      </ButtonText>
+      </SmallText>
     </ButtonContainer>
   );
 };

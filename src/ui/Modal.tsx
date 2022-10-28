@@ -3,7 +3,7 @@ import NativeModal from 'react-native-modal';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { LightP } from '~/ui/Typography';
+import { SmallText } from '~/framework/components/text';
 
 export const ModalBox = styled(NativeModal)({
   alignItems: 'stretch',
@@ -38,6 +38,7 @@ export const ModalContentBlock = styled.View({
   marginHorizontal: UI_SIZES.spacing.big,
 });
 
-export const ModalContentText = styled(LightP)({
+export const ModalContentText = styled(SmallText)({
+  color: theme.ui.text.light,
   textAlign: 'center',
 });

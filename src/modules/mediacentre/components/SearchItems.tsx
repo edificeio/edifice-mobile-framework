@@ -3,8 +3,9 @@ import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text } from '~/framework/components/text';
+import { SmallActionText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   searchBarContainer: {
@@ -13,8 +14,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
-    paddingVertical: 10, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
     borderWidth: 2,
     borderRadius: 50,
     borderColor: theme.palette.primary.regular,
@@ -22,10 +23,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10, // MO-142 use UI_SIZES.spacing here
+    paddingVertical: UI_SIZES.spacing.minor,
   },
   buttonIcon: {
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.tiny,
   },
 });
 
@@ -86,7 +87,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<IS
 
 export const IconButtonText: React.FunctionComponent<IIconButtonTextProps> = (props: IIconButtonTextProps) => (
   <TouchableOpacity style={styles.buttonContainer} onPress={props.onPress}>
-    <Icon style={styles.buttonIcon} size={16} color={props.color ? props.color : theme.palette.primary.regular} name={props.icon} />
-    <Text style={{ color: theme.palette.primary.regular }}>{props.text}</Text>
+    <Icon style={styles.buttonIcon} size={16} color={props.color ?? theme.palette.primary.regular} name={props.icon} />
+    <SmallActionText>{props.text}</SmallActionText>
   </TouchableOpacity>
 );

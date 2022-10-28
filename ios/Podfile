@@ -1,24 +1,28 @@
-platform :ios, '12.0'
-
-# source 'https://github.com/CocoaPods/Specs.git'
-
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '12.4'
+
+install! 'cocoapods', :deterministic_uuids => false
+
+production = ENV["PRODUCTION"] == "1"
 
 target 'appe' do
 
   config = use_native_modules!
-  use_react_native!(:path => config["reactNativePath"],:hermes_enabled => true)
+  flags = get_default_flags()
+  $RNFirebaseAsStaticFramework = true
 
-  # Flipper
-  flipperkit_version = '0.140.0'
-  use_flipper!({ 'Flipper' => flipperkit_version })
-  pod 'FlipperKit/FlipperKitLayoutPlugin', flipperkit_version, :configuration => 'Debug'
-  pod 'FlipperKit/SKIOSNetworkPlugin', flipperkit_version, :configuration => 'Debug'
-  pod 'FlipperKit/FlipperKitUserDefaultsPlugin', flipperkit_version, :configuration => 'Debug'
+  #
+  # Static libraries => use modular headers
+  #
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
 
-  # react-native-permissions
-  # @see: https://github.com/zoontek/react-native-permissions#ios
+  #
+  # react-native-permissions : @see: https://github.com/zoontek/react-native-permissions#ios
+  #
   permissions_path = '../node_modules/react-native-permissions/ios'
   #pod 'Permission-AppTrackingTransparency', :path => "#{permissions_path}/AppTrackingTransparency"
   #pod 'Permission-BluetoothPeripheral', :path => "#{permissions_path}/BluetoothPeripheral"
@@ -40,8 +44,17 @@ target 'appe' do
   #pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition"
   #pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit"
 
-  # Native pods
-  pod 'MatomoTracker', '7.5.1'
+  #
+  # React Native Stuff
+  #
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :production => production,
+    :hermes_enabled => true, #flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+    :flipper_configuration => FlipperConfiguration.enabled(["Debug"]),
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
 
   post_install do |installer|
     react_native_post_install(installer)

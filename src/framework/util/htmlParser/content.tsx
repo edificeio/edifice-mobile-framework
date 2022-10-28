@@ -1,7 +1,11 @@
 import { decode } from 'html-entities';
+import I18n from 'i18n-js';
 import * as React from 'react';
+import theme from '~/app/theme';
 
 import { IMedia } from '~/framework//util/notifications';
+import { UI_SIZES } from '~/framework/components/constants';
+import { SmallItalicText } from '~/framework/components/text';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { IRemoteAttachment } from '~/ui/Attachment';
@@ -123,6 +127,9 @@ export const extractVideoResolution = (resolutionAsString: string) => {
 const renderAudioVideoPreview = (media: IMedia) => {
   const videoDimensions = media['video-resolution'] ? extractVideoResolution(media['video-resolution']) : undefined;
   const videoId = media['document-id'] as string | undefined;
+  if (!media.src) {
+    return <SmallItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>{I18n.t(`${media.type || 'media'}NotAvailable`)}</SmallItalicText>
+  }
   return (
     <Player
       type={media.type as 'audio' | 'video'}

@@ -5,7 +5,7 @@
 	<key>BundleVersionOverride</key>
 	<string>dev/default</string>
 	<key>BundleVersionType</key>
-	<string>rc.2</string>
+	<string>rc.6</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
@@ -21,16 +21,40 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.8.4</string>
+	<string>1.8.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1080412</string>
+	<string>1080506</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
+		<key>BundleVersionOverride</key>
+		<string></string>
+		<key>BundleVersionType</key>
+		<string></string>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>fr_FR</string>
+		<key>CFBundleDisplayName</key>
+		<string>Dev Pocket</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>com.ode.mobile</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>$(PRODUCT_NAME)</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>1.8.2</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>1080200</string>
+		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
@@ -51,14 +75,11 @@
 	<array>
 		<string>icomoon.ttf</string>
 		<string>MaterialIcons.ttf</string>
-		<string>OpenSans-Bold.ttf</string>
-		<string>OpenSans-BoldItalic.ttf</string>
-		<string>OpenSans-Italic.ttf</string>
-		<string>OpenSans-Light.ttf</string>
-		<string>OpenSans-LightItalic.ttf</string>
-		<string>OpenSans-Regular.ttf</string>
-		<string>OpenSans-SemiBold.ttf</string>
-		<string>OpenSans-SemiBoldItalic.ttf</string>
+		<string>Font-Bold.ttf</string>
+		<string>Font-BoldItalic.ttf</string>
+		<string>Font-Italic.ttf</string>
+		<string>Font-Regular.ttf</string>
+		<string>Comfortaa-Bold.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

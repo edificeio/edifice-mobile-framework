@@ -7,17 +7,14 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
-import { CommonStyles } from '~/styles/common/styles';
-import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~/user/actions/version';
@@ -121,12 +118,8 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   }
 
   protected renderLogo = () => {
-    const logoStyle = { height: 64, width: '100%' };
-    if (DEPRECATED_getCurrentPlatform()!.logoStyle) {
-      Object.assign(logoStyle, DEPRECATED_getCurrentPlatform()!.logoStyle!);
-    }
     return (
-      <View style={{ flexGrow: 2, justifyContent: 'center', width: '100%' }}>
+      <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
         <PFLogo />
       </View>
     );
@@ -135,7 +128,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   protected renderForm() {
     const { loggingIn, loggedIn, error, errtype } = this.props.auth;
     const { login, password, typing, rememberMe } = this.state;
-    const FederationTextComponent = error ? TextBold : Text;
+    const FederationTextComponent = error ? SmallBoldText : SmallText;
     const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
 
     return (
@@ -149,7 +142,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
           {isSommeNumerique ? (
             <View
               style={{
-                backgroundColor: '#FCEEEA',
+                backgroundColor: theme.palette.complementary.red.pale,
                 justifyContent: 'center',
                 alignItems: 'center',
                 padding: UI_SIZES.spacing.minor,
@@ -160,9 +153,9 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 alignSelf: 'center',
                 position: 'absolute',
               }}>
-              <TextBold style={{ textAlign: 'center', color: theme.palette.status.failure }}>
+              <SmallBoldText style={{ textAlign: 'center', color: theme.palette.status.failure }}>
                 {I18n.t('common.sommeNumeriqueAlert_temp')}
-              </TextBold>
+              </SmallBoldText>
             </View>
           ) : null}
           <FormContainer>
@@ -187,16 +180,22 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               hasError={(error && !typing && !errtype) as boolean}
             />
             <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium }}>
-              <Text style={{ marginRight: UI_SIZES.spacing.small, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>
-                {I18n.t('AutoLogin')}
-              </Text>
+              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('AutoLogin')}</CaptionText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <ErrorMessage style={errtype === 'warning' ? { color: theme.palette.status.warning } : {}}>
+            <SmallText
+              style={{
+                flexGrow: 0,
+                marginTop: UI_SIZES.spacing.medium,
+                padding: UI_SIZES.spacing.tiny,
+                textAlign: 'center',
+                alignSelf: 'center',
+                color: errtype === 'warning' ? theme.palette.status.warning : theme.palette.status.failure,
+              }}>
               {this.state.typing
                 ? ''
                 : error &&
@@ -205,7 +204,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                     errorcode: error,
                     currentplatform: DEPRECATED_getCurrentPlatform()!.url,
                   })}
-            </ErrorMessage>
+            </SmallText>
 
             <View
               style={{
@@ -215,48 +214,41 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
               }}>
               {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
-                <FlatButton
-                  onPress={() => this.handleGoToWeb()}
-                  disabled={false}
-                  title={I18n.t('LoginWeb')}
-                  loading={false}
-                  rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
-                />
+                <ActionButton text={I18n.t('LoginWeb')} url="/" />
               ) : (
-                <FlatButton
-                  onPress={() => this.handleLogin()}
+                <ActionButton
+                  text={I18n.t('Connect')}
                   disabled={this.isSubmitDisabled || !this.props.connected}
-                  title={I18n.t('Connect')}
+                  action={() => this.handleLogin()}
                   loading={loggingIn || loggedIn}
                 />
               )}
-
               <View
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Text
-                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, ...TextColorStyle.Light }}
+                <SmallText
+                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, color: theme.ui.text.light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: false });
                   }}>
                   {I18n.t('forgot-password')}
-                </Text>
-                <Text
-                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.medium, ...TextColorStyle.Light }}
+                </SmallText>
+                <SmallText
+                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.medium, color: theme.ui.text.light }}
                   onPress={() => {
                     navigate('Forgot', { forgotId: true });
                   }}>
                   {I18n.t('forgot-id')}
-                </Text>
+                </SmallText>
                 {DEPRECATED_getCurrentPlatform()!.federation && (
                   <FederationTextComponent
                     style={{
                       textDecorationLine: 'underline',
                       marginTop: UI_SIZES.spacing.major,
                       textAlign: 'center',
-                      color: error ? CommonStyles.profileTypes.Student : theme.ui.text.light,
+                      color: error ? theme.palette.complementary.orange.regular : theme.ui.text.light,
                     }}
                     onPress={() => {
                       navigate('FederatedAccount');
@@ -281,10 +273,6 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
       this.state.rememberMe,
     );
     this.setState({ typing: false });
-  }
-
-  protected handleGoToWeb() {
-    openUrl(DEPRECATED_getCurrentPlatform()!.url);
   }
 
   // Other public methods

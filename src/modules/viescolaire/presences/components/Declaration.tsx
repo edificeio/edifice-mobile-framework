@@ -4,14 +4,14 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, responsiveStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
-import { DialogButtonOk } from '~/ui/ConfirmDialog';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
@@ -20,14 +20,14 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     justifyContent: 'center',
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
   },
   switchPart: {
     flex: 1,
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: theme.palette.grey.cloudy,
-    padding: 15, // MO-142 use UI_SIZES.spacing here
+    padding: UI_SIZES.spacing.small,
     justifyContent: 'center',
   },
   leftSwitch: {
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   rightSwitchSingle: { flexDirection: 'row' },
-  rightSwitchSingleText: { marginHorizontal: 10 }, // MO-142 use UI_SIZES.spacing here
+  rightSwitchSingleText: { marginHorizontal: UI_SIZES.spacing.minor },
   selected: {
     backgroundColor: theme.palette.grey.white,
     elevation: 20,
@@ -52,30 +52,21 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   row: {
-    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.small,
     justifyContent: 'space-evenly',
     flexDirection: 'row',
   },
-  timePickerContainer: {
-    flex: 1,
+  timePickerMainContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-evenly',
-    backgroundColor: theme.palette.grey.white,
+    marginVertical: UI_SIZES.spacing.small,
+  },
+  timePickerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    margin: 10, // MO-142 use UI_SIZES.spacing here
   },
-  timePickerRender: {
-    borderStyle: 'solid',
-    borderBottomWidth: 2,
-    borderColor: viescoTheme.palette.presences,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
-  },
-  timePickerTitleText: {
-    color: viescoTheme.palette.presences,
-    textTransform: 'uppercase',
-  },
-  timePickerDate: {
-    ...responsiveStyle(24),
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+  timePickerText: {
+    marginRight: UI_SIZES.spacing.minor,
   },
   inputContainer: {
     backgroundColor: theme.palette.grey.white,
@@ -93,10 +84,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: UI_SIZES.spacing.medium,
   },
-  iconAttMarginRight: { marginRight: 10 }, // MO-142 use UI_SIZES.spacing here
+  iconAttMarginRight: { marginRight: UI_SIZES.spacing.small },
   dialogButtonOk: {
     alignSelf: 'center',
-    marginVertical: 10, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.minor,
   },
 });
 
@@ -154,15 +145,15 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
         onPress={() => this.setState({ switchState: SwitchState.SEVERAL })}>
         {this.state.switchState === SwitchState.SINGLE ? (
           <View style={styles.rightSwitchSingle}>
-            <Text>{I18n.t('viesco-several-days')}</Text>
-            <TextBold style={styles.rightSwitchSingleText}>+</TextBold>
+            <SmallText>{I18n.t('viesco-several-days')}</SmallText>
+            <SmallBoldText style={styles.rightSwitchSingleText}>+</SmallBoldText>
           </View>
         ) : (
           <View>
-            <Text>{I18n.t('viesco-several-days')}</Text>
-            <TextBold>
+            <SmallText>{I18n.t('viesco-several-days')}</SmallText>
+            <SmallBoldText>
               {I18n.t('viesco-from')} {startDate.format('DD/MM')} {I18n.t('viesco-to')} {endDate.format('DD/MM')}
-            </TextBold>
+            </SmallBoldText>
           </View>
         )}
       </TouchableOpacity>
@@ -172,42 +163,38 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
       <TouchableOpacity
         style={[styles.switchPart, styles.leftSwitch, this.state.switchState === SwitchState.SINGLE && styles.selected]}
         onPress={() => this.setState({ switchState: SwitchState.SINGLE })}>
-        <Text>{I18n.t('viesco-single-day')}</Text>
-        <TextBold>{startDate.format('DD/MM')}</TextBold>
+        <SmallText>{I18n.t('viesco-single-day')}</SmallText>
+        <SmallBoldText>{startDate.format('DD/MM')}</SmallBoldText>
       </TouchableOpacity>
-    );
-
-    const TimePickerComponent = ({ time, onChange, title }) => (
-      <DateTimePicker
-        value={time}
-        style={styles.timePickerContainer}
-        renderDate={date => (
-          <>
-            <View style={styles.timePickerRender}>
-              <Text style={styles.timePickerTitleText}>{title}</Text>
-            </View>
-            <TextBold style={styles.timePickerDate}>{date.format('HH    :    mm')}</TextBold>
-          </>
-        )}
-        mode="time"
-        onChange={onChange}
-      />
     );
 
     const DatePickers = () => (
       <>
         {this.state.switchState === SwitchState.SINGLE ? (
-          <DateTimePicker mode="date" value={startDate} minimumDate={moment().startOf('day')} onChange={updateStartDate} />
+          <DateTimePicker
+            mode="date"
+            value={startDate}
+            onChange={updateStartDate}
+            minimumDate={moment().startOf('day')}
+            color={viescoTheme.palette.presences}
+          />
         ) : (
           <>
             <DateTimePicker
               mode="date"
               value={startDate}
-              minimumDate={moment().startOf('day')}
-              maximumDate={endDate}
               onChange={updateStartDate}
+              maximumDate={endDate}
+              minimumDate={moment().startOf('day')}
+              color={viescoTheme.palette.presences}
             />
-            <DateTimePicker mode="date" value={endDate} minimumDate={startDate} onChange={updateEndDate} />
+            <DateTimePicker
+              mode="date"
+              value={endDate}
+              onChange={updateEndDate}
+              minimumDate={startDate}
+              color={viescoTheme.palette.presences}
+            />
           </>
         )}
       </>
@@ -227,12 +214,18 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
           <View style={styles.row}>
             <DatePickers />
           </View>
-          <View style={styles.row}>
-            <TimePickerComponent title={I18n.t('viesco-from-hour')} time={startDate} onChange={updateStartDate} />
-            <TimePickerComponent title={I18n.t('viesco-to-hour')} time={endDate} onChange={updateEndDate} />
+          <View style={styles.timePickerMainContainer}>
+            <View style={styles.timePickerContainer}>
+              <SmallText style={styles.timePickerText}>{I18n.t('viesco-from-hour')}</SmallText>
+              <DateTimePicker mode="time" value={startDate} onChange={updateStartDate} color={viescoTheme.palette.presences} />
+            </View>
+            <View style={styles.timePickerContainer}>
+              <SmallText style={styles.timePickerText}>{I18n.t('viesco-to-hour')}</SmallText>
+              <DateTimePicker mode="time" value={endDate} onChange={updateEndDate} color={viescoTheme.palette.presences} />
+            </View>
           </View>
           <View style={[styles.row, styles.inputContainer]}>
-            <TextBold style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</TextBold>
+            <SmallBoldText style={styles.inputContainerText}>{I18n.t('viesco-absence-motive')}</SmallBoldText>
             <TextInput
               multiline
               placeholder={I18n.t('viesco-enter-text')}
@@ -240,10 +233,12 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               style={styles.motiveTextInput}
               onChangeText={updateComment}
             />
-            <FilePicker multiple callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
-              <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-              <Text>{I18n.t('viesco-attachment')}</Text>
-            </FilePicker>
+            {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
+              <FilePicker callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
+                <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
+                <SmallText>{I18n.t('viesco-attachment')}</SmallText>
+              </FilePicker>
+            ) : null}
           </View>
           {attachment ? (
             <Attachment
@@ -253,12 +248,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               onRemove={this.props.removeAttachment}
             />
           ) : null}
-          <DialogButtonOk
-            style={styles.dialogButtonOk}
-            disabled={!this.props.validate()}
-            label={I18n.t('viesco-validate')}
-            onPress={submit}
-          />
+          <ActionButton text={I18n.t('viesco-validate')} action={submit} disabled={!this.props.validate()} />
         </ScrollView>
       </KeyboardAvoidingView>
     );

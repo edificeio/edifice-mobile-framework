@@ -165,7 +165,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
     }
   };
   const fetchFromStart = async (blogId: string) => {
-    await fetchPage(blogId, 0, true);
+    return fetchPage(blogId, 0, true);
   };
 
   const onGoToPostCreationScreen = () =>

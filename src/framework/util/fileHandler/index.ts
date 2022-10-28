@@ -78,12 +78,14 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       if (opts.multiple) {
         pickedFiles = await DocumentPicker.pickMultiple({
           type: LocalFile._getDocumentPickerTypeArg(opts.type),
+          presentationStyle: 'fullScreen',
           mode: 'open',
         });
       } else {
         pickedFiles = [
           await DocumentPicker.pickSingle({
             type: LocalFile._getDocumentPickerTypeArg(opts.type),
+            presentationStyle: 'fullScreen',
             mode: 'open',
           }),
         ];
@@ -104,6 +106,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           launchImageLibrary(
             {
               mediaType: LocalFile._getImagePickerTypeArg(opts.type),
+              presentationStyle: 'fullScreen',
               selectionLimit: 0,
               ...galeryOptions,
             },
@@ -113,6 +116,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           launchImageLibrary(
             {
               mediaType: LocalFile._getImagePickerTypeArg(opts.type),
+              presentationStyle: 'fullScreen',
               ...galeryOptions,
             },
             callback,
@@ -133,6 +137,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         launchCamera(
           {
             mediaType: LocalFile._getImagePickerTypeArg(opts.type),
+            presentationStyle: 'fullScreen',
             saveToPhotos: false,
             ...cameraOptions,
           },
@@ -205,15 +210,15 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   /**
    * Opens the file with the native device's reader.
    */
-  open() {
-    FileViewer.open(this._filepathNative, {
-      showOpenWithDialog: true,
-      showAppsSuggestions: true,
-    })
-      .then(() => {})
-      .catch(error => {
-        throw error;
+  async open() {
+    try {
+      await FileViewer.open(this._filepathNative, {
+        showOpenWithDialog: true,
+        showAppsSuggestions: true,
       });
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**

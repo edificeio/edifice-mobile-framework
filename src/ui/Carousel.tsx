@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Animated, Image, ImageURISource, StatusBar, Text, View } from 'react-native';
+import { Animated, Image, ImageURISource, StatusBar, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { PanGestureHandler, PinchGestureHandler, State } from 'react-native-gesture-handler';
 import RNCarousel from 'react-native-snap-carousel';
@@ -9,13 +9,13 @@ import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
+import { SmallItalicText, SmallText } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
 import { MediaAction } from './MediaAction';
-import { A, Italic } from './Typography';
 
 const UnavailableImage = () => (
   <View
@@ -27,7 +27,7 @@ const UnavailableImage = () => (
       paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
-    <Italic>{I18n.t('imageNotAvailable')}</Italic>
+    <SmallItalicText>{I18n.t('imageNotAvailable')}</SmallItalicText>
   </View>
 );
 
@@ -76,7 +76,7 @@ class Carousel extends React.Component<
   public onPanXSpringEvent = () => {
     Animated.spring(this.baseOffsetX, {
       toValue: this.lastOffsetX > 0 ? this.sideHiddenWidth : -this.sideHiddenWidth,
-      useNativeDriver: true,
+      useNativeDriver: false,
       friction: 10,
     }).start();
     this.lastOffsetX = this.lastOffsetX > 0 ? this.sideHiddenWidth : -this.sideHiddenWidth;
@@ -85,7 +85,7 @@ class Carousel extends React.Component<
   public onPanYSpringEvent = () => {
     Animated.spring(this.baseOffsetY, {
       toValue: this.lastOffsetY > 0 ? this.sideHiddenHeight : -this.sideHiddenHeight,
-      useNativeDriver: true,
+      useNativeDriver: false,
       friction: 10,
     }).start();
     this.lastOffsetY = this.lastOffsetY > 0 ? this.sideHiddenHeight : -this.sideHiddenHeight;
@@ -98,7 +98,7 @@ class Carousel extends React.Component<
     return gestures;
   };
 
-  public onPanGestureEvent = () => Animated.event([{ nativeEvent: this.allowedPanGestures() }], { useNativeDriver: true });
+  public onPanGestureEvent = () => Animated.event([{ nativeEvent: this.allowedPanGestures() }], { useNativeDriver: false });
 
   public onPanStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -139,7 +139,7 @@ class Carousel extends React.Component<
   sideHiddenWidth = 0;
   sideHiddenHeight = 0;
 
-  public onZoomEvent = Animated.event([{ nativeEvent: { scale: this.pinchScale } }], { useNativeDriver: true });
+  public onZoomEvent = Animated.event([{ nativeEvent: { scale: this.pinchScale } }], { useNativeDriver: false });
 
   public onZoomStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -192,13 +192,13 @@ class Carousel extends React.Component<
         this.lastScale = maxScale;
         Animated.spring(this.baseScale, {
           toValue: maxScale,
-          useNativeDriver: true,
+          useNativeDriver: false,
           friction: 10,
         }).start();
       } else if (this.lastScale < minScale) {
         Animated.spring(this.baseScale, {
           toValue: 1,
-          useNativeDriver: true,
+          useNativeDriver: false,
           friction: 10,
         }).start();
         this.lastScale = 1;
@@ -260,7 +260,7 @@ class Carousel extends React.Component<
 
     return (
       <View
-        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.90)' }}
+        style={{ flex: 1, backgroundColor: theme.palette.grey.black }}
         onLayout={() => {
           this.setState({
             viewport: {
@@ -269,7 +269,7 @@ class Carousel extends React.Component<
             },
           });
         }}>
-        <StatusBar backgroundColor="rgba(0,0,0,0.90)" barStyle="light-content" />
+        <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />
         <RNCarousel
           data={images}
           renderItem={({ item, index }: { item: { src: ImageURISource; alt: string; linkTo?: string }; index: number }) => (
@@ -336,20 +336,16 @@ class Carousel extends React.Component<
                   <TouchableOpacity
                     onPress={() => openUrl(item.linkTo)}
                     style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                      backgroundColor: theme.palette.grey.graphite,
                       padding: UI_SIZES.spacing.small,
                       width: '100%',
                       flexDirection: 'row',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
-                    <Text
-                      style={{
-                        color: theme.palette.grey.fog,
-                        textAlign: 'center',
-                      }}>
+                    <SmallText style={{ color: theme.palette.grey.fog, textAlign: 'center' }}>
                       {I18n.t('linkTo')}{' '}
-                      <A>
+                      <SmallText style={{ color: theme.palette.complementary.blue.regular }}>
                         {(() => {
                           const matches = item.linkTo.match(
                             // from https://stackoverflow.com/a/8498629/6111343
@@ -357,8 +353,8 @@ class Carousel extends React.Component<
                           );
                           return matches && matches[1];
                         })()}
-                      </A>
-                    </Text>
+                      </SmallText>
+                    </SmallText>
                     <NamedSVG
                       name="ui-externalLink"
                       width={16}

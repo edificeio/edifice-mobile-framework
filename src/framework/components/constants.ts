@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StatusBar, TextStyle } from 'react-native';
+import { Dimensions, Platform, StatusBar, StyleSheet, TextStyle } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -8,7 +8,7 @@ const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 const SCALE_DIMENSION_MAX = 1.5;
 const SCALE_DIMENSION_MIN = 0.75;
 
-const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
+export const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
   Math.round(
     dimension *
       Math.max(
@@ -25,7 +25,7 @@ const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font')
 export const UI_ANIMATIONS = {
   fade: {
     duration: 300,
-    useNativeDriver: true,
+    useNativeDriver: false,
   },
   size: {
     duration: 300,
@@ -61,9 +61,11 @@ export const UI_SIZES = {
   },
   elements: {
     actionButtonSize: 20,
+    logoSize: { height: 64, width: 300 },
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
+    tabbarIconSize: 24,
     textFieldMaxHeight: 105,
   },
   radius: {
@@ -76,7 +78,10 @@ export const UI_SIZES = {
     extraLarge: 24,
   },
   screen: {
-    bottomInset: initialWindowMetrics?.insets?.bottom || 0,
+    bottomInset: Platform.select({
+      ios: initialWindowMetrics?.insets?.bottom || 0,
+      default: 0,
+    }),
     height: screenDimensions.height,
     scale: screenDimensions.scale,
     topInset: Platform.select({
@@ -97,10 +102,7 @@ export const UI_SIZES = {
     major: getScaleDimension(48, 'width'),
     huge: getScaleDimension(64, 'width'),
   },
-  getResponsiveFontSize: (dimension: number) => getScaleDimension(dimension, 'font'),
-  getResponsiveLineHeight: (dimension: number) => getScaleDimension(dimension + 6, 'font'),
-  getResponsiveStyledLineHeight: (textStyle: TextStyle | undefined = undefined) =>
-    getScaleDimension((textStyle?.fontSize || 14) + 6, 'height'),
+  standardScreen: standardScreenDimensions,
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (
@@ -117,3 +119,12 @@ export const UI_SIZES = {
 export const UI_VALUES = {
   modalOpacity: 0.4,
 };
+
+export const UI_STYLES = StyleSheet.create({
+  row: { flexDirection: 'row' },
+  rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
+  flex1: { flex: 1 },
+  flexGrow1: { flexGrow: 1 },
+  flexShrink1: { flexShrink: 1 },
+  justifyEnd: { justifyContent: 'flex-end' },
+});

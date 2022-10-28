@@ -8,7 +8,7 @@ import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResource
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
-import { FontStyle, Text, TextSemiBold } from '~/framework/components/text';
+import { CaptionBoldText, SmallBoldText, SmallText, TextFontStyle } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
@@ -57,7 +57,7 @@ export const BlogPostResourceCard = ({
             icon={<ContentCardIcon userIds={[authorId || require('ASSETS/images/system-avatar.png')]} />}
             text={
               authorName ? (
-                <TextSemiBold numberOfLines={authorTextMaxLines}>{`${I18n.t('common.by')} ${authorName}`}</TextSemiBold>
+                <SmallBoldText numberOfLines={authorTextMaxLines}>{`${I18n.t('common.by')} ${authorName}`}</SmallBoldText>
               ) : undefined
             }
             date={date}
@@ -73,7 +73,7 @@ export const BlogPostResourceCard = ({
                 labelSize="small"
               />
             ) : null}
-            <ContentCardTitle style={{ ...FontStyle.Bold }}>{title}</ContentCardTitle>
+            <ContentCardTitle>{title}</ContentCardTitle>
           </>
         }
         footer={
@@ -84,16 +84,16 @@ export const BlogPostResourceCard = ({
                 alignItems: 'center',
               }}>
               <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
-              <TextSemiBold style={{ color: theme.ui.text.light, fontSize: 12 }}>{commentsString(comments)}</TextSemiBold>
+              <CaptionBoldText style={{ color: theme.ui.text.light }}>{commentsString(comments)}</CaptionBoldText>
             </View>
           ) : undefined
         }>
         {hasBlogPostText ? (
-          <Text
-            style={{ color: theme.ui.text.regular, marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
+          <SmallText
+            style={{ marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
             numberOfLines={contentTextMaxLines}>
             {blogPostText}
-          </Text>
+          </SmallText>
         ) : null}
         {hasBlogPostMedia ? renderMediaPreview(blogPostMedia) : null}
       </TouchableResourceCard>

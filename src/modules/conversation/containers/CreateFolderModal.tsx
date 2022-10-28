@@ -8,11 +8,11 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { SmallBoldText } from '~/framework/components/text';
 import { postFolderAction } from '~/modules/conversation/actions/folders';
 import { fetchInitAction } from '~/modules/conversation/actions/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
-import { TextBold } from '~/ui/Typography';
 
 class CreateFolderModal extends React.PureComponent<any, any> {
   constructor(props) {
@@ -38,7 +38,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       Toast.show(I18n.t('conversation.createDirectoryConfirm'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
       });
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
@@ -46,7 +46,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       Toast.show(I18n.t(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
       });
     } finally {
       this.setState({ name: '' });
@@ -63,7 +63,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       <ModalBox isVisible={show} backdropOpacity={0.5}>
         <ModalContent style={{ width: 350 }}>
           <ModalContentBlock>
-            <TextBold>{I18n.t('conversation.createDirectory')}</TextBold>
+            <SmallBoldText>{I18n.t('conversation.createDirectory')}</SmallBoldText>
           </ModalContentBlock>
           <View style={{ width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
             <TextInput
@@ -71,7 +71,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
               value={name}
               onChangeText={this.onNameChange}
               placeholder={I18n.t('conversation.directoryName')}
-              underlineColorAndroid="grey"
+              underlineColorAndroid={theme.palette.grey.grey}
               style={textInputStyle}
             />
           </View>

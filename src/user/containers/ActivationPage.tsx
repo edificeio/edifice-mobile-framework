@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { activationAccount, cancelActivationAccount } from '~/user/actions/activation';
+import { initActivationAccount } from '~/user/actions/initActivation';
 import {
   ActivationPage,
   IActivationPageDataProps,
@@ -11,8 +12,6 @@ import {
 } from '~/user/components/ActivationPage';
 import userConfig from '~/user/config';
 import { IActivationState } from '~/user/reducers/activation';
-
-import { initActivationAccount } from '../actions/initActivation';
 
 const mapStateToProps: (state: any) => IActivationPageDataProps & { version: number } = state => {
   const activationState: IActivationState = state[userConfig.reducerName].activation;

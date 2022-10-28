@@ -1,12 +1,13 @@
 import styled from '@emotion/native';
 import * as React from 'react';
-import { ActivityIndicator, Animated, Platform, Text, View } from 'react-native';
+import { ActivityIndicator, Animated, Platform, View } from 'react-native';
 import { AnimatedValue, LayoutEvent } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import { SmallInverseText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import { NotifierState } from './state';
@@ -129,20 +130,19 @@ class Notifier extends React.Component<
         <NotifierWrapper style={{ backgroundColor: this.barColor }}>
           <View style={[{ flexDirection: 'row', flex: 1, ...style }, icon && !loading && { alignItems: 'center' }]}>
             {text ? (
-              <Text
+              <SmallInverseText
                 onTextLayout={this.measureText}
                 style={{
                   flex: 1,
-                  color: theme.ui.text.inverse,
                   textAlign: longText ? 'left' : 'center',
                   alignSelf: 'center',
-                  height,
-                  marginLeft,
                   paddingTop: longText ? UI_SIZES.spacing.medium : undefined,
                   paddingBottom: longText ? UI_SIZES.spacing.medium : undefined,
+                  height,
+                  marginLeft,
                 }}>
                 {text}
-              </Text>
+              </SmallInverseText>
             ) : null}
             {loading ? (
               <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.big }} />

@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { HeadingSText } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -107,7 +107,7 @@ class MailContentContainer extends React.PureComponent<
     Toast.show(I18n.t('conversation.messageMoved'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: '95%', backgroundColor: 'black' },
+      containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
     });
   };
 
@@ -138,7 +138,7 @@ class MailContentContainer extends React.PureComponent<
       Toast.show(I18n.t(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: '95%', backgroundColor: 'black' },
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
       });
     } catch (error) {
       // TODO: Manage error
@@ -194,7 +194,7 @@ class MailContentContainer extends React.PureComponent<
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
-                      <TextSemiBold style={{ ...TextSizeStyle.Big }}>{this.props.mail.subject}</TextSemiBold>
+                      <HeadingSText>{this.props.mail.subject}</HeadingSText>
                     </ViewportAwareSubject>
                     {this.props.mail.body !== undefined && this.mailContent()}
                   </ScrollView>

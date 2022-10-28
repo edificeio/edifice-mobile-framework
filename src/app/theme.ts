@@ -78,7 +78,6 @@ export interface ITheme {
     };
     text: {
       regular: ColorValue;
-      heavy: ColorValue;
       light: ColorValue;
       inverse: ColorValue;
     };
@@ -107,6 +106,13 @@ export interface ITheme {
         outing: ColorValue;
         various: ColorValue;
       };
+    };
+    profileTypes: {
+      Student: ColorValue;
+      Relative: ColorValue;
+      Personnel: ColorValue;
+      Teacher: ColorValue;
+      Guest: ColorValue;
     };
   };
 
@@ -274,9 +280,8 @@ export const defaultTheme: ThemeInitializer = {
         listItem: this.palette.grey.cloudy,
       },
       text: {
-        regular: this.legacy.neutral.subtleShadow,
-        heavy: this.legacy.neutral.shadow,
-        light: this.legacy.neutral.subtleLight,
+        regular: this.palette.grey.black,
+        light: this.palette.grey.graphite,
         inverse: this.palette.grey.white,
       },
     };
@@ -321,6 +326,13 @@ export const defaultTheme: ThemeInitializer = {
           outing: this.palette.complementary.green.regular,
           various: this.palette.complementary.indigo.regular,
         },
+      },
+      profileTypes: {
+        Student: this.palette.complementary.orange.regular,
+        Relative: this.palette.complementary.blue.regular,
+        Personnel: this.palette.complementary.purple.regular,
+        Teacher: this.palette.complementary.green.regular,
+        Guest: this.palette.complementary.pink.regular,
       },
     };
 

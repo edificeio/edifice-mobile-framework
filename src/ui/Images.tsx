@@ -1,24 +1,17 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ImageProps, ImageSourcePropType, ImageURISource, View, ViewStyle } from 'react-native';
+import { ImageProps, ImageURISource, View, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { CommonStyles } from '~/styles/common/styles';
+import { SmallInverseText, SmallItalicText } from '~/framework/components/text';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
 import ImageOptional from './ImageOptional';
-import { Italic } from './Typography';
-
-const BubbleText = styled.Text({
-  color: theme.ui.text.inverse,
-  marginHorizontal: -UI_SIZES.spacing.small,
-  textAlign: 'center',
-});
 
 const ContainerImage = styled.View({});
 
@@ -33,7 +26,8 @@ const QuarterImage = styled(TouchableOpacity)({
 });
 
 const Overlay = styled(TouchableOpacity)({
-  backgroundColor: 'rgba(0,0,0,0.5)',
+  backgroundColor: theme.palette.grey.black,
+  opacity: 0.6,
   bottom: 0,
   position: 'absolute',
   right: 0,
@@ -47,7 +41,8 @@ const Column = styled.View({
 });
 
 const BubbleView = styled.View({
-  backgroundColor: 'rgba(0,0,0,0.5)',
+  backgroundColor: theme.palette.grey.black,
+  opacity: 0.8,
   borderRadius: 15,
   height: 30,
   left: '50%',
@@ -65,13 +60,13 @@ const BubbleView = styled.View({
 const UnavailableImage = () => (
   <View
     style={{
-      backgroundColor: CommonStyles.entryfieldBorder,
+      backgroundColor: theme.palette.grey.cloudy,
       height: '100%',
       paddingHorizontal: UI_SIZES.spacing.medium,
       paddingVertical: UI_SIZES.spacing.small,
       width: '100%',
     }}>
-    <Italic>{I18n.t('imageNotAvailable')}</Italic>
+    <SmallItalicText>{I18n.t('imageNotAvailable')}</SmallItalicText>
   </View>
 );
 
@@ -185,13 +180,15 @@ class Images extends React.Component<
               {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(3)} />}
               {images.length > 4 && (
                 <BubbleView style={{ bottom: heightRatio / 4 - 15 }}>
-                  <BubbleText onPress={() => this.openImage(3)}>
+                  <SmallInverseText
+                    style={{ marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center' }}
+                    onPress={() => this.openImage(3)}>
                     +
                     {
                       images.length - 3
                       /* -3 instead of -4 because of the last one has the dark foreground*/
                     }
-                  </BubbleText>
+                  </SmallInverseText>
                 </BubbleView>
               )}
             </QuarterImage>

@@ -7,10 +7,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle, responsiveStyle } from '~/framework/components/text';
+import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import {
   deleteEvent,
   postLateEvent,
@@ -18,52 +21,39 @@ import {
   updateLateEvent,
   updateLeavingEvent,
 } from '~/modules/viescolaire/presences/actions/events';
-import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/viesco/utils/viescoTheme';
-import { DialogButtonOk } from '~/ui/ConfirmDialog/buttonOk';
 import DateTimePicker from '~/ui/DateTimePicker';
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
   },
   recapHeader: {
-    marginTop: 10, // MO-142 use UI_SIZES.spacing here
     paddingVertical: UI_SIZES.spacing.small,
     alignSelf: 'flex-end',
     width: '90%',
-    marginBottom: 15, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.medium,
   },
   recapHeaderView: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   recapHeaderText: {
-    marginHorizontal: 5, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.tiny,
   },
-  underlinedText: {
-    alignSelf: 'center',
-    borderBottomWidth: 2,
-    padding: 10, // MO-142 use UI_SIZES.spacing here
+  timePickerRowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: UI_SIZES.spacing.small,
+  },
+  timePickerText: {
+    marginRight: UI_SIZES.spacing.minor,
   },
   inputContainer: {
-    marginHorizontal: 30, // MO-142 use UI_SIZES.spacing here
-  },
-  timeView: {
-    margin: 40, // MO-142 use UI_SIZES.spacing here
-    alignItems: 'center',
-    borderWidth: 2,
-    borderStyle: 'solid',
-    borderRadius: 3,
-    backgroundColor: theme.palette.grey.white,
-  },
-  timeViewText: {
-    ...responsiveStyle(55),
-    paddingVertical: 50, // MO-142 use UI_SIZES.spacing here
-    textDecorationLine: 'underline',
+    marginHorizontal: UI_SIZES.spacing.large,
   },
   labelText: {
-    ...TextSizeStyle.Small,
+    marginTop: UI_SIZES.spacing.big,
     marginBottom: UI_SIZES.spacing.tiny,
   },
   reasonTextInput: {
@@ -75,7 +65,10 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     flexWrap: 'nowrap',
-    marginVertical: 20, // MO-142 use UI_SIZES.spacing here
+    marginVertical: UI_SIZES.spacing.big,
+  },
+  deleteButton: {
+    marginRight: UI_SIZES.spacing.medium,
   },
 });
 
@@ -172,7 +165,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     switch (type) {
       case 'late':
         result.mainColor = viescoTheme.palette.presencesEvents.lateness;
-        result.lightColor = 'rgb(179, 0, 179)';
+        result.lightColor = viescoTheme.palette.presencesEvents.lateness;
         result.title = I18n.t('viesco-lateness');
         result.mainText = I18n.t('viesco-arrived');
         result.inputLabel = I18n.t('viesco-arrived-motive');
@@ -191,7 +184,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
   public render() {
     const { date } = this.state;
     const { type, event, student, startDate, endDate } = this.props.navigation.state.params;
-    const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties(type);
+    const { mainColor, mainText, inputLabel } = this.getSpecificProperties(type);
     const startDateString = moment(startDate).format('HH:mm');
     const endDateString = moment(endDate).format('HH:mm');
 
@@ -208,44 +201,39 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
           enabled={Platform.OS === 'ios'}
           behavior="padding"
           keyboardVerticalOffset={60}
-          style={style.safeAreaContainer}>
+          style={styles.safeAreaContainer}>
           <ScrollView>
-            <LeftColoredItem color={mainColor} style={style.recapHeader}>
-              <View style={style.recapHeaderView}>
+            <LeftColoredItem color={mainColor} style={styles.recapHeader}>
+              <View style={styles.recapHeaderView}>
                 <Icon color="grey" size={12} name="access_time" />
-                <Text style={style.recapHeaderText}>
+                <SmallText style={styles.recapHeaderText}>
                   {startDateString} - {endDateString}
-                </Text>
-                <TextBold>{student.name}</TextBold>
+                </SmallText>
+                <SmallBoldText>{student.name}</SmallBoldText>
               </View>
             </LeftColoredItem>
-            <Text style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Text>
-            <DateTimePicker
-              value={moment(date)}
-              mode="time"
-              onChange={this.onTimeChange}
-              renderDate={dateItem => (
-                <View style={[style.timeView, { borderColor: lightColor }]}>
-                  <Text style={style.timeViewText}>{dateItem.format('HH : mm')}</Text>
-                </View>
-              )}
-            />
-            <View style={style.inputContainer}>
-              <Text style={style.labelText}>{inputLabel}</Text>
+            <View style={styles.timePickerRowContainer}>
+              <SmallText style={[styles.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
+              <DateTimePicker mode="time" value={moment(date)} onChange={this.onTimeChange} color={mainColor} />
+            </View>
+            <View style={styles.inputContainer}>
+              <CaptionText style={styles.labelText}>{inputLabel}</CaptionText>
               <TextInput
                 defaultValue={event === undefined ? '' : event.comment}
                 placeholder={I18n.t('viesco-enter-text')}
-                style={style.reasonTextInput}
+                style={styles.reasonTextInput}
                 multiline
                 onChangeText={this.onReasonChange}
               />
             </View>
-            <View style={style.buttonOkContainer}>
-              {event !== undefined && <DialogButtonOk label={I18n.t('delete')} onPress={this.onCancel} />}
-              <DialogButtonOk
+            <View style={styles.buttonOkContainer}>
+              {event !== undefined ? (
+                <ActionButton text={I18n.t('delete')} type="secondary" action={this.onCancel} style={styles.deleteButton} />
+              ) : null}
+              <ActionButton
+                text={I18n.t('viesco-confirm')}
+                action={this.onSubmit}
                 disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
-                label={I18n.t('viesco-confirm')}
-                onPress={this.onSubmit}
               />
             </View>
           </ScrollView>

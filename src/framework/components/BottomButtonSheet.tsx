@@ -10,11 +10,12 @@ export const BottomButtonSheet = ({
   action,
   disabled,
   displayShadow,
+  loading,
 }: ActionButtonProps & Omit<BottomSheetProps, 'content'>) => {
   return (
     <BottomSheet
       displayShadow={displayShadow}
-      content={<ActionButton text={text} iconName={iconName} url={url} action={action} disabled={disabled} />}
+      content={<ActionButton loading={loading} text={text} iconName={iconName} url={url} action={action} disabled={disabled} />}
     />
   );
 };

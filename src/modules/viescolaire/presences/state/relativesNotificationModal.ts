@@ -1,5 +1,5 @@
 import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
-import viescoConfig from '~/modules/viescolaire/moduleConfig';
+import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 export type IChildEventsNotification = {
   studentsEvents: any;
@@ -28,6 +28,6 @@ export const initialState = {
 export type IChildEventsNotificationState = AsyncState<IChildEventsNotification>;
 
 export const getRelativesNotification = (globalState: any) =>
-  viescoConfig.getState(globalState).presences.relativesNotification as IChildEventsNotificationState;
+  moduleConfig.getState(globalState).relativesNotification as IChildEventsNotificationState;
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('RELATIVES_NOTIFICATION'));
+export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('RELATIVES_NOTIFICATION'));

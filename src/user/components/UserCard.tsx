@@ -6,9 +6,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
-import { CommonStyles } from '~/styles/common/styles';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
@@ -52,11 +51,11 @@ export const UserCard = ({
           height: 6,
           borderRadius: 3,
           marginRight: UI_SIZES.spacing.tiny,
-          backgroundColor: CommonStyles.profileTypes[type] || theme.palette.grey.fog,
+          backgroundColor: theme.color.profileTypes[type] || theme.palette.grey.fog,
         }}
         key={type}
       />
-      <Text style={{ ...TextColorStyle.Light, ...TextSizeStyle.Small }}>{I18n.t(`profileTypes.${type}`)}</Text>
+      <SmallText style={{ color: theme.ui.text.light }}>{I18n.t(`profileTypes.${type}`)}</SmallText>
     </View>
   );
 
@@ -130,12 +129,10 @@ export const UserCard = ({
           marginRight: 'auto',
           paddingLeft: UI_SIZES.spacing.medium,
         }}>
-        <TextBold>{displayName}</TextBold>
+        <BodyBoldText>{displayName}</BodyBoldText>
         {Array.isArray(type) ? type.map(item => renderUserType(item)) : renderUserType(type)}
       </View>
-      {touchable ? (
-        <Icon name="arrow_down" color={theme.legacy.neutral.regular} style={{ transform: [{ rotate: '270deg' }] }} />
-      ) : undefined}
+      {touchable ? <Icon name="arrow_down" color={theme.ui.text.light} style={{ transform: [{ rotate: '270deg' }] }} /> : undefined}
     </WrapperComponent>
   );
 };

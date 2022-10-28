@@ -19,6 +19,8 @@
 ; Ignore metro
 .*/node_modules/metro/.*
 
+.*/node_modules/resolve/test/resolver/malformed_package_json/package\.json$
+
 [include]
 
 [libs]
@@ -50,5 +52,8 @@ suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
 
+[untyped]
+.*/node_modules/@react-native-community/cli/.*/.*
+
 [version]
-^0.162.0
+^0.176.3

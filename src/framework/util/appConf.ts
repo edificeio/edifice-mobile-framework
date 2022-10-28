@@ -2,7 +2,7 @@
  * AppConfTool
  * AppConf Loader
  */
-import { ImageStyle } from 'react-native';
+import { ImageStyle, PlatformOSType } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
 import { PictureProps } from '~/framework/components/picture';
@@ -22,20 +22,37 @@ export type IPlatformAccessDeclaration = {
   wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
   webTheme: string; // web theme applied to the activated accounts
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
+  showWhoAreWe?: boolean; // To show or not the team link in profile page
+  showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
 };
 
 export class Platform {
   displayName!: IPlatformAccessDeclaration['displayName'];
+
   federation: IPlatformAccessDeclaration['federation'];
+
   hidden: IPlatformAccessDeclaration['hidden'];
+
   logo: IPlatformAccessDeclaration['logo'];
+
   logoStyle: IPlatformAccessDeclaration['logoStyle'];
+
   logoType: Required<IPlatformAccessDeclaration>['logoType'];
+
   name!: IPlatformAccessDeclaration['name'];
+
   _oauth!: IPlatformAccessDeclaration['oauth'];
+
   url!: IPlatformAccessDeclaration['url'];
+
   wayf: IPlatformAccessDeclaration['wayf'];
+
   webTheme!: IPlatformAccessDeclaration['webTheme'];
+
+  showWhoAreWe!: IPlatformAccessDeclaration['showWhoAreWe'];
+
+  showVieScolaireDashboard!: IPlatformAccessDeclaration['showVieScolaireDashboard'];
+
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
   constructor(pf: IPlatformAccessDeclaration) {
@@ -50,12 +67,15 @@ export class Platform {
     this.url = pf.url;
     this.wayf = pf.wayf;
     this.webTheme = pf.webTheme;
+    this.showWhoAreWe = pf.showWhoAreWe;
+    this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this._webviewIdentifier = pf.webviewIdentifier;
   }
 
   get webviewIdentifier() {
     return this._webviewIdentifier ?? appConf.webviewIdentifier;
   }
+
   get oauth() {
     return {
       client_id: this._oauth[0],
@@ -73,17 +93,53 @@ export interface IAppConfDeclaration {
   };
   webviewIdentifier: string;
   platforms: IPlatformAccessDeclaration[];
+  level?: '1d' | '2d';
+  onboarding?: {
+    showDiscoverLink?: PlatformOSType[];
+    showAppName?: boolean;
+  };
 }
 
 export class AppConf {
   matomo: { url: string; siteId: number };
+
   webviewIdentifier: string;
+
   platforms: Platform[];
+
   constructor(opts: IAppConfDeclaration) {
     this.matomo = opts.matomo;
     this.webviewIdentifier = opts.webviewIdentifier;
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
+    if (opts.level) this.level = opts.level;
+
+    const onboarding: Partial<AppConf['onboarding']> = {};
+    if (opts.onboarding?.showDiscoverLink) {
+      onboarding.showDiscoverLink = {};
+      for (const ptf of opts.onboarding.showDiscoverLink) {
+        onboarding.showDiscoverLink[ptf] = true;
+      }
+    } else {
+      onboarding.showDiscoverLink = { ios: true, android: true };
+    }
+    onboarding.showAppName = opts.onboarding?.showAppName ?? false;
+    this.onboarding = onboarding as AppConf['onboarding'];
   }
+
+  level: '1d' | '2d' = '2d'; // 2d by default
+
+  get is1d() {
+    return this.level === '1d';
+  }
+
+  get is2d() {
+    return this.level === '2d';
+  }
+
+  onboarding: {
+    showDiscoverLink: { [p in PlatformOSType]?: boolean };
+    showAppName: boolean;
+  };
 }
 
 const appConf = new AppConf(AppConfValues as IAppConfDeclaration);

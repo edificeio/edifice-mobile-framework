@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { FlatList, Platform, RefreshControl, StyleSheet, View } from 'react-native';
+import { Platform, RefreshControl, StyleSheet } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -10,9 +10,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/flatList';
 import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import { DocumentPicked } from '~/infra/filePicker';
@@ -34,14 +36,9 @@ import { WorkspaceFileListItem } from '~/modules/workspace/components/WorkspaceF
 import { IWorkspaceModalEventProps, WorkspaceModal, WorkspaceModalType } from '~/modules/workspace/components/WorkspaceModal';
 import moduleConfig from '~/modules/workspace/moduleConfig';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
-import { CommonStyles } from '~/styles/common/styles';
 import { DropdownMenu, DropdownMenuAction } from '~/ui/DropdownMenu';
 
 const styles = StyleSheet.create({
-  separator: {
-    borderBottomColor: CommonStyles.borderColorLighter,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
   listContainer: {
     backgroundColor: theme.palette.grey.fog,
     flexGrow: 1,
@@ -139,9 +136,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
     const { id, name: title, isFolder } = file;
     if (isFolder) {
       const filter = props.filter === Filter.ROOT ? id : props.filter;
-      props.navigation.push(moduleConfig.routeName, { filter, parentId: id, title });
+      props.navigation.push(computeRelativePath(moduleConfig.routeName, props.navigation.state), { filter, parentId: id, title });
     } else {
-      props.navigation.navigate(`${moduleConfig.routeName}/details`, { file, title });
+      props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), { file, title });
     }
   };
 
@@ -321,7 +318,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
             onLongPress={selectFile}
           />
         )}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
         keyExtractor={(item: IFile) => item.id}
         refreshControl={<RefreshControl refreshing={props.isFetching} onRefresh={fetchFiles} />}
         ListEmptyComponent={renderEmpty()}

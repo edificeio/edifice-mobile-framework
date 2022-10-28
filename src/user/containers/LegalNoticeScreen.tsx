@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
-import { Text } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -59,7 +59,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
     return (
       <TouchableOpacity onPress={() => this.handleOpenLegalItem(legalItem)} key={legalItem}>
         <ListItem
-          leftElement={<Text>{I18n.t(`user.legalNoticeScreen.${legalItem}`)}</Text>}
+          leftElement={<SmallText>{I18n.t(`user.legalNoticeScreen.${legalItem}`)}</SmallText>}
           rightElement={
             <Icon
               name="arrow_down"

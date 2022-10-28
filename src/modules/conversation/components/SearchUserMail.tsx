@@ -3,11 +3,10 @@ import { FlatList, TextInput, TouchableOpacity, View, ViewStyle } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { FontStyle, Text, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/modules/conversation/service/newMail';
-import { CommonStyles, IOSShadowStyle } from '~/styles/common/styles';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
@@ -62,14 +61,14 @@ export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }
 
 export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key }) => {
   const textInputStyle = {
+    ...TextFontStyle.Regular,
+    ...TextSizeStyle.Normal,
+    lineHeight: undefined,
     flex: 0,
     paddingVertical: UI_SIZES.spacing.tiny,
     color: theme.ui.text.regular,
-    ...FontStyle.Regular,
-    ...TextSizeStyle.Normal,
-    ...TextColorStyle.Normal,
-    marginVertical: -2, // Hack to compensate the position of TextInput baseline compared to regular text.
-    height: UI_SIZES.getResponsiveLineHeight(14) * 1.5, // Some magic here.
+    marginVertical: 2, // Hack to compensate the position of TextInput baseline compared to regular text.
+    height: getScaleDimension(20, 'font') * 1.5, // Some magic here.
   } as ViewStyle;
 
   return (
@@ -97,7 +96,13 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
   const absoluteListStyle = {
     backgroundColor: theme.ui.background.card,
     flex: 1,
-    ...IOSShadowStyle,
+    shadowColor: theme.ui.shadowColor,
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
   } as ViewStyle;
 
   const FoundUserOrGroup = ({ id, displayName, onPress }) => {
@@ -111,9 +116,9 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
         }}
         onPress={onPress}>
         <SingleAvatar userId={id} />
-        <Text numberOfLines={1} lineHeight={30} ellipsizeMode="tail" style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
+        <SmallText numberOfLines={1} ellipsizeMode="tail" style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
           {displayName}
-        </Text>
+        </SmallText>
       </TouchableOpacity>
     );
   };
@@ -149,21 +154,21 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
 export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
   const SelectedUserOrGroup = ({ onClick, displayName }) => {
     const itemStyle = {
-      backgroundColor: CommonStyles.primaryLight,
+      backgroundColor: theme.palette.complementary.blue.pale,
       borderRadius: 3,
       paddingVertical: UI_SIZES.spacing.tiny,
       paddingHorizontal: UI_SIZES.spacing.tiny,
       marginRight: UI_SIZES.spacing.tiny,
       flex: 0,
       flexDirection: 'row',
-      alignItems: 'baseline',
+      alignItems: 'center',
     } as ViewStyle;
 
     const userLabel = { color: theme.palette.complementary.blue.regular, textAlignVertical: 'center' } as ViewStyle;
 
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
-        <Text style={userLabel}>{displayName}</Text>
+        <SmallText style={userLabel}>{displayName}</SmallText>
         <Icon
           name="close"
           size={12}

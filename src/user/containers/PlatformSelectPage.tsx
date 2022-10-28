@@ -9,9 +9,9 @@ import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { H1, LightP } from '~/ui/Typography';
 import { selectPlatform } from '~/user/actions/platform';
 import { IUserAuthState } from '~/user/reducers/auth';
 
@@ -62,17 +62,17 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
             keyExtractor={item => item.url}
             ListHeaderComponent={
               <>
-                <H1
+                <HeadingSText
                   style={{
-                    color: theme.ui.text.regular,
-                    fontSize: 20,
-                    fontWeight: 'normal',
+                    marginBottom: UI_SIZES.spacing.big,
                     marginTop: UI_SIZES.spacing.medium + UI_SIZES.screen.topInset,
                     textAlign: 'center',
                   }}>
                   {I18n.t('welcome')}
-                </H1>
-                <LightP style={{ textAlign: 'center', marginBottom: UI_SIZES.spacing.small }}>{I18n.t('select-platform')}</LightP>
+                </HeadingSText>
+                <SmallText style={{ color: theme.ui.text.light, textAlign: 'center', marginBottom: UI_SIZES.spacing.small }}>
+                  {I18n.t('select-platform')}
+                </SmallText>
               </>
             }
             alwaysBounceVertical={false}

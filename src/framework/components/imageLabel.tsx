@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from './constants';
 import { Icon } from './icon';
 import { NamedSVG } from './picture';
-import { TextSemiBold, TextSizeStyle } from './text';
+import { SmallBoldText } from './text';
 
 export enum ImageType {
   svg,
@@ -44,9 +44,9 @@ export const ImageLabel = ({ text, imageName, imageType, color, cachedSVG }: Ima
           />
         ) : null}
       </View>
-      <TextSemiBold numberOfLines={1} style={{ marginLeft: UI_SIZES.spacing.tiny, color }}>
+      <SmallBoldText numberOfLines={1} style={{ marginLeft: UI_SIZES.spacing.tiny, color }}>
         {text}
-      </TextSemiBold>
+      </SmallBoldText>
     </View>
   );
 };

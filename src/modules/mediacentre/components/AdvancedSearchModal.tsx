@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  ScrollView,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -14,14 +13,19 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { Checkbox } from '~/framework/components/checkbox';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold, TextSizeStyle } from '~/framework/components/text';
+import ScrollView from '~/framework/components/scrollView';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
-import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 
 const styles = StyleSheet.create({
+  buttonGroupContainer: {
+    marginBottom: UI_SIZES.spacing.tiny,
+  },
   criteriaContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -30,23 +34,25 @@ const styles = StyleSheet.create({
   criteriaInput: {
     width: '75%',
     height: 45,
-    paddingHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.small,
     borderWidth: 2,
-    borderRadius: 5,
+    borderRadius: UI_SIZES.radius.small,
+    backgroundColor: theme.palette.grey.white,
     borderColor: theme.palette.primary.regular,
   },
   sourceCheckBoxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.minor,
   },
   sourceImage: {
     width: 30,
     height: 30,
-    marginRight: 5, // MO-142 use UI_SIZES.spacing here
+    marginRight: UI_SIZES.spacing.minor,
   },
   safeAreaContainer: {
     flex: 1,
+    backgroundColor: theme.ui.background.page,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -54,32 +60,33 @@ const styles = StyleSheet.create({
     backgroundColor: theme.palette.primary.regular,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20, // MO-142 use UI_SIZES.spacing here
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   headerTitle: {
-    ...TextSizeStyle.SlightBig,
-    color: theme.palette.grey.white,
+    color: theme.ui.text.inverse,
   },
   contentContainer: {
     flexGrow: 1,
     justifyContent: 'space-between',
-    padding: 20, // MO-142 use UI_SIZES.spacing here
+    marginHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
   },
   sourcesContainer: {
-    marginBottom: 5, // MO-142 use UI_SIZES.spacing here
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   sourcesContentContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 5, // MO-142 use UI_SIZES.spacing here
+    marginTop: UI_SIZES.spacing.tiny,
   },
-  dialogButtonsContainer: {
+  buttonsContainer: {
     flexDirection: 'row',
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
+    paddingBottom: UI_SIZES.spacing.medium,
   },
   searchButton: {
-    backgroundColor: theme.palette.primary.regular,
+    marginLeft: UI_SIZES.spacing.medium,
   },
 });
 
@@ -155,10 +162,15 @@ const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICri
   return (
     <View>
       {props.field.name !== 'title' ? (
-        <ButtonGroup buttons={buttons} selectedButton={props.field.operand} onPress={onChangeOperand} />
+        <ButtonGroup
+          buttons={buttons}
+          selectedButton={props.field.operand}
+          onPress={onChangeOperand}
+          containerStyle={styles.buttonGroupContainer}
+        />
       ) : null}
       <View style={styles.criteriaContainer}>
-        <Text>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</Text>
+        <SmallText>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallText>
         <TextInput
           defaultValue={props.field.value}
           placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
@@ -231,9 +243,9 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         keyboardVerticalOffset={60}
         style={styles.safeAreaContainer}>
         <View style={styles.headerContainer}>
-          <TextBold style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</TextBold>
+          <BodyBoldText style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</BodyBoldText>
           <TouchableOpacity onPress={props.closeModal}>
-            <Icon name="close" color={theme.ui.text.inverse} size={24} />
+            <Icon name="close" color={theme.ui.text.inverse} size={20} />
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
@@ -241,7 +253,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
             <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
           ))}
           <View style={styles.sourcesContainer}>
-            <Text>{I18n.t('mediacentre.advancedSearch.sources')}</Text>
+            <SmallText>{I18n.t('mediacentre.advancedSearch.sources')}</SmallText>
             <View style={styles.sourcesContentContainer}>
               {props.availableSources.includes(Source.GAR) ? (
                 <SourceCheckbox
@@ -273,14 +285,9 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
               ) : null}
             </View>
           </View>
-          <View style={styles.dialogButtonsContainer}>
-            <DialogButtonCancel onPress={props.closeModal} />
-            <DialogButtonOk
-              onPress={onSearch}
-              disabled={areFieldsEmpty}
-              label={I18n.t('common.search')}
-              style={styles.searchButton}
-            />
+          <View style={styles.buttonsContainer}>
+            <ActionButton text={I18n.t('common.cancel')} type="secondary" action={props.closeModal} />
+            <ActionButton text={I18n.t('common.search')} action={onSearch} disabled={areFieldsEmpty} style={styles.searchButton} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

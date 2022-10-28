@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { HeadingSText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -52,7 +52,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
           <NamedSVG name={dayImages[dayOfTheWeek]} style={styles.dayImage} />
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer}>
-          {title ? <TextSemiBold style={styles.title}>{title}</TextSemiBold> : null}
+          {title ? <HeadingSText>{title}</HeadingSText> : null}
           {content ? (
             <HtmlContentView
               html={content}
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     aspectRatio: 3,
   },
   content: {
-    ...TextSizeStyle.SlightBig,
+    ...TextSizeStyle.Medium,
     marginTop: UI_SIZES.spacing.medium,
   },
   contentContainer: {
@@ -91,9 +91,6 @@ const styles = StyleSheet.create({
   dayImage: {
     height: '100%',
     aspectRatio: 1,
-  },
-  title: {
-    ...TextSizeStyle.Big,
   },
 });
 

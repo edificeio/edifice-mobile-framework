@@ -1,15 +1,17 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NavigationDrawerProp } from 'react-navigation-drawer';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { pageGutterSize } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { Text, TextBold } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IInit } from '~/modules/zimbra/components/DrawerMenuContainer';
 import { DraftType } from '~/modules/zimbra/screens/NewMail';
 import { IMail } from '~/modules/zimbra/state/mailContent';
@@ -76,9 +78,13 @@ type MailListProps = {
 
 type MailListState = {
   indexPage: number;
+  isChangingPage: boolean;
+  isRefreshing: boolean;
   mails: any;
   nextPageCallable: boolean;
 };
+
+let lastFolderCache = '';
 
 export default class MailList extends React.PureComponent<MailListProps, MailListState> {
   constructor(props) {
@@ -87,15 +93,17 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const { notifications } = this.props;
     this.state = {
       indexPage: 0,
+      isChangingPage: false,
+      isRefreshing: false,
       mails: notifications,
       nextPageCallable: false,
     };
-    this.props.setMails(notifications);
   }
 
   componentDidUpdate(prevProps) {
-    const { notifications, isFetching, fetchCompleted } = this.props;
-    if (prevProps.navigation.getParam('key') !== this.props.navigation.getParam('key')) {
+    const { navigation, notifications, isFetching, fetchCompleted } = this.props;
+    const { isChangingPage } = this.state;
+    if (prevProps.navigation.getParam('key') !== navigation.getParam('key')) {
       this.setState({ indexPage: 0 });
     }
     if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && this.props.fetchRequested) {
@@ -110,11 +118,17 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       !isFetching &&
       this.props.fetchRequested
     ) {
-      const { mails } = this.state;
-      const joinedList = mails.concat(this.props.notifications);
-      this.props.setMails(joinedList);
+      let { mails } = this.state;
+      if (lastFolderCache && navigation.state?.params?.key !== lastFolderCache) {
+        mails = [];
+      }
+      lastFolderCache = navigation.state?.params?.key;
+      const joinedList = mails.concat(notifications);
       this.setState({ mails: joinedList });
       fetchCompleted();
+    }
+    if (isChangingPage && !isFetching && prevProps.isFetching) {
+      this.setState({ isChangingPage: false });
     }
   }
 
@@ -192,21 +206,21 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           <CenterPanel>
             <View style={styles.mailInfoRow}>
               {mail.unread ? (
-                <TextBold style={styles.displayNameText} numberOfLines={1}>
+                <SmallBoldText style={styles.displayNameText} numberOfLines={1}>
                   {displayName}
-                </TextBold>
+                </SmallBoldText>
               ) : (
-                <Text style={styles.displayNameText} numberOfLines={1}>
+                <SmallText style={styles.displayNameText} numberOfLines={1}>
                   {displayName}
-                </Text>
+                </SmallText>
               )}
-              <Text style={styles.greyColor}>{date}</Text>
+              <SmallText style={styles.greyColor}>{date}</SmallText>
             </View>
             <View style={styles.mailInfoRow}>
-              <Text style={styles.greyColor} numberOfLines={1}>
+              <SmallText style={styles.greyColor} numberOfLines={1}>
                 {mail.subject}
-              </Text>
-              {mail.hasAttachment ? <Icon name="attached" size={18} color="black" /> : null}
+              </SmallText>
+              {mail.hasAttachment ? <Icon name="attached" size={18} color={theme.palette.grey.black} /> : null}
             </View>
           </CenterPanel>
         </Header>
@@ -231,8 +245,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   public render() {
     const { isFetching, firstFetch } = this.props;
-    const uniqueMails = this.state.mails.filter((mail: IMail, index, self) => {
-      return index === self.indexOf(mail);
+    const { isChangingPage, isRefreshing, mails, nextPageCallable } = this.state;
+    const uniqueId: string[] = [];
+    const uniqueMails = mails.filter((mail: IMail) => {
+      if (uniqueId.indexOf(mail.id) === -1) {
+        uniqueId.push(mail.id);
+        return true;
+      }
     });
     return (
       <FlatList
@@ -241,15 +260,29 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         renderItem={({ item }) => this.renderMailItem(item)}
         extraData={uniqueMails}
         keyExtractor={(item: IMail) => item.id}
-        refreshControl={<RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={async () => {
+              this.setState({ isRefreshing: true });
+              await this.refreshMailList();
+              this.setState({ isRefreshing: false });
+            }}
+          />
+        }
         onEndReachedThreshold={0.001}
         onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
         onEndReached={() => {
-          if (this.state.nextPageCallable) {
-            this.setState({ nextPageCallable: false });
+          if (nextPageCallable) {
+            this.setState({ nextPageCallable: false, isChangingPage: true });
             this.onChangePage();
           }
         }}
+        ListFooterComponent={
+          isChangingPage ? (
+            <LoadingIndicator customStyle={{ marginTop: UI_SIZES.spacing.big, marginBottom: pageGutterSize }} />
+          ) : null
+        }
         ListEmptyComponent={
           isFetching && firstFetch ? (
             <LoadingIndicator />

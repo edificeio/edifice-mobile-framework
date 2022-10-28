@@ -3,12 +3,12 @@ import * as React from 'react';
 import { Image, ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
-import { FlatButton } from '~/ui/FlatButton';
 import { IconButton } from '~/ui/IconButton';
 
+import { ActionButton } from './ActionButton';
 import { Card, InfoCard } from './card';
 import { UI_SIZES } from './constants';
-import { Text, TextBold } from './text';
+import { CaptionText, SmallBoldText, SmallText } from './text';
 import { Toggle } from './toggle';
 
 export interface IInfoBubbleProps {
@@ -77,7 +77,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
               alignItems: 'center',
             }}>
             {infoTitle ? (
-              <TextBold style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoTitle}</TextBold>
+              <SmallBoldText style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoTitle}</SmallBoldText>
             ) : null}
             {infoImage ? (
               <Image
@@ -86,8 +86,8 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
                 style={{ height: 120, width: 120, marginBottom: UI_SIZES.spacing.medium }}
               />
             ) : null}
-            <Text style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</Text>
-            <FlatButton title={I18n.t('common.infoBubble-understood')} onPress={() => this.doAcknowledge(true)} />
+            <SmallText style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</SmallText>
+            <ActionButton text={I18n.t('common.infoBubble-understood')} action={() => this.doAcknowledge(true)} />
           </View>
         ) : null}
         <TouchableOpacity
@@ -112,9 +112,9 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
     const { acknowledgeToggle } = this.state;
     return (
       <InfoCard style={style}>
-        <Text style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</Text>
+        <SmallText style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</SmallText>
         <View style={{ flexDirection: 'row', alignSelf: 'flex-end', alignItems: 'center' }}>
-          <Text style={{ marginRight: UI_SIZES.spacing.small, fontSize: 12 }}>{I18n.t('common.infoBubble-doNotShow')}</Text>
+          <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('common.infoBubble-doNotShow')}</CaptionText>
           <Toggle checked={acknowledgeToggle} onCheckChange={() => this.doAcknowledge(!acknowledgeToggle)} />
         </View>
       </InfoCard>

@@ -4,19 +4,20 @@ import { StyleSheet, TextStyle, TouchableOpacity, ViewStyle } from 'react-native
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Text } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    borderRadius: 2,
     backgroundColor: theme.palette.grey.grey,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
+    borderRadius: UI_SIZES.radius.small,
+    marginLeft: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    color: theme.palette.grey.white,
+    color: theme.ui.text.inverse,
   },
 });
 
@@ -28,6 +29,6 @@ interface IDialogButtonCancelProps {
 
 export const DialogButtonCancel = ({ style, textStyle, onPress }: IDialogButtonCancelProps) => (
   <TouchableOpacity style={[styles.buttonContainer, style]} onPress={onPress}>
-    <Text style={[styles.text, textStyle]}>{I18n.t('Cancel')}</Text>
+    <SmallText style={[styles.text, textStyle]}>{I18n.t('Cancel')}</SmallText>
   </TouchableOpacity>
 );

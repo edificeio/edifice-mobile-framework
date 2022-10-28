@@ -1,4 +1,4 @@
-import { CommonStyles } from '~/styles/common/styles';
+import theme from '~/app/theme';
 import { mailContentService } from '~/modules/conversation/service/mailContent';
 
 enum UserRole {
@@ -23,18 +23,18 @@ export const getUserColor = async (userId: string) => {
 export const getProfileColor = (role?) => {
   switch (role?.toUpperCase()) {
     case UserRole.STUDENT:
-      return CommonStyles.profileTypes.Student;
+      return theme.color.profileTypes.Student;
     case UserRole.RELATIVE:
-      return CommonStyles.profileTypes.Relative;
+      return theme.color.profileTypes.Relative;
     case UserRole.TEACHER:
-      return CommonStyles.profileTypes.Teacher;
+      return theme.color.profileTypes.Teacher;
     case UserRole.PERSONNEL:
-      return CommonStyles.profileTypes.Personnel;
+      return theme.color.profileTypes.Personnel;
     case 'PrincTeacherGroup':
-      return '#8C939E';
+      return theme.palette.grey.graphite;
     case UserRole.GUEST:
-      return CommonStyles.profileTypes.Guest;
+      return theme.color.profileTypes.Guest;
     default:
-      return '#BBBFC6';
+      return theme.palette.grey.grey;
   }
 };

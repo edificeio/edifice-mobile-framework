@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform, SafeAreaView, View } from 'react-native';
+import deviceInfoModule from 'react-native-device-info';
 import Swiper from 'react-native-swiper';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingS, TextSemiBold } from '~/framework/components/text';
+import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
@@ -49,10 +49,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
     const { discoverButtonWidth, joinMyNetworkButtonWidth, measuredDiscoverButton, measuredJoinMyNetworkButton } = this.state;
     const largestButtonWidth = Math.max(joinMyNetworkButtonWidth, discoverButtonWidth);
     const areAllButtonsMeasured = measuredDiscoverButton && measuredJoinMyNetworkButton;
-    const isPlatformIos = Platform.OS === 'ios';
-    const appName = I18n.t('common.appName');
-    const isAppOneOrNeo = appName.includes('ONE Pocket') || appName.includes('NEO Pocket');
-    const hideDiscoveryButton = isPlatformIos && isAppOneOrNeo;
+    const hideDiscoveryButton = !Platform.select(appConf.onboarding.showDiscoverLink);
+    const showAppName = appConf.onboarding.showAppName;
     const svgSize = UI_SIZES.screen.width * 0.8;
     const imageStyle = {
       width: svgSize,
@@ -71,16 +69,15 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
           paddingVertical: UI_SIZES.spacing.big,
         }}>
         <View style={{ flex: 4 }}>
-          <HeadingS
+          <HeadingLText
             style={{
               color: theme.palette.primary.regular,
               alignSelf: 'center',
-              fontSize: 24,
               height: 80,
               lineHeight: undefined,
             }}>
-            {I18n.t('common.appName').toUpperCase()}
-          </HeadingS>
+            {showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
+          </HeadingLText>
           <Swiper
             autoplay
             autoplayTimeout={5}
@@ -109,7 +106,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
                   width: '80%',
                 }}>
                 <NamedSVG name={`onboarding-${index}`} style={imageStyle} />
-                <TextSemiBold style={{ textAlign: 'center', fontSize: 18 }}>{onboardingText}</TextSemiBold>
+                <HeadingSText style={{ textAlign: 'center' }}>{onboardingText}</HeadingSText>
               </View>
             ))}
           </Swiper>
