@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
 import { postFolderAction } from '~/modules/conversation/actions/folders';
 import { fetchInitAction } from '~/modules/conversation/actions/initMails';
@@ -39,6 +39,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+        ...UI_ANIMATIONS.toast,
       });
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
@@ -47,6 +48,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+        ...UI_ANIMATIONS.toast,
       });
     } finally {
       this.setState({ name: '' });

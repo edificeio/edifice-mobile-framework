@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -197,6 +198,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+          ...UI_ANIMATIONS.toast,
         });
         return;
       } else if (this.state.tempAttachment && this.state.tempAttachment !== null) {
@@ -205,6 +207,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+          ...UI_ANIMATIONS.toast,
         });
         return;
       }
@@ -220,6 +223,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+          ...UI_ANIMATIONS.toast,
         });
 
         const navParams = navigation.state;
@@ -242,6 +246,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             position: Toast.position.BOTTOM,
             mask: false,
             containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+            ...UI_ANIMATIONS.toast,
           });
         } catch (error) {
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
@@ -269,6 +274,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+          ...UI_ANIMATIONS.toast,
         });
       } else if (!isDraftEmpty) {
         const textToDisplay = {
@@ -582,6 +588,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       Keyboard.dismiss();
       Toast.show(I18n.t('conversation.attachmentError'), {
         position: Toast.position.BOTTOM,
+        ...UI_ANIMATIONS.toast,
       });
       this.setState({ tempAttachment: null });
       throw e;

@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
@@ -48,7 +49,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         await userService.sendEmailVerificationCode(email);
         props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail });
       } catch {
-        Toast.show(I18n.t('common.error.text'));
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
       } finally {
         setIsSendingEmailVerificationCode(false);
       }

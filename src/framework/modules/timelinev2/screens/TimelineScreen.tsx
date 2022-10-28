@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { cardPaddingMerging } from '~/framework/components/card';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
@@ -147,9 +147,9 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         iconName="new_post"
         options={workflows}
         ref={this.popupMenuRef}
-      // onPress={() => {
-      // this.listRef.current?.recenter();
-      // }}
+        // onPress={() => {
+        // this.listRef.current?.recenter();
+        // }}
       />
     );
   }
@@ -220,33 +220,33 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             right: this.rights.notification.report
               ? item.type === ITimelineItemType.NOTIFICATION
                 ? [
-                  {
-                    action: async row => {
-                      try {
-                        await this.doReportConfirm(item.data as ITimelineNotification);
-                        row[item.data.id]?.closeRow();
-                      } catch (e) { } // Do nothing, just to prevent error
+                    {
+                      action: async row => {
+                        try {
+                          await this.doReportConfirm(item.data as ITimelineNotification);
+                          row[item.data.id]?.closeRow();
+                        } catch (e) {} // Do nothing, just to prevent error
+                      },
+                      actionColor: theme.palette.status.warning,
+                      actionText: I18n.t('timeline.reportAction.button'),
+                      actionIcon: 'ui-warning',
                     },
-                    actionColor: theme.palette.status.warning,
-                    actionText: I18n.t('timeline.reportAction.button'),
-                    actionIcon: 'ui-warning',
-                  },
-                ]
+                  ]
                 : item.type === ITimelineItemType.FLASHMSG
-                  ? [
+                ? [
                     {
                       action: async row => {
                         try {
                           await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
                           row[item.data.id]?.closeRow();
-                        } catch (e) { } // Do nothing, just to prevent error
+                        } catch (e) {} // Do nothing, just to prevent error
                       },
                       actionColor: theme.palette.status.failure,
                       actionText: I18n.t('common.close'),
                       actionIcon: 'ui-close',
                     },
                   ]
-                  : undefined
+                : undefined
               : undefined,
           };
         }}
@@ -363,7 +363,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             try {
               await notificationsService.report(this.props.session, notif.id);
               resolve(true);
-              Toast.showSuccess(I18n.t('timeline.reportAction.success'));
+              Toast.showSuccess(I18n.t('timeline.reportAction.success'), { ...UI_ANIMATIONS.toast });
             } catch (e) {
               Alert.alert(I18n.t('common.error.text'));
               reject(e);

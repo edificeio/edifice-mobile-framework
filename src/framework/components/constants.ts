@@ -23,6 +23,9 @@ export const getScaleDimension = (dimension: number, type: 'height' | 'width' | 
   );
 
 export const UI_ANIMATIONS = {
+  toast: {
+    duration: 3000,
+  },
   fade: {
     duration: 300,
     useNativeDriver: false,

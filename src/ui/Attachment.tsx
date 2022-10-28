@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -95,7 +95,7 @@ const openFile = (notifierId: string, file?: SyncedFile) => {
       try {
         file.open();
       } catch (e) {
-        Toast.show(I18n.t('download-error-generic'));
+        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
   };
@@ -107,9 +107,11 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
       try {
         file.mirrorToDownloadFolder();
         Toast.hide(lastToast);
-        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }));
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }), {
+          ...UI_ANIMATIONS.toast,
+        });
       } catch (e) {
-        Toast.show(I18n.t('download-error-generic'));
+        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
   };

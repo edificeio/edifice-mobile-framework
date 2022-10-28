@@ -6,7 +6,7 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -106,7 +106,7 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
 
   copyToClipboard = () => {
     Clipboard.setString(this.props.resource.link);
-    Toast.show(I18n.t('mediacentre.link-copied'));
+    Toast.show(I18n.t('mediacentre.link-copied'), { ...UI_ANIMATIONS.toast });
   };
 
   public render() {

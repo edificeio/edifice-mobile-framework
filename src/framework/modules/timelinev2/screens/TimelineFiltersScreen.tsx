@@ -52,21 +52,22 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     const { selectedFilters } = this.state;
     const { navigation, notifFilterSettings } = this.props;
     const areFiltersUnchanged = shallowEqual(notifFilterSettings, selectedFilters);
+    const noneSet = Object.values(selectedFilters).every(value => !value);
     return (
       <PageView
         navigation={navigation}
         navBarWithBack={{
           right: (
             <HeaderAction
-              text={I18n.t('common.apply')}
-              disabled={areFiltersUnchanged}
+              text={I18n.t('common.ok')}
+              disabled={areFiltersUnchanged || noneSet}
               onPress={() => this.doSetFilters(selectedFilters)}
             />
           ),
           title: I18n.t('timeline.filtersScreen.title'),
         }}
         onBack={() => {
-          if (!areFiltersUnchanged) {
+          if (!areFiltersUnchanged && !noneSet) {
             Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
               {
                 text: I18n.t('common.cancel'),
