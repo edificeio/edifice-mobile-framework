@@ -225,7 +225,7 @@ export const VerifyEmailCodeScreen = ({
         <SmallText style={styles.issueText}>{I18n.t('user.verifyEmailCodeScreen.codeIssue')}</SmallText>
         <TouchableOpacity
           style={[styles.resendButton, { opacity: isResendInactive ? 0.5 : 1 }]}
-          disabled={false}
+          disabled={isResendInactive}
           onPress={() => resendCode()}>
           <Icon name="refresh" size={22} color={theme.palette.grey.black} />
           <BodyBoldText style={styles.resendText}>{I18n.t('user.verifyEmailCodeScreen.resendCode')}</BodyBoldText>
