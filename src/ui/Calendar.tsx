@@ -1,11 +1,10 @@
 import moment from 'moment';
 import React from 'react';
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallText } from '~/framework/components/text';
 import { IHomework } from '~/modules/viescolaire/diary/reducer';
 

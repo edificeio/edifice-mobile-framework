@@ -101,6 +101,7 @@ export class FilePicker extends React.PureComponent<
             type: DocumentPicker.types.allFiles as
               | PlatformTypes[keyof PlatformTypes][keyof PlatformTypes[keyof PlatformTypes]][]
               | DocumentType[keyof PlatformTypes],
+            presentationStyle: 'fullScreen',
             ...options,
           })
             .then(file => {

@@ -63,10 +63,11 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
   const textInputStyle = {
     ...TextFontStyle.Regular,
     ...TextSizeStyle.Normal,
+    lineHeight: undefined,
     flex: 0,
     paddingVertical: UI_SIZES.spacing.tiny,
     color: theme.ui.text.regular,
-    marginVertical: -2, // Hack to compensate the position of TextInput baseline compared to regular text.
+    marginVertical: 2, // Hack to compensate the position of TextInput baseline compared to regular text.
     height: getScaleDimension(20, 'font') * 1.5, // Some magic here.
   } as ViewStyle;
 
@@ -160,7 +161,7 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
       marginRight: UI_SIZES.spacing.tiny,
       flex: 0,
       flexDirection: 'row',
-      alignItems: 'baseline',
+      alignItems: 'center',
     } as ViewStyle;
 
     const userLabel = { color: theme.palette.complementary.blue.regular, textAlignVertical: 'center' } as ViewStyle;

@@ -5,7 +5,7 @@ import theme from '~/app/theme';
 
 import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextItalic } from '~/framework/components/text';
+import { SmallItalicText } from '~/framework/components/text';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { IRemoteAttachment } from '~/ui/Attachment';
 import { AttachmentGroup } from '~/ui/AttachmentGroup';
@@ -128,7 +128,7 @@ const renderAudioVideoPreview = (media: IMedia) => {
   const videoDimensions = media['video-resolution'] ? extractVideoResolution(media['video-resolution']) : undefined;
   const videoId = media['document-id'] as string | undefined;
   if (!media.src) {
-    return <TextItalic style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>{I18n.t(`${media.type || 'media'}NotAvailable`)}</TextItalic>
+    return <SmallItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>{I18n.t(`${media.type || 'media'}NotAvailable`)}</SmallItalicText>
   }
   return (
     <Player
