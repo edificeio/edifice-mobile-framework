@@ -4,11 +4,12 @@
  */
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
+import { ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import {
+  BodyItalicText,
   NestedActionText,
   NestedBoldText,
   NestedItalicText,
@@ -19,10 +20,11 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
-import { DEPRECATED_signImageURISource, DEPRECATED_signImagesUrls, signURISource, transformedSrc } from '~/infra/oauth';
 import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
 import Player from '~/ui/Player';
+
+import { formatMediaSourceArray, formatSource, Image } from '../media';
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -296,7 +298,7 @@ function renderParseText(
  * @param style
  */
 function renderParseImages(nugget: IImagesNugget, key: string, style: ViewStyle = {}): JSX.Element {
-  return <Images images={DEPRECATED_signImagesUrls(nugget.images)} key={key} style={style} />;
+  return <Images images={formatMediaSourceArray(nugget.images)} key={key} style={style} />;
 }
 
 /**
@@ -308,7 +310,7 @@ function renderParseImages(nugget: IImagesNugget, key: string, style: ViewStyle 
 function renderParseInlineImage(nugget: IInlineImageNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <Image
-      source={DEPRECATED_signImageURISource(nugget.src)}
+      source={formatSource(nugget.src)}
       style={{
         height: 20,
         width: 20,
@@ -341,14 +343,14 @@ function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle 
 function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = {}): JSX.Element {
   if (!nugget.src) {
     return (
-      <TextItalic style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
+      <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
         {I18n.t(`audioNotAvailable`)}
-      </TextItalic>
+      </BodyItalicText>
     );
   }
   return (
     <View key={key}>
-      <Player type="audio" source={signURISource(transformedSrc(nugget.src))} style={style} />
+      <Player type="audio" source={formatSource(nugget.src)} style={style} />
     </View>
   );
 }
@@ -362,16 +364,16 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
 function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = {}): JSX.Element {
   if (!nugget.src) {
     return (
-      <TextItalic style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
+      <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
         {I18n.t(`videoNotAvailable`)}
-      </TextItalic>
+      </BodyItalicText>
     );
   }
   return (
     <View key={key}>
       <Player
         type="video"
-        source={signURISource(transformedSrc(nugget.src))}
+        source={formatSource(nugget.src)}
         style={style}
         {...(nugget.ratio ? { ratio: nugget.ratio } : {})}
         {...(nugget.posterSource ? { posterSource: nugget.posterSource } : {})}

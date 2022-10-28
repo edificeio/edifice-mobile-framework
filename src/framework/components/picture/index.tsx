@@ -4,10 +4,11 @@
  * A unique component for displaying image from various technologies.
  */
 import * as React from 'react';
-import { Image, ImageProps } from 'react-native';
+import { ImageProps } from 'react-native';
 
 import NamedSVG, { NamedSVGProps } from './NamedSVG';
 import { Icon, IconProps } from './Icon';
+import { Image } from '~/framework/util/media';
 
 export interface IAnyPictureSource {
   source: any;

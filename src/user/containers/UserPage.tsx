@@ -21,7 +21,7 @@ import { pickFileError } from '~/infra/actions/pickFile';
 import { ImagePicked } from '~/infra/imagePicker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
-import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
@@ -29,6 +29,7 @@ import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
 import { IUserInfoState } from '~/user/state/info';
+import { formatSource } from '~/framework/util/media';
 
 const uploadAvatarError = () => {
   return dispatch => {
@@ -183,13 +184,13 @@ export class UserPage extends React.PureComponent<
     //avoid setstate on modalbox when unmounted
     const { userinfo, session } = this.props;
     const { showDisconnect, showVersionType, versionOverride, versionType, updatingAvatar } = this.state;
-    const signedURISource = userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`);
+    const URISource = userinfo.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`);
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
     // (otherwise, a previously-loaded image is retrieved from cache)
-    const sourceWithParam = signedURISource && {
-      ...signedURISource,
+    const sourceWithParam = URISource && {
+      ...URISource,
       uri: `${
-        signedURISource && signedURISource.uri
+        URISource && URISource.uri
       }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
     const showWhoAreWe = session.platform.showWhoAreWe;

@@ -27,7 +27,6 @@ import {
   ColorValue,
   FlatList,
   FlatListProps,
-  Image,
   ImageSourcePropType,
   TextProps,
   TextStyle,
@@ -39,6 +38,7 @@ import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
+import { Image } from '../util/media';
 
 import { UI_SIZES } from './constants';
 import { Picture, PictureProps } from './picture';

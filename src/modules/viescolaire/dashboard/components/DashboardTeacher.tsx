@@ -1,10 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
+import { formatSource, Image } from '~/framework/util/media';
 import { BottomColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
 import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -87,7 +88,7 @@ const ImageButtonModule = ({ imageSrc, color, text, onPress, disabled }: ImageBu
         color={color}
         onPress={onPress}
         disabled={disabled}>
-        <Image source={imageSrc} style={styles.gridButtonImage} resizeMode="contain" />
+        <Image source={formatSource(imageSrc)} style={styles.gridButtonImage} resizeMode="contain" />
         <SmallText>{text}</SmallText>
       </BottomColoredItem>
     </View>

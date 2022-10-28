@@ -5,7 +5,7 @@
 import I18n from 'i18n-js';
 import { Alert, Linking } from 'react-native';
 
-import { getIsUrlSignable, transformedSrc } from '~/infra/oauth';
+import { urlSigner } from '~/infra/oauth';
 
 import { IUserSession, getUserSession } from './session';
 
@@ -38,9 +38,9 @@ export async function openUrl(
       throw new Error('openUrl : no url provided.');
     }
     // 1. compute url redirection if function provided
-    url = transformedSrc(url);
+    url = urlSigner.getAbsoluteUrl(url);
     try {
-      if (getIsUrlSignable(url) && autoLogin) {
+      if (urlSigner.getIsUrlSignable(url) && autoLogin) {
         const customToken = await session.oauth.getQueryParamToken();
         if (customToken) {
           // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.

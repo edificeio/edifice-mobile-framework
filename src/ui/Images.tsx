@@ -2,12 +2,14 @@ import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ImageProps, ImageURISource, View, ViewStyle } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import RNFastImage from 'react-native-fast-image';
 import { withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallInverseText, SmallItalicText } from '~/framework/components/text';
+import { FastImage } from '~/framework/util/media';
+import { urlSigner } from '~/infra/oauth';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
@@ -80,7 +82,7 @@ const StretchImage = (props: ImageProps) => (
       width: '100%',
       borderRadius: UI_SIZES.radius.small,
     }}
-    resizeMode={FastImage.resizeMode.cover}
+    resizeMode={RNFastImage.resizeMode.cover}
   />
 );
 
@@ -110,7 +112,7 @@ class Images extends React.Component<
     };
     const getImageSource = (imageSrc: ImageURISource, removeThumbnail?: boolean) => {
       if (!imageSrc.uri) return imageSrc;
-      const uri = new URL(imageSrc.uri);
+      const uri = new URL(urlSigner.getAbsoluteUrl(imageSrc.uri)!);
       if (removeThumbnail) {
         uri.searchParams.delete('thumbnail');
       }
@@ -179,9 +181,9 @@ class Images extends React.Component<
               <StretchImage source={getImageSource(images[3].src)} />
               {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(3)} />}
               {images.length > 4 && (
-                <BubbleView style={{ bottom: heightRatio / 4 - 15 }}>
+                <BubbleView style={{ bottom: heightRatio / 4 - 15, justifyContent: 'center' }}>
                   <SmallInverseText
-                    style={{ marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center' }}
+                    style={{ marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center', lineHeight: undefined }}
                     onPress={() => this.openImage(3)}>
                     +
                     {

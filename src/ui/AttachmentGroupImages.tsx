@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { FlatList, Image, TouchableOpacity, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { formatSource, Image } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { ContentUri } from '~/types/contentUri';
@@ -44,7 +45,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
                   backgroundColor: theme.ui.background.card,
                   borderRadius: 3,
                 }}>
-                <Image source={{ uri: item.uri }} style={{ width: 110, height: 110, borderRadius: 3 }} resizeMode="cover" />
+                <Image source={formatSource(item.uri)} style={{ width: 110, height: 110, borderRadius: 3 }} resizeMode="cover" />
               </TouchableOpacity>
               <View style={{ position: 'absolute', right: -25, top: -25, elevation: 10 }}>
                 <TouchableOpacity

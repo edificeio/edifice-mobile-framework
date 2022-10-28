@@ -6,7 +6,6 @@ import { Picture } from '~/framework/components//picture';
 import { SmallBoldText } from '~/framework/components//text';
 import { UI_SIZES } from '~/framework/components/constants';
 import { openUrl } from '~/framework/util/linking';
-import { transformedSrc } from '~/infra/oauth';
 
 export interface ActionButtonProps {
   text: string;
@@ -89,7 +88,7 @@ export const ActionButton = ({
                 action();
               }
               if (url) {
-                openUrl(transformedSrc(url), undefined, undefined, showConfirmation, requireSession);
+                openUrl(url, undefined, undefined, showConfirmation, requireSession);
               }
             },
           }

@@ -24,7 +24,6 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
-import { signURISource } from '~/infra/oauth';
 import { ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
 import { PageContainer } from '~/ui/ContainerContent';
 import { changePasswordResetAction } from '~/user/actions/changePassword';
@@ -33,6 +32,7 @@ import { UserCard } from '~/user/components/UserCard';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
+import { formatSource } from '~/framework/util/media';
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -92,7 +92,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
             <SafeAreaView>
               <UserCard
                 id={
-                  this.props.userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
+                  this.props.userinfo.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
                 }
                 displayName={this.props.userinfo.displayName!}
                 type={

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import { formatSource, Image } from '~/framework/util/media';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { DEPRECATED_signImageURISource } from '~/infra/oauth';
 import { Filter, IFile } from '~/modules/workspace/reducer';
 import ImageOptional from '~/ui/ImageOptional';
 
@@ -115,7 +115,7 @@ export const renderIcon = (id: string | null, isFolder: boolean, name: string, c
         style={style}
         imageComponent={Image}
         errorComponent={<UnavailableIcon />}
-        source={DEPRECATED_signImageURISource(uri)}
+        source={formatSource(uri)}
       />
     );
   }
@@ -138,7 +138,7 @@ export const renderImage = (item: IFile, isFolder: boolean, name: string): any =
       imageComponent={Image}
       errorComponent={<UnavailableImage />}
       resizeMode={FastImage.resizeMode.contain}
-      source={DEPRECATED_signImageURISource(uri)}
+      source={formatSource(uri)}
     />
   );
 };

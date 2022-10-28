@@ -3,7 +3,6 @@ import { Moment } from 'moment';
 import * as React from 'react';
 import {
   ColorValue,
-  Image,
   ImageSourcePropType,
   ImageStyle,
   StyleSheet,
@@ -24,6 +23,7 @@ import { Badge } from './badge';
 import { UI_SIZES, getScaleDimension } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
 import { BodyText, CaptionItalicText, CaptionText, SmallText, TextFontStyle, TextSizeStyle } from './text';
+import { Image } from '../util/media';
 
 export const cardPaddingV = UI_SIZES.spacing.medium;
 export const cardPaddingH = UI_SIZES.spacing.medium;

@@ -1,9 +1,10 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
+import { Image } from '../util/media';
 
 import { ActionButton } from './ActionButton';
 import { Card, InfoCard } from './card';

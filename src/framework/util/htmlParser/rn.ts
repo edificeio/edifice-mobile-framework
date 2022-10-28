@@ -26,7 +26,7 @@ import { TextStyle } from 'react-native';
 
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { signURISource } from '~/infra/oauth';
+import { formatSource } from '../media';
 
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
 import { extractVideoResolution } from './content';
@@ -631,7 +631,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       src,
       type: HtmlParserNuggetTypes.Video,
       ...(videoDimensions && videoDimensions[1] !== 0 ? { ratio: videoDimensions[0] / videoDimensions[1] } : {}),
-      ...(videoId && videoDimensions ? { posterSource: signURISource(computeVideoThumbnail(videoId, videoDimensions)) } : {}),
+      ...(videoId && videoDimensions ? { posterSource: formatSource(computeVideoThumbnail(videoId, videoDimensions)) } : {}),
     };
     this.insertTopLevelNugget(videoNugget);
     this.currentImageNugget = undefined; // Video breaks image groups

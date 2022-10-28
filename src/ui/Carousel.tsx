@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Animated, Image, ImageURISource, StatusBar, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
 import { PanGestureHandler, PinchGestureHandler, State } from 'react-native-gesture-handler';
 import RNCarousel from 'react-native-snap-carousel';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
@@ -11,7 +10,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallItalicText, SmallText } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
+import { FastImage } from '~/framework/util/media';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { urlSigner } from '~/infra/oauth';
 
 import TouchableOpacity from './CustomTouchableOpacity';
 import ImageOptional from './ImageOptional';
@@ -232,12 +233,15 @@ class Carousel extends React.Component<
     const { navigation } = this.props;
     const images = (navigation && navigation.getParam('images')) || [];
     images.forEach((image, index) =>
-      Image.getSizeWithHeaders(image.src.uri, image.src.headers, (width: number, height: number) =>
-        this.setState(prevstate => {
-          const newImagesSizes = prevstate.imageSizes;
-          newImagesSizes[index] = { width, height };
-          return { imageSizes: newImagesSizes };
-        }),
+      Image.getSizeWithHeaders(
+        urlSigner.getAbsoluteUrl(image.src.uri)!,
+        { ...image.src.headers, ...urlSigner.getAuthHeader() },
+        (width: number, height: number) =>
+          this.setState(prevstate => {
+            const newImagesSizes = prevstate.imageSizes;
+            newImagesSizes[index] = { width, height };
+            return { imageSizes: newImagesSizes };
+          }),
       ),
     );
   }
@@ -262,6 +266,7 @@ class Carousel extends React.Component<
       <View
         style={{ flex: 1, backgroundColor: theme.palette.grey.black }}
         onLayout={() => {
+          console.log("ONLAYOUT");
           this.setState({
             viewport: {
               height: UI_SIZES.screen.height,
@@ -274,7 +279,7 @@ class Carousel extends React.Component<
           data={images}
           renderItem={({ item, index }: { item: { src: ImageURISource; alt: string; linkTo?: string }; index: number }) => (
             <View
-              key={index}
+              key={urlSigner.getSourceURIAsString(item.src)}
               style={{
                 height: '100%',
                 width: UI_SIZES.screen.width,
@@ -372,7 +377,6 @@ class Carousel extends React.Component<
           firstItem={startIndex || 0}
           ref={r => (this.carouselRef = r)}
           scrollEventThrottle={16}
-          keyExtractor={(index: number) => index.toString()}
           decelerationRate="fast"
           onSnapToItem={(index: number) => {
             this.setState({

@@ -11,7 +11,7 @@ import Matomo from 'react-native-matomo';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import appConf from '~/framework/util/appConf';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
-import { signRequest } from '~/infra/oauth';
+import { urlSigner } from '~/infra/oauth';
 
 
 export type TrackEventArgs = [string, string, string?, number?];
@@ -192,7 +192,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     while (this.sending && this.reportQueue.length) {
       try {
         const req = this.reportQueue[0].clone();
-        const res = await fetch(signRequest(this.reportQueue[0]));
+        const res = await fetch(urlSigner.signRequest(this.reportQueue[0]));
         if (res.ok) {
           this.reportQueue.shift();
           this.errorCount = 0;

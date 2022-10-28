@@ -4,7 +4,8 @@
  */
 
 import * as React from 'react';
-import { Image, ImageProps, TouchableOpacityProps } from 'react-native';
+import { ImageProps, TouchableOpacityProps } from 'react-native';
+import { Image } from '~/framework/util/media';
 
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
@@ -21,6 +22,7 @@ export default class ImageOptional extends React.PureComponent<ImageOptionalProp
 
   public render() {
     const ImageComponent = this.props.imageComponent ? this.props.imageComponent : Image;
+    console.log(this.props.source);
     return this.state.isError ? (
       this.props.errorComponent
     ) : (
