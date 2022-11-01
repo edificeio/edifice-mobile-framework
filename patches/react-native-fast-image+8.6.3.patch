@@ -1,90 +1,1844 @@
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/054896e2878a6a80dd4839800bcc5f52/results.bin b/node_modules/react-native-file-viewer/android/build/.transforms/054896e2878a6a80dd4839800bcc5f52/results.bin
-new file mode 100644
-index 0000000..1ed65e0
---- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/.transforms/054896e2878a6a80dd4839800bcc5f52/results.bin
-@@ -0,0 +1 @@
-+i/
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/results.bin b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/results.bin
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/results.bin b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/results.bin
 new file mode 100644
 index 0000000..5ff383e
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/results.bin
++++ b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/results.bin
 @@ -0,0 +1 @@
 +o/debug
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/BuildConfig.dex b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/BuildConfig.dex
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/GeneratedAppGlideModuleImpl.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/GeneratedAppGlideModuleImpl.dex
 new file mode 100644
-index 0000000..c4ac509
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/BuildConfig.dex differ
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/FileProvider.dex b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/FileProvider.dex
+index 0000000..3322748
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/GeneratedAppGlideModuleImpl.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/GeneratedRequestManagerFactory.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/GeneratedRequestManagerFactory.dex
 new file mode 100644
-index 0000000..4e084e7
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/FileProvider.dex differ
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.dex b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.dex
+index 0000000..c179fce
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/GeneratedRequestManagerFactory.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.dex
 new file mode 100644
-index 0000000..194ee41
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.dex differ
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule.dex b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule.dex
+index 0000000..3fbc3a2
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/BuildConfig.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/BuildConfig.dex
 new file mode 100644
-index 0000000..ad00c54
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule.dex differ
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.dex b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.dex
+index 0000000..6beca9d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/BuildConfig.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageCacheControl.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageCacheControl.dex
 new file mode 100644
-index 0000000..bf8fff2
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/debug/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.dex differ
-diff --git a/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/desugar_graph.bin b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/desugar_graph.bin
+index 0000000..fbb4602
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageCacheControl.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageGlideModule.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageGlideModule.dex
+new file mode 100644
+index 0000000..611e2f1
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageGlideModule.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.dex
+new file mode 100644
+index 0000000..fd8dbcd
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.dex
+new file mode 100644
+index 0000000..373ca0b
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.dex
+new file mode 100644
+index 0000000..50dec75
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.dex
+new file mode 100644
+index 0000000..c392c5f
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.dex
+new file mode 100644
+index 0000000..3ecc9fc
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.dex
+new file mode 100644
+index 0000000..79b6bb7
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageProgressListener.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageProgressListener.dex
+new file mode 100644
+index 0000000..1bfdc6d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageProgressListener.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageRequestListener.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageRequestListener.dex
+new file mode 100644
+index 0000000..7483435
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageRequestListener.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageSource.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageSource.dex
+new file mode 100644
+index 0000000..21c7742
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageSource.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$1.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$1.dex
+new file mode 100644
+index 0000000..be38c8e
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$1.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$2.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$2.dex
+new file mode 100644
+index 0000000..f0f2e49
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$2.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$3.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$3.dex
+new file mode 100644
+index 0000000..306aec4
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$3.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$4.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$4.dex
+new file mode 100644
+index 0000000..1ed466f
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter$4.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter.dex
+new file mode 100644
+index 0000000..2fa20b6
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewConverter.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewManager.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewManager.dex
+new file mode 100644
+index 0000000..fd2d755
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewManager.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule$1.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule$1.dex
+new file mode 100644
+index 0000000..6c785ef
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule$1.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule$2.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule$2.dex
+new file mode 100644
+index 0000000..1953024
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule$2.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule.dex
+new file mode 100644
+index 0000000..c201bfe
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewModule.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewPackage.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewPackage.dex
+new file mode 100644
+index 0000000..85423e1
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewPackage.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewWithUrl.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewWithUrl.dex
+new file mode 100644
+index 0000000..a67c0ac
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/FastImageViewWithUrl.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideApp.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideApp.dex
+new file mode 100644
+index 0000000..2f105bd
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideApp.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideOptions.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideOptions.dex
+new file mode 100644
+index 0000000..ec4ca07
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideOptions.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideRequest.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideRequest.dex
+new file mode 100644
+index 0000000..10d0ba6
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideRequest.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideRequests.dex b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideRequests.dex
+new file mode 100644
+index 0000000..ec36f56
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/debug/com/dylanvann/fastimage/GlideRequests.dex differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/desugar_graph.bin b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/desugar_graph.bin
 new file mode 100644
 index 0000000..601f245
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/.transforms/8fc8280e8b7abe12de88bca3e35faa4b/transformed/desugar_graph.bin differ
-diff --git a/node_modules/react-native-file-viewer/android/build/generated/source/buildConfig/debug/com/vinzscam/reactnativefileviewer/BuildConfig.java b/node_modules/react-native-file-viewer/android/build/generated/source/buildConfig/debug/com/vinzscam/reactnativefileviewer/BuildConfig.java
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/.transforms/9b476951ce738e1793af11cb0a578e5c/transformed/desugar_graph.bin differ
+diff --git a/node_modules/react-native-fast-image/android/build/.transforms/e65dc559c85b20c0195bb1d38a57caf7/results.bin b/node_modules/react-native-fast-image/android/build/.transforms/e65dc559c85b20c0195bb1d38a57caf7/results.bin
 new file mode 100644
-index 0000000..35ccf9d
+index 0000000..1ed65e0
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/generated/source/buildConfig/debug/com/vinzscam/reactnativefileviewer/BuildConfig.java
++++ b/node_modules/react-native-fast-image/android/build/.transforms/e65dc559c85b20c0195bb1d38a57caf7/results.bin
+@@ -0,0 +1 @@
++i/
+diff --git a/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/GeneratedAppGlideModuleImpl.java b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/GeneratedAppGlideModuleImpl.java
+new file mode 100644
+index 0000000..d1697fa
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/GeneratedAppGlideModuleImpl.java
+@@ -0,0 +1,54 @@
++package com.bumptech.glide;
++
++import android.content.Context;
++import android.util.Log;
++import androidx.annotation.NonNull;
++import com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule;
++import com.dylanvann.fastimage.FastImageGlideModule;
++import com.dylanvann.fastimage.FastImageOkHttpProgressGlideModule;
++import java.util.Collections;
++import java.util.Set;
++
++@SuppressWarnings("deprecation")
++final class GeneratedAppGlideModuleImpl extends GeneratedAppGlideModule {
++  private final FastImageGlideModule appGlideModule;
++
++  public GeneratedAppGlideModuleImpl(Context context) {
++    appGlideModule = new FastImageGlideModule();
++    if (Log.isLoggable("Glide", Log.DEBUG)) {
++      Log.d("Glide", "Discovered AppGlideModule from annotation: com.dylanvann.fastimage.FastImageGlideModule");
++      Log.d("Glide", "Discovered LibraryGlideModule from annotation: com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule");
++      Log.d("Glide", "Discovered LibraryGlideModule from annotation: com.dylanvann.fastimage.FastImageOkHttpProgressGlideModule");
++    }
++  }
++
++  @Override
++  public void applyOptions(@NonNull Context context, @NonNull GlideBuilder builder) {
++    appGlideModule.applyOptions(context, builder);
++  }
++
++  @Override
++  public void registerComponents(@NonNull Context context, @NonNull Glide glide,
++      @NonNull Registry registry) {
++    new OkHttpLibraryGlideModule().registerComponents(context, glide, registry);
++    new FastImageOkHttpProgressGlideModule().registerComponents(context, glide, registry);
++    appGlideModule.registerComponents(context, glide, registry);
++  }
++
++  @Override
++  public boolean isManifestParsingEnabled() {
++    return appGlideModule.isManifestParsingEnabled();
++  }
++
++  @Override
++  @NonNull
++  public Set<Class<?>> getExcludedModuleClasses() {
++    return Collections.emptySet();
++  }
++
++  @Override
++  @NonNull
++  GeneratedRequestManagerFactory getRequestManagerFactory() {
++    return new GeneratedRequestManagerFactory();
++  }
++}
+diff --git a/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/GeneratedRequestManagerFactory.java b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/GeneratedRequestManagerFactory.java
+new file mode 100644
+index 0000000..2e5b7b0
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/GeneratedRequestManagerFactory.java
+@@ -0,0 +1,20 @@
++package com.bumptech.glide;
++
++import android.content.Context;
++import androidx.annotation.NonNull;
++import com.bumptech.glide.manager.Lifecycle;
++import com.bumptech.glide.manager.RequestManagerRetriever;
++import com.bumptech.glide.manager.RequestManagerTreeNode;
++import com.dylanvann.fastimage.GlideRequests;
++
++/**
++ * Generated code, do not modify
++ */
++final class GeneratedRequestManagerFactory implements RequestManagerRetriever.RequestManagerFactory {
++  @Override
++  @NonNull
++  public RequestManager build(@NonNull Glide glide, @NonNull Lifecycle lifecycle,
++      @NonNull RequestManagerTreeNode treeNode, @NonNull Context context) {
++    return new GlideRequests(glide, lifecycle, treeNode, context);
++  }
++}
+diff --git a/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.java b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.java
+new file mode 100644
+index 0000000..46dc97b
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.java
+@@ -0,0 +1,7 @@
++package com.bumptech.glide.annotation.compiler;
++
++@Index(
++    modules = "com.dylanvann.fastimage.FastImageOkHttpProgressGlideModule"
++)
++public class GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule {
++}
+diff --git a/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideApp.java b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideApp.java
+new file mode 100644
+index 0000000..317387b
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideApp.java
+@@ -0,0 +1,138 @@
++package com.dylanvann.fastimage;
++
++import android.annotation.SuppressLint;
++import android.app.Activity;
++import android.content.Context;
++import android.view.View;
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
++import androidx.annotation.VisibleForTesting;
++import androidx.fragment.app.Fragment;
++import androidx.fragment.app.FragmentActivity;
++import com.bumptech.glide.Glide;
++import com.bumptech.glide.GlideBuilder;
++import java.io.File;
++
++/**
++ * The entry point for interacting with Glide for Applications
++ *
++ * <p>Includes all generated APIs from all
++ * {@link com.bumptech.glide.annotation.GlideExtension}s in source and dependent libraries.
++ *
++ * <p>This class is generated and should not be modified
++ * @see Glide
++ */
++public final class GlideApp {
++  private GlideApp() {
++  }
++
++  /**
++   * @see Glide#getPhotoCacheDir(Context)
++   */
++  @Nullable
++  public static File getPhotoCacheDir(@NonNull Context context) {
++    return Glide.getPhotoCacheDir(context);
++  }
++
++  /**
++   * @see Glide#getPhotoCacheDir(Context, String)
++   */
++  @Nullable
++  public static File getPhotoCacheDir(@NonNull Context context, @NonNull String string) {
++    return Glide.getPhotoCacheDir(context, string);
++  }
++
++  /**
++   * @see Glide#get(Context)
++   */
++  @NonNull
++  public static Glide get(@NonNull Context context) {
++    return Glide.get(context);
++  }
++
++  /**
++   * @see Glide#init(Glide)
++   */
++  @Deprecated
++  @VisibleForTesting
++  @SuppressLint("VisibleForTests")
++  public static void init(Glide glide) {
++    Glide.init(glide);
++  }
++
++  /**
++   * @see Glide#init(Context, GlideBuilder)
++   */
++  @VisibleForTesting
++  @SuppressLint("VisibleForTests")
++  public static void init(@NonNull Context context, @NonNull GlideBuilder builder) {
++    Glide.init(context, builder);
++  }
++
++  /**
++   * @see Glide#enableHardwareBitmaps()
++   */
++  @VisibleForTesting
++  @SuppressLint("VisibleForTests")
++  public static void enableHardwareBitmaps() {
++    Glide.enableHardwareBitmaps();
++  }
++
++  /**
++   * @see Glide#tearDown()
++   */
++  @VisibleForTesting
++  @SuppressLint("VisibleForTests")
++  public static void tearDown() {
++    Glide.tearDown();
++  }
++
++  /**
++   * @see Glide#with(Context)
++   */
++  @NonNull
++  public static GlideRequests with(@NonNull Context context) {
++    return (GlideRequests) Glide.with(context);
++  }
++
++  /**
++   * @see Glide#with(Activity)
++   */
++  @NonNull
++  public static GlideRequests with(@NonNull Activity activity) {
++    return (GlideRequests) Glide.with(activity);
++  }
++
++  /**
++   * @see Glide#with(FragmentActivity)
++   */
++  @NonNull
++  public static GlideRequests with(@NonNull FragmentActivity activity) {
++    return (GlideRequests) Glide.with(activity);
++  }
++
++  /**
++   * @see Glide#with(Fragment)
++   */
++  @NonNull
++  public static GlideRequests with(@NonNull Fragment fragment) {
++    return (GlideRequests) Glide.with(fragment);
++  }
++
++  /**
++   * @see Glide#with(Fragment)
++   */
++  @Deprecated
++  @NonNull
++  public static GlideRequests with(@NonNull android.app.Fragment fragment) {
++    return (GlideRequests) Glide.with(fragment);
++  }
++
++  /**
++   * @see Glide#with(View)
++   */
++  @NonNull
++  public static GlideRequests with(@NonNull View view) {
++    return (GlideRequests) Glide.with(view);
++  }
++}
+diff --git a/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideOptions.java b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideOptions.java
+new file mode 100644
+index 0000000..442798e
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideOptions.java
+@@ -0,0 +1,624 @@
++package com.dylanvann.fastimage;
++
++import android.content.res.Resources;
++import android.graphics.Bitmap;
++import android.graphics.drawable.Drawable;
++import androidx.annotation.CheckResult;
++import androidx.annotation.DrawableRes;
++import androidx.annotation.FloatRange;
++import androidx.annotation.IntRange;
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
++import com.bumptech.glide.Priority;
++import com.bumptech.glide.load.DecodeFormat;
++import com.bumptech.glide.load.Key;
++import com.bumptech.glide.load.Option;
++import com.bumptech.glide.load.Transformation;
++import com.bumptech.glide.load.engine.DiskCacheStrategy;
++import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
++import com.bumptech.glide.request.BaseRequestOptions;
++import com.bumptech.glide.request.RequestOptions;
++
++/**
++ * Automatically generated from {@link com.bumptech.glide.annotation.GlideExtension} annotated classes.
++ *
++ * @see RequestOptions
++ */
++@SuppressWarnings("deprecation")
++public final class GlideOptions extends RequestOptions implements Cloneable {
++  private static GlideOptions fitCenterTransform0;
++
++  private static GlideOptions centerInsideTransform1;
++
++  private static GlideOptions centerCropTransform2;
++
++  private static GlideOptions circleCropTransform3;
++
++  private static GlideOptions noTransformation4;
++
++  private static GlideOptions noAnimation5;
++
++  /**
++   * @see RequestOptions#sizeMultiplierOf(float)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions sizeMultiplierOf(@FloatRange(from = 0.0, to = 1.0) float value) {
++    return new GlideOptions().sizeMultiplier(value);
++  }
++
++  /**
++   * @see RequestOptions#diskCacheStrategyOf(DiskCacheStrategy)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions diskCacheStrategyOf(@NonNull DiskCacheStrategy strategy) {
++    return new GlideOptions().diskCacheStrategy(strategy);
++  }
++
++  /**
++   * @see RequestOptions#priorityOf(Priority)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions priorityOf(@NonNull Priority priority) {
++    return new GlideOptions().priority(priority);
++  }
++
++  /**
++   * @see RequestOptions#placeholderOf(Drawable)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions placeholderOf(@Nullable Drawable drawable) {
++    return new GlideOptions().placeholder(drawable);
++  }
++
++  /**
++   * @see RequestOptions#placeholderOf(int)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions placeholderOf(@DrawableRes int id) {
++    return new GlideOptions().placeholder(id);
++  }
++
++  /**
++   * @see RequestOptions#errorOf(Drawable)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions errorOf(@Nullable Drawable drawable) {
++    return new GlideOptions().error(drawable);
++  }
++
++  /**
++   * @see RequestOptions#errorOf(int)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions errorOf(@DrawableRes int id) {
++    return new GlideOptions().error(id);
++  }
++
++  /**
++   * @see RequestOptions#skipMemoryCacheOf(boolean)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions skipMemoryCacheOf(boolean skipMemoryCache) {
++    return new GlideOptions().skipMemoryCache(skipMemoryCache);
++  }
++
++  /**
++   * @see RequestOptions#overrideOf(int, int)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions overrideOf(int width, int height) {
++    return new GlideOptions().override(width, height);
++  }
++
++  /**
++   * @see RequestOptions#overrideOf(int)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions overrideOf(int size) {
++    return new GlideOptions().override(size);
++  }
++
++  /**
++   * @see RequestOptions#signatureOf(Key)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions signatureOf(@NonNull Key key) {
++    return new GlideOptions().signature(key);
++  }
++
++  /**
++   * @see RequestOptions#fitCenterTransform()
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions fitCenterTransform() {
++    if (GlideOptions.fitCenterTransform0 == null) {
++      GlideOptions.fitCenterTransform0 =
++          new GlideOptions().fitCenter().autoClone();
++    }
++    return GlideOptions.fitCenterTransform0;
++  }
++
++  /**
++   * @see RequestOptions#centerInsideTransform()
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions centerInsideTransform() {
++    if (GlideOptions.centerInsideTransform1 == null) {
++      GlideOptions.centerInsideTransform1 =
++          new GlideOptions().centerInside().autoClone();
++    }
++    return GlideOptions.centerInsideTransform1;
++  }
++
++  /**
++   * @see RequestOptions#centerCropTransform()
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions centerCropTransform() {
++    if (GlideOptions.centerCropTransform2 == null) {
++      GlideOptions.centerCropTransform2 =
++          new GlideOptions().centerCrop().autoClone();
++    }
++    return GlideOptions.centerCropTransform2;
++  }
++
++  /**
++   * @see RequestOptions#circleCropTransform()
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions circleCropTransform() {
++    if (GlideOptions.circleCropTransform3 == null) {
++      GlideOptions.circleCropTransform3 =
++          new GlideOptions().circleCrop().autoClone();
++    }
++    return GlideOptions.circleCropTransform3;
++  }
++
++  /**
++   * @see RequestOptions#bitmapTransform(Transformation)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions bitmapTransform(@NonNull Transformation<Bitmap> transformation) {
++    return new GlideOptions().transform(transformation);
++  }
++
++  /**
++   * @see RequestOptions#noTransformation()
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions noTransformation() {
++    if (GlideOptions.noTransformation4 == null) {
++      GlideOptions.noTransformation4 =
++          new GlideOptions().dontTransform().autoClone();
++    }
++    return GlideOptions.noTransformation4;
++  }
++
++  /**
++   * @see RequestOptions#option(Option, T)
++   */
++  @CheckResult
++  @NonNull
++  public static <T> GlideOptions option(@NonNull Option<T> option, @NonNull T t) {
++    return new GlideOptions().set(option, t);
++  }
++
++  /**
++   * @see RequestOptions#decodeTypeOf(Class)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions decodeTypeOf(@NonNull Class<?> clazz) {
++    return new GlideOptions().decode(clazz);
++  }
++
++  /**
++   * @see RequestOptions#formatOf(DecodeFormat)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions formatOf(@NonNull DecodeFormat format) {
++    return new GlideOptions().format(format);
++  }
++
++  /**
++   * @see RequestOptions#frameOf(long)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions frameOf(@IntRange(from = 0) long value) {
++    return new GlideOptions().frame(value);
++  }
++
++  /**
++   * @see RequestOptions#downsampleOf(DownsampleStrategy)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions downsampleOf(@NonNull DownsampleStrategy strategy) {
++    return new GlideOptions().downsample(strategy);
++  }
++
++  /**
++   * @see RequestOptions#timeoutOf(int)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions timeoutOf(@IntRange(from = 0) int value) {
++    return new GlideOptions().timeout(value);
++  }
++
++  /**
++   * @see RequestOptions#encodeQualityOf(int)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions encodeQualityOf(@IntRange(from = 0, to = 100) int value) {
++    return new GlideOptions().encodeQuality(value);
++  }
++
++  /**
++   * @see RequestOptions#encodeFormatOf(CompressFormat)
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions encodeFormatOf(@NonNull Bitmap.CompressFormat format) {
++    return new GlideOptions().encodeFormat(format);
++  }
++
++  /**
++   * @see RequestOptions#noAnimation()
++   */
++  @CheckResult
++  @NonNull
++  public static GlideOptions noAnimation() {
++    if (GlideOptions.noAnimation5 == null) {
++      GlideOptions.noAnimation5 =
++          new GlideOptions().dontAnimate().autoClone();
++    }
++    return GlideOptions.noAnimation5;
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions sizeMultiplier(@FloatRange(from = 0.0, to = 1.0) float value) {
++    return (GlideOptions) super.sizeMultiplier(value);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions useUnlimitedSourceGeneratorsPool(boolean flag) {
++    return (GlideOptions) super.useUnlimitedSourceGeneratorsPool(flag);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions useAnimationPool(boolean flag) {
++    return (GlideOptions) super.useAnimationPool(flag);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions onlyRetrieveFromCache(boolean flag) {
++    return (GlideOptions) super.onlyRetrieveFromCache(flag);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions diskCacheStrategy(@NonNull DiskCacheStrategy strategy) {
++    return (GlideOptions) super.diskCacheStrategy(strategy);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions priority(@NonNull Priority priority) {
++    return (GlideOptions) super.priority(priority);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions placeholder(@Nullable Drawable drawable) {
++    return (GlideOptions) super.placeholder(drawable);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions placeholder(@DrawableRes int id) {
++    return (GlideOptions) super.placeholder(id);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions fallback(@Nullable Drawable drawable) {
++    return (GlideOptions) super.fallback(drawable);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions fallback(@DrawableRes int id) {
++    return (GlideOptions) super.fallback(id);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions error(@Nullable Drawable drawable) {
++    return (GlideOptions) super.error(drawable);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions error(@DrawableRes int id) {
++    return (GlideOptions) super.error(id);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions theme(@Nullable Resources.Theme theme) {
++    return (GlideOptions) super.theme(theme);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions skipMemoryCache(boolean skip) {
++    return (GlideOptions) super.skipMemoryCache(skip);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions override(int width, int height) {
++    return (GlideOptions) super.override(width, height);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions override(int size) {
++    return (GlideOptions) super.override(size);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions signature(@NonNull Key key) {
++    return (GlideOptions) super.signature(key);
++  }
++
++  @Override
++  @CheckResult
++  public GlideOptions clone() {
++    return (GlideOptions) super.clone();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public <Y> GlideOptions set(@NonNull Option<Y> option, @NonNull Y y) {
++    return (GlideOptions) super.set(option, y);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions decode(@NonNull Class<?> clazz) {
++    return (GlideOptions) super.decode(clazz);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions encodeFormat(@NonNull Bitmap.CompressFormat format) {
++    return (GlideOptions) super.encodeFormat(format);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions encodeQuality(@IntRange(from = 0, to = 100) int value) {
++    return (GlideOptions) super.encodeQuality(value);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions frame(@IntRange(from = 0) long value) {
++    return (GlideOptions) super.frame(value);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions format(@NonNull DecodeFormat format) {
++    return (GlideOptions) super.format(format);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions disallowHardwareConfig() {
++    return (GlideOptions) super.disallowHardwareConfig();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions downsample(@NonNull DownsampleStrategy strategy) {
++    return (GlideOptions) super.downsample(strategy);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions timeout(@IntRange(from = 0) int value) {
++    return (GlideOptions) super.timeout(value);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions optionalCenterCrop() {
++    return (GlideOptions) super.optionalCenterCrop();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions centerCrop() {
++    return (GlideOptions) super.centerCrop();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions optionalFitCenter() {
++    return (GlideOptions) super.optionalFitCenter();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions fitCenter() {
++    return (GlideOptions) super.fitCenter();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions optionalCenterInside() {
++    return (GlideOptions) super.optionalCenterInside();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions centerInside() {
++    return (GlideOptions) super.centerInside();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions optionalCircleCrop() {
++    return (GlideOptions) super.optionalCircleCrop();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions circleCrop() {
++    return (GlideOptions) super.circleCrop();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions transform(@NonNull Transformation<Bitmap> transformation) {
++    return (GlideOptions) super.transform(transformation);
++  }
++
++  @Override
++  @SafeVarargs
++  @SuppressWarnings("varargs")
++  @NonNull
++  @CheckResult
++  public final GlideOptions transform(@NonNull Transformation<Bitmap>... transformations) {
++    return (GlideOptions) super.transform(transformations);
++  }
++
++  @Override
++  @SafeVarargs
++  @SuppressWarnings("varargs")
++  @Deprecated
++  @NonNull
++  @CheckResult
++  public final GlideOptions transforms(@NonNull Transformation<Bitmap>... transformations) {
++    return (GlideOptions) super.transforms(transformations);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions optionalTransform(@NonNull Transformation<Bitmap> transformation) {
++    return (GlideOptions) super.optionalTransform(transformation);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public <Y> GlideOptions optionalTransform(@NonNull Class<Y> clazz,
++      @NonNull Transformation<Y> transformation) {
++    return (GlideOptions) super.optionalTransform(clazz, transformation);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public <Y> GlideOptions transform(@NonNull Class<Y> clazz,
++      @NonNull Transformation<Y> transformation) {
++    return (GlideOptions) super.transform(clazz, transformation);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions dontTransform() {
++    return (GlideOptions) super.dontTransform();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions dontAnimate() {
++    return (GlideOptions) super.dontAnimate();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideOptions apply(@NonNull BaseRequestOptions<?> options) {
++    return (GlideOptions) super.apply(options);
++  }
++
++  @Override
++  @NonNull
++  public GlideOptions lock() {
++    return (GlideOptions) super.lock();
++  }
++
++  @Override
++  @NonNull
++  public GlideOptions autoClone() {
++    return (GlideOptions) super.autoClone();
++  }
++}
+diff --git a/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideRequest.java b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideRequest.java
+new file mode 100644
+index 0000000..5b45773
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideRequest.java
+@@ -0,0 +1,608 @@
++package com.dylanvann.fastimage;
++
++import android.content.Context;
++import android.content.res.Resources;
++import android.graphics.Bitmap;
++import android.graphics.drawable.Drawable;
++import android.net.Uri;
++import androidx.annotation.CheckResult;
++import androidx.annotation.DrawableRes;
++import androidx.annotation.FloatRange;
++import androidx.annotation.IntRange;
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
++import androidx.annotation.RawRes;
++import com.bumptech.glide.Glide;
++import com.bumptech.glide.Priority;
++import com.bumptech.glide.RequestBuilder;
++import com.bumptech.glide.RequestManager;
++import com.bumptech.glide.TransitionOptions;
++import com.bumptech.glide.load.DecodeFormat;
++import com.bumptech.glide.load.Key;
++import com.bumptech.glide.load.Option;
++import com.bumptech.glide.load.Transformation;
++import com.bumptech.glide.load.engine.DiskCacheStrategy;
++import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
++import com.bumptech.glide.request.BaseRequestOptions;
++import com.bumptech.glide.request.RequestListener;
++import java.io.File;
++import java.net.URL;
++import java.util.List;
++
++/**
++ * Contains all public methods from {@link RequestBuilder<TranscodeType>}, all options from
++ * {@link com.bumptech.glide.request.RequestOptions} and all generated options from
++ * {@link com.bumptech.glide.annotation.GlideOption} in annotated methods in
++ * {@link com.bumptech.glide.annotation.GlideExtension} annotated classes.
++ *
++ * <p>Generated code, do not modify.
++ *
++ * @see RequestBuilder<TranscodeType>
++ * @see com.bumptech.glide.request.RequestOptions
++ */
++@SuppressWarnings({
++    "unused",
++    "deprecation"
++})
++public class GlideRequest<TranscodeType> extends RequestBuilder<TranscodeType> implements Cloneable {
++  GlideRequest(@NonNull Class<TranscodeType> transcodeClass, @NonNull RequestBuilder<?> other) {
++    super(transcodeClass, other);
++  }
++
++  GlideRequest(@NonNull Glide glide, @NonNull RequestManager requestManager,
++      @NonNull Class<TranscodeType> transcodeClass, @NonNull Context context) {
++    super(glide, requestManager ,transcodeClass, context);
++  }
++
++  @Override
++  @CheckResult
++  @NonNull
++  protected GlideRequest<File> getDownloadOnlyRequest() {
++    return new GlideRequest<>(File.class, this).apply(DOWNLOAD_ONLY_OPTIONS);
++  }
++
++  /**
++   * @see GlideOptions#sizeMultiplier(float)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> sizeMultiplier(@FloatRange(from = 0.0, to = 1.0) float value) {
++    return (GlideRequest<TranscodeType>) super.sizeMultiplier(value);
++  }
++
++  /**
++   * @see GlideOptions#useUnlimitedSourceGeneratorsPool(boolean)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> useUnlimitedSourceGeneratorsPool(boolean flag) {
++    return (GlideRequest<TranscodeType>) super.useUnlimitedSourceGeneratorsPool(flag);
++  }
++
++  /**
++   * @see GlideOptions#useAnimationPool(boolean)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> useAnimationPool(boolean flag) {
++    return (GlideRequest<TranscodeType>) super.useAnimationPool(flag);
++  }
++
++  /**
++   * @see GlideOptions#onlyRetrieveFromCache(boolean)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> onlyRetrieveFromCache(boolean flag) {
++    return (GlideRequest<TranscodeType>) super.onlyRetrieveFromCache(flag);
++  }
++
++  /**
++   * @see GlideOptions#diskCacheStrategy(DiskCacheStrategy)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> diskCacheStrategy(@NonNull DiskCacheStrategy strategy) {
++    return (GlideRequest<TranscodeType>) super.diskCacheStrategy(strategy);
++  }
++
++  /**
++   * @see GlideOptions#priority(Priority)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> priority(@NonNull Priority priority) {
++    return (GlideRequest<TranscodeType>) super.priority(priority);
++  }
++
++  /**
++   * @see GlideOptions#placeholder(Drawable)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> placeholder(@Nullable Drawable drawable) {
++    return (GlideRequest<TranscodeType>) super.placeholder(drawable);
++  }
++
++  /**
++   * @see GlideOptions#placeholder(int)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> placeholder(@DrawableRes int id) {
++    return (GlideRequest<TranscodeType>) super.placeholder(id);
++  }
++
++  /**
++   * @see GlideOptions#fallback(Drawable)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> fallback(@Nullable Drawable drawable) {
++    return (GlideRequest<TranscodeType>) super.fallback(drawable);
++  }
++
++  /**
++   * @see GlideOptions#fallback(int)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> fallback(@DrawableRes int id) {
++    return (GlideRequest<TranscodeType>) super.fallback(id);
++  }
++
++  /**
++   * @see GlideOptions#error(Drawable)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> error(@Nullable Drawable drawable) {
++    return (GlideRequest<TranscodeType>) super.error(drawable);
++  }
++
++  /**
++   * @see GlideOptions#error(int)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> error(@DrawableRes int id) {
++    return (GlideRequest<TranscodeType>) super.error(id);
++  }
++
++  /**
++   * @see GlideOptions#theme(Resources.Theme)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> theme(@Nullable Resources.Theme theme) {
++    return (GlideRequest<TranscodeType>) super.theme(theme);
++  }
++
++  /**
++   * @see GlideOptions#skipMemoryCache(boolean)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> skipMemoryCache(boolean skip) {
++    return (GlideRequest<TranscodeType>) super.skipMemoryCache(skip);
++  }
++
++  /**
++   * @see GlideOptions#override(int, int)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> override(int width, int height) {
++    return (GlideRequest<TranscodeType>) super.override(width, height);
++  }
++
++  /**
++   * @see GlideOptions#override(int)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> override(int size) {
++    return (GlideRequest<TranscodeType>) super.override(size);
++  }
++
++  /**
++   * @see GlideOptions#signature(Key)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> signature(@NonNull Key key) {
++    return (GlideRequest<TranscodeType>) super.signature(key);
++  }
++
++  /**
++   * @see GlideOptions#set(Option<Y>, Y)
++   */
++  @NonNull
++  @CheckResult
++  public <Y> GlideRequest<TranscodeType> set(@NonNull Option<Y> option, @NonNull Y y) {
++    return (GlideRequest<TranscodeType>) super.set(option, y);
++  }
++
++  /**
++   * @see GlideOptions#decode(Class<?>)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> decode(@NonNull Class<?> clazz) {
++    return (GlideRequest<TranscodeType>) super.decode(clazz);
++  }
++
++  /**
++   * @see GlideOptions#encodeFormat(Bitmap.CompressFormat)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> encodeFormat(@NonNull Bitmap.CompressFormat format) {
++    return (GlideRequest<TranscodeType>) super.encodeFormat(format);
++  }
++
++  /**
++   * @see GlideOptions#encodeQuality(int)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> encodeQuality(@IntRange(from = 0, to = 100) int value) {
++    return (GlideRequest<TranscodeType>) super.encodeQuality(value);
++  }
++
++  /**
++   * @see GlideOptions#frame(long)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> frame(@IntRange(from = 0) long value) {
++    return (GlideRequest<TranscodeType>) super.frame(value);
++  }
++
++  /**
++   * @see GlideOptions#format(DecodeFormat)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> format(@NonNull DecodeFormat format) {
++    return (GlideRequest<TranscodeType>) super.format(format);
++  }
++
++  /**
++   * @see GlideOptions#disallowHardwareConfig()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> disallowHardwareConfig() {
++    return (GlideRequest<TranscodeType>) super.disallowHardwareConfig();
++  }
++
++  /**
++   * @see GlideOptions#downsample(DownsampleStrategy)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> downsample(@NonNull DownsampleStrategy strategy) {
++    return (GlideRequest<TranscodeType>) super.downsample(strategy);
++  }
++
++  /**
++   * @see GlideOptions#timeout(int)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> timeout(@IntRange(from = 0) int value) {
++    return (GlideRequest<TranscodeType>) super.timeout(value);
++  }
++
++  /**
++   * @see GlideOptions#optionalCenterCrop()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> optionalCenterCrop() {
++    return (GlideRequest<TranscodeType>) super.optionalCenterCrop();
++  }
++
++  /**
++   * @see GlideOptions#centerCrop()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> centerCrop() {
++    return (GlideRequest<TranscodeType>) super.centerCrop();
++  }
++
++  /**
++   * @see GlideOptions#optionalFitCenter()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> optionalFitCenter() {
++    return (GlideRequest<TranscodeType>) super.optionalFitCenter();
++  }
++
++  /**
++   * @see GlideOptions#fitCenter()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> fitCenter() {
++    return (GlideRequest<TranscodeType>) super.fitCenter();
++  }
++
++  /**
++   * @see GlideOptions#optionalCenterInside()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> optionalCenterInside() {
++    return (GlideRequest<TranscodeType>) super.optionalCenterInside();
++  }
++
++  /**
++   * @see GlideOptions#centerInside()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> centerInside() {
++    return (GlideRequest<TranscodeType>) super.centerInside();
++  }
++
++  /**
++   * @see GlideOptions#optionalCircleCrop()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> optionalCircleCrop() {
++    return (GlideRequest<TranscodeType>) super.optionalCircleCrop();
++  }
++
++  /**
++   * @see GlideOptions#circleCrop()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> circleCrop() {
++    return (GlideRequest<TranscodeType>) super.circleCrop();
++  }
++
++  /**
++   * @see GlideOptions#transform(Transformation<Bitmap>)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> transform(@NonNull Transformation<Bitmap> transformation) {
++    return (GlideRequest<TranscodeType>) super.transform(transformation);
++  }
++
++  /**
++   * @see GlideOptions#transform(Transformation<Bitmap>[])
++   */
++  @NonNull
++  @CheckResult
++  @SuppressWarnings({
++      "unchecked",
++      "varargs"
++  })
++  public GlideRequest<TranscodeType> transform(@NonNull Transformation<Bitmap>... transformations) {
++    return (GlideRequest<TranscodeType>) super.transform(transformations);
++  }
++
++  /**
++   * @see GlideOptions#transforms(Transformation<Bitmap>[])
++   */
++  @Deprecated
++  @NonNull
++  @CheckResult
++  @SuppressWarnings({
++      "unchecked",
++      "varargs"
++  })
++  public GlideRequest<TranscodeType> transforms(@NonNull Transformation<Bitmap>... transformations) {
++    return (GlideRequest<TranscodeType>) super.transforms(transformations);
++  }
++
++  /**
++   * @see GlideOptions#optionalTransform(Transformation<Bitmap>)
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> optionalTransform(@NonNull Transformation<Bitmap> transformation) {
++    return (GlideRequest<TranscodeType>) super.optionalTransform(transformation);
++  }
++
++  /**
++   * @see GlideOptions#optionalTransform(Class<Y>, Transformation<Y>)
++   */
++  @NonNull
++  @CheckResult
++  public <Y> GlideRequest<TranscodeType> optionalTransform(@NonNull Class<Y> clazz,
++      @NonNull Transformation<Y> transformation) {
++    return (GlideRequest<TranscodeType>) super.optionalTransform(clazz, transformation);
++  }
++
++  /**
++   * @see GlideOptions#transform(Class<Y>, Transformation<Y>)
++   */
++  @NonNull
++  @CheckResult
++  public <Y> GlideRequest<TranscodeType> transform(@NonNull Class<Y> clazz,
++      @NonNull Transformation<Y> transformation) {
++    return (GlideRequest<TranscodeType>) super.transform(clazz, transformation);
++  }
++
++  /**
++   * @see GlideOptions#dontTransform()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> dontTransform() {
++    return (GlideRequest<TranscodeType>) super.dontTransform();
++  }
++
++  /**
++   * @see GlideOptions#dontAnimate()
++   */
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> dontAnimate() {
++    return (GlideRequest<TranscodeType>) super.dontAnimate();
++  }
++
++  /**
++   * @see GlideOptions#lock()
++   */
++  @NonNull
++  public GlideRequest<TranscodeType> lock() {
++    return (GlideRequest<TranscodeType>) super.lock();
++  }
++
++  /**
++   * @see GlideOptions#autoClone()
++   */
++  @NonNull
++  public GlideRequest<TranscodeType> autoClone() {
++    return (GlideRequest<TranscodeType>) super.autoClone();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> apply(@NonNull BaseRequestOptions<?> options) {
++    return (GlideRequest<TranscodeType>) super.apply(options);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> transition(@NonNull TransitionOptions<?, ? super TranscodeType> options) {
++    return (GlideRequest<TranscodeType>) super.transition(options);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> listener(@Nullable RequestListener<TranscodeType> listener) {
++    return (GlideRequest<TranscodeType>) super.listener(listener);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> addListener(@Nullable RequestListener<TranscodeType> listener) {
++    return (GlideRequest<TranscodeType>) super.addListener(listener);
++  }
++
++  @Override
++  @NonNull
++  public GlideRequest<TranscodeType> error(@Nullable RequestBuilder<TranscodeType> builder) {
++    return (GlideRequest<TranscodeType>) super.error(builder);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> error(Object o) {
++    return (GlideRequest<TranscodeType>) super.error(o);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> thumbnail(@Nullable RequestBuilder<TranscodeType> builder) {
++    return (GlideRequest<TranscodeType>) super.thumbnail(builder);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  @SafeVarargs
++  @SuppressWarnings("varargs")
++  public final GlideRequest<TranscodeType> thumbnail(@Nullable RequestBuilder<TranscodeType>... builders) {
++    return (GlideRequest<TranscodeType>) super.thumbnail(builders);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> thumbnail(@Nullable List<RequestBuilder<TranscodeType>> list) {
++    return (GlideRequest<TranscodeType>) super.thumbnail(list);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> thumbnail(float sizeMultiplier) {
++    return (GlideRequest<TranscodeType>) super.thumbnail(sizeMultiplier);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable Object o) {
++    return (GlideRequest<TranscodeType>) super.load(o);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable Bitmap bitmap) {
++    return (GlideRequest<TranscodeType>) super.load(bitmap);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable Drawable drawable) {
++    return (GlideRequest<TranscodeType>) super.load(drawable);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable String string) {
++    return (GlideRequest<TranscodeType>) super.load(string);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable Uri uri) {
++    return (GlideRequest<TranscodeType>) super.load(uri);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable File file) {
++    return (GlideRequest<TranscodeType>) super.load(file);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@RawRes @DrawableRes @Nullable Integer id) {
++    return (GlideRequest<TranscodeType>) super.load(id);
++  }
++
++  @Override
++  @Deprecated
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable URL url) {
++    return (GlideRequest<TranscodeType>) super.load(url);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<TranscodeType> load(@Nullable byte[] bytes) {
++    return (GlideRequest<TranscodeType>) super.load(bytes);
++  }
++
++  @Override
++  @CheckResult
++  public GlideRequest<TranscodeType> clone() {
++    return (GlideRequest<TranscodeType>) super.clone();
++  }
++}
+diff --git a/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideRequests.java b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideRequests.java
+new file mode 100644
+index 0000000..afc3f30
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/ap_generated_sources/debug/out/com/dylanvann/fastimage/GlideRequests.java
+@@ -0,0 +1,173 @@
++package com.dylanvann.fastimage;
++
++import android.content.Context;
++import android.graphics.Bitmap;
++import android.graphics.drawable.Drawable;
++import android.net.Uri;
++import androidx.annotation.CheckResult;
++import androidx.annotation.DrawableRes;
++import androidx.annotation.NonNull;
++import androidx.annotation.Nullable;
++import androidx.annotation.RawRes;
++import com.bumptech.glide.Glide;
++import com.bumptech.glide.RequestManager;
++import com.bumptech.glide.load.resource.gif.GifDrawable;
++import com.bumptech.glide.manager.Lifecycle;
++import com.bumptech.glide.manager.RequestManagerTreeNode;
++import com.bumptech.glide.request.RequestListener;
++import com.bumptech.glide.request.RequestOptions;
++import java.io.File;
++import java.net.URL;
++
++/**
++ * Includes all additions from methods in {@link com.bumptech.glide.annotation.GlideExtension}s
++ * annotated with {@link com.bumptech.glide.annotation.GlideType}
++ *
++ * <p>Generated code, do not modify
++ */
++@SuppressWarnings("deprecation")
++public class GlideRequests extends RequestManager {
++  public GlideRequests(@NonNull Glide glide, @NonNull Lifecycle lifecycle,
++      @NonNull RequestManagerTreeNode treeNode, @NonNull Context context) {
++    super(glide, lifecycle, treeNode, context);
++  }
++
++  @Override
++  @CheckResult
++  @NonNull
++  public <ResourceType> GlideRequest<ResourceType> as(@NonNull Class<ResourceType> resourceClass) {
++    return new GlideRequest<>(glide, this, resourceClass, context);
++  }
++
++  @Override
++  @NonNull
++  public synchronized GlideRequests applyDefaultRequestOptions(@NonNull RequestOptions options) {
++    return (GlideRequests) super.applyDefaultRequestOptions(options);
++  }
++
++  @Override
++  @NonNull
++  public synchronized GlideRequests setDefaultRequestOptions(@NonNull RequestOptions options) {
++    return (GlideRequests) super.setDefaultRequestOptions(options);
++  }
++
++  @Override
++  @NonNull
++  public GlideRequests addDefaultRequestListener(RequestListener<Object> listener) {
++    return (GlideRequests) super.addDefaultRequestListener(listener);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Bitmap> asBitmap() {
++    return (GlideRequest<Bitmap>) super.asBitmap();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<GifDrawable> asGif() {
++    return (GlideRequest<GifDrawable>) super.asGif();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> asDrawable() {
++    return (GlideRequest<Drawable>) super.asDrawable();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable Bitmap bitmap) {
++    return (GlideRequest<Drawable>) super.load(bitmap);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable Drawable drawable) {
++    return (GlideRequest<Drawable>) super.load(drawable);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable String string) {
++    return (GlideRequest<Drawable>) super.load(string);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable Uri uri) {
++    return (GlideRequest<Drawable>) super.load(uri);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable File file) {
++    return (GlideRequest<Drawable>) super.load(file);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@RawRes @DrawableRes @Nullable Integer id) {
++    return (GlideRequest<Drawable>) super.load(id);
++  }
++
++  @Override
++  @Deprecated
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable URL url) {
++    return (GlideRequest<Drawable>) super.load(url);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable byte[] bytes) {
++    return (GlideRequest<Drawable>) super.load(bytes);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<Drawable> load(@Nullable Object o) {
++    return (GlideRequest<Drawable>) super.load(o);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<File> downloadOnly() {
++    return (GlideRequest<File>) super.downloadOnly();
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<File> download(@Nullable Object o) {
++    return (GlideRequest<File>) super.download(o);
++  }
++
++  @Override
++  @NonNull
++  @CheckResult
++  public GlideRequest<File> asFile() {
++    return (GlideRequest<File>) super.asFile();
++  }
++
++  @Override
++  protected void setRequestOptions(@NonNull RequestOptions toSet) {
++    if (toSet instanceof com.dylanvann.fastimage.GlideOptions) {
++      super.setRequestOptions(toSet);
++    } else {
++      super.setRequestOptions(new com.dylanvann.fastimage.GlideOptions().apply(toSet));
++    }
++  }
++}
+diff --git a/node_modules/react-native-fast-image/android/build/generated/source/buildConfig/debug/com/dylanvann/fastimage/BuildConfig.java b/node_modules/react-native-fast-image/android/build/generated/source/buildConfig/debug/com/dylanvann/fastimage/BuildConfig.java
+new file mode 100644
+index 0000000..385f24d
+--- /dev/null
++++ b/node_modules/react-native-fast-image/android/build/generated/source/buildConfig/debug/com/dylanvann/fastimage/BuildConfig.java
 @@ -0,0 +1,10 @@
 +/**
 + * Automatically generated file. DO NOT MODIFY
 + */
-+package com.vinzscam.reactnativefileviewer;
++package com.dylanvann.fastimage;
 +
 +public final class BuildConfig {
 +  public static final boolean DEBUG = Boolean.parseBoolean("true");
-+  public static final String LIBRARY_PACKAGE_NAME = "com.vinzscam.reactnativefileviewer";
++  public static final String LIBRARY_PACKAGE_NAME = "com.dylanvann.fastimage";
 +  public static final String BUILD_TYPE = "debug";
 +}
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/react-native-file-viewer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/react-native-fast-image/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
 new file mode 100644
-index 0000000..d1a5b10
+index 0000000..65bf962
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
-@@ -0,0 +1,21 @@
++++ b/node_modules/react-native-fast-image/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+@@ -0,0 +1,9 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    package="com.vinzscam.reactnativefileviewer" >
++    package="com.dylanvann.fastimage" >
 +
 +    <uses-sdk
 +        android:minSdkVersion="21"
 +        android:targetSdkVersion="31" />
 +
-+    <application>
-+        <provider
-+            android:name="com.vinzscam.reactnativefileviewer.FileProvider"
-+            android:authorities="dollar_openBracket_applicationId_closeBracket.provider"
-+            android:exported="false"
-+            android:grantUriPermissions="true" >
-+            <meta-data
-+                android:name="android.support.FILE_PROVIDER_PATHS"
-+                android:resource="@xml/file_viewer_provider_paths" />
-+        </provider>
-+    </application>
-+
 +</manifest>
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/react-native-file-viewer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/react-native-fast-image/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
 new file mode 100644
-index 0000000..e49a528
+index 0000000..c657541
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
++++ b/node_modules/react-native-fast-image/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
 @@ -0,0 +1,18 @@
 +{
 +  "version": 3,
@@ -92,7 +1846,7 @@ index 0000000..e49a528
 +    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
 +    "kind": "Directory"
 +  },
-+  "applicationId": "com.vinzscam.reactnativefileviewer",
++  "applicationId": "com.dylanvann.fastimage",
 +  "variantName": "debug",
 +  "elements": [
 +    {
@@ -105,38 +1859,38 @@ index 0000000..e49a528
 +  "elementType": "File"
 +}
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-file-viewer/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-fast-image/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
 new file mode 100644
 index 0000000..8c9c699
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
++++ b/node_modules/react-native-fast-image/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
 @@ -0,0 +1,4 @@
 +aarFormatVersion=1.0
 +aarMetadataVersion=1.0
 +minCompileSdk=1
 +minAndroidGradlePluginVersion=1.0.0
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json b/node_modules/react-native-file-viewer/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json b/node_modules/react-native-fast-image/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
 new file mode 100644
-index 0000000..9e26dfe
+index 0000000..d81d11f
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
++++ b/node_modules/react-native-fast-image/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
 @@ -0,0 +1 @@
-+{}
++{"compiler-4.12.0.jar (com.github.bumptech.glide:compiler:4.12.0)":true}
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/react-native-file-viewer/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/react-native-fast-image/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..a838075
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-file-viewer/android/build/intermediates/compile_r_class_jar/debug/R.jar
+index 0000000..d25e1e4
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-fast-image/android/build/intermediates/compile_r_class_jar/debug/R.jar
 new file mode 100644
-index 0000000..4ed9fed
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/react-native-file-viewer/android/build/intermediates/compile_symbol_list/debug/R.txt
+index 0000000..c338a10
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/react-native-fast-image/android/build/intermediates/compile_symbol_list/debug/R.txt
 new file mode 100644
-index 0000000..a4e4478
+index 0000000..a06b203
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/compile_symbol_list/debug/R.txt
-@@ -0,0 +1,1954 @@
++++ b/node_modules/react-native-fast-image/android/build/intermediates/compile_symbol_list/debug/R.txt
+@@ -0,0 +1,1981 @@
 +int anim abc_fade_in 0x0
 +int anim abc_fade_out 0x0
 +int anim abc_grow_fade_in_from_bottom 0x0
@@ -283,6 +2037,7 @@ index 0000000..a4e4478
 +int attr contentInsetStart 0x0
 +int attr contentInsetStartWithNavigation 0x0
 +int attr controlBackground 0x0
++int attr coordinatorLayoutStyle 0x0
 +int attr customNavigationLayout 0x0
 +int attr defaultQueryHint 0x0
 +int attr dialogCornerRadius 0x0
@@ -343,9 +2098,16 @@ index 0000000..a4e4478
 +int attr isAutofillInlineSuggestionTheme 0x0
 +int attr isLightTheme 0x0
 +int attr itemPadding 0x0
++int attr keylines 0x0
 +int attr lStar 0x0
 +int attr lastBaselineToBottomHeight 0x0
 +int attr layout 0x0
++int attr layout_anchor 0x0
++int attr layout_anchorGravity 0x0
++int attr layout_behavior 0x0
++int attr layout_dodgeInsetEdges 0x0
++int attr layout_insetEdge 0x0
++int attr layout_keyline 0x0
 +int attr lineHeight 0x0
 +int attr listChoiceBackgroundIndicator 0x0
 +int attr listChoiceIndicatorMultipleAnimated 0x0
@@ -435,6 +2197,7 @@ index 0000000..a4e4478
 +int attr splitTrack 0x0
 +int attr srcCompat 0x0
 +int attr state_above_anchor 0x0
++int attr statusBarBackground 0x0
 +int attr subMenuArrow 0x0
 +int attr submitBackground 0x0
 +int attr subtitle 0x0
@@ -883,6 +2646,7 @@ index 0000000..a4e4478
 +int id autofill_inline_suggestion_subtitle 0x0
 +int id autofill_inline_suggestion_title 0x0
 +int id blocking 0x0
++int id bottom 0x0
 +int id buttonPanel 0x0
 +int id catalyst_redbox_title 0x0
 +int id center 0x0
@@ -899,6 +2663,7 @@ index 0000000..a4e4478
 +int id default_activity_button 0x0
 +int id dialog_button 0x0
 +int id edit_query 0x0
++int id end 0x0
 +int id expand_activities_button 0x0
 +int id expanded_menu 0x0
 +int id fitBottomStart 0x0
@@ -910,6 +2675,7 @@ index 0000000..a4e4478
 +int id forever 0x0
 +int id fps_text 0x0
 +int id fragment_container_view_tag 0x0
++int id glide_custom_view_target_tag 0x0
 +int id group_divider 0x0
 +int id home 0x0
 +int id icon 0x0
@@ -922,6 +2688,7 @@ index 0000000..a4e4478
 +int id item3 0x0
 +int id item4 0x0
 +int id labelled_by 0x0
++int id left 0x0
 +int id line1 0x0
 +int id line3 0x0
 +int id listMode 0x0
@@ -943,6 +2710,7 @@ index 0000000..a4e4478
 +int id progress_horizontal 0x0
 +int id radio 0x0
 +int id react_test_id 0x0
++int id right 0x0
 +int id right_icon 0x0
 +int id right_side 0x0
 +int id rn_frame_file 0x0
@@ -976,6 +2744,7 @@ index 0000000..a4e4478
 +int id src_atop 0x0
 +int id src_in 0x0
 +int id src_over 0x0
++int id start 0x0
 +int id submenuarrow 0x0
 +int id submit_area 0x0
 +int id tabMode 0x0
@@ -1000,6 +2769,7 @@ index 0000000..a4e4478
 +int id title 0x0
 +int id titleDividerNoCustom 0x0
 +int id title_template 0x0
++int id top 0x0
 +int id topPanel 0x0
 +int id unchecked 0x0
 +int id uniform 0x0
@@ -1530,6 +3300,7 @@ index 0000000..a4e4478
 +int style Widget_Autofill_InlineSuggestionTitle 0x0
 +int style Widget_Compat_NotificationActionContainer 0x0
 +int style Widget_Compat_NotificationActionText 0x0
++int style Widget_Support_CoordinatorLayout 0x0
 +int style redboxButton 0x0
 +int[] styleable ActionBar { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 +int styleable ActionBar_background 0
@@ -1798,6 +3569,17 @@ index 0000000..a4e4478
 +int styleable CompoundButton_buttonCompat 1
 +int styleable CompoundButton_buttonTint 2
 +int styleable CompoundButton_buttonTintMode 3
++int[] styleable CoordinatorLayout { 0x0, 0x0 }
++int styleable CoordinatorLayout_keylines 0
++int styleable CoordinatorLayout_statusBarBackground 1
++int[] styleable CoordinatorLayout_Layout { 0x10100b3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
++int styleable CoordinatorLayout_Layout_android_layout_gravity 0
++int styleable CoordinatorLayout_Layout_layout_anchor 1
++int styleable CoordinatorLayout_Layout_layout_anchorGravity 2
++int styleable CoordinatorLayout_Layout_layout_behavior 3
++int styleable CoordinatorLayout_Layout_layout_dodgeInsetEdges 4
++int styleable CoordinatorLayout_Layout_layout_insetEdge 5
++int styleable CoordinatorLayout_Layout_layout_keyline 6
 +int[] styleable DrawerArrowToggle { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 +int styleable DrawerArrowToggle_arrowHeadLength 0
 +int styleable DrawerArrowToggle_arrowShaftLength 1
@@ -2089,164 +3871,228 @@ index 0000000..a4e4478
 +int styleable ViewStubCompat_android_id 0
 +int styleable ViewStubCompat_android_inflatedId 1
 +int styleable ViewStubCompat_android_layout 2
-+int xml file_viewer_provider_paths 0x0
 +int xml rn_dev_preferences 0x0
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/compiled_local_resources/debug/out/xml_file_viewer_provider_paths.xml.flat b/node_modules/react-native-file-viewer/android/build/intermediates/compiled_local_resources/debug/out/xml_file_viewer_provider_paths.xml.flat
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/react-native-fast-image/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
 new file mode 100644
-index 0000000..2ded08f
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/compiled_local_resources/debug/out/xml_file_viewer_provider_paths.xml.flat differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
-new file mode 100644
-index 0000000..c7dfa8e
+index 0000000..6da7318
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
++++ b/node_modules/react-native-fast-image/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/debug/jniLibs"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/debug/jniLibs"/></dataSet></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-fast-image/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
 new file mode 100644
-index 0000000..d0c2e40
+index 0000000..37ceea9
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
++++ b/node_modules/react-native-fast-image/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/debug/shaders"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/debug/shaders"/></dataSet></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugAssets/merger.xml
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugAssets/merger.xml
 new file mode 100644
-index 0000000..f2e73aa
+index 0000000..9187315
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugAssets/merger.xml
++++ b/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugAssets/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/assets"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/build/intermediates/shader_assets/debug/out"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/debug/assets"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/assets"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/build/intermediates/shader_assets/debug/out"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/debug/assets"/></dataSet></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties b/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
 new file mode 100644
-index 0000000..b529dc7
+index 0000000..58d1f6d
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
-@@ -0,0 +1,2 @@
++++ b/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
 +#Tue Nov 01 15:47:55 CET 2022
-+/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/res/xml/file_viewer_provider_paths.xml=/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/build/intermediates/packaged_res/debug/xml/file_viewer_provider_paths.xml
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugResources/merger.xml b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugResources/merger.xml
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugResources/merger.xml b/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugResources/merger.xml
 new file mode 100644
-index 0000000..cc23df0
+index 0000000..d0c718f
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/incremental/packageDebugResources/merger.xml
++++ b/node_modules/react-native-fast-image/android/build/intermediates/incremental/packageDebugResources/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/res"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/build/generated/res/rs/debug"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/res"><file name="file_viewer_provider_paths" path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/res/xml/file_viewer_provider_paths.xml" qualifiers="" type="xml"/></source><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/build/generated/res/rs/debug"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/debug/res"/></dataSet><mergedItems/></merger>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/res"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/build/generated/res/rs/debug"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/res"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/build/generated/res/rs/debug"/><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/debug/res"/></dataSet><mergedItems/></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/BuildConfig.class b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/BuildConfig.class
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/GeneratedAppGlideModuleImpl.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/GeneratedAppGlideModuleImpl.class
 new file mode 100644
-index 0000000..7315990
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/BuildConfig.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/FileProvider.class b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/FileProvider.class
+index 0000000..e6b539e
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/GeneratedAppGlideModuleImpl.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/GeneratedRequestManagerFactory.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/GeneratedRequestManagerFactory.class
 new file mode 100644
-index 0000000..f657068
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/FileProvider.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.class b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.class
+index 0000000..b47f550
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/GeneratedRequestManagerFactory.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.class
 new file mode 100644
-index 0000000..36348d5
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerModule.class b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerModule.class
+index 0000000..ce1d1dc
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/BuildConfig.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/BuildConfig.class
 new file mode 100644
-index 0000000..2f10ec5
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerModule.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.class b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.class
+index 0000000..18d574c
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/BuildConfig.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageCacheControl.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageCacheControl.class
 new file mode 100644
-index 0000000..1236d79
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/javac/debug/classes/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/react-native-file-viewer/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
+index 0000000..21a24ea
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageCacheControl.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageGlideModule.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageGlideModule.class
 new file mode 100644
-index 0000000..c6d6e76
+index 0000000..48189f0
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageGlideModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.class
+new file mode 100644
+index 0000000..3d3f407
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.class
+new file mode 100644
+index 0000000..0d68039
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.class
+new file mode 100644
+index 0000000..3d5bfd1
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.class
+new file mode 100644
+index 0000000..a5dc256
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.class
+new file mode 100644
+index 0000000..1636bae
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.class
+new file mode 100644
+index 0000000..de64128
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageProgressListener.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageProgressListener.class
+new file mode 100644
+index 0000000..8df5342
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageProgressListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageRequestListener.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageRequestListener.class
+new file mode 100644
+index 0000000..a34a4dd
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageRequestListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageSource.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageSource.class
+new file mode 100644
+index 0000000..304c320
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageSource.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$1.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$1.class
+new file mode 100644
+index 0000000..9696908
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$2.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$2.class
+new file mode 100644
+index 0000000..80f17b4
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$2.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$3.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$3.class
+new file mode 100644
+index 0000000..b4ec82d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$3.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$4.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$4.class
+new file mode 100644
+index 0000000..15d874a
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter$4.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter.class
+new file mode 100644
+index 0000000..1e0787d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewConverter.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewManager.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewManager.class
+new file mode 100644
+index 0000000..700d48d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewManager.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule$1.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule$1.class
+new file mode 100644
+index 0000000..875792c
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule$2.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule$2.class
+new file mode 100644
+index 0000000..186c17f
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule$2.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule.class
+new file mode 100644
+index 0000000..bce07ee
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewPackage.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewPackage.class
+new file mode 100644
+index 0000000..c07158c
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewPackage.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewWithUrl.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewWithUrl.class
+new file mode 100644
+index 0000000..4e9d239
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/FastImageViewWithUrl.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideApp.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideApp.class
+new file mode 100644
+index 0000000..476a034
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideApp.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideOptions.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideOptions.class
+new file mode 100644
+index 0000000..57822e1
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideOptions.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideRequest.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideRequest.class
+new file mode 100644
+index 0000000..32eff99
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideRequest.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideRequests.class b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideRequests.class
+new file mode 100644
+index 0000000..a934bb3
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/javac/debug/classes/com/dylanvann/fastimage/GlideRequests.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/library_java_res/debug/res.jar b/node_modules/react-native-fast-image/android/build/intermediates/library_java_res/debug/res.jar
+new file mode 100644
+index 0000000..15cb0ec
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/library_java_res/debug/res.jar differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/react-native-fast-image/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
-@@ -0,0 +1,3 @@
++++ b/node_modules/react-native-fast-image/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
+@@ -0,0 +1,2 @@
 +R_DEF: Internal format may change without notice
 +local
-+xml file_viewer_provider_paths
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/react-native-file-viewer/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/react-native-fast-image/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
 new file mode 100644
-index 0000000..38014e1
+index 0000000..cf9afa3
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
-@@ -0,0 +1,32 @@
++++ b/node_modules/react-native-fast-image/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,11 @@
 +1<?xml version="1.0" encoding="utf-8"?>
 +2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+3    package="com.vinzscam.reactnativefileviewer" >
++3    package="com.dylanvann.fastimage" >
 +4
 +5    <uses-sdk
 +6        android:minSdkVersion="21"
-+6-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
++6-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
 +7        android:targetSdkVersion="31" />
-+7-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
++7-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
 +8
-+9    <application>
-+9-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:6:7-10:21
-+10        <provider
-+10-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:9-9:20
-+11            android:name="com.vinzscam.reactnativefileviewer.FileProvider"
-+11-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:19-81
-+12            android:authorities="${applicationId}.provider"
-+12-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:82-129
-+13            android:exported="false"
-+13-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:130-154
-+14            android:grantUriPermissions="true" >
-+14-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:155-189
-+15            <meta-data
-+15-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:8:15-130
-+16                android:name="android.support.FILE_PROVIDER_PATHS"
-+16-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:8:26-76
-+17                android:resource="@xml/file_viewer_provider_paths" />
-+17-->/Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:8:77-127
-+18        </provider>
-+19    </application>
-+20
-+21</manifest>
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml b/node_modules/react-native-file-viewer/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
++9</manifest>
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml b/node_modules/react-native-fast-image/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
 new file mode 100644
-index 0000000..afa3948
+index 0000000..65bf962
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
-@@ -0,0 +1,21 @@
++++ b/node_modules/react-native-fast-image/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+@@ -0,0 +1,9 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    package="com.vinzscam.reactnativefileviewer" >
++    package="com.dylanvann.fastimage" >
 +
 +    <uses-sdk
 +        android:minSdkVersion="21"
 +        android:targetSdkVersion="31" />
 +
-+    <application>
-+        <provider
-+            android:name="com.vinzscam.reactnativefileviewer.FileProvider"
-+            android:authorities="${applicationId}.provider"
-+            android:exported="false"
-+            android:grantUriPermissions="true" >
-+            <meta-data
-+                android:name="android.support.FILE_PROVIDER_PATHS"
-+                android:resource="@xml/file_viewer_provider_paths" />
-+        </provider>
-+    </application>
-+
 +</manifest>
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-file-viewer/android/build/intermediates/navigation_json/debug/navigation.json
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-fast-image/android/build/intermediates/navigation_json/debug/navigation.json
 new file mode 100644
 index 0000000..0637a08
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/navigation_json/debug/navigation.json
++++ b/node_modules/react-native-fast-image/android/build/intermediates/navigation_json/debug/navigation.json
 @@ -0,0 +1 @@
 +[]
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/packaged_manifests/debug/output-metadata.json b/node_modules/react-native-file-viewer/android/build/intermediates/packaged_manifests/debug/output-metadata.json
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/packaged_manifests/debug/output-metadata.json b/node_modules/react-native-fast-image/android/build/intermediates/packaged_manifests/debug/output-metadata.json
 new file mode 100644
-index 0000000..3f8c2d2
+index 0000000..daabd76
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/packaged_manifests/debug/output-metadata.json
++++ b/node_modules/react-native-fast-image/android/build/intermediates/packaged_manifests/debug/output-metadata.json
 @@ -0,0 +1,18 @@
 +{
 +  "version": 3,
@@ -2254,7 +4100,7 @@ index 0000000..3f8c2d2
 +    "type": "PACKAGED_MANIFESTS",
 +    "kind": "Directory"
 +  },
-+  "applicationId": "com.vinzscam.reactnativefileviewer",
++  "applicationId": "com.dylanvann.fastimage",
 +  "variantName": "debug",
 +  "elements": [
 +    {
@@ -2267,46 +4113,133 @@ index 0000000..3f8c2d2
 +  "elementType": "File"
 +}
 \ No newline at end of file
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/packaged_res/debug/xml/file_viewer_provider_paths.xml b/node_modules/react-native-file-viewer/android/build/intermediates/packaged_res/debug/xml/file_viewer_provider_paths.xml
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/GeneratedAppGlideModuleImpl.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/GeneratedAppGlideModuleImpl.class
 new file mode 100644
-index 0000000..a762cfa
+index 0000000..e6b539e
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/GeneratedAppGlideModuleImpl.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/GeneratedRequestManagerFactory.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/GeneratedRequestManagerFactory.class
+new file mode 100644
+index 0000000..b47f550
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/GeneratedRequestManagerFactory.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.class
+new file mode 100644
+index 0000000..ce1d1dc
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/bumptech/glide/annotation/compiler/GlideIndexer_GlideModule_com_dylanvann_fastimage_FastImageOkHttpProgressGlideModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/BuildConfig.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/BuildConfig.class
+new file mode 100644
+index 0000000..18d574c
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/BuildConfig.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageCacheControl.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageCacheControl.class
+new file mode 100644
+index 0000000..21a24ea
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageCacheControl.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageGlideModule.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageGlideModule.class
+new file mode 100644
+index 0000000..48189f0
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageGlideModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.class
+new file mode 100644
+index 0000000..3d3f407
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.class
+new file mode 100644
+index 0000000..0d68039
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$DispatchingProgressListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.class
+new file mode 100644
+index 0000000..3d5bfd1
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.class
+new file mode 100644
+index 0000000..a5dc256
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$OkHttpProgressResponseBody.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.class
+new file mode 100644
+index 0000000..1636bae
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule$ResponseProgressListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.class
+new file mode 100644
+index 0000000..de64128
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageOkHttpProgressGlideModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageProgressListener.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageProgressListener.class
+new file mode 100644
+index 0000000..8df5342
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageProgressListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageRequestListener.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageRequestListener.class
+new file mode 100644
+index 0000000..a34a4dd
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageRequestListener.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageSource.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageSource.class
+new file mode 100644
+index 0000000..304c320
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageSource.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$1.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$1.class
+new file mode 100644
+index 0000000..9696908
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$2.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$2.class
+new file mode 100644
+index 0000000..80f17b4
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$2.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$3.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$3.class
+new file mode 100644
+index 0000000..b4ec82d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$3.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$4.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$4.class
+new file mode 100644
+index 0000000..15d874a
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter$4.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter.class
+new file mode 100644
+index 0000000..1e0787d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewConverter.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewManager.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewManager.class
+new file mode 100644
+index 0000000..700d48d
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewManager.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule$1.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule$1.class
+new file mode 100644
+index 0000000..875792c
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule$1.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule$2.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule$2.class
+new file mode 100644
+index 0000000..186c17f
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule$2.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule.class
+new file mode 100644
+index 0000000..bce07ee
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewModule.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewPackage.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewPackage.class
+new file mode 100644
+index 0000000..c07158c
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewPackage.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewWithUrl.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewWithUrl.class
+new file mode 100644
+index 0000000..4e9d239
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/FastImageViewWithUrl.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideApp.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideApp.class
+new file mode 100644
+index 0000000..476a034
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideApp.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideOptions.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideOptions.class
+new file mode 100644
+index 0000000..57822e1
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideOptions.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideRequest.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideRequest.class
+new file mode 100644
+index 0000000..32eff99
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideRequest.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideRequests.class b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideRequests.class
+new file mode 100644
+index 0000000..a934bb3
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/intermediates/runtime_library_classes_dir/debug/com/dylanvann/fastimage/GlideRequests.class differ
+diff --git a/node_modules/react-native-fast-image/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/react-native-fast-image/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
+new file mode 100644
+index 0000000..e32cfcb
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/packaged_res/debug/xml/file_viewer_provider_paths.xml
-@@ -0,0 +1,7 @@
-+<?xml version='1.0' encoding='utf-8'?>
-+<paths xmlns:android="http://schemas.android.com/apk/res/android">
-+    <files-path name="files" path="/" />
-+    <external-files-path name="external_files" path="" />
-+    <external-path name="external" path="." />
-+    <cache-path name="cache" path="/" />
-+</paths>
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/BuildConfig.class b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/BuildConfig.class
-new file mode 100644
-index 0000000..7315990
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/BuildConfig.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/FileProvider.class b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/FileProvider.class
-new file mode 100644
-index 0000000..f657068
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/FileProvider.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.class b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.class
-new file mode 100644
-index 0000000..36348d5
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule$1.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule.class b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule.class
-new file mode 100644
-index 0000000..2f10ec5
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerModule.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.class b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.class
-new file mode 100644
-index 0000000..1236d79
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/intermediates/runtime_library_classes_dir/debug/com/vinzscam/reactnativefileviewer/RNFileViewerPackage.class differ
-diff --git a/node_modules/react-native-file-viewer/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/react-native-file-viewer/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
-new file mode 100644
-index 0000000..52a56df
---- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
-@@ -0,0 +1,1447 @@
-+com.vinzscam.reactnativefileviewer
++++ b/node_modules/react-native-fast-image/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
+@@ -0,0 +1,1465 @@
++com.dylanvann.fastimage
 +anim abc_fade_in
 +anim abc_fade_out
 +anim abc_grow_fade_in_from_bottom
@@ -2453,6 +4386,7 @@ index 0000000..52a56df
 +attr contentInsetStart
 +attr contentInsetStartWithNavigation
 +attr controlBackground
++attr coordinatorLayoutStyle
 +attr customNavigationLayout
 +attr defaultQueryHint
 +attr dialogCornerRadius
@@ -2513,9 +4447,16 @@ index 0000000..52a56df
 +attr isAutofillInlineSuggestionTheme
 +attr isLightTheme
 +attr itemPadding
++attr keylines
 +attr lStar
 +attr lastBaselineToBottomHeight
 +attr layout
++attr layout_anchor
++attr layout_anchorGravity
++attr layout_behavior
++attr layout_dodgeInsetEdges
++attr layout_insetEdge
++attr layout_keyline
 +attr lineHeight
 +attr listChoiceBackgroundIndicator
 +attr listChoiceIndicatorMultipleAnimated
@@ -2605,6 +4546,7 @@ index 0000000..52a56df
 +attr splitTrack
 +attr srcCompat
 +attr state_above_anchor
++attr statusBarBackground
 +attr subMenuArrow
 +attr submitBackground
 +attr subtitle
@@ -3053,6 +4995,7 @@ index 0000000..52a56df
 +id autofill_inline_suggestion_subtitle
 +id autofill_inline_suggestion_title
 +id blocking
++id bottom
 +id buttonPanel
 +id catalyst_redbox_title
 +id center
@@ -3069,6 +5012,7 @@ index 0000000..52a56df
 +id default_activity_button
 +id dialog_button
 +id edit_query
++id end
 +id expand_activities_button
 +id expanded_menu
 +id fitBottomStart
@@ -3080,6 +5024,7 @@ index 0000000..52a56df
 +id forever
 +id fps_text
 +id fragment_container_view_tag
++id glide_custom_view_target_tag
 +id group_divider
 +id home
 +id icon
@@ -3092,6 +5037,7 @@ index 0000000..52a56df
 +id item3
 +id item4
 +id labelled_by
++id left
 +id line1
 +id line3
 +id listMode
@@ -3113,6 +5059,7 @@ index 0000000..52a56df
 +id progress_horizontal
 +id radio
 +id react_test_id
++id right
 +id right_icon
 +id right_side
 +id rn_frame_file
@@ -3146,6 +5093,7 @@ index 0000000..52a56df
 +id src_atop
 +id src_in
 +id src_over
++id start
 +id submenuarrow
 +id submit_area
 +id tabMode
@@ -3170,6 +5118,7 @@ index 0000000..52a56df
 +id title
 +id titleDividerNoCustom
 +id title_template
++id top
 +id topPanel
 +id unchecked
 +id uniform
@@ -3700,6 +5649,7 @@ index 0000000..52a56df
 +style Widget_Autofill_InlineSuggestionTitle
 +style Widget_Compat_NotificationActionContainer
 +style Widget_Compat_NotificationActionText
++style Widget_Support_CoordinatorLayout
 +style redboxButton
 +styleable ActionBar background backgroundSplit backgroundStacked contentInsetEnd contentInsetEndWithActions contentInsetLeft contentInsetRight contentInsetStart contentInsetStartWithNavigation customNavigationLayout displayOptions divider elevation height hideOnContentScroll homeAsUpIndicator homeLayout icon indeterminateProgressStyle itemPadding logo navigationMode popupTheme progressBarPadding progressBarStyle subtitle subtitleTextStyle title titleTextStyle
 +styleable ActionBarLayout android_layout_gravity
@@ -3723,6 +5673,8 @@ index 0000000..52a56df
 +styleable CheckedTextView android_checkMark checkMarkCompat checkMarkTint checkMarkTintMode
 +styleable ColorStateListItem alpha android_alpha android_color android_lStar lStar
 +styleable CompoundButton android_button buttonCompat buttonTint buttonTintMode
++styleable CoordinatorLayout keylines statusBarBackground
++styleable CoordinatorLayout_Layout android_layout_gravity layout_anchor layout_anchorGravity layout_behavior layout_dodgeInsetEdges layout_insetEdge layout_keyline
 +styleable DrawerArrowToggle arrowHeadLength arrowShaftLength barLength color drawableSize gapBetweenBars spinBars thickness
 +styleable FontFamily fontProviderAuthority fontProviderCerts fontProviderFetchStrategy fontProviderFetchTimeout fontProviderPackage fontProviderQuery fontProviderSystemFontFamily
 +styleable FontFamilyFont android_font android_fontStyle android_fontVariationSettings android_fontWeight android_ttcIndex font fontStyle fontVariationSettings fontWeight ttcIndex
@@ -3751,74 +5703,77 @@ index 0000000..52a56df
 +styleable View android_focusable android_theme paddingEnd paddingStart theme
 +styleable ViewBackgroundHelper android_background backgroundTint backgroundTintMode
 +styleable ViewStubCompat android_id android_inflatedId android_layout
-+xml file_viewer_provider_paths
 +xml rn_dev_preferences
-diff --git a/node_modules/react-native-file-viewer/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-file-viewer/android/build/outputs/logs/manifest-merger-debug-report.txt
+diff --git a/node_modules/react-native-fast-image/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-fast-image/android/build/outputs/logs/manifest-merger-debug-report.txt
 new file mode 100644
-index 0000000..6ba3e66
+index 0000000..55ccd91
 --- /dev/null
-+++ b/node_modules/react-native-file-viewer/android/build/outputs/logs/manifest-merger-debug-report.txt
-@@ -0,0 +1,43 @@
++++ b/node_modules/react-native-fast-image/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,25 @@
 +-- Merging decision tree log ---
 +manifest
-+ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:2:1-11:12
-+INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:2:1-11:12
-+INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:2:1-11:12
++ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml:1:1-2:12
++INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml:1:1-2:12
++INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml:1:1-2:12
 +	package
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:4:3-47
-+		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
++		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml:1:11-44
++		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
 +	xmlns:android
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:3:3-61
-+application
-+ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:6:7-10:21
-+provider#com.vinzscam.reactnativefileviewer.FileProvider
-+ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:9-9:20
-+	android:grantUriPermissions
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:155-189
-+	android:authorities
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:82-129
-+	android:exported
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:130-154
-+	android:name
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:7:19-81
-+meta-data#android.support.FILE_PROVIDER_PATHS
-+ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:8:15-130
-+	android:resource
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:8:77-127
-+	android:name
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml:8:26-76
++		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml:1:1-2:12
 +uses-sdk
-+INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
-+INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
++INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
 +	android:targetSdkVersion
-+		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
 +	android:minSdkVersion
-+		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-file-viewer/android/src/main/AndroidManifest.xml
-diff --git a/node_modules/react-native-file-viewer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-file-viewer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
++		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++		ADDED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/guillaume/ode/repositories/ode-mobile-framework.190/node_modules/react-native-fast-image/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/react-native-fast-image/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-fast-image/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
 new file mode 100644
-index 0000000..27841fd
-Binary files /dev/null and b/node_modules/react-native-file-viewer/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
-diff --git a/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java b/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java
-index 93f7881..faf1731 100644
---- a/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java
-+++ b/node_modules/react-native-file-viewer/android/src/main/java/com/vinzscam/reactnativefileviewer/RNFileViewerModule.java
-@@ -43,6 +43,11 @@ public class RNFileViewerModule extends ReactContextBaseJavaModule {
+index 0000000..fdb482f
+Binary files /dev/null and b/node_modules/react-native-fast-image/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
+diff --git a/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m b/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
+index f710081..83476eb 100644
+--- a/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
++++ b/node_modules/react-native-fast-image/ios/FastImage/FFFastImageView.m
+@@ -32,21 +32,21 @@
  
-   @ReactMethod
-   public void open(String path, Integer currentId, ReadableMap options) {
-+
-+    if (getCurrentActivity() == null) {
-+      sendEvent(OPEN_EVENT, currentId, "No Current Activity");
-+    }
-+
-     Uri contentUri = null;
-     Boolean showOpenWithDialog = options.hasKey(SHOW_OPEN_WITH_DIALOG) ? options.getBoolean(SHOW_OPEN_WITH_DIALOG) : false;
-     Boolean showStoreSuggestions = options.hasKey(SHOW_STORE_SUGGESTIONS) ? options.getBoolean(SHOW_STORE_SUGGESTIONS) : false;
+ - (void) setOnFastImageLoadEnd: (RCTDirectEventBlock)onFastImageLoadEnd {
+     _onFastImageLoadEnd = onFastImageLoadEnd;
+-    if (self.hasCompleted) {
++    if (self.hasCompleted && _onFastImageLoadEnd) {
+         _onFastImageLoadEnd(@{});
+     }
+ }
+ 
+ - (void) setOnFastImageLoad: (RCTDirectEventBlock)onFastImageLoad {
+     _onFastImageLoad = onFastImageLoad;
+-    if (self.hasCompleted) {
++    if (self.hasCompleted && _onFastImageLoad) {
+         _onFastImageLoad(self.onLoadEvent);
+     }
+ }
+ 
+ - (void) setOnFastImageError: (RCTDirectEventBlock)onFastImageError {
+     _onFastImageError = onFastImageError;
+-    if (self.hasErrored) {
++    if (self.hasErrored && _onFastImageError) {
+         _onFastImageError(@{});
+     }
+ }
+@@ -54,7 +54,7 @@
+ - (void) setOnFastImageLoadStart: (RCTDirectEventBlock)onFastImageLoadStart {
+     if (_source && !self.hasSentOnLoadStart) {
+         _onFastImageLoadStart = onFastImageLoadStart;
+-        onFastImageLoadStart(@{});
++        if (_onFastImageLoadStart) _onFastImageLoadStart(@{});
+         self.hasSentOnLoadStart = YES;
+     } else {
+         _onFastImageLoadStart = onFastImageLoadStart;
