@@ -80,6 +80,7 @@ export const UI_SIZES = {
     mediumPlus: 16,
     large: 21,
     extraLarge: 24,
+    huge: 48,
   },
   screen: {
     bottomInset: Platform.select({

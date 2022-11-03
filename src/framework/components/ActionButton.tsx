@@ -3,7 +3,7 @@ import { ActivityIndicator, LayoutChangeEvent, StyleProp, StyleSheet, TouchableO
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components//picture';
-import { SmallBoldText } from '~/framework/components//text';
+import { SmallBoldText, TextSizeStyle } from '~/framework/components//text';
 import { UI_SIZES } from '~/framework/components/constants';
 import { openUrl } from '~/framework/util/linking';
 
@@ -41,17 +41,17 @@ export const ActionButton = ({
   const [isButtonMeasured, setIsButtonMeasured] = React.useState(false);
   const [buttonWidth, setButtonWidth] = React.useState(0);
   const Component = disabled ? View : TouchableOpacity;
+  const commonViewStyle = {
+    width: isButtonMeasured ? buttonWidth : undefined,
+    borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
+    borderWidth: 2,
+    opacity: disabled ? 0.5 : 1,
+  };
   const viewStyle = {
     primary: {
       backgroundColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-      opacity: disabled ? 0.5 : 1,
     },
-    secondary: {
-      borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-      opacity: disabled ? 0.5 : 1,
-      borderWidth: 2,
-      paddingVertical: UI_SIZES.spacing.tiny, // Note: we compendate for "borderWith: 2" so the text doesn't get cropped
-    },
+    secondary: {},
   };
   const textStyle = {
     primary: {
@@ -75,12 +75,7 @@ export const ActionButton = ({
           setIsButtonMeasured(true);
         }
       }}
-      style={[
-        ActionButton.Style.viewCommon,
-        viewStyle[type ?? 'primary'],
-        { width: isButtonMeasured ? buttonWidth : undefined },
-        style,
-      ]}
+      style={[ActionButton.Style.viewCommon, commonViewStyle, viewStyle[type ?? 'primary'], style]}
       {...(!disabled
         ? {
             onPress: () => {
@@ -99,10 +94,14 @@ export const ActionButton = ({
           }
         : {})}>
       {loading ? (
-        <ActivityIndicator size="small" color={textStyle[type ?? 'primary'].color} />
+        <ActivityIndicator
+          size="small"
+          color={textStyle[type ?? 'primary'].color}
+          style={{ height: TextSizeStyle.Normal.lineHeight }}
+        />
       ) : (
         <>
-          <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined }, textStyle[type ?? 'primary']]}>
+          <SmallBoldText numberOfLines={1} style={textStyle[type ?? 'primary']}>
             {text}
           </SmallBoldText>
           {showIcon ? (
@@ -110,15 +109,13 @@ export const ActionButton = ({
               <Picture
                 type="NamedSvg"
                 name={iconName || 'pictos-external-link'}
-                width={UI_SIZES.dimensions.width.large}
-                height={UI_SIZES.dimensions.height.large}
+                width={TextSizeStyle.Small.lineHeight}
+                height={TextSizeStyle.Small.lineHeight}
                 fill={pictureFill[type ?? 'primary']}
                 style={ActionButton.Style.picture}
               />
             ) : emoji ? (
-              <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined, marginBottom: 1 }]}>
-                {' ' + emoji}
-              </SmallBoldText>
+              <SmallBoldText numberOfLines={1}>{' ' + emoji}</SmallBoldText>
             ) : null
           ) : null}
         </>
@@ -129,9 +126,9 @@ export const ActionButton = ({
 
 ActionButton.Style = StyleSheet.create({
   viewCommon: {
-    height: UI_SIZES.dimensions.height.largePlus,
+    paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.medium,
-    borderRadius: UI_SIZES.radius.extraLarge,
+    borderRadius: UI_SIZES.radius.huge,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

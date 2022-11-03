@@ -112,54 +112,52 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
           </Swiper>
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>
-          <View style={{ height: 90, justifyContent: 'space-between' }}>
-            <ActionButton
-              text={I18n.t('user.onboardingScreen.joinMyNetwork')}
-              action={() => {
-                const hasMultiplePlatforms = appConf.platforms.length > 1;
-                if (!hasMultiplePlatforms) {
-                  dispatch(selectPlatform(appConf.platforms[0].name));
-                }
-                navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : getLoginRouteName());
-              }}
-              onLayout={e => {
-                if (!measuredJoinMyNetworkButton) {
-                  const joinMyNetworkButtonWidth = e.nativeEvent.layout.width;
-                  this.setState({ joinMyNetworkButtonWidth, measuredJoinMyNetworkButton: true });
-                }
-              }}
-              style={{ width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
-            />
-            {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
+          <ActionButton
+            text={I18n.t('user.onboardingScreen.joinMyNetwork')}
+            action={() => {
+              const hasMultiplePlatforms = appConf.platforms.length > 1;
+              if (!hasMultiplePlatforms) {
+                dispatch(selectPlatform(appConf.platforms[0].name));
+              }
+              navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : getLoginRouteName());
+            }}
+            onLayout={e => {
+              if (!measuredJoinMyNetworkButton) {
+                const joinMyNetworkButtonWidth = e.nativeEvent.layout.width;
+                this.setState({ joinMyNetworkButtonWidth, measuredJoinMyNetworkButton: true });
+              }
+            }}
+            style={{ width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
+          />
+          {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
-            {hideDiscoveryButton ? null : (
-              <ActionButton
-                text={I18n.t('user.onboardingScreen.discover')}
-                type="secondary"
-                url={I18n.t('user.onboardingScreen.discoverLink')}
-                requireSession={false}
-                onLayout={e => {
-                  if (!measuredDiscoverButton) {
-                    const discoverButtonWidth = e.nativeEvent.layout.width;
-                    this.setState({ discoverButtonWidth, measuredDiscoverButton: true });
-                  }
-                }}
-                style={{ width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
-              />
-            )}
-            {/* Note: if there is no Discovery button, the JoinMyNetwork button is immediately displayed;
+          {hideDiscoveryButton ? null : (
+            <ActionButton
+              text={I18n.t('user.onboardingScreen.discover')}
+              type="secondary"
+              url={I18n.t('user.onboardingScreen.discoverLink')}
+              requireSession={false}
+              onLayout={e => {
+                if (!measuredDiscoverButton) {
+                  const discoverButtonWidth = e.nativeEvent.layout.width;
+                  this.setState({ discoverButtonWidth, measuredDiscoverButton: true });
+                }
+              }}
+              style={{ marginTop: UI_SIZES.spacing.medium, width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
+            />
+          )}
+          {/* Note: if there is no Discovery button, the JoinMyNetwork button is immediately displayed;
             otherwise, both buttons are hidden until measurements are done (so they are directly displayed with the same width).*/}
-            {hideDiscoveryButton || areAllButtonsMeasured ? null : (
-              <View
-                style={{
-                  backgroundColor: theme.ui.background.page,
-                  width: '100%',
-                  height: '110%', // Note: height is slightly bigger than View to completely hide buttons on Android
-                  position: 'absolute',
-                }}
-              />
-            )}
-          </View>
+          {hideDiscoveryButton || areAllButtonsMeasured ? null : (
+            <View
+              style={{
+                backgroundColor: theme.ui.background.page,
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+              }}
+            />
+          )}
         </View>
       </SafeAreaView>
     );
