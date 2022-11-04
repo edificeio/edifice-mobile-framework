@@ -42,12 +42,14 @@ export function formatMediaSourceArray(medias: IMediaCommonAttributes[]) {
 export class Image extends React.PureComponent<ImageProps> {
   render() {
     const { source, ...rest } = this.props;
-    return <RNImage source={urlSigner.signURISource(source)} {...rest} />;
+    const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
+    return <RNImage source={hasSource ? urlSigner.signURISource(source) : undefined} {...rest} />;
   }
 }
 export class FastImage extends React.PureComponent<FastImageProps> {
   render() {
     const { source, ...rest } = this.props;
-    return <RNFastImage source={urlSigner.signURISource(source)} {...rest} />;
+    const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
+    return <RNFastImage source={hasSource ? urlSigner.signURISource(source) : undefined} {...rest} />;
   }
 }
