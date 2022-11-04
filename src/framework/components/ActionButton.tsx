@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActivityIndicator, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, LayoutChangeEvent, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components//picture';
@@ -36,21 +36,29 @@ export const ActionButton = ({
   style,
   onLayout,
 }: ActionButtonProps) => {
-  const [isButtonMeasured, setIsButtonMeasured] = React.useState(false);
   const [buttonWidth, setButtonWidth] = React.useState(0);
   const Component = disabled ? View : TouchableOpacity;
+
   const commonViewStyle = {
-    width: isButtonMeasured ? buttonWidth : undefined,
+    alignItems: 'center',
+    alignSelf: 'center',
     borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-    borderWidth: 2,
+    borderRadius: UI_SIZES.radius.huge,
+    borderWidth: UI_SIZES.elements.actionButtonBorder,
+    flexDirection: 'row',
+    justifyContent: 'center',
     opacity: disabled ? 0.5 : 1,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
+    width: buttonWidth || undefined,
   };
-  const viewStyle = {
-    primary: {
-      backgroundColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-    },
-    secondary: {},
+
+  const pictureSize = TextSizeStyle.Normal.fontSize! + (TextSizeStyle.Normal.lineHeight! - TextSizeStyle.Normal.fontSize!) / 2;
+
+  const pictureStyle = {
+    marginLeft: UI_SIZES.spacing.minor,
   };
+
   const textStyle = {
     primary: {
       color: theme.ui.text.inverse,
@@ -59,21 +67,30 @@ export const ActionButton = ({
       color: disabled ? theme.ui.text.light : theme.palette.primary.regular,
     },
   };
+
+  const viewStyle = {
+    primary: {
+      backgroundColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
+    },
+    secondary: {},
+  };
+
   const pictureFill = {
     primary: theme.ui.text.inverse,
     secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
+
   return (
     <Component
       onLayout={e => {
-        if (onLayout) {
-          onLayout(e);
-        } else if (!isButtonMeasured) {
-          setButtonWidth(e.nativeEvent.layout.width);
-          setIsButtonMeasured(true);
-        }
+        const newWidth = e.nativeEvent.layout.width;
+        // Add borders
+        if (newWidth !== buttonWidth) setButtonWidth(newWidth + 2 * UI_SIZES.elements.actionButtonBorder);
+        // Pass borders to callback
+        e.nativeEvent.layout.width += 2 * UI_SIZES.elements.actionButtonBorder;
+        if (onLayout) onLayout(e);
       }}
-      style={[ActionButton.Style.viewCommon, commonViewStyle, viewStyle[type ?? 'primary'], style]}
+      style={[commonViewStyle, viewStyle[type ?? 'primary'], style]}
       {...(!disabled
         ? {
             onPress: () => {
@@ -106,10 +123,10 @@ export const ActionButton = ({
             <Picture
               type="NamedSvg"
               name={iconName || 'pictos-external-link'}
-              width={TextSizeStyle.Small.lineHeight}
-              height={TextSizeStyle.Small.lineHeight}
+              width={pictureSize}
+              height={pictureSize}
               fill={pictureFill[type ?? 'primary']}
-              style={ActionButton.Style.picture}
+              style={pictureStyle}
             />
           ) : emoji ? (
             <SmallBoldText numberOfLines={1}>{' ' + emoji}</SmallBoldText>
@@ -119,18 +136,3 @@ export const ActionButton = ({
     </Component>
   );
 };
-
-ActionButton.Style = StyleSheet.create({
-  viewCommon: {
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    borderRadius: UI_SIZES.radius.huge,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  picture: {
-    marginLeft: UI_SIZES.spacing.minor,
-  },
-});
