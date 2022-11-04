@@ -11,6 +11,7 @@ import { AppPushNotificationHandlerComponent } from '~/framework/util/notificati
 import { IAppModule } from '~/infra/moduleTool/types';
 import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
 import Carousel from '~/ui/Carousel';
+import Carousel2 from '~/ui/Carousel2';
 import { IFrame } from '~/ui/IFrame';
 
 import LoginNavigator from './LoginNavigator';
@@ -62,6 +63,9 @@ function getMainNavigator(appsInfo: any[], widgetsInfo: IEntcoreWidget[]) {
       mainTabNavigator,
       carouselModal: {
         screen: Carousel,
+      },
+      carouselModal2: {
+        screen: Carousel2,
       },
       iframeModal: {
         screen: IFrame,

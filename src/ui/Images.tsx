@@ -11,6 +11,7 @@ import { SmallInverseText, SmallItalicText } from '~/framework/components/text';
 import { FastImage } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
+import { openCarousel } from './Carousel2';
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
 import ImageOptional from './ImageOptional';
@@ -88,7 +89,7 @@ const StretchImage = (props: ImageProps) => (
 
 class Images extends React.Component<
   {
-    images: { src: ImageURISource; alt: string; linkTo?: string }[];
+    images: { src: ImageURISource; alt?: string; linkTo?: string }[];
     style?: ViewStyle;
     navigation: any;
     // windowDimensions: any;
@@ -97,7 +98,13 @@ class Images extends React.Component<
 > {
   public openImage(startIndex: any) {
     const { images, navigation } = this.props;
-    navigation.navigate('carouselModal', { images, startIndex });
+    const data = images.map(img => ({
+      type: 'image' as 'image',
+      src: img.src,
+      ...(img.alt ? { alt: img.alt } : undefined),
+      ...(img.linkTo ? { link: img.linkTo } : undefined),
+    }));
+    openCarousel({ data, startIndex }, navigation);
   }
 
   public images() {
