@@ -38,6 +38,7 @@
     "@emotion/native": "11.10.0",
     "@emotion/react": "11.10.5",
     "@flyerhq/react-native-android-uri-path": "2.3.0",
+    "@likashefqet/react-native-image-zoom": "1.2.1",
     "@react-native-async-storage/async-storage": "1.17.10",
     "@react-native-clipboard/clipboard": "1.11.1",
     "@react-native-community/cli": "9.2.1",

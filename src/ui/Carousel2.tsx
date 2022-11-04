@@ -9,6 +9,7 @@ import RNFastImage from 'react-native-fast-image';
 import PhotoView from 'react-native-photo-view-ex';
 import RNCarousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { NavigationInjectedProps } from 'react-navigation';
+import { ImageZoom } from '@likashefqet/react-native-image-zoom';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
@@ -63,7 +64,10 @@ function renderCarouselItem({ item, index }: { item: IMedia; index: number }) {
             style={imageStyle}
           />
         ),
-        android: <FastImage source={item.src as Source} style={imageStyle} resizeMode={RNFastImage.resizeMode.contain} />,
+        android: (
+          <ImageZoom source={urlSigner.signURISource(item.src)} minScale={1} maxScale={3} containerStyle={imageStyle} resizeMode="contain" resizeMethod="scale" />
+        // <FastImage source={item.src as Source} style={imageStyle} resizeMode={RNFastImage.resizeMode.contain} />
+        ),
       })
     );
   } else return <></>;
