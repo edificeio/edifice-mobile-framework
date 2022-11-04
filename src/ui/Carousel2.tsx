@@ -3,9 +3,10 @@
  */
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ImageURISource, StatusBar, StyleSheet, Text } from 'react-native';
+import { ImageURISource, Platform, StatusBar, StyleSheet, Text } from 'react-native';
 import { Source } from 'react-native-fast-image';
 import RNFastImage from 'react-native-fast-image';
+import PhotoView from 'react-native-photo-view-ex';
 import RNCarousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { NavigationInjectedProps } from 'react-navigation';
 
@@ -14,6 +15,7 @@ import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { FastImage, IMedia, Image } from '~/framework/util/media';
+import { urlSigner } from '~/infra/oauth';
 
 export interface ICarouselNavParams {
   data: IMedia[];
@@ -37,20 +39,31 @@ const styles = StyleSheet.create({
     height: UI_SIZES.dimensions.width.huge,
     padding: 0,
     paddingHorizontal: 0,
-    zIndex: 1
+    zIndex: 1,
   },
 });
 
 function renderCarouselItem({ item, index }: { item: IMedia; index: number }) {
   if (item.type === 'image') {
     const imageStyle = {
-      width: '100%',
-      height: '100%',
+      width: UI_SIZES.screen.width,
+      height: UI_SIZES.screen.height,
     };
     return typeof item.src === 'number' ? (
       <Image source={item.src} style={imageStyle} resizeMode="contain" resizeMethod="scale" />
     ) : (
-      <FastImage source={item.src as Source} style={imageStyle} resizeMode={RNFastImage.resizeMode.contain} />
+      Platform.select({
+        ios: (
+          <PhotoView
+            source={urlSigner.signURISource(item.src)}
+            minimumZoomScale={1}
+            maximumZoomScale={3}
+            resizeMode="center"
+            style={imageStyle}
+          />
+        ),
+        android: <FastImage source={item.src as Source} style={imageStyle} resizeMode={RNFastImage.resizeMode.contain} />,
+      })
     );
   } else return <></>;
 }
