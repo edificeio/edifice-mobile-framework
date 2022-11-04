@@ -11,7 +11,6 @@ export interface ActionButtonProps {
   text: string;
   iconName?: string;
   emoji?: string;
-  showIcon?: boolean;
   action?: () => void;
   url?: string;
   showConfirmation?: boolean;
@@ -27,7 +26,6 @@ export const ActionButton = ({
   text,
   iconName,
   emoji,
-  showIcon = true,
   url,
   showConfirmation = true,
   requireSession = true,
@@ -104,19 +102,17 @@ export const ActionButton = ({
           <SmallBoldText numberOfLines={1} style={textStyle[type ?? 'primary']}>
             {text}
           </SmallBoldText>
-          {showIcon ? (
-            url || iconName ? (
-              <Picture
-                type="NamedSvg"
-                name={iconName || 'pictos-external-link'}
-                width={TextSizeStyle.Small.lineHeight}
-                height={TextSizeStyle.Small.lineHeight}
-                fill={pictureFill[type ?? 'primary']}
-                style={ActionButton.Style.picture}
-              />
-            ) : emoji ? (
-              <SmallBoldText numberOfLines={1}>{' ' + emoji}</SmallBoldText>
-            ) : null
+          {url || iconName ? (
+            <Picture
+              type="NamedSvg"
+              name={iconName || 'pictos-external-link'}
+              width={TextSizeStyle.Small.lineHeight}
+              height={TextSizeStyle.Small.lineHeight}
+              fill={pictureFill[type ?? 'primary']}
+              style={ActionButton.Style.picture}
+            />
+          ) : emoji ? (
+            <SmallBoldText numberOfLines={1}>{' ' + emoji}</SmallBoldText>
           ) : null}
         </>
       )}
