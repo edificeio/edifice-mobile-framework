@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     padding: 0,
     paddingHorizontal: 0,
     zIndex: 1,
+    borderWidth: 0
   },
 });
 
@@ -79,7 +80,7 @@ export function Carousel(props: ICarouselProps) {
   const carouselRef = React.useRef<ICarouselInstance>();
 
   const closeButton = React.useMemo(
-    () => <ActionButton action={navigation.goBack} iconName="ui-close" style={styles.closeButton} />,
+    () => <ActionButton action={navigation.goBack} iconName="ui-rafterLeft" style={styles.closeButton} />,
     [navigation],
   );
 
