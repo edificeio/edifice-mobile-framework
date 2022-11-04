@@ -8,7 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { openUrl } from '~/framework/util/linking';
 
 export interface ActionButtonProps {
-  text: string;
+  text?: string;
   iconName?: string;
   emoji?: string;
   action?: () => void;
@@ -99,9 +99,11 @@ export const ActionButton = ({
         />
       ) : (
         <>
-          <SmallBoldText numberOfLines={1} style={textStyle[type ?? 'primary']}>
-            {text}
-          </SmallBoldText>
+          {text ? (
+            <SmallBoldText numberOfLines={1} style={textStyle[type ?? 'primary']}>
+              {text}
+            </SmallBoldText>
+          ) : null}
           {url || iconName ? (
             <Picture
               type="NamedSvg"
@@ -130,7 +132,7 @@ ActionButton.Style = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
   },
-  picture: {
+  pictureSpacing: {
     marginLeft: UI_SIZES.spacing.minor,
   },
 });
