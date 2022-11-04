@@ -122,10 +122,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
               navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : getLoginRouteName());
             }}
             onLayout={e => {
-              if (!measuredJoinMyNetworkButton) {
-                const joinMyNetworkButtonWidth = e.nativeEvent.layout.width;
-                this.setState({ joinMyNetworkButtonWidth, measuredJoinMyNetworkButton: true });
-              }
+              if (!measuredJoinMyNetworkButton)
+                this.setState({ joinMyNetworkButtonWidth: e.nativeEvent.layout.width, measuredJoinMyNetworkButton: true });
             }}
             style={{ width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
           />
@@ -138,10 +136,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
               url={I18n.t('user.onboardingScreen.discoverLink')}
               requireSession={false}
               onLayout={e => {
-                if (!measuredDiscoverButton) {
-                  const discoverButtonWidth = e.nativeEvent.layout.width;
-                  this.setState({ discoverButtonWidth, measuredDiscoverButton: true });
-                }
+                if (!measuredDiscoverButton)
+                  this.setState({ discoverButtonWidth: e.nativeEvent.layout.width, measuredDiscoverButton: true });
               }}
               style={{ marginTop: UI_SIZES.spacing.medium, width: areAllButtonsMeasured ? largestButtonWidth : undefined }}
             />
