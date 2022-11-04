@@ -85,6 +85,7 @@ export const VerifyEmailCodeScreen = ({
 
   const CELL_COUNT = 6;
   const isCodeComplete = code.length === CELL_COUNT;
+  const isCodeTyped = code.length > 0;
   const codeFieldRef = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
@@ -173,6 +174,7 @@ export const VerifyEmailCodeScreen = ({
           <CodeField
             {...props}
             ref={codeFieldRef}
+            caretHidden={isCodeTyped}
             cellCount={CELL_COUNT}
             keyboardType="number-pad"
             textContentType="oneTimeCode"
