@@ -138,7 +138,7 @@ try {
 try {
   if (['alpha', 'rc'].includes(buildType)) {
     lastContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
-    lastContent.notes = execSync(`git log --pretty=format:"%s" --since="${lastContent.last}" --all`).toString();
+    lastContent.notes = execSync(`git --no-pager log --pretty=format:"%s" --since="${lastContent.last}"`).toString();
     lastContent.version = fullVersion;
   }
 } catch (error) {
