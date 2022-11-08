@@ -52,7 +52,7 @@ target 'appe' do
     :production => production,
     :hermes_enabled => true, #flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => FlipperConfiguration.enabled(["Debug"]),
+    :flipper_configuration => FlipperConfiguration.enabled(["Debug"], { 'Flipper' => '0.173.0' }),
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
