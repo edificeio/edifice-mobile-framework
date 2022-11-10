@@ -83,12 +83,12 @@ export const ActionButton = ({
   return (
     <Component
       onLayout={e => {
+        if (!buttonWidth) e.nativeEvent.layout.width += 2 * UI_SIZES.elements.actionButtonBorder;
         const newWidth = e.nativeEvent.layout.width;
-        // Add borders
-        if (newWidth !== buttonWidth) setButtonWidth(newWidth + 2 * UI_SIZES.elements.actionButtonBorder);
-        // Pass borders to callback
-        e.nativeEvent.layout.width += 2 * UI_SIZES.elements.actionButtonBorder;
-        if (onLayout) onLayout(e);
+        if (newWidth !== buttonWidth) {
+          setButtonWidth(newWidth);
+          if (onLayout) onLayout(e);
+        }
       }}
       style={[commonViewStyle, viewStyle[type ?? 'primary'], style]}
       {...(!disabled
