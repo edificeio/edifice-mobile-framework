@@ -23,9 +23,6 @@ export const getScaleDimension = (dimension: number, type: 'height' | 'width' | 
   );
 
 export const UI_ANIMATIONS = {
-  toast: {
-    duration: 3000,
-  },
   fade: {
     duration: 300,
     useNativeDriver: false,
@@ -33,6 +30,9 @@ export const UI_ANIMATIONS = {
   size: {
     duration: 300,
     useNativeDriver: false,
+  },
+  toast: {
+    duration: 3000,
   },
 };
 
@@ -65,7 +65,7 @@ export const UI_SIZES = {
   },
   elements: {
     actionButtonBorder: 2,
-    logoSize: { height: 64, width: 300 },
+    logoSize: { height: getScaleDimension(64, 'height'), width: getScaleDimension(300, 'width') },
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
@@ -121,10 +121,6 @@ export const UI_SIZES = {
   },
 };
 
-export const UI_VALUES = {
-  modalOpacity: 0.4,
-};
-
 export const UI_STYLES = StyleSheet.create({
   row: { flexDirection: 'row' },
   rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
@@ -133,3 +129,7 @@ export const UI_STYLES = StyleSheet.create({
   flexShrink1: { flexShrink: 1 },
   justifyEnd: { justifyContent: 'flex-end' },
 });
+
+export const UI_VALUES = {
+  modalOpacity: 0.4,
+};
