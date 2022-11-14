@@ -155,7 +155,7 @@ const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
     formId: data.form_id,
     title: data.title,
     position: data.position,
-    questionType: data.question_type,
+    type: data.question_type,
     statement: data.statement,
     mandatory: data.mandatory,
     sectionId: data.section_id,

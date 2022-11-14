@@ -32,6 +32,7 @@ import {
   IQuestion,
   IQuestionResponse,
   ISection,
+  QuestionType,
   formatElement,
   formatSummary,
   getIsElementSection,
@@ -73,7 +74,6 @@ interface IFormDistributionScreen_DataProps {
   elements: IFormElement[];
   elementsCount: number;
   initialLoadingState: AsyncPagedLoadingState;
-  isFetching: boolean;
   session: IUserSession;
 }
 
@@ -197,7 +197,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     for (const question of questions) {
       const res = responses.filter(r => r.questionId === question.id);
       // Delete responses of multiple answer questions
-      if (question.questionType === 5) {
+      if (question.type === QuestionType.MULTIPLEANSWER) {
         formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
         res.map(r => (r.id = undefined));
       }
@@ -321,7 +321,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     }
     const questionResponses = responses.filter(response => response.questionId === item.id);
     item = item as IQuestion;
-    const FormQuestionCard = getQuestionCard(item.questionType);
+    const FormQuestionCard = getQuestionCard(item.type);
     const onEditQuestion =
       isPositionAtSummary && (status !== DistributionStatus.FINISHED || editable)
         ? () => setPositionToQuestion(item as IQuestion)
@@ -412,7 +412,6 @@ export default connect(
       elements: state.formContent.data.elements,
       elementsCount: state.formContent.data.elementsCount,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
-      isFetching: state.formContent.isFetching,
       session: getUserSession(),
     };
   },

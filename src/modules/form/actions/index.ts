@@ -72,7 +72,7 @@ export const fetchFormContentAction =
       };
       await Promise.all(
         formContent.elements.map(async element => {
-          if (!('questionType' in element)) {
+          if (!('type' in element)) {
             element.questions = await formService.section.getQuestions(session, element.id);
           }
           return element;
@@ -80,7 +80,7 @@ export const fetchFormContentAction =
       );
       await Promise.all(
         formContent.elements.map(async element => {
-          if (!('questionType' in element)) {
+          if (!('type' in element)) {
             const questionIds = element.questions.map(question => question.id);
             const choices = await formService.questions.getAllChoices(session, questionIds);
             element.questions.map(question => {

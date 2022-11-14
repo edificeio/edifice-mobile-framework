@@ -15,6 +15,19 @@ export enum DistributionStatus {
   TODO = 'TO_DO',
 }
 
+export enum QuestionType {
+  FREETEXT = 1,
+  SHORTANSWER = 2,
+  LONGANSWER = 3,
+  SINGLEANSWER = 4,
+  MULTIPLEANSWER = 5,
+  DATE = 6,
+  TIME = 7,
+  FILE = 8,
+  SINGLEANSWERRADIO = 9,
+  SLIDER = 11,
+}
+
 export interface IDistribution {
   id: number;
   formId: number;
@@ -61,7 +74,7 @@ export interface IQuestion {
   formId: number;
   title: string;
   position?: number;
-  questionType: number;
+  type: QuestionType;
   statement?: string;
   mandatory: boolean;
   sectionId: number;
@@ -141,7 +154,7 @@ export default combineReducers({
 // Getters
 
 export const getIsElementSection = (element: IFormElement) => {
-  return !('questionType' in element);
+  return !('type' in element);
 };
 
 export const formatElement = (element: IFormElement): IFormElement[] => {

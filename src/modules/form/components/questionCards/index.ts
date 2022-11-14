@@ -1,3 +1,5 @@
+import { QuestionType } from '~/modules/form/reducer';
+
 import { FormDateCard } from './FormDateCard';
 import { FormFileCard } from './FormFileCard';
 import { FormFreeTextCard } from './FormFreeTextCard';
@@ -9,27 +11,27 @@ import { FormSingleAnswerRadioCard } from './FormSingleAnswerRadioCard';
 import { FormSliderCard } from './FormSliderCard';
 import { FormTimeCard } from './FormTimeCard';
 
-export const getQuestionCard = (questionType: number) => {
+export const getQuestionCard = (questionType: QuestionType) => {
   switch (questionType) {
-    case 1:
+    case QuestionType.FREETEXT:
       return FormFreeTextCard;
-    case 2:
+    case QuestionType.SHORTANSWER:
       return FormShortAnswerCard;
-    case 3:
+    case QuestionType.LONGANSWER:
       return FormLongAnswerCard;
-    case 4:
+    case QuestionType.SINGLEANSWER:
       return FormSingleAnswerCard;
-    case 5:
+    case QuestionType.MULTIPLEANSWER:
       return FormMultipleAnswerCard;
-    case 6:
+    case QuestionType.DATE:
       return FormDateCard;
-    case 7:
+    case QuestionType.TIME:
       return FormTimeCard;
-    case 8:
+    case QuestionType.FILE:
       return FormFileCard;
-    case 9:
+    case QuestionType.SINGLEANSWERRADIO:
       return FormSingleAnswerRadioCard;
-    case 11:
+    case QuestionType.SLIDER:
       return FormSliderCard;
     default:
       return FormFreeTextCard;
