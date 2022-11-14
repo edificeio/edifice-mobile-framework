@@ -172,9 +172,23 @@ export default (props: HomeworkListProps) => {
   const DatePickers = React.memo(({ startDate, endDate }) => (
     <View style={styles.grid}>
       <SmallText>{I18n.t('viesco-from')}</SmallText>
-      <DateTimePicker mode="date" style={styles.datePicker} value={startDate} maximumDate={endDate} onChange={setStartDate} />
+      <DateTimePicker
+        mode="date"
+        style={styles.datePicker}
+        value={startDate}
+        maximumDate={endDate}
+        onChange={setStartDate}
+        color={viescoTheme.palette.diary}
+      />
       <SmallText>{I18n.t('viesco-to')}</SmallText>
-      <DateTimePicker mode="date" style={styles.datePicker} value={endDate} minimumDate={startDate} onChange={setEndDate} />
+      <DateTimePicker
+        mode="date"
+        style={styles.datePicker}
+        value={endDate}
+        minimumDate={startDate}
+        onChange={setEndDate}
+        color={viescoTheme.palette.diary}
+      />
     </View>
   ));
 

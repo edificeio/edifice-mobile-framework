@@ -1,28 +1,36 @@
 import { Picker } from '@react-native-picker/picker';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { useState } from 'react';
-import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallBoldText } from '~/framework/components/text';
+import { Picture } from '~/framework/components/picture';
+import { SmallText } from '~/framework/components/text';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
-import { Icon } from '~/ui/icons/Icon';
 
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
 
-/* STYLE */
-
 const styles = StyleSheet.create({
-  fullView: {
-    flex: 1,
+  container: {
+    borderRadius: UI_SIZES.radius.medium,
+    borderColor: theme.palette.primary.regular,
+    borderWidth: 1,
+    minHeight: 50,
+    backgroundColor: theme.ui.background.card,
   },
-  dropdownButton: {
-    padding: UI_SIZES.spacing.small,
+  androidPickerColor: {
+    color: theme.ui.text.light,
+  },
+  rowContainer: {
+    paddingVertical: UI_SIZES.spacing.tiny,
+    paddingHorizontal: UI_SIZES.spacing.small,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  valueText: {
+    color: theme.ui.text.light,
   },
   modalContent: {
     width: 350,
@@ -34,105 +42,105 @@ const styles = StyleSheet.create({
   },
 });
 
-/* COMPONENT */
 interface IDropdownProps {
-  keyId?: string;
-  style?: ViewStyle;
-  value?: string;
   data: any[];
-  onSelect: (item: string) => void;
-  renderItem?: (item: any) => string;
-  keyExtractor?: (item: any) => string;
+  keyId?: string;
   placeholder?: string;
+  showPlaceholderItem?: boolean;
+  style?: ViewStyle;
   title?: string;
+  value?: string;
+  onSelect: (item: string) => void;
+  keyExtractor?: (item: any) => string;
+  renderItem?: (item: any) => string;
 }
 
-const selectedStyle = {
-  borderRadius: 5,
-  borderColor: theme.palette.grey.stone,
-  borderWidth: 2,
-  borderStyle: 'solid',
-  backgroundColor: theme.ui.background.card,
-} as ViewStyle;
-
-const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {
-  const getItemRenderer = renderItem ? renderItem : item => item.toString();
-  const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
-
+const DropdownAndroid = ({
+  data,
+  placeholder,
+  showPlaceholderItem,
+  style,
+  title,
+  value,
+  onSelect,
+  keyExtractor = item => item.toString(),
+  renderItem = item => item.toString(),
+}: IDropdownProps) => {
   return (
-    <View style={[selectedStyle, styles.fullView, style]}>
+    <View style={[styles.container, style]}>
       <Picker
-        style={{
-          color: theme.ui.text.regular,
-        }}
-        prompt={title}
         selectedValue={value}
-        onValueChange={(key, value) => onSelect(key as string)}>
+        onValueChange={(itemValue, itemIndex) => onSelect(itemValue)}
+        prompt={title}
+        style={styles.androidPickerColor}>
+        {showPlaceholderItem ? <Picker.Item label={placeholder} /> : null}
         {data.map(item => (
-          <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
+          <Picker.Item label={renderItem(item)} value={keyExtractor(item)} />
         ))}
       </Picker>
     </View>
   );
 };
 
-const DropdownIOS = ({ keyId, title, renderItem, keyExtractor, style, data, placeholder, value, onSelect }: IDropdownProps) => {
-  const getItemRenderer = renderItem ? renderItem : item => item.toString();
-  const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
+const DropdownIOS = ({
+  data,
+  keyId,
+  placeholder,
+  style,
+  title,
+  value,
+  onSelect,
+  keyExtractor = item => item.toString(),
+  renderItem = item => item.toString(),
+}: IDropdownProps) => {
+  const [isModalVisible, setModalVisible] = React.useState(false);
+  const [tempValue, setTempValue] = React.useState(value);
+  const selectedValue = data.find(item => keyExtractor(item) === value);
 
-  const [visible, toggleModal] = useState(false);
-  const [selected, selectValue] = useState(value);
-  if (value !== selected && !visible && keyId === 'competences.periods') {
-    selectValue(value);
+  if (value !== tempValue && !isModalVisible && keyId === 'competences.periods') {
+    setTempValue(value);
   }
 
   return (
-    <View style={styles.fullView}>
-      <TouchableWithoutFeedback style={[selectedStyle, styles.dropdownButton, style]} onPress={() => toggleModal(true)}>
-        <SmallBoldText style={styles.fullView} numberOfLines={1}>
-          {placeholder ? placeholder : value ? getItemRenderer(data.find(item => getItemKeyExtractor(item) === value)) : ' '}
-        </SmallBoldText>
-        <Icon size={20} name="arrow_down" />
-      </TouchableWithoutFeedback>
-      <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
+    <>
+      <TouchableOpacity style={[styles.container, styles.rowContainer, style]} onPress={() => setModalVisible(true)}>
+        <SmallText style={styles.valueText} numberOfLines={1}>
+          {selectedValue ? renderItem(selectedValue) : placeholder}
+        </SmallText>
+        <Picture type="NamedSvg" name="ui-rafterDown" width={20} height={20} fill={theme.ui.text.light} />
+      </TouchableOpacity>
+      <ModalBox isVisible={isModalVisible} onDismiss={() => setModalVisible(false)}>
         <ModalContent style={styles.modalContent}>
-          {!!title && (
+          {title ? (
             <ModalContentBlock>
               <ModalContentText>{title}</ModalContentText>
             </ModalContentBlock>
-          )}
+          ) : null}
           <View style={styles.dropdownPicker}>
-            <Picker selectedValue={selected} onValueChange={(value, label) => selectValue(value as string)}>
+            <Picker selectedValue={tempValue} onValueChange={(itemValue, itemIndex) => setTempValue(itemValue)}>
               {data.map(item => (
-                <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
+                <Picker.Item label={renderItem(item)} value={keyExtractor(item)} />
               ))}
             </Picker>
           </View>
           <ModalContentBlock>
             <ButtonsOkCancel
               onCancel={() => {
-                toggleModal(false);
+                setModalVisible(false);
               }}
               onValid={() => {
-                toggleModal(false);
-                onSelect(selected!);
+                setModalVisible(false);
+                onSelect(tempValue!);
               }}
               title={I18n.t('common-ok')}
             />
           </ModalContentBlock>
         </ModalContent>
       </ModalBox>
-    </View>
+    </>
   );
 };
 
 export default (props: IDropdownProps) => {
-  switch (Platform.OS) {
-    case 'ios': {
-      return <DropdownIOS {...props} />;
-    }
-    default: {
-      return <DropdownAndroid {...props} />;
-    }
-  }
+  return Platform.OS === 'ios' ? <DropdownIOS {...props} /> : <DropdownAndroid {...props} />;
 };
