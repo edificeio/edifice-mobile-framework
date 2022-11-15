@@ -21,6 +21,7 @@ import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import { CaptionText, SmallActionText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { formatSource } from '~/framework/util/media';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
@@ -32,7 +33,6 @@ import { UserCard } from '~/user/components/UserCard';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
-import { formatSource } from '~/framework/util/media';
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -226,15 +226,19 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           </SmallText>
         </ContainerTextInput>
       ) : (
-        <ContainerView style={{ justifyContent: 'space-between' }}>
-          <SmallText style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</SmallText>
+        <ContainerView style={{ flex: 1, justifyContent: 'space-between' }}>
+          <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
+            {getter()}
+          </SmallText>
           {modifyAction ? <SmallActionText>{I18n.t('common.modify')}</SmallActionText> : null}
         </ContainerView>
       );
     } else {
       box = (
-        <ContainerView style={{ justifyContent: 'space-between' }}>
-          <SmallText style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</SmallText>
+        <ContainerView style={{ flex: 1, justifyContent: 'space-between' }}>
+          <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
+            {getter()}
+          </SmallText>
           {modifyAction ? (
             <TouchableOpacity onPress={() => modifyAction()}>
               <SmallActionText>{I18n.t('common.modify')}</SmallActionText>
