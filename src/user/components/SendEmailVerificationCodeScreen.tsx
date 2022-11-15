@@ -15,7 +15,7 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 const imageWidth = getScaleDimension(150, 'width');
 const imageHeight = getScaleDimension(150, 'height');
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: UI_SIZES.spacing.big },
+  container: { paddingHorizontal: UI_SIZES.spacing.medium },
   imageContainer: { paddingTop: UI_SIZES.spacing.medium },
   imageSubContainer: { height: imageHeight, alignItems: 'center' },
   title: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },

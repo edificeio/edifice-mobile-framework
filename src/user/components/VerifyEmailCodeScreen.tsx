@@ -18,14 +18,14 @@ import { CodeState, ResendResponse } from '../containers/VerifyEmailCodeScreen';
 const imageWidth = getScaleDimension(150, 'width');
 const imageHeight = getScaleDimension(150, 'height');
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: UI_SIZES.spacing.big },
+  container: { flex: 1, paddingHorizontal: UI_SIZES.spacing.medium },
   contentContainer: { flex: 1 },
   imageContainer: { paddingTop: UI_SIZES.spacing.medium },
   imageSubContainer: { height: imageHeight, alignItems: 'center' },
   title: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
   contentEmail: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
   content: { textAlign: 'center' },
-  codeFieldContainer: { marginTop: UI_SIZES.spacing.large },
+  codeFieldContainer: { marginTop: UI_SIZES.spacing.large, paddingHorizontal: UI_SIZES.spacing.medium },
   codeFieldCell: {
     width: 45,
     height: 58,
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     marginTop: UI_SIZES.spacing.small,
+    marginBottom: UI_SIZES.spacing.big,
   },
   resendText: { marginLeft: UI_SIZES.spacing.minor },
 });
@@ -216,7 +217,7 @@ export const VerifyEmailCodeScreen = ({
               <View style={[styles.codeStateIconContainer, { borderColor: codeStateColor }]}>
                 <Icon size={16} name={isCodeCorrect ? 'checked' : 'close'} color={codeStateColor} />
               </View>
-              <BodyText style={[styles.codeStateText, { color: codeStateColor }]}>
+              <BodyText numberOfLines={2} style={[styles.codeStateText, { color: codeStateColor }]}>
                 {I18n.t(`user.verifyEmailCodeScreen.${codeState}`)}
               </BodyText>
             </>
