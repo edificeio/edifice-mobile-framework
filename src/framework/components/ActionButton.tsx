@@ -85,10 +85,8 @@ export const ActionButton = ({
       onLayout={e => {
         if (!buttonWidth) e.nativeEvent.layout.width += 2 * UI_SIZES.elements.actionButtonBorder;
         const newWidth = e.nativeEvent.layout.width;
-        if (newWidth !== buttonWidth) {
-          setButtonWidth(newWidth);
-          if (onLayout) onLayout(e);
-        }
+        if (newWidth !== buttonWidth) setButtonWidth(newWidth);
+        if (onLayout) onLayout(e);
       }}
       style={[commonViewStyle, viewStyle[type ?? 'primary'], style]}
       {...(!disabled
