@@ -8,7 +8,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture';
+import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 
@@ -88,7 +88,13 @@ export const SendEmailVerificationCodeScreen = ({
       </HeadingSText>
       <SmallText style={styles.content}>{I18n.t(`user.sendEmailVerificationCodeScreen.mustVerify${modifyString}`)}</SmallText>
       <View style={styles.inputTitleContainer}>
-        <Icon name="messagerie-off" size={22} color={theme.palette.grey.black} />
+        <Picture
+          type="NamedSvg"
+          name="pictos-mail"
+          fill={theme.palette.grey.black}
+          width={UI_SIZES.dimensions.width.mediumPlus}
+          height={UI_SIZES.dimensions.height.mediumPlus}
+        />
         <SmallBoldText style={styles.inputTitle}>
           {I18n.t(`user.sendEmailVerificationCodeScreen.emailAddress${modifyString}`)}
         </SmallBoldText>

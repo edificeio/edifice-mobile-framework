@@ -9,7 +9,7 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES, getScaleDimension } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture';
+import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 
@@ -40,14 +40,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   feedbackContainer: { alignItems: 'center', marginTop: UI_SIZES.spacing.medium },
-  codeStateIconContainer: {
-    width: 33,
-    height: 33,
-    borderRadius: 16.5,
-    borderWidth: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   codeStateText: { textAlign: 'center', marginTop: UI_SIZES.spacing.small },
   resendContainer: { justifyContent: 'flex-end' },
   issueText: { textAlign: 'center' },
@@ -214,10 +206,14 @@ export const VerifyEmailCodeScreen = ({
             <ActivityIndicator size="large" color={theme.palette.primary.regular} />
           ) : isCodeStateDisplayed ? (
             <>
-              <View style={[styles.codeStateIconContainer, { borderColor: codeStateColor }]}>
-                <Icon size={16} name={isCodeCorrect ? 'checked' : 'close'} color={codeStateColor} />
-              </View>
-              <BodyText numberOfLines={2} style={[styles.codeStateText, { color: codeStateColor }]}>
+              <Picture
+                type="NamedSvg"
+                name={`pictos-${isCodeCorrect ? 'success-outline' : 'error'}`}
+                fill={codeStateColor}
+                width={33}
+                height={33}
+              />
+              <BodyText style={[styles.codeStateText, { color: codeStateColor }]}>
                 {I18n.t(`user.verifyEmailCodeScreen.${codeState}`)}
               </BodyText>
             </>
@@ -230,7 +226,13 @@ export const VerifyEmailCodeScreen = ({
           style={[styles.resendButton, { opacity: isResendInactive ? 0.5 : 1 }]}
           disabled={isResendInactive}
           onPress={() => resendCode()}>
-          <Icon name="refresh" size={22} color={theme.palette.grey.black} />
+          <Picture
+            type="NamedSvg"
+            name="pictos-redo"
+            fill={theme.palette.grey.black}
+            width={UI_SIZES.dimensions.width.medium}
+            height={UI_SIZES.dimensions.height.medium}
+          />
           <BodyBoldText style={styles.resendText}>{I18n.t('user.verifyEmailCodeScreen.resendCode')}</BodyBoldText>
         </TouchableOpacity>
       </View>
