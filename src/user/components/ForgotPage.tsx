@@ -175,9 +175,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           marginTop: UI_SIZES.spacing.medium,
                           padding: UI_SIZES.spacing.tiny,
                           textAlign: 'center',
-                          height: 38,
                         }}>
-                        {editing ? '' : isSuccess && I18n.t('forgot-success')}
+                        {editing ? '' : isSuccess && I18n.t(`forgot-success-${forgotId ? 'id' : 'password'}`)}
                       </SmallText>
                     ) : null}
                     {forgotId && hasStructures && !isSuccess ? (
