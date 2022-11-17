@@ -16,8 +16,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 
 export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAction: () => void; acceptAction: () => void }) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const imageWidth = getScaleDimension(200, 'width');
-  const imageHeight = getScaleDimension(200, 'height');
+  const imageSize = getScaleDimension(200, 'width');
   const platform = DEPRECATED_getCurrentPlatform()!.url;
   const path = I18n.t('common.url.cgu');
   const eulaUrl = `${platform}${path}`;
@@ -28,7 +27,7 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
         paddingTop: UI_SIZES.spacing.huge,
         paddingHorizontal: UI_SIZES.spacing.medium,
       }}>
-      <NamedSVG style={{ alignSelf: 'center' }} name={'empty-eula'} width={imageWidth} height={imageHeight} />
+      <NamedSVG style={{ alignSelf: 'center' }} name={'empty-eula'} width={imageSize} height={imageSize} />
       <HeadingSText
         numberOfLines={2}
         style={{
