@@ -107,11 +107,7 @@ export const ActionButton = ({
           }
         : {})}>
       {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={textStyle[type ?? 'primary'].color}
-          style={{ height: TextSizeStyle.Normal.lineHeight }}
-        />
+        <ActivityIndicator color={textStyle[type ?? 'primary'].color} style={{ height: TextSizeStyle.Normal.lineHeight }} />
       ) : (
         <>
           <SmallBoldText numberOfLines={1} style={textStyle[type ?? 'primary']}>
