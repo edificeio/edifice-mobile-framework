@@ -1,6 +1,6 @@
 {
-  "last": "2022-11-14 22:47:35",
-  "notes": "",
-  "version": "1.9.0-alpha.6(1090006)",
+  "last": "2022-11-17 20:17:07",
+  "notes": "fix: MB-913, svg proportions to respect 1:1 ratio\nchore: removed unused translations\nfeat(user): MB-813, forgot page success feedback\nchore: action button small spinner\nchore(upgrade): Upgrade packages.\nfix: MB-913, svg proportions\nfix(2fa): MB-948, icon enhancements\nfix(2fa): MB-948, design enhancements\nfix(2fa): MB-949, non-breaking hyphen in error message\nchore(build): Fix empty release notes\nfix(user): MB-874, elipsis in profile fields\nfix(ui): Fix potential onLayout forwarding leak\nrelease: 1.9.0-alpha.6(1090006)",
+  "version": "1.9.0-alpha.7(1090007)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
