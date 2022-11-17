@@ -34,7 +34,8 @@ export const EmptyScreen = ({
   buttonIcon?: string;
   customStyle?: ViewStyle;
 }) => {
-  const imageSize = getScaleDimension(280, 'width');
+  const imageWidth = getScaleDimension(280, 'width');
+  const imageHeight = getScaleDimension(200, 'height');
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageViewStyle
@@ -45,7 +46,7 @@ export const EmptyScreen = ({
         },
         customStyle,
       ]}>
-      <NamedSVG style={{ alignSelf: 'center' }} name={svgImage} width={imageSize} height={imageSize} />
+      <NamedSVG style={{ alignSelf: 'center' }} name={svgImage} width={imageWidth} height={imageHeight} />
       <HeadingSText
         numberOfLines={2}
         style={{
