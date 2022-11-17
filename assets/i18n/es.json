@@ -380,7 +380,6 @@
   "forgot-several-emails": "Varios usuarios utilizan esta dirección de correo electrónico. Aporte información determinada para poder recibir su inicio de sesión.",
   "forgot-several-emails-no-match": "La información aportada no corresponde a la dirección de correo electrónico proporcionada.",
   "forgot-submit": "Enviar",
-  "forgot-success": "Correo electrónico enviado",
   "form.answerAgain": "Responde de nuevo",
   "form.answeredOnDate": "Respondido el {{date}}",
   "form.answersNb": "Respuestas : {{nb}}",

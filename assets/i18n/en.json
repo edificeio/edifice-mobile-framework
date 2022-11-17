@@ -380,7 +380,6 @@
   "forgot-several-emails": "This email address is being used by several users. Please confirm your information to receive your login.",
   "forgot-several-emails-no-match": "This information does not match the email address that was provided.",
   "forgot-submit": "Send",
-  "forgot-success": "Email sent",
   "form.answerAgain": "Answer again",
   "form.answeredOnDate": "Answered on {{date}}",
   "form.answersNb": "Answers : {{nb}}",
