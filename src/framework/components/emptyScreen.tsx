@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
 import { ActionButton } from './ActionButton';
-import { UI_SIZES } from './constants';
+import { UI_SIZES, getScaleDimension } from './constants';
 import { PageViewStyle } from './page';
 import { HeadingSText, SmallText } from './text';
 
@@ -34,8 +34,8 @@ export const EmptyScreen = ({
   buttonIcon?: string;
   customStyle?: ViewStyle;
 }) => {
-  const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.big;
-  const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
+  const imageWidth = getScaleDimension(280, 'width');
+  const imageHeight = getScaleDimension(200, 'height');
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageViewStyle
@@ -46,11 +46,7 @@ export const EmptyScreen = ({
         },
         customStyle,
       ]}>
-      <View style={{ paddingHorizontal: UI_SIZES.spacing.big }}>
-        <View style={{ height: imageHeight }}>
-          <NamedSVG name={svgImage} width={imageWidth} height={imageHeight} />
-        </View>
-      </View>
+      <NamedSVG style={{ alignSelf: 'center' }} name={svgImage} width={imageWidth} height={imageHeight} />
       <HeadingSText
         numberOfLines={2}
         style={{
@@ -72,7 +68,7 @@ export const EmptyScreen = ({
       ) : null}
       {hasButton ? (
         <View style={{ marginTop: UI_SIZES.spacing.large }}>
-          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} iconName={buttonIcon}/>
+          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} iconName={buttonIcon} />
         </View>
       ) : null}
     </PageViewStyle>

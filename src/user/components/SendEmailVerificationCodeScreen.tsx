@@ -16,8 +16,7 @@ const imageWidth = getScaleDimension(150, 'width');
 const imageHeight = getScaleDimension(150, 'height');
 const styles = StyleSheet.create({
   container: { paddingHorizontal: UI_SIZES.spacing.medium },
-  imageContainer: { paddingTop: UI_SIZES.spacing.medium },
-  imageSubContainer: { height: imageHeight, alignItems: 'center' },
+  imageContainer: { paddingTop: UI_SIZES.spacing.medium, alignSelf: 'center' },
   title: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
   content: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
   inputTitleContainer: { alignItems: 'center', marginTop: UI_SIZES.spacing.big, flexDirection: 'row' },
@@ -79,9 +78,7 @@ export const SendEmailVerificationCodeScreen = ({
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <View style={styles.imageSubContainer}>
-          <NamedSVG name="empty-email" width={imageWidth} height={imageHeight} />
-        </View>
+        <NamedSVG name="empty-email" width={imageWidth} height={imageHeight} />
       </View>
       <HeadingSText style={styles.title}>
         {I18n.t(`user.sendEmailVerificationCodeScreen.emailVerification${modifyString}`)}
