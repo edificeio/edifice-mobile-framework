@@ -4,6 +4,7 @@ import { FormDateCard } from './FormDateCard';
 import { FormFileCard } from './FormFileCard';
 import { FormFreeTextCard } from './FormFreeTextCard';
 import { FormLongAnswerCard } from './FormLongAnswerCard';
+import { FormMatrixCard } from './FormMatrixCard';
 import { FormMultipleAnswerCard } from './FormMultipleAnswerCard';
 import { FormShortAnswerCard } from './FormShortAnswerCard';
 import { FormSingleAnswerCard } from './FormSingleAnswerCard';
@@ -13,6 +14,7 @@ import { FormTimeCard } from './FormTimeCard';
 
 export const getQuestionCard = (questionType: QuestionType) => {
   switch (questionType) {
+    default:
     case QuestionType.FREETEXT:
       return FormFreeTextCard;
     case QuestionType.SHORTANSWER:
@@ -31,9 +33,9 @@ export const getQuestionCard = (questionType: QuestionType) => {
       return FormFileCard;
     case QuestionType.SINGLEANSWERRADIO:
       return FormSingleAnswerRadioCard;
+    case QuestionType.MATRIX:
+      return FormMatrixCard;
     case QuestionType.SLIDER:
       return FormSliderCard;
-    default:
-      return FormFreeTextCard;
   }
 };

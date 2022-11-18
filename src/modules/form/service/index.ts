@@ -161,6 +161,8 @@ const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
     sectionId: data.section_id,
     conditional: data.conditional,
     placeholder: data.placeholder,
+    matrixId: data.matrix_id,
+    matrixPosition: data.matrix_position,
     cursorMinVal: data.cursor_min_val,
     cursorMaxVal: data.cursor_max_val,
     cursorStep: data.cursor_step,
@@ -277,6 +279,12 @@ export const formService = {
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const choices = (await fetchJSONWithCache(api)) as IBackendQuestionChoiceList;
       return choices.map(choice => questionChoiceAdapter(choice)) as IQuestionChoice[];
+    },
+    getChildren: async (session: IUserSession, questionIds: number[]) => {
+      let api = `/formulaire/questions/children?`;
+      questionIds.forEach((value, index) => (api += `${index}=${value}&`));
+      const children = (await fetchJSONWithCache(api)) as IBackendQuestionList;
+      return children.map(child => questionAdapter(child)) as IQuestion[];
     },
   },
   question: {

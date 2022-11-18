@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Card } from '~/framework/components/card';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText, NestedBoldText } from '~/framework/components/text';
 import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
 import { ArticleContainer } from '~/ui/ContainerContent';
@@ -13,11 +13,14 @@ const styles = StyleSheet.create({
   mandatoryText: {
     color: theme.palette.complementary.red.regular,
   },
-  childrenContainer: {
+  lowerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     marginTop: UI_SIZES.spacing.small,
+  },
+  childrenContainer: {
+    flex: 1,
   },
 });
 
@@ -39,8 +42,8 @@ export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps
             {title}
             {isMandatory ? <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText> : null}
           </BodyBoldText>
-          <View style={styles.childrenContainer}>
-            <View style={UI_STYLES.flex1}>{children}</View>
+          <View style={styles.lowerContainer}>
+            <View style={styles.childrenContainer}>{children}</View>
             {onEditQuestion ? <ButtonTextIcon title={I18n.t('common.modify')} onPress={() => onEditQuestion()} /> : null}
           </View>
         </Card>

@@ -25,6 +25,7 @@ export enum QuestionType {
   TIME = 7,
   FILE = 8,
   SINGLEANSWERRADIO = 9,
+  MATRIX = 10,
   SLIDER = 11,
 }
 
@@ -80,12 +81,15 @@ export interface IQuestion {
   sectionId: number;
   conditional: boolean;
   placeholder?: string;
+  matrixId?: number;
+  matrixPosition?: number;
   cursorMinVal?: number;
   cursorMaxVal?: number;
   cursorStep?: number;
   cursorLabelMinVal?: string;
   cursorLabelMaxVal?: string;
   choices: IQuestionChoice[];
+  children?: IQuestion[];
 }
 
 export interface IResponseFile {
@@ -164,17 +168,24 @@ export const formatElement = (element: IFormElement): IFormElement[] => {
   return [element];
 };
 
+const getIsQuestionAnswered = (question: IQuestion, responses: IQuestionResponse[]): boolean => {
+  if (question.type === QuestionType.MATRIX) {
+    const questionIds = question.children?.map(q => q.id);
+    return responses.some(r => questionIds?.includes(r.questionId));
+  }
+  return responses.some(r => r.questionId === question.id);
+};
+
 export const formatSummary = (elements: IFormElement[], responses: IQuestionResponse[]): IFormElement[] => {
   const formatted: IFormElement[] = [];
   for (const element of elements) {
-    const isSection = getIsElementSection(element);
-    if (isSection) {
-      const questions = (element as ISection).questions.filter(q => responses.some(r => r.questionId === q.id));
+    if (!('type' in element)) {
+      const questions = element.questions.filter(q => getIsQuestionAnswered(q, responses));
       if (questions.length) {
         formatted.push(element);
       }
       formatted.push(...questions);
-    } else if (!isSection && responses.some(r => r.questionId === element.id)) {
+    } else if ('type' in element && getIsQuestionAnswered(element, responses)) {
       formatted.push(element);
     }
   }
@@ -182,10 +193,11 @@ export const formatSummary = (elements: IFormElement[], responses: IQuestionResp
 };
 
 export const getIsMandatoryAnswerMissing = (elements: IFormElement[], responses: IQuestionResponse[]): boolean => {
-  const questions = elements.filter(element => !getIsElementSection(element)) as IQuestion[];
+  const questions = elements.filter(element => 'type' in element && element.mandatory) as IQuestion[];
   for (const question of questions) {
-    if (question.mandatory) {
-      const questionResponses = responses.filter(r => r.questionId === question.id);
+    const questionIds = question.type === QuestionType.MATRIX ? question.children!.map(q => q.id) : [question.id];
+    for (const id of questionIds) {
+      const questionResponses = responses.filter(r => r.questionId === id);
       if (!questionResponses.length || questionResponses.some(r => !r.answer)) return true;
     }
   }

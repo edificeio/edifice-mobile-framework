@@ -12,6 +12,7 @@ import {
   IFormElement,
   IQuestionResponse,
   IResponseFile,
+  QuestionType,
   actionTypes,
 } from '~/modules/form/reducer';
 import { formService } from '~/modules/form/service';
@@ -74,20 +75,19 @@ export const fetchFormContentAction =
         formContent.elements.map(async element => {
           if (!('type' in element)) {
             element.questions = await formService.section.getQuestions(session, element.id);
-          }
-          return element;
-        }),
-      );
-      await Promise.all(
-        formContent.elements.map(async element => {
-          if (!('type' in element)) {
             const questionIds = element.questions.map(question => question.id);
             const choices = await formService.questions.getAllChoices(session, questionIds);
-            element.questions.map(question => {
+            element.questions.map(async question => {
               question.choices = choices.filter(choice => choice.questionId === question.id);
+              if (question.type === QuestionType.MATRIX) {
+                question.children = await formService.questions.getChildren(session, [question.id]);
+              }
             });
           } else {
             element.choices = await formService.question.getChoices(session, element.id);
+            if (element.type === QuestionType.MATRIX) {
+              element.children = await formService.questions.getChildren(session, [element.id]);
+            }
           }
           return element;
         }),

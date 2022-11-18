@@ -31,7 +31,6 @@ import {
   IFormElement,
   IQuestion,
   IQuestionResponse,
-  ISection,
   QuestionType,
   formatElement,
   formatSummary,
@@ -195,10 +194,15 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     const session = getUserSession();
 
     for (const question of questions) {
-      const res = responses.filter(r => r.questionId === question.id);
-      // Delete responses of multiple answer questions
+      let res = responses.filter(r => r.questionId === question.id);
+      // Delete responses of multiple answer and matrix questions
       if (question.type === QuestionType.MULTIPLEANSWER) {
         formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
+        res.map(r => (r.id = undefined));
+      } else if (question.type === QuestionType.MATRIX) {
+        const questionIds = question.children?.map(q => q.id);
+        questionIds?.forEach(id => formService.distribution.deleteQuestionResponses(session, distributionId, id));
+        res = responses.filter(r => questionIds?.includes(r.questionId));
         res.map(r => (r.id = undefined));
       }
       res.map(response => {
@@ -220,9 +224,10 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       });
       // Add empty response to unanswered question
       if (!res.length) {
-        formService.question
-          .createResponse(session, question.id, distributionId, null, '')
-          .then(r => updateResponses(question.id, [r]));
+        const questionIds = question.type === QuestionType.MATRIX ? question.children?.map(q => q.id) : [question.id];
+        questionIds?.forEach(id => {
+          formService.question.createResponse(session, id, distributionId, null, '').then(r => updateResponses(id, [r]));
+        });
       }
     }
   };
@@ -315,12 +320,15 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   };
 
   const renderElement = (item: IFormElement) => {
-    if (getIsElementSection(item)) {
-      const { title, description } = item as ISection;
+    if (!('type' in item)) {
+      const { title, description } = item;
       return <FormSectionCard title={title} description={description} />;
     }
-    const questionResponses = responses.filter(response => response.questionId === item.id);
-    item = item as IQuestion;
+    let questionResponses = responses.filter(response => response.questionId === item.id);
+    if (item.type === QuestionType.MATRIX) {
+      const childIds = item.children?.map(child => child.id);
+      questionResponses = responses.filter(response => childIds?.includes(response.questionId));
+    }
     const FormQuestionCard = getQuestionCard(item.type);
     const onEditQuestion =
       isPositionAtSummary && (status !== DistributionStatus.FINISHED || editable)
