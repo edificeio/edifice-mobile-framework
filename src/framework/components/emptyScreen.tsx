@@ -34,8 +34,8 @@ export const EmptyScreen = ({
   buttonIcon?: string;
   customStyle?: ViewStyle;
 }) => {
-  const imageWidth = getScaleDimension(280, 'width');
-  const imageHeight = getScaleDimension(200, 'height');
+  const imageWidth = getScaleDimension(280, 'image');
+  const imageHeight = getScaleDimension(200, 'image');
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageViewStyle

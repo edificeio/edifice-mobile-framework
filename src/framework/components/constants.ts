@@ -8,7 +8,7 @@ const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 const SCALE_DIMENSION_MAX = 1.5;
 const SCALE_DIMENSION_MIN = 0.75;
 
-export const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
+export const getScaleDimension = (dimension: number, type: 'height' | 'font' | 'image' | 'width') =>
   Math.round(
     dimension *
       Math.max(

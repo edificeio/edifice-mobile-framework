@@ -12,8 +12,8 @@ import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 
-const imageWidth = getScaleDimension(150, 'width');
-const imageHeight = getScaleDimension(150, 'height');
+const imageSize = getScaleDimension(150, 'image');
+
 const styles = StyleSheet.create({
   container: { paddingHorizontal: UI_SIZES.spacing.medium },
   imageContainer: { paddingTop: UI_SIZES.spacing.medium, alignSelf: 'center' },
@@ -59,17 +59,20 @@ export const SendEmailVerificationCodeScreen = ({
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
   const isEmailStateAlreadyVerified = emailState === EmailState.EMAIL_ALREADY_VERIFIED;
   const modifyString = isModifyingEmail ? 'Modify' : '';
+
   const errorString = I18n.t(
     isEmailStatePristine
       ? 'common.space'
       : `user.sendEmailVerificationCodeScreen.invalidEmailFormat${isEmailStateAlreadyVerified ? 'Modify' : ''}`,
   );
+
   const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure;
 
   const changeEmail = (text: string) => {
     if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
     setEmail(text);
   };
+
   const sendEmail = async () => {
     const sendResponse = await sendAction(email);
     if (sendResponse) setEmailState(sendResponse);
@@ -78,7 +81,7 @@ export const SendEmailVerificationCodeScreen = ({
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <NamedSVG name="empty-email" width={imageWidth} height={imageHeight} />
+        <NamedSVG name="empty-email" width={imageSize} height={imageSize} />
       </View>
       <HeadingSText style={styles.title}>
         {I18n.t(`user.sendEmailVerificationCodeScreen.emailVerification${modifyString}`)}

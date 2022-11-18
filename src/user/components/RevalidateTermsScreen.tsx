@@ -16,7 +16,8 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 
 export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAction: () => void; acceptAction: () => void }) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-  const imageSize = getScaleDimension(200, 'width');
+
+  const imageSize = getScaleDimension(200, 'image');
   const platform = DEPRECATED_getCurrentPlatform()!.url;
   const path = I18n.t('common.url.cgu');
   const eulaUrl = `${platform}${path}`;

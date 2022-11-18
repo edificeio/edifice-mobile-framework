@@ -15,8 +15,7 @@ import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~
 
 import { CodeState, ResendResponse } from '../containers/VerifyEmailCodeScreen';
 
-const imageWidth = getScaleDimension(150, 'width');
-const imageHeight = getScaleDimension(150, 'height');
+const imageSize = getScaleDimension(150, 'image');
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: UI_SIZES.spacing.medium },
   contentContainer: { flex: 1 },
@@ -155,7 +154,7 @@ export const VerifyEmailCodeScreen = ({
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.imageContainer}>
-          <NamedSVG name="empty-email" width={imageWidth} height={imageHeight} />
+          <NamedSVG name="empty-email" width={imageSize} height={imageSize} />
         </View>
         <HeadingSText style={styles.title}>{I18n.t('user.verifyEmailCodeScreen.typeCode')}</HeadingSText>
         <SmallText style={styles.contentEmail}>{I18n.t('user.verifyEmailCodeScreen.sentTo') + ` ${email}.`}</SmallText>
