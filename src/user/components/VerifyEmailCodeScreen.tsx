@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
   content: { textAlign: 'center' },
   codeFieldContainer: { marginTop: UI_SIZES.spacing.large, paddingHorizontal: UI_SIZES.spacing.medium },
   codeFieldCell: {
-    width: 45,
-    height: 58,
-    lineHeight: 58,
-    textAlign: 'center',
+    width: getScaleDimension(45, 'width'),
+    height: getScaleDimension(58, 'height'),
+    lineHeight: getScaleDimension(58, 'height'),
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.dimensions.width.tiny,
+    textAlign: 'center',
   },
   codeFieldWrapper: {
     width: '100%',
