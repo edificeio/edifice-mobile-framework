@@ -10,6 +10,7 @@ import {
   IForm,
   IFormContent,
   IFormElement,
+  IQuestionChoice,
   IQuestionResponse,
   IResponseFile,
   QuestionType,
@@ -75,8 +76,11 @@ export const fetchFormContentAction =
         formContent.elements.map(async element => {
           if (!('type' in element)) {
             element.questions = await formService.section.getQuestions(session, element.id);
-            const questionIds = element.questions.map(question => question.id);
-            const choices = await formService.questions.getAllChoices(session, questionIds);
+            let choices: IQuestionChoice[] = [];
+            if (element.questions.length) {
+              const questionIds = element.questions.map(question => question.id);
+              choices = await formService.questions.getAllChoices(session, questionIds);
+            }
             element.questions.map(async question => {
               question.choices = choices.filter(choice => choice.questionId === question.id);
               if (question.type === QuestionType.MATRIX) {
