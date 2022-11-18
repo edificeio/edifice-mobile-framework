@@ -102,7 +102,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         : {
             navBar: navBarInfo,
           })}
-      onBack={() => displayConfirmationAlert()}>
+      onBack={isModifyingEmail ? () => displayConfirmationAlert() : undefined}>
       <SendEmailVerificationCodeScreen
         defaultEmail={defaultEmail}
         isModifyingEmail={isModifyingEmail}

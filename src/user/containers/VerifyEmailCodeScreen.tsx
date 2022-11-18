@@ -97,21 +97,17 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   };
 
   const displayConfirmationAlert = () =>
-    Alert.alert(
-      I18n.t('user.sendEmailVerificationCodeScreen.alertTitle'),
-      I18n.t('user.sendEmailVerificationCodeScreen.alertContent'),
-      [
-        {
-          text: I18n.t('common.discard'),
-          onPress: () => props.navigation.navigate('MyProfile'),
-          style: 'destructive',
-        },
-        {
-          text: I18n.t('common.continue'),
-          style: 'cancel',
-        },
-      ],
-    );
+    Alert.alert(I18n.t('user.verifyEmailCodeScreen.alertTitle'), I18n.t('user.verifyEmailCodeScreen.alertContent'), [
+      {
+        text: I18n.t('common.discard'),
+        onPress: () => props.navigation.navigate('MyProfile'),
+        style: 'destructive',
+      },
+      {
+        text: I18n.t('common.continue'),
+        style: 'cancel',
+      },
+    ]);
 
   // HEADER =====================================================================================
 
