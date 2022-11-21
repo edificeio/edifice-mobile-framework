@@ -226,7 +226,14 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       if (!res.length) {
         const questionIds = question.type === QuestionType.MATRIX ? question.children?.map(q => q.id) : [question.id];
         questionIds?.forEach(id => {
-          formService.question.createResponse(session, id, distributionId, null, '').then(r => updateResponses(id, [r]));
+          const response: IQuestionResponse = {
+            questionId: id,
+            answer: '',
+          };
+          formService.question.createResponse(session, response.questionId, distributionId, null, response.answer).then(r => {
+            response.id = r.id;
+            updateResponses(id, [response]);
+          });
         });
       }
     }
