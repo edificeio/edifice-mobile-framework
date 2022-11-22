@@ -109,7 +109,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
           style: 'cancel',
         },
       ]);
-    }
+    } else return true;
   };
 
   // HEADER =====================================================================================

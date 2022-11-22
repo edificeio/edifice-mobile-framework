@@ -81,7 +81,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           },
         ],
       );
-    }
+    } else return false;
   };
 
   // HEADER =====================================================================================
