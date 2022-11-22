@@ -159,7 +159,7 @@ export const VerifyEmailCodeScreen = ({
         <HeadingSText style={styles.title}>{I18n.t('user.verifyEmailCodeScreen.typeCode')}</HeadingSText>
         <SmallText style={styles.contentEmail}>{I18n.t('user.verifyEmailCodeScreen.sentTo') + ` ${email}.`}</SmallText>
         <SmallText style={styles.content}>{I18n.t('user.verifyEmailCodeScreen.mailArrival')}</SmallText>
-        <View style={styles.codeFieldContainer}>
+        <View pointerEvents="box-none" style={styles.codeFieldContainer}>
           <CodeField
             {...props}
             ref={codeFieldRef}
