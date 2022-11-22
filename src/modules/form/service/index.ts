@@ -217,6 +217,11 @@ export const formService = {
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
       return distributions.map(distribution => distributionAdapter(distribution)) as IDistribution[];
     },
+    getFromForm: async (session: IUserSession, formId: number) => {
+      const api = `/formulaire/distributions/forms/${formId}/list`;
+      const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
+      return distributions.map(distribution => distributionAdapter(distribution)) as IDistribution[];
+    },
   },
   distribution: {
     get: async (session: IUserSession, distributionId: number) => {
@@ -257,6 +262,11 @@ export const formService = {
     },
   },
   form: {
+    get: async (session: IUserSession, id: number) => {
+      const api = `/formulaire/forms/${id}`;
+      const form = (await fetchJSONWithCache(api)) as IBackendForm;
+      return formAdapter(form) as IForm;
+    },
     getElementsCount: async (session: IUserSession, formId: number) => {
       const api = `/formulaire/forms/${formId}/elements/count`;
       const data = (await fetchJSONWithCache(api)) as { count: number };

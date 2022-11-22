@@ -109,9 +109,9 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
     modalRef?.current?.doDismissModal();
     props.navigation.navigate(`${moduleConfig.routeName}/distribution`, {
       id,
-      title: form.title,
-      formId: form.id,
       status,
+      formId: form.id,
+      title: form.title,
       editable: form.editable,
     });
   };

@@ -393,7 +393,6 @@
   "form.myAnswersTitle": "Mis respuestas - {{title}}",
   "form.notAnswered": "No se ha contestado",
   "form.selectAnOption": "Seleccione una opción",
-  "form.selectedValue": "Valor seleccionado : {{value}}",
   "form.summary": "Resumen",
   "form.tabName": "Formulario",
   "homework-createActivity": "Agregar deberes",
