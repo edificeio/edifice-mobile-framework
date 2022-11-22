@@ -96,18 +96,21 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
     }
   };
 
-  const displayConfirmationAlert = () =>
-    Alert.alert(I18n.t('user.verifyEmailCodeScreen.alertTitle'), I18n.t('user.verifyEmailCodeScreen.alertContent'), [
-      {
-        text: I18n.t('common.discard'),
-        onPress: () => props.navigation.navigate('MyProfile'),
-        style: 'destructive',
-      },
-      {
-        text: I18n.t('common.continue'),
-        style: 'cancel',
-      },
-    ]);
+  const displayConfirmationAlert = () => {
+    if (isModifyingEmail) {
+      Alert.alert(I18n.t('user.verifyEmailCodeScreen.alertTitle'), I18n.t('user.verifyEmailCodeScreen.alertContent'), [
+        {
+          text: I18n.t('common.discard'),
+          onPress: () => props.navigation.navigate('MyProfile'),
+          style: 'destructive',
+        },
+        {
+          text: I18n.t('common.continue'),
+          style: 'cancel',
+        },
+      ]);
+    }
+  };
 
   // HEADER =====================================================================================
 
@@ -123,7 +126,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       scrollable
       navigation={props.navigation}
       navBarWithBack={navBarInfo}
-      onBack={isModifyingEmail ? () => displayConfirmationAlert() : undefined}>
+      onBack={() => displayConfirmationAlert()}>
       <VerifyEmailCodeScreen
         email={email}
         verifyAction={code => verifyEmailCode(code)}

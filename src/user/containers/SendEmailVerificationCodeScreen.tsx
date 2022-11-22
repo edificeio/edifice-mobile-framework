@@ -65,21 +65,23 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   };
 
   const displayConfirmationAlert = () => {
-    Alert.alert(
-      I18n.t('user.sendEmailVerificationCodeScreen.alertTitle'),
-      I18n.t('user.sendEmailVerificationCodeScreen.alertContent'),
-      [
-        {
-          text: I18n.t('common.discard'),
-          onPress: () => props.navigation.navigate('MyProfile'),
-          style: 'destructive',
-        },
-        {
-          text: I18n.t('common.continue'),
-          style: 'cancel',
-        },
-      ],
-    );
+    if (isModifyingEmail) {
+      Alert.alert(
+        I18n.t('user.sendEmailVerificationCodeScreen.alertTitle'),
+        I18n.t('user.sendEmailVerificationCodeScreen.alertContent'),
+        [
+          {
+            text: I18n.t('common.discard'),
+            onPress: () => props.navigation.navigate('MyProfile'),
+            style: 'destructive',
+          },
+          {
+            text: I18n.t('common.continue'),
+            style: 'cancel',
+          },
+        ],
+      );
+    }
   };
 
   // HEADER =====================================================================================
@@ -102,7 +104,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         : {
             navBar: navBarInfo,
           })}
-      onBack={isModifyingEmail ? () => displayConfirmationAlert() : undefined}>
+      onBack={() => displayConfirmationAlert()}>
       <SendEmailVerificationCodeScreen
         defaultEmail={defaultEmail}
         isModifyingEmail={isModifyingEmail}
