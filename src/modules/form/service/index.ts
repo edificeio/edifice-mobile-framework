@@ -358,14 +358,16 @@ export const formService = {
     },
     addFile: async (session: IUserSession, responseId: number, file: LocalFile) => {
       const api = `/formulaire/responses/${responseId}/files`;
-      const formdata = new FormData();
-      formdata.append('file', {
-        fileId: file.filepath,
-        name: file.filename,
-        type: file.filetype,
-      });
+      const { firstName, lastName } = session.user;
+      const formData = new FormData();
+      file.filename = `${firstName}${lastName}_${file.filename}`;
+      formData.append('file', file);
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
-        body: formdata,
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
         method: 'POST',
       }) as Promise<[]>;
     },

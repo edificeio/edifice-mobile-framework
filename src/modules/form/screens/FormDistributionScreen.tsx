@@ -222,6 +222,15 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
         }
         return response;
       });
+      if (question.type === QuestionType.FILE && res[0]?.answer !== '') {
+        const response = res[0];
+        formService.response.deleteFiles(session, response.id!);
+        response.files?.forEach(file => {
+          if (file.lf) {
+            formService.response.addFile(session, response.id!, file.lf);
+          }
+        });
+      }
       // Add empty response to unanswered question
       if (!res.length) {
         const questionIds = question.type === QuestionType.MATRIX ? question.children?.map(q => q.id) : [question.id];

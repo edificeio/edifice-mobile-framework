@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     marginTop: UI_SIZES.spacing.minor,
   },
   answerText: {
+    flex: 1,
     marginLeft: UI_SIZES.spacing.minor,
   },
 });

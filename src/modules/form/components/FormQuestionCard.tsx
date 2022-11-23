@@ -15,12 +15,16 @@ const styles = StyleSheet.create({
   },
   lowerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    flexWrap: 'wrap',
     marginTop: UI_SIZES.spacing.small,
   },
   childrenContainer: {
-    flex: 1,
+    flexGrow: 100,
+  },
+  modifyActionContainer: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   },
 });
 
@@ -44,7 +48,11 @@ export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps
           </BodyBoldText>
           <View style={styles.lowerContainer}>
             <View style={styles.childrenContainer}>{children}</View>
-            {onEditQuestion ? <ButtonTextIcon title={I18n.t('common.modify')} onPress={() => onEditQuestion()} /> : null}
+            {onEditQuestion ? (
+              <View style={styles.modifyActionContainer}>
+                <ButtonTextIcon title={I18n.t('common.modify')} onPress={() => onEditQuestion()} />
+              </View>
+            ) : null}
           </View>
         </Card>
       </ArticleContainer>

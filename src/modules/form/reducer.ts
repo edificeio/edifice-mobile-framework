@@ -4,6 +4,7 @@
 import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
+import { LocalFile } from '~/framework/util/fileHandler';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/workspace/moduleConfig';
 
@@ -68,6 +69,7 @@ export interface IQuestionResponse {
   questionId: number;
   answer: string;
   choiceId?: number;
+  files?: IResponseFile[];
 }
 
 export interface IQuestion {
@@ -93,10 +95,11 @@ export interface IQuestion {
 }
 
 export interface IResponseFile {
-  id: string;
+  id: string | null;
   responseId: number;
   filename: string;
   type: string;
+  lf?: LocalFile;
 }
 
 export interface ISection {

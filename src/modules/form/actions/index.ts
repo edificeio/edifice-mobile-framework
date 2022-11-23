@@ -112,14 +112,15 @@ export const fetchDistributionResponsesAction =
   async (dispatch, getState) => {
     try {
       const session = getUserSession();
-      /*const responses: IQuestionResponse[] = [];
+      const responses = await formService.distribution.getResponses(session, distributionId);
       await Promise.all(
-        questionIds.map(async id => {
-          const res = await formService.question.getDistributionResponses(session, id, distributionId);
-          responses.push(...res);
+        responses.map(async response => {
+          if (response.answer === 'Fichier déposé' && response.id) {
+            response.files = await formService.response.getFiles(session, response.id);
+          }
         }),
-      );*/
-      return await formService.distribution.getResponses(session, distributionId);
+      );
+      return responses;
     } catch (e) {
       throw e;
     }

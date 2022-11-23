@@ -2,7 +2,8 @@ import * as React from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { Picture } from '~/framework/components/picture';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import { getFileIcon } from '~/modules/zimbra/utils/fileIcon';
@@ -12,45 +13,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: theme.palette.primary.pale,
   },
-  leftContainer: {
+  iconContainer: {
     width: 48,
+    height: 42,
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  nameText: {
-    color: theme.palette.primary.regular,
-    flexShrink: 1,
-    marginVertical: UI_SIZES.spacing.tiny,
-  },
-  iconMargin: {
-    marginHorizontal: UI_SIZES.spacing.small,
-    marginVertical: UI_SIZES.spacing.minor,
   },
 });
 
 interface IAttachmentProps {
   name: string;
   type: string;
-  uploadSuccess: boolean;
+  uploadSuccess?: boolean;
   onRemove: () => void;
 }
 
-export const Attachment = ({ name, type, uploadSuccess, onRemove }: IAttachmentProps) => {
+export const Attachment = ({ name, type, uploadSuccess = true, onRemove }: IAttachmentProps) => {
   const iconName = getFileIcon(type);
   return (
-    <TouchableOpacity style={styles.mainContainer} onPress={onRemove}>
-      <View style={styles.leftContainer}>
+    <View style={styles.mainContainer}>
+      <View style={styles.iconContainer}>
         {uploadSuccess ? (
-          <Icon name={iconName} size={25} color={theme.palette.primary.regular} />
+          <Icon name={iconName} size={24} color={theme.palette.primary.regular} />
         ) : (
           <ActivityIndicator color={theme.palette.primary.regular} />
         )}
       </View>
-      <SmallText numberOfLines={2} style={styles.nameText}>
+      <SmallText numberOfLines={1} ellipsizeMode="middle" style={UI_STYLES.flex1}>
         {name}
       </SmallText>
-      <Icon name="close" size={14} color={theme.palette.complementary.red.regular} style={styles.iconMargin} />
-    </TouchableOpacity>
+      <TouchableOpacity onPress={onRemove} style={styles.iconContainer}>
+        <Picture
+          type="NamedSvg"
+          name="pictos-close"
+          width={UI_SIZES.dimensions.width.medium}
+          height={UI_SIZES.dimensions.height.medium}
+          fill={theme.palette.complementary.red.regular}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
