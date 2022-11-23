@@ -3,7 +3,7 @@
  */
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ActivityIndicator, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import Toast from 'react-native-tiny-toast';
 
@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
   codeFieldCell: {
     width: getScaleDimension(45, 'width'),
     height: getScaleDimension(58, 'height'),
-    lineHeight: getScaleDimension(58, 'height'),
+    lineHeight: Platform.select({ ios: getScaleDimension(58, 'height'), android: getScaleDimension(34, 'height') }),
+    textAlignVertical: 'center',
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.dimensions.width.tiny,
     textAlign: 'center',
