@@ -148,7 +148,7 @@ export const KeyboardPageView = (
           contentContainerStyle={styles.flexGrow1}
           alwaysBounceVertical={false}
           overScrollMode="never"
-          keyboardShouldPersistTaps="never"
+          keyboardShouldPersistTaps="handled"
           {...props.scrollViewProps}>
           <AreaComponent style={styles.flex1}>{children}</AreaComponent>
         </InnerViewComponent>
