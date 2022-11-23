@@ -125,6 +125,7 @@
   "blog.post.waitingValidation": "Billet en attente de validation",
   "blog.resourceName": "Billet de blog",
   "blog.tabName": "Blog",
+  "carousel.counter": "{{current}} / {{total}}",
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorConfirm": "Les mots de passe doivent être identiques.",
   "changePassword-errorFields": "Le formulaire contient des erreurs",
