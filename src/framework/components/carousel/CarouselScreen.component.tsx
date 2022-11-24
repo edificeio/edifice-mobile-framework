@@ -180,7 +180,7 @@ export function Carousel(props: ICarouselProps) {
   return (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <PageView navigation={navigation} style={styles.page}>
-        <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />
+        <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" />
         {/* <RNCarousel
           // Layout
           width={UI_SIZES.screen.width}
