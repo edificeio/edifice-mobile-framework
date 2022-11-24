@@ -1,7 +1,8 @@
 import moment from 'moment';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import fileHandlerService from '~/framework/util/fileHandler/service';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 import {
@@ -359,17 +360,28 @@ export const formService = {
     addFile: async (session: IUserSession, responseId: number, file: LocalFile) => {
       const api = `/formulaire/responses/${responseId}/files`;
       const { firstName, lastName } = session.user;
-      const formData = new FormData();
-      file.filename = `${firstName}${lastName}_${file.filename}`;
-      formData.append('file', file);
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
-        body: formData,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
+      if (!file.filename.startsWith(firstName)) {
+        file.filename = `${firstName}${lastName}_${file.filename}`;
+      }
+      return fileHandlerService.uploadFile<SyncedFileWithId>(
+        session,
+        file,
+        {
+          url: api,
+          headers: {
+            Accept: 'application/json',
+          },
         },
-        method: 'POST',
-      }) as Promise<[]>;
+        data => {
+          const json = JSON.parse(data) as { id: string };
+          return {
+            url: `/formulaire/responses/${responseId}/files/${json.id}`,
+            id: json.id,
+          };
+        },
+        undefined,
+        SyncedFileWithId,
+      );
     },
     deleteFiles: async (session: IUserSession, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files`;
