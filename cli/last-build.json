@@ -1,6 +1,6 @@
 {
-  "last": "2022-11-17 20:17:07",
-  "notes": "fix: MB-913, svg proportions to respect 1:1 ratio\nchore: removed unused translations\nfeat(user): MB-813, forgot page success feedback\nchore: action button small spinner\nchore(upgrade): Upgrade packages.\nfix: MB-913, svg proportions\nfix(2fa): MB-948, icon enhancements\nfix(2fa): MB-948, design enhancements\nfix(2fa): MB-949, non-breaking hyphen in error message\nchore(build): Fix empty release notes\nfix(user): MB-874, elipsis in profile fields\nfix(ui): Fix potential onLayout forwarding leak\nrelease: 1.9.0-alpha.6(1090006)",
-  "version": "1.9.0-alpha.7(1090007)",
+  "last": "2022-11-24 09:41:27",
+  "notes": "feat: MB-586, MB-303 new carousel screen with rn-image-zoom-viewer\nfeat(form): AMV2-213, file question style\nfix(2fa): MB-980, aligned numbers on android\nfix: MB-978, keyboardShouldPersistTaps handled\nchore(upgrade): Upgrade some packages.\nfix(2fa): MB-979, codefield keyboard rapid display\nchore(2fa): improved displayConfirmationAlert\nchore(2fa): refactored displayConfirmationAlert\nfeat(form): AMV2-204, add form received notification handler\nfix(form): AMV2-214, empty responses not always showed\nfeat(form): AMV2-441, improve value rendering\nfix(2fa): MB-950, conditional back button action\nfix(2fa): numeric cells spacing\nfix(form): AMV2-212, fix content fetch with empty section\nfeat(form): AMV2-382, add matrix question\nfix(images): New specific scaled dimension for images\nfix: MB-913, revert svg proportions for empty screen\nrelease: 1.9.0-alpha.7(1090007)",
+  "version": "1.9.0-alpha.8(1090008)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
