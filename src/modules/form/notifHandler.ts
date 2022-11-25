@@ -27,7 +27,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
     if (!form || form.archived) return { managed: 0 };
     const distributions = await formService.distributions.getFromForm(session, formId);
     const distribution = distributions.find(d => d.status === DistributionStatus.TODO);
-    console.log(distribution);
+
     if (distribution) {
       mainNavNavigate(computeRelativePath(`${moduleConfig.routeName}/distribution`, navState), {
         id: distribution.id,

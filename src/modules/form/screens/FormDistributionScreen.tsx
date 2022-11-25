@@ -57,6 +57,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
   },
+  positionActionContainer: {
+    width: 100,
+  },
   listFooterContainer: {
     flexGrow: 1,
     justifyContent: 'flex-end',
@@ -377,8 +380,14 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
           type="secondary"
           action={() => goToPreviousPosition()}
           disabled={!positionHistory.length}
+          style={styles.positionActionContainer}
         />
-        <ActionButton text={I18n.t('next')} action={() => goToNextPosition()} disabled={isMandatoryAnswerMissing} />
+        <ActionButton
+          text={I18n.t('next')}
+          action={() => goToNextPosition()}
+          disabled={isMandatoryAnswerMissing}
+          style={styles.positionActionContainer}
+        />
       </View>
     );
   };

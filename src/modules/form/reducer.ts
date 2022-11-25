@@ -28,6 +28,7 @@ export enum QuestionType {
   SINGLEANSWERRADIO = 9,
   MATRIX = 10,
   SLIDER = 11,
+  ORDER = 12,
 }
 
 export interface IDistribution {

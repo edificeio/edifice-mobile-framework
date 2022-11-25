@@ -22,6 +22,7 @@ const imports = {
   'ui-arrowUp': import('ASSETS/icons/uiIcons/arrowUp.svg'),
   'ui-calendar': import('ASSETS/icons/uiIcons/calendar.svg'),
   'ui-close': import('ASSETS/icons/uiIcons/close.svg'),
+  'ui-drag': import('ASSETS/icons/uiIcons/drag.svg'),
   'ui-externalLink': import('ASSETS/icons/uiIcons/externalLink.svg'),
   'ui-flag': import('ASSETS/icons/uiIcons/flag.svg'),
   'ui-options': import('ASSETS/icons/uiIcons/options.svg'),

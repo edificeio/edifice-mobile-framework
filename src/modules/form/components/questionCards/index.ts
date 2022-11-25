@@ -6,6 +6,7 @@ import { FormFreeTextCard } from './FormFreeTextCard';
 import { FormLongAnswerCard } from './FormLongAnswerCard';
 import { FormMatrixCard } from './FormMatrixCard';
 import { FormMultipleAnswerCard } from './FormMultipleAnswerCard';
+import { FormOrderCard } from './FormOrderCard';
 import { FormShortAnswerCard } from './FormShortAnswerCard';
 import { FormSingleAnswerCard } from './FormSingleAnswerCard';
 import { FormSingleAnswerRadioCard } from './FormSingleAnswerRadioCard';
@@ -37,5 +38,7 @@ export const getQuestionCard = (questionType: QuestionType) => {
       return FormMatrixCard;
     case QuestionType.SLIDER:
       return FormSliderCard;
+    case QuestionType.ORDER:
+      return FormOrderCard;
   }
 };
