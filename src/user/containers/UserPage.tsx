@@ -13,7 +13,9 @@ import { PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import appConf from '~/framework/util/appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { formatSource } from '~/framework/util/media';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -29,7 +31,6 @@ import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
 import { IUserInfoState } from '~/user/state/info';
-import { formatSource } from '~/framework/util/media';
 
 const uploadAvatarError = () => {
   return dispatch => {
@@ -189,9 +190,7 @@ export class UserPage extends React.PureComponent<
     // (otherwise, a previously-loaded image is retrieved from cache)
     const sourceWithParam = URISource && {
       ...URISource,
-      uri: `${
-        URISource && URISource.uri
-      }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
+      uri: `${URISource && URISource.uri}?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
     const showWhoAreWe = session.platform.showWhoAreWe;
 
@@ -235,6 +234,8 @@ export class UserPage extends React.PureComponent<
             </>
           ) : null}
           <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
+          <ContainerSpacer />
+          <ButtonLine title={'directory-xmasTitle'} onPress={() => this.props.navigation.navigate('Xmas')} />
           <ContainerSpacer />
           {showWhoAreWe ? (
             <>

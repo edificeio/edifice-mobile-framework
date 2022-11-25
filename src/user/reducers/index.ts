@@ -1,21 +1,22 @@
 /*
   Reducers for User app and authentification.
 */
+import { Action, combineReducers } from 'redux';
 
-import { Action, combineReducers } from "redux";
-
-import auth from "./auth";
-import info from "./info";
-import activation from "./activation";
-import forgot from "./forgot";
-import changePassword from "./changePassword";
+import activation from './activation';
+import auth from './auth';
+import changePassword from './changePassword';
+import forgot from './forgot';
+import info from './info';
+import xmas from './xmas';
 
 const rootReducer: (state: any, action: Action) => any = combineReducers({
   auth,
   info,
   activation,
   forgot,
-  changePassword
+  changePassword,
+  xmas,
 });
 
 export default rootReducer;

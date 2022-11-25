@@ -11,6 +11,7 @@ import StructuresPage from './containers/StructuresPage';
 import UserPage from './containers/UserPage';
 import VerifyEmailCodeScreen from './containers/VerifyEmailCodeScreen';
 import WhoAreWeScreen from './containers/WhoAreWeScreen';
+import XmasScreen from './containers/XmasScreen';
 
 export default createStackNavigator(
   {
@@ -20,6 +21,10 @@ export default createStackNavigator(
 
     NotifPrefs: {
       screen: PushNotifsSettingsScreen,
+    },
+
+    Xmas: {
+      screen: XmasScreen,
     },
 
     WhoAreWe: {

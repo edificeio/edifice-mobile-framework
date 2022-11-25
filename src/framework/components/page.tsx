@@ -10,6 +10,7 @@
 import styled from '@emotion/native';
 import * as React from 'react';
 import {
+  Animated,
   BackHandler,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
@@ -19,15 +20,20 @@ import {
   ScrollViewProps,
   StatusBar,
   StyleSheet,
+  Vibration,
   View,
   ViewProps,
 } from 'react-native';
-import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import RNShake from 'react-native-shake';
+import Snow from 'react-native-snow-bg';
+import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
+import { getUserSession } from '../util/session';
 import { UI_SIZES } from './constants';
 import { FakeHeader, FakeHeaderProps, HeaderBackAction } from './header';
 
@@ -42,6 +48,7 @@ export interface PageViewProps extends ViewProps {
   // Fixme : Currently not working for iOS swipe back.
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
+  xmasTheme?: boolean;
 }
 
 export const pageGutterSize = UI_SIZES.spacing.medium;
@@ -62,16 +69,68 @@ export const PageViewStyle = styled.View({
   flex: 1,
   backgroundColor: theme.ui.background.page,
 });
-export const PageView = (props: PageViewProps) => {
-  const { navigation, children, navBar, navBarWithBack, navBarNode, showNetworkBar = true, onBack, gutters, ...viewProps } = props;
+const PageViewContainer = (props: PageViewProps) => {
+  const {
+    navigation,
+    children,
+    navBar,
+    navBarWithBack,
+    navBarNode,
+    showNetworkBar = true,
+    onBack,
+    gutters,
+    xmasTheme,
+    ...viewProps
+  } = props;
+  const [snowfall, setSnowfall] = React.useState(false);
+  const [fadeAnim, setFadeAnim] = React.useState(new Animated.Value(1));
+  let focusEventListener: NavigationEventSubscription;
   const navBarColor = StyleSheet.flatten(navBar?.style || navBarWithBack?.style)?.backgroundColor;
 
   const goBack = () => {
     return (onBack && onBack() && navigation.dispatch(NavigationActions.back())) || undefined;
   };
 
-  // Handle Back Android
   React.useEffect(() => {
+    const isUserLoggedIn = getUserSession()?.user?.id;
+    const stopSnowFall = () => {
+      setSnowfall(false);
+      setFadeAnim(new Animated.Value(1));
+    };
+    const makeSnowFall = () => {
+      setSnowfall(true);
+      Vibration.vibrate();
+      const snowfallTimer = setTimeout(() => {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: false,
+        }).start(() => {
+          stopSnowFall();
+        });
+      }, 20000);
+      return () => clearTimeout(snowfallTimer);
+    };
+
+    // Specific screens
+    if (navigation.state.routeName === 'Xmas') {
+      if (xmasTheme) makeSnowFall();
+      else stopSnowFall();
+    } else if (navigation.state.routeName === 'timeline') {
+      if (xmasTheme) makeSnowFall();
+    }
+
+    // Blur-screen listener
+    focusEventListener = navigation.addListener('didBlur', () => {
+      stopSnowFall();
+    });
+
+    // Device-shake listener
+    const subscription = RNShake.addListener(() => {
+      if (isUserLoggedIn && xmasTheme) makeSnowFall();
+    });
+
+    // Handle Back Android
     if (onBack) {
       const callback = () => {
         goBack();
@@ -80,9 +139,16 @@ export const PageView = (props: PageViewProps) => {
       BackHandler.addEventListener('hardwareBackPress', callback);
       return () => {
         BackHandler.removeEventListener('hardwareBackPress', callback);
+        focusEventListener.remove();
+        subscription.remove();
+      };
+    } else {
+      return () => {
+        focusEventListener.remove();
+        subscription.remove();
       };
     }
-  });
+  }, [xmasTheme]);
 
   const gutterStyle = React.useMemo(
     () => ({
@@ -117,9 +183,20 @@ export const PageView = (props: PageViewProps) => {
         <Notifier id={navigation.state.routeName} />
         <View style={gutterStyle}>{children}</View>
       </>
+      {snowfall ? (
+        <Animated.View style={{ position: 'absolute', opacity: fadeAnim }}>
+          <Snow fullScreen snowflakesCount={150} fallSpeed="medium" />
+        </Animated.View>
+      ) : null}
     </PageViewStyle>
   );
 };
+export const PageView = connect((state: any) => {
+  const ret = {
+    xmasTheme: state.user.xmas.xmasTheme,
+  };
+  return ret;
+})(PageViewContainer);
 
 export const KeyboardPageView = (
   props: React.PropsWithChildren<

@@ -1,10 +1,8 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-
-
 import { IConversation_State } from './reducer';
 
-
+const isXmasThemeOn = true;
 export default new NavigableModuleConfig<'conversation', IConversation_State>({
   name: 'conversation',
   entcoreScope: ['conversation', 'userbook'],
@@ -14,6 +12,6 @@ export default new NavigableModuleConfig<'conversation', IConversation_State>({
   displayI18n: 'conversation.tabName',
   displayAs: 'tabModule',
   displayOrder: 1,
-  displayPicture: { type: 'Icon', name: 'messagerie-off' },
-  displayPictureFocus: { type: 'Icon', name: 'messagerie-on' },
+  displayPicture: { type: 'Icon', name: `${isXmasThemeOn ? 'xmas-' : ''}messagerie-off` },
+  displayPictureFocus: { type: 'Icon', name: `${isXmasThemeOn ? 'xmas-' : ''}messagerie-on` },
 });

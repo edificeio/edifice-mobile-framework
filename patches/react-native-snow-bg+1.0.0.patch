@@ -1,0 +1,21 @@
+diff --git a/node_modules/react-native-snow-bg/src/Snow.js b/node_modules/react-native-snow-bg/src/Snow.js
+index 3bf2ad3..8d851fd 100644
+--- a/node_modules/react-native-snow-bg/src/Snow.js
++++ b/node_modules/react-native-snow-bg/src/Snow.js
+@@ -8,6 +8,7 @@ export default function Snow({
+   snowflakesCount = 100,
+   fallSpeed = 'medium',
+   fullScreen = false,
++  pointerEvents = 'box-none'
+ }) {
+   const [scene, setScene] = React.useState(() => {
+     if (fullScreen) {
+@@ -32,7 +33,7 @@ export default function Snow({
+   };
+ 
+   return (
+-    <View style={[styles.container, dimensionsStyle]} onLayout={onLayout}>
++    <View pointerEvents={pointerEvents} style={[styles.container, dimensionsStyle]} onLayout={onLayout}>
+       {!!scene &&
+         new Array(snowflakesCount)
+           .fill(true)
