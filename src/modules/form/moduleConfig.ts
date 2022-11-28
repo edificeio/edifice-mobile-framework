@@ -9,5 +9,5 @@ export default new NavigableModuleConfig<'form', IForm_State>({
 
   displayI18n: 'form.tabName',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'form' },
+  displayPicture: { type: 'Image', source: require('ASSETS/images/logo-form.png') },
 });

@@ -53,7 +53,6 @@ const imports = {
   edt: import('ASSETS/icons/moduleIcons/edt.svg'),
   exercices: import('ASSETS/icons/moduleIcons/exercices.svg'),
   files: import('ASSETS/icons/moduleIcons/files.svg'),
-  form: import('ASSETS/icons/moduleIcons/form.svg'),
   forum: import('ASSETS/icons/moduleIcons/forum.svg'),
   homeLiaisonDiary: import('ASSETS/icons/moduleIcons/homeLiaisonDiary.svg'),
   homework1D: import('ASSETS/icons/moduleIcons/homework1D.svg'),
