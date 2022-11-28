@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { ContentCardHeader, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { SmallBoldText } from '~/framework/components/text';
+import { SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { DistributionStatus } from '~/modules/form/reducer';
 import { IFormDistributions } from '~/modules/form/screens/FormDistributionListScreen';
 import { ArticleContainer } from '~/ui/ContainerContent';
@@ -64,8 +64,14 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
           header={
             <ContentCardHeader
               icon={<FormPicture pictureUri={picture} />}
-              text={ownerName}
-              date={I18n.t('common.sentOnDate', { date: dateSending?.format('DD/MM/YYYY, HH:mm') })}
+              text={
+                <View>
+                  <SmallText>{ownerName}</SmallText>
+                  <SmallItalicText style={{ color: theme.ui.text.light }}>
+                    {I18n.t('common.sentOnDate', { date: dateSending?.format('DD/MM/YYYY, HH:mm') })}
+                  </SmallItalicText>
+                </View>
+              }
             />
           }
           onPress={this.onPress}>
