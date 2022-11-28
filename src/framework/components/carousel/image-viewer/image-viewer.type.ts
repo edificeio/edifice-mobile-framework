@@ -136,6 +136,8 @@ export class Props {
    */
   public onSave?: (url: string) => void = undefined;
 
+  public onShare?: (url: string) => void = undefined;
+
   public onMove?: (position?: IOnMove) => void = () => {
     //
   };

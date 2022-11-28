@@ -17,12 +17,14 @@ import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { FakeHeader } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { FastImage, IMedia, Image, formatSource } from '~/framework/util/media';
+import { FastImage, IMedia, Image } from '~/framework/util/media';
 import { getUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
+
+import { NamedSVG } from '../picture';
+import PopupMenu from '../popupMenu';
 
 export interface ICarouselNavParams {
   data: IMedia[];
@@ -183,7 +185,11 @@ export function Carousel(props: ICarouselProps) {
   );
 
   const imageViewerRef = React.useRef<ImageViewer>();
-
+  const popupMenuRef = React.useRef<PopupMenu>();
+  const dotsButton = React.useCallback(
+    onPress => <ActionButton iconName="ui-options" style={styles.closeButton} action={onPress} />,
+    [],
+  );
   const buttons = React.useMemo(
     () => (
       <>
@@ -194,9 +200,34 @@ export function Carousel(props: ICarouselProps) {
           iconName="ui-download"
           style={styles.closeButton}
         />
+        <PopupMenu
+          button={dotsButton}
+          options={[
+            {
+              i18n: 'share',
+              icon: (
+                <NamedSVG
+                  name="ui-send"
+                  fill={theme.palette.grey.black}
+                  width={UI_SIZES.dimensions.width.large}
+                  height={UI_SIZES.dimensions.width.large}
+                  style={{ marginHorizontal: UI_SIZES.spacing.small }}
+                />
+              ),
+              onClick: () => imageViewerRef.current?.share?.(),
+            },
+          ]}
+          ref={popupMenuRef}
+          style={{
+            top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
+          }}
+          // onPress={() => {
+          // this.listRef.current?.recenter();
+          // }}
+        />
       </>
     ),
-    [],
+    [dotsButton],
   );
 
   const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
@@ -297,6 +328,7 @@ export function Carousel(props: ICarouselProps) {
             navigation.goBack();
           }}
           onSave={onSave}
+          onShare={onShare}
           renderImage={props => <FastImage {...props} />}
           loadingRender={() => <Loading />}
           loadWindow={1}

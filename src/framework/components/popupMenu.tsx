@@ -19,9 +19,11 @@ import { SmallText } from './text';
 
 export interface IPopupMenuProps {
   iconName: string;
+  button?: (onPress: () => void) => React.ReactElement;
   active?: boolean;
-  options: Array<{ icon: string; i18n: string; goTo: NavigationNavigateActionPayload }>;
+  options: Array<{ icon: string | React.ReactElement; i18n: string; goTo?: NavigationNavigateActionPayload; onClick?: () => void }>;
   onPress?: () => void;
+  style?: ViewStyle;
 }
 
 interface IPopupMenuState {
@@ -45,17 +47,15 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
   }
 
   render() {
-    const { iconName } = this.props;
+    const { iconName, button } = this.props;
     const { active } = this.state;
+    const onPress = () => {
+      this.setState({ active: !active });
+      this.props.onPress?.();
+    };
     return (
       <>
-        <DEPRECATED_HeaderPrimaryAction
-          iconName={active ? 'close' : iconName}
-          onPress={() => {
-            this.setState({ active: !active });
-            this.props.onPress?.();
-          }}
-        />
+        {button ? button(onPress) : <DEPRECATED_HeaderPrimaryAction iconName={active ? 'close' : iconName} onPress={onPress} />}
         {active ? (
           <>
             {this.renderOverlay()}
@@ -70,10 +70,10 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
     const Overlay = styled.TouchableOpacity({
       position: 'absolute',
       zIndex: 99,
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
+      top: -1000,
+      bottom: -1000,
+      left: -1000,
+      right: -1000,
     });
     return (
       <Overlay
@@ -85,18 +85,21 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
   }
 
   renderOptions() {
-    const { options } = this.props;
+    const { options, style } = this.props;
     const Menu = styled.FlatList({
       position: 'absolute',
       zIndex: 100,
-      right: 20,
-      top: Platform.select({ android: 70, ios: hasNotch() ? 117 : 90 }),
+      right: UI_SIZES.spacing.minor,
+      top: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.medium,
       overflow: 'visible',
+      ...style,
     });
     return (
       <Menu
         data={options}
-        renderItem={({ item }) => this.renderAction(item as { icon: string; i18n: string; goTo: NavigationNavigateActionPayload })}
+        renderItem={({ item }) =>
+          this.renderAction(item as { icon: string | React.ReactElement; i18n: string; goTo: NavigationNavigateActionPayload })
+        }
         contentContainerStyle={
           {
             borderRadius: 4,
@@ -112,7 +115,12 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
     );
   }
 
-  renderAction(item: { icon: string; i18n: string; goTo: NavigationNavigateActionPayload }) {
+  renderAction(item: {
+    icon: string | React.ReactElement;
+    i18n: string;
+    goTo?: NavigationNavigateActionPayload;
+    onClick: () => void;
+  }) {
     const Action = styled.TouchableOpacity({
       flexDirection: 'row',
       justifyContent: 'flex-start',
@@ -125,15 +133,21 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
       <Action
         onPress={() => {
           this.doReset();
-          mainNavNavigate(item.goTo.routeName, item.goTo);
+          if (item.goTo) mainNavNavigate(item.goTo.routeName, item.goTo);
+          if (item.onClick) item.onClick();
         }}>
-        <Icon
-          size={26}
-          name={item.icon}
-          style={{
-            paddingHorizontal: UI_SIZES.spacing.small,
-          }}
-        />
+        {typeof item.icon === 'string' ? (
+          <Icon
+            size={26}
+            name={item.icon}
+            style={{
+              paddingHorizontal: UI_SIZES.spacing.small,
+            }}
+          />
+        ) : (
+          item.icon
+        )}
+
         <SmallText numberOfLines={1}>{I18n.t(item.i18n)}</SmallText>
       </Action>
     );

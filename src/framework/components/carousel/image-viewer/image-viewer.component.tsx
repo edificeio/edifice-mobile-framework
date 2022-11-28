@@ -652,6 +652,17 @@ export default class ImageViewer extends React.Component<Props, State> {
     this.setState({ isShowMenu: false });
   };
 
+  public share = () => {
+    if (this.props.onShare) {
+      this.props.onShare(
+        this.props.imageUrls[this.state.currentShowIndex || 0].url ||
+          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
+      );
+    }
+
+    this.setState({ isShowMenu: false });
+  };
+
   public getMenu() {
     if (!this.state.isShowMenu) {
       return null;
