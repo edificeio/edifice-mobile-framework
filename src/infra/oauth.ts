@@ -567,6 +567,15 @@ export const urlSigner = {
   },
 
   /**
+   * Remove domain, protocol & searchParams from url
+   * @param absoluteUrl 
+   * @returns 
+   */
+  getRelativeUrl: (absoluteUrl?: string) => {
+    return absoluteUrl && absoluteUrl.replace(DEPRECATED_getCurrentPlatform()!.url, '').split('?')[0];
+  },
+
+  /**
    * Returns if the given url need to be signed.
    * An url must be signed if it point to the current platform.
    * If the url contains a protocol identifier, it not be signed.

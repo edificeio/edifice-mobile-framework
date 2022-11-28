@@ -1,10 +1,12 @@
 /**
  * New implementation of Carousel built with react-native-reanimated-carousel !
  */
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Share from 'react-native-share';
 import WebView from 'react-native-webview';
 import { WebViewSource } from 'react-native-webview/lib/WebViewTypes';
 import { NavigationInjectedProps } from 'react-navigation';
@@ -15,7 +17,10 @@ import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { FakeHeader } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { FastImage, IMedia, Image } from '~/framework/util/media';
+import { downloadFileAction } from '~/framework/util/fileHandler/actions';
+import fileTransferService from '~/framework/util/fileHandler/service';
+import { FastImage, IMedia, Image, formatSource } from '~/framework/util/media';
+import { getUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -177,6 +182,50 @@ export function Carousel(props: ICarouselProps) {
     [navigation],
   );
 
+  const imageViewerRef = React.useRef<ImageViewer>();
+
+  const buttons = React.useMemo(
+    () => (
+      <>
+        <ActionButton
+          action={() => {
+            imageViewerRef.current?.saveToLocal?.();
+          }}
+          iconName="ui-download"
+          style={styles.closeButton}
+        />
+      </>
+    ),
+    [],
+  );
+
+  const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
+    const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+    if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
+    const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl }, {});
+    return sf;
+  }, []);
+
+  const onSave = React.useCallback(
+    async (url: string | ImageURISource) => {
+      const sf = await downloadFile(url);
+      await CameraRoll.save(sf.filepath);
+    },
+    [downloadFile],
+  );
+
+  const onShare = React.useCallback(
+    async (url: string | ImageURISource) => {
+      const sf = await downloadFile(url);
+      await Share.open({
+        type: sf.filetype || 'text/html',
+        url: Platform.OS === 'android' ? 'file://' + sf.filepath : sf.filepath,
+        showAppsToView: true,
+      });
+    },
+    [downloadFile],
+  );
+
   return (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <PageView navigation={navigation} style={styles.page}>
@@ -238,6 +287,7 @@ export function Carousel(props: ICarouselProps) {
         </Swiper> */}
 
         <ImageViewer
+          ref={imageViewerRef}
           enableSwipeDown
           show={true}
           useNativeDriver={true}
@@ -246,6 +296,7 @@ export function Carousel(props: ICarouselProps) {
           onCancel={() => {
             navigation.goBack();
           }}
+          onSave={onSave}
           renderImage={props => <FastImage {...props} />}
           loadingRender={() => <Loading />}
           loadWindow={1}
@@ -254,6 +305,7 @@ export function Carousel(props: ICarouselProps) {
               left={closeButton}
               style={[styles.header, { opacity: isNavBarVisible ? 1 : 0 }]}
               title={I18n.t('carousel.counter', { current, total })}
+              right={buttons}
             />
           )}
           saveToLocalByLongPress={false}

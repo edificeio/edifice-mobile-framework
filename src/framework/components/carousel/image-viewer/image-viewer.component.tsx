@@ -1,7 +1,7 @@
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import * as React from 'react';
 import {
   Animated,
-  CameraRoll,
   Dimensions,
   I18nManager,
   Image,
@@ -133,13 +133,13 @@ export default class ImageViewer extends React.Component<Props, State> {
   }
 
   public loadImageWindow(index: number) {
-    for (let i = index - this.props.loadWindow; i <= index + this.props.loadWindow ; ++i) {
-        if (i >= 0 && i < this.props.imageUrls.length) {
-            if (!this.loadedIndex.get(i)) {
-                this.loadImage(i);
-            }
+    for (let i = index - this.props.loadWindow; i <= index + this.props.loadWindow; ++i) {
+      if (i >= 0 && i < this.props.imageUrls.length) {
+        if (!this.loadedIndex.get(i)) {
+          this.loadImage(i);
         }
-    } 
+      }
+    }
   }
 
   /**
@@ -225,9 +225,9 @@ export default class ImageViewer extends React.Component<Props, State> {
     };
 
     if (image.url) {
-        Image.getSize(image.url, getSizeSuccess, getSizeFailure);
+      Image.getSize(image.url, getSizeSuccess, getSizeFailure);
     } else if (image.props.source) {
-        Image.getSizeWithHeaders(image.props.source.uri, image.props.source.headers ?? {}, getSizeSuccess, getSizeFailure);
+      Image.getSizeWithHeaders(image.props.source.uri, image.props.source.headers ?? {}, getSizeSuccess, getSizeFailure);
     }
   }
 
@@ -643,7 +643,10 @@ export default class ImageViewer extends React.Component<Props, State> {
       CameraRoll.saveToCameraRoll(this.props.imageUrls[this.state.currentShowIndex || 0].url);
       this!.props!.onSaveToCamera!(this.state.currentShowIndex);
     } else {
-      this.props.onSave(this.props.imageUrls[this.state.currentShowIndex || 0].url);
+      this.props.onSave(
+        this.props.imageUrls[this.state.currentShowIndex || 0].url ||
+          this.props.imageUrls[this.state.currentShowIndex || 0]?.props?.source,
+      );
     }
 
     this.setState({ isShowMenu: false });
