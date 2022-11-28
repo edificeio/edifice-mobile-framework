@@ -393,6 +393,7 @@
   "form.formDistributionScreen.submitAlert.editable.text": "Vous êtes sur le point de valider vos réponses à ce formulaire. Vous aurez la possibilité de modifier vos réponses plus tard.\n\nVoulez-vous confirmer l'envoi ?",
   "form.formDistributionScreen.submitAlert.text": "Vous êtes sur le point de valider vos réponses à ce formulaire. Une fois votre formulaire envoyé vous ne pourrez plus modifier vos réponses.\n\nVoulez-vous confirmer l'envoi ?",
   "form.formDistributionScreen.submitAlert.title": "Valider l'envoi",
+  "form.missingFormAlert": "Le formulaire a été archivé ou n'existe pas",
   "form.myAnswersTitle": "Mes réponses - {{title}}",
   "form.notAnswered": "Non répondu",
   "form.selectAnOption": "Sélectionner une option",

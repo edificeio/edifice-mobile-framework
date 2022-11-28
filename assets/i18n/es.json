@@ -390,6 +390,7 @@
   "form.formDistributionScreen.submitAlert.editable.text": "Está a punto de validar sus respuestas a este formulario. Tendrá la oportunidad de modificar sus respuestas más tarde.\n\n¿Quiere confirmar el envío?",
   "form.formDistributionScreen.submitAlert.text": "Está a punto de validar sus respuestas a este formulario. Una vez que haya enviado su formulario, no podrá modificar sus respuestas.\n\n¿Quiere confirmar el envío?",
   "form.formDistributionScreen.submitAlert.title": "Validar el envío",
+  "form.missingFormAlert": "El formulario ha sido archivado o no existe",
   "form.myAnswersTitle": "Mis respuestas - {{title}}",
   "form.notAnswered": "No se ha contestado",
   "form.selectAnOption": "Seleccione una opción",

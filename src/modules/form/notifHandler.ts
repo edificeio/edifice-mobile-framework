@@ -1,6 +1,9 @@
 /**
  * Form notif handler
  */
+import I18n from 'i18n-js';
+import { Alert } from 'react-native';
+
 import { computeRelativePath } from '~/framework/util/navigation';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 import { getUserSession } from '~/framework/util/session';
@@ -12,37 +15,48 @@ import { formService } from './service';
 
 const handleNewFormNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navState) => async (dispatch, getState) => {
-    let formUri = notification.backupData.params.formUri;
-    if (!formUri) return { managed: 0 };
-    let index = formUri.indexOf('form/');
-    if (index === -1) return { managed: 0 };
-    formUri = formUri.substring(index + 5);
-    index = formUri.indexOf('/');
-    if (index !== -1) {
-      formUri = formUri.substring(0, index);
-    }
-    const formId = Number(formUri);
-    const session = getUserSession();
-    const form = await formService.form.get(session, formId);
-    if (!form || form.archived) return { managed: 0 };
-    const distributions = await formService.distributions.getFromForm(session, formId);
-    const distribution = distributions.find(d => d.status === DistributionStatus.TODO);
+    try {
+      let formUri = notification.backupData.params.formUri;
+      if (!formUri) return { managed: 0 };
+      let index = formUri.indexOf('form/');
+      if (index === -1) return { managed: 0 };
+      formUri = formUri.substring(index + 5);
+      index = formUri.indexOf('/');
+      if (index !== -1) {
+        formUri = formUri.substring(0, index);
+      }
+      const formId = Number(formUri);
+      const session = getUserSession();
+      const form = await formService.form.get(session, formId);
+      if (!form || form.archived) {
+        Alert.alert(I18n.t('form.missingFormAlert'));
+        return { managed: 0 };
+      }
+      const distributions = await formService.distributions.getFromForm(session, formId);
+      const distribution =
+        distributions.length === 1
+          ? distributions[0]
+          : distributions.find(d => d.status === DistributionStatus.ONCHANGE) ??
+            distributions.find(d => d.status === DistributionStatus.TODO);
 
-    if (distribution) {
-      mainNavNavigate(computeRelativePath(`${moduleConfig.routeName}/distribution`, navState), {
-        id: distribution.id,
-        status: distribution.status,
-        formId: form.id,
-        title: form.title,
-        editable: form.editable,
-      });
-    } else {
-      mainNavNavigate(computeRelativePath(moduleConfig.routeName, navState));
+      if (distribution) {
+        mainNavNavigate(computeRelativePath(`${moduleConfig.routeName}/distribution`, navState), {
+          id: distribution.id,
+          status: distribution.status,
+          formId: form.id,
+          title: form.title,
+          editable: form.editable,
+        });
+      } else {
+        mainNavNavigate(computeRelativePath(moduleConfig.routeName, navState));
+      }
+      return {
+        managed: 1,
+        trackInfo: { action: 'Form', name: `${notification.type}.${notification['event-type']}` },
+      };
+    } catch (e) {
+      return { managed: 0 };
     }
-    return {
-      managed: 1,
-      trackInfo: { action: 'Form', name: `${notification.type}.${notification['event-type']}` },
-    };
   };
 
 export default () =>

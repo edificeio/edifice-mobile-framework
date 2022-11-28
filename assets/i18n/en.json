@@ -390,6 +390,7 @@
   "form.formDistributionScreen.submitAlert.editable.text": "You are about to validate your answers to this form. You will have the opportunity to modify your answers later.\n\nDo you want to confirm the submission?",
   "form.formDistributionScreen.submitAlert.text": "You are about to validate your answers to this form. Once you have submitted your form you will not be able to change your answers.\n\nDo you want to confirm the submission?",
   "form.formDistributionScreen.submitAlert.title": "Validate the submission",
+  "form.missingFormAlert": "The form has been archived or does not exist",
   "form.myAnswersTitle": "My answers - {{title}}",
   "form.notAnswered": "Not answered",
   "form.selectAnOption": "Select an option",
