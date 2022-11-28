@@ -388,6 +388,7 @@
   "form.answerAgain": "Répondre à nouveau",
   "form.answeredOnDate": "Répondu le {{date}}",
   "form.answersNb": "Réponses : {{nb}}",
+  "form.answersSent": "Vos réponses ont bien été envoyées !",
   "form.answersWellSaved": "Réponses bien enregistrées",
   "form.awaitingResponse": "En attente de réponse",
   "form.finishAndSend": "Terminer et envoyer",

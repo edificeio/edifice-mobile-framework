@@ -317,6 +317,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
               distribution.status = DistributionStatus.FINISHED;
               await formService.distribution.put(session, distribution);
               props.navigation.dispatch(NavigationActions.back());
+              Toast.showSuccess(I18n.t('form.answersSent'), { ...UI_ANIMATIONS.toast });
             } catch (e) {
               Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
             }

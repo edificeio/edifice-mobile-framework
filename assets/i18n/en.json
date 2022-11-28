@@ -385,6 +385,7 @@
   "form.answerAgain": "Answer again",
   "form.answeredOnDate": "Answered on {{date}}",
   "form.answersNb": "Answers : {{nb}}",
+  "form.answersSent": "Your answers have been sent!",
   "form.answersWellSaved": "Answers well saved",
   "form.awaitingResponse": "Awaiting response",
   "form.finishAndSend": "Finish and send",
