@@ -184,6 +184,8 @@
   "common.delete": "Supprimer",
   "common.deletion": "Suppression",
   "common.discard": "Abandonner",
+  "common.enterDate": "Saisir une date",
+  "common.enterTime": "Saisir une heure",
   "common.error.connection.text": "Un problème est survenu. Nous n'arrivons pas à afficher la page. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
   "common.error.connection.title": "Désolé...\nLa lumière s'est éteinte",
   "common.error.content.text": "Il semblerait que le contenu a été supprimé ou que vous n'y avez plus accès.",

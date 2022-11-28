@@ -183,6 +183,8 @@
   "common.delete": "Eliminar",
   "common.deletion": "Eliminación",
   "common.discard": "Abandonar",
+  "common.enterDate": "Introduzca una fecha",
+  "common.enterTime": "Introduzca una hora",
   "common.error.connection.text": "Ha ocurrido un problema. No podemos mostrar la página. Compruebe la conexión de red o vuelva a intentarlo más tarde.",
   "common.error.connection.title": "Lo sentimos...\nLa luz se ha apagado",
   "common.error.content.text": "Parece ser que el contenido se ha eliminado o ya no se puede acceder a él.",

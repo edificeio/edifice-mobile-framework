@@ -1,7 +1,9 @@
+import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
+import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/modules/form/reducer';
 import DateTimePicker from '~/ui/DateTimePicker';
@@ -44,8 +46,12 @@ export const FormDateCard = ({ isDisabled, question, responses, onChangeAnswer, 
     <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
       {isDisabled ? (
         <FormAnswerText answer={responses[0]?.answer} />
-      ) : (
+      ) : responses[0]?.answer ? (
         <DateTimePicker mode="date" value={date} onChange={value => onChangeDate(value)} style={styles.datePicker} />
+      ) : (
+        <TouchableOpacity onPress={() => onChangeDate(moment())}>
+          <SmallActionText>{I18n.t('common.enterDate')}</SmallActionText>
+        </TouchableOpacity>
       )}
     </FormQuestionCard>
   );

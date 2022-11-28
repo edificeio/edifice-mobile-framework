@@ -183,6 +183,8 @@
   "common.delete": "Delete",
   "common.deletion": "Deletion",
   "common.discard": "Cancel",
+  "common.enterDate": "Enter a date",
+  "common.enterTime": "Enter a time",
   "common.error.connection.text": "A problem has occurred. We cannot display the page. Please check your Wi-Fi connection or try again later.",
   "common.error.connection.title": "Sorry...\nThe lights are out",
   "common.error.content.text": "It looks like the content has been deleted or you no longer have access.",
