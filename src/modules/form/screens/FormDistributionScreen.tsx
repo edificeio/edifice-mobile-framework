@@ -192,62 +192,80 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     setPosition(pos);
   };
 
-  const postResponsesChanges = () => {
-    const questions = listElements.filter(e => !getIsElementSection(e)) as IQuestion[];
-    const session = getUserSession();
-
-    for (const question of questions) {
-      let res = responses.filter(r => r.questionId === question.id);
-      // Delete responses of multiple answer and matrix questions
-      if (question.type === QuestionType.MULTIPLEANSWER) {
-        formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
-        res.map(r => (r.id = undefined));
-      } else if (question.type === QuestionType.MATRIX) {
-        const questionIds = question.children?.map(q => q.id);
-        questionIds?.forEach(id => formService.distribution.deleteQuestionResponses(session, distributionId, id));
-        res = responses.filter(r => questionIds?.includes(r.questionId));
-        res.map(r => (r.id = undefined));
-      }
-      res.map(response => {
-        if (response.id) {
-          formService.response.put(
-            session,
-            response.id,
-            distributionId,
-            response.questionId,
-            response.choiceId ?? null,
-            response.answer,
-          );
-        } else {
-          formService.question
-            .createResponse(session, response.questionId, distributionId, response.choiceId ?? null, response.answer)
-            .then(r => (response.id = r.id));
+  const postResponsesChanges = async () => {
+    try {
+      const questions = listElements.filter(e => !getIsElementSection(e)) as IQuestion[];
+      const session = getUserSession();
+      for (const question of questions) {
+        let res = responses.filter(r => r.questionId === question.id);
+        // Delete responses of multiple answer and matrix questions
+        if (question.type === QuestionType.MULTIPLEANSWER) {
+          await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
+          res.map(r => (r.id = undefined));
+        } else if (question.type === QuestionType.MATRIX) {
+          const questionIds = question.children!.map(q => q.id);
+          await Promise.all(questionIds.map(id => formService.distribution.deleteQuestionResponses(session, distributionId, id)));
+          res = responses.filter(r => questionIds?.includes(r.questionId));
+          res.map(r => (r.id = undefined));
         }
-        return response;
-      });
-      if (question.type === QuestionType.FILE && res[0]?.answer !== '') {
-        const response = res[0];
-        formService.response.deleteFiles(session, response.id!);
-        response.files?.forEach(file => {
-          if (file.lf) {
-            formService.response.addFile(session, response.id!, file.lf);
-          }
-        });
+        await Promise.all(
+          res.map(response => {
+            if (response.id) {
+              formService.response.put(
+                session,
+                response.id,
+                distributionId,
+                response.questionId,
+                response.choiceId ?? null,
+                response.answer,
+              );
+            } else {
+              formService.question
+                .createResponse(session, response.questionId, distributionId, response.choiceId ?? null, response.answer)
+                .then(r => (response.id = r.id));
+            }
+            return response;
+          }),
+        );
+        if (question.type === QuestionType.FILE && res[0]?.answer !== '') {
+          const response = res[0];
+          await formService.response.deleteFiles(session, response.id!);
+          await Promise.all(
+            response.files!.map(file => {
+              if (file.lf) {
+                formService.response.addFile(session, response.id!, file.lf);
+              }
+            }),
+          );
+        }
+        // Add empty response to unanswered question
+        if (!res.length) {
+          const questionIds = question.type === QuestionType.MATRIX ? question.children!.map(q => q.id) : [question.id];
+          await Promise.all(
+            questionIds.map(id => {
+              const response: IQuestionResponse = {
+                questionId: id,
+                answer: '',
+              };
+              formService.question.createResponse(session, response.questionId, distributionId, null, response.answer).then(r => {
+                response.id = r.id;
+                updateResponses(id, [response]);
+              });
+            }),
+          );
+        }
       }
-      // Add empty response to unanswered question
-      if (!res.length) {
-        const questionIds = question.type === QuestionType.MATRIX ? question.children?.map(q => q.id) : [question.id];
-        questionIds?.forEach(id => {
-          const response: IQuestionResponse = {
-            questionId: id,
-            answer: '',
-          };
-          formService.question.createResponse(session, response.questionId, distributionId, null, response.answer).then(r => {
-            response.id = r.id;
-            updateResponses(id, [response]);
-          });
-        });
-      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const onSave = async () => {
+    try {
+      await postResponsesChanges();
+      Toast.show(I18n.t('form.answersWellSaved'), { ...UI_ANIMATIONS.toast });
+    } catch (e) {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 
@@ -315,7 +333,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     title: props.navigation.getParam('title'),
     right:
       loadingRef.current === AsyncPagedLoadingState.DONE && !isPositionAtSummary ? (
-        <TouchableOpacity onPress={() => postResponsesChanges()} style={styles.saveActionContainer}>
+        <TouchableOpacity onPress={() => onSave()} style={styles.saveActionContainer}>
           <Picture type="NamedSvg" name="ui-save" fill={theme.ui.text.inverse} width={24} height={24} />
         </TouchableOpacity>
       ) : undefined,

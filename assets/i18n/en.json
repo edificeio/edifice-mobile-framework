@@ -383,6 +383,7 @@
   "form.answerAgain": "Answer again",
   "form.answeredOnDate": "Answered on {{date}}",
   "form.answersNb": "Answers : {{nb}}",
+  "form.answersWellSaved": "Answers well saved",
   "form.awaitingResponse": "Awaiting response",
   "form.finishAndSend": "Finish and send",
   "form.formDistributionListScreen.emptyScreen.text": "You will receive a notification as soon as a form has been sent to you.",

@@ -386,6 +386,7 @@
   "form.answerAgain": "Répondre à nouveau",
   "form.answeredOnDate": "Répondu le {{date}}",
   "form.answersNb": "Réponses : {{nb}}",
+  "form.answersWellSaved": "Réponses bien enregistrées",
   "form.awaitingResponse": "En attente de réponse",
   "form.finishAndSend": "Terminer et envoyer",
   "form.formDistributionListScreen.emptyScreen.text": "Vous recevrez une notification dès qu'un formulaire vous aura été envoyé.",

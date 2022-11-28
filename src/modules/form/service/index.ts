@@ -4,7 +4,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import { IUserSession } from '~/framework/util/session';
-import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, fetchWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 import {
   DistributionStatus,
   IDistribution,
@@ -385,9 +385,9 @@ export const formService = {
     },
     deleteFiles: async (session: IUserSession, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files`;
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      return fetchWithCache(api, {
         method: 'DELETE',
-      }) as Promise<[]>;
+      });
     },
   },
   section: {
