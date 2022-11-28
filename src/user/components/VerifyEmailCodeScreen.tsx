@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
+import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText, TextSizeStyle } from '~/framework/components/text';
 
 import { CodeState, ResendResponse } from '../containers/VerifyEmailCodeScreen';
 
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   codeFieldCell: {
     width: getScaleDimension(45, 'width'),
     height: getScaleDimension(58, 'height'),
-    lineHeight: Platform.select({ ios: getScaleDimension(58, 'height'), android: getScaleDimension(34, 'height') }),
+    lineHeight: Platform.select({ ios: getScaleDimension(58, 'height'), android: TextSizeStyle.Huge.lineHeight }),
     textAlignVertical: 'center',
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.dimensions.width.tiny,
