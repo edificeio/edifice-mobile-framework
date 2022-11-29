@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActivityIndicator, LayoutChangeEvent, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, LayoutChangeEvent, StyleProp, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components//picture';
@@ -8,7 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { openUrl } from '~/framework/util/linking';
 
 export interface ActionButtonProps {
-  text: string;
+  text?: string;
   iconName?: string;
   emoji?: string;
   action?: () => void;
@@ -37,7 +37,7 @@ export const ActionButton = ({
   onLayout,
 }: ActionButtonProps) => {
   const [buttonWidth, setButtonWidth] = React.useState(0);
-  const Component = disabled ? View : TouchableOpacity;
+  const Component: React.ComponentType<ViewProps> = disabled ? View : TouchableOpacity;
 
   const commonViewStyle = {
     alignItems: 'center',

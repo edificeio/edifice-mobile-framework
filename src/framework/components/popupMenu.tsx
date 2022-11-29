@@ -5,8 +5,7 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, ViewStyle } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import { ViewStyle } from 'react-native';
 import { NavigationNavigateActionPayload } from 'react-navigation';
 
 import theme from '~/app/theme';
@@ -18,10 +17,10 @@ import { Icon } from './icon';
 import { SmallText } from './text';
 
 export interface IPopupMenuProps {
-  iconName: string;
+  iconName?: string;
   button?: (onPress: () => void) => React.ReactElement;
   active?: boolean;
-  options: Array<{ icon: string | React.ReactElement; i18n: string; goTo?: NavigationNavigateActionPayload; onClick?: () => void }>;
+  options: { icon: string | React.ReactElement; i18n: string; goTo?: NavigationNavigateActionPayload; onClick?: () => void }[];
   onPress?: () => void;
   style?: ViewStyle;
 }
@@ -55,7 +54,11 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
     };
     return (
       <>
-        {button ? button(onPress) : <DEPRECATED_HeaderPrimaryAction iconName={active ? 'close' : iconName} onPress={onPress} />}
+        {button ? (
+          button(onPress)
+        ) : iconName ? (
+          <DEPRECATED_HeaderPrimaryAction iconName={active ? 'close' : iconName} onPress={onPress} />
+        ) : null}
         {active ? (
           <>
             {this.renderOverlay()}
@@ -98,7 +101,14 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
       <Menu
         data={options}
         renderItem={({ item }) =>
-          this.renderAction(item as { icon: string | React.ReactElement; i18n: string; goTo: NavigationNavigateActionPayload })
+          this.renderAction(
+            item as {
+              icon: string | React.ReactElement;
+              i18n: string;
+              goTo: NavigationNavigateActionPayload;
+              onClick: () => void;
+            },
+          )
         }
         contentContainerStyle={
           {
