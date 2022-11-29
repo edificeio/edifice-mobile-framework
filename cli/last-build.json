@@ -1,6 +1,6 @@
 {
-  "last": "2022-11-25 21:09:04",
-  "notes": "upgrade(stack): Upgrade some packages.\nfeat(form): AMV2-383, add order question\nfix(form): AMV2-213, file upload\nfix(carousel): wrong statusbar color on Android\nrelease: 1.9.0-alpha.8(1090008)",
-  "version": "1.9.0-alpha.9(1090009)",
+  "last": "2022-11-29 19:16:38",
+  "notes": "feat(xmas): MB-993, tabbar icons\nrefacto: add `shadowColorTransparent` in theme\nrefacto(carousel): MB-951 code cleanup\nfeat(xmas): MB-871, snowfall shake\nfeat(xmas): MB-870, xmas settings design\nfeat(carousel): MB-951 menu + share on iOS\nfeat(carousel): MB-951 download in gallery on iOS\nfeat: add news icons from figma\nfeat(form): AMV2-205, show success feedback on distribution sent\nfix(form): AMV2-213, hide date and time pickers until text action press\nfeat(form): AMV2-214, add save changes feedback\nfix(form): AMV2-204, change new form notif handler\nfix(form): AMV2-199, increase content card text size\nfix(form): module image png instead of svg\nchore(2fa): refactored lineHeight\nupgrade(stack): Upgrade some packages\nrelease: 1.9.0-alpha.9(1090009)",
+  "version": "1.9.0-alpha.10(1090010)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
