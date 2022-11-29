@@ -31,13 +31,11 @@ export interface ICarouselNavParams {
 
 export interface ICarouselProps extends NavigationInjectedProps<ICarouselNavParams> {}
 
-const HEADER_BGCOLOR = '#0000007f';
-
 const styles = StyleSheet.create({
   page: { backgroundColor: theme.palette.grey.black },
   header: {
     position: 'absolute',
-    backgroundColor: HEADER_BGCOLOR,
+    backgroundColor: theme.ui.shadowColorTransparent,
     zIndex: 10,
   },
   // eslint-disable-next-line react-native/no-color-literals

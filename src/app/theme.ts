@@ -67,6 +67,7 @@ export interface ITheme {
   ui: {
     notificationBadge: ColorValue;
     shadowColor: ColorValue;
+    shadowColorTransparent: ColorValue;
     background: {
       card: ColorValue;
       empty: ColorValue;
@@ -270,6 +271,7 @@ export const defaultTheme: ThemeInitializer = {
     (this as Partial<ITheme>).ui = {
       notificationBadge: this.palette.complementary.red.regular,
       shadowColor: '#000',
+      shadowColorTransparent: '#0000007f',
       background: {
         card: this.palette.grey.white,
         empty: this.palette.grey.fog,
