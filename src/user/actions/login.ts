@@ -161,7 +161,8 @@ export function loginAction(
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
-      } else if (pf.url === 'https://recette-paris.opendigitaleducation.com' && !emailValidationInfos?.emailState?.valid) {
+      } // Tmp Workaround : we use this flag detection only for Recette Paris (remove once email verification is ready on all PF's)
+      else if (pf.url === 'https://recette-paris.opendigitaleducation.com' && !emailValidationInfos?.emailState?.valid) {
         const err = new Error('[loginAction]: User must verify email.');
         (err as any).type = LoginFlowErrorType.MUST_VERIFY_EMAIL;
         (err as any).emailValidationInfos = emailValidationInfos;

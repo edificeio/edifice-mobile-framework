@@ -807,6 +807,8 @@
   "user.sendEmailVerificationCodeScreen.emailVerificationModify": "Modification de votre adresse mail",
   "user.sendEmailVerificationCodeScreen.invalidEmailFormat": "Format d'email invalide.",
   "user.sendEmailVerificationCodeScreen.invalidEmailFormatModify": "L'email doit être différent de celui renseigné actuellement.",
+  "user.sendEmailVerificationCodeScreen.modify": "Veuillez rentrer votre nouvelle adresse mail.",
+  "user.sendEmailVerificationCodeScreen.modifyMyEmail": "Modifier mon email",
   "user.sendEmailVerificationCodeScreen.mustVerify": "En tant qu'administrateur de votre établissement, vous avez accès à des informations sensibles. Pour améliorer la sécurité de votre compte vous devez vérifier votre adresse mail.",
   "user.sendEmailVerificationCodeScreen.mustVerifyModify": "En changeant votre adresse mail il vous sera demandé de la vérifier pour des raisons de sécurité.",
   "user.sendEmailVerificationCodeScreen.refuseAndDisconnect": "Refuser et se déconnecter",

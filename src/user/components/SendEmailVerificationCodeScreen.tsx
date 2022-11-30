@@ -11,6 +11,7 @@ import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 const imageSize = getScaleDimension(150, 'image');
 
@@ -78,6 +79,10 @@ export const SendEmailVerificationCodeScreen = ({
     if (sendResponse) setEmailState(sendResponse);
   };
 
+  // Temporary condition (remove once email verification is ready on all PF's)
+  const pf = DEPRECATED_getCurrentPlatform();
+  const isPfRecetteParis = pf?.url === 'https://recette-paris.opendigitaleducation.com';
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -86,7 +91,9 @@ export const SendEmailVerificationCodeScreen = ({
       <HeadingSText style={styles.title}>
         {I18n.t(`user.sendEmailVerificationCodeScreen.emailVerification${modifyString}`)}
       </HeadingSText>
-      <SmallText style={styles.content}>{I18n.t(`user.sendEmailVerificationCodeScreen.mustVerify${modifyString}`)}</SmallText>
+      <SmallText style={styles.content}>
+        {I18n.t(`user.sendEmailVerificationCodeScreen.${isPfRecetteParis ? `mustVerify${modifyString}` : 'modify'}`)}
+      </SmallText>
       <View style={styles.inputTitleContainer}>
         <Picture
           type="NamedSvg"
@@ -112,7 +119,7 @@ export const SendEmailVerificationCodeScreen = ({
       <CaptionItalicText style={styles.errorText}>{errorString}</CaptionItalicText>
       <ActionButton
         style={styles.sendButton}
-        text={I18n.t('user.sendEmailVerificationCodeScreen.verifyMyEmail')}
+        text={I18n.t(`user.sendEmailVerificationCodeScreen.${isPfRecetteParis ? 'verify' : 'modify'}MyEmail`)}
         disabled={isEmailEmpty}
         loading={isSending}
         action={() => sendEmail()}
