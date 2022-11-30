@@ -26,8 +26,8 @@ import { TextStyle } from 'react-native';
 
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { formatSource } from '../media';
 
+import { formatSource } from '../media';
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
 import { extractVideoResolution } from './content';
 import {
@@ -537,6 +537,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
         // TODO : Better parse image url and detect cases
         if (src.indexOf('://') === -1) {
           if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+          if (!src.startsWith('/')) src = '/' + src;
           src = DEPRECATED_getCurrentPlatform()!.url + src;
         }
         const split = src.split('?');
@@ -570,7 +571,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
 
     // 1 - Build iframe ojbect representation
     let src = tag.attrs.src;
-    if(src) {
+    if (src) {
       src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
     }
     const iframeNugget: IIframeNugget = {
