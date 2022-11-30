@@ -6,12 +6,12 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 
 import AllModules, { setUpModulesAccess } from '~/app/modules';
+import CarouselScreen from '~/framework/components/carousel';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { IAppModule } from '~/infra/moduleTool/types';
 import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
 import Carousel from '~/ui/Carousel';
-import CarouselScreen from '~/framework/components/carousel';
 import { IFrame } from '~/ui/IFrame';
 
 import LoginNavigator from './LoginNavigator';

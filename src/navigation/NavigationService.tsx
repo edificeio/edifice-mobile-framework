@@ -1,6 +1,5 @@
 // NavigationService.js
-
-import { NavigationActions, NavigationContainerComponent } from "react-navigation";
+import { NavigationActions, NavigationContainerComponent } from 'react-navigation';
 
 /**
  * This holds a global reference to the active Main navigator container.
@@ -17,14 +16,14 @@ function navigate(routeName, params = {}) {
     NavigationActions.navigate({
       routeName,
       params,
-    })
+    }),
   );
 }
 
 let inOwnerWorkspace = false;
 
-export function setInOwnerWorkspace( value) {
-  inOwnerWorkspace = value
+export function setInOwnerWorkspace(value) {
+  inOwnerWorkspace = value;
 }
 
 export function isInOwnerWorkspace() {

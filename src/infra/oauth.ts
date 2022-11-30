@@ -568,8 +568,8 @@ export const urlSigner = {
 
   /**
    * Remove domain, protocol & searchParams from url
-   * @param absoluteUrl 
-   * @returns 
+   * @param absoluteUrl
+   * @returns
    */
   getRelativeUrl: (absoluteUrl?: string) => {
     return absoluteUrl && absoluteUrl.replace(DEPRECATED_getCurrentPlatform()!.url, '').split('?')[0];

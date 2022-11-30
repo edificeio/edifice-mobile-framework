@@ -2,13 +2,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { ILocalAttachment } from './Attachment';
-import { AttachmentGroup } from './AttachmentGroup';
-import { AttachmentGroupImages } from './AttachmentGroupImages';
-
 import { Trackers } from '~/framework/util/tracker';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';
 import { ContentUri } from '~/types/contentUri';
+
+import { ILocalAttachment } from './Attachment';
+import { AttachmentGroup } from './AttachmentGroup';
+import { AttachmentGroupImages } from './AttachmentGroupImages';
 
 class AttachmentPicker_Unconnected extends React.PureComponent<{
   attachments: ContentUri[] | ILocalAttachment[];

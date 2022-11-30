@@ -3,7 +3,7 @@ import { FlatList, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { formatSource, Image } from '~/framework/util/media';
+import { Image, formatSource } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { ContentUri } from '~/types/contentUri';

@@ -1,7 +1,6 @@
 /**
  * Homework workflow
  */
-
 import { IUserSession } from '~/framework/util/session';
 
 export const viewHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|view';

@@ -29,7 +29,7 @@
     "prepare-major": "node cli/prepare-build.js major",
     "prepare-minor": "node cli/prepare-build.js minor",
     "prepare-rev": "node cli/prepare-build.js rev",
-    "prettier": "npx prettier --write **/*.{js,jsx,ts,tsx,json} && npx prettier --write *.{js,jsx,ts,tsx,json}",
+    "prettier": "npx prettier --write src/**/*.{ts,tsx}",
     "start": "watchman watch-del-all && react-native start --reset-cache",
     "test": "jest",
     "tsc": "tsc -p tsconfig.json"
