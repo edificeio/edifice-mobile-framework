@@ -146,36 +146,24 @@ export function Carousel(props: ICarouselProps) {
       ios: [],
       android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
     })!;
-    try {
-      await assertPermissions(permissions);
-    } catch (e) {
-      if (e instanceof PermissionError) {
-        Alert.alert(
-          I18n.t('save.to.camera.roll.permission.blocked.title'),
-          I18n.t('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
-        );
-        return undefined;
-      } else {
-        throw e;
-      }
-    }
+    await assertPermissions(permissions);
     const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl }, {});
     return sf;
   }, []);
 
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
-      const sf = await downloadFile(url);
-      if (!sf) return;
-      const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
-      const permissions = Platform.select<Permission[]>({
-        ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
-        android:
-          androidVersionMajor >= 13
-            ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
-            : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
-      })!;
       try {
+        const sf = await downloadFile(url);
+        if (!sf) return;
+        const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
+        const permissions = Platform.select<Permission[]>({
+          ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
+          android:
+            androidVersionMajor >= 13
+              ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
+              : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+        })!;
         await assertPermissions(permissions);
       } catch (e) {
         if (e instanceof PermissionError) {
@@ -196,13 +184,25 @@ export function Carousel(props: ICarouselProps) {
 
   const onShare = React.useCallback(
     async (url: string | ImageURISource) => {
-      const sf = await downloadFile(url);
-      if (!sf) return;
-      await Share.open({
-        type: sf.filetype || 'text/html',
-        url: Platform.OS === 'android' ? 'file://' + sf.filepath : sf.filepath,
-        showAppsToView: true,
-      });
+      try {
+        const sf = await downloadFile(url);
+        if (!sf) return;
+        await Share.open({
+          type: sf.filetype || 'text/html',
+          url: Platform.OS === 'android' ? 'file://' + sf.filepath : sf.filepath,
+          showAppsToView: true,
+        });
+      } catch (e) {
+        if (e instanceof PermissionError) {
+          Alert.alert(
+            I18n.t('share.permission.blocked.title'),
+            I18n.t('share.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+          );
+          return undefined;
+        } else {
+          throw e;
+        }
+      }
     },
     [downloadFile],
   );
