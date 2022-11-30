@@ -4,9 +4,12 @@
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
+import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
 import Share from 'react-native-share';
+import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
@@ -49,6 +52,36 @@ const styles = StyleSheet.create({
     marginHorizontal: UI_SIZES.spacing.minor,
   },
 });
+
+class PermissionError extends Error {
+  value: PermissionStatus;
+
+  permission: Permission;
+
+  constructor(message: string, permission: Permission, value: PermissionStatus) {
+    super(message);
+    this.name = 'PermissionError';
+    this.permission = permission;
+    this.value = value;
+  }
+}
+
+async function assertPermissions(permissions: Permission[]) {
+  const permissionsResults = permissions.length > 0 ? await Promise.all(permissions.map(p => check(p))) : [];
+  for (let [i, result] of permissionsResults.entries()) {
+    if (result === 'denied') {
+      result = await request(permissions[i]);
+      permissionsResults[i] = result;
+    }
+    if (result === 'blocked') {
+      throw new PermissionError(`[Permission] ${permissions[i]} blocked by the user.`, permissions[i], result);
+    } else if (result === 'unavailable') {
+      throw new PermissionError(`[Permission] ${permissions[i]} not available on this device.`, permissions[i], result);
+    } else if (result === 'denied') {
+      throw new PermissionError(`[Permission] ${permissions[i]} not granted yet by the user.`, permissions[i], result);
+    }
+  }
+}
 
 export function Carousel(props: ICarouselProps) {
   const { navigation } = props;
@@ -109,6 +142,23 @@ export function Carousel(props: ICarouselProps) {
   const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
     const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
     if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
+    const permissions = Platform.select<Permission[]>({
+      ios: [],
+      android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+    })!;
+    try {
+      await assertPermissions(permissions);
+    } catch (e) {
+      if (e instanceof PermissionError) {
+        Alert.alert(
+          I18n.t('save.to.camera.roll.permission.blocked.title'),
+          I18n.t('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+        );
+        return undefined;
+      } else {
+        throw e;
+      }
+    }
     const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl }, {});
     return sf;
   }, []);
@@ -116,7 +166,30 @@ export function Carousel(props: ICarouselProps) {
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
       const sf = await downloadFile(url);
+      if (!sf) return;
+      const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
+      const permissions = Platform.select<Permission[]>({
+        ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
+        android:
+          androidVersionMajor >= 13
+            ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
+            : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+      })!;
+      try {
+        await assertPermissions(permissions);
+      } catch (e) {
+        if (e instanceof PermissionError) {
+          Alert.alert(
+            I18n.t('save.to.camera.roll.permission.blocked.title'),
+            I18n.t('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+          );
+          return undefined;
+        } else {
+          throw e;
+        }
+      }
       await CameraRoll.save(sf.filepath);
+      Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
     },
     [downloadFile],
   );
@@ -124,6 +197,7 @@ export function Carousel(props: ICarouselProps) {
   const onShare = React.useCallback(
     async (url: string | ImageURISource) => {
       const sf = await downloadFile(url);
+      if (!sf) return;
       await Share.open({
         type: sf.filetype || 'text/html',
         url: Platform.OS === 'android' ? 'file://' + sf.filepath : sf.filepath,
