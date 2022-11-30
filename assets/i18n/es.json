@@ -388,6 +388,7 @@
   "form.answersSent": "¡Sus respuestas han sido enviadas!",
   "form.answersWellSaved": "Respuestas bien guardadas",
   "form.awaitingResponse": "A la espera de respuesta",
+  "form.enterYourAnswer": "Introduzca su respuesta",
   "form.finishAndSend": "Terminar y enviar",
   "form.formDistributionListScreen.emptyScreen.text": "Se le notificará tan pronto como se le envíe un formulario.",
   "form.formDistributionListScreen.emptyScreen.title": "No tiene ningún formulario esperando una respuesta.",

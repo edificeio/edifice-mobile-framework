@@ -218,6 +218,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
                 response.questionId,
                 response.choiceId ?? null,
                 response.answer,
+                response.customAnswer ?? null,
               );
             } else {
               formService.question

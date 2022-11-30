@@ -63,6 +63,7 @@ export interface IQuestionChoice {
   type?: string;
   position?: number;
   nextSectionId?: number | null;
+  isCustom: boolean;
 }
 
 export interface IQuestionResponse {
@@ -70,6 +71,7 @@ export interface IQuestionResponse {
   questionId: number;
   answer: string;
   choiceId?: number;
+  customAnswer?: string;
   files?: IResponseFile[];
 }
 

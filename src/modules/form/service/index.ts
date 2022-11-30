@@ -85,6 +85,7 @@ interface IBackendQuestionChoice {
   type?: string;
   position?: number;
   next_section_id?: number | null;
+  is_custom: boolean;
 }
 
 interface IBackendQuestionResponse {
@@ -95,6 +96,7 @@ interface IBackendQuestionResponse {
   choice_id?: number;
   distribution_id: number;
   original_id?: number;
+  custom_answer: string;
 }
 
 interface IBackendResponseFile {
@@ -180,6 +182,7 @@ const questionChoiceAdapter: (data: IBackendQuestionChoice) => IQuestionChoice =
     type: data.type,
     position: data.position,
     nextSectionId: data.next_section_id,
+    isCustom: data.is_custom,
   } as IQuestionChoice;
 };
 
@@ -189,6 +192,7 @@ const questionResponseAdapter: (data: IBackendQuestionResponse) => IQuestionResp
     questionId: data.question_id,
     answer: data.answer,
     choiceId: data.choice_id,
+    customAnswer: data.custom_answer,
   } as IQuestionResponse;
 };
 
@@ -338,6 +342,7 @@ export const formService = {
       questionId: number,
       choiceId: number | null,
       answer: string,
+      customAnswer: string | null,
     ) => {
       const api = `/formulaire/responses/${responseId}`;
       const body = JSON.stringify({
@@ -346,6 +351,7 @@ export const formService = {
         choice_id: choiceId,
         answer,
         reponder_id: session.user.id,
+        custom_answer: customAnswer,
       });
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'PUT',

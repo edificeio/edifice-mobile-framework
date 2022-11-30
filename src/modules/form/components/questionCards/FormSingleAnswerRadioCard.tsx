@@ -1,7 +1,9 @@
+import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
+import theme from '~/app/theme';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
@@ -19,8 +21,15 @@ const styles = StyleSheet.create({
     marginTop: UI_SIZES.spacing.minor,
   },
   answerText: {
-    flex: 1,
     marginLeft: UI_SIZES.spacing.minor,
+  },
+  customAnswerInput: {
+    flex: 1,
+    marginLeft: UI_SIZES.spacing.small,
+    paddingVertical: UI_SIZES.spacing.tiny,
+    color: theme.ui.text.regular,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.grey,
   },
 });
 
@@ -40,6 +49,7 @@ export const FormSingleAnswerRadioCard = ({
   onEditQuestion,
 }: IFormSingleAnswerRadioCardProps) => {
   const [value, setValue] = React.useState(responses[0]?.choiceId);
+  const [customAnswer, setCustomAnswer] = React.useState(responses[0]?.customAnswer ?? '');
   const { title, mandatory, choices } = question;
 
   const onChangeChoice = (choice: IQuestionChoice) => {
@@ -47,14 +57,23 @@ export const FormSingleAnswerRadioCard = ({
     if (responses.length) {
       responses[0].answer = choice.value ?? '';
       responses[0].choiceId = choice.id;
+      responses[0].customAnswer = choice.isCustom ? customAnswer : undefined;
     } else {
       responses.push({
         questionId: question.id,
         answer: choice.value ?? '',
         choiceId: choice.id,
+        customAnswer: choice.isCustom ? customAnswer : undefined,
       });
     }
     onChangeAnswer(question.id, responses);
+  };
+
+  const onChangeCustomAnswer = (text: string, choice: IQuestionChoice) => {
+    setCustomAnswer(text);
+    if (value !== choice.id) {
+      onChangeChoice(choice);
+    }
   };
 
   return (
@@ -71,7 +90,16 @@ export const FormSingleAnswerRadioCard = ({
               disabled={isDisabled}
               style={[styles.answerContainer, index > 0 && styles.containerMargin]}>
               <FormRadio active={item.id === value} disabled={isDisabled} />
-              <SmallText style={styles.answerText}>{item.value}</SmallText>
+              <SmallText style={[styles.answerText, !item.isCustom && UI_STYLES.flex1]}>{item.value}</SmallText>
+              {item.isCustom ? (
+                <TextInput
+                  value={customAnswer}
+                  onChangeText={text => onChangeCustomAnswer(text, item)}
+                  editable={!isDisabled}
+                  placeholder={I18n.t('form.enterYourAnswer')}
+                  style={styles.customAnswerInput}
+                />
+              ) : null}
             </TouchableOpacity>
           )}
           bottomInset={false}

@@ -388,6 +388,7 @@
   "form.answersSent": "Your answers have been sent!",
   "form.answersWellSaved": "Answers well saved",
   "form.awaitingResponse": "Awaiting response",
+  "form.enterYourAnswer": "Enter your answer",
   "form.finishAndSend": "Finish and send",
   "form.formDistributionListScreen.emptyScreen.text": "You will receive a notification as soon as a form has been sent to you.",
   "form.formDistributionListScreen.emptyScreen.title": "You do not have any forms pending.",
