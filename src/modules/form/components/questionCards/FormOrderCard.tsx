@@ -104,7 +104,7 @@ export const FormOrderCard = ({ isDisabled, question, responses, onChangeAnswer,
         <DraggableFlatList
           data={choices}
           onDragEnd={({ data }) => updateOrder(data)}
-          keyExtractor={(item, index) => `${item.id.toString()}#${index.toString()}`}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
           style={styles.listContainer}
         />

@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
   },
   sliderMargin: {
     paddingTop: UI_SIZES.spacing.medium,
@@ -29,8 +28,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: UI_SIZES.spacing.minor,
   },
-  labelText: {
+  labelContainer: {
     maxWidth: '30%',
+  },
+  labelText: {
     textAlign: 'center',
     color: theme.ui.text.light,
   },
@@ -44,27 +45,34 @@ interface IFormSliderCardProps {
   onEditQuestion?: () => void;
 }
 
+const getDefaultValue = (min: number, max: number, step: number) => {
+  const half = Math.round((max - min) / 2);
+  return (half / step) * step;
+};
+
 export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormSliderCardProps) => {
-  const { title, mandatory, cursorMinVal = 0, cursorMaxVal = 100, cursorStep, cursorLabelMinVal, cursorLabelMaxVal } = question;
-  const [value, setValue] = React.useState(responses[0]?.answer ? Number(responses[0]?.answer) : cursorMinVal);
+  const { title, mandatory, cursorMinVal = 0, cursorMaxVal = 100, cursorStep = 1, cursorLabelMinVal, cursorLabelMaxVal } = question;
+  const [value, setValue] = React.useState(
+    responses[0]?.answer ? Number(responses[0]?.answer) : getDefaultValue(cursorMinVal, cursorMaxVal, cursorStep),
+  );
+  const [isLabelExpanded, setLabelExpanded] = React.useState(false);
   const position = ((value - cursorMinVal) / (cursorMaxVal - cursorMinVal)) * 100;
   const valuePosition = {
     left: `${position}%`,
     marginLeft: -50 + (position - 50) / -2,
   };
 
-  const onChangeValue = (v: number) => {
-    setValue(v);
+  React.useEffect(() => {
     if (responses[0]) {
-      responses[0].answer = v.toString();
+      responses[0].answer = value.toString();
     } else {
       responses.push({
         questionId: question.id,
-        answer: v.toString(),
+        answer: value.toString(),
       });
     }
     onChangeAnswer(question.id, responses);
-  };
+  }, [value]);
 
   return (
     <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
@@ -88,19 +96,30 @@ export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer
                 minimumTrackTintColor={theme.palette.primary.regular.toString()}
                 style={styles.sliderContainer}
                 onValueChange={v => setValue(v)}
-                onSlidingComplete={v => onChangeValue(v)}
               />
             </View>
             <SmallText>{cursorMaxVal}</SmallText>
           </View>
           {cursorLabelMinVal || cursorLabelMaxVal ? (
             <View style={styles.rowContainer}>
-              <CaptionText numberOfLines={2} style={styles.labelText}>
-                {cursorLabelMinVal}
-              </CaptionText>
-              <CaptionText numberOfLines={2} style={styles.labelText}>
-                {cursorLabelMaxVal}
-              </CaptionText>
+              <TouchableOpacity
+                onPress={() => setLabelExpanded(true)}
+                disabled={isLabelExpanded}
+                activeOpacity={1}
+                style={styles.labelContainer}>
+                <CaptionText numberOfLines={isLabelExpanded ? undefined : 2} style={styles.labelText}>
+                  {cursorLabelMinVal}
+                </CaptionText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setLabelExpanded(true)}
+                disabled={isLabelExpanded}
+                activeOpacity={1}
+                style={styles.labelContainer}>
+                <CaptionText numberOfLines={isLabelExpanded ? undefined : 2} style={styles.labelText}>
+                  {cursorLabelMaxVal}
+                </CaptionText>
+              </TouchableOpacity>
             </View>
           ) : null}
         </>

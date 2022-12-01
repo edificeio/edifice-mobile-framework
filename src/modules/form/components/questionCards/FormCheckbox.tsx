@@ -13,7 +13,7 @@ export const FormCheckbox = ({ checked, disabled }: IFormCheckboxProps) => {
   const style: ViewStyle = {
     width: 25,
     height: 25,
-    borderRadius: 14,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: checked ? (disabled ? theme.palette.grey.grey : theme.palette.primary.regular) : theme.ui.text.inverse,
