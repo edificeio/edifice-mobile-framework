@@ -28,6 +28,7 @@ interface IBackendDistribution {
   date_response?: string;
   active: boolean;
   structure?: string;
+  original_id?: number;
 }
 
 interface IBackendForm {
@@ -136,6 +137,7 @@ const distributionAdapter: (data: IBackendDistribution) => IDistribution = data 
     dateResponse: moment(data.date_response),
     active: data.active,
     structure: data.structure,
+    originalId: data.original_id,
   } as IDistribution;
 };
 
@@ -236,7 +238,9 @@ export const formService = {
     },
     add: async (session: IUserSession, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/add`;
-      const distribution = (await fetchJSONWithCache(api, { method: 'post' })) as IBackendDistribution;
+      const distribution = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'POST',
+      })) as IBackendDistribution;
       return distributionAdapter(distribution) as IDistribution;
     },
     getResponses: async (session: IUserSession, distributionId: number) => {
@@ -253,10 +257,25 @@ export const formService = {
     put: async (session: IUserSession, distribution: IDistribution) => {
       const api = `/formulaire/distributions/${distribution.id}`;
       const body = JSON.stringify(distribution);
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      const distrib = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'DELETE',
         body,
-        method: 'PUT',
-      }) as Promise<IDistribution>;
+      })) as IBackendDistribution;
+      return distributionAdapter(distrib) as IDistribution;
+    },
+    duplicate: async (session: IUserSession, distributionId: number) => {
+      const api = `/formulaire/distributions/${distributionId}/duplicate`;
+      const distribution = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'POST',
+      })) as IBackendDistribution;
+      return distributionAdapter(distribution) as IDistribution;
+    },
+    replace: async (session: IUserSession, distributionId: number, originalDistributionId: number) => {
+      const api = `/formulaire/distributions/${distributionId}/replace/${originalDistributionId}`;
+      const distribution = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'DELETE',
+      })) as IBackendDistribution;
+      return distributionAdapter(distribution) as IDistribution;
     },
   },
   forms: {
@@ -318,10 +337,11 @@ export const formService = {
         answer,
         responder_id: session.user.id,
       });
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      const response = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'POST',
         body,
-      }) as Promise<IQuestionResponse>;
+      })) as IBackendQuestionResponse;
+      return questionResponseAdapter(response) as IQuestionResponse;
     },
     getChoices: async (session: IUserSession, questionId: number) => {
       const api = `/formulaire/questions/${questionId}/choices`;
@@ -353,10 +373,11 @@ export const formService = {
         reponder_id: session.user.id,
         custom_answer: customAnswer,
       });
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      const response = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
         method: 'PUT',
         body,
-      }) as Promise<IQuestionResponse>;
+      })) as IBackendQuestionResponse;
+      return questionResponseAdapter(response) as IQuestionResponse;
     },
     getFiles: async (session: IUserSession, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files/all`;

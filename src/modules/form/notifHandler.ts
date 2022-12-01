@@ -34,10 +34,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
       }
       const distributions = await formService.distributions.getFromForm(session, formId);
       const distribution =
-        distributions.length === 1
-          ? distributions[0]
-          : distributions.find(d => d.status === DistributionStatus.ONCHANGE) ??
-            distributions.find(d => d.status === DistributionStatus.TODO);
+        distributions.length === 1 ? distributions[0] : distributions.find(d => d.status === DistributionStatus.TO_DO);
 
       if (distribution) {
         mainNavNavigate(computeRelativePath(`${moduleConfig.routeName}/distribution`, navState), {

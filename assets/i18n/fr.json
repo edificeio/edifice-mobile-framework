@@ -395,6 +395,7 @@
   "form.finishAndSend": "Terminer et envoyer",
   "form.formDistributionListScreen.emptyScreen.text": "Vous recevrez une notification dès qu'un formulaire vous aura été envoyé.",
   "form.formDistributionListScreen.emptyScreen.title": "Vous n'avez aucun formulaire en attente de réponse",
+  "form.formDistributionScreen.replaceAlert.text": "Voulez-vous valider et envoyer les modifications apportées à votre réponse ?",
   "form.formDistributionScreen.submitAlert.editable.text": "Vous êtes sur le point de valider vos réponses à ce formulaire. Vous aurez la possibilité de modifier vos réponses plus tard.\n\nVoulez-vous confirmer l'envoi ?",
   "form.formDistributionScreen.submitAlert.text": "Vous êtes sur le point de valider vos réponses à ce formulaire. Une fois votre formulaire envoyé vous ne pourrez plus modifier vos réponses.\n\nVoulez-vous confirmer l'envoi ?",
   "form.formDistributionScreen.submitAlert.title": "Valider l'envoi",

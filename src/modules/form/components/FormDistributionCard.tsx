@@ -43,10 +43,10 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
       );
     }
     const { status, dateResponse } = formDistributions.distributions[0];
-    const color = status === DistributionStatus.TODO ? theme.palette.status.failure : theme.palette.status.success;
+    const color = status === DistributionStatus.TO_DO ? theme.palette.status.failure : theme.palette.status.success;
     return (
       <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
-        {I18n.t(status === DistributionStatus.TODO ? 'form.awaitingResponse' : 'form.answeredOnDate', {
+        {I18n.t(status === DistributionStatus.TO_DO ? 'form.awaitingResponse' : 'form.answeredOnDate', {
           date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
         })}
       </SmallBoldText>

@@ -125,7 +125,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       if (content) {
         const res = await props.fetchDistributionResponses(distributionId);
         setResponses(res);
-        if (content?.elementsCount && status === DistributionStatus.FINISHED) {
+        if (content?.elementsCount && status !== DistributionStatus.TO_DO) {
           setPosition(content.elementsCount);
           setPositionHistory(getPositionHistory(content.elements, res));
         }
@@ -303,7 +303,13 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   const submitDistribution = () => {
     Alert.alert(
       I18n.t('form.formDistributionScreen.submitAlert.title'),
-      I18n.t(editable ? 'form.formDistributionScreen.submitAlert.editable.text' : 'form.formDistributionScreen.submitAlert.text'),
+      I18n.t(
+        status === DistributionStatus.ON_CHANGE
+          ? 'form.formDistributionScreen.replaceAlert.text'
+          : editable
+          ? 'form.formDistributionScreen.submitAlert.editable.text'
+          : 'form.formDistributionScreen.submitAlert.text',
+      ),
       [
         {
           text: I18n.t('common.cancel'),
@@ -315,8 +321,12 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
             try {
               const session = getUserSession();
               const distribution = await formService.distribution.get(session, distributionId);
-              distribution.status = DistributionStatus.FINISHED;
-              await formService.distribution.put(session, distribution);
+              if (status === DistributionStatus.TO_DO) {
+                distribution.status = DistributionStatus.FINISHED;
+                await formService.distribution.put(session, distribution);
+              } else if (distribution.originalId) {
+                await formService.distribution.replace(session, distributionId, distribution.originalId);
+              }
               props.navigation.dispatch(NavigationActions.back());
               Toast.showSuccess(I18n.t('form.answersSent'), { ...UI_ANIMATIONS.toast });
             } catch (e) {

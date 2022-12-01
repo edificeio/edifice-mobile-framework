@@ -12,8 +12,8 @@ import moduleConfig from '~/modules/workspace/moduleConfig';
 
 export enum DistributionStatus {
   FINISHED = 'FINISHED',
-  ONCHANGE = 'ON_CHANGE',
-  TODO = 'TO_DO',
+  ON_CHANGE = 'ON_CHANGE',
+  TO_DO = 'TO_DO',
 }
 
 export enum QuestionType {
@@ -43,6 +43,7 @@ export interface IDistribution {
   dateResponse?: Moment;
   active: boolean;
   structure?: string;
+  originalId?: number;
 }
 
 export interface IForm {

@@ -52,30 +52,25 @@ export const FormDistributionListModal = ({
     }
   };
 
-  const renderListItem = (distribution: IDistribution, index: number) => {
-    const { dateResponse } = distribution;
-    const text = `${index}. ${I18n.t('form.answeredOnDate', { date: dateResponse?.format('DD/MM/YYYY, HH:mm') })}`;
-    return (
-      <TouchableOpacity
-        onPress={() => openDistributionCallback(distribution.id, DistributionStatus.FINISHED)}
-        style={styles.itemContainer}>
-        <SmallText>{text}</SmallText>
-        <Picture
-          type="NamedSvg"
-          width={20}
-          height={20}
-          name="ui-eye"
-          fill={theme.palette.primary.regular}
-          style={styles.itemIconMargin}
-        />
-      </TouchableOpacity>
-    );
+  const openSentDistribution = async (id: number) => {
+    if (form?.editable) {
+      let distribution = distributions.find(d => d.status === DistributionStatus.ON_CHANGE);
+      if (!distribution) {
+        try {
+          const session = getUserSession();
+          distribution = await formService.distribution.duplicate(session, id);
+        } catch (e) {
+          throw e;
+        }
+      }
+      openDistributionCallback(distribution.id, distribution.status);
+    } else {
+      openDistributionCallback(id, DistributionStatus.FINISHED);
+    }
   };
 
   const onAnswerAgain = async () => {
-    let distribution =
-      distributions.find(d => d.status === DistributionStatus.ONCHANGE) ??
-      distributions.find(d => d.status === DistributionStatus.TODO);
+    let distribution = distributions.find(d => d.status === DistributionStatus.TO_DO);
     if (!distribution) {
       try {
         setLoading(true);
@@ -88,6 +83,24 @@ export const FormDistributionListModal = ({
       }
     }
     openDistributionCallback(distribution.id, distribution.status);
+  };
+
+  const renderListItem = (distribution: IDistribution, index: number) => {
+    const { dateResponse } = distribution;
+    const text = `${index}. ${I18n.t('form.answeredOnDate', { date: dateResponse?.format('DD/MM/YYYY, HH:mm') })}`;
+    return (
+      <TouchableOpacity onPress={() => openSentDistribution(distribution.id)} style={styles.itemContainer}>
+        <SmallText>{text}</SmallText>
+        <Picture
+          type="NamedSvg"
+          width={20}
+          height={20}
+          name="ui-eye"
+          fill={theme.palette.primary.regular}
+          style={styles.itemIconMargin}
+        />
+      </TouchableOpacity>
+    );
   };
 
   return (
