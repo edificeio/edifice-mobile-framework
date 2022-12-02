@@ -42,6 +42,11 @@ export class Props {
   public failImageSource?: IImageInfo = undefined;
 
   /**
+   * renders abritray component when image failed. Use this instead of failImageSource.
+   */
+  public renderFailImage?: (props: IImageInfo) => React.ReactElement<any> = undefined;
+
+  /**
    * 背景颜色
    */
   public backgroundColor?: string = 'black';

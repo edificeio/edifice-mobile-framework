@@ -126,6 +126,7 @@
   "blog.resourceName": "Billet de blog",
   "blog.tabName": "Blog",
   "carousel.counter": "{{current}} / {{total}}",
+  "carousel.image.not.found": "Désolé, nous n’avons pas pu vous afficher l'image. Elle est inaccessible ou introuvable.",
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorConfirm": "Les mots de passe doivent être identiques.",
   "changePassword-errorFields": "Le formulaire contient des erreurs",

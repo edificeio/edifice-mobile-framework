@@ -5,7 +5,7 @@
  * Shows a large image (svg) with a title, an optional paragraph and an optional action button.
  */
 import * as React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { ColorValue, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
@@ -24,6 +24,8 @@ export const EmptyScreen = ({
   buttonAction,
   buttonIcon,
   customStyle,
+  svgFillColor,
+  textColor,
 }: {
   svgImage: string;
   title: string;
@@ -33,6 +35,8 @@ export const EmptyScreen = ({
   buttonAction?: () => void;
   buttonIcon?: string;
   customStyle?: ViewStyle;
+  svgFillColor?: ColorValue;
+  textColor?: ColorValue;
 }) => {
   const imageWidth = getScaleDimension(280, 'image');
   const imageHeight = getScaleDimension(200, 'image');
@@ -46,21 +50,24 @@ export const EmptyScreen = ({
         },
         customStyle,
       ]}>
-      <NamedSVG style={{ alignSelf: 'center' }} name={svgImage} width={imageWidth} height={imageHeight} />
-      <HeadingSText
-        numberOfLines={2}
-        style={{
-          textAlign: 'center',
-          color: theme.palette.primary.regular,
-          marginTop: UI_SIZES.spacing.large,
-        }}>
-        {title}
-      </HeadingSText>
+      <NamedSVG style={{ alignSelf: 'center' }} name={svgImage} width={imageWidth} height={imageHeight} fill={svgFillColor} />
+      {title ? (
+        <HeadingSText
+          numberOfLines={2}
+          style={{
+            textAlign: 'center',
+            color: textColor ?? theme.palette.primary.regular,
+            marginTop: UI_SIZES.spacing.large,
+          }}>
+          {title}
+        </HeadingSText>
+      ) : null}
       {text ? (
         <SmallText
           // numberOfLines={5}
           style={{
             textAlign: 'center',
+            ...(textColor ? { color: textColor } : {}),
             marginTop: UI_SIZES.spacing.small,
           }}>
           {text}

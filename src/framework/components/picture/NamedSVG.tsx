@@ -167,6 +167,7 @@ const imports = {
   'empty-viesco': import('ASSETS/images/empty-screen/empty-viesco.svg'),
   'empty-workspace': import('ASSETS/images/empty-screen/empty-workspace.svg'),
   'empty-pronote-uri': import('ASSETS/images/empty-screen/pronote-error-uri.svg'),
+  'image-not-found': import('ASSETS/images/empty-screen/image-not-found.svg'),
   'form-default': import('ASSETS/images/form-default.svg'),
   'onboarding-0': import('ASSETS/images/onboarding/onboarding_0.svg'),
   'onboarding-1': import('ASSETS/images/onboarding/onboarding_1.svg'),

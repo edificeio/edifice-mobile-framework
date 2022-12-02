@@ -165,6 +165,13 @@ export default class ImageViewer extends React.Component<Props, State> {
         return;
       }
 
+      if (this!.state!.imageSizes![index].status !== 'fail') {
+        console.debug('FIAL');
+        this!.state!.imageSizes![index] = imageStatus;
+        setTimeout(() => this.forceUpdate(), 500); // Tiny hack to not cancel the gesture
+        return;
+      }
+
       const imageSizes = this!.state!.imageSizes!.slice();
       imageSizes[index] = imageStatus;
       this.setState({ imageSizes });
@@ -188,7 +195,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     let imageLoaded = false;
 
     // Tagged success if url is started with file:, or not set yet(for custom source.uri).
-    if (!image.url || image.url.startsWith(`file:`)) {
+    if (image.url.startsWith(`file:`)) {
       imageLoaded = true;
     }
 
@@ -213,6 +220,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     const getSizeFailure = () => {
       try {
         const data = (Image as any).resolveAssetSource(image.props.source);
+        if (data.width === undefined || data.height === undefined) throw new Error('cannot resolveAssetSource');
         imageStatus.width = data.width;
         imageStatus.height = data.height;
         imageStatus.status = 'success';
@@ -576,16 +584,18 @@ export default class ImageViewer extends React.Component<Props, State> {
               style={this.styles.modalContainer}
               imageWidth={this.props.failImageSource ? this.props.failImageSource.width : screenWidth}
               imageHeight={this.props.failImageSource ? this.props.failImageSource.height : screenHeight}>
-              {this.props.failImageSource &&
-                this!.props!.renderImage!({
-                  source: {
-                    uri: this.props.failImageSource.url,
-                  },
-                  style: {
-                    width: this.props.failImageSource.width,
-                    height: this.props.failImageSource.height,
-                  },
-                })}
+              {this.props.renderFailImage
+                ? this.props.renderFailImage(image)
+                : this.props.failImageSource &&
+                  this!.props!.renderImage!({
+                    source: {
+                      uri: this.props.failImageSource.url,
+                    },
+                    style: {
+                      width: this.props.failImageSource.width,
+                      height: this.props.failImageSource.height,
+                    },
+                  })}
             </Wrapper>
           );
       }

@@ -24,6 +24,7 @@ import { getUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
+import { EmptyScreen } from '../emptyScreen';
 import { NamedSVG } from '../picture';
 import PopupMenu from '../popupMenu';
 
@@ -50,6 +51,12 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     backgroundColor: 'transparent',
     marginHorizontal: UI_SIZES.spacing.minor,
+  },
+  // eslint-disable-next-line react-native/no-color-literals
+  errorScreen: {
+    backgroundColor: 'transparent',
+    height: UI_SIZES.screen.height,
+    justifyContent: 'center',
   },
 });
 
@@ -214,9 +221,22 @@ export function Carousel(props: ICarouselProps) {
 
   const renderImage = React.useCallback(imageProps => <FastImage {...imageProps} />, []);
 
+  const renderFailImage = React.useCallback(imageProps => {
+    return (
+      <EmptyScreen
+        customStyle={styles.errorScreen}
+        svgImage="image-not-found"
+        title=""
+        text={I18n.t('carousel.image.not.found')}
+        svgFillColor={theme.palette.grey.fog}
+        textColor={theme.palette.grey.fog}
+      />
+    );
+  }, []);
+
   return (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
-      <PageView navigation={navigation} style={styles.page}>
+      <PageView navigation={navigation} style={styles.page} showNetworkBar={false}>
         <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" />
 
         <ImageViewer
@@ -246,6 +266,7 @@ export function Carousel(props: ICarouselProps) {
           onClick={() => {
             setNavBarVisible(!isNavBarVisible);
           }}
+          renderFailImage={renderFailImage}
         />
       </PageView>
     </GestureHandlerRootView>

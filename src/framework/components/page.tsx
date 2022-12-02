@@ -41,6 +41,7 @@ export interface PageViewProps extends ViewProps {
   onBack?: () => boolean | void; // call when trigger a Back event. The given function returns true to perform the back action, false to cancel it.
   // Fixme : Currently not working for iOS swipe back.
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
+  showNetworkBar?: boolean;
 }
 
 export const pageGutterSize = UI_SIZES.spacing.medium;
@@ -62,7 +63,7 @@ export const PageViewStyle = styled.View({
   backgroundColor: theme.ui.background.page,
 });
 export const PageView = (props: PageViewProps) => {
-  const { navigation, children, navBar, navBarWithBack, navBarNode, onBack, gutters, ...viewProps } = props;
+  const { navigation, children, navBar, navBarWithBack, navBarNode, showNetworkBar = true, onBack, gutters, ...viewProps } = props;
   const navBarColor = StyleSheet.flatten(navBar?.style || navBarWithBack?.style)?.backgroundColor;
 
   const goBack = () => {
@@ -112,7 +113,7 @@ export const PageView = (props: PageViewProps) => {
           />
         ) : null}
         {navBarNode ? navBarNode : null}
-        <DEPRECATED_ConnectionTrackingBar />
+        {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={navigation.state.routeName} />
         <View style={gutterStyle}>{children}</View>
       </>
