@@ -119,7 +119,7 @@ export function Carousel(props: ICarouselProps) {
               i18n: 'share',
               icon: (
                 <NamedSVG
-                  name="ui-send"
+                  name="ui-share"
                   fill={theme.palette.grey.black}
                   width={UI_SIZES.dimensions.width.large}
                   height={UI_SIZES.dimensions.width.large}

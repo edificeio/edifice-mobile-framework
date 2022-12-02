@@ -7,6 +7,7 @@
  * ToDo : make this list automatically computed.
  */
 import React, { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
 const imports = {
@@ -83,6 +84,10 @@ const imports = {
   'ui-see': import('ASSETS/icons/uiIcons/see.svg'),
   'ui-send': import('ASSETS/icons/uiIcons/send.svg'),
   'ui-settings': import('ASSETS/icons/uiIcons/settings.svg'),
+  'ui-share': Platform.select({
+    ios: import('ASSETS/icons/uiIcons/shareIOS.svg'),
+    android: import('ASSETS/icons/uiIcons/shareAOS.svg'),
+  }),
   'ui-skills': import('ASSETS/icons/uiIcons/skills.svg'),
   'ui-success_fill': import('ASSETS/icons/uiIcons/success_fill.svg'),
   'ui-success_outline': import('ASSETS/icons/uiIcons/success_outline.svg'),
