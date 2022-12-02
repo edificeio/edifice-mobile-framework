@@ -59,6 +59,7 @@ export const FormMultipleAnswerCard = ({
       responses = responses.filter(response => response.choiceId !== id);
     } else {
       setSelectedChoices([...selectedChoices, id]);
+      responses = responses.filter(r => r.choiceId);
       responses.push({
         questionId: question.id,
         answer: value ?? '',

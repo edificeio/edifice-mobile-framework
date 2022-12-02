@@ -16,9 +16,15 @@ const styles = StyleSheet.create({
     borderColor: theme.ui.border.input,
     borderWidth: 1,
     borderRadius: 5,
-    height: 140,
     color: theme.ui.text.regular,
     textAlignVertical: 'top',
+  },
+  fixedHeight: {
+    height: 140,
+  },
+  changeableHeight: {
+    minHeight: 140,
+    maxHeight: 500,
   },
 });
 
@@ -42,12 +48,13 @@ export const FormLongAnswerCard = ({
 
   const onChangeTextCallback = (text: string) => {
     setValue(text);
-    if (responses[0]) {
-      responses[0].answer = `<div style="" class="ng-scope">${text.replace(/\n/g, '<br>')}</div>`;
+    const answer = text ? `<div style="" class="ng-scope">${text.replace(/\n/g, '<br>')}</div>` : '';
+    if (responses.length) {
+      responses[0].answer = answer;
     } else {
       responses.push({
         questionId: question.id,
-        answer: `<div style="" class="ng-scope">${text.replace(/\n/g, '<br>')}</div>`,
+        answer,
       });
     }
     onChangeAnswer(question.id, responses);
@@ -63,7 +70,7 @@ export const FormLongAnswerCard = ({
           value={value}
           onChangeText={text => onChangeTextCallback(text)}
           multiline
-          style={styles.textInput}
+          style={[styles.textInput, question.sectionId ? styles.fixedHeight : styles.changeableHeight]}
         />
       )}
     </FormQuestionCard>
