@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { Alert, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
+import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
@@ -459,10 +459,12 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     }
   };
 
+  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+
   return (
-    <PageView navigation={props.navigation} navBarWithBack={navBarInfo}>
+    <PageComponent navigation={props.navigation} navBarWithBack={navBarInfo}>
       {renderPage()}
-    </PageView>
+    </PageComponent>
   );
 };
 
