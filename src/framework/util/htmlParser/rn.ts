@@ -26,8 +26,8 @@ import { TextStyle } from 'react-native';
 
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { formatSource } from '~/framework/util/media';
 
-import { formatSource } from '../media';
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
 import { extractVideoResolution } from './content';
 import {
@@ -532,7 +532,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       this.insertInlineImageNugget(emoji);
     } else {
       // B - 1 - Build image object representation
-      let src = tag.attrs.src;
+      let src = tag.attrs.src ?? tag.attrs['data-mce-src'];
       if (src && src.indexOf('file://') === -1) {
         // TODO : Better parse image url and detect cases
         if (src.indexOf('://') === -1) {
