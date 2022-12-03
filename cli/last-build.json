@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-01 20:12:27",
-  "notes": "upgrade(stack): Upgrade some packages.\nchore:Fix linter error when executing yarn lint\nfix(form): AMV2-441, slider question improvements\nfix(form): AMV2-214, response edition using duplicate and replace endpoints\nfix(carousel): MB-951 specific permissions message for share\nfix(carousel): MB-951 specific permissions check\nchore(2fa): MB-991, temp workaround\nfeat(form): AMV2-454, 'other' choice for single and multiple questions\nchore: Prettier some files\nfix: AMVZ-97, html img parser\nrelease: 1.9.0-alpha.10(1090010)",
-  "version": "1.9.0-alpha.11(1090011)",
+  "last": "2022-12-03 09:46:42",
+  "notes": "feat(user): MB-870/MB-871/MB-993, xmas theme\nfix(carousel): MB-951 error handeling\nchore(build): Fix null RNTextSize\nfix(form): AMV2-205, keyboard page view\nfix(form): AMV2-213, mandatory long answer and multiple answer questions\nfix: MB-951 right share icon for ios & android\nfix(zimbra): img parsing data-mce-src\nrelease: 1.9.0-alpha.11(1090011)\nupgrade(stack): Upgrade some packages.\nchore:Fix linter error when executing yarn lint\nfix(form): AMV2-441, slider question improvements\nfix(form): AMV2-214, response edition using duplicate and replace endpoints\nfix(carousel): MB-951 specific permissions message for share\nfix(carousel): MB-951 specific permissions check\nchore(2fa): MB-991, temp workaround\nfeat(form): AMV2-454, 'other' choice for single and multiple questions\nchore: Prettier some files\nfix: AMVZ-97, html img parser\nrelease: 1.9.0-alpha.10(1090010)\nrefacto: add `shadowColorTransparent` in theme\nrefacto(carousel): MB-951 code cleanup",
+  "version": "1.9.0-rc.1(1090012)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
