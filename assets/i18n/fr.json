@@ -579,6 +579,7 @@
   "share.permission.blocked.text": "{{appName}} ne peut partager le document. Vous pouvez autoriser l'accès aux documents via les paramètres de confidentialité.",
   "share.permission.blocked.title": "Partage bloqué",
   "save.to.camera.roll.success": "Enregistré dans la Galerie",
+  "save.to.camera.roll.error": "Erreur lors de l'enregistrement.",
   "schoolbook.acknowledge": "Confirmer la lecture",
   "schoolbook.acknowledged": "Lu",
   "schoolbook.acknowledgement": "Lu",

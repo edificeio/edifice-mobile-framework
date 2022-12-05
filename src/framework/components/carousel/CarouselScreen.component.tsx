@@ -18,6 +18,7 @@ import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { FakeHeader } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { getUserSession } from '~/framework/util/session';
@@ -161,30 +162,35 @@ export function Carousel(props: ICarouselProps) {
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
       try {
-        const sf = await downloadFile(url);
-        if (!sf) return;
-        const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
-        const permissions = Platform.select<Permission[]>({
-          ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
-          android:
-            androidVersionMajor >= 13
-              ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
-              : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
-        })!;
-        await assertPermissions(permissions);
-      } catch (e) {
-        if (e instanceof PermissionError) {
-          Alert.alert(
-            I18n.t('save.to.camera.roll.permission.blocked.title'),
-            I18n.t('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
-          );
-          return undefined;
-        } else {
-          throw e;
+        let sf: SyncedFile;
+        try {
+          sf = await downloadFile(url);
+          if (!sf) return;
+          const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
+          const permissions = Platform.select<Permission[]>({
+            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
+            android:
+              androidVersionMajor >= 13
+                ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
+                : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+          })!;
+          await assertPermissions(permissions);
+        } catch (e) {
+          if (e instanceof PermissionError) {
+            Alert.alert(
+              I18n.t('save.to.camera.roll.permission.blocked.title'),
+              I18n.t('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+            );
+            return undefined;
+          } else {
+            throw e;
+          }
         }
+        await CameraRoll.save(sf.filepath);
+        Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
+      } catch (e) {
+        Toast.show(I18n.t('save.to.camera.roll.error'));
       }
-      await CameraRoll.save(sf.filepath);
-      Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
     },
     [downloadFile],
   );
