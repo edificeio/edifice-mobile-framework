@@ -264,7 +264,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   const onSave = async () => {
     try {
       await postResponsesChanges();
-      Toast.show(I18n.t('form.answersWellSaved'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('form.answersWellSaved'), { ...UI_ANIMATIONS.toast });
     } catch (e) {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
