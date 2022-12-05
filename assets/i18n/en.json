@@ -398,7 +398,7 @@
   "form.formDistributionScreen.submissionModal.lowerText.replace": "Do you want to validate and send the changes to your response?",
   "form.formDistributionScreen.submissionModal.selectStructure": "Please select your establishment :",
   "form.formDistributionScreen.submissionModal.title": "Validate the submission",
-  "form.missingFormAlert": "The form has been archived or does not exist",
+  "form.missingFormAlert": "You no longer have access rights to this form",
   "form.myAnswersTitle": "My answers - {{title}}",
   "form.notAnswered": "Not answered",
   "form.selectAnOption": "Select an option",

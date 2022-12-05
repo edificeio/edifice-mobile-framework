@@ -398,7 +398,7 @@
   "form.formDistributionScreen.submissionModal.lowerText.replace": "¿Desea validar y enviar los cambios a su respuesta?",
   "form.formDistributionScreen.submissionModal.selectStructure": "Seleccione su establecimiento:",
   "form.formDistributionScreen.submissionModal.title": "Validar el envío",
-  "form.missingFormAlert": "El formulario ha sido archivado o no existe",
+  "form.missingFormAlert": "Ya no tiene derechos de acceso a este formulario",
   "form.myAnswersTitle": "Mis respuestas - {{title}}",
   "form.notAnswered": "No se ha contestado",
   "form.selectAnOption": "Seleccione una opción",
