@@ -4,8 +4,8 @@ import { Platform, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
-import { ActionButton } from '~/framework/components/ActionButton';
 import GridList from '~/framework/components/GridList';
+import { ActionButton } from '~/framework/components/action-button';
 import { TouchableSelectorPictureCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';

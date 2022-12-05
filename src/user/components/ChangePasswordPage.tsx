@@ -6,7 +6,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';

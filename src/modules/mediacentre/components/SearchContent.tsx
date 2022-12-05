@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';

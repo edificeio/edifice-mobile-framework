@@ -5,7 +5,7 @@ import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, Toucha
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
