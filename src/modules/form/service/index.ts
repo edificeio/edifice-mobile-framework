@@ -258,7 +258,7 @@ export const formService = {
       const api = `/formulaire/distributions/${distribution.id}`;
       const body = JSON.stringify(distribution);
       const distrib = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
-        method: 'DELETE',
+        method: 'PUT',
         body,
       })) as IBackendDistribution;
       return distributionAdapter(distrib) as IDistribution;

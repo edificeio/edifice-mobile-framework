@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { Alert, Platform, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -23,6 +23,7 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/modules/form/actions';
 import { FormSectionCard } from '~/modules/form/components/FormSectionCard';
+import { FormSubmissionModal } from '~/modules/form/components/FormSubmissionModal';
 import { getQuestionCard } from '~/modules/form/components/questionCards';
 import moduleConfig from '~/modules/form/moduleConfig';
 import {
@@ -77,6 +78,7 @@ interface IFormDistributionScreen_DataProps {
   elementsCount: number;
   initialLoadingState: AsyncPagedLoadingState;
   session: IUserSession;
+  structures: { label: string; value: string }[];
 }
 
 interface IFormDistributionScreen_EventProps {
@@ -108,6 +110,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
   const [responses, setResponses] = React.useState<IQuestionResponse[]>([]);
   const flatListRef = React.useRef<typeof FlatList>();
+  const modalRef: { current: any } = React.createRef();
   const isPositionAtSummary = position === props.elementsCount;
   const listElements = isPositionAtSummary ? formatSummary(props.elements, responses) : formatElement(props.elements[position]);
   const isMandatoryAnswerMissing = getIsMandatoryAnswerMissing(listElements, responses);
@@ -300,43 +303,24 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     updatePosition(position + 1);
   };
 
-  const submitDistribution = () => {
-    Alert.alert(
-      I18n.t('form.formDistributionScreen.submitAlert.title'),
-      I18n.t(
-        status === DistributionStatus.ON_CHANGE
-          ? 'form.formDistributionScreen.replaceAlert.text'
-          : editable
-          ? 'form.formDistributionScreen.submitAlert.editable.text'
-          : 'form.formDistributionScreen.submitAlert.text',
-      ),
-      [
-        {
-          text: I18n.t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: I18n.t('common.confirm'),
-          onPress: async () => {
-            try {
-              const session = getUserSession();
-              const distribution = await formService.distribution.get(session, distributionId);
-              if (status === DistributionStatus.TO_DO) {
-                distribution.status = DistributionStatus.FINISHED;
-                await formService.distribution.put(session, distribution);
-              } else if (distribution.originalId) {
-                await formService.distribution.replace(session, distributionId, distribution.originalId);
-              }
-              props.navigation.dispatch(NavigationActions.back());
-              Toast.showSuccess(I18n.t('form.answersSent'), { ...UI_ANIMATIONS.toast });
-            } catch (e) {
-              Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
-            }
-          },
-          style: 'default',
-        },
-      ],
-    );
+  const submitDistribution = async (structureId: string) => {
+    try {
+      const session = getUserSession();
+      const structure = props.structures.find(s => s.value === structureId);
+      const distribution = await formService.distribution.get(session, distributionId);
+      distribution.structure = structure?.label;
+      if (status === DistributionStatus.TO_DO) {
+        distribution.status = DistributionStatus.FINISHED;
+        await formService.distribution.put(session, distribution);
+      } else if (distribution.originalId) {
+        await formService.distribution.replace(session, distributionId, distribution.originalId);
+      }
+      modalRef?.current?.doDismissModal();
+      props.navigation.dispatch(NavigationActions.back());
+      Toast.showSuccess(I18n.t('form.answersSent'), { ...UI_ANIMATIONS.toast });
+    } catch (e) {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    }
   };
 
   // HEADER =======================================================================================
@@ -400,7 +384,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     return isPositionAtSummary ? (
       <ActionButton
         text={I18n.t('form.finishAndSend')}
-        action={() => submitDistribution()}
+        action={() => modalRef?.current?.doShowModal()}
         disabled={status === DistributionStatus.FINISHED && !editable}
       />
     ) : (
@@ -426,18 +410,27 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
 
   const renderDistribution = () => {
     return (
-      <FlatList
-        ref={ref => {
-          flatListRef.current = ref;
-        }}
-        data={listElements}
-        keyExtractor={element => (getIsElementSection(element) ? 's' : 'q') + element.id.toString()}
-        renderItem={({ item }) => renderElement(item)}
-        ListHeaderComponent={renderSummaryHeading()}
-        ListFooterComponent={renderPositionActions()}
-        ListFooterComponentStyle={styles.listFooterContainer}
-        contentContainerStyle={styles.listContainer}
-      />
+      <>
+        <FlatList
+          ref={ref => {
+            flatListRef.current = ref;
+          }}
+          data={listElements}
+          keyExtractor={element => (getIsElementSection(element) ? 's' : 'q') + element.id.toString()}
+          renderItem={({ item }) => renderElement(item)}
+          ListHeaderComponent={renderSummaryHeading()}
+          ListFooterComponent={renderPositionActions()}
+          ListFooterComponentStyle={styles.listFooterContainer}
+          contentContainerStyle={styles.listContainer}
+        />
+        <FormSubmissionModal
+          editable={editable}
+          modalBoxRef={modalRef}
+          status={status}
+          structures={props.structures}
+          onSubmit={submitDistribution}
+        />
+      </>
     );
   };
 
@@ -462,7 +455,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
 
   return (
-    <PageComponent navigation={props.navigation} navBarWithBack={navBarInfo}>
+    <PageComponent navigation={props.navigation} navBarWithBack={navBarInfo} safeArea={false}>
       {renderPage()}
     </PageComponent>
   );
@@ -478,6 +471,12 @@ export default connect(
       elementsCount: state.formContent.data.elementsCount,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       session: getUserSession(),
+      structures: gs.user.info.schools.map(school => {
+        return {
+          label: school.name,
+          value: school.id,
+        };
+      }),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
