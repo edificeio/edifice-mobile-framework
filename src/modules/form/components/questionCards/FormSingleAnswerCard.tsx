@@ -44,12 +44,13 @@ export const FormSingleAnswerCard = ({
       value: choice.value,
     };
   });
-  const selectedChoice = question.choices.find(c => c.id === value);
+  let selectedChoice = question.choices.find(c => c.id === value);
   const { title, mandatory } = question;
 
   const onChangeChoice = (choiceId?: number) => {
     setValue(choiceId);
     if (!choiceId) return;
+    selectedChoice = question.choices.find(c => c.id === choiceId);
     const answer = selectedChoice?.value ?? '';
 
     if (responses.length) {
