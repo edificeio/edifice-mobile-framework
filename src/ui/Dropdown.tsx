@@ -94,7 +94,7 @@ const DropdownIOS = ({
   renderItem = item => item.toString(),
 }: IDropdownProps) => {
   const [isModalVisible, setModalVisible] = React.useState(false);
-  const [tempValue, setTempValue] = React.useState(value);
+  const [tempValue, setTempValue] = React.useState<string | undefined>(value ?? keyExtractor(data[0]));
   const selectedValue = data.find(item => keyExtractor(item) === value);
 
   if (value !== tempValue && !isModalVisible && keyId === 'competences.periods') {
