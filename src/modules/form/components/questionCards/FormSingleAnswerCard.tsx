@@ -6,9 +6,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/modules/form/reducer';
-import Dropdown from '~/ui/Dropdown';
 
 import { FormAnswerText } from './FormAnswerText';
+import Dropdown from './FormDropdown';
 
 const styles = StyleSheet.create({
   customAnswerInput: {
