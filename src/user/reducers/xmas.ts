@@ -1,13 +1,15 @@
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 
 export interface IXmasState {
-  xmasTheme: boolean;
+  xmasTheme?: boolean;
+  flakesFaling: boolean;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 export const stateDefault: IXmasState = {
-  xmasTheme: true,
+  xmasTheme: undefined,
+  flakesFaling: false,
 };
 
 const xmasReducer = (state: IXmasState = stateDefault, action): IXmasState => {
@@ -15,7 +17,12 @@ const xmasReducer = (state: IXmasState = stateDefault, action): IXmasState => {
     case 'toggleXmasTheme':
       return {
         ...state,
-        xmasTheme: action.xmasTheme,
+        xmasTheme: action.value,
+      };
+    case 'setFlakes':
+      return {
+        ...state,
+        flakesFaling: action.value,
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

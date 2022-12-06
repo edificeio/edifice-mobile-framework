@@ -26,7 +26,13 @@ import {
 } from 'react-native';
 import RNShake from 'react-native-shake';
 import Snow from 'react-native-snow-bg';
-import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
+import {
+  NavigationActions,
+  NavigationEventSubscription,
+  NavigationFocusInjectedProps,
+  NavigationInjectedProps,
+  withNavigationFocus,
+} from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -34,10 +40,11 @@ import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 import { getUserSession } from '../util/session';
+import SnowFlakes from './SnowFlakes';
 import { UI_SIZES } from './constants';
 import { FakeHeader, FakeHeaderProps, HeaderBackAction } from './header';
 
-export interface PageViewProps extends ViewProps {
+export interface PageViewProps extends ViewProps, NavigationFocusInjectedProps {
   navigation: NavigationInjectedProps['navigation'];
   // Navbar setup.
   navBar?: FakeHeaderProps; // Forwared as FakeHeader props...
@@ -80,75 +87,76 @@ const PageViewContainer = (props: PageViewProps) => {
     onBack,
     gutters,
     xmasTheme,
+    isFocused,
     ...viewProps
   } = props;
-  const [snowfall, setSnowfall] = React.useState(false);
-  const [fadeAnim, setFadeAnim] = React.useState(new Animated.Value(1));
-  let focusEventListener: NavigationEventSubscription;
+  // const [snowfall, setSnowfall] = React.useState(false);
+  // const [fadeAnim, setFadeAnim] = React.useState(new Animated.Value(1));
+  // let focusEventListener: NavigationEventSubscription;
   const navBarColor = StyleSheet.flatten(navBar?.style || navBarWithBack?.style)?.backgroundColor;
 
   const goBack = () => {
     return (onBack && onBack() && navigation.dispatch(NavigationActions.back())) || undefined;
   };
 
-  React.useEffect(() => {
-    const isUserLoggedIn = getUserSession()?.user?.id;
-    const stopSnowFall = () => {
-      setSnowfall(false);
-      setFadeAnim(new Animated.Value(1));
-    };
-    const makeSnowFall = () => {
-      setSnowfall(true);
-      Vibration.vibrate();
-      const snowfallTimer = setTimeout(() => {
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: false,
-        }).start(() => {
-          stopSnowFall();
-        });
-      }, 20000);
-      return () => clearTimeout(snowfallTimer);
-    };
+  // React.useEffect(() => {
+  //   const isUserLoggedIn = getUserSession()?.user?.id;
+  //   const stopSnowFall = () => {
+  //     setSnowfall(false);
+  //     setFadeAnim(new Animated.Value(1));
+  //   };
+  //   const makeSnowFall = () => {
+  //     setSnowfall(true);
+  //     Vibration.vibrate();
+  //     const snowfallTimer = setTimeout(() => {
+  //       Animated.timing(fadeAnim, {
+  //         toValue: 0,
+  //         duration: 1000,
+  //         useNativeDriver: false,
+  //       }).start(() => {
+  //         stopSnowFall();
+  //       });
+  //     }, 20000);
+  //     return () => clearTimeout(snowfallTimer);
+  //   };
 
-    // Specific screens
-    if (navigation.state.routeName === 'Xmas') {
-      if (xmasTheme) makeSnowFall();
-      else stopSnowFall();
-    } else if (navigation.state.routeName === 'timeline') {
-      if (xmasTheme) makeSnowFall();
-    }
+  //   // Specific screens
+  //   if (navigation.state.routeName === 'Xmas') {
+  //     if (xmasTheme) makeSnowFall();
+  //     else stopSnowFall();
+  //   } else if (navigation.state.routeName === 'timeline') {
+  //     if (xmasTheme) makeSnowFall();
+  //   }
 
-    // Blur-screen listener
-    focusEventListener = navigation.addListener('didBlur', () => {
-      stopSnowFall();
-    });
+  //   // Blur-screen listener
+  //   focusEventListener = navigation.addListener('didBlur', () => {
+  //     stopSnowFall();
+  //   });
 
-    // Device-shake listener
-    const subscription = RNShake.addListener(() => {
-      if (isUserLoggedIn && xmasTheme) makeSnowFall();
-    });
+  //   // Device-shake listener
+  //   const subscription = RNShake.addListener(() => {
+  //     if (isUserLoggedIn && xmasTheme) makeSnowFall();
+  //   });
 
-    // Handle Back Android
-    if (onBack) {
-      const callback = () => {
-        goBack();
-        return true;
-      };
-      BackHandler.addEventListener('hardwareBackPress', callback);
-      return () => {
-        BackHandler.removeEventListener('hardwareBackPress', callback);
-        focusEventListener.remove();
-        subscription.remove();
-      };
-    } else {
-      return () => {
-        focusEventListener.remove();
-        subscription.remove();
-      };
-    }
-  }, [xmasTheme]);
+  //   // Handle Back Android
+  //   if (onBack) {
+  //     const callback = () => {
+  //       goBack();
+  //       return true;
+  //     };
+  //     BackHandler.addEventListener('hardwareBackPress', callback);
+  //     return () => {
+  //       BackHandler.removeEventListener('hardwareBackPress', callback);
+  //       focusEventListener.remove();
+  //       subscription.remove();
+  //     };
+  //   } else {
+  //     return () => {
+  //       focusEventListener.remove();
+  //       subscription.remove();
+  //     };
+  //   }
+  // }, [xmasTheme]);
 
   const gutterStyle = React.useMemo(
     () => ({
@@ -183,11 +191,12 @@ const PageViewContainer = (props: PageViewProps) => {
         <Notifier id={navigation.state.routeName} />
         <View style={gutterStyle}>{children}</View>
       </>
-      {snowfall ? (
+      <SnowFlakes navigation={navigation} isFocused={isFocused} />
+      {/* {snowfall ? (
         <Animated.View style={{ position: 'absolute', opacity: fadeAnim }}>
           <Snow fullScreen snowflakesCount={150} fallSpeed="medium" />
         </Animated.View>
-      ) : null}
+      ) : null} */}
     </PageViewStyle>
   );
 };
@@ -196,7 +205,7 @@ export const PageView = connect((state: any) => {
     xmasTheme: state.user.xmas.xmasTheme,
   };
   return ret;
-})(PageViewContainer);
+})(withNavigationFocus(PageViewContainer));
 
 export const KeyboardPageView = (
   props: React.PropsWithChildren<

@@ -37,7 +37,7 @@ const style = StyleSheet.create({
 });
 
 class XmasScreenContainer extends React.PureComponent<
-  NavigationInjectedProps<object> & { onSetXmasTheme: (xmasTheme: boolean) => void; xmasTheme: boolean }
+  NavigationInjectedProps<object> & { onSetXmasTheme: (xmasTheme: boolean) => void; xmasTheme?: boolean }
 > {
   render() {
     const { navigation, onSetXmasTheme, xmasTheme } = this.props;
@@ -46,7 +46,7 @@ class XmasScreenContainer extends React.PureComponent<
         <View style={style.textContainer}>
           <View style={style.toggleContainer}>
             <BodyText>{I18n.t('user.xmasScreen.activate')}</BodyText>
-            <Toggle onCheckChange={() => onSetXmasTheme(!xmasTheme)} checked={xmasTheme} />
+            <Toggle onCheckChange={() => onSetXmasTheme(xmasTheme === false)} checked={xmasTheme !== false} />
           </View>
           <SmallText>{I18n.t('user.xmasScreen.description', { appName: DeviceInfo.getApplicationName() })}</SmallText>
         </View>
