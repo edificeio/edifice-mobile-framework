@@ -19,7 +19,7 @@ export interface IHomeworkCardProps {
 const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
-  const dayColor = theme.color.homework.days[dayOfTheWeek].accent;
+  const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.stone;
   const arrowColor = isPastDate ? theme.palette.grey.stone : dayColor;
   const formattedContent = content && HtmlToText(content, false).render;
 
