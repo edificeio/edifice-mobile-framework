@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { EmitterSubscription, Vibration } from 'react-native';
 import RNShake from 'react-native-shake';
 import { ThunkDispatch } from 'redux-thunk';
@@ -15,7 +16,17 @@ const computeAsyncStorageKey = () => {
 const SNOW_DURATION = 20000;
 let snowfallTimer: NodeJS.Timeout;
 
-export const getIsXmasActive = (state: IGlobalState) => state.user.xmas.xmasTheme !== false;
+function nextOccurrence(from: moment.Moment, month: number, date: number) {
+  const input = moment(from);
+  const output = input.clone().startOf('month').month(month).date(date);
+  return output > input ? output : output.add(1, 'years');
+}
+const today = moment();
+const todayMinus = today.clone().subtract(11, 'months').add(15, 'days'); // Xmas activated from Dec 1st to Jan 15th !
+const limit = nextOccurrence(todayMinus, 0, 15); // 0, 15 = Jan 15th
+export const isXmasDateLimitCrossed = today.isAfter(limit);
+
+export const getIsXmasActive = (state: IGlobalState) => state.user.xmas.xmasTheme !== false && !isXmasDateLimitCrossed;
 
 export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {

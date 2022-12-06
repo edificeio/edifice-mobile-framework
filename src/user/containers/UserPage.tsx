@@ -32,6 +32,8 @@ import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
 import { IUserInfoState } from '~/user/state/info';
 
+import { isXmasDateLimitCrossed } from '../actions/xmas';
+
 const uploadAvatarError = () => {
   return dispatch => {
     dispatch(
@@ -235,8 +237,12 @@ export class UserPage extends React.PureComponent<
           ) : null}
           <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
           <ContainerSpacer />
-          <ButtonLine title={'directory-xmasTitle'} onPress={() => this.props.navigation.navigate('Xmas')} />
-          <ContainerSpacer />
+          {!isXmasDateLimitCrossed ? (
+            <>
+              <ButtonLine title={'directory-xmasTitle'} onPress={() => this.props.navigation.navigate('Xmas')} />
+              <ContainerSpacer />
+            </>
+          ) : null}
           {showWhoAreWe ? (
             <>
               <ButtonLine title={'directory-whoAreWeTitle'} onPress={() => this.props.navigation.navigate('WhoAreWe')} />
