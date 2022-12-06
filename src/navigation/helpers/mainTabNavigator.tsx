@@ -3,11 +3,14 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { NavigationScreenProp, NavigationState } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { connect } from 'react-redux';
 
+import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture, PictureProps } from '~/framework/components/picture';
+import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
 import { IconOnOff } from '~/ui/icons/IconOnOff';
+import { getIsXmasActive } from '~/user/actions/xmas';
 
 const TabBarText = styled.Text({
   alignSelf: 'center',
@@ -61,6 +64,20 @@ export const createMainTabNavigator = (routeConfigs, initialRouteName: string = 
     },
   });
 
+const IconOnOffWithXmas = connect((state: IGlobalState) => ({
+  isXmas: getIsXmasActive(state),
+}))((props: IconProps & { isXmas?: boolean; focused: boolean }) => {
+  const { name, isXmas, ...other } = props;
+  return <IconOnOff {...other} name={isXmas ? `xmas-${name}` : (name as string)} />;
+});
+
+const IconPictureWithXmas = connect((state: IGlobalState) => ({
+  isXmas: getIsXmasActive(state),
+}))((props: PictureProps & IconProps & { isXmas?: boolean; focused: boolean }) => {
+  const { name, isXmas, ...other } = props;
+  return <Picture {...other} name={isXmas ? `xmas-${name}` : (name as string)} />;
+});
+
 // ToDo : remove magic values here, replace with RN6
 export const createMainTabNavOption = (title: string, icon?: string | PictureProps, iconFocus?: PictureProps) => {
   const computePicture = (icn: PictureProps) => {
@@ -88,9 +105,9 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
   } else if (typeof icon === 'string') {
     return {
       tabBarIcon: ({ focused }) => (
-        <IconOnOff
+        <IconOnOffWithXmas
           size={UI_SIZES.elements.tabbarIconSize}
-          name={icon}
+          name={icon as string}
           focused={focused}
           // style={{ marginBottom: UI_SIZES.spacing.small }}
         />
@@ -119,9 +136,9 @@ export const createMainTabNavOption = (title: string, icon?: string | PicturePro
       return {
         tabBarIcon: ({ focused }) =>
           focused ? (
-            <Picture {...iconFocus} color={theme.palette.primary.regular} />
+            <IconPictureWithXmas {...iconFocus} color={theme.palette.primary.regular} />
           ) : (
-            <Picture {...icon} color={theme.ui.text.light} />
+            <IconPictureWithXmas {...icon} color={theme.ui.text.light} />
           ),
         tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
       };

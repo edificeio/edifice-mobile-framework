@@ -3,20 +3,19 @@ import RNShake from 'react-native-shake';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
-import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
-import { IUserSession, getUserSession } from '~/framework/util/session';
+import { getUserSession } from '~/framework/util/session';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 const computeAsyncStorageKey = () => {
   const session = getUserSession();
   const userId = session.user.id;
-  return `${moduleConfig.name}.xmasThemeSetting.${userId}`;
+  return `xmasThemeSetting.${userId}`;
 };
 
 const SNOW_DURATION = 20000;
 let snowfallTimer: NodeJS.Timeout;
 
-const getIsXmasActive = (state: IGlobalState) => state.user.xmas.xmasTheme !== false;
+export const getIsXmasActive = (state: IGlobalState) => state.user.xmas.xmasTheme !== false;
 
 export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
