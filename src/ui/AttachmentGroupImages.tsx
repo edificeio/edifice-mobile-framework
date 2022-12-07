@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { FlatList, TouchableOpacity, View } from 'react-native';
+import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Image, formatSource } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
-import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { ContentUri } from '~/types/contentUri';
 
 import { IconButton } from './IconButton';
 
-export class AttachmentGroupImages extends React.PureComponent<{
-  attachments: ContentUri[];
-  onRemove: (index: number) => void;
-}> {
+class AttachmentGroupImagesNoNav extends React.PureComponent<
+  {
+    attachments: ContentUri[];
+    onRemove: (index: number) => void;
+  } & NavigationInjectedProps
+> {
   public render() {
     const { attachments, onRemove } = this.props;
     const carouselImages = attachments.map(att => ({ src: { uri: att.uri }, alt: 'image' }));
@@ -33,7 +36,16 @@ export class AttachmentGroupImages extends React.PureComponent<{
               }}>
               <TouchableOpacity
                 onPress={() => {
-                  mainNavNavigate('carouselModal', { images: carouselImages, startIndex: index });
+                  openCarousel(
+                    {
+                      data: carouselImages.map(img => ({
+                        type: 'image' as 'image',
+                        src: img.src,
+                        ...(img.alt ? { alt: img.alt } : undefined),
+                      })),
+                    },
+                    this.props.navigation,
+                  );
                   Trackers.trackEvent('Post creation', 'OPEN ATTACHMENT', 'Edit mode');
                   //FIXME: ugly code here  (module name (1st argument) must be obtained dynamically)
                 }}
@@ -77,3 +89,4 @@ export class AttachmentGroupImages extends React.PureComponent<{
     );
   }
 }
+export const AttachmentGroupImages = withNavigation(AttachmentGroupImagesNoNav);

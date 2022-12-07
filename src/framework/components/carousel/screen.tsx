@@ -292,6 +292,6 @@ export function Carousel(props: ICarouselProps) {
 
 export default Carousel;
 
-export function openCarousel(props: ICarouselNavParams, navigation: any) {
-  navigation.navigate('carouselModal2', props);
+export function openCarousel(props: ICarouselNavParams, navigation: NavigationInjectedProps['navigation']) {
+  navigation.navigate('carouselModal', props);
 }
