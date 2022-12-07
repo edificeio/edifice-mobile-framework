@@ -166,7 +166,6 @@ export default class ImageViewer extends React.Component<Props, State> {
       }
 
       if (this!.state!.imageSizes![index].status !== 'fail') {
-        console.debug('FIAL');
         this!.state!.imageSizes![index] = imageStatus;
         setTimeout(() => this.forceUpdate(), 500); // Tiny hack to not cancel the gesture
         return;
@@ -626,7 +625,11 @@ export default class ImageViewer extends React.Component<Props, State> {
             }}>
             {ImageElements}
           </Animated.View>
-          {this!.props!.renderIndicator!((this.state.currentShowIndex || 0) + 1, this.props.imageUrls.length)}
+          {this!.props!.renderIndicator!(
+            (this.state.currentShowIndex || 0) + 1,
+            this.props.imageUrls.length,
+            this.state.imageSizes?.[this.state.currentShowIndex || 0]?.status,
+          )}
 
           {this.props.imageUrls[this.state.currentShowIndex || 0] &&
             this.props.imageUrls[this.state.currentShowIndex || 0].originSizeKb &&

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Image, ImageURISource, Text, View, ViewStyle } from 'react-native';
+
 import { simpleStyle } from './image-viewer.style';
 
 interface IOnMove {
@@ -103,7 +104,7 @@ export class Props {
    */
   public pageAnimateTime?: number = 100;
 
-  /** 
+  /**
    * 是否启用原生动画驱动
    * Whether to use the native code to perform animations.
    */
@@ -164,14 +165,15 @@ export class Props {
   /**
    * 自定义计时器
    */
-  public renderIndicator?: (currentIndex?: number, allSize?: number) => React.ReactElement<any> = (
+  public renderIndicator?: (
     currentIndex?: number,
-    allSize?: number
-  ) => {
+    allSize?: number,
+    imageStatus?: 'loading' | 'success' | 'fail' | undefined,
+  ) => React.ReactElement<any> = (currentIndex?: number, allSize?: number) => {
     return React.createElement(
       View,
       { style: simpleStyle.count },
-      React.createElement(Text, { style: simpleStyle.countText }, currentIndex + '/' + allSize)
+      React.createElement(Text, { style: simpleStyle.countText }, currentIndex + '/' + allSize),
     );
   };
 

@@ -91,6 +91,47 @@ async function assertPermissions(permissions: Permission[]) {
   }
 }
 
+export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: boolean; imageViewerRef; popupMenuRef }) => {
+  const dotsButtons = React.useCallback(
+    (onPress: () => void) => <ActionButton disabled={disabled} iconName="ui-options" style={styles.closeButton} action={onPress} />,
+    [disabled],
+  );
+  return (
+    <>
+      <ActionButton
+        action={() => {
+          imageViewerRef.current?.saveToLocal?.();
+        }}
+        iconName="ui-download"
+        style={styles.closeButton}
+        disabled={disabled}
+      />
+      <PopupMenu
+        button={dotsButtons}
+        options={[
+          {
+            i18n: 'share',
+            icon: (
+              <NamedSVG
+                name="ui-share"
+                fill={theme.palette.grey.black}
+                width={UI_SIZES.dimensions.width.large}
+                height={UI_SIZES.dimensions.width.large}
+                style={{ marginHorizontal: UI_SIZES.spacing.small }}
+              />
+            ),
+            onClick: () => imageViewerRef.current?.share?.(),
+          },
+        ]}
+        ref={popupMenuRef as React.LegacyRef<PopupMenu>} // Some type hack here...
+        style={{
+          top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
+        }}
+      />
+    </>
+  );
+};
+
 export function Carousel(props: ICarouselProps) {
   const { navigation } = props;
   const startIndex = navigation.getParam('startIndex') ?? 0;
@@ -106,45 +147,9 @@ export function Carousel(props: ICarouselProps) {
 
   const imageViewerRef = React.useRef<ImageViewer>();
   const popupMenuRef = React.useRef<PopupMenu>();
-  const dotsButton = React.useCallback(
-    onPress => <ActionButton iconName="ui-options" style={styles.closeButton} action={onPress} />,
-    [],
-  );
-  const buttons = React.useMemo(
-    () => (
-      <>
-        <ActionButton
-          action={() => {
-            imageViewerRef.current?.saveToLocal?.();
-          }}
-          iconName="ui-download"
-          style={styles.closeButton}
-        />
-        <PopupMenu
-          button={dotsButton}
-          options={[
-            {
-              i18n: 'share',
-              icon: (
-                <NamedSVG
-                  name="ui-share"
-                  fill={theme.palette.grey.black}
-                  width={UI_SIZES.dimensions.width.large}
-                  height={UI_SIZES.dimensions.width.large}
-                  style={{ marginHorizontal: UI_SIZES.spacing.small }}
-                />
-              ),
-              onClick: () => imageViewerRef.current?.share?.(),
-            },
-          ]}
-          ref={popupMenuRef as React.LegacyRef<PopupMenu>} // Some type hack here...
-          style={{
-            top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
-          }}
-        />
-      </>
-    ),
-    [dotsButton],
+  const getButtons = React.useCallback(
+    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} popupMenuRef={popupMenuRef} />,
+    [popupMenuRef, imageViewerRef],
   );
 
   const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
@@ -213,7 +218,7 @@ export function Carousel(props: ICarouselProps) {
           );
           return undefined;
         } else {
-          throw e;
+          Toast.show(I18n.t('share.error'));
         }
       }
     },
@@ -260,14 +265,16 @@ export function Carousel(props: ICarouselProps) {
           renderImage={renderImage}
           loadingRender={renderLoading}
           loadWindow={1}
-          renderIndicator={(current, total) => (
-            <FakeHeader
-              left={closeButton}
-              style={headerStyle}
-              title={I18n.t('carousel.counter', { current, total })}
-              right={buttons}
-            />
-          )}
+          renderIndicator={(current, total, imageStatus) => {
+            return (
+              <FakeHeader
+                left={closeButton}
+                style={headerStyle}
+                title={total !== 1 ? I18n.t('carousel.counter', { current, total }) : ''}
+                right={getButtons(imageStatus !== 'success')}
+              />
+            );
+          }}
           saveToLocalByLongPress={false}
           onClick={() => {
             setNavBarVisible(!isNavBarVisible);
