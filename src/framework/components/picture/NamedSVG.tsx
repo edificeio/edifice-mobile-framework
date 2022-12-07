@@ -190,6 +190,7 @@ const imports = {
   'schoolbook-outing': import('ASSETS/images/schoolbook/outing.svg'),
   'schoolbook-various': import('ASSETS/images/schoolbook/various.svg'),
   'textbook-default': import('ASSETS/images/textbook-default.svg'),
+  'userpage-header': import('ASSETS/images/userpage-header.svg'),
   xmas: import('ASSETS/images/xmas.svg'),
 };
 

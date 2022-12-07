@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { ColorValue, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/picture/Icon';
 
 export const IconButton = (props: {
   iconName: string;
-  iconColor?: string;
+  iconColor?: ColorValue;
   iconSize?: number;
   iconStyle?: ViewStyle;
   buttonStyle?: ViewStyle;

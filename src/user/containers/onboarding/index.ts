@@ -1,3 +1,3 @@
-import OnboardingScreen from './container';
+import OnboardingScreen from './screen';
 
 export default OnboardingScreen;
