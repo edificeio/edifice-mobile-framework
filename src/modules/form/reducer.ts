@@ -175,6 +175,23 @@ export const formatElement = (element: IFormElement): IFormElement[] => {
   return [element];
 };
 
+const getVisitedPositions = (elements: IFormElement[], responses: IQuestionResponse[]): number[] => {
+  const visitedPositions: number[] = [];
+  let nextSectionId;
+
+  for (const element of elements) {
+    if (nextSectionId !== undefined && element.id !== nextSectionId) continue;
+    nextSectionId = undefined;
+    visitedPositions.push(element.position!);
+    const conditionalQuestion = (!('type' in element) ? element.questions : [element]).find(q => q.conditional);
+    if (conditionalQuestion) {
+      const choiceId = responses.find(r => r.questionId === conditionalQuestion.id)?.choiceId;
+      nextSectionId = conditionalQuestion.choices.find(c => c.id === choiceId)?.nextSectionId;
+    }
+  }
+  return visitedPositions;
+};
+
 const getIsQuestionAnswered = (question: IQuestion, responses: IQuestionResponse[]): boolean => {
   if (question.type === QuestionType.MATRIX) {
     const questionIds = question.children?.map(q => q.id);
@@ -185,6 +202,9 @@ const getIsQuestionAnswered = (question: IQuestion, responses: IQuestionResponse
 
 export const formatSummary = (elements: IFormElement[], responses: IQuestionResponse[]): IFormElement[] => {
   const formatted: IFormElement[] = [];
+  const visitedPositions = getVisitedPositions(elements, responses);
+
+  elements = elements.filter(e => visitedPositions.includes(e.position!));
   for (const element of elements) {
     if (!('type' in element)) {
       const questions = element.questions.filter(q => getIsQuestionAnswered(q, responses));
@@ -201,6 +221,7 @@ export const formatSummary = (elements: IFormElement[], responses: IQuestionResp
 
 export const getIsMandatoryAnswerMissing = (elements: IFormElement[], responses: IQuestionResponse[]): boolean => {
   const questions = elements.filter(element => 'type' in element && element.mandatory) as IQuestion[];
+
   for (const question of questions) {
     const questionIds = question.type === QuestionType.MATRIX ? question.children!.map(q => q.id) : [question.id];
     for (const id of questionIds) {
