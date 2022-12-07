@@ -111,7 +111,7 @@ export const FormDistributionListModal = ({
       ref={modalBoxRef}
       content={
         <View>
-          <BodyText style={styles.titleMargin}>{I18n.t('form.myAnswersTitle', { title: form?.title })}</BodyText>
+          <BodyText style={styles.titleMargin}>{`${I18n.t('form.myAnswers')} - ${form?.title}`}</BodyText>
           <FlatList
             data={data}
             keyExtractor={distribution => distribution.id.toString()}

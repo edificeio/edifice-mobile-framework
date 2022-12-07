@@ -399,7 +399,7 @@
   "form.formDistributionScreen.submissionModal.selectStructure": "Seleccione su establecimiento:",
   "form.formDistributionScreen.submissionModal.title": "Validar el envío",
   "form.missingFormAlert": "Ya no tiene derechos de acceso a este formulario",
-  "form.myAnswersTitle": "Mis respuestas - {{title}}",
+  "form.myAnswers": "Mis respuestas",
   "form.notAnswered": "No se ha contestado",
   "form.selectAnOption": "Seleccione una opción",
   "form.summary": "Resumen",

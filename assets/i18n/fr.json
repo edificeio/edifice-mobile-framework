@@ -404,7 +404,7 @@
   "form.formDistributionScreen.submissionModal.selectStructure": "Veuillez sélectionner votre établissement :",
   "form.formDistributionScreen.submissionModal.title": "Valider l'envoi",
   "form.missingFormAlert": "Vous n'avez plus les droits d'accès à ce formulaire",
-  "form.myAnswersTitle": "Mes réponses - {{title}}",
+  "form.myAnswers": "Mes réponses",
   "form.notAnswered": "Non répondu",
   "form.selectAnOption": "Sélectionner une option",
   "form.summary": "Récapitulatif",

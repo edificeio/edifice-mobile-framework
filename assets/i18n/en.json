@@ -399,7 +399,7 @@
   "form.formDistributionScreen.submissionModal.selectStructure": "Please select your establishment :",
   "form.formDistributionScreen.submissionModal.title": "Validate the submission",
   "form.missingFormAlert": "You no longer have access rights to this form",
-  "form.myAnswersTitle": "My answers - {{title}}",
+  "form.myAnswers": "My answers",
   "form.notAnswered": "Not answered",
   "form.selectAnOption": "Select an option",
   "form.summary": "Summary",
