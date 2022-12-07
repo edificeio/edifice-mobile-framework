@@ -191,7 +191,11 @@ export function Carousel(props: ICarouselProps) {
             throw e;
           }
         }
-        await CameraRoll.save(sf.filepath);
+        if (Platform.OS === 'android') {
+          await CameraRoll.save(sf.filepath, { album: 'Download' }); // Will put in the actual folder "Download", but still displayed in "Camera" album :/
+        } else {
+          await CameraRoll.save(sf.filepath);
+        }
         Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
       } catch (e) {
         Toast.show(I18n.t('save.to.camera.roll.error'));
