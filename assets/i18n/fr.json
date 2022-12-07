@@ -578,6 +578,7 @@
   "rename": "Renommer",
   "save.to.camera.roll.permission.blocked.text": "{{appName}} ne peut pas accéder à la Galerie. Vous pouvez autoriser l'accès à la Galerie via les paramètres de confidentialité.",
   "save.to.camera.roll.permission.blocked.title": "Enregistrement bloqué",
+  "share.error": "Erreur lors du partage.",
   "share.permission.blocked.text": "{{appName}} ne peut partager le document. Vous pouvez autoriser l'accès aux documents via les paramètres de confidentialité.",
   "share.permission.blocked.title": "Partage bloqué",
   "save.to.camera.roll.success": "Enregistré dans la Galerie",
