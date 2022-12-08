@@ -151,7 +151,11 @@ export class UserScreen extends React.PureComponent<
             </SmallBoldText>
             <SmallBoldText style={styles.textVersion} onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
               {I18n.t('version-number')} {DeviceInfo.getVersion()}
-              {showVersionType ? `-(${DeviceInfo.getBuildNumber()})-${versionType}-${versionOverride}` : ''}
+              {showVersionType
+                ? `-(${DeviceInfo.getBuildNumber()})-${versionType}-${versionOverride}\n${
+                    DEPRECATED_getCurrentPlatform()!.displayName
+                  }`
+                : ''}
             </SmallBoldText>
           </View>
         </ScrollView>
