@@ -29,9 +29,6 @@ export const LabelView = styled.View({
   alignSelf: 'baseline',
   justifyContent: 'center',
 });
-export const LabelText = styled(SmallBoldText)({
-  lineHeight: undefined,
-});
 
 // COMPONENT ======================================================================================
 
@@ -62,7 +59,7 @@ export default (props: ILabelProps) => {
           borderColor: color,
         }),
   });
-  const LabelTextWithColor = styled(LabelText)({
+  const LabelTextWithColor = styled(SmallBoldText)({
     ...(labelStyle === 'plain'
       ? {
           color: theme.ui.text.inverse,
