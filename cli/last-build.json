@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-06 18:47:02",
-  "notes": "feat: MB-1039 xmas only available from december 1st to january 15th\nfix: MB-870 activate/deactivate xmas tab icons\nfix: MB-870, MB-871 fix snowfall 2\nfix: MB-870, MB-871 fix snowfall\nfix(form): AMV2-213, single answer question select\nfix(viesco): revert dropdown style\nfix(crash): MB-863, Mapped property node does not exists fix\nfix(crash): MB-907, Cannot read property 'accent' of undefined fix\nfix(form): AMV2-213, ios dropdown default select\nfix(form): AMV2-204, new form notif error i18n\nfix(form): AMV2-200, distribution list modal title margin\nfeat(form): AMV2-457, submission modal\nfix: MB-951 syncedfile was mishandled\nfix(form): AMV2-205, show success toast when saving\nrelease: 1.9.0-rc.1(1090012)",
-  "version": "1.9.0-rc.2(1090013)",
+  "last": "2022-12-08 18:24:49",
+  "notes": "fix(form): AMV2-465, rework responses delete until form 1.6.0\nfix(homework): MB-1040, remove line-height undefinded of label text\nfix(carousel): remove old carousel\nfix(carousel): MB-951 good album when saving picture\nfix(carousel): MB-1041 disable carousel buttons if image not loaded\nfix(viesco): missing dashboard icon\nfix(form): change list screen header title\nfix(form): AMV2-381, summary answers depending on conditional question answers\nfix: add missing i18n for carousel\nrelease: 1.9.0-rc.2(1090013)",
+  "version": "1.9.0-rc.3(1090014)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
