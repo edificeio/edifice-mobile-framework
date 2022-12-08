@@ -16,7 +16,6 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { formatSource } from '~/framework/util/media';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import Notifier from '~/infra/notifier/container';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { ButtonLine } from '~/ui/button-line';
@@ -88,11 +87,11 @@ export class UserScreen extends React.PureComponent<
       <PageView
         style={styles.page}
         navigation={this.props.navigation}
+        showNetworkBar={false}
         navBar={{
           title: I18n.t('MyAccount'),
         }}>
         <ScrollView style={styles.main} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-          <Notifier id="profileOne" />
           <View style={styles.userInfo}>
             <NamedSVG
               width={this.headerWidth}

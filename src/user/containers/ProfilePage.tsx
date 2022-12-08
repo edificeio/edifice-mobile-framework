@@ -134,7 +134,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     const isEditMode = this.props.navigation.getParam('edit', false);
     return (
       <PageContainer>
-        <Notifier id="profileTwo" />
+        <Notifier id="profileOne" />
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: theme.ui.background.card }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
