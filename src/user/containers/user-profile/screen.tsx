@@ -1,61 +1,33 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
-import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { formatSource } from '~/framework/util/media';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { pickFileError } from '~/infra/actions/pickFile';
-import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
-import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { ButtonLine } from '~/ui/button-line';
 import { logout } from '~/user/actions/login';
-import { profileUpdateAction } from '~/user/actions/profile';
 import { IUserInfoState } from '~/user/state/info';
 
 import styles from './styles';
 
-const uploadAvatarError = () => {
-  return dispatch => {
-    dispatch(
-      notifierShowAction({
-        id: 'profileOne',
-        text: I18n.t('ProfileChangeAvatarErrorUpload'),
-        icon: 'close',
-        type: 'error',
-      }),
-    );
-    Trackers.trackEvent('Profile', 'UPDATE ERROR', 'AvatarChangeError');
-  };
-};
-
-// tslint:disable-next-line:max-classes-per-file
 export class UserScreen extends React.PureComponent<
   {
     onLogout: () => Promise<void>;
-    onUploadAvatar: (avatar: LocalFile) => Promise<SyncedFile>;
-    onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
-    onPickFileError: (notifierId: string) => void;
-    onUploadAvatarError: () => void;
     userinfo: IUserInfoState;
     session: IUserSession;
     navigation: any;
@@ -108,31 +80,6 @@ export class UserScreen extends React.PureComponent<
     ]);
   };
 
-  public async onChangeAvatar(image: ImagePicked) {
-    const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError } = this.props;
-    try {
-      const lc = new LocalFile(
-        {
-          filename: image.fileName as string,
-          filepath: image.uri as string,
-          filetype: image.type as string,
-        },
-        { _needIOSReleaseSecureAccess: false },
-      );
-      this.setState({ updatingAvatar: true });
-      const sc = await onUploadAvatar(lc);
-      await onUpdateAvatar(sc.url);
-    } catch (err: any) {
-      if (err.message === 'Error picking image') {
-        onPickFileError('profileOne');
-      } else if (!(err instanceof Error)) {
-        onUploadAvatarError();
-      }
-    } finally {
-      this.setState({ updatingAvatar: false });
-    }
-  }
-
   public render() {
     const { userinfo, session } = this.props;
     const { showVersionType, versionOverride, versionType } = this.state;
@@ -155,9 +102,9 @@ export class UserScreen extends React.PureComponent<
               name="userpage-header"
             />
             {userinfo.photo === '' ? (
-              <ImagePicker callback={image => this.onChangeAvatar(image)} activeOpacity={1} cameraOptions={{ cameraType: 'front' }}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('MyProfile')}>
                 <Avatar sourceOrId={this.sourceWithParam} size={Size.verylarge} id="" />
-              </ImagePicker>
+              </TouchableOpacity>
             ) : (
               <Avatar sourceOrId={this.sourceWithParam} size={Size.verylarge} id="" />
             )}
@@ -214,10 +161,6 @@ export class UserScreen extends React.PureComponent<
   }
 }
 
-const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch, getState: () => IGlobalState) => {
-  return workspaceService.uploadFile(getUserSession(), avatar, {});
-};
-
 const UserPageConnected = connect(
   (state: any) => {
     const ret = {
@@ -226,13 +169,8 @@ const UserPageConnected = connect(
     };
     return ret;
   },
-  (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ({
+  (dispatch: ThunkDispatch<any, any, any>) => ({
     onLogout: () => dispatch<any>(logout()),
-    onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
-    onUploadAvatarError: () => dispatch(uploadAvatarError()),
-    onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
-    onUpdateAvatar: (imageWorkspaceUrl: string) =>
-      dispatch(profileUpdateAction({ picture: imageWorkspaceUrl }, true)) as unknown as Promise<void>,
   }),
 )(UserScreen);
 
