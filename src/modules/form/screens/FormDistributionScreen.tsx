@@ -203,13 +203,19 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
         let res = responses.filter(r => r.questionId === question.id);
         // Delete responses of multiple answer and matrix questions
         if (question.type === QuestionType.MULTIPLEANSWER) {
-          await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
-          res.map(r => (r.id = undefined));
+          // AMV2-465 temporary fix until form web 1.6.0
+          const unselectedResponses = res.filter(r => r.toDelete);
+          await formService.responses.delete(session, formId, unselectedResponses);
+          res = res.filter(r => !r.toDelete);
+          updateResponses(question.id, res);
+          //await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
+          //res.map(r => (r.id = undefined));
         } else if (question.type === QuestionType.MATRIX) {
+          // AMV2-465 temporary fix until form web 1.6.0
           const questionIds = question.children!.map(q => q.id);
-          await Promise.all(questionIds.map(id => formService.distribution.deleteQuestionResponses(session, distributionId, id)));
+          //await Promise.all(questionIds.map(id => formService.distribution.deleteQuestionResponses(session, distributionId, id)));
           res = responses.filter(r => questionIds?.includes(r.questionId));
-          res.map(r => (r.id = undefined));
+          //res.map(r => (r.id = undefined));
         }
         await Promise.all(
           res.map(response => {

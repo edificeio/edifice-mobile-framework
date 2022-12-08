@@ -74,6 +74,7 @@ export interface IQuestionResponse {
   choiceId?: number;
   customAnswer?: string;
   files?: IResponseFile[];
+  toDelete?: boolean;
 }
 
 export interface IQuestion {

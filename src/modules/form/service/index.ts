@@ -354,6 +354,26 @@ export const formService = {
       return responses.map(response => questionResponseAdapter(response)) as IQuestionResponse[];
     },
   },
+  responses: {
+    delete: async (session: IUserSession, formId: number, responses: IQuestionResponse[]) => {
+      const api = `/formulaire/responses/${formId}`;
+      const body = JSON.stringify(
+        responses.map(r => {
+          return {
+            id: r.id,
+            question_id: r.questionId,
+            answer: r.answer,
+            choice_id: r.choiceId,
+            custom_answer: r.customAnswer,
+          } as IBackendQuestionResponse;
+        }),
+      );
+      return fetchWithCache(api, {
+        method: 'DELETE',
+        body,
+      });
+    },
+  },
   response: {
     put: async (
       session: IUserSession,
