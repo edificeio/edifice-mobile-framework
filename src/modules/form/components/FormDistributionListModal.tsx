@@ -22,6 +22,9 @@ const styles = StyleSheet.create({
   itemIconMargin: {
     marginLeft: UI_SIZES.spacing.minor,
   },
+  titleMargin: {
+    marginTop: UI_SIZES.spacing.small,
+  },
   flatListContainer: {
     marginVertical: UI_SIZES.spacing.medium,
     maxHeight: 300,
@@ -108,7 +111,7 @@ export const FormDistributionListModal = ({
       ref={modalBoxRef}
       content={
         <View>
-          <BodyText>{I18n.t('form.myAnswersTitle', { title: form?.title })}</BodyText>
+          <BodyText style={styles.titleMargin}>{`${I18n.t('form.myAnswers')} - ${form?.title}`}</BodyText>
           <FlatList
             data={data}
             keyExtractor={distribution => distribution.id.toString()}

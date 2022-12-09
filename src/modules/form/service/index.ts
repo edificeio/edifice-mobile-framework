@@ -258,7 +258,7 @@ export const formService = {
       const api = `/formulaire/distributions/${distribution.id}`;
       const body = JSON.stringify(distribution);
       const distrib = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
-        method: 'DELETE',
+        method: 'PUT',
         body,
       })) as IBackendDistribution;
       return distributionAdapter(distrib) as IDistribution;
@@ -352,6 +352,26 @@ export const formService = {
       const api = `/formulaire/questions/${questionId}/distributions/${distributionId}/responses`;
       const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
       return responses.map(response => questionResponseAdapter(response)) as IQuestionResponse[];
+    },
+  },
+  responses: {
+    delete: async (session: IUserSession, formId: number, responses: IQuestionResponse[]) => {
+      const api = `/formulaire/responses/${formId}`;
+      const body = JSON.stringify(
+        responses.map(r => {
+          return {
+            id: r.id,
+            question_id: r.questionId,
+            answer: r.answer,
+            choice_id: r.choiceId,
+            custom_answer: r.customAnswer,
+          } as IBackendQuestionResponse;
+        }),
+      );
+      return fetchWithCache(api, {
+        method: 'DELETE',
+        body,
+      });
     },
   },
   response: {

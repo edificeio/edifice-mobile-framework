@@ -11,7 +11,6 @@ import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray, tabModules } from '~
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { IAppModule } from '~/infra/moduleTool/types';
 import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
-import Carousel from '~/ui/Carousel';
 import { IFrame } from '~/ui/IFrame';
 
 import LoginNavigator from './LoginNavigator';
@@ -62,9 +61,6 @@ function getMainNavigator(appsInfo: any[], widgetsInfo: IEntcoreWidget[]) {
     {
       mainTabNavigator,
       carouselModal: {
-        screen: Carousel,
-      },
-      carouselModal2: {
         screen: CarouselScreen,
       },
       iframeModal: {

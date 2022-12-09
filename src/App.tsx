@@ -1,7 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { AppState, AppStateStatus, StatusBar, View } from 'react-native';
+import { AppState, AppStateStatus, Platform, StatusBar, UIManager, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 // import needed for side-effects https://docs.swmansion.com/react-native-gesture-handler/docs/installation#ios
 import 'react-native-gesture-handler';
@@ -39,6 +39,12 @@ require('./homework');
 //require("./viescolaire");
 //require("./support");
 require('./user');
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: boolean }> {
   private notificationOpenedListener?: () => void;
