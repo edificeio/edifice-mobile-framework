@@ -120,8 +120,8 @@ export class UserScreen extends React.PureComponent<
           </View>
           <View style={styles.section}>
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.configuration')}</HeadingSText>
-            <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} first />
-            <ButtonLine title="PasswordChange" onPress={() => this.props.navigation.navigate('ChangePassword')} />
+            <ButtonLine title="user.page.editEmail" onPress={() => this.props.navigation.navigate('NotifPrefs')} first />
+            <ButtonLine title="user.page.editPassword" onPress={() => this.props.navigation.navigate('ChangePassword')} />
             <ButtonLine
               title="user.sendEmailVerificationCodeScreen.titleModify"
               onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}

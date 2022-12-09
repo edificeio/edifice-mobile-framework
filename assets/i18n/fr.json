@@ -843,6 +843,8 @@
   "user.page.configuration": "Configuration",
   "user.page.others": "Autres",
   "user.page.userFileButton": "Voir ma fiche utilisateur",
+  "user.page.editEmail": "Changer mon email",
+  "user.page.editPassword": "Changer mon mot de passe",
   "version-number": "Version",
   "videoNotAvailable": "Lecteur vidéo non disponible",
   "viesco": "Vie Scolaire",
