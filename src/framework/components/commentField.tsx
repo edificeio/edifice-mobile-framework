@@ -28,6 +28,7 @@ export interface CommentFieldProps {
   index?: number;
   isResponse?: boolean;
   onEditableLayoutHeight?: (val: number) => void;
+  isManager?: boolean;
 }
 
 // STYLES =========================================================================================
@@ -254,6 +255,16 @@ const CommentField = (props: CommentFieldProps, ref) => {
               <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
+          {props.onDeleteComment ? (
+            <TouchableOpacity onPress={() => deleteComment()}>
+              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+                {I18n.t('common.delete')}
+              </SmallBoldText>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      ) : props.isManager ? (
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
               <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>

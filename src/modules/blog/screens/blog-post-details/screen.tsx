@@ -120,35 +120,36 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
       },
     };
-    const menuData = hasPermissionManager(blog!, session)
-      ? [
-          menuItemOpenBrowser,
-          {
-            text: I18n.t('common.deletionPostBlogTitle'),
-            icon: { type: 'NamedSvg', name: 'ui-delete' },
-            color: theme.palette.status.failure,
-            onPress: () => {
-              Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
-                {
-                  text: I18n.t('common.cancel'),
-                  style: 'default',
-                },
-                {
-                  text: I18n.t('common.delete'),
-                  style: 'destructive',
-                  onPress: () => {
-                    //TODO: supprimer le billet
-                    console.log(blogPostData!._id, 'postID', blogId, 'blogID');
-                    this.doDeleteBlogPost(blogPostData!._id).then(() => {
-                      navigation.dispatch(NavigationActions.back());
-                    });
+    const menuData =
+      hasPermissionManager(blog!, session) || blogPostData?.author.userId === session.user.id
+        ? [
+            menuItemOpenBrowser,
+            {
+              text: I18n.t('common.deletionPostBlogTitle'),
+              icon: { type: 'NamedSvg', name: 'ui-delete' },
+              color: theme.palette.status.failure,
+              onPress: () => {
+                Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
+                  {
+                    text: I18n.t('common.cancel'),
+                    style: 'default',
                   },
-                },
-              ]);
+                  {
+                    text: I18n.t('common.delete'),
+                    style: 'destructive',
+                    onPress: () => {
+                      //TODO: supprimer le billet
+                      console.log(blogPostData!._id, 'postID', blogId, 'blogID');
+                      this.doDeleteBlogPost(blogPostData!._id).then(() => {
+                        navigation.dispatch(NavigationActions.back());
+                      });
+                    },
+                  },
+                ]);
+              },
             },
-          },
-        ]
-      : [menuItemOpenBrowser];
+          ]
+        : [menuItemOpenBrowser];
 
     const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
 
@@ -367,8 +368,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   renderComment(blogPostComment: IBlogPostComment, index: number) {
-    const { session } = this.props;
+    const { navigation, session } = this.props;
     const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;
+
+    const blog = navigation.getParam('blog');
     const isUpdatingComment = updateCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasUpdateCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
     const hasDeleteCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
@@ -381,7 +384,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           hasUpdateCommentBlogPostRight ? (comment, commentId) => this.doCreateComment(comment, commentId) : undefined
         }
         onDeleteComment={
-          hasDeleteCommentBlogPostRight
+          hasDeleteCommentBlogPostRight || hasPermissionManager(blog!, session)
             ? () => {
                 Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.confirmationDelete'), [
                   {
@@ -413,6 +416,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         onEditableLayoutHeight={val => {
           this.editorOffsetRef.current = val;
         }}
+        isManager={hasPermissionManager(blog!, session)}
       />
     );
   }
