@@ -44,7 +44,7 @@ export const FormShortAnswerCard = ({
     } else {
       responses.push({
         questionId: question.id,
-        answer: value,
+        answer: text,
       });
     }
     onChangeAnswer(question.id, responses);

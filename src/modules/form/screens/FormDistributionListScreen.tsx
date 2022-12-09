@@ -11,6 +11,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
+import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -193,7 +194,9 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
   };
 
   return (
-    <PageView navigation={props.navigation} navBarWithBack={{ title: I18n.t('form.tabName') }}>
+    <PageView
+      navigation={props.navigation}
+      navBarWithBack={{ title: <HeaderTitleAndSubtitle title={I18n.t('form.myAnswers')} subtitle={I18n.t('form.tabName')} /> }}>
       {renderPage()}
     </PageView>
   );

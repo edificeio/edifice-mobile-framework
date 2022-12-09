@@ -24,6 +24,7 @@ import {
 // eslint-disable-next-line import/order
 import { initActivationAccount as initActivationAccountAction } from './initActivation';
 import { PLATFORM_STORAGE_KEY } from './platform';
+import { letItSnowAction } from './xmas';
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -236,6 +237,7 @@ export function loginAction(
 
       // === 10: navigate back to the main screen
       navigate('Main');
+      dispatch(letItSnowAction());
     } catch (err) {
       // In case of error...
       let routeToGo;

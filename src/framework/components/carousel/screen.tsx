@@ -18,6 +18,7 @@ import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { FakeHeader } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { getUserSession } from '~/framework/util/session';
@@ -90,6 +91,47 @@ async function assertPermissions(permissions: Permission[]) {
   }
 }
 
+export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: boolean; imageViewerRef; popupMenuRef }) => {
+  const dotsButtons = React.useCallback(
+    (onPress: () => void) => <ActionButton disabled={disabled} iconName="ui-options" style={styles.closeButton} action={onPress} />,
+    [disabled],
+  );
+  return (
+    <>
+      <ActionButton
+        action={() => {
+          imageViewerRef.current?.saveToLocal?.();
+        }}
+        iconName="ui-download"
+        style={styles.closeButton}
+        disabled={disabled}
+      />
+      <PopupMenu
+        button={dotsButtons}
+        options={[
+          {
+            i18n: 'share',
+            icon: (
+              <NamedSVG
+                name="ui-share"
+                fill={theme.palette.grey.black}
+                width={UI_SIZES.dimensions.width.large}
+                height={UI_SIZES.dimensions.width.large}
+                style={{ marginHorizontal: UI_SIZES.spacing.small }}
+              />
+            ),
+            onClick: () => imageViewerRef.current?.share?.(),
+          },
+        ]}
+        ref={popupMenuRef as React.LegacyRef<PopupMenu>} // Some type hack here...
+        style={{
+          top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
+        }}
+      />
+    </>
+  );
+};
+
 export function Carousel(props: ICarouselProps) {
   const { navigation } = props;
   const startIndex = navigation.getParam('startIndex') ?? 0;
@@ -105,45 +147,9 @@ export function Carousel(props: ICarouselProps) {
 
   const imageViewerRef = React.useRef<ImageViewer>();
   const popupMenuRef = React.useRef<PopupMenu>();
-  const dotsButton = React.useCallback(
-    onPress => <ActionButton iconName="ui-options" style={styles.closeButton} action={onPress} />,
-    [],
-  );
-  const buttons = React.useMemo(
-    () => (
-      <>
-        <ActionButton
-          action={() => {
-            imageViewerRef.current?.saveToLocal?.();
-          }}
-          iconName="ui-download"
-          style={styles.closeButton}
-        />
-        <PopupMenu
-          button={dotsButton}
-          options={[
-            {
-              i18n: 'share',
-              icon: (
-                <NamedSVG
-                  name="ui-share"
-                  fill={theme.palette.grey.black}
-                  width={UI_SIZES.dimensions.width.large}
-                  height={UI_SIZES.dimensions.width.large}
-                  style={{ marginHorizontal: UI_SIZES.spacing.small }}
-                />
-              ),
-              onClick: () => imageViewerRef.current?.share?.(),
-            },
-          ]}
-          ref={popupMenuRef as React.LegacyRef<PopupMenu>} // Some type hack here...
-          style={{
-            top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
-          }}
-        />
-      </>
-    ),
-    [dotsButton],
+  const getButtons = React.useCallback(
+    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} popupMenuRef={popupMenuRef} />,
+    [popupMenuRef, imageViewerRef],
   );
 
   const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
@@ -161,30 +167,39 @@ export function Carousel(props: ICarouselProps) {
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
       try {
-        const sf = await downloadFile(url);
-        if (!sf) return;
-        const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
-        const permissions = Platform.select<Permission[]>({
-          ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
-          android:
-            androidVersionMajor >= 13
-              ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
-              : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
-        })!;
-        await assertPermissions(permissions);
-      } catch (e) {
-        if (e instanceof PermissionError) {
-          Alert.alert(
-            I18n.t('save.to.camera.roll.permission.blocked.title'),
-            I18n.t('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
-          );
-          return undefined;
-        } else {
-          throw e;
+        let sf: SyncedFile;
+        try {
+          sf = await downloadFile(url);
+          if (!sf) return;
+          const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
+          const permissions = Platform.select<Permission[]>({
+            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
+            android:
+              androidVersionMajor >= 13
+                ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
+                : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+          })!;
+          await assertPermissions(permissions);
+        } catch (e) {
+          if (e instanceof PermissionError) {
+            Alert.alert(
+              I18n.t('save.to.camera.roll.permission.blocked.title'),
+              I18n.t('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+            );
+            return undefined;
+          } else {
+            throw e;
+          }
         }
+        if (Platform.OS === 'android') {
+          await CameraRoll.save(sf.filepath, { album: 'Download' }); // Will put in the actual folder "Download", but still displayed in "Camera" album :/
+        } else {
+          await CameraRoll.save(sf.filepath);
+        }
+        Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
+      } catch (e) {
+        Toast.show(I18n.t('save.to.camera.roll.error'));
       }
-      await CameraRoll.save(sf.filepath);
-      Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
     },
     [downloadFile],
   );
@@ -207,7 +222,7 @@ export function Carousel(props: ICarouselProps) {
           );
           return undefined;
         } else {
-          throw e;
+          Toast.show(I18n.t('share.error'));
         }
       }
     },
@@ -254,14 +269,16 @@ export function Carousel(props: ICarouselProps) {
           renderImage={renderImage}
           loadingRender={renderLoading}
           loadWindow={1}
-          renderIndicator={(current, total) => (
-            <FakeHeader
-              left={closeButton}
-              style={headerStyle}
-              title={I18n.t('carousel.counter', { current, total })}
-              right={buttons}
-            />
-          )}
+          renderIndicator={(current, total, imageStatus) => {
+            return (
+              <FakeHeader
+                left={closeButton}
+                style={headerStyle}
+                title={total !== 1 ? I18n.t('carousel.counter', { current, total }) : ''}
+                right={getButtons(imageStatus !== 'success')}
+              />
+            );
+          }}
           saveToLocalByLongPress={false}
           onClick={() => {
             setNavBarVisible(!isNavBarVisible);
@@ -275,6 +292,6 @@ export function Carousel(props: ICarouselProps) {
 
 export default Carousel;
 
-export function openCarousel(props: ICarouselNavParams, navigation: any) {
-  navigation.navigate('carouselModal2', props);
+export function openCarousel(props: ICarouselNavParams, navigation: NavigationInjectedProps['navigation']) {
+  navigation.navigate('carouselModal', props);
 }

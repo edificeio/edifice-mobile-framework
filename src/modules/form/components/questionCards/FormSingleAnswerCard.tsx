@@ -6,9 +6,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/modules/form/reducer';
-import Dropdown from '~/ui/Dropdown';
 
 import { FormAnswerText } from './FormAnswerText';
+import Dropdown from './FormDropdown';
 
 const styles = StyleSheet.create({
   customAnswerInput: {
@@ -44,12 +44,13 @@ export const FormSingleAnswerCard = ({
       value: choice.value,
     };
   });
-  const selectedChoice = question.choices.find(c => c.id === value);
+  let selectedChoice = question.choices.find(c => c.id === value);
   const { title, mandatory } = question;
 
   const onChangeChoice = (choiceId?: number) => {
     setValue(choiceId);
     if (!choiceId) return;
+    selectedChoice = question.choices.find(c => c.id === choiceId);
     const answer = selectedChoice?.value ?? '';
 
     if (responses.length) {
