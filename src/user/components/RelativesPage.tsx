@@ -6,7 +6,7 @@ import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 
-import { UserCard } from './UserCard';
+import UserCard from './user-card';
 
 // TYPES ------------------------------------------------------------------------------------------
 

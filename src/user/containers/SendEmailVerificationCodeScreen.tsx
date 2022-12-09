@@ -83,7 +83,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         [
           {
             text: I18n.t('common.discard'),
-            onPress: () => props.navigation.navigate('MyProfile'),
+            onPress: () => props.navigation.goBack(),
             style: 'destructive',
           },
           {

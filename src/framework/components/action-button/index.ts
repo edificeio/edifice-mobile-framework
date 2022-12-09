@@ -51,3 +51,4 @@ const getActionButtonWidth = async ({
 };
 
 export { ActionButton, ActionButtonProps, getActionButtonWidth };
+export default ActionButton;

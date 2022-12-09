@@ -8,7 +8,7 @@ import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText } from '~/framework/components/text';
 
-import { UserCard } from './UserCard';
+import UserCard from './user-card';
 
 // TYPES ------------------------------------------------------------------------------------------
 

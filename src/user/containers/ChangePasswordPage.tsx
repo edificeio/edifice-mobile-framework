@@ -6,15 +6,22 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-
-
 import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
-import { IChangePasswordUserInfo, cancelChangePasswordAction, changePasswordAction, initChangePasswordAction } from '~/user/actions/changePassword';
-import { ChangePasswordPage, IChangePasswordPageDataProps, IChangePasswordPageEventProps, IChangePasswordPageProps } from '~/user/components/ChangePasswordPage';
+import {
+  IChangePasswordUserInfo,
+  cancelChangePasswordAction,
+  changePasswordAction,
+  initChangePasswordAction,
+} from '~/user/actions/changePassword';
+import {
+  ChangePasswordPage,
+  IChangePasswordPageDataProps,
+  IChangePasswordPageEventProps,
+  IChangePasswordPageProps,
+} from '~/user/components/ChangePasswordPage';
 import userConfig from '~/user/config';
 import { IChangePasswordState } from '~/user/reducers/changePassword';
-
 
 const mapStateToProps: (state: any) => IChangePasswordPageDataProps = state => {
   const activationState: IChangePasswordState = state[userConfig.reducerName].changePassword;
