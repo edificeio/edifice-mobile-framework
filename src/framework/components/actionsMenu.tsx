@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ColorValue, StyleSheet, View } from 'react-native';
 import { FlatList, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -46,6 +46,7 @@ type ActionsMenuProps = {
   data: {
     text: string;
     icon: string | PictureProps;
+    color?: ColorValue;
     onPress: () => any;
   }[];
   onClickOutside: () => any;
@@ -74,17 +75,17 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
                         paddingVertical: UI_SIZES.spacing.small,
                         paddingHorizontal: UI_SIZES.spacing.medium,
                       }}>
-                      <SmallText style={{ ...itemColorStyle }}>{item.text}</SmallText>
+                      <SmallText style={[{ ...itemColorStyle }, item.color ? { color: item.color } : null]}>{item.text}</SmallText>
                       {typeof item.icon === 'string' ? (
                         <Icon name={item.icon} size={22} style={{ marginLeft: UI_SIZES.spacing.small, ...itemColorStyle }} />
                       ) : (
                         <Picture
-                          fill={theme.ui.text.regular}
                           {...item.icon}
                           width={22}
                           height={22}
                           size={22}
                           style={style.menuIconPicture}
+                          fill={item.color ?? theme.ui.text.regular}
                         />
                       )}
                     </View>
