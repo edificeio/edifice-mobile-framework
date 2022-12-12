@@ -141,12 +141,13 @@ export function loginAction(
       }
 
       // === 3: Gather user email validation infos
-      let emailValidationInfos;
-      try {
-        emailValidationInfos = await userService.getEmailValidationInfos();
-      } catch (err) {
-        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
-      }
+      // Temporary disabled until backend is implemented.
+      // let emailValidationInfos;
+      // try {
+      //   emailValidationInfos = await userService.getEmailValidationInfos();
+      // } catch (err) {
+      //   throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
+      // }
 
       // === 4: check user validity
       if (userinfo2.deletePending) {

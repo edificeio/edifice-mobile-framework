@@ -3,6 +3,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { InteractionManager, Platform, ScrollView, TextInput, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -285,6 +286,18 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
         {this.renderForm()}
       </KeyboardPageView>
     );
+  }
+
+  private blurListener?: NavigationEventSubscription;
+
+  public componentDidMount(): void {
+    this.blurListener = this.props.navigation.addListener('didBlur', () => {
+      this.setState({ isLoggingIn: false });
+    });
+  }
+
+  public componentWillUnmount(): void {
+    this.blurListener?.remove();
   }
 }
 
