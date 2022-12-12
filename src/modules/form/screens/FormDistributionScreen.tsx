@@ -387,13 +387,12 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   // POSITION ACTIONS =============================================================================
 
   const renderPositionActions = () => {
-    return isPositionAtSummary ? (
-      <ActionButton
-        text={I18n.t('form.finishAndSend')}
-        action={() => modalRef?.current?.doShowModal()}
-        disabled={status === DistributionStatus.FINISHED && !editable}
-      />
-    ) : (
+    if (isPositionAtSummary) {
+      return status !== DistributionStatus.FINISHED || editable ? (
+        <ActionButton text={I18n.t('form.finishAndSend')} action={() => modalRef?.current?.doShowModal()} />
+      ) : null;
+    }
+    return (
       <View style={styles.actionsContainer}>
         <ActionButton
           text={I18n.t('back')}
