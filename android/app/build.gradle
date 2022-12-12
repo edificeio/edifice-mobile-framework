@@ -40,10 +40,10 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1090015
+        versionCode 1090016
         versionName "1.9.0"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.4\""
+        buildConfigField "String", "BundleVersionType", "\"rc.5\""
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
