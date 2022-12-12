@@ -80,8 +80,8 @@ export const FormSingleAnswerCard = ({
             onSelect={v => onChangeChoice(v ? Number(v) : undefined)}
             placeholder={I18n.t('form.selectAnOption')}
             showPlaceholderItem={value === undefined}
-            keyExtractor={item => item.id}
-            renderItem={item => item.value}
+            keyExtractor={item => item?.id}
+            renderItem={item => item?.value}
           />
           {selectedChoice?.isCustom ? (
             <TextInput
