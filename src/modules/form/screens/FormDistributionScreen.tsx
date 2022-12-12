@@ -189,8 +189,8 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       }
     }
     const index = positionHistory.indexOf(pos);
-    if (index) {
-      setPositionHistory(positionHistory.splice(0, index));
+    if (index !== -1) {
+      setPositionHistory(positionHistory.slice(0, index));
     }
     setPosition(pos);
   };
