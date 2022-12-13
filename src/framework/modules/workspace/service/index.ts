@@ -3,11 +3,11 @@
  */
 import queryString from 'query-string';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '~/framework/util/fileHandler/service';
 import { IUserSession } from '~/framework/util/session';
 import { signedFetchJson2 } from '~/infra/fetchWithCache';
+import { assertSession } from '~/framework/modules/auth/reducer';
 
 const implicitWorkspaceUploadParams = {
   owner: {}, // Exists BackEnd side but not useed yet!
@@ -126,9 +126,11 @@ const workspaceService = {
   },
 };
 
-export const computeVideoThumbnail = (id: string, size?: number[]) =>
-  `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}${
+export const computeVideoThumbnail = (id: string, size?: number[]) => {
+  const session = assertSession();
+  return `${session.platform.url}/workspace/document/${id}${
     size && size[0] && size[1] ? `?thumbnail=${size[0]}x${size[1]}` : ''
   }`;
+}
 
 export default workspaceService;
