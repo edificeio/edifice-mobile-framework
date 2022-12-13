@@ -22,19 +22,17 @@ export default () => {
   if (AllModules) return AllModules;
   else {
     const moduleDeclarations = [
-      // Built-il modules
+      // Built-in modules
       require('~/framework/modules/auth'),
       require('~/framework/modules/timelinev2'),
 
       // Included modules from override
       // ...(IncludedModules || []),
 
-      // Built-il modules that depends
+      // Built-in modules that depends on other
       // CAUTION ! Modules that depends on other (ex myAppMenu) must be listed at the end !
-      // ToDo: fix me with React Navigation 6
-      // require('~/framework/modules/myAppMenu'),
+      require('~/framework/modules/myAppMenu'),
     ];
-    // AllModules = dynamiclyRegisterModules(loadModules(moduleDeclarations).initModules());
     AllModules = loadModules(moduleDeclarations);
     return AllModules;
   }

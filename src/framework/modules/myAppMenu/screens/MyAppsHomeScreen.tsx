@@ -11,24 +11,21 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { IAppModule } from '~/infra/moduleTool/types';
 
-export interface MyAppGrid_Props extends NavigationInjectedProps {
+export interface MyAppsHomeScreenProps extends NavigationInjectedProps {
   modules: NavigableModuleArray;
-  legacyModules: IAppModule[];
 }
 
-class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
-  private renderGrid(modules?: NavigableModuleArray, legacyModules?: IAppModule[]) {
-    const allModules = [...(legacyModules || []), ...(modules || [])]?.sort((a, b) =>
+class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
+  private renderGrid(modules?: NavigableModuleArray) {
+    const allModules = (modules ?? [])?.sort((a, b) =>
       I18n.t(a.config.displayI18n).localeCompare(I18n.t(b.config.displayI18n)),
     ) as NavigableModuleArray;
 
     const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
       return (
         <TouchableSelectorPictureCard
-          onPress={() => this.props.navigation.navigate(item.config.name)}
+          onPress={() => this.props.navigation.navigate(item.config.routeName)}
           text={I18n.t(item.config.displayI18n)}
           picture={
             item.config.displayPicture
@@ -82,17 +79,14 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
   }
 
   public render() {
-    const { modules, legacyModules } = this.props;
+    const { modules } = this.props;
+    console.log("MODULES", modules);
     return (
-      <PageView
-        navigation={this.props.navigation}
-        navBar={{
-          title: I18n.t('MyApplications'),
-        }}>
-        {this.renderGrid(modules, legacyModules)}
+      <PageView>
+        {this.renderGrid(modules)}
       </PageView>
     );
   }
 }
 
-export default withViewTracking('myapps')(MyAppGrid);
+export default MyAppsHomeScreen;

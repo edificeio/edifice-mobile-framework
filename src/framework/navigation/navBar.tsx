@@ -27,10 +27,12 @@ export const navBarOptions: (props: {
       color: undefined, // override default test color
     },
     headerTitleAlign: 'center',
-    headerLeft: props =>
-      navigation.canGoBack() ? (
+    headerLeft: props => {
+      // Here use canGoBack() is not sufficient. We have to manually check how many routes have bee traversed in the current stack.
+      return navigation.canGoBack() && navigation.getState().routes.length > 1 ? (
         <HeaderBackButton {...props} onPress={navigation.goBack} style={[{ marginHorizontal: -UI_SIZES.spacing.minor }]} />
-      ) : null,
+        ) : null
+      },
     headerTintColor: theme.ui.text.inverse,
     headerBackTitleVisible: false,
     headerShadowVisible: true,
