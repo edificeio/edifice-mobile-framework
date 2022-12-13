@@ -3,12 +3,12 @@ import createReducer from '~/framework/util/redux/reducerFactory';
 
 // State type
 export interface StartupState {
-  isReady: boolean;
+  isReady?: number; // Timestamp if true, undefined if false
 }
 
 // Initial state
 export const initialState: StartupState = {
-  isReady: false,
+  isReady: undefined,
 };
 
 // Action types
@@ -20,7 +20,7 @@ export const reducer = createReducer(initialState, {
   [actionTypes.ready]: (state, action) => {
     return {
       ...state,
-      isReady: true,
+      isReady: Date.now(),
     };
   },
 });

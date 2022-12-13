@@ -78,33 +78,32 @@ function RootNavigatorUnconnected(props: RootNavigatorProps) {
 
   // === Render navigation container with initialState ===
 
-  const appScreen = isReady ? (
-    <NavigationContainer ref={navigationRef} initialState={initialNavState}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* === A. Auth/Main switch === */}
-        {isFullyLogged ? (
+  return (
+    <>
+      <SplashScreenComponent key={isReady} />
+      <NavigationContainer ref={navigationRef} initialState={initialNavState}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {/* === A. Auth/Main switch === */}
+          {isFullyLogged ? (
+            <Stack.Screen
+              name={RootRouteNames.MainStack}
+              options={{ animation: 'none' }}
+              component={() => <Text>{`\n\n\nMAIN STACK`}</Text>}
+            />
+          ) : (
+            <Stack.Screen name={RootRouteNames.AuthStack} options={{ animation: 'none' }} component={AuthNavigator} />
+          )}
+
+          {/* === B. Global modals === */}
           <Stack.Screen
-            name={RootRouteNames.MainStack}
-            options={{ animation: 'none' }}
-            component={() => <Text>{`\n\n\nMAIN STACK`}</Text>}
+            name={RootRouteNames.Pdf}
+            options={screenProps => ({ presentation: 'formSheet', headerShown: true, title: screenProps.route.params.title })}
+            component={BackdropPdfReaderScreen}
           />
-        ) : (
-          <Stack.Screen name={RootRouteNames.AuthStack} options={{ animation: 'none' }} component={AuthNavigator} />
-        )}
-
-        {/* === B. Global modals === */}
-        <Stack.Screen
-          name={RootRouteNames.Pdf}
-          options={screenProps => ({ presentation: 'formSheet', headerShown: true, title: screenProps.route.params.title })}
-          component={BackdropPdfReaderScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  ) : (
-    <SplashScreenComponent />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
-
-  return appScreen;
 }
 
 export default connect((state: IGlobalState) => ({
