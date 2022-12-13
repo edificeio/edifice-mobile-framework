@@ -31,7 +31,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             ),
             headerRight: () => (
               <NavBarAction
-                iconName="ui-calendar"
+                iconName="ui-plus"
                 onPress={() => {
                   navigate(timelineRouteNames.Filters);
                 }}
