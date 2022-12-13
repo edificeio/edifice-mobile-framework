@@ -22,7 +22,7 @@ import { getActiveSession } from '~/framework/util/session';
 import MainNavigator from './MainNavigator';
 import { navigationRef } from './helper';
 import { StartupState, getState as getAppStartupState } from './redux';
-import { StatusBar } from 'react-native';
+import { Platform, StatusBar } from 'react-native';
 import theme from '~/app/theme';
 
 function SplashScreenComponent() {
@@ -59,7 +59,7 @@ function RootNavigatorUnconnected(props: RootNavigatorProps) {
   const isFullyLogged = logged && session; // Partial sessions scenarios have session = true && logged = false, and must stay on auth stack.
 
   React.useEffect(() => {
-    StatusBar.setBackgroundColor(theme.palette.primary.regular)
+    if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular)
   }, [])
 
   // === Compute initial auth state ===
