@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-09 08:17:49",
-  "notes": "release: 1.9.0-rc.3(1090014)",
-  "version": "1.9.0-rc.4(1090015)",
+  "last": "2022-12-12 19:20:34",
+  "notes": "fix(form): AMV2-482, position history update\nfix(form): MO-176, replace list refresh with silent refresh\nfix(form): AMV2-470, hide finish button instead of disabling it\nfix(form): MO-175, single question without choice\nfix(form): AMV2-472, mandatory multiple question answer\nfix(activation): MB-1074 fix infinite render loop between activation and snowflakes\nchore(translate): New wordings EN && ES translations\nrelease: 1.9.0-rc.4(1090015)",
+  "version": "1.9.0-rc.5(1090016)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
