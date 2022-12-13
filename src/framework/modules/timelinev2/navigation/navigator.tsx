@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Text } from 'react-native';
 
-import { createModuleNavigator } from '~/framework/navigation/MainNavigator';
+import { createModuleNavigator } from '~/framework/navigation/mainNavigation';
 import { navigate } from '~/framework/navigation/helper';
 import { NavBarAction } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -60,7 +60,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             title: I18n.t('timeline.filtersScreen.title'),
             headerRight: () => computeNavBar(true),
           }}
-          initialParams={{}}
+          initialParams={undefined}
         />
       </>
     ),

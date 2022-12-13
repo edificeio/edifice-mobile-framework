@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
-import { createModuleNavigator } from '~/framework/navigation/MainNavigator';
+import { createModuleNavigator } from '~/framework/navigation/mainNavigation';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
 
 import { IMyAppsNavigationParams, myAppsRouteNames } from '.';

@@ -6,7 +6,7 @@ import Pdf from 'react-native-pdf';
 import theme from '~/app/theme';
 
 import { EmptyContentScreen } from '../components/emptyContentScreen';
-import { IRootNavigationParams, RootRouteNames } from '../navigation/RootNavigator';
+import { IModalsNavigationParams, ModalsRouteNames } from '../navigation/modals';
 
 export interface IBackdropPdfReaderState {
   error: boolean;
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 });
 
 export class BackdropPdfReaderScreen extends React.PureComponent<
-  NativeStackScreenProps<IRootNavigationParams, RootRouteNames.Pdf>,
+  NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Pdf>,
   IBackdropPdfReaderState
 > {
   // DECLARATIONS =================================================================================

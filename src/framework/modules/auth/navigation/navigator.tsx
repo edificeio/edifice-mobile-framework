@@ -6,6 +6,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { AuthRouteNames, IAuthNavigationParams } from '.';
 import ActivationScreen from '../screens/ActivationScreen';
@@ -18,11 +19,11 @@ import PlatformSelectScreen from '../screens/PlatformSelectScreen';
 import RevalidateTermsScreen from '../screens/RevalidateTermsScreen';
 import WayfScreen from '../screens/WayfScreen';
 
-const Stack = createNativeStackNavigator<IAuthNavigationParams>();
+const Stack = getTypedRootStack<IAuthNavigationParams>();
 
 export default function () {
   return (
-    <Stack.Navigator screenOptions={navBarOptions}>
+    <Stack.Group screenOptions={navBarOptions}>
       <Stack.Group screenOptions={{ headerShown: false }}>
         <Stack.Screen name={AuthRouteNames.onboarding} component={OnboardingScreen} />
         <Stack.Screen name={AuthRouteNames.platforms} component={PlatformSelectScreen} />
@@ -76,6 +77,6 @@ export default function () {
           title: I18n.t('PasswordChange'),
         })}
       />
-    </Stack.Navigator>
+    </Stack.Group>
   );
 }
