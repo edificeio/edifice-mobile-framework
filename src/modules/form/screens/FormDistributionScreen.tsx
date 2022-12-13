@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
