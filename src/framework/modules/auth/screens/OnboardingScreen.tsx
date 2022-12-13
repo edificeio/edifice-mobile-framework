@@ -13,7 +13,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingS, TextSemiBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 
-import { AuthRouteNames, IAuthNavigationParams, navigateAfterOnboarding } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, navigateAfterOnboarding } from '../navigation';
 
 // TYPES ==========================================================================================
 

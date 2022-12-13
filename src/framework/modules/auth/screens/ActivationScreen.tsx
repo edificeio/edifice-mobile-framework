@@ -36,7 +36,7 @@ import {
   ValueChangeArgs,
 } from '../components/ActivationForm';
 import { IActivationError, IActivationPayload } from '../model';
-import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigation';
 
 // TYPES ---------------------------------------------------------------------------
 

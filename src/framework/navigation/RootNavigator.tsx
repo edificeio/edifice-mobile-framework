@@ -12,13 +12,14 @@ import { Dispatch } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
 import { useAppStartup } from '~/app/startup';
-import AuthNavigator, { getAuthNavigationState } from '~/framework/modules/auth/navigator';
+import { ILoginResult } from '~/framework/modules/auth/actions';
+import { ISession } from '~/framework/modules/auth/model';
+import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
+import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
+import { getActiveSession } from '~/framework/util/session';
 
-import { ILoginResult } from '../modules/auth/actions';
-import { ISession } from '../modules/auth/model';
-import { BackdropPdfReaderScreen } from '../screens/PdfReaderScreen';
-import { getActiveSession } from '../util/session';
 import { StartupState, getState as getAppStartupState } from './redux';
 
 export const navigationRef = createNavigationContainerRef();

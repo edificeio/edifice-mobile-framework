@@ -22,7 +22,7 @@ import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 
 import { loginAction } from '../actions';
-import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigation';
 import { IAuthState, getState as getAuthState } from '../reducer';
 
 enum WAYFPageMode {

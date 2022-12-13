@@ -23,7 +23,7 @@ import { Toggle } from '~/ui/forms/Toggle';
 
 import { ILoginResult, loginAction, markLoginErrorTimestampAction } from '../actions';
 import { AuthErrorCode } from '../model';
-import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigation';
 import { IAuthState, getState as getAuthState } from '../reducer';
 
 // TYPES ==========================================================================================

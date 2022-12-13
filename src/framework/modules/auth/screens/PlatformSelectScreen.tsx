@@ -1,5 +1,4 @@
 // Libraries
-import type { ParamListBase } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -14,7 +13,7 @@ import { PageView } from '~/framework/components/page';
 import appConf from '~/framework/util/appConf';
 import { H1, LightP } from '~/ui/Typography';
 
-import { AuthRouteNames, IAuthNavigationParams, getLoginRouteName } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, getLoginRouteName } from '../navigation';
 
 // Props definition -------------------------------------------------------------------------------
 

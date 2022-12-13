@@ -12,7 +12,7 @@ import { Text } from '~/framework/components/text';
 import { Trackers } from '~/framework/util/tracker';
 import { FlatButton } from '~/ui/FlatButton';
 
-import { AuthRouteNames, IAuthNavigationParams } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams } from '../navigation';
 
 interface ILoginWayfScreenProps extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf> {}
 

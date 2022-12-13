@@ -28,7 +28,7 @@ import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { ValidatorBuilder } from '~/utils/form';
 
 import { forgotAction } from '../actions';
-import { AuthRouteNames, IAuthNavigationParams } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams } from '../navigation';
 
 // TYPES ---------------------------------------------------------------------------
 

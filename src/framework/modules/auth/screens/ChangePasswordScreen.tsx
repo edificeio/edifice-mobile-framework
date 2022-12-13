@@ -1,32 +1,28 @@
 import styled from '@emotion/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import { Dispatch } from 'react';
 import * as React from 'react';
-import { Alert, Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
 import { FlatButton } from '~/ui/FlatButton';
-import { Loading } from '~/ui/Loading';
 import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
-import { IChangePasswordModel, IChangePasswordUserInfo } from '~/user/actions/changePassword';
-import { ContextState, SubmitState } from '~/utils/SubmitState';
+import { IChangePasswordModel } from '~/user/actions/changePassword';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
 
 import { ILoginResult, changePasswordAction, loginAction, logoutAction } from '../actions';
 import { IChangePasswordError, IChangePasswordPayload, ISession, createChangePasswordError } from '../model';
-import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState, redirectLoginNavAction } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState, redirectLoginNavAction } from '../navigation';
 import { getState as getAuthState } from '../reducer';
 
 // TYPES ------------------------------------------------------------------------------------------

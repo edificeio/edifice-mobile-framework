@@ -5,8 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 import theme from '~/app/theme';
-
-import { IAuthNavigationParams } from '../modules/auth/navigator';
+import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;

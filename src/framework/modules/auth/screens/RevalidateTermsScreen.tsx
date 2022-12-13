@@ -21,7 +21,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 
 import { ILoginResult, loginAction, logoutAction } from '../actions';
 import { ISession } from '../model';
-import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState, redirectLoginNavAction } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState, redirectLoginNavAction } from '../navigation';
 import { getState as getAuthState } from '../reducer';
 import { revalidateTerms } from '../service';
 
