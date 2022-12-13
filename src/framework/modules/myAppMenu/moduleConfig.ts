@@ -7,6 +7,7 @@ export default new NavigableModuleConfig<'myapps', null>({
   entcoreScope: [],
   matchEntcoreApp: (entcoreApp, allEntcoreApps) => {
     const modules = myAppsModules.get().filterAvailables(allEntcoreApps);
+    return true;
     return modules.length > 0;
   },
 

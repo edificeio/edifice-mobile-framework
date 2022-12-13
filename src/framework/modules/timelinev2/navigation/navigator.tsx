@@ -1,5 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { Text } from 'react-native';
 
 import { createModuleNavigator } from '~/framework/navigation/MainNavigator';
 import { navigate } from '~/framework/navigation/helper';
@@ -33,12 +34,20 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
               <NavBarAction
                 iconName="ui-plus"
                 onPress={() => {
-                  navigate(timelineRouteNames.Filters);
+                  navigate(timelineRouteNames.Dummy);
                 }}
               />
             ),
           }}
           initialParams={{}}
+        />
+
+        <Stack.Screen
+          name={timelineRouteNames.Dummy}
+          component={() => <Text>Dummy</Text>}
+          options={{
+            title: 'Dummy',
+          }}
         />
       </>
     ),

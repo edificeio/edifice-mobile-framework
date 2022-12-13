@@ -239,6 +239,9 @@ export function createModuleNavigator<ParamList extends ParamListBase>(
   stackScreens?: (Stack: ReturnType<ICreateNativeStackNavigatorInterface<ParamList>>) => React.ReactNode,
 ) {
   if (stackScreens) ModuleScreens.register(routeName, <MainStack.Group key={routeName}>{stackScreens(MainStack)}</MainStack.Group>);
-  const ModuleStack = createNativeStackNavigator<ParamList>();
-  return () => <ModuleStack.Navigator screenOptions={navBarOptions}>{homeScreens(ModuleStack)}</ModuleStack.Navigator>;
+  return () => (
+    <MainStack.Navigator screenOptions={navBarOptions}>
+      {homeScreens(MainStack as ReturnType<ICreateNativeStackNavigatorInterface<ParamList>>)}
+    </MainStack.Navigator>
+  );
 }
