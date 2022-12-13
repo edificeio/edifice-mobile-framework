@@ -10,7 +10,6 @@ import {
   IPushNotifsSettings,
   IPushNotifsSettings_State_Data,
 } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 
@@ -55,7 +54,7 @@ export const notificationsService = {
     return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
   },
   report: async (session: ISession, id: string) => {
-    const api = `${DEPRECATED_getCurrentPlatform()!.url}/timeline/${id}/report`;
+    const api = `${session.platform.url}/timeline/${id}/report`;
     const method = 'PUT';
     return signedFetchJson(api, { method });
   },
@@ -131,7 +130,7 @@ export const pushNotifsService = {
     const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
     const prefsUpdated = { config: notifPrefs };
     const payload = { ...prefsOriginal, ...prefsUpdated };
-    const responseJson = await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+    const responseJson = await signedFetchJson(`${session.platform.url}${api}`, {
       method,
       body: JSON.stringify(payload),
     });
