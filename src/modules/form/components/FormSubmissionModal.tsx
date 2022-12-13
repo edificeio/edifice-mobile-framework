@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import ModalBox from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, NestedText, SmallText } from '~/framework/components/text';

@@ -217,12 +217,12 @@ export function Carousel(props: ICarouselProps) {
       } catch (e) {
         if (e instanceof PermissionError) {
           Alert.alert(
-            I18n.t('share.permission.blocked.title'),
-            I18n.t('share.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+            I18n.t('share-permission-blocked-title'),
+            I18n.t('share-permission-blocked-text', { appName: DeviceInfo.getApplicationName() }),
           );
           return undefined;
         } else {
-          Toast.show(I18n.t('share.error'));
+          Toast.show(I18n.t('share-error'));
         }
       }
     },
