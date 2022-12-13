@@ -10,8 +10,8 @@ import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import { HeadingS, Small } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
-import { H1, LightP } from '~/ui/Typography';
 
 import { AuthRouteNames, IAuthNavigationParams, getLoginRouteName } from '../navigation';
 
@@ -31,14 +31,13 @@ export type IPlatformSelectScreenProps = IPlatformSelectPageDataProps &
 // Styles -----------------------------------------------------------------------------------------
 
 const styles = StyleSheet.create({
-  h1: {
-    color: theme.ui.text.regular,
-    fontSize: 20,
-    fontWeight: 'normal',
+  heading: {
     marginTop: UI_SIZES.spacing.medium + UI_SIZES.screen.topInset,
+    marginBottom: UI_SIZES.spacing.big,
     textAlign: 'center',
+    color: theme.ui.text.regular,
   },
-  lightP: { textAlign: 'center', marginBottom: UI_SIZES.spacing.small },
+  lightP: { color: theme.ui.text.light, textAlign: 'center', marginBottom: UI_SIZES.spacing.small },
   picture: { height: 64, width: '100%' },
 });
 
@@ -72,8 +71,8 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
             keyExtractor={item => item.url}
             ListHeaderComponent={
               <>
-                <H1 style={styles.h1}>{I18n.t('welcome')}</H1>
-                <LightP style={styles.lightP}>{I18n.t('select-platform')}</LightP>
+                <HeadingS style={styles.heading}>{I18n.t('welcome')}</HeadingS>
+                <Small style={styles.lightP}>{I18n.t('select-platform')}</Small>
               </>
             }
             alwaysBounceVertical={false}

@@ -19,11 +19,10 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text, TextAction } from '~/framework/components/text';
+import { Small, SmallAction } from '~/framework/components/text';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
 import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage } from '~/ui/Typography';
 
 import { ILoginResult, activateAccountAction } from '../actions';
 import {
@@ -69,6 +68,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     flexWrap: 'wrap',
+    flex: 1,
+  },
+  errorMsg: {
+    flexGrow: 0,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: theme.palette.status.failure,
   },
 });
 
@@ -79,8 +87,8 @@ const FormContainer = styled.View({
   flex: 1,
   flexDirection: 'column',
   justifyContent: 'center',
-  padding: UI_SIZES.spacing.large,
-  paddingTop: UI_SIZES.spacing.huge,
+  margin: UI_SIZES.spacing.large,
+  marginTop: UI_SIZES.spacing.huge,
 });
 const LogoWrapper = styled.View({
   flexGrow: 2,
@@ -194,13 +202,15 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
                       />
                       <View style={styles.cguText}>
-                        <Text>{I18n.t('activation-cgu-accept')}</Text>
+                        <Small>{I18n.t('activation-cgu-accept')}</Small>
                         <TouchableOpacity onPress={() => this.handleOpenCGU(cguUrl)}>
-                          <TextAction>{I18n.t('activation-cgu')}</TextAction>
+                          <SmallAction>{I18n.t('activation-cgu')}</SmallAction>
                         </TouchableOpacity>
                       </View>
                     </View>
-                    <ErrorMessage>{(hasErrorKey || errorText) && !typing ? I18n.t('activation-errorSubmit') : ''}</ErrorMessage>
+                    <Small style={styles.errorMsg}>
+                      {(hasErrorKey || errorText) && !typing ? I18n.t('activation-errorSubmit') : ''}
+                    </Small>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
                       <FlatButton
                         onPress={() => this.doActivation()}

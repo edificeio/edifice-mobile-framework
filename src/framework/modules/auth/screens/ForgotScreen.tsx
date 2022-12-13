@@ -20,10 +20,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingS, Text, TextColorStyle } from '~/framework/components/text';
+import { HeadingS, Small } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage, InfoMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { ValidatorBuilder } from '~/utils/form';
 
@@ -86,6 +85,23 @@ const styles = StyleSheet.create({
   inputLine: { color: theme.ui.text.inverse },
   touchable: { height: '100%', width: '100%', position: 'absolute' },
   picker: { width: '100%', borderWidth: 1, borderColor: theme.palette.grey.grey, borderTopWidth: 0 },
+  textColorLight: { color: theme.ui.text.light },
+  errorMsg: {
+    flexGrow: 0,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: theme.palette.status.failure,
+  },
+  infoMsg: {
+    alignSelf: 'center',
+    flexGrow: 0,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    height: 38,
+  },
 });
 
 export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScreenState> {
@@ -164,12 +180,12 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
-                      <HeadingS style={{ ...TextColorStyle.Light }}>
+                      <HeadingS style={styles.textColorLight}>
                         {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}`)}
                       </HeadingS>
-                      <Text style={{ ...TextColorStyle.Light }}>
+                      <Small style={styles.textColorLight}>
                         {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}-instructions`)}
-                      </Text>
+                      </Small>
                     </LogoWrapper>
                     {!isSuccess ? (
                       <TextInputLine
@@ -194,9 +210,11 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                         spellCheck={false}
                       />
                     ) : null}
-                    {(hasStructures && !isSuccess) || (isError && !editing) ? <ErrorMessage>{errorText}</ErrorMessage> : null}
+                    {(hasStructures && !isSuccess) || (isError && !editing) ? (
+                      <Small style={styles.errorMsg}>{errorText}</Small>
+                    ) : null}
                     {isSuccess ? (
-                      <InfoMessage style={styles.infoMessage}>{editing ? '' : isSuccess && I18n.t('forgot-success')}</InfoMessage>
+                      <Small style={styles.infoMsg}>{editing ? '' : isSuccess && I18n.t('forgot-success')}</Small>
                     ) : null}
                     {forgotMode === 'id' && hasStructures && !isSuccess ? (
                       <>
@@ -277,7 +295,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                           loading={this.state.forgotState === 'RUNNING'}
                         />
                       ) : null}
-                      {hasStructures && errorMsg ? <ErrorMessage>{I18n.t('forgot-several-emails-no-match')}</ErrorMessage> : null}
+
+                      {hasStructures && errorMsg ? (
+                        <Small style={styles.errorMsg}>{I18n.t('forgot-several-emails-no-match')}</Small>
+                      ) : null}
                     </View>
                   </FormContainer>
                 </FormWrapper>

@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Text } from '~/framework/components/text';
+import { Small } from '~/framework/components/text';
 import { Trackers } from '~/framework/util/tracker';
 import { FlatButton } from '~/ui/FlatButton';
 
@@ -43,7 +43,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.safeAreaInner}>
             <PFLogo pf={route.params.platform} />
-            <Text style={styles.textCenter}>{I18n.t('login-wayf-main-text')}</Text>
+            <Small style={styles.textCenter}>{I18n.t('login-wayf-main-text')}</Small>
             <FlatButton
               title={I18n.t('login-wayf-main-button')}
               onPress={() => {

@@ -7,6 +7,8 @@ import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import theme from '~/app/theme';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 
+import { TextFontStyle } from '../components/text';
+
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;
   navigation: any;
@@ -16,7 +18,7 @@ export const navBarOptions: (props: {
       backgroundColor: theme.palette.primary.regular,
     },
     headerTitleStyle: {
-      fontWeight: 'bold',
+      ...TextFontStyle.Bold,
     },
     headerTintColor: theme.ui.text.inverse,
     headerBackTitleVisible: false,

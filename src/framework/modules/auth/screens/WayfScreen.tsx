@@ -2,7 +2,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
@@ -15,11 +15,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
+import { Small } from '~/framework/components/text';
 import { Trackers } from '~/framework/util/tracker';
 import { IOAuthToken, OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, initOAuth2 } from '~/infra/oauth';
 import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
-import { ErrorMessage } from '~/ui/Typography';
 
 import { loginAction } from '../actions';
 import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigation';
@@ -54,7 +54,7 @@ const STYLES = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.large,
     paddingVertical: UI_SIZES.spacing.huge * 1.5,
   },
-  help: { marginTop: UI_SIZES.spacing.large, textAlign: 'center' },
+  // help: { marginTop: UI_SIZES.spacing.large, textAlign: 'center' },
   safeView: { flex: 1, backgroundColor: theme.ui.background.card },
   select: { borderColor: theme.palette.primary.regular, borderWidth: 1 },
   selectBackDrop: { flex: 1 },
@@ -63,6 +63,14 @@ const STYLES = StyleSheet.create({
   selectText: { color: theme.ui.text.light },
   text: { textAlign: 'center' },
   webview: { flex: 1 },
+  errorMsg: {
+    flexGrow: 0,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: theme.palette.status.failure,
+  },
 });
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
@@ -142,13 +150,13 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
-          <ErrorMessage>
+          <Small style={STYLES.errorMsg}>
             {I18n.t('auth-error-' + this.error, {
               version: DeviceInfo.getVersion(),
               errorcode: this.error,
               currentplatform: this.props.route.params.platform.url,
             })}
-          </ErrorMessage>
+          </Small>
           <FlatButton title={I18n.t('login-wayf-error-retry')} onPress={() => this.displayWebview()} />
         </View>
       );
@@ -159,7 +167,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
-          <Text style={STYLES.text}>{I18n.t('login-wayf-loading-text')}</Text>
+          <Small style={STYLES.text}>{I18n.t('login-wayf-loading-text')}</Small>
           <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
@@ -174,7 +182,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
             this.setState({ dropdownOpened: false });
           }}>
           <View style={STYLES.container}>
-            <Text style={STYLES.text}>{I18n.t('login-wayf-select-text')}</Text>
+            <Small style={STYLES.text}>{I18n.t('login-wayf-select-text')}</Small>
             <DropDownPicker
               dropDownContainerStyle={STYLES.selectContainer}
               items={this.dropdownItems}
@@ -198,7 +206,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
                 disabled={this.dropdownValue === null}
                 onPress={() => this.loginWithCustomToken()}
               />
-              {/*<Text style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Text>*/}
+              {/*<Small style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Small>*/}
             </View>
           </View>
         </TouchableWithoutFeedback>

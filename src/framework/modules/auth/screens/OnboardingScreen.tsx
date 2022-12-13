@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingS, TextSemiBold } from '~/framework/components/text';
+import { HeadingL, HeadingS } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 
 import { AuthRouteNames, IAuthNavigationParams, navigateAfterOnboarding } from '../navigation';
@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   heading: {
     color: theme.palette.primary.regular,
     alignSelf: 'center',
-    fontSize: 24,
     height: 80,
     lineHeight: undefined,
   },
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
     height: '85%',
     width: '80%',
   },
-  swiperElementText: { textAlign: 'center', fontSize: 18 },
+  swiperElementText: { textAlign: 'center' },
   safeAreaInnerBottom: { flex: 1, justifyContent: 'center' },
   safeAreInnerBottomInner: { height: 90, justifyContent: 'space-between' },
   buttonsMask: {
@@ -110,12 +109,12 @@ export default class OnboardingScreen extends React.PureComponent<IOnboardingScr
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.safeAreaInnerTop}>
-          <HeadingS style={styles.heading}>{showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}</HeadingS>
+          <HeadingL style={styles.heading}>{showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}</HeadingL>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiperDot} activeDotStyle={styles.swiperDotActive}>
             {(onboardingTexts as unknown as string[]).map((onboardingText, index) => (
               <View key={index} style={styles.swiperElementWrapper}>
                 <NamedSVG name={`onboarding-${index}`} style={imageStyle} />
-                <TextSemiBold style={styles.swiperElementText}>{onboardingText}</TextSemiBold>
+                <HeadingS style={styles.swiperElementText}>{onboardingText}</HeadingS>
               </View>
             ))}
           </Swiper>

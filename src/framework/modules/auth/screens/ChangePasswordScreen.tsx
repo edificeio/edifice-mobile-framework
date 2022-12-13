@@ -9,13 +9,12 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Text, TextSemiBold, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
 import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel } from '~/user/actions/changePassword';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.tiny,
     flex: 0,
   },
-  infoBubbleText: { ...TextSizeStyle.SlightBig, textAlign: 'center' },
+  infoBubbleText: { ...TextSizeStyle.Medium, textAlign: 'center' },
   infoRules: {
     backgroundColor: theme.palette.primary.light,
     paddingVertical: UI_SIZES.spacing.minor,
@@ -139,8 +138,16 @@ const styles = StyleSheet.create({
     flex: 0,
   },
   flexShrink0: { flexShrink: 0 },
-  error: { marginTop: 0, minHeight: UI_SIZES.getResponsiveStyledLineHeight() * 3 },
   refuse: { color: theme.palette.status.failure, textAlign: 'center' },
+  errorMsg: {
+    flexGrow: 0,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: theme.palette.status.failure,
+    marginTop: 0,
+    minHeight: getScaleDimension(20, 'height') * 3,
+  },
 });
 
 function OldPasswordField(props: { oldPassword: string; form: ChangePasswordFormModel; onChange: ValueChange<string> }) {
@@ -291,16 +298,16 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
             <View style={styles.flexStretch0}>
               {this.props.route.params.forceChange ? (
                 <View style={styles.infoBubble}>
-                  <Text style={styles.infoBubbleText}>{I18n.t('PasswordChangeWarning')}</Text>
+                  <Small style={styles.infoBubbleText}>{I18n.t('PasswordChangeWarning')}</Small>
                   <MiniSpacer />
                   <MiniSpacer />
                 </View>
               ) : null}
               {isIDF ? (
                 <View style={styles.infoRules}>
-                  <Text style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
+                  <Small style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
                     {I18n.t('common.idf.passwordRules')}
-                  </Text>
+                  </Small>
                 </View>
               ) : null}
             </View>
@@ -317,11 +324,11 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
               <MiniSpacer />
             </View>
             <View style={styles.flexShrink0}>
-              <ErrorMessage style={styles.error}>
+              <Small style={styles.errorMsg}>
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}
-              </ErrorMessage>
+              </Small>
             </View>
             <View style={styles.flexShrink0}>
               <ButtonWrapper error={hasErrorKey} typing={typing}>
@@ -334,7 +341,7 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
               </ButtonWrapper>
               {this.props.route.params.forceChange ? (
                 <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={this.doRefuseTerms}>
-                  <TextSemiBold style={styles.refuse}>{I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}</TextSemiBold>
+                  <SmallBold style={styles.refuse}>{I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}</SmallBold>
                 </TouchableOpacity>
               ) : null}
               <MiniSpacer />

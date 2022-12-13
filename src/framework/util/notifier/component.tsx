@@ -7,7 +7,6 @@ import {
   NativeSyntheticEvent,
   Platform,
   StyleSheet,
-  Text,
   TextLayoutEventData,
   View,
 } from 'react-native';
@@ -16,6 +15,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import { SmallInverse } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import type { NotifierState } from './reducer';
@@ -150,7 +150,6 @@ class Notifier extends React.Component<
       alignCenter: { alignItems: 'center' },
       textAnimated: {
         flex: 1,
-        color: theme.ui.text.inverse,
         textAlign: longText ? 'left' : 'center',
         alignSelf: 'center',
         height,
@@ -165,9 +164,9 @@ class Notifier extends React.Component<
         <NotifierWrapper style={{ backgroundColor: this.barColor }}>
           <View style={[styles.innerAnimatedView, icon && !loading && styles.alignCenter]}>
             {text ? (
-              <Text onTextLayout={this.measureText} style={styles.textAnimated}>
+              <SmallInverse onTextLayout={this.measureText} style={styles.textAnimated}>
                 {text}
-              </Text>
+              </SmallInverse>
             ) : null}
             {loading ? (
               <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.big }} />

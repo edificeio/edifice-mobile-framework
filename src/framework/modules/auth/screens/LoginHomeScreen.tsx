@@ -13,11 +13,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/components/text';
+import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { tryAction } from '~/framework/util/redux/actions';
 import { FlatButton } from '~/ui/FlatButton';
-import { ErrorMessage } from '~/ui/Typography';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 
@@ -89,7 +88,7 @@ const styles = StyleSheet.create({
   },
   sommeNumeriqueInfoBubbleText: { textAlign: 'center', color: theme.palette.status.failure },
   autoLoginWrapper: { flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium },
-  autoLoginWrapperText: { marginRight: UI_SIZES.spacing.small, ...TextColorStyle.Normal, ...TextSizeStyle.Small },
+  autoLoginWrapperText: { marginRight: UI_SIZES.spacing.small, ...TextSizeStyle.Small },
   buttonWrapper: {
     alignItems: 'center',
     flexGrow: 2,
@@ -99,7 +98,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonLink: { textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, ...TextColorStyle.Light },
+  buttonLink: { textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, color: theme.ui.text.light },
+  errorMsg: {
+    flexGrow: 0,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: theme.palette.status.failure,
+  },
 });
 
 export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILoginPageState> {
@@ -162,7 +169,7 @@ export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILog
           {/* Temporary banner displayed for Somme Numérique */}
           {isSommeNumerique ? (
             <View style={styles.sommeNumeriqueInfoBubble}>
-              <TextBold style={styles.sommeNumeriqueInfoBubbleText}>{I18n.t('common.sommeNumeriqueAlert_temp')}</TextBold>
+              <SmallBold style={styles.sommeNumeriqueInfoBubbleText}>{I18n.t('common.sommeNumeriqueAlert_temp')}</SmallBold>
             </View>
           ) : null}
           <FormContainer>
@@ -187,14 +194,14 @@ export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILog
               hasError={(error && !typing && !error) as boolean}
             />
             <View style={styles.autoLoginWrapper}>
-              <Text style={styles.autoLoginWrapperText}>{I18n.t('AutoLogin')}</Text>
+              <Small style={styles.autoLoginWrapperText}>{I18n.t('AutoLogin')}</Small>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <ErrorMessage>
+            <Small style={styles.errorMsg}>
               {this.state.typing || (this.state.errorTimestamp !== errorTimestamp && errorTimestamp !== undefined) // errorTimestamp === undefined => redirected from somewhere or autoLogin
                 ? ''
                 : error &&
@@ -208,7 +215,7 @@ export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILog
                       currentplatform: platform.url,
                     }),
                   })}
-            </ErrorMessage>
+            </Small>
 
             <View
               style={[styles.buttonWrapper, { marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium }]}>
@@ -230,20 +237,20 @@ export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILog
               )}
 
               <View style={styles.center}>
-                <Text
+                <Small
                   style={styles.buttonLink}
                   onPress={() => {
                     navigation.navigate('Forgot', { platform, mode: 'password' });
                   }}>
                   {I18n.t('forgot-password')}
-                </Text>
-                <Text
+                </Small>
+                <Small
                   style={styles.buttonLink}
                   onPress={() => {
                     navigation.navigate('Forgot', { platform, mode: 'id' });
                   }}>
                   {I18n.t('forgot-id')}
-                </Text>
+                </Small>
               </View>
             </View>
           </FormContainer>

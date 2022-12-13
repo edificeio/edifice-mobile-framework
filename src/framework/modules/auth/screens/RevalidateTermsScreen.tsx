@@ -16,7 +16,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingS, Text, TextAction, TextSemiBold } from '~/framework/components/text';
+import { HeadingS, Small, SmallAction, SmallBold } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import { ILoginResult, loginAction, logoutAction } from '../actions';
@@ -109,17 +109,17 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
           }}>
           {I18n.t('user.revalidateTermsScreen.newEULA')}
         </HeadingS>
-        <Text numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
+        <Small numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
           {`${I18n.t('user.revalidateTermsScreen.mustAccept')} `}
-          <TextAction onPress={() => openCGU(eulaUrl)} style={{ textDecorationLine: 'underline' }}>
+          <SmallAction onPress={() => openCGU(eulaUrl)} style={{ textDecorationLine: 'underline' }}>
             {I18n.t('user.revalidateTermsScreen.newEndUserLicenseAgreement')}
-          </TextAction>
-        </Text>
+          </SmallAction>
+        </Small>
         <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.t('common.accept')} action={doRevalidateTerms} />
         <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={doRefuseTerms}>
-          <TextSemiBold style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
+          <SmallBold style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
             {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
-          </TextSemiBold>
+          </SmallBold>
         </TouchableOpacity>
       </PageViewStyle>
     </PageView>
