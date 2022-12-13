@@ -24,6 +24,7 @@ export const navBarOptions: (props: {
     },
     headerTitleStyle: {
       ...TextFontStyle.Bold,
+      color: undefined, // override default test color
     },
     headerTintColor: theme.ui.text.inverse,
     headerBackTitleVisible: false,
