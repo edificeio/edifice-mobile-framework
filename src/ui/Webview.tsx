@@ -1,11 +1,13 @@
 import React from 'react';
 import WebView, { WebViewProps } from 'react-native-webview';
+import { connect } from 'react-redux';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import appConf from '~/framework/util/appConf';
+import { IGlobalState } from '~/app/store';
+import { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 
-export function SafeWebView<P>(props: WebViewProps & P) {
-  const id = DEPRECATED_getCurrentPlatform()!.webviewIdentifier || appConf.webviewIdentifier || 'ode-unknown';
+function SafeWebView<P>(props: WebViewProps & P & { session?: ISession }) {
+  const id = props.session?.platform.webviewIdentifier || 'ode-unknown';
   return (
     <WebView
       {...props}
@@ -20,3 +22,7 @@ export function SafeWebView<P>(props: WebViewProps & P) {
     />
   );
 }
+
+export default connect((state: IGlobalState) => ({
+  session: getSession(state), // Attention : peut être undefined, le composant doit gérer le cas
+}))(SafeWebView);

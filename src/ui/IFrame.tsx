@@ -9,7 +9,7 @@ import { navigate } from '~/framework/navigation/helper';
 import { Loading } from '~/ui/Loading';
 
 import { MediaAction } from './MediaAction';
-import { SafeWebView } from './Webview';
+import SafeWebView from './Webview';
 
 export class IFrame extends React.Component<
   {
