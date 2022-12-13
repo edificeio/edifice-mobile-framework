@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StatusBar, StyleSheet } from 'react-native';
+import { Dimensions, Insets, Platform, StatusBar, StyleSheet } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -132,8 +132,16 @@ export const UI_STYLES = StyleSheet.create({
   flexGrow1: { flexGrow: 1 },
   flexShrink1: { flexShrink: 1 },
   justifyEnd: { justifyContent: 'flex-end' },
+  viewFill: { width: '100%', height: '100%' },
 });
 
 export const UI_VALUES = {
   modalOpacity: 0.4,
+};
+
+export const genericHitSlop: Insets = {
+  top: UI_SIZES.spacing.minor,
+  bottom: UI_SIZES.spacing.minor,
+  left: UI_SIZES.spacing.minor,
+  right: UI_SIZES.spacing.minor,
 };

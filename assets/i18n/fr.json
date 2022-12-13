@@ -691,6 +691,7 @@
   "timeline.emptyScreenText": "C'est calme ici... Vous connaissez l'expression \"le calme avant la tempête\" ?",
   "timeline.emptyScreenTitle": "C'est désert...\nIl y a quelqu'un ?",
   "timeline.filtersScreen.title": "Nouveautés à afficher",
+  "timeline.filtersScreen.apply": "OK",
   "timeline.newsDetailsScreen.title": "Actualités",
   "timeline.notifType.archive.archives_error": "Erreur lors de la création de l'archive",
   "timeline.notifType.archive.archives_ok": "Création de l'archive terminée",

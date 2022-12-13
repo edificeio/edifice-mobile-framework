@@ -29,6 +29,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
                 }}
               />
             ),
+            headerRight: () => (
+              <NavBarAction
+                iconName="ui-calendar"
+                onPress={() => {
+                  navigate(timelineRouteNames.Filters);
+                }}
+              />
+            ),
           }}
           initialParams={{}}
         />
@@ -41,9 +49,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           component={TimelineFiltersScreen}
           options={{
             title: I18n.t('timeline.filtersScreen.title'),
-            headerRight: () => (
-              computeNavBar(true)
-            ),
+            headerRight: () => computeNavBar(true),
           }}
           initialParams={{}}
         />

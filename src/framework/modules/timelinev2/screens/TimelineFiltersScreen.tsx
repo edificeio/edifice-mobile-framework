@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 // NAVBAR =========================================================================================
 
 export function computeNavBar(disabled: boolean, onPress?: () => void) {
-  return <NavBarAction title={I18n.t('common.apply')} disabled={disabled} onPress={onPress} />;
+  return <NavBarAction title={I18n.t('timeline.filtersScreen.apply')} disabled={disabled} onPress={onPress} />;
 }
 
 // COMPONENT ======================================================================================

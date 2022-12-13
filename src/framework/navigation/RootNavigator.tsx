@@ -22,6 +22,8 @@ import { getActiveSession } from '~/framework/util/session';
 import MainNavigator from './MainNavigator';
 import { navigationRef } from './helper';
 import { StartupState, getState as getAppStartupState } from './redux';
+import { StatusBar } from 'react-native';
+import theme from '~/app/theme';
 
 function SplashScreenComponent() {
   React.useEffect(() => {
@@ -55,6 +57,10 @@ const Stack = createNativeStackNavigator<IRootNavigationParams>();
 function RootNavigatorUnconnected(props: RootNavigatorProps) {
   const { logged, session, isReady, autoLoginResult, dispatch } = props;
   const isFullyLogged = logged && session; // Partial sessions scenarios have session = true && logged = false, and must stay on auth stack.
+
+  React.useEffect(() => {
+    StatusBar.setBackgroundColor(theme.palette.primary.regular)
+  }, [])
 
   // === Compute initial auth state ===
   // ToDo : verify that the state is correctly reset after logout & auto-login
