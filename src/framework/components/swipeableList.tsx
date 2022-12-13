@@ -190,9 +190,10 @@ export default React.forwardRef(
         if (!actions || (!actions.left && !actions.right)) return null;
         return (
           <View style={[UI_STYLES.rowStretch, hiddenRowStyle]}>
-            {actions?.left?.map(p => (
+            {actions?.left?.map((p, index) => (
               <SwipeAction
                 {...p}
+                key={index}
                 style={
                   [
                     hiddenItemStyle,
@@ -209,9 +210,10 @@ export default React.forwardRef(
               />
             ))}
             <View style={UI_STYLES.flex1} />
-            {actions?.right?.map(p => (
+            {actions?.right?.map((p, index) => (
               <SwipeAction
                 {...p}
+                key={index}
                 style={[hiddenItemStyle, p.style] as ViewStyle}
                 rowMap={rowmap}
                 animatedRefs={animatedRefs.current}
