@@ -201,6 +201,8 @@ const MiniSpacer = styled.View({
 });
 
 export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPageProps, IChangePasswordScreenState> {
+  private mounted = false;
+
   public state: IChangePasswordScreenState = {
     oldPassword: '',
     newPassword: '',
@@ -232,7 +234,7 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
         redirectLoginNavAction(redirect, platform, this.props.navigation);
         setTimeout(() => {
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
-          this.setState({ typing: false, submitState: 'IDLE', error: undefined });
+          if (this.mounted) this.setState({ typing: false, submitState: 'IDLE', error: undefined });
         }, 500);
       } catch (e) {
         // If error during the login phase, redirect to login screen
@@ -241,7 +243,7 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
       }
     } catch (e) {
       const changePwdError = e as IChangePasswordError;
-      this.setState({ typing: false, error: changePwdError.error, submitState: 'IDLE' });
+      if (this.mounted) this.setState({ typing: false, error: changePwdError.error, submitState: 'IDLE' });
     }
   }
 
@@ -343,6 +345,14 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
         </Pressable>
       </KeyboardPageView>
     );
+  }
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount(): void {
+    this.mounted = false;
   }
 }
 

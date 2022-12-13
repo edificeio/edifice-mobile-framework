@@ -102,7 +102,9 @@ const styles = StyleSheet.create({
   buttonLink: { textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, ...TextColorStyle.Light },
 });
 
-export class LoginPage extends React.Component<ILoginHomeScreenProps, ILoginPageState> {
+export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILoginPageState> {
+  private mounted = false;
+
   // Refs
   private inputLogin: TextInput | null = null;
 
@@ -271,13 +273,13 @@ export class LoginPage extends React.Component<ILoginHomeScreenProps, ILoginPage
         redirectLoginNavAction(redirect, platform, navigation);
         setTimeout(() => {
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
-          this.setState({ typing: false, loginState: 'IDLE' });
+          if (this.mounted) this.setState({ typing: false, loginState: 'IDLE' });
         }, 500);
       } else {
-        this.setState({ typing: false, loginState: 'DONE' });
+        if (this.mounted) this.setState({ typing: false, loginState: 'DONE' });
       }
     } catch (e) {
-      this.setState({ typing: false, loginState: 'IDLE' });
+      if (this.mounted) this.setState({ typing: false, loginState: 'IDLE' });
     }
   }
 
@@ -306,7 +308,12 @@ export class LoginPage extends React.Component<ILoginHomeScreenProps, ILoginPage
   }
 
   componentDidMount() {
+    this.mounted = true;
     this.consumeErrorIfNeeded();
+  }
+
+  componentWillUnmount(): void {
+    this.mounted = false;
   }
 }
 
@@ -328,4 +335,4 @@ export default connect(
       },
       dispatch,
     ),
-)(LoginPage);
+)(LoginHomeScreen);

@@ -95,6 +95,8 @@ const ButtonWrapper = styled.View<{ error: any; typing: boolean }>({
 });
 
 export class ActivationPage extends React.PureComponent<IActivationPageProps, IActivationPageState> {
+  private mounted = false;
+
   // fully controller component
   public state: IActivationPageState = {
     typing: false,
@@ -120,14 +122,14 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
         redirectLoginNavAction(redirect, this.props.route.params.platform, this.props.navigation);
         setTimeout(() => {
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
-          this.setState({ typing: false, activationState: 'IDLE', error: undefined });
+          if (this.mounted) this.setState({ typing: false, activationState: 'IDLE', error: undefined });
         }, 500);
       } else {
-        this.setState({ typing: false, activationState: 'DONE', error: undefined });
+        if (this.mounted) this.setState({ typing: false, activationState: 'DONE', error: undefined });
       }
     } catch (e) {
       const activationError = e as IActivationError;
-      this.setState({ typing: false, error: activationError.error, activationState: 'IDLE' });
+      if (this.mounted) this.setState({ typing: false, error: activationError.error, activationState: 'IDLE' });
     }
   };
 
@@ -215,6 +217,14 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
         </SafeAreaView>
       </PageView>
     );
+  }
+
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount(): void {
+    this.mounted = false;
   }
 }
 
