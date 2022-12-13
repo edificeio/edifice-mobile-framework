@@ -19,9 +19,8 @@ import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { getActiveSession } from '~/framework/util/session';
 
-import { IEntcoreApp, IEntcoreWidget } from '../util/moduleTool';
 import { navigationRef } from './helper';
-import { getMainNavigation } from './mainNavigation';
+import { MainNavigation } from './mainNavigation';
 import modals from './modals';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
@@ -63,17 +62,15 @@ function RootNavigatorUnconnected(props: RootNavigatorProps) {
   }, [isReady, logged, loadedPlatform, autoLoginResult]);
 
   // === A. Auth/Main switch ===
-  const routes = React.useMemo(
-    () => (isFullyLogged ? getMainNavigation(session.apps, session.widgets) : AuthNavigator()),
-    [isFullyLogged, session],
-  );
+  const routes = React.useMemo(() => {
+    return isFullyLogged ? MainNavigation(session.apps, session.widgets) : AuthNavigator();
+  }, [isFullyLogged, session]);
 
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 
   // === Render navigation container with initialState ===
 
   const ret = React.useMemo(() => {
-    console.debug('[Navigation] init root navigation'/*, props */);
     return (
       <>
         <SplashScreenComponent key={isReady} />
@@ -87,7 +84,7 @@ function RootNavigatorUnconnected(props: RootNavigatorProps) {
         ) : null}
       </>
     );
-  }, [isReady, navigationRef, initialNavState, routes, modals]);
+  }, [isReady, initialNavState, routes]);
 
   return ret;
 }

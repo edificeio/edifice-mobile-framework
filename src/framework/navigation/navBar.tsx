@@ -1,7 +1,7 @@
 /**
  * constants used for the navBar setup accross navigators
  */
-import { getHeaderTitle, Header, HeaderBackButton } from '@react-navigation/elements';
+import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
@@ -10,7 +10,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import theme from '~/app/theme';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 
-import { genericHitSlop, UI_SIZES } from '../components/constants';
+import { UI_SIZES, genericHitSlop } from '../components/constants';
 import { NamedSVG } from '../components/picture';
 import { SmallInverseText, TextFontStyle } from '../components/text';
 
@@ -31,12 +31,13 @@ export const navBarOptions: (props: {
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have bee traversed in the current stack.
       return navigation.canGoBack() && navigation.getState().routes.length > 1 ? (
         <HeaderBackButton {...props} onPress={navigation.goBack} style={[{ marginHorizontal: -UI_SIZES.spacing.minor }]} />
-        ) : null
-      },
+      ) : null;
+    },
     headerTintColor: theme.ui.text.inverse,
     headerBackTitleVisible: false,
     headerShadowVisible: true,
     headerBackButtonMenuEnabled: false, // buggy with headerBackTitleVisible: false, ToDo fix issue in RN6,
+    freezeOnBlur: true,
   } as NativeStackNavigationOptions);
 
 const styles = StyleSheet.create({

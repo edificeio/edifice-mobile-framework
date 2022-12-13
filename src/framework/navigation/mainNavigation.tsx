@@ -5,7 +5,7 @@
  * navBar shows up with the RootSTack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
  */
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { ParamListBase } from '@react-navigation/native';
+import { NavigationHelpers, ParamListBase, StackActions } from '@react-navigation/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
@@ -19,7 +19,7 @@ import { Picture, PictureProps } from '../components/picture';
 import { TextSizeStyle } from '../components/text';
 import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '../util/moduleTool';
 import { ModuleScreens } from './moduleScreens';
-import { getTypedRootStack, TypedNativeStackNavigator } from './navigators';
+import { TypedNativeStackNavigator, getTypedRootStack } from './navigators';
 import { tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
@@ -35,6 +35,7 @@ import { tabModules } from './tabModules';
 //                                                                "Y88P"
 
 const Tab = createBottomTabNavigator();
+const RootStack = getTypedRootStack();
 
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
@@ -72,37 +73,62 @@ const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
   } as BottomTabNavigationOptions;
 };
 
-export function getTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
-  const modules = tabModules.get().filterAvailables(apps ?? []);
-  const routes = modules
-    .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
-    .map(module => (
-      <Tab.Screen
-        key={module.config.routeName}
-        name={`${module.config.routeName}.$tab`}
-        component={module.root}
-        options={createTabOptions(module.config)}
-      />
-    ));
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: theme.ui.background.card,
-          borderTopColor: theme.palette.grey.cloudy,
-          borderTopWidth: 1,
-          elevation: 1,
-          height: UI_SIZES.elements.tabbarHeight + Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }),
-        },
-        tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabBarLabelMargin },
-        tabBarIconStyle: { marginTop: UI_SIZES.elements.tabBarLabelMargin },
-        tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-        tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-      }}>
-      {routes}
-    </Tab.Navigator>
+/**
+ * Resets tabs with stackNavigators to the first route when navigation to another tab
+ */
+const resetTabStacksOnBlur = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
+  blur: () => {
+    const state = navigation.getState();
+    state.routes.forEach((route, tabIndex) => {
+      if (state?.index !== tabIndex && route.state?.index !== undefined && route.state?.index > 0) {
+        navigation.dispatch(StackActions.popToTop());
+      }
+    });
+  },
+});
+
+export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?: IEntcoreWidget[] }) {
+  const tabRoutes = React.useMemo(() => {
+    const modules = tabModules.get().filterAvailables(apps ?? []);
+    return modules
+      .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
+      .map(module => {
+        const TabStack = () => (
+          <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName}>
+            {ModuleScreens.all}
+          </RootStack.Navigator>
+        );
+        return (
+          <Tab.Screen
+            key={module.config.routeName}
+            name={`${module.config.routeName}.$tab`}
+            options={createTabOptions(module.config)}
+            listeners={resetTabStacksOnBlur}>
+            {TabStack}
+          </Tab.Screen>
+        );
+      });
+  }, [apps]);
+  const screenOptions: BottomTabNavigationOptions = React.useMemo(
+    () => ({
+      lazy: false, // Prevent navBar flickering with this option
+      freezeOnBlur: true,
+      headerShown: false,
+      tabBarStyle: {
+        backgroundColor: theme.ui.background.card,
+        borderTopColor: theme.palette.grey.cloudy,
+        borderTopWidth: 1,
+        elevation: 1,
+        height: UI_SIZES.elements.tabbarHeight + Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }),
+      },
+      tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabBarLabelMargin },
+      tabBarIconStyle: { marginTop: UI_SIZES.elements.tabBarLabelMargin },
+      tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
+      tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
+    }),
+    [],
   );
+  return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
 }
 
 //   .d8888b.  888                      888      888b    888                   d8b                   888
@@ -117,8 +143,6 @@ export function getTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
 //                                                                                 Y8b d88P
 //                                                                                  "Y88P"
 
-const RootStack = getTypedRootStack();
-
 export enum MainRouteNames {
   Tabs = '$tabs',
 }
@@ -128,20 +152,15 @@ export enum MainRouteNames {
  * This operation is heavy so be careful to not call it unless content of aaps or widgets really changes.
  * @param apps available apps for the user
  * @param widgets available widgets for the user
- * @returns 
+ * @returns
  */
-export function getMainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+export function MainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
   setUpModulesAccess(apps ?? [], widgets ?? []);
-  console.debug('[Navigation] init main navigation');
-  const Tabs = () => getTabNavigator(apps, widgets);
+
+  const Tabs = () => <TabNavigator apps={apps} widgets={widgets} />;
   return (
     <RootStack.Group screenOptions={navBarOptions}>
-      <RootStack.Screen
-        name={MainRouteNames.Tabs}
-        component={Tabs}
-        options={{ headerShown: false }}
-      />
-      {ModuleScreens.all}
+      <RootStack.Screen name={MainRouteNames.Tabs} component={Tabs} options={{ headerShown: false }} />
     </RootStack.Group>
   );
 }
@@ -159,32 +178,19 @@ export function getMainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget
 //                                                                                           "Y88P"
 
 /**
- * Registered given routes to the main navigator & return a NativeStackNavigator for the home component fo the module.
+ * Register rendered screens into the stack screens. They will be included in each tab.
  *
- * There is a distinction between "homeScreens" and "stackScreens" :
- *
- * - "homeScreens" is the main component of the module, this first screen to be displayed if the user navigates to it.
- *   This is also the screen that has the TabBar at the bottom.
- *   It is possible to have multiple screens in this. The first will be used as the homepage of the module, and the rest will be accessible within the navigator that links to the module.
- *   (Ex: BottomTabNavigator showing the tabs at the bottom / DrawerNavigator / whatever)
- *
- * - "stackScreens" must contain the other screens of the module, and will be included to the main NativeStack.
- *   They will be accessible from anywhere, anymodule, independantly of the navigator that links to the homeScreens.
- *
- * Both homeScreen and stackScreens are included in a StackNavigator that is given as a parameter
- *
- * @param routeName got from moduleConfig
- * @param homeScreen One screen for the main component (homepage) of the module
- * @param stackScreens Other screens of the module
+ * @param routeName got from moduleConfig, it's the name of the homescreen of the module.
+ * @param renderScreens Function that takes the navigator utility as a parameter and reders every screen or group
  * @returns
  */
 
 export function createModuleNavigator<ParamList extends ParamListBase>(
   routeName: string,
-  homeScreen: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
-  stackScreens?: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
+  renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
 ) {
   const TypedRootStack = getTypedRootStack<ParamList>();
-  if (stackScreens) ModuleScreens.register(routeName, <RootStack.Group key={routeName}>{stackScreens(TypedRootStack)}</RootStack.Group>);
-  return () => <RootStack.Navigator screenOptions={navBarOptions}>{homeScreen(TypedRootStack)}</RootStack.Navigator>;
+  if (renderScreens)
+    ModuleScreens.register(routeName, <RootStack.Group key={routeName}>{renderScreens(TypedRootStack)}</RootStack.Group>);
+  return routeName;
 }

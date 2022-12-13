@@ -6,26 +6,22 @@ import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/u
 
 import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
 import moduleConfig from '../moduleConfig';
-import MyAppsHomeScreen from '../screens/MyAppsHomeScreen';
 import { myAppsModules } from '../myAppsModules';
+import MyAppsHomeScreen from '../screens/MyAppsHomeScreen';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
   const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(apps, widgets));
   const MyAppsContainer = props => <MyAppsHomeScreen {...props} modules={modules} />;
-  return createModuleNavigator<IMyAppsNavigationParams>(
-    moduleConfig.routeName,
-    Stack => (
-      <>
-        <Stack.Screen
-          name={myAppsRouteNames.Home}
-          component={MyAppsContainer}
-          options={({
-            title: I18n.t('MyApplications'),
-          })}
-          initialParams={undefined}
-        />
-      </>
-    ),
-    Stack => null,
-  );
+  return createModuleNavigator<IMyAppsNavigationParams>(moduleConfig.routeName, Stack => (
+    <>
+      <Stack.Screen
+        name={myAppsRouteNames.Home}
+        component={MyAppsContainer}
+        options={{
+          title: I18n.t('MyApplications'),
+        }}
+        initialParams={undefined}
+      />
+    </>
+  ));
 };
