@@ -33,7 +33,8 @@ import { UI_SIZES } from './constants';
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
-  xmasTheme?: boolean;
+  // xmasTheme?: boolean;
+  statusBar?: 'primary' | 'light' | 'dark';
 }
 
 export const pageGutterSize = UI_SIZES.spacing.medium;
@@ -55,7 +56,7 @@ export const PageViewStyle = styled.View({
   backgroundColor: theme.ui.background.page,
 });
 export const PageViewContainer = (props: PageViewProps) => {
-  const { children, gutters, ...viewProps } = props;
+  const { children, gutters, statusBar = 'primary', ...viewProps } = props;
   const route = useRoute();
 
   const gutterStyle = React.useMemo(
@@ -66,10 +67,31 @@ export const PageViewContainer = (props: PageViewProps) => {
     [gutters],
   );
 
+  const statusBarComponent = React.useMemo(
+    () =>
+      Platform.select(
+        statusBar === 'primary'
+          ? {
+              ios: <StatusBar barStyle="light-content" />,
+              android: <StatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />,
+            }
+          : statusBar === 'light'
+          ? {
+              ios: <StatusBar barStyle="dark-content" />,
+              android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
+            }
+          : /* statusBar === 'dark' */ {
+              ios: <StatusBar barStyle="light-content" />,
+              android: <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
+            },
+      ),
+    [],
+  );
+
   return (
     <PageViewStyle {...viewProps}>
       <>
-        <StatusBar barStyle="light-content" />
+        {statusBarComponent}
         <DEPRECATED_ConnectionTrackingBar />
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
@@ -79,7 +101,7 @@ export const PageViewContainer = (props: PageViewProps) => {
 };
 export const PageView = connect((state: any) => {
   const ret = {
-    xmasTheme: state.user.xmas.xmasTheme,
+    // xmasTheme: state.user.xmas.xmasTheme,
   };
   return ret;
 })(PageViewContainer);

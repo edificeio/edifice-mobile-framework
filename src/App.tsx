@@ -17,7 +17,6 @@ import AppScreen from './AppScreen';
 import { createMainStore } from './AppStore';
 import { initI18n } from './app/i18n';
 import AppModules from './app/modules';
-import theme from './app/theme';
 import { AllModulesBackup, OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
 import { getLoginStackToDisplay } from './navigation/helpers/loginRouteName';
 import { reset } from './navigation/helpers/navHelper';
@@ -27,6 +26,7 @@ import { checkVersionThenLogin } from './user/actions/version';
 import { IUserAuthState } from './user/reducers/auth';
 import { isInActivatingMode } from './user/selectors';
 import { IUserInfoState } from './user/state/info';
+import theme from './app/theme';
 
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
 // require('./myAppMenu');
@@ -58,7 +58,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={this.props.store}>
           <View style={{ flex: 1 }}>
-            <StatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />
+            <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />
             <AppScreen />
           </View>
         </Provider>

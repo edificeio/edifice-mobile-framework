@@ -1,7 +1,7 @@
 // Libraries
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, StatusBar, View } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -42,11 +42,7 @@ export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageP
   public render() {
     return (
       <>
-        <PageView navigation={this.props.navigation}>
-          {Platform.select({
-            ios: <StatusBar barStyle="dark-content" />,
-            android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
-          })}
+        <PageView navigation={this.props.navigation} statusBar='light'>
           <GridList
             data={appConf.platforms}
             renderItem={({ item }) => (

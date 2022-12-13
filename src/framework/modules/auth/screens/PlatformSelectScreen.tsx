@@ -2,7 +2,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -49,11 +49,7 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
 
     return (
       <>
-        <PageView>
-          {Platform.select({
-            ios: <StatusBar barStyle="dark-content" />,
-            android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
-          })}
+        <PageView statusBar='light'>
           <GridList
             data={appConf.platforms}
             renderItem={({ item }) => (
