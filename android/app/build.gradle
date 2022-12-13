@@ -4,7 +4,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: "com.android.application"
 
 project.ext.react = [
-    enableHermes: true,
+    enableHermes: true
 ]
 
 project.ext.vectoricons = [
