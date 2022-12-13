@@ -56,7 +56,7 @@ export default connect(
   dispatch =>
     bindActionCreators(
       {
-        handleChangeFruit: tryAction(setFruitAction, undefined)
+        handleChangeFruit: tryAction(setFruitAction, undefined) as unknown as I{{moduleName | capitalize}}HomeScreenProps['handleChangeFruit'], // TS for react-redux still sux at this moment.
       },
       dispatch,
     ),

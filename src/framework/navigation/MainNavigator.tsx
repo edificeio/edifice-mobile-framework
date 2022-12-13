@@ -236,7 +236,7 @@ declare interface ICreateNativeStackNavigatorInterface<ParamList extends ParamLi
 export function createModuleNavigator<ParamList extends ParamListBase>(
   routeName: string,
   homeScreens: (Stack: ReturnType<ICreateNativeStackNavigatorInterface<ParamList>>) => React.ReactNode,
-  stackScreens?: (Stack: ReturnType<typeof createNativeStackNavigator>) => React.ReactNode,
+  stackScreens?: (Stack: ReturnType<ICreateNativeStackNavigatorInterface<ParamList>>) => React.ReactNode,
 ) {
   if (stackScreens) ModuleScreens.register(routeName, <MainStack.Group key={routeName}>{stackScreens(MainStack)}</MainStack.Group>);
   const ModuleStack = createNativeStackNavigator<ParamList>();

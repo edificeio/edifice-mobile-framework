@@ -18,7 +18,9 @@ export interface I{{moduleName | capitalize}}OtherScreenProps extends
 // NAVBAR =========================================================================================
 
 export function computeNavBar(disabled: boolean, onPress?: () => void) {
-  return <NavBarAction title={I18n.t('common.apply')} disabled={disabled} onPress={onPress} />;
+  return ({
+    headerLeft: () => <NavBarAction title={I18n.t('common.apply')} disabled={disabled} onPress={onPress} />
+  });
 }
 
 // COMPONENT ======================================================================================
