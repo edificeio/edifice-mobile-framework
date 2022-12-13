@@ -44,7 +44,14 @@ export interface IUserSession {
 }
 
 let sessionCache: IUserSession;
-export const getUserSession = () => sessionCache;
+/**
+ * @deprecated use `assertSession()` from framework/auth module instead.
+ * @returns the current user session
+ */
+export const getUserSession = () => {
+  console.warn('WARNING: `getUserSession()` is deprecated. Please use `assertSession()` instead.')
+  return sessionCache;
+};
 export const computeUserSession = (platform: Platform, authState?: IUserAuthState, infoState?: IUserInfoState) => {
   sessionCache = {
     platform,
