@@ -508,7 +508,8 @@ export class OAuth2RessourceOwnerPasswordClient {
         OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY,
       );
       if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
-        const url = `${assertSession().platform.url}/auth/oauth2/token?type=queryparam`;
+        const session = assertSession();
+        const url = `${session.platform.url}/auth/oauth2/token?type=queryparam`;
         const data = await this.request(url, {
           headers: urlSigner.getAuthHeader(),
         });

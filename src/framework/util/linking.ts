@@ -7,7 +7,8 @@ import { Alert, Linking } from 'react-native';
 
 import { urlSigner } from '~/infra/oauth';
 
-import { IUserSession, getUserSession } from './session';
+import { ISession } from '../modules/auth/model';
+import { assertSession } from '../modules/auth/reducer';
 
 export interface OpenUrlCustomLabels {
   title?: string;
@@ -18,14 +19,14 @@ export interface OpenUrlCustomLabels {
 }
 
 export async function openUrl(
-  urlOrGetUrl?: string | ((session: IUserSession) => string | false | undefined | Promise<string | false | undefined>),
+  urlOrGetUrl?: string | ((session: ISession) => string | false | undefined | Promise<string | false | undefined>),
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
   showConfirmation: boolean = true,
   autoLogin: boolean = true,
 ): Promise<void> {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     if (autoLogin && !session) {
       throw new Error('openUrl : no active session.');
     }
@@ -39,10 +40,13 @@ export async function openUrl(
     }
     // 1. compute url redirection if function provided
     url = urlSigner.getAbsoluteUrl(url);
+    if (!url) {
+      throw new Error('openUrl : no url provided.');
+    }
     try {
       if (urlSigner.getIsUrlSignable(url) && autoLogin) {
-        const customToken = await session.oauth.getQueryParamToken();
-        if (customToken) {
+        const customToken = await session.oauth2.getQueryParamToken();
+        if (customToken && url) {
           // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
           const urlObj = new URL(url);
           urlObj.searchParams.append('queryparam_token', customToken);
