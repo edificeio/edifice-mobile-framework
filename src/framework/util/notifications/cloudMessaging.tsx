@@ -4,21 +4,15 @@
  */
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
-import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-
 
 import { IGlobalState } from '~/AppStore';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 
-
-
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';
-
 
 export async function requestUserPermission() {
   const authorizationStatus = await messaging().requestPermission();
@@ -27,11 +21,13 @@ export async function requestUserPermission() {
   }
 }
 
-function _AppPushNotificationHandlerComponent(props: PropsWithChildren<{
-  isLoggedIn: boolean;
-  apps: string[];
-  dispatch: ThunkDispatch<any, any, any>;
-}>) {
+function _AppPushNotificationHandlerComponent(
+  props: PropsWithChildren<{
+    isLoggedIn: boolean;
+    apps: string[];
+    dispatch: ThunkDispatch<any, any, any>;
+  }>,
+) {
   const [notification, setNotification] = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
 
   useEffect(() => {
@@ -65,11 +61,10 @@ function _AppPushNotificationHandlerComponent(props: PropsWithChildren<{
       );
       setNotification(undefined);
     }
-    SplashScreen.hide();
   }
 
   return <>{props.children}</>;
-};
+}
 
 const mapStateToProps = (s: IGlobalState) => {
   return {

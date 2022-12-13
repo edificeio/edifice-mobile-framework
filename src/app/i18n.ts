@@ -65,6 +65,7 @@ export const initI18n = () => {
     I18n.locale = I18n.defaultLocale;
     moment.locale(undefined);
   }
+  return res.languageTag;
 };
 
 let initDone = false;

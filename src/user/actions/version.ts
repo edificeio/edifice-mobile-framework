@@ -1,17 +1,12 @@
 import { Action } from 'redux';
 
-
-
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
 import { getAuthState } from '~/user/selectors';
 import { userService } from '~/user/service';
 
-
-
 import { loginAction } from './login';
-
 
 export interface IVersionContext {
   redirectOnError?: boolean;

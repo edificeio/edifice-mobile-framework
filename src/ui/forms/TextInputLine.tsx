@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import { TextField } from 'rn-material-ui-textfield';
+import { ColorValue, StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 
 
 
@@ -33,7 +33,7 @@ export class TextInputLine extends React.Component<
     inputStyle?: StyleProp<ViewStyle>;
     isPasswordField?: boolean;
     placeholderTextColor?: string;
-    textColor?: string;
+    textColor?: ColorValue;
   } & TextInputProps
 > {
   public render() {

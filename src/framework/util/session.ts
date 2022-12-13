@@ -2,16 +2,13 @@
  * Session getter
  * TEMPORARY MODULE : In waiting to a proper session management (auth module), this compatibility module exposes IUserSession getter from global redux state
  */
-import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
-import { IUserAuthState } from '~/user/reducers/auth';
-import { IUserInfoState } from '~/user/state/info';
+import type { ISession } from '~/framework/modules/auth/model';
+import type { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
+import type { IUserAuthState } from '~/user/reducers/auth';
+import type { IUserInfoState } from '~/user/state/info';
 
-
-
-import { DEPRECATED_getCurrentPlatform } from './_legacy_appConf';
-import { Platform } from './appConf';
-import { IEntcoreApp, IEntcoreWidget } from './moduleTool';
-
+import type { Platform } from './appConf';
+import type { IEntcoreApp, IEntcoreWidget } from './moduleTool';
 
 export enum UserType {
   Student = 'Student',
@@ -48,9 +45,9 @@ export interface IUserSession {
 
 let sessionCache: IUserSession;
 export const getUserSession = () => sessionCache;
-export const computeUserSession = (authState?: IUserAuthState, infoState?: IUserInfoState) => {
+export const computeUserSession = (platform: Platform, authState?: IUserAuthState, infoState?: IUserInfoState) => {
   sessionCache = {
-    platform: DEPRECATED_getCurrentPlatform()!,
+    platform,
     oauth: OAuth2RessourceOwnerPasswordClient.connection,
     user: {
       login: authState ? authState.login : sessionCache?.user?.login,
@@ -65,4 +62,12 @@ export const computeUserSession = (authState?: IUserAuthState, infoState?: IUser
       lastName: infoState ? infoState.lastName : sessionCache?.user?.lastName,
     },
   } as IUserSession;
+};
+
+// News session cache for compatibility
+
+let activeSession: ISession | undefined;
+export const getActiveSession = () => activeSession;
+export const cacheActiveSession = (s?: ISession) => {
+  activeSession = s;
 };

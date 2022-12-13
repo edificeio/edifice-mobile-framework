@@ -16,22 +16,23 @@ import {
 // We first imports all modules and their code hierarchy. Registrations are executed,
 // and then, we call initModules to instanciate RootComponents for each module.
 // The singleton pattern guarantee AllModules will be computed once.
-let AllModules: ModuleArray<AnyModule> | undefined = undefined;
+let AllModules: ModuleArray<AnyModule> | undefined;
 
 export default () => {
   if (AllModules) return AllModules;
   else {
     const moduleDeclarations = [
       // Built-il modules
-      require('~/framework/modules/timelinev2'),
+      require('~/framework/modules/auth'),
+      // require('~/framework/modules/timelinev2'),
 
       // Included modules from override
-      ...(IncludedModules || []),
+      // ...(IncludedModules || []),
 
       // Built-il modules that depends
       // CAUTION ! Modules that depends on other (ex myAppMenu) must be listed at the end !
       // ToDo: fix me with React Navigation 6
-      require('~/framework/modules/myAppMenu'),
+      // require('~/framework/modules/myAppMenu'),
     ];
     // AllModules = dynamiclyRegisterModules(loadModules(moduleDeclarations).initModules());
     AllModules = loadModules(moduleDeclarations);

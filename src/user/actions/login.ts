@@ -1,13 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
-import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
+import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
@@ -37,7 +36,7 @@ enum LoginFlowErrorType {
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
   MUST_VERIFY_EMAIL = 'must-verify-email',
 }
-export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
+export type LoginErrorType = OAuth2ErrorCode | LoginFlowErrorType;
 
 export enum LoginStatus {
   IDLE,
@@ -244,7 +243,7 @@ export function loginAction(
       let routeToGo;
       let routeParams;
       // === 1: Check if user is in activation mode
-      if (err.type === OAuthErrorType.BAD_CREDENTIALS) {
+      if (err.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
         try {
           if (credentials) {
             const res = await fetch(`${pf!.url}/auth/activation/match`, {
@@ -342,7 +341,6 @@ export function loginAction(
         }
       }
     } finally {
-      SplashScreen.hide();
     }
   };
 }

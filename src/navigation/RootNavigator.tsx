@@ -15,7 +15,7 @@ import { IFrame } from '~/ui/IFrame';
 
 import LoginNavigator from './LoginNavigator';
 import NavigationService from './NavigationService';
-import { createMainTabNavigator } from './helpers/mainTabNavigator';
+// import { createMainTabNavigator } from './helpers/mainTabNavigator';
 import { getModules, getRoutes } from './helpers/navBuilder';
 
 /**

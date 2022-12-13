@@ -7,7 +7,6 @@ import DeviceInfo from 'react-native-device-info';
 import 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
-import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import 'ts-polyfill/lib/es2019-object';
 
@@ -107,7 +106,6 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
       this.setState({ autoLogin: true });
     } else {
       reset(getLoginStackToDisplay(platformId));
-      SplashScreen.hide();
     }
     this.handleAppStateChange('active'); // Call this manually after Tracker is set up
   }

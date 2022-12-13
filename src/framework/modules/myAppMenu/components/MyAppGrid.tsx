@@ -6,7 +6,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import { ActionButton } from '~/framework/components/ActionButton';
 import GridList from '~/framework/components/GridList';
-import { TouchableSelectorPictureCard } from '~/framework/components/card';
+import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';

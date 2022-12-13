@@ -3,15 +3,15 @@
  */
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
-import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAction: () => void; acceptAction: () => void }) => {
@@ -50,7 +50,8 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
           {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
         </SmallBoldText>
       </TouchableOpacity>
-      <BackdropPdfReader
+      {/* TODO : use PDF modal instead */}
+      <BackdropPdfReaderScreen
         handleClose={() => setIsModalVisible(false)}
         handleOpen={() => setIsModalVisible(true)}
         visible={isModalVisible}

@@ -7,7 +7,6 @@ import {
   ImageStyle,
   StyleSheet,
   TextProps,
-  TextStyle,
   TouchableOpacityProps,
   View,
   ViewProps,
@@ -16,42 +15,23 @@ import {
 
 import theme from '~/app/theme';
 import { displayPastDate } from '~/framework/util/date';
+import { Image } from '~/framework/util/media';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
-import { Badge } from './badge';
-import { UI_SIZES, getScaleDimension } from './constants';
-import { Icon, NamedSVG, Picture, PictureProps } from './picture';
-import { BodyText, CaptionItalicText, CaptionText, SmallText, TextFontStyle, TextSizeStyle } from './text';
-import { Image } from '../util/media';
-
-export const cardPaddingV = UI_SIZES.spacing.medium;
-export const cardPaddingH = UI_SIZES.spacing.medium;
-export const cardPadding: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: cardPaddingV };
-export const cardPaddingEqual: ViewStyle = { paddingHorizontal: 0, paddingVertical: cardPaddingH - cardPaddingV };
-export const cardPaddingMerging: ViewStyle = { paddingHorizontal: cardPaddingH, paddingBottom: cardPaddingV };
-export const cardPaddingSmall: ViewStyle = { paddingHorizontal: cardPaddingH, paddingVertical: (cardPaddingV * 2) / 3 };
-
-const cardStyle: ViewStyle = {
-  backgroundColor: theme.ui.background.card,
-  borderRadius: UI_SIZES.radius.card,
-};
-
-const cardShadow: ViewStyle = {
-  shadowColor: theme.ui.shadowColor,
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.3,
-  shadowRadius: 1,
-  elevation: 1,
-};
-
-export const Card = styled.View(cardStyle, cardPadding, cardShadow);
-export const CardWithoutPadding = styled.View(cardStyle, cardShadow);
-export const CardPaddingEqual = styled.View(cardStyle, cardPaddingEqual);
-export const TouchCard = styled.TouchableOpacity(cardStyle, cardPadding, cardShadow);
-export const TouchCardWithoutPadding = styled.TouchableOpacity(cardStyle, cardShadow);
-export const TouchCardPaddingEqual = styled.TouchableOpacity(cardStyle, cardPaddingEqual);
-export const InfoCard = styled.View(cardStyle, cardPadding, { backgroundColor: theme.palette.primary.light });
+import { Badge } from '../badge';
+import { UI_SIZES, UI_STYLES } from '../constants';
+import { Icon, NamedSVG, Picture, PictureProps } from '../picture';
+import { BodyText, CaptionItalicText, CaptionText, TextFontStyle, TextSizeStyle } from '../text';
+import {
+  CardWithoutPadding,
+  TouchCardWithoutPadding,
+  cardPadding,
+  cardPaddingEqual,
+  cardPaddingMerging,
+  cardPaddingSmall,
+} from './base';
+import { OverviewCardProps } from './pictureCard';
 
 export interface IContentCardProps extends ViewProps {
   header?: React.ReactElement;
@@ -118,8 +98,8 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
   return (
     <CC {...viewProps}>
       <HeaderFlexViewWithPadding>
-        <View style={{ flex: 1 }}>{props.header ?? null}</View>
-        <View style={[{ flex: 0 }, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
+        <View style={UI_STYLES.flex1}>{props.header ?? null}</View>
+        <View style={[UI_STYLES.flex0, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
       </HeaderFlexViewWithPadding>
       {content}
     </CC>
@@ -171,11 +151,11 @@ export const ContentCardHeader = (props: IContentCardHeaderProps) => {
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       {props.icon ? (
         <>
-          <View style={{ flex: 0 }}>{props.icon}</View>
+          <View style={UI_STYLES.flex0}>{props.icon}</View>
           <View style={{ flex: 0, width: 8 }} />
         </>
       ) : null}
-      <View style={{ flex: 1 }}>
+      <View style={UI_STYLES.flex1}>
         {props.text ? typeof props.text === 'string' ? <CaptionText>{props.text}</CaptionText> : props.text : null}
         {props.date ? (
           <CaptionItalicText style={{ color: theme.palette.grey.graphite }}>
@@ -282,80 +262,6 @@ export const TouchableResourceCard = (
 export const ResourceView = (props: IResourceCardProps) => {
   return <ResourceCard_base {...props} CC={ContentView} />;
 };
-
-export type PictureCardProps = {
-  text?: string | React.ReactElement;
-  textStyle?: TextStyle;
-  picture: PictureProps;
-  pictureStyle?: ViewStyle;
-} & ViewProps;
-
-function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
-  const { cardComponent, text, textStyle, picture, style, ...viewProps } = props;
-  const CC = cardComponent ?? CardWithoutPadding;
-  return (
-    <CC {...viewProps} style={[{ alignItems: 'center', justifyContent: 'center' }, style]}>
-      <Picture {...picture} />
-      {text ? (
-        typeof text === 'string' ? (
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: UI_SIZES.spacing.minor,
-              height: getScaleDimension(20, 'height') * 2,
-            }}>
-            <SmallText
-              numberOfLines={2}
-              style={[
-                {
-                  textAlign: 'center',
-                  lineHeight: undefined,
-                },
-                textStyle,
-              ]}>
-              {text}
-            </SmallText>
-          </View>
-        ) : (
-          text
-        )
-      ) : null}
-    </CC>
-  );
-}
-export function PictureCard(props: PictureCardProps) {
-  return <PictureCard_Base cardComponent={Card} {...props} />;
-}
-export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityProps) {
-  return <PictureCard_Base cardComponent={TouchCard} {...props} />;
-}
-
-function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
-  const { style, picture, pictureStyle, ...rest } = props;
-  picture['style'] = { maxWidth: '100%', ...pictureStyle };
-  picture['resizeMode'] = 'contain';
-  return (
-    <PictureCard
-      style={[{ paddingVertical: UI_SIZES.spacing.medium, paddingHorizontal: UI_SIZES.spacing.medium }, style]}
-      picture={picture}
-      {...rest}
-    />
-  );
-}
-export function SelectorPictureCard(props: PictureCardProps) {
-  return <SelectorPictureCard_Base cardComponent={Card} {...props} />;
-}
-export function TouchableSelectorPictureCard(props: PictureCardProps & TouchableOpacityProps) {
-  return <SelectorPictureCard_Base cardComponent={TouchCard} {...props} />;
-}
-
-export type OverviewCardProps = {
-  title?: string | React.ReactElement;
-  picture?: PictureProps;
-  pictureStyle?: PictureProps['style'];
-  pictureWrapperStyle?: ViewStyle;
-} & ViewProps;
 
 function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.ComponentType<IContentCardProps> }) {
   const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;

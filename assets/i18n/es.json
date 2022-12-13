@@ -81,6 +81,7 @@
   "auth-error-too_many_tries": "Por razones de seguridad, su cuenta se ha bloqueado temporalmente tras demasiados intentos de inicio de sesión. Inténtelo de nuevo más tarde.",
   "auth-error-unknown_denied": "Ha ocurrido un problema. Intentar otra vez. (Código 1)",
   "auth-error-unknown_response": "Ha ocurrido un problema. Intentar otra vez. (Código 2)",
+  "auth-error-other": "Identificación imposible ({{errorcode}}). Por favor intente nuevamente o contacte a soporte.",
   "back": "Atrás",
   "blog-emptyScreenButton": "Crear un blog",
   "blog-emptyScreenText": "No ha compartido ningún blog. Para publicar una entrada, primero debe crear un blog y compartirlo desde la versión web de su espacio digital.",

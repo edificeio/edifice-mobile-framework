@@ -1,4 +1,3 @@
-import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -14,14 +13,11 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingS, TextSemiBold } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 
-import { AuthRouteNames, getLoginRouteName } from '../navigator';
+import { AuthRouteNames, IAuthNavigationParams, navigateAfterOnboarding } from '../navigator';
 
 // TYPES ==========================================================================================
 
-interface IOnboardingScreenNavParams extends ParamListBase {
-  // No params.
-}
-interface IOnboardingScreenProps extends NativeStackScreenProps<IOnboardingScreenNavParams> {
+interface IOnboardingScreenProps extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.onboarding> {
   // No props.
 }
 
@@ -129,12 +125,7 @@ export default class OnboardingScreen extends React.PureComponent<IOnboardingScr
             <ActionButton
               text={I18n.t('user.onboardingScreen.joinMyNetwork')}
               action={() => {
-                const hasMultiplePlatforms = appConf.platforms.length > 1;
-                if (hasMultiplePlatforms) {
-                  navigation.navigate(AuthRouteNames.platforms);
-                } else {
-                  navigation.navigate(getLoginRouteName(appConf.platforms.at(0)), { platform: appConf.platforms.at(0) }); // Auto-select first platform if not defined));
-                }
+                navigateAfterOnboarding(navigation);
               }}
               onLayout={e => {
                 if (!measuredJoinMyNetworkButton) {

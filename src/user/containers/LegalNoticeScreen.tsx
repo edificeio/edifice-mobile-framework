@@ -4,12 +4,12 @@ import { TouchableOpacity } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
+import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -44,7 +44,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
           title: I18n.t('directory-legalNoticeTitle'),
         }}>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
-        <BackdropPdfReader
+        <BackdropPdfReaderScreen
           handleClose={() => this.setState({ legalTitle: '', legalUrl: '' })}
           handleOpen={() => this.setState({ legalTitle, legalUrl })}
           title={legalTitle}

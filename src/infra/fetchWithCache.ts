@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
-import { resetNavigation } from '~/navigation/helpers/navHelper';
+import { getActiveSession } from '~/framework/util/session';
 
+// import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
+// import { navigate } from '~/navigation/helpers/navHelper';
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
 
@@ -19,9 +20,9 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
-        const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
-        resetNavigation(stack, stack.length - 1);
-        throw err;
+        // ToDo : logout here ?
+        // navigate(getLoginRouteName());
+        Alert.alert('signedFetch failed', (err as any).toString);
       }
     }
     const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
@@ -48,7 +49,11 @@ export async function signedFetchJson(url: string | Request, init?: RequestInit)
 }
 
 export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
-  return signedFetchJson(DEPRECATED_getCurrentPlatform()!.url + url, init);
+  const session = getActiveSession();
+  if (!session) {
+    throw new Error('Fetch : no active session');
+  }
+  return signedFetchJson(session.platform.url + url, init);
 }
 
 const CACHE_KEY_PREFIX = 'request-';
@@ -69,7 +74,7 @@ export async function fetchWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = DEPRECATED_getCurrentPlatform()!.url,
+  platform: string | undefined = getActiveSession()?.platform.url,
   getBody = (r: Response) => r.text(),
   getCacheResult = (cr: any) => new Response(...cr),
 ) {
@@ -80,12 +85,8 @@ export async function fetchWithCache(
     const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
     if (Connection.isOnline && (forceSync || !dataFromCache)) {
       let response =
-        path.indexOf(DEPRECATED_getCurrentPlatform()!.url) === -1
-          ? await signedFetch(`${platform}${path}`, init)
-          : await signedFetch(`${path}`, init);
+        path.indexOf(platform) === -1 ? await signedFetch(`${platform}${path}`, init) : await signedFetch(`${path}`, init);
       const r2 = response.clone();
-      const resJson = response;
-      const resText = response.clone();
       response = r2;
 
       // TODO: check if response is OK
@@ -126,7 +127,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = DEPRECATED_getCurrentPlatform()!.url,
+  platform: string | undefined = getActiveSession()?.platform.url,
 ) {
   return fetchWithCache(
     path,

@@ -1,4 +1,4 @@
-import { IAppModule } from './infra/moduleTool/types';
+import type { IAppModule } from './infra/moduleTool/types';
 
 /**
  * Write here the app-e functional modules imports.

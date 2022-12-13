@@ -81,6 +81,7 @@
   "auth-error-too_many_tries": "For security reasons, your account has been temporarily blocked due to too many sign-in attempts. Please try again later.",
   "auth-error-unknown_denied": "A problem has occurred. Try Again. (Code 1)",
   "auth-error-unknown_response": "A problem has occurred. Try Again. (Code 2)",
+  "auth-error-other": "Unable to log in ({{errorcode}}). Please try again or contact support.",
   "back": "Back",
   "blog-emptyScreenButton": "Create a blog",
   "blog-emptyScreenText": "You don't have any shared blogs. To publish a post, you'll need to first create a blog and share it from the web version of your virtual learning environment.",

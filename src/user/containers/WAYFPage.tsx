@@ -288,7 +288,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Display error message
   displayError(error: string) {
     this.clearDatas(() => {
-      this.error = error === OAuthErrorType.BAD_CREDENTIALS ? OAuthErrorType.BAD_SAML : error;
+      this.error = error === OAuth2ErrorCode.BAD_CREDENTIALS ? OAuth2ErrorCode.BAD_SAML : error;
       this.setState({ mode: WAYFPageMode.ERROR });
     });
   }
@@ -322,7 +322,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           this.login();
         } else {
           const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-            OAuthErrorType.BAD_RESPONSE,
+            OAuth2ErrorCode.BAD_RESPONSE,
             'no access_token returned',
             '',
             { data },
@@ -332,7 +332,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       })
       .catch(error => {
         // Manage multiple users, otherwise display received error
-        if (error.error === OAuthErrorType.MULTIPLE_VECTOR) {
+        if (error.error === OAuth2ErrorCode.MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
             const data = JSON.parse(error.error_description);
@@ -343,7 +343,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
             this.displaySelect();
           } catch {
             // Malformed multiple users error description
-            this.displayError(OAuthErrorType.BAD_RESPONSE);
+            this.displayError(OAuth2ErrorCode.BAD_RESPONSE);
           }
         } else this.displayError(error.type);
       });
@@ -373,7 +373,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
             this.login();
           } else {
             const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-              OAuthErrorType.BAD_RESPONSE,
+              OAuth2ErrorCode.BAD_RESPONSE,
               'no access_token returned',
               '',
               { data },

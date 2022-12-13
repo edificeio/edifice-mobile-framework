@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
-import { TouchableSelectorPictureCard } from '~/framework/components/card';
+import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText, SmallText } from '~/framework/components/text';

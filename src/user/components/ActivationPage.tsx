@@ -6,12 +6,12 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
-import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
+import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
@@ -193,7 +193,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
               </FormTouchable>
             </ScrollView>
           </KeyboardAvoidingView>
-          <BackdropPdfReader
+          <BackdropPdfReaderScreen
             handleClose={() => this.setState({ isModalVisible: false })}
             handleOpen={() => this.setState({ isModalVisible: true })}
             title={I18n.t('activation-cgu')}

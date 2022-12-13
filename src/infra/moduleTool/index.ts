@@ -3,7 +3,7 @@ import I18n from 'i18n-js';
 import theme from '~/app/theme';
 import { PictureProps } from '~/framework/components/picture';
 import { NotificationHandlerFactory } from '~/infra/pushNotification';
-import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
+// import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 import { backendUserApp } from '~/user/reducers/auth';
 
 import { IAppModule, IFunctionalConfig } from './types';
@@ -75,8 +75,8 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     return {
       screen: comp,
 
-      navigationOptions: () =>
-        this.group ? { headerShown: false } : createMainTabNavOption(I18n.t(this.displayName), this.picture ?? this.iconName),
+      // navigationOptions: () =>
+      //   this.group ? { headerShown: false } : createMainTabNavOption(I18n.t(this.displayName), this.picture ?? this.iconName),
     };
   }
 
