@@ -43,7 +43,7 @@ android {
         versionCode 1090016
         versionName "1.9.0"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.5\""
+        buildConfigField "String", "BundleVersionType", "\"alpha.1\""
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
