@@ -5,6 +5,8 @@
 import * as React from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+// import needed for side-effects https://docs.swmansion.com/react-native-gesture-handler/docs/installation#ios
+import 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
