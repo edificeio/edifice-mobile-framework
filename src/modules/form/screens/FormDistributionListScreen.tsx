@@ -89,9 +89,16 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchList()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
   const fetchOnNavigation = () => {
     if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refresh();
+    else refreshSilent();
   };
 
   const focusEventListener = React.useRef<NavigationEventSubscription>();

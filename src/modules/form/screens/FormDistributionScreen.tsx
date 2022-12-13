@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
@@ -189,8 +189,8 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       }
     }
     const index = positionHistory.indexOf(pos);
-    if (index) {
-      setPositionHistory(positionHistory.splice(0, index));
+    if (index !== -1) {
+      setPositionHistory(positionHistory.slice(0, index));
     }
     setPosition(pos);
   };
@@ -387,13 +387,12 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   // POSITION ACTIONS =============================================================================
 
   const renderPositionActions = () => {
-    return isPositionAtSummary ? (
-      <ActionButton
-        text={I18n.t('form.finishAndSend')}
-        action={() => modalRef?.current?.doShowModal()}
-        disabled={status === DistributionStatus.FINISHED && !editable}
-      />
-    ) : (
+    if (isPositionAtSummary) {
+      return status !== DistributionStatus.FINISHED || editable ? (
+        <ActionButton text={I18n.t('form.finishAndSend')} action={() => modalRef?.current?.doShowModal()} />
+      ) : null;
+    }
+    return (
       <View style={styles.actionsContainer}>
         <ActionButton
           text={I18n.t('back')}
