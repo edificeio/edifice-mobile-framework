@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingL, HeadingS } from '~/framework/components/text';
+import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 
 import { AuthRouteNames, IAuthNavigationParams, navigateAfterOnboarding } from '../navigation';
@@ -109,12 +109,14 @@ export default class OnboardingScreen extends React.PureComponent<IOnboardingScr
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.safeAreaInnerTop}>
-          <HeadingL style={styles.heading}>{showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}</HeadingL>
+          <HeadingLText style={styles.heading}>
+            {showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
+          </HeadingLText>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiperDot} activeDotStyle={styles.swiperDotActive}>
             {(onboardingTexts as unknown as string[]).map((onboardingText, index) => (
               <View key={index} style={styles.swiperElementWrapper}>
                 <NamedSVG name={`onboarding-${index}`} style={imageStyle} />
-                <HeadingS style={styles.swiperElementText}>{onboardingText}</HeadingS>
+                <HeadingSText style={styles.swiperElementText}>{onboardingText}</HeadingSText>
               </View>
             ))}
           </Swiper>

@@ -2,10 +2,9 @@
  * Startup is a conditionnaly rendered content based on app startup status.
  * It can render the SplashScreen, auth flow or main flow in function of token loading and status.
  */
-import { NavigationContainer, ParamListBase, createNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, ParamListBase } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Text } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -20,9 +19,9 @@ import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 import { getActiveSession } from '~/framework/util/session';
 
+import MainNavigator from './MainNavigator';
+import { navigationRef } from './helper';
 import { StartupState, getState as getAppStartupState } from './redux';
-
-export const navigationRef = createNavigationContainerRef();
 
 function SplashScreenComponent() {
   React.useEffect(() => {
@@ -82,27 +81,29 @@ function RootNavigatorUnconnected(props: RootNavigatorProps) {
   return (
     <>
       <SplashScreenComponent key={isReady} />
-      <NavigationContainer ref={navigationRef} initialState={initialNavState}>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {/* === A. Auth/Main switch === */}
-          {isFullyLogged ? (
-            <Stack.Screen
-              name={RootRouteNames.MainStack}
-              options={{ animation: 'none' }}
-              component={() => <Text>{`\n\n\nMAIN STACK`}</Text>}
-            />
-          ) : (
-            <Stack.Screen name={RootRouteNames.AuthStack} options={{ animation: 'none' }} component={AuthNavigator} />
-          )}
+      {isReady ? (
+        <NavigationContainer ref={navigationRef} initialState={initialNavState}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {/* === A. Auth/Main switch === */}
+            <Stack.Group screenOptions={{ animation: 'none' }}>
+              {isFullyLogged ? (
+                <Stack.Screen name={RootRouteNames.MainStack} component={MainNavigator} />
+              ) : (
+                <Stack.Screen name={RootRouteNames.AuthStack} component={AuthNavigator} />
+              )}
+            </Stack.Group>
 
-          {/* === B. Global modals === */}
-          <Stack.Screen
-            name={RootRouteNames.Pdf}
-            options={screenProps => ({ presentation: 'formSheet', headerShown: true, title: screenProps.route.params.title })}
-            component={BackdropPdfReaderScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+            {/* === B. Global modals === */}
+            <Stack.Group screenOptions={{ presentation: 'formSheet', headerShown: true }}>
+              <Stack.Screen
+                name={RootRouteNames.Pdf}
+                options={screenProps => ({ title: screenProps.route.params.title })}
+                component={BackdropPdfReaderScreen}
+              />
+            </Stack.Group>
+          </Stack.Navigator>
+        </NavigationContainer>
+      ) : null}
     </>
   );
 }

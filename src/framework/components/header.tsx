@@ -13,8 +13,7 @@
  */
 import styled from '@emotion/native';
 import * as React from 'react';
-import { ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
-import { NavigationActions, NavigationParams, NavigationScreenProp } from 'react-navigation';
+import { Alert, ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 
@@ -183,17 +182,11 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
   );
 };
 
-export const HeaderBackAction = ({
-  navigation,
-  onPress,
-}: {
-  navigation?: NavigationScreenProp<NavigationParams>;
-  onPress?: () => void;
-}) => (
+export const HeaderBackAction = ({ navigation, onPress }: { navigation?: any; onPress?: () => void }) => (
   <HeaderAction
     iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
     iconSize={24}
-    onPress={onPress ? onPress : navigation ? () => navigation.dispatch(NavigationActions.back()) : () => {}}
+    onPress={onPress ? onPress : navigation ? () => Alert.alert('GO BACK') : () => {}}
   />
 );
 

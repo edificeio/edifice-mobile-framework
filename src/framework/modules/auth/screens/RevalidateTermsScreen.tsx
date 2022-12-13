@@ -16,7 +16,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingS, Small, SmallAction, SmallBold } from '~/framework/components/text';
+import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import { ILoginResult, loginAction, logoutAction } from '../actions';
@@ -100,7 +100,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
             <NamedSVG name={'empty-eula'} width={imageWidth} height={imageHeight} />
           </View>
         </View>
-        <HeadingS
+        <HeadingSText
           numberOfLines={2}
           style={{
             textAlign: 'center',
@@ -108,18 +108,18 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
             marginTop: UI_SIZES.spacing.large,
           }}>
           {I18n.t('user.revalidateTermsScreen.newEULA')}
-        </HeadingS>
-        <Small numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
+        </HeadingSText>
+        <SmallText numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
           {`${I18n.t('user.revalidateTermsScreen.mustAccept')} `}
-          <SmallAction onPress={() => openCGU(eulaUrl)} style={{ textDecorationLine: 'underline' }}>
+          <SmallActionText onPress={() => openCGU(eulaUrl)} style={{ textDecorationLine: 'underline' }}>
             {I18n.t('user.revalidateTermsScreen.newEndUserLicenseAgreement')}
-          </SmallAction>
-        </Small>
+          </SmallActionText>
+        </SmallText>
         <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.t('common.accept')} action={doRevalidateTerms} />
         <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={doRefuseTerms}>
-          <SmallBold style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
+          <SmallBoldText style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
             {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
-          </SmallBold>
+          </SmallBoldText>
         </TouchableOpacity>
       </PageViewStyle>
     </PageView>

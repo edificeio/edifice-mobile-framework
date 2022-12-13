@@ -2,13 +2,15 @@ import styled from '@emotion/native';
 import * as React from 'react';
 import { ImageProps, ImageURISource, View } from 'react-native';
 import { Grayscale } from 'react-native-color-matrix-image-filters';
+import { connect } from 'react-redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getUserSession } from '~/framework/util/session';
-import { Connection } from '~/infra/Connection';
+import { ISession } from '~/framework/modules/auth/model';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { FastImage } from '~/framework/util/media';
+import { Connection } from '~/infra/Connection';
 
 const getSelfAvatarUniqueKey = () => Date.now();
 let selfAvatarUniqueKey = getSelfAvatarUniqueKey();
@@ -212,9 +214,10 @@ export interface IAvatarProps {
   size: Size;
   width?: number;
   fallback?: ImageURISource;
+  session: ISession;
 }
 
-export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'loading' | 'success' | 'failed' }> {
+class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'loading' | 'success' | 'failed' }> {
   count: number;
 
   constructor(props) {
@@ -343,11 +346,11 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
       !this.userId && this.props.sourceOrId
         ? (this.props.sourceOrId as ImageURISource)
         : {
-            uri: `${DEPRECATED_getCurrentPlatform()!.url}/userbook/avatar/${
+            uri: `${this.props.session.platform.url}/userbook/avatar/${
               typeof this.userId === 'string' ? this.userId : this.userId!.id
             }?thumbnail=${this.props.size === Size.verylarge ? '150x150' : '100x100'}`,
           };
-    const isSelf = source.uri?.includes(getUserSession().user.id);
+    const isSelf = source.uri?.includes(this.props.session.user.id);
     if (isSelf) {
       source = {
         ...source,
@@ -356,7 +359,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
     }
     //in case of success,initial,loading status...
     if (this.props.size === Size.large || this.count === 1) {
-      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <LargeContainer style={{ width, height: width }}>
           <LargeImage
@@ -369,7 +371,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
-      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <AlignedContainer index={this.props.index}>
           <AlignedImage
@@ -381,7 +382,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
         </AlignedContainer>
       );
     } else if (this.props.size === Size.verylarge) {
-      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <VLContainer>
           <VeryLargeImage
@@ -394,7 +394,6 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
         </VLContainer>
       );
     } else {
-      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
           <SmallImage
@@ -409,3 +408,9 @@ export class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial
     }
   }
 }
+
+export default connect((state: IGlobalState) => {
+  const session = getAuthState(state).session;
+  if (!session) throw new Error('[Avatar] session must exist');
+  return { session };
+})(Avatar);

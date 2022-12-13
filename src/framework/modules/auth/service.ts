@@ -10,9 +10,16 @@ import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2 } from 
 
 import { IAuthContext, IAuthCredentials, ISession, PartialSessionScenario, RuntimeAuthErrorCode, createAuthError } from './model';
 
+export interface IAuthorizedAction {
+  name: string;
+  displayName: string;
+  type: 'SECURED_ACTION_WORKFLOW'; // ToDo add other types here
+}
+
 export interface IUserInfoBackend {
   // ToDo: type it !
   userId?: string;
+  login?: string;
   type?: UserType;
   deletePending?: boolean;
   hasApp?: boolean;
@@ -20,6 +27,7 @@ export interface IUserInfoBackend {
   needRevalidateTerms?: boolean;
   apps?: IEntcoreApp[];
   widgets?: IEntcoreWidget[];
+  authorizedActions?: IAuthorizedAction[];
 }
 
 export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
@@ -150,14 +158,20 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend): I
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
   }
-  if (!userinfo.apps || !userinfo.widgets) {
-    throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing apps or widgets in user info', '');
+  if (!userinfo.apps || !userinfo.widgets || !userinfo.authorizedActions || !userinfo.userId || !userinfo.login) {
+    throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing data in user info', '');
   }
+  const user = {
+    id: userinfo.userId,
+    login: userinfo.login,
+  };
   return {
     platform,
     oauth2: OAuth2RessourceOwnerPasswordClient.connection,
     apps: userinfo.apps,
     widgets: userinfo.widgets,
+    authorizedActions: userinfo.authorizedActions,
+    user,
   };
 }
 

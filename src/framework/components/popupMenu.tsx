@@ -3,13 +3,13 @@
  * Show a drop-down menu from the header
  */
 import styled from '@emotion/native';
+import { CommonActions, ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ViewStyle } from 'react-native';
-import { NavigationNavigateActionPayload } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
 import { UI_SIZES } from './constants';
 import { DEPRECATED_HeaderPrimaryAction } from './header';
@@ -20,8 +20,9 @@ export interface IPopupMenuProps {
   iconName?: string;
   button?: (onPress: () => void) => React.ReactElement;
   active?: boolean;
-  options: { icon: string | React.ReactElement; i18n: string; goTo?: NavigationNavigateActionPayload; onClick?: () => void }[];
+  options: { icon: string | React.ReactElement; i18n: string; goTo?: CommonActions.Action; onClick?: () => void }[];
   onPress?: () => void;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   style?: ViewStyle;
 }
 
@@ -105,7 +106,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
             item as {
               icon: string | React.ReactElement;
               i18n: string;
-              goTo: NavigationNavigateActionPayload;
+              goTo: CommonActions.Action;
               onClick: () => void;
             },
           )
@@ -125,12 +126,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
     );
   }
 
-  renderAction(item: {
-    icon: string | React.ReactElement;
-    i18n: string;
-    goTo?: NavigationNavigateActionPayload;
-    onClick: () => void;
-  }) {
+  renderAction(item: { icon: string | React.ReactElement; i18n: string; goTo?: CommonActions.Action; onClick: () => void }) {
     const Action = styled.TouchableOpacity({
       flexDirection: 'row',
       justifyContent: 'flex-start',
@@ -143,7 +139,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
       <Action
         onPress={() => {
           this.doReset();
-          if (item.goTo) mainNavNavigate(item.goTo.routeName, item.goTo);
+          if (item.goTo) this.props.navigation.dispatch(item.goTo);
           if (item.onClick) item.onClick();
         }}>
         {typeof item.icon === 'string' ? (

@@ -2,11 +2,26 @@ import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
+export interface IUserAuthorizedAction {
+  name: string;
+  displayName: string;
+  type: 'SECURED_ACTION_WORKFLOW'; // ToDo : add other types here
+}
+
+export interface IUser {
+  id: string;
+  login: string;
+}
+
+export interface ILoggedUser extends IUser {}
+
 export interface ISession {
   platform: Platform;
   oauth2: OAuth2RessourceOwnerPasswordClient;
   apps: IEntcoreApp[];
   widgets: IEntcoreWidget[];
+  authorizedActions: IUserAuthorizedAction[];
+  user: ILoggedUser;
 }
 
 /** Error codes as an enum, values can be string that backend returns */

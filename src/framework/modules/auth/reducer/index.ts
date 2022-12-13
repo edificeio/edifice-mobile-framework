@@ -1,4 +1,4 @@
-import { IGlobalState, Reducers } from '~/app/store';
+import { IGlobalState, Reducers, getStore } from '~/app/store';
 import createReducer from '~/framework/util/redux/reducerFactory';
 import { cacheActiveSession } from '~/framework/util/session';
 
@@ -86,5 +86,20 @@ const reducer = createReducer(initialState, {
 Reducers.register(moduleConfig.reducerName, reducer);
 
 export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as IAuthState;
+
+/**
+ * Get the current active session.
+ * This IS NOT the recommended way to get the session information.
+ * - In a component, use the above `getState` (as getAuthState)
+ * - In an action/thunk, use the above `getState` (as getAuthState)
+ * - In a utility function, use this assertion.
+ * Caution : this is an "assert" function. If session not present, this function will throw an error.
+ * @returns the current session
+ */
+export function assertSession() {
+  const session = getState(getStore().getState()).session;
+  if (!session) throw new Error('[assertSession] no session');
+  return session;
+}
 
 export default reducer;

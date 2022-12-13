@@ -24,7 +24,7 @@ export default () => {
     const moduleDeclarations = [
       // Built-il modules
       require('~/framework/modules/auth'),
-      // require('~/framework/modules/timelinev2'),
+      require('~/framework/modules/timelinev2'),
 
       // Included modules from override
       // ...(IncludedModules || []),

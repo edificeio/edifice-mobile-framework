@@ -10,13 +10,13 @@ import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
 import { tryAction } from '~/framework/util/redux/actions';
-import { FlatButton } from '~/ui/FlatButton';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 
@@ -169,7 +169,7 @@ export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILog
           {/* Temporary banner displayed for Somme Numérique */}
           {isSommeNumerique ? (
             <View style={styles.sommeNumeriqueInfoBubble}>
-              <SmallBold style={styles.sommeNumeriqueInfoBubbleText}>{I18n.t('common.sommeNumeriqueAlert_temp')}</SmallBold>
+              <SmallBoldText style={styles.sommeNumeriqueInfoBubbleText}>{I18n.t('common.sommeNumeriqueAlert_temp')}</SmallBoldText>
             </View>
           ) : null}
           <FormContainer>
@@ -194,14 +194,14 @@ export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILog
               hasError={(error && !typing && !error) as boolean}
             />
             <View style={styles.autoLoginWrapper}>
-              <Small style={styles.autoLoginWrapperText}>{I18n.t('AutoLogin')}</Small>
+              <SmallText style={styles.autoLoginWrapperText}>{I18n.t('AutoLogin')}</SmallText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
                 onUncheck={() => this.setState({ rememberMe: false })}
               />
             </View>
-            <Small style={styles.errorMsg}>
+            <SmallText style={styles.errorMsg}>
               {this.state.typing || (this.state.errorTimestamp !== errorTimestamp && errorTimestamp !== undefined) // errorTimestamp === undefined => redirected from somewhere or autoLogin
                 ? ''
                 : error &&
@@ -215,42 +215,43 @@ export class LoginHomeScreen extends React.Component<ILoginHomeScreenProps, ILog
                       currentplatform: platform.url,
                     }),
                   })}
-            </Small>
+            </SmallText>
 
             <View
               style={[styles.buttonWrapper, { marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium }]}>
               {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
-                <FlatButton
-                  onPress={() => this.goToWeb()}
+                <ActionButton
+                  action={() => this.goToWeb()}
                   disabled={false}
-                  title={I18n.t('LoginWeb')}
+                  text={I18n.t('LoginWeb')}
                   loading={false}
-                  rightName={{ type: 'NamedSvg', name: 'ui-externalLink' }}
+                  iconName="ui-externalLink"
+                  showIcon
                 />
               ) : (
-                <FlatButton
-                  onPress={() => this.doLogin()}
+                <ActionButton
+                  action={() => this.doLogin()}
                   disabled={this.isSubmitDisabled}
-                  title={I18n.t('Connect')}
+                  text={I18n.t('Connect')}
                   loading={this.state.loginState === 'RUNNING' || this.state.loginState === 'DONE'}
                 />
               )}
 
               <View style={styles.center}>
-                <Small
+                <SmallText
                   style={styles.buttonLink}
                   onPress={() => {
                     navigation.navigate('Forgot', { platform, mode: 'password' });
                   }}>
                   {I18n.t('forgot-password')}
-                </Small>
-                <Small
+                </SmallText>
+                <SmallText
                   style={styles.buttonLink}
                   onPress={() => {
                     navigation.navigate('Forgot', { platform, mode: 'id' });
                   }}>
                   {I18n.t('forgot-id')}
-                </Small>
+                </SmallText>
               </View>
             </View>
           </FormContainer>

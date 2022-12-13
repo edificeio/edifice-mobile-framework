@@ -15,14 +15,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small, SmallAction } from '~/framework/components/text';
+import { SmallActionText, SmallText } from '~/framework/components/text';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
-import { FlatButton } from '~/ui/FlatButton';
 
 import { ILoginResult, activateAccountAction } from '../actions';
 import {
@@ -202,20 +202,20 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
                       />
                       <View style={styles.cguText}>
-                        <Small>{I18n.t('activation-cgu-accept')}</Small>
+                        <SmallText>{I18n.t('activation-cgu-accept')}</SmallText>
                         <TouchableOpacity onPress={() => this.handleOpenCGU(cguUrl)}>
-                          <SmallAction>{I18n.t('activation-cgu')}</SmallAction>
+                          <SmallActionText>{I18n.t('activation-cgu')}</SmallActionText>
                         </TouchableOpacity>
                       </View>
                     </View>
-                    <Small style={styles.errorMsg}>
+                    <SmallText style={styles.errorMsg}>
                       {(hasErrorKey || errorText) && !typing ? I18n.t('activation-errorSubmit') : ''}
-                    </Small>
+                    </SmallText>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
-                      <FlatButton
-                        onPress={() => this.doActivation()}
+                      <ActionButton
+                        action={() => this.doActivation()}
                         disabled={isNotValid}
-                        title={I18n.t('Activate')}
+                        text={I18n.t('Activate')}
                         loading={isSubmitLoading}
                       />
                     </ButtonWrapper>

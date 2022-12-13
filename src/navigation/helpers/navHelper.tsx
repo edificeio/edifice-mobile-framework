@@ -1,7 +1,4 @@
-import { NavigationAction, NavigationActions, NavigationNavigateAction, StackActions } from 'react-navigation';
-
-import { rootNavigatorRef } from '~/AppScreen';
-import NavigationService from '~/navigation/NavigationService';
+import { Alert } from 'react-native';
 
 /**
  * Use the Root Navigator to go on another page.
@@ -10,15 +7,10 @@ import NavigationService from '~/navigation/NavigationService';
  * @param params additional parameters to pass to navigation state
  */
 export const navigate = (route, params = {}) => {
-  return rootNavigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params }));
+  Alert.alert('[legacy] navigate', route.toString());
 };
-export const resetNavigation = (actions: NavigationNavigateAction[], index?: number) => {
-  return rootNavigatorRef.dispatch(
-    StackActions.reset({
-      index: index ?? 0,
-      actions,
-    }),
-  );
+export const resetNavigation = (actions: any[], index?: number) => {
+  Alert.alert('[legacy] resetNavigation', actions.toString());
 };
 
 /**
@@ -27,8 +19,8 @@ export const resetNavigation = (actions: NavigationNavigateAction[], index?: num
  * @param route route to go
  * @param params additional parameters to pass to navigation state
  */
-export const reset = (stack: NavigationNavigateAction[]) => {
-  return rootNavigatorRef.dispatch(StackActions.reset({ index: stack.length - 1, actions: stack }));
+export const reset = (stack: any[]) => {
+  Alert.alert('[legacy] reset', stack.toString());
 };
 
 /**
@@ -38,5 +30,5 @@ export const reset = (stack: NavigationNavigateAction[]) => {
  * @param params additional parameters to pass to navigation state
  */
 export const mainNavNavigate = (route, params = {}) => {
-  return NavigationService.navigate(route, params);
+  Alert.alert('[legacy] mainNavNavigate', route.toString());
 };

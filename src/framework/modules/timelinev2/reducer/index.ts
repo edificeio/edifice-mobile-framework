@@ -1,11 +1,14 @@
-import { CombinedState, combineReducers } from "redux";
+import { CombinedState, combineReducers } from 'redux';
 
-import notifDefinitions, { INotifDefinitions_State } from "./notifDefinitions";
-import notifSettings, { INotifSettings_State } from "./notifSettings";
-import notifications, { INotifications_State } from "./notifications";
-import flashMessages, { IFlashMessages_State } from "./flashMessages";
-import { INotificationFilter } from "./notifDefinitions/notifFilters";
-import { IPushNotifsSettings } from "./notifSettings/pushNotifsSettings";
+import { IGlobalState, Reducers } from '~/app/store';
+
+import moduleConfig from '../moduleConfig';
+import flashMessages, { IFlashMessages_State } from './flashMessages';
+import notifDefinitions, { INotifDefinitions_State } from './notifDefinitions';
+import { INotificationFilter } from './notifDefinitions/notifFilters';
+import notifSettings, { INotifSettings_State } from './notifSettings';
+import { IPushNotifsSettings } from './notifSettings/pushNotifsSettings';
+import notifications, { INotifications_State } from './notifications';
 
 // State
 
@@ -14,23 +17,23 @@ export type ITimeline_State = CombinedState<{
   notifSettings: INotifSettings_State;
   notifications: INotifications_State;
   flashMessages: IFlashMessages_State;
-}>
+}>;
 
 export interface INotificationFilterWithSetting extends INotificationFilter {
   setting: boolean;
 }
 
 export interface IPushNotifsSettingsByType {
-  [type: string]: IPushNotifsSettings
+  [type: string]: IPushNotifsSettings;
 }
 
 // Reducer
 
-export default combineReducers({
+const reducer = combineReducers({
   notifDefinitions,
   notifSettings,
   notifications,
-  flashMessages
+  flashMessages,
 });
 
 // Getters
@@ -38,7 +41,7 @@ export default combineReducers({
 export const getNotifFiltersWithSetting = (state: ITimeline_State) =>
   state.notifDefinitions.notifFilters.data.map(e => ({
     ...e,
-    setting: state.notifSettings.notifFilterSettings.data[e.type]
+    setting: state.notifSettings.notifFilterSettings.data[e.type],
   })) as INotificationFilterWithSetting[];
 
 export const getPushNotifsSettingsByType = (state: ITimeline_State) => {
@@ -49,14 +52,20 @@ export const getPushNotifsSettingsByType = (state: ITimeline_State) => {
     acc[nt.type][key] = state.notifSettings.pushNotifsSettings.data[key];
     return acc;
   }, {});
-}
+};
 
 export const getDefaultPushNotifsSettingsByType = (state: ITimeline_State) => {
   return Object.values(state.notifDefinitions.notifTypes.data).reduce((acc: IPushNotifsSettingsByType, nt) => {
-    if (nt["push-notif"]) {
+    if (nt['push-notif']) {
       if (!acc[nt.type]) acc[nt.type] = {};
-      acc[nt.type][nt.key] = nt["push-notif"];
+      acc[nt.type][nt.key] = nt['push-notif'];
     }
     return acc;
   }, {});
-}
+};
+
+Reducers.register(moduleConfig.reducerName, reducer);
+
+export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as ITimeline_State;
+
+export default reducer;

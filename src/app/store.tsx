@@ -76,7 +76,7 @@ const theStore: { current?: Store } = { current: undefined };
 
 // IMPORTANT ! Do not call this function outside a component rendering.
 // This would cause it to be called before all reducers are registered.
-const getStore = () => {
+export const getStore = () => {
   if (theStore.current === undefined) theStore.current = createMainStore();
   return theStore.current;
 };

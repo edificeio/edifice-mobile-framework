@@ -74,11 +74,6 @@ function App(props: AppProps) {
   useLocale();
   useTrackers();
 
-  // Hack to generate scopes without circular deps. ToDo: fix it !
-  React.useEffect(() => {
-    AllModulesBackup.value = AppModules();
-  }, []);
-
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <Provider store={props.store}>
@@ -87,5 +82,8 @@ function App(props: AppProps) {
     </SafeAreaProvider>
   );
 }
+
+// Hack to generate scopes without circular deps. ToDo: fix it !
+AllModulesBackup.value = AppModules();
 
 export default connectWithStore(App);

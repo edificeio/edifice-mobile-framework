@@ -10,7 +10,7 @@ import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
-import { Avatar, Size } from '~/ui/avatars/Avatar';
+import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 export interface IUserCardProps {
   touchable?: boolean;

@@ -5,7 +5,7 @@ import { Platform, SafeAreaView, StatusBar, TouchableOpacity, View, ViewStyle } 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
-import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import { navigate } from '~/framework/navigation/helper';
 import { Loading } from '~/ui/Loading';
 
 import { MediaAction } from './MediaAction';
@@ -114,7 +114,7 @@ export class IFrame extends React.Component<
         ) : null}
         {isEducationApp && loaded ? (
           <TouchableOpacity
-            onPress={() => mainNavNavigate('iframeModal', { source })}
+            onPress={() => navigate('iframeModal', { source })}
             style={{
               position: 'absolute',
               zIndex: 1,
@@ -127,7 +127,7 @@ export class IFrame extends React.Component<
             }}>
             <MediaAction
               iconName="fullscreen-on"
-              action={() => mainNavNavigate('iframeModal', { source })}
+              action={() => navigate('iframeModal', { source })}
               customStyle={{
                 height: 70,
                 width: 70,

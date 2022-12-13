@@ -10,7 +10,7 @@ import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
-import { HeadingS, Small } from '~/framework/components/text';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 
 import { AuthRouteNames, IAuthNavigationParams, getLoginRouteName } from '../navigation';
@@ -71,8 +71,8 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
             keyExtractor={item => item.url}
             ListHeaderComponent={
               <>
-                <HeadingS style={styles.heading}>{I18n.t('welcome')}</HeadingS>
-                <Small style={styles.lightP}>{I18n.t('select-platform')}</Small>
+                <HeadingSText style={styles.heading}>{I18n.t('welcome')}</HeadingSText>
+                <SmallText style={styles.lightP}>{I18n.t('select-platform')}</SmallText>
               </>
             }
             alwaysBounceVertical={false}

@@ -15,6 +15,7 @@ import { openCarousel } from '~/framework/components/carousel';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText } from '~/framework/components/text';
+import { navigate } from '~/framework/navigation/helper';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
@@ -301,7 +302,7 @@ class Attachment extends React.PureComponent<
       if (Platform.OS === 'android') {
         await Permissions.request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
       }
-      onOpen && onOpen();
+      if (onOpen) onOpen();
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
         openCarousel(
           {

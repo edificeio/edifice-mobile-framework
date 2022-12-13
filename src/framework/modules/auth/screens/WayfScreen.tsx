@@ -11,14 +11,14 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { Small } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { Trackers } from '~/framework/util/tracker';
 import { IOAuthToken, OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, initOAuth2 } from '~/infra/oauth';
-import { FlatButton } from '~/ui/FlatButton';
 import { Loading } from '~/ui/Loading';
 
 import { loginAction } from '../actions';
@@ -150,14 +150,14 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
-          <Small style={STYLES.errorMsg}>
+          <SmallText style={STYLES.errorMsg}>
             {I18n.t('auth-error-' + this.error, {
               version: DeviceInfo.getVersion(),
               errorcode: this.error,
               currentplatform: this.props.route.params.platform.url,
             })}
-          </Small>
-          <FlatButton title={I18n.t('login-wayf-error-retry')} onPress={() => this.displayWebview()} />
+          </SmallText>
+          <ActionButton text={I18n.t('login-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
       );
     },
@@ -167,7 +167,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
-          <Small style={STYLES.text}>{I18n.t('login-wayf-loading-text')}</Small>
+          <SmallText style={STYLES.text}>{I18n.t('login-wayf-loading-text')}</SmallText>
           <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
@@ -182,7 +182,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
             this.setState({ dropdownOpened: false });
           }}>
           <View style={STYLES.container}>
-            <Small style={STYLES.text}>{I18n.t('login-wayf-select-text')}</Small>
+            <SmallText style={STYLES.text}>{I18n.t('login-wayf-select-text')}</SmallText>
             <DropDownPicker
               dropDownContainerStyle={STYLES.selectContainer}
               items={this.dropdownItems}
@@ -201,10 +201,10 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
               value={this.dropdownValue}
             />
             <View>
-              <FlatButton
-                title={I18n.t('login-wayf-select-button')}
+              <ActionButton
+                text={I18n.t('login-wayf-select-button')}
                 disabled={this.dropdownValue === null}
-                onPress={() => this.loginWithCustomToken()}
+                action={() => this.loginWithCustomToken()}
               />
               {/*<Small style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Small>*/}
             </View>

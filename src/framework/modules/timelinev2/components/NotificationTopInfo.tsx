@@ -6,15 +6,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/AppStore';
-import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { ISession } from '~/framework/modules/auth/model';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { APPBADGES } from '~/framework/modules/timelinev2/appBadges';
 import { ITimelineNotification } from '~/framework/util/notifications';
-import { IUserSession, getUserSession } from '~/framework/util/session';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
-const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: IUserSession }) => {
+const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: ISession }) => {
   const message = notification && notification.message;
   const type = notification && notification.type;
   const date = notification && notification.date;
@@ -65,9 +65,11 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
   );
 };
 
-const mapStateToProps: (s: IGlobalState) => { session: IUserSession } = s => {
+const mapStateToProps = (s: IGlobalState) => {
+  const session = getAuthState(s).session;
+  if (!session) throw new Error('[NotificationTopInfo] session not provided');
   return {
-    session: getUserSession(),
+    session,
   };
 };
 

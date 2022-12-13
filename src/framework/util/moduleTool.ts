@@ -476,8 +476,6 @@ export class NavigableModule<
 
   #root?: Root;
 
-  #route?: object /* ToDo type generic screen options */;
-
   constructor(moduleDeclaration: INavigableModuleDeclaration<Name, ConfigType, State, Root>) {
     const { getRoot } = moduleDeclaration;
     super(moduleDeclaration);
@@ -487,34 +485,18 @@ export class NavigableModule<
   handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
     super.handleInit(matchingApps, matchingWidgets);
     this.#root = this.getRoot(matchingApps, matchingWidgets);
-    this.#route = this.createModuleRoute(matchingApps, matchingWidgets);
     if (this.config.displayBadges) {
       updateAppBadges(this.config.displayBadges);
     }
   }
 
   get isReady() {
-    return super.isReady && !!this.#root && !!this.#route;
+    return super.isReady && !!this.#root;
   }
 
   get root() {
     if (!this.#root) throw new Error(`Try to get root of non-initialized module '${this.config.name}'`);
     return this.#root;
-  }
-
-  get route() {
-    if (!this.#route) throw new Error(`Try to get route of non-initialized module '${this.config.name}'`);
-    return this.#route;
-  }
-
-  createModuleRoute(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
-    return {
-      screen: this.root,
-      navigationOptions: {
-        tabBarLabel: I18n.t(this.config.displayI18n),
-        tabBarIcon: ({ focused }) => (focused ? this.config.displayPictureFocus : this.config.displayPicture),
-      },
-    };
   }
 
   get() {
@@ -529,13 +511,6 @@ export type UnknownNavigableModule = NavigableModule<
   React.ComponentType<any>
 >;
 export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, React.ComponentType<any>>;
-
-// ToDo Export here updated route map rn6
-// export type RouteMap = NavigationRouteConfigMap<
-//   StackNavigationOptions,
-//   StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>,
-//   unknown
-// >;
 
 //  888b     d888               888          888                 d8888
 //  8888b   d8888               888          888                d88888
@@ -621,14 +596,6 @@ export class NavigableModuleArray<
         ),
       ),
     );
-  }
-
-  getRoutes() {
-    const routes = {} as { [k: string]: any /* ToDo : type route component here */ };
-    for (const m of this) {
-      routes[m.config.routeName] = m.get().route;
-    }
-    return routes;
   }
 }
 
@@ -752,10 +719,3 @@ export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule =
   });
   return modules; // Allow chaining
 };
-
-// Tab modules register ===========================================================================
-
-// ToDo : move this into the future Navigation Manager ?
-
-export const tabModules = new ModuleRegister<AnyNavigableModule>();
-setGlobalRegister('tabModule', tabModules);

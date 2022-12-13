@@ -92,7 +92,6 @@ class Images extends React.Component<
     images: { src: ImageURISource; alt?: string; linkTo?: string }[];
     style?: ViewStyle;
     navigation: any;
-    // windowDimensions: any;
   },
   any
 > {

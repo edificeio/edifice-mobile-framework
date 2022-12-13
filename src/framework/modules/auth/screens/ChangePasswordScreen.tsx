@@ -9,12 +9,12 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/ActionButton';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Small, SmallBold, TextSizeStyle } from '~/framework/components/text';
+import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
-import { FlatButton } from '~/ui/FlatButton';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IChangePasswordModel } from '~/user/actions/changePassword';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
@@ -298,16 +298,16 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
             <View style={styles.flexStretch0}>
               {this.props.route.params.forceChange ? (
                 <View style={styles.infoBubble}>
-                  <Small style={styles.infoBubbleText}>{I18n.t('PasswordChangeWarning')}</Small>
+                  <SmallText style={styles.infoBubbleText}>{I18n.t('PasswordChangeWarning')}</SmallText>
                   <MiniSpacer />
                   <MiniSpacer />
                 </View>
               ) : null}
               {isIDF ? (
                 <View style={styles.infoRules}>
-                  <Small style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
+                  <SmallText style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
                     {I18n.t('common.idf.passwordRules')}
-                  </Small>
+                  </SmallText>
                 </View>
               ) : null}
             </View>
@@ -324,24 +324,24 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
               <MiniSpacer />
             </View>
             <View style={styles.flexShrink0}>
-              <Small style={styles.errorMsg}>
+              <SmallText style={styles.errorMsg}>
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}
-              </Small>
+              </SmallText>
             </View>
             <View style={styles.flexShrink0}>
               <ButtonWrapper error={hasErrorKey} typing={typing}>
-                <FlatButton
-                  onPress={() => this.doSubmit()}
+                <ActionButton
+                  action={() => this.doSubmit()}
                   disabled={isNotValid}
-                  title={I18n.t('Save')}
+                  text={I18n.t('Save')}
                   loading={isSubmitLoading}
                 />
               </ButtonWrapper>
               {this.props.route.params.forceChange ? (
                 <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={this.doRefuseTerms}>
-                  <SmallBold style={styles.refuse}>{I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}</SmallBold>
+                  <SmallBoldText style={styles.refuse}>{I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}</SmallBoldText>
                 </TouchableOpacity>
               ) : null}
               <MiniSpacer />

@@ -83,25 +83,19 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
   );
   const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
   const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
-  const content =
-    props.children || props.footer
-      ? [
-          props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null,
-          props.footer ? (
-            <>
-              <FooterSeparator />
-              <FooterFlexViewWithPadding>{props.footer}</FooterFlexViewWithPadding>
-            </>
-          ) : null,
-        ]
-      : null;
   return (
     <CC {...viewProps}>
       <HeaderFlexViewWithPadding>
         <View style={UI_STYLES.flex1}>{props.header ?? null}</View>
         <View style={[UI_STYLES.flex0, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
       </HeaderFlexViewWithPadding>
-      {content}
+      {props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null}
+      {props.footer ? (
+        <>
+          <FooterSeparator />
+          <FooterFlexViewWithPadding>{props.footer}</FooterFlexViewWithPadding>
+        </>
+      ) : null}
     </CC>
   );
 };

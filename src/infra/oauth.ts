@@ -7,6 +7,7 @@ import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
 import { Source } from 'react-native-fast-image';
 
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
@@ -507,7 +508,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY,
       );
       if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
-        const url = `${DEPRECATED_getCurrentPlatform()!.url}/auth/oauth2/token?type=queryparam`;
+        const url = `${assertSession().platform.url}/auth/oauth2/token?type=queryparam`;
         const data = await this.request(url, {
           headers: urlSigner.getAuthHeader(),
         });
@@ -568,9 +569,8 @@ export const urlSigner = {
    * Prepend url with domain name if needed.
    */
   getAbsoluteUrl: (url?: string) => {
-    return (
-      url && (url.startsWith('//') ? `https:${url}` : url.startsWith('/') ? `${DEPRECATED_getCurrentPlatform()!.url}${url}` : url)
-    );
+    const pf = assertSession().platform;
+    return url && (url.startsWith('//') ? `https:${url}` : url.startsWith('/') ? `${pf.url}${url}` : url);
   },
 
   /**
@@ -579,7 +579,8 @@ export const urlSigner = {
    * @returns
    */
   getRelativeUrl: (absoluteUrl?: string) => {
-    return absoluteUrl && absoluteUrl.replace(DEPRECATED_getCurrentPlatform()!.url, '').split('?')[0];
+    const pf = assertSession().platform;
+    return absoluteUrl && absoluteUrl.replace(pf.url, '').split('?')[0];
   },
 
   /**
@@ -588,7 +589,8 @@ export const urlSigner = {
    * If the url contains a protocol identifier, it not be signed.
    */
   getIsUrlSignable: (absoluteUrl?: string) => {
-    return absoluteUrl && (absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf(DEPRECATED_getCurrentPlatform()!.url) !== -1);
+    const pf = assertSession().platform;
+    return absoluteUrl && (absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf(pf.url) !== -1);
   },
 
   /**

@@ -1,7 +1,7 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, TouchableOpacity } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -9,7 +9,6 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import FlatList from '~/framework/components/flatList';
-import { HeaderAction } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
@@ -18,7 +17,10 @@ import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
+import { NavBarAction } from '~/framework/navigation/navBar';
 import { shallowEqual } from '~/framework/util/object';
+
+import { ITimelineNavigationParams } from '../navigation';
 
 // TYPES ==========================================================================================
 
@@ -31,10 +33,26 @@ export interface ITimelineFiltersScreenEventProps {
 }
 export type ITimelineFiltersScreenProps = ITimelineFiltersScreenDataProps &
   ITimelineFiltersScreenEventProps &
-  NavigationInjectedProps;
+  NativeStackScreenProps<ITimelineNavigationParams, 'Filters'>;
 
 export interface ITimelineFiltersScreenState {
   selectedFilters: INotifFilterSettings;
+}
+
+// STYLES =======================================================================================
+
+const styles = StyleSheet.create({
+  checkboxContainer: {
+    backgroundColor: theme.ui.background.card,
+    borderColor: theme.ui.text.light,
+    borderWidth: 2,
+  },
+});
+
+// NAVBAR =========================================================================================
+
+export function computeNavBar(disabled: boolean, onPress?: () => void) {
+  return <NavBarAction title={I18n.t('common.apply')} disabled={disabled} onPress={onPress} />;
 }
 
 // COMPONENT ======================================================================================
@@ -49,6 +67,8 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
   // RENDER =======================================================================================
 
   render() {
+    /*
+    // ToDo : goather back this back-handler logic
     const { selectedFilters } = this.state;
     const { navigation, notifFilterSettings } = this.props;
     const areFiltersUnchanged = shallowEqual(notifFilterSettings, selectedFilters);
@@ -86,6 +106,9 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
         {this.renderList()}
       </PageView>
     );
+    */
+    this.updateNavBar();
+    return <PageView>{this.renderList()}</PageView>;
   }
 
   renderList() {
@@ -105,11 +128,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
                 rightElement={
                   <Checkbox
                     customCheckboxColor={!someNotSet ? theme.ui.text.light : undefined}
-                    customContainerStyle={{
-                      backgroundColor: theme.ui.background.card,
-                      borderColor: theme.ui.text.light,
-                      borderWidth: 2,
-                    }}
+                    customContainerStyle={styles.checkboxContainer}
                     checked={!someNotSet}
                     onPress={() => this.doToggleAllFilters()}
                   />
@@ -137,9 +156,21 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
 
   // LIFECYCLE ====================================================================================
 
+  mounted: boolean = false;
+
+  componentDidMount(): void {
+    this.mounted = true;
+    this.updateNavBar();
+  }
+
+  componentWillUnmount(): void {
+    this.mounted = false;
+  }
+
   // METHODS ======================================================================================
 
   doToggleFilter(item: INotificationFilter) {
+    if (!this.mounted) return;
     const { selectedFilters } = this.state;
     this.setState({
       selectedFilters: { ...selectedFilters, [item.type]: !selectedFilters[item.type] },
@@ -147,6 +178,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
   }
 
   doToggleAllFilters() {
+    if (!this.mounted) return;
     const { selectedFilters } = this.state;
     const someNotSet = Object.values(selectedFilters).some(value => !value);
     const selectedFiltersKeys = Object.keys(selectedFilters);
@@ -156,13 +188,22 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
   }
 
   async doSetFilters(selectedFilters: INotifFilterSettings) {
+    if (!this.mounted) return;
     const { handleSetFilters, navigation } = this.props;
     await handleSetFilters(selectedFilters);
     navigation.navigate('timeline', { reloadWithNewSettings: true });
   }
-}
 
-// UTILS ==========================================================================================
+  updateNavBar() {
+    if (!this.mounted) return;
+    const { selectedFilters } = this.state;
+    const { notifFilterSettings } = this.props;
+    const areFiltersUnchanged = shallowEqual(notifFilterSettings, selectedFilters);
+    this.props.navigation.setOptions({
+      headerRight: () => computeNavBar(areFiltersUnchanged, () => this.doSetFilters(selectedFilters)),
+    });
+  }
+}
 
 // MAPPING ========================================================================================
 
@@ -184,5 +225,4 @@ const mapDispatchToProps: (
   },
 });
 
-const TimelineFiltersScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineFiltersScreen);
-export default TimelineFiltersScreen_Connected;
+export default connect(mapStateToProps, mapDispatchToProps)(TimelineFiltersScreen);

@@ -22,20 +22,15 @@ export class TimelineNotification extends React.PureComponent<ITimelineNotificat
     const text = preview && preview.text;
     const CC = notificationAction ? TouchableResourceCard : ResourceCard;
 
-    const content =
-      text || media
-        ? [
-            text && /\S/.test(text) ? (
-              <SmallText style={{ marginBottom: media?.length ? UI_SIZES.spacing.small : undefined }}>{text}</SmallText>
-            ) : null,
-            media ? renderMediaPreview(media) : null,
-          ]
-        : null;
-
     return (
       <ArticleContainer>
         <CC onPress={notificationAction} style={{ width: '100%' }} header={<NotificationTopInfo notification={notification} />}>
-          {content}
+          {text && /\S/.test(text) ? (
+            <SmallText key={notification.id} style={{ marginBottom: media?.length ? UI_SIZES.spacing.small : undefined }}>
+              {text}
+            </SmallText>
+          ) : null}
+          {media ? renderMediaPreview(media) : null}
         </CC>
       </ArticleContainer>
     );

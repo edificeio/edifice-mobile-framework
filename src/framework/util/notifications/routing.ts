@@ -2,14 +2,15 @@
  * Notification routing
  * Router operations on opeening a notification
  */
-import { NavigationState } from 'react-navigation';
+import { NavigationState } from '@react-navigation/native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import legacyModuleDefinitions from '~/AppModules';
+import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
+import { navigate } from '~/framework/navigation/helper';
 import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
-import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
 import { IAbstractNotification, ITimelineNotification, getAsResourceUriNotification } from '.';
 
@@ -64,14 +65,13 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
           /**/ // #44727 tmp fix. Copied from timelineRedirection.
           const thunkAction = def.notifHandlerAction(n, trackCategory, navState);
           const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
-          trackCategory &&
-            ret.trackInfo &&
+          if (trackCategory && ret.trackInfo)
             Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
           return ret;
         } else {
           /**/ // #44727 tmp fix. Copied from timelineRedirection.
-          /**/ trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-          /**/ mainNavNavigate('timeline', {
+          /**/ if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
+          /**/ navigate<ITimelineNavigationParams, typeof timelineRouteNames.Home>(timelineRouteNames.Home, {
             /**/ notification: n,
             /**/
           });
@@ -103,13 +103,13 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     }
     if ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) {
       /**/ // #44727 tmp fix. Copied from timelineRedirection.
-      trackCategory && Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
+      if (trackCategory) Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
       openUrl(notifWithUri.resource.uri);
       return { managed: 1 };
     } else {
       /**/ // #44727 tmp fix. Copied from timelineRedirection.
-      /**/ trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-      /**/ mainNavNavigate('timeline', {
+      /**/ if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
+      /**/ navigate<ITimelineNavigationParams, typeof timelineRouteNames.Home>(timelineRouteNames.Home, {
         /**/ notification: n,
         /**/
       });
@@ -119,8 +119,8 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   },
 
   timelineRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
-    trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-    mainNavNavigate('timeline', {
+    if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
+    navigate<ITimelineNavigationParams, typeof timelineRouteNames.Home>(timelineRouteNames.Home, {
       notification: n,
     });
     return { managed: 1 };
@@ -147,8 +147,7 @@ export const handleNotificationAction =
       if (manageCount) return;
       const ret = (await dispatch(action(notification, trackCategory, navState))) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
-      ret.trackInfo &&
-        trackCategory &&
+      if (ret.trackInfo && trackCategory)
         Trackers.trackEvent(trackCategory, ret.trackInfo.action, 'Post-routing', ret.trackInfo.value);
     }
   };

@@ -14,15 +14,15 @@ import {
 } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import { pushNotifsService } from '~/framework/modules/timelinev2/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
-import { getUserSession } from '~/framework/util/session';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
+import { assertSession } from '../../auth/reducer';
 
 import { loadNotificationsDefinitionsAction } from './notifDefinitions';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     dispatch(notifFilterSettingsActions.request());
-    const session = getUserSession();
+    const session = assertSession();
     const userId = session.user.id;
     // 1 - Load notification definitions if necessary
     let state = moduleConfig.getState(getState()) as ITimeline_State;
@@ -61,7 +61,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
 export const setFiltersAction =
   (selectedFilters: INotifFilterSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession();
+      const session = assertSession();
       const userId = session.user.id;
       const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings.${userId}`;
       dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
@@ -76,7 +76,7 @@ export const setFiltersAction =
 export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     dispatch(pushNotifsSettingsActions.request());
-    const session = getUserSession();
+    const session = assertSession();
     // 1 - Load notification definitions if necessary
     let state = moduleConfig.getState(getState()) as ITimeline_State;
     if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
@@ -97,7 +97,7 @@ export const updatePushNotifsSettingsAction =
   (changes: IPushNotifsSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       dispatch(pushNotifsSettingsActions.setRequest(changes));
-      const session = getUserSession();
+      const session = assertSession();
       await pushNotifsService.set(session, changes);
       dispatch(pushNotifsSettingsActions.setReceipt(changes));
       dispatch(loadPushNotifsSettingsAction()); // no await here it's for refreshing datas
