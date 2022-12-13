@@ -186,7 +186,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
         formdata.append(key, payload[key]);
       }
       // === 2 - Send activation information
-      const res = await fetch(`${platform.url}/auth/activation`, {
+      const res = await fetch(`${platform.url}/auth/activation/no-login`, {
         body: formdata,
         headers: {
           Accept: 'application/json',
