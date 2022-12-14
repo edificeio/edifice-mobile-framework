@@ -2,10 +2,10 @@
  * An Image component, but can accept a `errorComponent` prop to display if Image fails loading.
  * Accepts also an imageComponent to replace the <Image> rendered component by default.
  */
-
 import * as React from 'react';
-import { Image, ImageProps, TouchableOpacityProps } from 'react-native';
+import { ImageProps, TouchableOpacityProps } from 'react-native';
 
+import { Image } from '~/framework/util/media';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export type ImageOptionalProps = ImageProps & {

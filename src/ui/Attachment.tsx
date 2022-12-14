@@ -5,12 +5,14 @@ import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-n
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Toast from 'react-native-tiny-toast';
+import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { openCarousel } from '~/framework/components/carousel';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -18,7 +20,6 @@ import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/frame
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
-import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
 import { IconButton } from './IconButton';
 
@@ -95,7 +96,7 @@ const openFile = (notifierId: string, file?: SyncedFile) => {
       try {
         file.open();
       } catch (e) {
-        Toast.show(I18n.t('download-error-generic'));
+        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
   };
@@ -107,9 +108,11 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
       try {
         file.mirrorToDownloadFolder();
         Toast.hide(lastToast);
-        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }));
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }), {
+          ...UI_ANIMATIONS.toast,
+        });
       } catch (e) {
-        Toast.show(I18n.t('download-error-generic'));
+        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
   };
@@ -127,7 +130,7 @@ class Attachment extends React.PureComponent<
     onError?: () => void;
     onOpen?: () => void;
     dispatch: ThunkDispatch<any, any, any>;
-  },
+  } & NavigationInjectedProps,
   {
     downloadState: DownloadState;
     progress: number; // From 0 to 1
@@ -299,9 +302,20 @@ class Attachment extends React.PureComponent<
         await Permissions.request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
       }
       onOpen && onOpen();
-      (fileType && fileType.startsWith('image')) || fileType === 'picture'
-        ? mainNavNavigate('carouselModal', { images: carouselImage })
-        : onOpenFile(notifierId, file);
+      if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
+        openCarousel(
+          {
+            data: carouselImage.map(img => ({
+              type: 'image' as 'image',
+              src: img.src,
+              ...(img.alt ? { alt: img.alt } : undefined),
+            })),
+          },
+          this.props.navigation,
+        );
+      } else {
+        onOpenFile(notifierId, file);
+      }
     } else {
       this.startDownload(attachment as IRemoteAttachment).catch(err => {
         /*TODO: Manage error*/
@@ -358,9 +372,11 @@ class Attachment extends React.PureComponent<
   }
 }
 
-export default connect(null, dispatch => ({
-  onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
-  onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
-    dispatch(downloadFile(notifierId, file, toastMessage)),
-  dispatch,
-}))(Attachment);
+export default withNavigation(
+  connect(null, dispatch => ({
+    onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
+    onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
+      dispatch(downloadFile(notifierId, file, toastMessage)),
+    dispatch,
+  }))(Attachment),
+);

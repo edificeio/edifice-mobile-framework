@@ -27,7 +27,6 @@ import {
   ColorValue,
   FlatList,
   FlatListProps,
-  Image,
   ImageSourcePropType,
   TextProps,
   TextStyle,
@@ -37,8 +36,9 @@ import {
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
-import { CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
+import { Image } from '../util/media';
 
 import { UI_SIZES } from './constants';
 import { Picture, PictureProps } from './picture';
@@ -230,6 +230,19 @@ const MetadataView = styled.View({
   paddingHorizontal: UI_SIZES.spacing.minor,
 });
 
+const ExplorerSmallText = styled.Text({
+  ...TextFontStyle.Regular,
+  fontSize: TextSizeStyle.Normal.fontSize,
+});
+const ExplorerCaptionText = styled.Text({
+  ...TextFontStyle.Regular,
+  fontSize: TextSizeStyle.Small.fontSize,
+});
+const ExplorerCaptionBoldText = styled.Text({
+  ...TextFontStyle.Bold,
+  fontSize: TextSizeStyle.Small.fontSize,
+});
+
 export const ResourceItem = (props: {
   title: string;
   subtitle?: string;
@@ -274,10 +287,10 @@ export const ResourceItem = (props: {
         <View style={{}}>
           {/* a resource item always has available space for 2 text lines,
           so we generate it and place the title/subtitle on top (as an absolute position) */}
-          <SmallText> </SmallText>
-          <SmallText> </SmallText>
+          <ExplorerSmallText> </ExplorerSmallText>
+          <ExplorerSmallText> </ExplorerSmallText>
           <View style={{ position: 'absolute', width: '100%' }}>
-            <CaptionBoldText
+            <ExplorerCaptionBoldText
               numberOfLines={props.textProps?.numberOfLines}
               {...props.textProps}
               style={{
@@ -285,19 +298,19 @@ export const ResourceItem = (props: {
                 ...props.textStyle,
               }}>
               {props.title ?? null}
-            </CaptionBoldText>
+            </ExplorerCaptionBoldText>
           </View>
           {props.subtitle ? (
             <View style={{ position: 'absolute', width: '100%' }}>
-              <SmallText> </SmallText>
-              <CaptionText
+              <ExplorerSmallText> </ExplorerSmallText>
+              <ExplorerCaptionText
                 numberOfLines={props.textProps?.numberOfLines}
                 style={{
                   color: theme.ui.text.light,
                   ...props.textStyle,
                 }}>
                 {props.subtitle}
-              </CaptionText>
+              </ExplorerCaptionText>
             </View>
           ) : null}
         </View>

@@ -190,7 +190,6 @@ const SchoolbookWordDetailsCard = (
             onPress={() => {
               modalBoxRef?.current?.doShowModal();
               setTimeout(() => {
-                console.log(flatListModalRef?.current);
                 flatListModalRef?.current?.flashScrollIndicators();
               });
             }}>

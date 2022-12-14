@@ -1,9 +1,6 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-
-
 import { ITimeline_State } from './reducer';
-
 
 export default new NavigableModuleConfig<'timelinev2', ITimeline_State>({
   name: 'timelinev2',

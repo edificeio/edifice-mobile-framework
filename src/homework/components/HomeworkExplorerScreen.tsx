@@ -7,12 +7,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import Explorer from '~/framework/components/explorer';
 import { PageView } from '~/framework/components/page';
+import { formatSource } from '~/framework/util/media';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import config from '~/homework/config';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
-import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
 export interface IHomeworkExplorerScreenDataProps {
@@ -94,7 +94,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
         ...b,
         color: config?.picture?.fill ?? theme.palette.complementary.green.regular,
         ...(thumbnail
-          ? { thumbnail: signURISource(transformedSrc(thumbnail)) }
+          ? { thumbnail: formatSource(thumbnail) }
           : {
               icon: config.displayPicture,
             }),

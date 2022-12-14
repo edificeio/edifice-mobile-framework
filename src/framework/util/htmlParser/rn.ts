@@ -26,7 +26,7 @@ import { TextStyle } from 'react-native';
 
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { signURISource } from '~/infra/oauth';
+import { formatSource } from '~/framework/util/media';
 
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
 import { extractVideoResolution } from './content';
@@ -532,11 +532,12 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       this.insertInlineImageNugget(emoji);
     } else {
       // B - 1 - Build image object representation
-      let src = tag.attrs.src;
+      let src = tag.attrs.src ?? tag.attrs['data-mce-src'];
       if (src && src.indexOf('file://') === -1) {
         // TODO : Better parse image url and detect cases
         if (src.indexOf('://') === -1) {
           if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+          if (!src.startsWith('/')) src = '/' + src;
           src = DEPRECATED_getCurrentPlatform()!.url + src;
         }
         const split = src.split('?');
@@ -570,7 +571,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
 
     // 1 - Build iframe ojbect representation
     let src = tag.attrs.src;
-    if(src) {
+    if (src) {
       src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
     }
     const iframeNugget: IIframeNugget = {
@@ -631,7 +632,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       src,
       type: HtmlParserNuggetTypes.Video,
       ...(videoDimensions && videoDimensions[1] !== 0 ? { ratio: videoDimensions[0] / videoDimensions[1] } : {}),
-      ...(videoId && videoDimensions ? { posterSource: signURISource(computeVideoThumbnail(videoId, videoDimensions)) } : {}),
+      ...(videoId && videoDimensions ? { posterSource: formatSource(computeVideoThumbnail(videoId, videoDimensions)) } : {}),
     };
     this.insertTopLevelNugget(videoNugget);
     this.currentImageNugget = undefined; // Video breaks image groups

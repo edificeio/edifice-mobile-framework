@@ -9,11 +9,7 @@
  * @param {string} character Character to check
  * @return {bool} Whether the character is whitespace or not
  */
-const isWhitespace = character =>
-  character === " " ||
-  character === "\r" ||
-  character === "\n" ||
-  character === "\t";
+const isWhitespace = character => character === ' ' || character === '\r' || character === '\n' || character === '\t';
 
 /**
  * Parse a string of XML attributes to a map of attribute names
@@ -40,7 +36,7 @@ export const parseAttrs = input => {
     const startName = position;
     let noValue = false;
 
-    while (input[position] !== "=" && position < end) {
+    while (input[position] !== '=' && position < end) {
       if (isWhitespace(input[position])) {
         const attrName = input.slice(startName, position);
         attrs[attrName] = attrName;
@@ -65,7 +61,7 @@ export const parseAttrs = input => {
     position += 1;
 
     if (startQuote !== '"' && startQuote !== "'") {
-      throw new Error("Attribute values should be quoted");
+      throw new Error('Attribute values should be quoted');
     }
 
     let endQuote = input.indexOf(startQuote, position);

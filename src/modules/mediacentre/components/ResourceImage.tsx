@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Image, ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 'react-native';
+import { ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 'react-native';
 
 import { NamedSVG } from '~/framework/components/picture';
+import { Image } from '~/framework/util/media';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getAuthHeader } from '~/infra/oauth';
 import { Source } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
@@ -46,7 +46,7 @@ export const ResourceImage: React.FunctionComponent<IResourceImageProps> = (prop
   }
   return (
     <Image
-      source={{ headers: getAuthHeader(), uri: getImageUri(props.image) }}
+      source={{ uri: getImageUri(props.image) }}
       onError={onError}
       style={props.style}
       resizeMode={props.resizeMode}

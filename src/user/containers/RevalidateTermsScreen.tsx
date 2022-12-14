@@ -7,6 +7,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 import { logout } from '~/user/actions/login';
 import { checkVersionThenLogin } from '~/user/actions/version';
@@ -53,7 +54,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreen_Props) => {
   // RENDER =======================================================================================
 
   return (
-    <PageView navigation={props.navigation} navBar={navBarInfo}>
+    <PageView style={{ backgroundColor: theme.ui.background.card }} navigation={props.navigation} navBar={navBarInfo}>
       <RevalidateTermsScreen acceptAction={() => revalidateTerms()} refuseAction={() => refuseTerms()} />
     </PageView>
   );

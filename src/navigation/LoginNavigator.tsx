@@ -13,6 +13,8 @@ import LoginWAYFPage from '~/user/containers/LoginWAYFPage';
 import OnboardingScreen from '~/user/containers/OnboardingScreen';
 import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
 import RevalidateTermsScreen from '~/user/containers/RevalidateTermsScreen';
+import SendEmailVerificationCodeScreen from '~/user/containers/SendEmailVerificationCodeScreen';
+import VerifyEmailCodeScreen from '~/user/containers/VerifyEmailCodeScreen';
 import WAYFPage from '~/user/containers/WAYFPage';
 
 import { loginRouteNames } from './helpers/loginRouteName';
@@ -49,6 +51,15 @@ export default createStackNavigator(
       navigationOptions: {
         gestureEnabled: false,
       },
+    },
+    SendEmailVerificationCode: {
+      screen: SendEmailVerificationCodeScreen,
+      navigationOptions: {
+        gestureEnabled: false,
+      },
+    },
+    VerifyEmailCode: {
+      screen: VerifyEmailCodeScreen,
     },
   },
   {

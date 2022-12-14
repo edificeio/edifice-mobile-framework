@@ -7,12 +7,12 @@ import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
-import { signURISource, transformedSrc } from '~/infra/oauth';
 import { IRemoteAttachment } from '~/ui/Attachment';
 import { AttachmentGroup } from '~/ui/AttachmentGroup';
 import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
 import Player from '~/ui/Player';
+import { formatSource } from '../media';
 
 /**
  * Extracts text from an input html string
@@ -113,7 +113,7 @@ const renderAttachementsPreview = (medias: IMedia[]) => {
     mediaAttachments.push(mediaItem);
   }
   const attachments = mediaAttachments.map(mediaAtt => ({
-    url: transformedSrc(mediaAtt.src as string),
+    url: mediaAtt.src as string,
     displayName: mediaAtt.name,
   }));
   return <AttachmentGroup attachments={attachments as IRemoteAttachment[]} containerStyle={{ flex: 1 }} />;
@@ -133,8 +133,8 @@ const renderAudioVideoPreview = (media: IMedia) => {
   return (
     <Player
       type={media.type as 'audio' | 'video'}
-      source={signURISource(transformedSrc(media.src as string))}
-      posterSource={videoId && videoDimensions ? signURISource(computeVideoThumbnail(videoId, videoDimensions)) : undefined}
+      source={formatSource(media.src as string)}
+      posterSource={videoId && videoDimensions ? formatSource(computeVideoThumbnail(videoId, videoDimensions)) : undefined}
       ratio={videoDimensions && videoDimensions[1] !== 0 ? videoDimensions[0] / videoDimensions[1] : undefined}
     />
   );
@@ -151,7 +151,7 @@ const renderImagesPreview = (medias: IMedia[]) => {
     images.push(mediaItem);
   }
   const imageSrcs = images.map((image, index) => ({
-    src: signURISource(transformedSrc(image.src as string)),
+    src: formatSource(image.src as string),
     alt: `image-${index}`,
   }));
   return <Images images={imageSrcs} />;

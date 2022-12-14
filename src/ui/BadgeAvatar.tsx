@@ -19,5 +19,5 @@ export const BadgeAvatar = ({ avatars, badgeContent, badgeColor, customStyle }: 
         <Badge content={badgeContent} color={badgeColor} />
       </View>
     </View>
-  )
+  );
 };

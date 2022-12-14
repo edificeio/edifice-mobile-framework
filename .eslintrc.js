@@ -1,6 +1,10 @@
 module.exports = {
   root: true,
-  extends: ['@react-native-community', 'airbnb-typescript', 'prettier', 'universe/native'],
+  env: {
+    browser: true,
+    'react-native/react-native': true,
+  },
+  extends: ['@react-native-community', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',
@@ -11,6 +15,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native', 'jest'],
   rules: {
     '@typescript-eslint/naming-convention': ['error'],
+    'ft-flow/boolean-style': [2, 'boolean'],
     'import/extensions': [
       'error',
       'ignorePackages',
@@ -37,10 +42,13 @@ module.exports = {
     'react-native/split-platform-components': 2,
     'react-native/no-inline-styles': 2,
     'react-native/no-color-literals': 2,
-    'react-native/no-raw-text': 2,
+    // 'react-native/no-raw-text': 2,
     'react-native/no-single-element-style-arrays': 2,
   },
   settings: {
+    'ft-flow': {
+      onlyFilesWithFlowAnnotation: false,
+    },
     'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],
@@ -53,5 +61,6 @@ module.exports = {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
+    'import/ignore': ['react-native'],
   },
 };

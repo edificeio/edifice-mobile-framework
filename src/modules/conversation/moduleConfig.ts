@@ -1,9 +1,6 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-
-
 import { IConversation_State } from './reducer';
-
 
 export default new NavigableModuleConfig<'conversation', IConversation_State>({
   name: 'conversation',

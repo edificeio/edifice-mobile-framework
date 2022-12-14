@@ -1,9 +1,9 @@
+import { registerModule } from '~/AppModules';
+import { timelineSubModules } from '~/framework/modules/timelinev2/timelineModules';
+
 import homeworkConfig from './config';
 import mainComp, { homeworkViews } from './navigator';
 import mainReducer from './reducers';
-
-import { registerModule } from '~/AppModules';
-import { timelineSubModules } from '~/framework/modules/timelinev2/timelineModules';
 
 // Main component
 export const root = mainComp;

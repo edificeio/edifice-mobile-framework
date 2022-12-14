@@ -13,7 +13,9 @@ import { PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import appConf from '~/framework/util/appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { formatSource } from '~/framework/util/media';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -21,7 +23,7 @@ import { pickFileError } from '~/infra/actions/pickFile';
 import { ImagePicked } from '~/infra/imagePicker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
-import { OAuth2RessourceOwnerPasswordClient, signURISource } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { ButtonLine, ContainerSpacer, ContainerView } from '~/ui/ButtonLine';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
@@ -29,6 +31,8 @@ import { logout } from '~/user/actions/login';
 import { profileUpdateAction } from '~/user/actions/profile';
 import { UserCard } from '~/user/components/UserCard';
 import { IUserInfoState } from '~/user/state/info';
+
+import { isXmasDateLimitCrossed } from '../actions/xmas';
 
 const uploadAvatarError = () => {
   return dispatch => {
@@ -183,14 +187,12 @@ export class UserPage extends React.PureComponent<
     //avoid setstate on modalbox when unmounted
     const { userinfo, session } = this.props;
     const { showDisconnect, showVersionType, versionOverride, versionType, updatingAvatar } = this.state;
-    const signedURISource = userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`);
+    const URISource = userinfo.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`);
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
     // (otherwise, a previously-loaded image is retrieved from cache)
-    const sourceWithParam = signedURISource && {
-      ...signedURISource,
-      uri: `${
-        signedURISource && signedURISource.uri
-      }?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
+    const sourceWithParam = URISource && {
+      ...URISource,
+      uri: `${URISource && URISource.uri}?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`,
     };
     const showWhoAreWe = session.platform.showWhoAreWe;
 
@@ -235,6 +237,12 @@ export class UserPage extends React.PureComponent<
           ) : null}
           <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
           <ContainerSpacer />
+          {!isXmasDateLimitCrossed ? (
+            <>
+              <ButtonLine title={'directory-xmasTitle'} onPress={() => this.props.navigation.navigate('Xmas')} />
+              <ContainerSpacer />
+            </>
+          ) : null}
           {showWhoAreWe ? (
             <>
               <ButtonLine title={'directory-whoAreWeTitle'} onPress={() => this.props.navigation.navigate('WhoAreWe')} />

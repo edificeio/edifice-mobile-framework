@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ActionsMenu from '~/framework/components/actionsMenu';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -149,7 +150,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
       refreshSilent();
     } catch (e) {
       setIsAcknowledgingWord(false);
-      Toast.show(I18n.t('common.error.text'));
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 
@@ -169,7 +170,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
         setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
       }
     } catch (e) {
-      Toast.show(I18n.t('common.error.text'));
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     } finally {
       setIsPublishingReply(false);
     }
@@ -180,7 +181,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
       await schoolbookService.word.delete(session, schoolbookWordId);
       props.navigation.goBack();
     } catch (e) {
-      Toast.show(I18n.t('common.error.text'));
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 

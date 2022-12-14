@@ -1,9 +1,9 @@
-// Libraries
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ScrollView, TextInput, View } from 'react-native';
+import { InteractionManager, Platform, ScrollView, TextInput, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -21,8 +21,6 @@ import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~
 import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
-
-// Props definition -------------------------------------------------------------------------------
 
 export interface ILoginPageDataProps {
   auth: IUserAuthState;
@@ -48,13 +46,12 @@ export interface ILoginPageOtherProps {
 
 export type ILoginPageProps = ILoginPageDataProps & ILoginPageEventProps & ILoginPageOtherProps;
 
-// State definition -------------------------------------------------------------------------------
-
 export interface ILoginPageState {
   login?: string;
   password?: string;
   typing: boolean;
   rememberMe: boolean;
+  isLoggingIn: boolean;
 }
 
 const initialState: ILoginPageState = {
@@ -62,9 +59,8 @@ const initialState: ILoginPageState = {
   password: undefined,
   typing: false,
   rememberMe: true,
+  isLoggingIn: false,
 };
-
-// Main component ---------------------------------------------------------------------------------
 
 const FormContainer = styled.View({
   alignItems: 'center',
@@ -76,58 +72,57 @@ const FormContainer = styled.View({
 });
 
 export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState> {
-  // Refs
   private inputLogin: TextInput | null = null;
+
   private setInputLoginRef = (el: TextInput) => (this.inputLogin = el);
 
   private inputPassword: TextInput | null = null;
+
   private setInputPasswordRef = (el: TextInput) => (this.inputPassword = el);
 
-  // Set default state
   constructor(props: ILoginPageProps) {
     super(props);
     this.state = initialState;
   }
 
-  // Computed properties
+  changeLogin(login: string) {
+    this.setState({ login: login.trim().toLowerCase(), typing: true });
+  }
+
+  protected async handleLogin() {
+    this.setState({ isLoggingIn: true });
+    await this.props.onLogin(
+      this.state.login || this.props.auth.login, // ToDo: fix this TS issue
+      this.state.password,
+      this.state.rememberMe,
+    );
+    this.setState({ typing: false });
+  }
+
+  handleLoginChanged(login: string) {
+    if (Platform.OS === 'ios') this.changeLogin(login);
+    else
+      InteractionManager.runAfterInteractions(() => {
+        this.changeLogin(login);
+      });
+  }
+
+  handlePasswordChanged(password: string) {
+    this.setState({ password, typing: true });
+  }
+
   get isSubmitDisabled() {
     return !(this.state.login && this.state.password);
   }
 
-  // Render
-
-  public render() {
-    const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion, navigation } = this.props;
-    const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
-
-    return (
-      <KeyboardPageView
-        navigation={navigation}
-        navBarWithBack={{ title: platformDisplayName }}
-        style={{ backgroundColor: theme.ui.background.card }}>
-        <VersionModal
-          mandatory={versionMandatory}
-          version={version}
-          visibility={versionModal}
-          onCancel={() => versionContext && onSkipVersion(versionContext)}
-          onSubmit={() => versionContext && onUpdateVersion(versionContext)}
-        />
-        {this.renderForm()}
-      </KeyboardPageView>
-    );
+  public unfocus() {
+    this.inputLogin && this.inputLogin.blur();
+    this.inputPassword && this.inputPassword.blur();
   }
 
-  protected renderLogo = () => {
-    return (
-      <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-        <PFLogo />
-      </View>
-    );
-  };
-
   protected renderForm() {
-    const { loggingIn, loggedIn, error, errtype } = this.props.auth;
-    const { login, password, typing, rememberMe } = this.state;
+    const { error, errtype } = this.props.auth;
+    const { login, password, typing, rememberMe, isLoggingIn } = this.state;
     const FederationTextComponent = error ? SmallBoldText : SmallText;
     const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
 
@@ -163,7 +158,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
             <TextInputLine
               inputRef={this.setInputLoginRef}
               placeholder={I18n.t('Login')}
-              onChangeText={(login: string) => this.setState({ login: login.trim().toLowerCase(), typing: true })}
+              onChangeText={this.handleLoginChanged.bind(this)}
               value={login}
               hasError={(error && !typing && !errtype) as boolean}
               keyboardType="email-address"
@@ -175,7 +170,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               isPasswordField
               inputRef={this.setInputPasswordRef}
               placeholder={I18n.t('Password')}
-              onChangeText={(password: string) => this.setState({ password, typing: true })}
+              onChangeText={this.handlePasswordChanged.bind(this)}
               value={password}
               hasError={(error && !typing && !errtype) as boolean}
             />
@@ -220,7 +215,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                   text={I18n.t('Connect')}
                   disabled={this.isSubmitDisabled || !this.props.connected}
                   action={() => this.handleLogin()}
-                  loading={loggingIn || loggedIn}
+                  loading={isLoggingIn && !error}
                 />
               )}
               <View
@@ -264,22 +259,45 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     );
   }
 
-  // Event handlers
-
-  protected async handleLogin() {
-    await this.props.onLogin(
-      this.state.login || this.props.auth.login, // ToDo: fix this TS issue
-      this.state.password,
-      this.state.rememberMe,
+  protected renderLogo = () => {
+    return (
+      <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+        <PFLogo />
+      </View>
     );
-    this.setState({ typing: false });
+  };
+
+  public render() {
+    const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion, navigation } = this.props;
+    const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
+
+    return (
+      <KeyboardPageView
+        navigation={navigation}
+        navBarWithBack={{ title: platformDisplayName }}
+        style={{ backgroundColor: theme.ui.background.card }}>
+        <VersionModal
+          mandatory={versionMandatory}
+          version={version}
+          visibility={versionModal}
+          onCancel={() => versionContext && onSkipVersion(versionContext)}
+          onSubmit={() => versionContext && onUpdateVersion(versionContext)}
+        />
+        {this.renderForm()}
+      </KeyboardPageView>
+    );
   }
 
-  // Other public methods
+  private blurListener?: NavigationEventSubscription;
 
-  public unfocus() {
-    this.inputLogin && this.inputLogin.blur();
-    this.inputPassword && this.inputPassword.blur();
+  public componentDidMount(): void {
+    this.blurListener = this.props.navigation.addListener('didBlur', () => {
+      this.setState({ isLoggingIn: false });
+    });
+  }
+
+  public componentWillUnmount(): void {
+    this.blurListener?.remove();
   }
 }
 

@@ -137,9 +137,12 @@ try {
 
 try {
   if (['alpha', 'rc'].includes(buildType)) {
-    lastContent.last = moment().format('YYYY-MM-DDTHH:mm:ss');
-    lastContent.notes = execSync(`git log --pretty=format:"%s" --since=${lastContent.last}`).toString();
+    // ¡¡¡ Update notes before last !!!
+    lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`).toString();
+    lastContent.last = moment().format('YYYY-MM-DD HH:mm:ss');
     lastContent.version = fullVersion;
+    console.info('=> Release Notes :');
+    console.info(lastContent.notes);
   }
 } catch (error) {
   console.error('!!! Unable to compute last-build !!!');

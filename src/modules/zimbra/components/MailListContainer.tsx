@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -188,7 +189,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
     await this.props.restoreMails(mailsIds);
 
-    Toast.show(I18n.t(mailsIds.length > 1 ? 'zimbra-messages-restored' : 'zimbra-message-restored'));
+    Toast.show(I18n.t(mailsIds.length > 1 ? 'zimbra-messages-restored' : 'zimbra-message-restored'), { ...UI_ANIMATIONS.toast });
     this.onUnselectListMails();
   };
 
@@ -201,7 +202,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
     }
 
-    Toast.show(I18n.t(mailsIds.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'));
+    Toast.show(I18n.t(mailsIds.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
     this.onUnselectListMails();
   };
 
@@ -228,7 +229,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   mailsMoved = () => {
     const listSelected = this.getListSelectedMails();
     this.onUnselectListMails();
-    Toast.show(I18n.t(listSelected.length > 1 ? 'zimbra-messages-moved' : 'zimbra-message-moved'));
+    Toast.show(I18n.t(listSelected.length > 1 ? 'zimbra-messages-moved' : 'zimbra-message-moved'), { ...UI_ANIMATIONS.toast });
   };
 
   public showMoveModal = () => this.setState({ isShownMoveModal: true });

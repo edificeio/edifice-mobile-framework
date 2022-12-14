@@ -1,18 +1,16 @@
 import * as React from 'react';
-import { ActivityIndicator, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, LayoutChangeEvent, StyleProp, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components//picture';
-import { SmallBoldText } from '~/framework/components//text';
+import { SmallBoldText, TextSizeStyle } from '~/framework/components//text';
 import { UI_SIZES } from '~/framework/components/constants';
 import { openUrl } from '~/framework/util/linking';
-import { transformedSrc } from '~/infra/oauth';
 
 export interface ActionButtonProps {
-  text: string;
+  text?: string;
   iconName?: string;
   emoji?: string;
-  showIcon?: boolean;
   action?: () => void;
   url?: string;
   showConfirmation?: boolean;
@@ -28,7 +26,6 @@ export const ActionButton = ({
   text,
   iconName,
   emoji,
-  showIcon = true,
   url,
   showConfirmation = true,
   requireSession = true,
@@ -39,19 +36,29 @@ export const ActionButton = ({
   style,
   onLayout,
 }: ActionButtonProps) => {
-  const Component = disabled ? View : TouchableOpacity;
-  const viewStyle = {
-    primary: {
-      backgroundColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-      opacity: disabled ? 0.5 : 1,
-    },
-    secondary: {
-      borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-      opacity: disabled ? 0.5 : 1,
-      borderWidth: 2,
-      paddingVertical: UI_SIZES.spacing.tiny, // Note: we compendate for "borderWith: 2" so the text doesn't get cropped
-    },
+  const [buttonWidth, setButtonWidth] = React.useState(0);
+  const Component: React.ComponentType<ViewProps> = disabled ? View : TouchableOpacity;
+
+  const commonViewStyle = {
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
+    borderRadius: UI_SIZES.radius.huge,
+    borderWidth: UI_SIZES.elements.actionButtonBorder,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    opacity: disabled ? 0.5 : 1,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
+    width: buttonWidth || undefined,
   };
+
+  const pictureSize = TextSizeStyle.Normal.fontSize! + (TextSizeStyle.Normal.lineHeight! - TextSizeStyle.Normal.fontSize!) / 2;
+
+  const pictureStyle = {
+    marginLeft: UI_SIZES.spacing.minor,
+  };
+
   const textStyle = {
     primary: {
       color: theme.ui.text.inverse,
@@ -60,17 +67,28 @@ export const ActionButton = ({
       color: disabled ? theme.ui.text.light : theme.palette.primary.regular,
     },
   };
+
+  const viewStyle = {
+    primary: {
+      backgroundColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
+    },
+    secondary: {},
+  };
+
   const pictureFill = {
     primary: theme.ui.text.inverse,
     secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
 
-  return loading ? (
-    <ActivityIndicator size="large" color={theme.palette.primary.regular} />
-  ) : (
+  return (
     <Component
-      onLayout={e => onLayout && onLayout(e)}
-      style={[ActionButton.Style.viewCommon, viewStyle[type ?? 'primary'], style]}
+      onLayout={e => {
+        if (!buttonWidth) e.nativeEvent.layout.width += 2 * UI_SIZES.elements.actionButtonBorder;
+        const newWidth = e.nativeEvent.layout.width;
+        if (newWidth !== buttonWidth) setButtonWidth(newWidth);
+        if (onLayout) onLayout(e);
+      }}
+      style={[commonViewStyle, viewStyle[type ?? 'primary'], style]}
       {...(!disabled
         ? {
             onPress: () => {
@@ -78,45 +96,37 @@ export const ActionButton = ({
                 action();
               }
               if (url) {
-                openUrl(transformedSrc(url), undefined, undefined, showConfirmation, requireSession);
+                openUrl(url, undefined, undefined, showConfirmation, requireSession);
               }
             },
           }
+        : {})}
+      {...(loading
+        ? {
+            disabled: true,
+          }
         : {})}>
-      <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined }, textStyle[type ?? 'primary']]}>
-        {text}
-      </SmallBoldText>
-      {showIcon ? (
-        url || iconName ? (
-          <Picture
-            type="NamedSvg"
-            name={iconName || 'pictos-external-link'}
-            width={UI_SIZES.dimensions.width.large}
-            height={UI_SIZES.dimensions.height.large}
-            fill={pictureFill[type ?? 'primary']}
-            style={ActionButton.Style.picture}
-          />
-        ) : emoji ? (
-          <SmallBoldText numberOfLines={1} style={[{ lineHeight: undefined, marginBottom: 1 }]}>
-            {` ${emoji}`}
+      {loading ? (
+        <ActivityIndicator color={textStyle[type ?? 'primary'].color} style={{ height: TextSizeStyle.Normal.lineHeight }} />
+      ) : (
+        <>
+          <SmallBoldText numberOfLines={1} style={textStyle[type ?? 'primary']}>
+            {text}
           </SmallBoldText>
-        ) : null
-      ) : null}
+          {url || iconName ? (
+            <Picture
+              type="NamedSvg"
+              name={iconName || 'pictos-external-link'}
+              width={pictureSize}
+              height={pictureSize}
+              fill={pictureFill[type ?? 'primary']}
+              style={pictureStyle}
+            />
+          ) : emoji ? (
+            <SmallBoldText numberOfLines={1}>{' ' + emoji}</SmallBoldText>
+          ) : null}
+        </>
+      )}
     </Component>
   );
 };
-
-ActionButton.Style = StyleSheet.create({
-  viewCommon: {
-    height: UI_SIZES.dimensions.height.largePlus,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    borderRadius: UI_SIZES.radius.extraLarge,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  picture: {
-    marginLeft: UI_SIZES.spacing.minor,
-  },
-});

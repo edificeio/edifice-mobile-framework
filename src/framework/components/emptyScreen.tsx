@@ -5,13 +5,13 @@
  * Shows a large image (svg) with a title, an optional paragraph and an optional action button.
  */
 import * as React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { ColorValue, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
 import { ActionButton } from './ActionButton';
-import { UI_SIZES } from './constants';
+import { UI_SIZES, getScaleDimension } from './constants';
 import { PageViewStyle } from './page';
 import { HeadingSText, SmallText } from './text';
 
@@ -24,6 +24,8 @@ export const EmptyScreen = ({
   buttonAction,
   buttonIcon,
   customStyle,
+  svgFillColor,
+  textColor,
 }: {
   svgImage: string;
   title: string;
@@ -33,9 +35,11 @@ export const EmptyScreen = ({
   buttonAction?: () => void;
   buttonIcon?: string;
   customStyle?: ViewStyle;
+  svgFillColor?: ColorValue;
+  textColor?: ColorValue;
 }) => {
-  const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.big;
-  const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
+  const imageWidth = getScaleDimension(280, 'image');
+  const imageHeight = getScaleDimension(200, 'image');
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageViewStyle
@@ -46,25 +50,24 @@ export const EmptyScreen = ({
         },
         customStyle,
       ]}>
-      <View style={{ paddingHorizontal: UI_SIZES.spacing.big }}>
-        <View style={{ height: imageHeight }}>
-          <NamedSVG name={svgImage} width={imageWidth} height={imageHeight} />
-        </View>
-      </View>
-      <HeadingSText
-        numberOfLines={2}
-        style={{
-          textAlign: 'center',
-          color: theme.palette.primary.regular,
-          marginTop: UI_SIZES.spacing.large,
-        }}>
-        {title}
-      </HeadingSText>
+      <NamedSVG style={{ alignSelf: 'center' }} name={svgImage} width={imageWidth} height={imageHeight} fill={svgFillColor} />
+      {title ? (
+        <HeadingSText
+          numberOfLines={2}
+          style={{
+            textAlign: 'center',
+            color: textColor ?? theme.palette.primary.regular,
+            marginTop: UI_SIZES.spacing.large,
+          }}>
+          {title}
+        </HeadingSText>
+      ) : null}
       {text ? (
         <SmallText
           // numberOfLines={5}
           style={{
             textAlign: 'center',
+            ...(textColor ? { color: textColor } : {}),
             marginTop: UI_SIZES.spacing.small,
           }}>
           {text}
@@ -72,7 +75,7 @@ export const EmptyScreen = ({
       ) : null}
       {hasButton ? (
         <View style={{ marginTop: UI_SIZES.spacing.large }}>
-          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} iconName={buttonIcon}/>
+          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} iconName={buttonIcon} />
         </View>
       ) : null}
     </PageViewStyle>

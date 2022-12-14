@@ -45,6 +45,11 @@ target 'appe' do
   #pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit"
 
   #
+  # react-native-text-sizze not added automatically
+  #
+  pod 'RNTextSize', :path => "../node_modules/react-native-text-size/ios"
+
+  #
   # React Native Stuff
   #
   use_react_native!(

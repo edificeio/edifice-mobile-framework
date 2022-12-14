@@ -5,6 +5,7 @@ import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -74,7 +75,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     const { navigation } = this.props;
     navigation.state.params.onGoBack?.();
     navigation.navigate('inbox', { key: 'inbox', folderName: undefined });
-    Toast.show(I18n.t('zimbra-message-moved'));
+    Toast.show(I18n.t('zimbra-message-moved'), { ...UI_ANIMATIONS.toast });
   };
 
   markAsRead = () => {
@@ -94,7 +95,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     }
 
     this.goBack();
-    Toast.show(I18n.t('zimbra-message-deleted'));
+    Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
   };
 
   public closeDeleteModal = () => this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
@@ -113,7 +114,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   restore = async () => {
     await this.props.restoreMails([this.props.mail.id]);
     this.goBack();
-    Toast.show(I18n.t('zimbra-message-restored'));
+    Toast.show(I18n.t('zimbra-message-restored'), { ...UI_ANIMATIONS.toast });
   };
 
   goBack = () => {

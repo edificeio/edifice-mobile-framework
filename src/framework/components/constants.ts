@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StatusBar, StyleSheet, TextStyle } from 'react-native';
+import { Dimensions, Platform, StatusBar, StyleSheet } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -8,7 +8,7 @@ const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 const SCALE_DIMENSION_MAX = 1.5;
 const SCALE_DIMENSION_MIN = 0.75;
 
-export const getScaleDimension = (dimension: number, type: 'height' | 'width' | 'font') =>
+export const getScaleDimension = (dimension: number, type: 'height' | 'font' | 'image' | 'width') =>
   Math.round(
     dimension *
       Math.max(
@@ -31,6 +31,9 @@ export const UI_ANIMATIONS = {
     duration: 300,
     useNativeDriver: false,
   },
+  toast: {
+    duration: 3000,
+  },
 };
 
 export const UI_SIZES = {
@@ -45,6 +48,7 @@ export const UI_SIZES = {
       mediumPlus: 20,
       large: 22,
       larger: 24,
+      largerPlus: 28,
       largePlus: 36,
       huge: 38,
     },
@@ -60,8 +64,8 @@ export const UI_SIZES = {
     },
   },
   elements: {
-    actionButtonSize: 20,
-    logoSize: { height: 64, width: 300 },
+    actionButtonBorder: 2,
+    logoSize: { height: getScaleDimension(64, 'height'), width: getScaleDimension(300, 'width') },
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
@@ -76,6 +80,7 @@ export const UI_SIZES = {
     mediumPlus: 16,
     large: 21,
     extraLarge: 24,
+    huge: 48,
   },
   screen: {
     bottomInset: Platform.select({
@@ -116,10 +121,6 @@ export const UI_SIZES = {
   },
 };
 
-export const UI_VALUES = {
-  modalOpacity: 0.4,
-};
-
 export const UI_STYLES = StyleSheet.create({
   row: { flexDirection: 'row' },
   rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
@@ -128,3 +129,7 @@ export const UI_STYLES = StyleSheet.create({
   flexShrink1: { flexShrink: 1 },
   justifyEnd: { justifyContent: 'flex-end' },
 });
+
+export const UI_VALUES = {
+  modalOpacity: 0.4,
+};

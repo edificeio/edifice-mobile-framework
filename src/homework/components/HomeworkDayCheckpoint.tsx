@@ -15,7 +15,7 @@ export interface IHomeworkDayCheckpointProps {
 export const HomeworkDayCheckpoint = ({ date }: IHomeworkDayCheckpointProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
-  const dayColor = theme.color.homework.days[dayOfTheWeek].accent;
+  const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.stone;
   const labelColor = isPastDate ? theme.palette.grey.stone : dayColor;
   const formattedDate = displayDate(date.locale(false), 'short');
   const datePrefix = isPastDate ? '' : `${I18n.t('common.for')} `;

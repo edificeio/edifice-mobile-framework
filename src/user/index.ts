@@ -1,8 +1,8 @@
+import { registerModule } from '~/AppModules';
+
 import userConfig from './config';
 import mainComp from './navigator';
 import mainReducer from './reducers';
-
-import { registerModule } from '~/AppModules';
 
 // Main component
 export const root = mainComp;

@@ -13,7 +13,7 @@ import {
 import userConfig from '~/user/config';
 import { IActivationState } from '~/user/reducers/activation';
 
-const mapStateToProps: (state: any) => IActivationPageDataProps & { version: number } = state => {
+const mapStateToProps: (state: any) => IActivationPageDataProps = state => {
   const activationState: IActivationState = state[userConfig.reducerName].activation;
   return {
     activationCode: activationState.userinfo.activationCode,
@@ -28,7 +28,6 @@ const mapStateToProps: (state: any) => IActivationPageDataProps & { version: num
     phone: activationState.submitted.phone,
     phoneRequired: activationState.context.mandatory.phone,
     submitState: activationState.submitState,
-    version: new Date().getTime(),
   };
 };
 
@@ -48,8 +47,7 @@ const mapDispatchToProps: (dispatch) => IActivationPageEventProps = dispatch => 
 };
 class ActivationPageContainer extends React.PureComponent<IActivationPageProps & { dispatch: any; version: number }, object> {
   public render() {
-    // use the key to recompute state from props
-    return <ActivationPage {...this.props} key={this.props.version + ''} />;
+    return <ActivationPage {...this.props} />;
   }
 }
 

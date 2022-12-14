@@ -19,7 +19,7 @@ export interface ILabelProps extends React.PropsWithChildren<{}>, ViewProps {
   iconStyle?: TextStyle;
   color?: ColorValue;
   labelStyle?: 'plain' | 'outline';
-  labelSize?: 'normal' | 'small' | 'large';
+  labelSize?: 'normal' | 'large';
   textProps?: TextProps;
 }
 
@@ -27,12 +27,7 @@ export interface ILabelProps extends React.PropsWithChildren<{}>, ViewProps {
 
 export const LabelView = styled.View({
   alignSelf: 'baseline',
-  borderRadius: UI_SIZES.radius.large,
-  paddingVertical: UI_SIZES.spacing._LEGACY_small,
-  paddingHorizontal: UI_SIZES.spacing.small,
-});
-export const LabelText = styled(SmallBoldText)({
-  // No common style except bold
+  justifyContent: 'center',
 });
 
 // COMPONENT ======================================================================================
@@ -50,14 +45,8 @@ export default (props: ILabelProps) => {
     ...viewProps
   } = props;
   const LabelViewWithPadding = styled(LabelView)({
-    paddingVertical:
-      labelSize === 'small'
-        ? UI_SIZES.spacing._LEGACY_tiny
-        : labelSize === 'large'
-        ? UI_SIZES.spacing.minor
-        : UI_SIZES.spacing._LEGACY_small,
-    paddingHorizontal:
-      labelSize === 'small' ? UI_SIZES.spacing.minor : labelSize === 'large' ? UI_SIZES.spacing.medium : UI_SIZES.spacing.small,
+    height: labelSize === 'large' ? UI_SIZES.dimensions.height.huge : UI_SIZES.dimensions.height.largerPlus,
+    paddingHorizontal: labelSize === 'large' ? UI_SIZES.spacing.medium : UI_SIZES.spacing.small,
     borderRadius: labelSize === 'large' ? UI_SIZES.radius.extraLarge : UI_SIZES.radius.large,
   });
   const LabelViewWithColor = styled(LabelViewWithPadding)({
@@ -70,20 +59,13 @@ export default (props: ILabelProps) => {
           borderColor: color,
         }),
   });
-  const LabelTextWithColor = styled(LabelText)({
+  const LabelTextWithColor = styled(SmallBoldText)({
     ...(labelStyle === 'plain'
       ? {
           color: theme.ui.text.inverse,
         }
       : {
           color,
-        }),
-    ...(labelSize === 'small'
-      ? {
-          ...TextSizeStyle.Small,
-        }
-      : {
-          ...TextSizeStyle.Normal,
         }),
   });
   return (
@@ -95,7 +77,7 @@ export default (props: ILabelProps) => {
               <Icon
                 name={icon}
                 color={labelStyle === 'plain' ? theme.ui.text.inverse : color}
-                size={labelSize === 'small' ? TextSizeStyle.Small.fontSize : TextSizeStyle.Normal.fontSize}
+                size={TextSizeStyle.Normal.fontSize}
                 style={{
                   marginRight: labelSize === 'large' ? UI_SIZES.spacing.minor : undefined,
                   ...iconStyle,

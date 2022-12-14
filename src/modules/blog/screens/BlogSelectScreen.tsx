@@ -14,10 +14,8 @@ import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-import { getAuthHeader } from '~/infra/oauth';
 import { getPublishableBlogListAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog, IBlogList } from '~/modules/blog/reducer';
@@ -138,7 +136,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
               <GridAvatars
                 users={[
                   blog.thumbnail
-                    ? { headers: getAuthHeader(), uri: DEPRECATED_getCurrentPlatform()!.url + blog.thumbnail }
+                    ? { uri: blog.thumbnail }
                     : require('ASSETS/images/resource-avatar.png'),
                 ]}
                 fallback={require('ASSETS/images/resource-avatar.png')}

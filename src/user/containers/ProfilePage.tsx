@@ -1,6 +1,15 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  KeyboardTypeOptions,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
@@ -10,13 +19,13 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { CaptionText, SmallText } from '~/framework/components/text';
+import { CaptionText, SmallActionText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { formatSource } from '~/framework/util/media';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import Notifier from '~/infra/notifier/container';
-import { signURISource } from '~/infra/oauth';
-import { ButtonLine, ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
+import { ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
 import { PageContainer } from '~/ui/ContainerContent';
 import { changePasswordResetAction } from '~/user/actions/changePassword';
 import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
@@ -83,7 +92,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
             <SafeAreaView>
               <UserCard
                 id={
-                  this.props.userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
+                  this.props.userinfo.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
                 }
                 displayName={this.props.userinfo.displayName!}
                 type={
@@ -95,7 +104,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                     | ('Student' | 'Relative' | 'Teacher' | 'Personnel')[]
                 }
               />
-
               {this.renderItem({
                 title: I18n.t('Login'),
                 getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || this.props.userinfo.login),
@@ -104,49 +112,35 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 validator: { key: 'loginAliasValid', regex: /^[0-9a-z\-\.]+$/ },
                 placeholder: this.props.userinfo.login,
               })}
-
-              {!this.props.userinfo.federated ? (
-                <View {...(isEditMode ? { style: { opacity: 0.33 } } : {})}>
-                  <CaptionText style={{ paddingHorizontal: UI_SIZES.spacing.medium, marginTop: UI_SIZES.spacing.medium }}>
-                    {I18n.t('Password')}
-                  </CaptionText>
-                  <ButtonLine
-                    title="PasswordChange"
-                    disabled={isEditMode}
-                    onPress={() => {
+              {!this.props.userinfo.federated
+                ? this.renderItem({
+                    title: I18n.t('Password'),
+                    getter: () => I18n.t('PasswordPlaceholder'),
+                    modifyAction: () => {
                       this.props.dispatch(changePasswordResetAction());
                       this.props.navigation.navigate('ChangePassword');
-                    }}
-                  />
-                </View>
-              ) : null}
-
+                    },
+                  })
+                : null}
               {this.renderItem({
                 title: I18n.t('Firstname'),
                 getter: () => this.props.userinfo.firstName,
               })}
-
               {this.renderItem({
                 title: I18n.t('Lastname'),
                 getter: () => this.props.userinfo.lastName,
               })}
-
               {this.renderItem({
                 title: I18n.t('DisplayName'),
                 getter: () => this.state.displayName,
                 editable: this.props.userinfo.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
-
               {this.renderItem({
                 title: I18n.t('EmailAddress'),
-                getter: () => this.state.email,
-                editable: true,
-                setter: email => this.setState({ email }),
-                keyboardType: 'email-address',
-                validator: { key: 'emailValid', regex: ValidatorBuilder.MAIL_REGEX },
+                getter: () => this.props.userinfo.email,
+                modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
               })}
-
               {this.renderItem({
                 title: I18n.t('Phone'),
                 getter: () => this.state.homePhone,
@@ -155,7 +149,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 keyboardType: 'phone-pad',
                 validator: { key: 'homePhoneValid', regex: ValidatorBuilder.PHONE_REGEX },
               })}
-
               {this.renderItem({
                 title: I18n.t('CellPhone'),
                 getter: () => this.state.mobile,
@@ -164,7 +157,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 keyboardType: 'phone-pad',
                 validator: { key: 'mobileValid', regex: ValidatorBuilder.PHONE_REGEX },
               })}
-
               {this.renderItem({
                 title: I18n.t('Birthdate'),
                 getter: () =>
@@ -183,6 +175,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     title,
     getter,
     editable = false,
+    modifyAction,
     setter,
     keyboardType,
     validator,
@@ -192,6 +185,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     title: string;
     getter: () => string | undefined;
     editable?: boolean;
+    modifyAction?: () => void;
     setter?: (val: any) => void;
     keyboardType?: KeyboardTypeOptions;
     validator?: { key: keyof IProfilePageState; regex: RegExp };
@@ -220,6 +214,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           {...(placeholderTextColor ? { placeholderTextColor } : {})}>
           <SmallText
             style={{
+              lineHeight: undefined,
               textAlignVertical: 'center',
               color: validator
                 ? this.state[validator.key]
@@ -231,14 +226,24 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           </SmallText>
         </ContainerTextInput>
       ) : (
-        <ContainerView>
-          <SmallText style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</SmallText>
+        <ContainerView style={{ flex: 1, justifyContent: 'space-between' }}>
+          <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
+            {getter()}
+          </SmallText>
+          {modifyAction ? <SmallActionText>{I18n.t('common.modify')}</SmallActionText> : null}
         </ContainerView>
       );
     } else {
       box = (
-        <ContainerView>
-          <SmallText style={{ color: theme.ui.text.light, textAlignVertical: 'center' }}>{getter()}</SmallText>
+        <ContainerView style={{ flex: 1, justifyContent: 'space-between' }}>
+          <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
+            {getter()}
+          </SmallText>
+          {modifyAction ? (
+            <TouchableOpacity onPress={() => modifyAction()}>
+              <SmallActionText>{I18n.t('common.modify')}</SmallActionText>
+            </TouchableOpacity>
+          ) : null}
         </ContainerView>
       );
     }
@@ -290,7 +295,9 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps 
         }
       : {
           title: I18n.t('MyProfile'),
-          right: canEdit ? <HeaderAction onPress={() => navigation.setParams({ edit: true })} text={I18n.t('Edit')} /> : null,
+          right: canEdit ? (
+            <HeaderAction onPress={() => navigation.setParams({ edit: true })} iconName="new_post" iconSize={24} />
+          ) : null,
         };
     return (
       <PageView navigation={navigation} {...(isEditMode ? { navBar: navBarInfo } : { navBarWithBack: navBarInfo })}>

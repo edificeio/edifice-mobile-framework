@@ -3,13 +3,15 @@
  */
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Image, ImageURISource, Platform, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { ImageURISource, Platform, TouchableOpacity, View, ViewStyle } from 'react-native';
 import VideoPlayer from 'react-native-video';
 import VideoPlayerAndroid from 'react-native-video-player';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
+import { Image } from '~/framework/util/media';
+import { urlSigner } from '~/infra/oauth';
 
 import { Loading } from './Loading';
 import { MediaAction } from './MediaAction';
@@ -62,7 +64,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
             {Platform.select({
               ios: (
                 <VideoPlayer
-                  source={source}
+                  source={urlSigner.signURISource(source)}
                   onLoad={() => this.setState({ loaded: true })}
                   onError={() => this.setState({ error: true, loaded: true })}
                   controls
@@ -71,7 +73,7 @@ export default class Player extends React.Component<IPlayerProps, IPlayerState> 
               ),
               android: (
                 <VideoPlayerAndroid
-                  video={source}
+                  video={urlSigner.signURISource(source)}
                   onLoad={() => this.setState({ loaded: true })}
                   onError={() => this.setState({ error: true, loaded: true })}
                   autoplay

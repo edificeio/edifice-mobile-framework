@@ -27,11 +27,11 @@ import { NamedSVGProps, PictureProps } from '~/framework/components/picture';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { IUserSession, getUserSession } from '~/framework/util/session';
-import { signURISource, transformedSrc } from '~/infra/oauth';
 import { fetchBlogsAndFoldersAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog, IBlogFlatTree, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources } from '~/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/modules/blog/rights';
+import { formatSource } from '~/framework/util/media';
 
 // TYPES ==========================================================================================
 
@@ -196,7 +196,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
                 b.created,
               b.modified ?? b.created,
             ),
-            ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'bullhorn' }),
+            ...(thumbnail ? { thumbnail: formatSource(thumbnail) } : { icon: 'bullhorn' }),
           };
         })
         .sort((a, b) => b.date.valueOf() - a.date.valueOf());

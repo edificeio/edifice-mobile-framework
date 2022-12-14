@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import {
-  Image,
   ImageSourcePropType,
   KeyboardAvoidingView,
   Modal,
@@ -19,6 +18,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
+import { Image } from '~/framework/util/media';
 import { Source } from '~/modules/mediacentre/reducer';
 import { ButtonGroup } from '~/ui/ButtonGroup';
 

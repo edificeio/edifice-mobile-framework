@@ -1,10 +1,10 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import HomeworkInitialScreen from './containers/HomeworkInitialScreen';
-import HomeworkExplorerScreen from './containers/HomeworkExplorerScreen';
-import HomeworkTaskListScreen from './containers/HomeworkTaskListScreen';
-import HomeworkTaskDetailsScreen from './containers/HomeworkTaskDetailsScreen';
 import config from './config';
+import HomeworkExplorerScreen from './containers/HomeworkExplorerScreen';
+import HomeworkInitialScreen from './containers/HomeworkInitialScreen';
+import HomeworkTaskDetailsScreen from './containers/HomeworkTaskDetailsScreen';
+import HomeworkTaskListScreen from './containers/HomeworkTaskListScreen';
 
 export const homeworkViews = {
   [`${config.name}`]: {

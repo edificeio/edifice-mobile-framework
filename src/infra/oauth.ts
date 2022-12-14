@@ -4,9 +4,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { encode as btoa } from 'base-64';
 import querystring from 'querystring';
-import { ImageURISource } from 'react-native';
+import { ImageRequireSource, ImageURISource } from 'react-native';
+import { Source } from 'react-native-fast-image';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IMedia } from '~/framework/util/media';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 
@@ -500,7 +502,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
         const url = `${DEPRECATED_getCurrentPlatform()!.url}/auth/oauth2/token?type=queryparam`;
         const data = await this.request(url, {
-          headers: getAuthHeader(),
+          headers: urlSigner.getAuthHeader(),
         });
         currentQueryParamToken = {
           ...data,
@@ -549,113 +551,116 @@ export const createAppScopes = () => {
 };
 export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ...scopes])];
 
-/**
- * Transforms a source to ensure it can be used.
- * @param src
- */
-export function transformedSrc(src: string) {
-  if (!src) return src;
-  return src.startsWith('//') ? `https:${src}` : src.startsWith('/') ? `${DEPRECATED_getCurrentPlatform()!.url}${src}` : src;
-}
+///////
+// URL Signer
+// Ensure specified string url is absolute
+///////
 
-/**
- * Returns if the given url need to be signed.
- * An url must be signed if it point to the current platform.
- * If the url contains a protocol identifier, it noot be signed.
- * @param absoluteUrl
- */
-export function getIsUrlSignable(absoluteUrl: string): boolean {
-  return absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf(DEPRECATED_getCurrentPlatform()!.url) !== -1;
-}
+export const urlSigner = {
+  /**
+   * Prepend url with domain name if needed.
+   */
+  getAbsoluteUrl: (url?: string) => {
+    return (
+      url && (url.startsWith('//') ? `https:${url}` : url.startsWith('/') ? `${DEPRECATED_getCurrentPlatform()!.url}${url}` : url)
+    );
+  },
 
-/**
- * Returns an empty signed request, just to get the authorisation header.
- */
-export function getDummySignedRequest() {
-  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] getDummySignedRequest: no token');
-  return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
-}
-/**
- * Returns an headers object containing only the authorisation header.
- */
-export function getAuthHeader(): { Authorization: string } {
-  const ret = { Authorization: getDummySignedRequest().headers.get('Authorization') };
-  if (!ret.Authorization) throw new Error('[oAuth] getAuthHeader: empty auth header');
-  return ret as { Authorization: string };
-}
+  /**
+   * Remove domain, protocol & searchParams from url
+   * @param absoluteUrl
+   * @returns
+   */
+  getRelativeUrl: (absoluteUrl?: string) => {
+    return absoluteUrl && absoluteUrl.replace(DEPRECATED_getCurrentPlatform()!.url, '').split('?')[0];
+  },
 
-/**
- * Returns a signed request from an url or a request
- */
-export function signRequest(requestInfo: RequestInfo): RequestInfo {
-  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signRequest: no token');
+  /**
+   * Returns if the given url need to be signed.
+   * An url must be signed if it point to the current platform.
+   * If the url contains a protocol identifier, it not be signed.
+   */
+  getIsUrlSignable: (absoluteUrl?: string) => {
+    return absoluteUrl && (absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf(DEPRECATED_getCurrentPlatform()!.url) !== -1);
+  },
 
-  if (requestInfo instanceof Request) {
-    return getIsUrlSignable(requestInfo.url) ? OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) : requestInfo;
-  } else {
-    /* requestInfo is string */
-    return getIsUrlSignable(requestInfo) ? OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) : requestInfo;
-  }
-}
+  /**
+   * Returns an empty signed request, just to get the authorisation header.
+   * Caution: That request and its properties are read-only.
+   */
+  getDummySignedRequest: () => {
+    if (!OAuth2RessourceOwnerPasswordClient.connection)
+      throw new Error('[oAuth2] urlSigner.getDummySignedRequest: no active token');
+    return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
+  },
 
-/**
- * Returns a signed URISource from a url or an imageURISource.
- */
-export function signURISource(URISource: ImageURISource | string): ImageURISource {
-  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signURISource: no token');
+  /**
+   * Returns an headers object containing only the authorisation header.
+   * Caution: That header is read-only, use its just before sending the requests.
+   */
+  getAuthHeader: () => {
+    const ret = { Authorization: urlSigner.getDummySignedRequest().headers.get('Authorization') };
+    if (!ret.Authorization) throw new Error('[oAuth2] urlSigner.getAuthHeader: empty auth header');
+    return ret as { Authorization: string };
+  },
 
-  if (typeof URISource === 'object') {
-    if (!URISource.uri) throw new Error('[oAuth] signURISource: no uri');
-    if (getIsUrlSignable(URISource.uri)) {
-      return { ...URISource, headers: { ...URISource.headers, ...getAuthHeader() } };
+  /**
+   * Returns a signed request from an url or a request
+   */
+  signRequest: (requestInfo: RequestInfo) => {
+    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signRequest: no token');
+
+    if (requestInfo instanceof Request) {
+      return urlSigner.getIsUrlSignable(requestInfo.url)
+        ? OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo)
+        : (requestInfo as RequestInfo);
     } else {
-      return URISource;
+      /* requestInfo is string */
+      return urlSigner.getIsUrlSignable(requestInfo)
+        ? OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo)
+        : (requestInfo as RequestInfo);
     }
-  } else {
-    /* URISource is string */
-    if (getIsUrlSignable(URISource)) {
-      return { uri: URISource, headers: getAuthHeader() };
+  },
+
+  /**
+   * Returns a signed URISource from a url or an imageURISource.
+   */
+  signURISource: (URISource: ImageURISource | string | ImageRequireSource | ImageURISource[] | Source | undefined) => {
+    if (URISource === undefined) return URISource;
+    if (typeof URISource === 'number') return URISource;
+    if (Array.isArray(URISource)) {
+      return URISource.map(urlSigner.signURISource);
+    }
+    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signURISource: no token');
+
+    if (typeof URISource === 'object') {
+      if (!URISource.uri) throw new Error('[oAuth] signURISource: no uri');
+      const absUri = urlSigner.getAbsoluteUrl(URISource.uri)!;
+      if (urlSigner.getIsUrlSignable(absUri)) {
+        return { ...URISource, uri: absUri, headers: { ...URISource.headers, ...urlSigner.getAuthHeader() } };
+      } else {
+        return { ...URISource, uri: absUri };
+      }
     } else {
-      return { uri: URISource };
+      /* URISource is string */
+      const absUri = urlSigner.getAbsoluteUrl(URISource);
+      if (urlSigner.getIsUrlSignable(absUri)) {
+        return { uri: absUri, headers: urlSigner.getAuthHeader() };
+      } else {
+        return { uri: absUri };
+      }
     }
-  }
-}
+  },
 
-/**
- * Returns a signed URISource from a url or an imageURISource for all items in the given array.
- * @param images
- */
-export function signURISourceArray(
-  URISources: { src: ImageURISource | string; alt: string }[],
-): { src: ImageURISource | string; alt: string }[] {
-  return URISources.map(URISource => ({ ...URISource, src: signURISource(URISource.src) }));
-}
+  /**
+   * Returns a signed URISource from a url or an imageURISource for all items in the given array.
+   * @param images
+   */
+  signURISourceArray: (URISources: { src: ImageURISource | string }[]) => {
+    return URISources.map(URISource => ({ ...URISource, src: urlSigner.signURISource(URISource.src) }));
+  },
 
-// ============ DEPRECATED SECTION ============= //
-
-/**
- * Returns a image array with signed url requests.
- */
-export function DEPRECATED_signImagesUrls(images: { src: string; alt: string }[]): { src: ImageURISource; alt: string }[] {
-  return images.map(v => ({
-    ...v,
-    src: DEPRECATED_signImageURISource(v.src),
-  }));
-}
-
-/**
- * Build a signed request from an url.
- * This function skip the signing if url points to an another web domain.
- */
-export function DEPRECATED_signImageURISource(url: string): ImageURISource {
-  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signUrl: no token');
-  // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
-  if (url.indexOf('://') !== -1 && url.indexOf(DEPRECATED_getCurrentPlatform()!.url) === -1) {
-    return { uri: url };
-  }
-  return {
-    method: 'GET',
-    uri: url,
-    headers: getAuthHeader(),
-  };
-}
+  getSourceURIAsString(URISource: ImageURISource | string) {
+    return typeof URISource === 'string' ? URISource : URISource.uri;
+  },
+};

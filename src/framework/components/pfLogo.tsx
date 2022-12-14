@@ -8,11 +8,12 @@ import React from 'react';
 import { Picture } from '~/framework/components//picture';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Image } from '../util/media';
 
 const logoHeight = 64;
 const logoWidth = 300;
 
-const ImageLogo = styled.Image({
+const ImageLogo = styled(Image)({
   height: logoHeight,
   resizeMode: 'contain',
   width: logoWidth,

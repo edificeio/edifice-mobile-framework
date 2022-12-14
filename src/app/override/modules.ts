@@ -1,6 +1,7 @@
 export default [
   require('~/modules/blog'),
   require('~/modules/conversation'),
+  require('~/modules/form'),
   require('~/modules/lvs'),
   require('~/modules/mediacentre'),
   require('~/modules/news'),

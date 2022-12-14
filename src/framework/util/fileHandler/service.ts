@@ -18,7 +18,7 @@ import RNFS, {
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { assertPermissions } from '~/framework/util/permissions';
 import { IUserSession } from '~/framework/util/session';
-import { getAuthHeader } from '~/infra/oauth';
+import { urlSigner } from '~/infra/oauth';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 
@@ -61,7 +61,7 @@ const fileTransferService = {
       toUrl: url,
       method: 'POST',
       fields: { ...params.fields },
-      headers: { ...getAuthHeader(), ...params.headers },
+      headers: { ...urlSigner.getAuthHeader(), ...params.headers },
       binaryStreamOnly: params.binaryStreamOnly,
       begin: callbacks?.onBegin,
       progress: callbacks?.onProgress,
@@ -146,7 +146,7 @@ const fileTransferService = {
     const folderDest = `${RNFS.DocumentDirectoryPath}${file.url}`;
     const downloadDest = `${folderDest}/${file.filename}`;
     const downloadUrl = `${DEPRECATED_getCurrentPlatform()?.url}${file.url}`;
-    const headers = { ...getAuthHeader() };
+    const headers = { ...urlSigner.getAuthHeader() };
     const localFile = new LocalFile(
       {
         filename: file.filename!,

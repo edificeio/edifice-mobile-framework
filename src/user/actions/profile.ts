@@ -42,7 +42,7 @@ export const profileUpdateErrorAction = profileUpdateActionBuilder(actionTypePro
 
 // THUNKS
 
-export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar: boolean) {
+export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar?: boolean) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
     const notifierId = `profile${updateAvatar ? 'One' : 'Two'}`;
     const notifierSuccessText = I18n.t(`ProfileChange${updateAvatar ? 'Avatar' : ''}Success`);

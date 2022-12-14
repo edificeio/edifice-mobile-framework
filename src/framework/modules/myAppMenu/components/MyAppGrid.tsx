@@ -68,7 +68,7 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
 
   private renderFooter() {
     return (
-      <View style={{ height: Platform.OS === 'android' ? 40 : undefined }}>
+      <>
         <ActionButton text={I18n.t('myapp-accessWeb')} url="/welcome" type="secondary" />
         <InfoBubble
           infoText={I18n.t('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}
@@ -77,7 +77,7 @@ class MyAppGrid extends React.PureComponent<MyAppGrid_Props> {
           infoBubbleType="floating"
           infoBubbleId="myAppsScreen.redirect"
         />
-      </View>
+      </>
     );
   }
 

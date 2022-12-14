@@ -7,8 +7,7 @@ import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import Label from '~/framework/components/label';
-import { CaptionBoldText, SmallBoldText, SmallText, TextFontStyle } from '~/framework/components/text';
+import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
@@ -66,12 +65,7 @@ export const BlogPostResourceCard = ({
         title={
           <>
             {state === 'SUBMITTED' ? (
-              <Label
-                text={I18n.t('blog.post.needValidation')}
-                color={theme.palette.status.warning}
-                labelStyle="outline"
-                labelSize="small"
-              />
+              <SmallBoldText style={{ color: theme.palette.status.warning }}>{I18n.t('blog.post.needValidation')}</SmallBoldText>
             ) : null}
             <ContentCardTitle>{title}</ContentCardTitle>
           </>
