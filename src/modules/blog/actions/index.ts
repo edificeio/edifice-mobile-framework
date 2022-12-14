@@ -191,6 +191,19 @@ export const publishBlogPostAction =
   };
 
 /**
+ * Delete a blog post.
+ * Info: no reducer is used in this action.
+ */
+export const deleteBlogPostAction = (blogPostId: { blogId: string; postId: string }) => async () => {
+  try {
+    const session = getUserSession();
+    return blogService.post.delete(session, blogPostId);
+  } catch (e) {
+    // ToDo: Error handling
+  }
+};
+
+/**
  * Publish a comment for a given blog post.
  * Info: no reducer is used in this action.
  */

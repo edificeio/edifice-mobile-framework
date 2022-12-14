@@ -206,6 +206,8 @@
   "common.publish": "Publier",
   "common.quit": "Quitter",
   "common.readMore": "lire plus",
+  "common.deletionPostBlogTitle": "Supprimer le billet",
+  "common.deletionPostBlogText": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer le billet ?",
   "common.redirect.browser.error": "Erreur lors de la redirection.",
   "common.redirect.browser.message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
   "common.redirect.browser.title": "Redirection sur le navigateur",

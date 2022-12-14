@@ -3,14 +3,11 @@
  */
 import moment from 'moment';
 
-
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { IUserSession } from '~/framework/util/session';
-import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetch, signedFetchJson } from '~/infra/fetchWithCache';
 import { IBlog, IBlogFolder, IBlogList, IBlogPost, IBlogPostComments, IBlogPostList } from '~/modules/blog/reducer';
-
 
 export interface IEntcoreBlog {
   _id: string;
@@ -223,7 +220,7 @@ export const blogService = {
       if (typeof state === 'string') stateAsArray = [state];
       else stateAsArray = state;
       let api = `/blog/post/list/all/${blogId}?content=true`;
-      if (stateAsArray) api += `&states=${stateAsArray.join(',')}`
+      if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
       const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList;
       return blogPosts;
@@ -239,7 +236,7 @@ export const blogService = {
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
       const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList;
       return blogPosts;
-    }
+    },
   },
   post: {
     get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, state?: string) => {
@@ -272,6 +269,13 @@ export const blogService = {
     publish: async (session: IUserSession, blogId: string, postId: string) => {
       const api = `/blog/post/publish/${blogId}/${postId}`;
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
+    },
+    delete: async (session: IUserSession, blogPostId: { blogId: string; postId: string }) => {
+      const { blogId, postId } = blogPostId;
+      const api = `/blog/post/${blogId}/${postId}`;
+      return signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'DELETE',
+      }) as Promise<Response>;
     },
   },
   comments: {
