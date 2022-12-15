@@ -1,12 +1,14 @@
 /**
  * Homework assistance actions
  */
+import { Moment } from 'moment';
 import { ThunkAction } from 'redux-thunk';
 
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
-import { IConfig, actionTypes } from '~/modules/homeworkAssistance/reducer';
+import { IConfig, IService, actionTypes } from '~/modules/homeworkAssistance/reducer';
 import { homeworkAssistanceService } from '~/modules/homeworkAssistance/service';
+import { IChild } from '~/modules/viescolaire/dashboard/state/children';
 
 /**
  * Fetch the config.
@@ -31,7 +33,7 @@ export const fetchHomeworkAssistanceConfigAction =
  */
 export const homeworkAssistanceServicesActionsCreators = createAsyncActionCreators(actionTypes.services);
 export const fetchHomeworkAssistanceServicesAction =
-  (): ThunkAction<Promise<string[]>, any, any, any> => async (dispatch, getState) => {
+  (): ThunkAction<Promise<IService[]>, any, any, any> => async (dispatch, getState) => {
     try {
       const session = getUserSession();
       dispatch(homeworkAssistanceServicesActionsCreators.request());
@@ -41,5 +43,46 @@ export const fetchHomeworkAssistanceServicesAction =
     } catch (e) {
       dispatch(homeworkAssistanceServicesActionsCreators.error(e as Error));
       throw e;
+    }
+  };
+
+/**
+ * Send the filled request.
+ */
+export const postHomeworkAssistanceRequestAction =
+  (
+    service: IService,
+    phoneNumber: string,
+    date: Moment,
+    time: Moment,
+    student: IChild | null,
+    structureName: string,
+    className: string,
+    information: string,
+  ) =>
+  async (dispatch, getState) => {
+    try {
+      const session = getUserSession();
+      const firstName = student?.firstName ?? session.user.firstName;
+      const lastName = student?.lastName ?? session.user.lastName;
+      const response = await homeworkAssistanceService.service.addRequest(
+        session,
+        service,
+        phoneNumber,
+        date,
+        time,
+        firstName,
+        lastName,
+        structureName,
+        className,
+        information,
+      );
+      if (response.status === 'OK') {
+        Promise.resolve();
+      } else {
+        Promise.reject(response);
+      }
+    } catch (e) {
+      return Promise.reject(e);
     }
   };
