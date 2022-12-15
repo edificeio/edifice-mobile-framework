@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-13 18:08:22",
-  "notes": "feat(homework-assistance): AMV2-407, homework assistance home screen\nfix(i18n): MB-1085, rename share i18n keys correctly\nSquashed commit of the following:",
-  "version": "1.9.1-alpha.1(1090101)",
+  "last": "2022-12-15 17:15:22",
+  "notes": "fix(auth): MB-388 show password rules on activation screen\nfix(auth): MB-388, MB-847 use new context api for login & change password\nfix(cgu): MB-1087, Legal notice not shown on Android\nfeat(homework-assistance): AMV2-408, request screen\nSquashed commit of the following:\nrelease: 1.9.1-alpha.1(1090101)",
+  "version": "1.9.1-alpha.2(1090102)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
