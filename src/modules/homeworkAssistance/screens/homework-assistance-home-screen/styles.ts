@@ -5,7 +5,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'space-between',
     margin: UI_SIZES.spacing.big,
   },
@@ -15,7 +15,7 @@ export default StyleSheet.create({
   backgroundImage: {
     position: 'absolute',
     right: -UI_SIZES.spacing.major,
-    bottom: '15%',
+    bottom: '10%',
     maxHeight: 300,
   },
   rowContainer: {
@@ -26,9 +26,14 @@ export default StyleSheet.create({
   secondaryText: {
     marginLeft: UI_SIZES.spacing.minor,
   },
-  actionContainer: {
-    marginBottom: UI_SIZES.spacing.big,
+  actionContainerEnabled: {
     backgroundColor: theme.palette.secondary.regular,
     borderColor: theme.palette.secondary.regular,
+    opacity: 1,
+  },
+  actionContainerDisabled: {
+    backgroundColor: theme.ui.text.light,
+    borderColor: theme.ui.text.light,
+    opacity: 0.5,
   },
 });

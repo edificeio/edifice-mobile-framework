@@ -4,16 +4,24 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  contentContainer: {
-    flex: 1,
+  container: {
+    padding: UI_SIZES.spacing.medium,
+    flexGrow: 1,
     justifyContent: 'space-between',
-    margin: UI_SIZES.spacing.medium,
+  },
+  dropdownContainer: {
+    marginBottom: UI_SIZES.spacing.medium,
+    borderColor: theme.palette.primary.regular,
+    borderWidth: 1,
+  },
+  dropdownText: {
+    color: theme.ui.text.regular,
   },
   textMargin: {
     marginBottom: UI_SIZES.spacing.minor,
   },
   phoneNumberInput: {
-    marginBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
@@ -22,11 +30,10 @@ export default StyleSheet.create({
     color: theme.ui.text.regular,
   },
   rowContainer: {
+    marginBottom: UI_SIZES.spacing.medium,
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  dateMargin: {
-    marginBottom: UI_SIZES.spacing.medium,
+    alignItems: 'center',
   },
   informationInput: {
     marginBottom: UI_SIZES.spacing.medium,
@@ -38,8 +45,16 @@ export default StyleSheet.create({
     height: 100,
     color: theme.ui.text.regular,
   },
-  actionContainer: {
+  actionContainerEnabled: {
+    marginBottom: UI_SIZES.spacing.medium,
     backgroundColor: theme.palette.secondary.regular,
     borderColor: theme.palette.secondary.regular,
+    opacity: 1,
+  },
+  actionContainerDisabled: {
+    marginBottom: UI_SIZES.spacing.medium,
+    backgroundColor: theme.ui.text.light,
+    borderColor: theme.ui.text.light,
+    opacity: 0.5,
   },
 });

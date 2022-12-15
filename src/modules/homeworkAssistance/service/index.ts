@@ -1,8 +1,9 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { IConfig, IExclusion } from '~/modules/homeworkAssistance/reducer';
+import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { IConfig, IExclusion, IService } from '~/modules/homeworkAssistance/reducer';
 
 interface IBackendHomeworkAssistanceExclusion {
   start: string;
@@ -47,8 +48,8 @@ type IBackendHomeworkAssistanceServices = {
 
 const homeworkAssistanceExclusionAdapter = (exclusion: IBackendHomeworkAssistanceExclusion) => {
   return {
-    start: moment(exclusion.start),
-    end: moment(exclusion.start),
+    start: moment(exclusion.start, 'DD/MM/YYYY'),
+    end: moment(exclusion.start, 'DD/MM/YYYY'),
   } as IExclusion;
 };
 
@@ -73,21 +74,20 @@ const homeworkAssistanceConfigAdapter = (config: IBackendHomeworkAssistanceConfi
         sunday: config.settings.opening_days.sunday,
       },
       openingTime: {
-        start: {
-          hour: config.settings.opening_time.start.hour,
-          minute: config.settings.opening_time.start.minute,
-        },
-        end: {
-          hour: config.settings.opening_time.end.hour,
-          minute: config.settings.opening_time.end.minute,
-        },
+        start: moment(`${config.settings.opening_time.start.hour}:${config.settings.opening_time.start.minute}`, 'HH:mm'),
+        end: moment(`${config.settings.opening_time.end.hour}:${config.settings.opening_time.end.minute}`, 'HH:mm'),
       },
     },
   } as IConfig;
 };
 
 const homeworkAssistanceServicesAdapter = (services: IBackendHomeworkAssistanceServices) => {
-  return Object.keys(services);
+  return Object.entries(services).map(([key, value]) => {
+    return {
+      label: key,
+      value,
+    } as IService;
+  });
 };
 
 export const homeworkAssistanceService = {
@@ -103,6 +103,44 @@ export const homeworkAssistanceService = {
       const api = '/homework-assistance/services/all';
       const services = (await fetchJSONWithCache(api)) as IBackendHomeworkAssistanceServices;
       return homeworkAssistanceServicesAdapter(services);
+    },
+  },
+  service: {
+    addRequest: async (
+      session: IUserSession,
+      service: IService,
+      phoneNumber: string,
+      date: Moment,
+      time: Moment,
+      firstName: string,
+      lastName: string,
+      structure: string,
+      className: string,
+      information: string,
+    ) => {
+      const api = `/homework-assistance/services/${service.value}/callback`;
+      const body = JSON.stringify({
+        destination: phoneNumber,
+        callback_date: date.format(),
+        callback_time: {
+          hour: time.format('HH'),
+          minute: Number(time.format('mm')),
+        },
+        userdata: {
+          prenom: firstName,
+          nom: lastName,
+          etablissement: structure,
+          classe: className,
+          matiere: service.label,
+          service: service.value,
+        },
+        informations_complementaires: information,
+      });
+      const response = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'POST',
+        body,
+      })) as { status: string };
+      return response;
     },
   },
 };

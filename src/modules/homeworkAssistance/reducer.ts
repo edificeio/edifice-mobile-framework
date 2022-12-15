@@ -1,9 +1,10 @@
 /**
  * Homework assistance Reducer
  */
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
+import { getDayOfTheWeek } from '~/framework/util/date';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/workspace/moduleConfig';
 
@@ -34,28 +35,27 @@ export interface IConfig {
       sunday: boolean;
     };
     openingTime: {
-      start: {
-        hour: string;
-        minute: string;
-      };
-      end: {
-        hour: string;
-        minute: string;
-      };
+      start: Moment;
+      end: Moment;
     };
   };
+}
+
+export interface IService {
+  label: string;
+  value: number;
 }
 
 // State
 
 interface IHomeworkAssistance_StateData {
   config?: IConfig;
-  services: string[];
+  services: IService[];
 }
 
 export interface IHomeworkAssistance_State {
   config: AsyncState<IConfig>;
-  services: AsyncState<string[]>;
+  services: AsyncState<IService[]>;
 }
 
 // Reducer
@@ -73,3 +73,24 @@ export default combineReducers({
   config: createSessionAsyncReducer(initialState.config, actionTypes.config),
   services: createSessionAsyncReducer(initialState.services, actionTypes.services),
 });
+
+// Getters
+
+export const getIsRequestValid = (
+  config: IConfig,
+  service: number | null,
+  phoneNumber: string,
+  date: Moment,
+  time: Moment,
+): boolean => {
+  const { openingDays, exclusions, openingTime } = config.settings;
+  if (!service || !phoneNumber) return false;
+  const weekday = getDayOfTheWeek(date);
+  const allowedWeekDays = Object.keys(openingDays).filter(day => openingDays[day]);
+  if (!allowedWeekDays.includes(weekday)) return false;
+  for (const exclusion of exclusions) {
+    if (date.isSameOrAfter(exclusion.start, 'day') && date.isSameOrBefore(exclusion.end, 'day')) return false;
+  }
+  if (!time.isBetween(openingTime.start, openingTime.end, undefined, '[]')) return false;
+  return true;
+};

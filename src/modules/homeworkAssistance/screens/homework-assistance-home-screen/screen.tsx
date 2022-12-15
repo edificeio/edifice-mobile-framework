@@ -84,6 +84,7 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreen_Props
   const renderInformation = () => {
     const { header, body, days, time, info } = props.config.messages;
     const userType = props.session.user.type;
+    const isActionDisabled = ![UserType.Student, UserType.Relative].includes(userType);
     return (
       <SafeAreaView style={styles.container}>
         <BodyBoldText style={styles.primaryText}>{header}</BodyBoldText>
@@ -107,8 +108,8 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreen_Props
         <ActionButton
           text={I18n.t('homeworkAssistance.makeARequest')}
           action={() => goToRequest()}
-          disabled={![UserType.Student, UserType.Relative].includes(userType)}
-          style={styles.actionContainer}
+          disabled={isActionDisabled}
+          style={isActionDisabled ? styles.actionContainerDisabled : styles.actionContainerEnabled}
         />
       </SafeAreaView>
     );
