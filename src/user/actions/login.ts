@@ -11,7 +11,7 @@ import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oaut
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
-import { userService } from '~/user/service';
+import { IEntcoreEmailValidationInfos, IUserAuthContext, userService } from '~/user/service';
 
 import {
   actionTypeLoggedIn,
@@ -140,16 +140,19 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 3: Gather user email validation infos
-      // Temporary disabled until backend is implemented.
-      // let emailValidationInfos;
-      // try {
-      //   emailValidationInfos = await userService.getEmailValidationInfos();
-      // } catch (err) {
-      //   throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
-      // }
+      // === 3: Gather user mandatory context
+      let userAuthContext: IUserAuthContext;
+      try {
+        userAuthContext = await fetchJSONWithCache('/auth/context');
+        if (!userAuthContext.mandatory) {
+          throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '');
+        }
+      } catch (err) {
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
+      }
 
       // === 4: check user validity
+
       if (userinfo2.deletePending) {
         const err = new Error('[loginAction]: User is predeleted.');
         (err as any).type = LoginFlowErrorType.PRE_DELETED;
@@ -158,23 +161,29 @@ export function loginAction(
         const err = new Error("[loginAction]: User's structure is not premium.");
         (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
         throw err;
-      } else if (userinfo2.forceChangePassword) {
+      } else if (userAuthContext.mandatory!.forceChangePassword) {
         const err = new Error('[loginAction]: User must change password.');
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
-      } // Tmp Workaround : we use this flag detection only for Recette Paris (remove once email verification is ready on all PF's)
-      else if (pf.url === 'https://recette-paris.opendigitaleducation.com' && !emailValidationInfos?.emailState?.valid) {
+      } else if (userAuthContext.mandatory!.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
-        (err as any).type = LoginFlowErrorType.MUST_VERIFY_EMAIL;
-        (err as any).emailValidationInfos = emailValidationInfos;
+        try {
+          const emailValidationInfos = await userService.getEmailValidationInfos();
+          (err as any).type = LoginFlowErrorType.MUST_VERIFY_EMAIL;
+          (err as any).emailValidationInfos = {
+            ...emailValidationInfos,
+          } as IEntcoreEmailValidationInfos;
+        } catch (e) {
+          throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', e as Error);
+        }
         throw err;
-      } // Tmp Workaround : we bypass this flag detection
-      /* else if (userinfo2.needRevalidateTerms) {
+      } else if (userAuthContext.mandatory!.needRevalidateTerms) {
         const err = new Error('[loginAction]: User must revalidate terms.');
         (err as any).type = LoginFlowErrorType.MUST_REVALIDATE_TERMS;
         throw err;
-      } */
+      }
+
       // === 5: Gather another user information
       let userdata: any, userPublicInfo: any;
       try {

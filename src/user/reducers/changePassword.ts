@@ -2,21 +2,23 @@ import { AnyAction } from 'redux';
 
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 import {
-  IChangePasswordUserInfo,
-  IChangePasswordModel,
-  actionTypeActivationContext,
-  IChangePasswordContextRequestedAction,
   IChangePasswordContextFetchedAction,
+  IChangePasswordContextRequestedAction,
+  IChangePasswordModel,
   IChangePasswordSubmitErrorAction,
-  actionTypeChangePasswordSubmit,
   IChangePasswordSubmitRequestedAction,
+  IChangePasswordUserInfo,
+  actionTypeActivationContext,
   actionTypeChangePasswordReset,
+  actionTypeChangePasswordSubmit,
 } from '~/user/actions/changePassword';
-import { SubmitState, ContextState, IActivationContext } from '~/utils/SubmitState';
+import { ContextState, IActivationContext, SubmitState } from '~/utils/SubmitState';
+
+import { IUserAuthContext } from '../service';
 
 export interface IChangePasswordState {
   isPerforming: boolean;
-  context: IActivationContext;
+  context: IUserAuthContext;
   userinfo: IChangePasswordUserInfo;
   submitted: IChangePasswordModel;
   submitState: SubmitState;
@@ -30,7 +32,8 @@ export const stateDefault: IChangePasswordState = {
   isPerforming: false,
   context: {
     cgu: true,
-    passwordRegex: '',
+    passwordRegex: /''/,
+    passwordRegexI18n: {},
     mandatory: { mail: false, phone: false },
   },
   submitted: {

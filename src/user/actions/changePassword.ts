@@ -3,13 +3,14 @@ import { Action, AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
-import { IActivationContext } from '~/utils/SubmitState';
-import { getUserSession } from '~/framework/util/session';
+
+import { IUserAuthContext } from '../service';
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ export interface IChangePasswordSubmitPayload {
 // ACTION INTERFACES --------------------------------------------------------------------------------
 
 export interface IChangePasswordContextFetchedAction extends Action {
-  context: IActivationContext;
+  context: IUserAuthContext;
 }
 
 export interface IChangePasswordContextRequestedAction extends Action {
@@ -61,7 +62,7 @@ export const actionTypeChangePasswordReset = userConfig.createActionType('CHANGE
 function changePasswordContextRequestedAction(args: IChangePasswordUserInfo): IChangePasswordContextRequestedAction {
   return { type: actionTypeActivationContext.requested, userinfo: args };
 }
-function changePasswordContextReceivedAction(context: IActivationContext): IChangePasswordContextFetchedAction {
+function changePasswordContextReceivedAction(context: IUserAuthContext): IChangePasswordContextFetchedAction {
   return { type: actionTypeActivationContext.received, context };
 }
 function changePasswordContextErrorAction(): Action {
@@ -94,7 +95,7 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
         dispatch(changePasswordContextErrorAction());
         return;
       }
-      const activationContext: IActivationContext = await res.json();
+      const activationContext: IUserAuthContext = await res.json();
       dispatch(changePasswordContextReceivedAction(activationContext));
       return initChangePasswordAction;
     } catch (e) {
