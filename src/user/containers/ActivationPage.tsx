@@ -25,6 +25,7 @@ const mapStateToProps: (state: any) => IActivationPageDataProps = state => {
     login: activationState.userinfo.login,
     password: activationState.submitted.password,
     passwordRegex: activationState.context.passwordRegex,
+    passwordRegexI18n: activationState.context.passwordRegexI18n,
     phone: activationState.submitted.phone,
     phoneRequired: activationState.context.mandatory.phone,
     submitState: activationState.submitState,
