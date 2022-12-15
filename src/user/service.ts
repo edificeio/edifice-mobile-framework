@@ -5,6 +5,7 @@ import AppLink from 'react-native-app-link';
 import DeviceInfo from 'react-native-device-info';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
@@ -66,10 +67,30 @@ function _compareVersion(version1: string, version2: string) {
   // Otherwise they are the same.
   return 0;
 }
+
+export interface IUserAuthContext {
+  callBack?: string;
+  cgu: boolean;
+  passwordRegex: RegExp;
+  passwordRegexI18n: { [lang: string]: string };
+  mandatory?: {
+    // Only if user is logged
+    forceChangePassword?: boolean;
+    needRevalidateEmail?: boolean;
+    needRevalidateTerms?: boolean;
+    // No needed session
+    mail?: boolean;
+    phone?: boolean;
+  };
+}
+
 class UserService {
   static FCM_TOKEN_TODELETE_KEY = 'users.fcmtokens.todelete';
+
   lastRegisteredToken: string;
+
   pendingRegistration: 'initial' | 'delayed' | 'registered' = 'initial';
+
   constructor() {
     Connection.onEachNetworkBack(async () => {
       if (this.pendingRegistration == 'delayed') {
@@ -78,12 +99,14 @@ class UserService {
       this._cleanQueue();
     });
   }
+
   private async _cleanQueue() {
     const tokens = await this._getTokenToDeleteQueue();
     tokens.forEach(token => {
       this.unregisterFCMToken(token);
     });
   }
+
   private async _getTokenToDeleteQueue(): Promise<string[]> {
     try {
       const tokensCached = await AsyncStorage.getItem(UserService.FCM_TOKEN_TODELETE_KEY);
@@ -98,6 +121,7 @@ class UserService {
     }
     return [];
   }
+
   private async _addTokenToDeleteQueue(token: string) {
     if (!token) {
       return;
@@ -109,6 +133,7 @@ class UserService {
     const json = JSON.stringify(Array.from(new Set(tokens)));
     await AsyncStorage.setItem(UserService.FCM_TOKEN_TODELETE_KEY, json);
   }
+
   private async _removeTokenFromDeleteQueue(token: string) {
     if (!token) {
       return;
@@ -119,6 +144,7 @@ class UserService {
     const json = JSON.stringify(tokens);
     await AsyncStorage.setItem(UserService.FCM_TOKEN_TODELETE_KEY, json);
   }
+
   async unregisterFCMToken(token: string | null = null) {
     try {
       if (!token) {
@@ -140,6 +166,7 @@ class UserService {
       }
     }
   }
+
   async registerFCMToken(token: string | null = null) {
     try {
       this.pendingRegistration = 'initial';
@@ -194,6 +221,7 @@ class UserService {
     }
     return { canContinue: true, hasNewVersion: false, newVersion: '' };
   }
+
   async redirectToTheStore() {
     const bundleId = DeviceInfo.getBundleId();
     const appName = DeviceInfo.getApplicationName();
@@ -217,6 +245,7 @@ class UserService {
       // TODO: Manage error
     }
   }
+
   async getUserChildren(userId: string) {
     try {
       const parentChildrenByStructureList = (await fetchJSONWithCache(
@@ -227,6 +256,7 @@ class UserService {
       // console.warn('[UserService] getUserChildren: could not get children data', e);
     }
   }
+
   async revalidateTerms() {
     try {
       await fetchJSONWithCache('/auth/cgu/revalidate', {
@@ -236,6 +266,7 @@ class UserService {
       // console.warn('[UserService] revalidateTerms: could not revalidate terms', e);
     }
   }
+
   async getEmailValidationInfos() {
     try {
       const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
@@ -244,6 +275,7 @@ class UserService {
       // console.warn('[UserService] getEmailValidationInfos: could not get email validation infos', e);
     }
   }
+
   async sendEmailVerificationCode(email: string) {
     try {
       await fetchJSONWithCache('/directory/user/mailstate', {
@@ -254,6 +286,7 @@ class UserService {
       // console.warn('[UserService] sendEmailVerificationCode: could not send email verification code', e);
     }
   }
+
   async verifyEmailCode(key: string) {
     try {
       await fetchJSONWithCache('/directory/user/mailstate', {
@@ -262,6 +295,30 @@ class UserService {
       });
     } catch (e) {
       // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
+    }
+  }
+
+  async getUserAuthContext(session?: IUserSession) {
+    try {
+      let res;
+      if (session) {
+        res = await fetchJSONWithCache('/auth/context');
+      } else {
+        res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
+        if (!res.ok) {
+          throw new Error('[UserService] getUserAuthContext: response not 20x');
+        }
+        res = await res.json();
+      }
+      return {
+        callBack: res.callBack,
+        cgu: res.cgu,
+        passwordRegex: new RegExp(res.passwordRegex),
+        passwordRegexI18n: res.passwordRegexI18n,
+        mandatory: res.mandatory,
+      } as IUserAuthContext;
+    } catch (e) {
+      // console.warn('[UserService] getUserAuthContext: could not verify email code', e);
     }
   }
 }
