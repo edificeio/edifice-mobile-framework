@@ -11,12 +11,3 @@ export enum ContextState {
   Failed,
   Success,
 }
-
-export interface IActivationContext {
-  cgu: boolean;
-  passwordRegex: string;
-  mandatory: {
-    mail: boolean;
-    phone: boolean;
-  };
-}

@@ -12,7 +12,7 @@ import {
   actionTypeChangePasswordReset,
   actionTypeChangePasswordSubmit,
 } from '~/user/actions/changePassword';
-import { ContextState, IActivationContext, SubmitState } from '~/utils/SubmitState';
+import { ContextState, SubmitState } from '~/utils/SubmitState';
 
 import { IUserAuthContext } from '../service';
 

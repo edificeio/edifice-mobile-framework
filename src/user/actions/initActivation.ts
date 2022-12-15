@@ -4,8 +4,8 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { asyncActionTypes } from '~/infra/redux/async';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
-import { IActivationContext } from '~/utils/SubmitState';
 
+import { IUserAuthContext } from '../service';
 import type { IActivationContextFetchedAction, IActivationContextRequestedAction, IActivationUserInfo } from './activation';
 
 export const actionTypeActivationContext = asyncActionTypes(userConfig.createActionType('ACTIVATION_CONTEXT'));
@@ -13,7 +13,7 @@ export const actionTypeActivationContext = asyncActionTypes(userConfig.createAct
 function activationContextRequested(args: IActivationUserInfo): IActivationContextRequestedAction {
   return { type: actionTypeActivationContext.requested, userinfo: args };
 }
-function activationContextReceived(context: IActivationContext): IActivationContextFetchedAction {
+function activationContextReceived(context: IUserAuthContext): IActivationContextFetchedAction {
   return { type: actionTypeActivationContext.received, context };
 }
 function activationContextError(): Action {
@@ -35,7 +35,7 @@ export function initActivationAccount(args: IActivationUserInfo, redirect: boole
         dispatch(activationContextError());
         return;
       }
-      const activationContext: IActivationContext = await res.json();
+      const activationContext: IUserAuthContext = await res.json();
       dispatch(activationContextReceived(activationContext));
     } catch (e) {
       dispatch(activationContextError());
