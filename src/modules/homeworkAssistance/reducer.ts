@@ -1,7 +1,7 @@
 /**
  * Homework assistance Reducer
  */
-import moment, { Moment } from 'moment';
+import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
 import { getDayOfTheWeek } from '~/framework/util/date';
@@ -76,15 +76,8 @@ export default combineReducers({
 
 // Getters
 
-export const getIsRequestValid = (
-  config: IConfig,
-  service: number | null,
-  phoneNumber: string,
-  date: Moment,
-  time: Moment,
-): boolean => {
+export const getIsDateValid = (config: IConfig, date: Moment, time: Moment): boolean => {
   const { openingDays, exclusions, openingTime } = config.settings;
-  if (!service || !phoneNumber) return false;
   const weekday = getDayOfTheWeek(date);
   const allowedWeekDays = Object.keys(openingDays).filter(day => openingDays[day]);
   if (!allowedWeekDays.includes(weekday)) return false;

@@ -434,6 +434,7 @@
   "homeworkAssistance.requestSent": "Su solicitud ha sido enviada!",
   "homeworkAssistance.sendMyRequest": "Enviar mi solicitud",
   "homeworkAssistance.serviceAvailable": "Servicio disponible:",
+  "homeworkAssistance.serviceClosedError": "Es imposible elegir esta fecha, el servicio está cerrado.",
   "homeworkAssistance.tabName": "Ayuda con los deberes",
   "homeworkAssistance.time": "Hora",
   "imageNotAvailable": "Imagen no disponible",

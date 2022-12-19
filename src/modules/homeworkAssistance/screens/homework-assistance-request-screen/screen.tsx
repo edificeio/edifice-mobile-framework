@@ -27,7 +27,7 @@ import {
   postHomeworkAssistanceRequestAction,
 } from '~/modules/homeworkAssistance/actions';
 import moduleConfig from '~/modules/homeworkAssistance/moduleConfig';
-import { getIsRequestValid } from '~/modules/homeworkAssistance/reducer';
+import { getIsDateValid } from '~/modules/homeworkAssistance/reducer';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
@@ -124,7 +124,8 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
 
   const renderRequest = () => {
     const { openingTime } = props.config.settings;
-    const isActionDisabled = !getIsRequestValid(props.config, service, phoneNumber, date, time);
+    const isDateValid = getIsDateValid(props.config, date, time);
+    const isActionDisabled = !service || !phoneNumber || !isDateValid;
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
@@ -159,7 +160,7 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
           <TextInput
             placeholder="+33 (0)6..."
             value={phoneNumber}
-            onChangeText={text => setPhoneNumber(text)}
+            onChangeText={text => setPhoneNumber(text.replace(/[^+0-9]/g, ''))}
             keyboardType="phone-pad"
             style={styles.phoneNumberInput}
           />
@@ -188,13 +189,16 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
             style={styles.informationInput}
           />
         </View>
-        <ActionButton
-          text={I18n.t('homeworkAssistance.sendMyRequest')}
-          action={() => sendRequest()}
-          disabled={isActionDisabled}
-          loading={isSendingRequest}
-          style={isActionDisabled ? styles.actionContainerDisabled : styles.actionContainerEnabled}
-        />
+        <View>
+          {!isDateValid ? <SmallText style={styles.errorText}>{I18n.t('homeworkAssistance.serviceClosedError')}</SmallText> : null}
+          <ActionButton
+            text={I18n.t('homeworkAssistance.sendMyRequest')}
+            action={() => sendRequest()}
+            disabled={isActionDisabled}
+            loading={isSendingRequest}
+            style={isActionDisabled ? styles.actionContainerDisabled : styles.actionContainerEnabled}
+          />
+        </View>
       </ScrollView>
     );
   };
