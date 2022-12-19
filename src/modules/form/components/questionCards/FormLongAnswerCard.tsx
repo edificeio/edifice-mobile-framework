@@ -11,20 +11,13 @@ import { FormAnswerText } from './FormAnswerText';
 
 const styles = StyleSheet.create({
   textInput: {
+    minHeight: 140,
     padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
     borderColor: theme.ui.border.input,
     borderWidth: 1,
     borderRadius: 5,
     color: theme.ui.text.regular,
-    textAlignVertical: 'top',
-  },
-  fixedHeight: {
-    height: 140,
-  },
-  changeableHeight: {
-    minHeight: 140,
-    maxHeight: 500,
   },
 });
 
@@ -70,7 +63,9 @@ export const FormLongAnswerCard = ({
           value={value}
           onChangeText={text => onChangeTextCallback(text)}
           multiline
-          style={[styles.textInput, question.sectionId ? styles.fixedHeight : styles.changeableHeight]}
+          scrollEnabled={false}
+          textAlignVertical="top"
+          style={styles.textInput}
         />
       )}
     </FormQuestionCard>
