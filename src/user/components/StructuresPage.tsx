@@ -7,7 +7,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { NestedText, SmallText } from '~/framework/components/text';
-import { ContainerView } from '~/ui/ButtonLine';
+import { ContainerView } from '~/ui/button-line';
 
 // TYPES ------------------------------------------------------------------------------------------
 

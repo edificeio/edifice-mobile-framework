@@ -6,11 +6,10 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IUserSession } from '~/framework/util/session';
 import { Loading } from '~/ui/Loading';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
@@ -29,6 +28,7 @@ export interface IChangePasswordPageState extends IChangePasswordModel {
 
 export interface IChangePasswordPageDataProps extends IChangePasswordModel {
   passwordRegex: string;
+  passwordRegexI18n: { [lang: string]: string };
   externalError: string;
   contextState: ContextState;
   submitState: SubmitState;
@@ -152,7 +152,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
   public componentDidMount() {
     const props = this.props;
     props.onRetryLoad({
-      login: props.session.user.login!,
+      login: props.session?.user.login!,
     });
   }
 
@@ -200,8 +200,6 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     const isSubmitLoading = submitState == SubmitState.Loading;
     const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
 
-    const isIDF = DEPRECATED_getCurrentPlatform()!.displayName === 'MonLycée.net'; // WTF ??!! 🤪🤪🤪
-
     return (
       <KeyboardPageView
         navigation={this.props.navigation}
@@ -212,7 +210,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
         <Pressable onPress={() => formModel.blur()} style={{ flexGrow: 1 }}>
           <FormContainer>
             <View style={{ flexShrink: 0, alignItems: 'stretch' }}>
-              {this.props.navigation.getParam('isLoginNavigator') && isIDF ? (
+              {this.props.navigation.getParam('isLoginNavigator') ? (
                 <View
                   style={{
                     justifyContent: 'center',
@@ -225,20 +223,21 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                   <MiniSpacer />
                 </View>
               ) : null}
-              {isIDF ? (
-                <View
-                  style={{
-                    backgroundColor: theme.palette.primary.light,
-                    paddingVertical: UI_SIZES.spacing.minor,
-                    paddingHorizontal: UI_SIZES.spacing.medium,
-                    borderColor: theme.palette.primary.regular,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    flex: 0,
-                  }}>
-                  <CaptionText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.idf.passwordRules')}</CaptionText>
-                </View>
-              ) : null}
+
+              <View
+                style={{
+                  backgroundColor: theme.palette.primary.light,
+                  paddingVertical: UI_SIZES.spacing.minor,
+                  paddingHorizontal: UI_SIZES.spacing.medium,
+                  borderColor: theme.palette.primary.regular,
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  flex: 0,
+                }}>
+                <CaptionText style={{ color: theme.palette.primary.regular }}>
+                  {this.props.passwordRegexI18n?.[I18n.currentLocale()]}
+                </CaptionText>
+              </View>
             </View>
             <View style={{ flexShrink: 0 }}>
               <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />

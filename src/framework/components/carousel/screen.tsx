@@ -14,7 +14,7 @@ import Share from 'react-native-share';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';

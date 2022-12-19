@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, ColorValue, View } from 'react-native';
 
 import theme from '~/app/theme';
 
 interface LoadingProps {
   small?: boolean;
-  customColor?: string;
+  customColor?: ColorValue;
   customStyle?: object;
 }
 

@@ -8,15 +8,15 @@ import PushNotifsSettingsScreen from './containers/PushNotifsSettingsScreen';
 import RelativesPage from './containers/RelativesPage';
 import SendEmailVerificationCodeScreen from './containers/SendEmailVerificationCodeScreen';
 import StructuresPage from './containers/StructuresPage';
-import UserPage from './containers/UserPage';
 import VerifyEmailCodeScreen from './containers/VerifyEmailCodeScreen';
 import WhoAreWeScreen from './containers/WhoAreWeScreen';
 import XmasScreen from './containers/XmasScreen';
+import UserScreen from './containers/user-profile';
 
 export default createStackNavigator(
   {
     Profile: {
-      screen: UserPage,
+      screen: UserScreen,
     },
 
     NotifPrefs: {

@@ -1,6 +1,6 @@
 {
-  "last": "2022-10-18T18:08:14",
-  "notes": "",
-  "version": "1.8.5-alpha.1(1080502)",
+  "last": "2022-12-15 17:15:22",
+  "notes": "fix(auth): MB-388 show password rules on activation screen\nfix(auth): MB-388, MB-847 use new context api for login & change password\nfix(cgu): MB-1087, Legal notice not shown on Android\nfeat(homework-assistance): AMV2-408, request screen\nSquashed commit of the following:\nrelease: 1.9.1-alpha.1(1090101)",
+  "version": "1.9.1-alpha.2(1090102)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

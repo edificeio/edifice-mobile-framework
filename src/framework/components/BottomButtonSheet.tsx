@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { ActionButton, ActionButtonProps } from './ActionButton';
 import { BottomSheet, BottomSheetProps } from './BottomSheet';
+import { ActionButton, ActionButtonProps } from './action-button';
 
 export const BottomButtonSheet = ({
   text,

@@ -4,9 +4,9 @@ import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-na
 
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
-import { Image } from '../util/media';
 
-import { ActionButton } from './ActionButton';
+import { Image } from '../util/media';
+import { ActionButton } from './action-button';
 import { Card, InfoCard } from './card/base';
 import { UI_SIZES } from './constants';
 import { CaptionText, SmallBoldText, SmallText } from './text';

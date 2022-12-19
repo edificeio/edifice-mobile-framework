@@ -6,7 +6,7 @@ import { ColorValue, Platform, StyleSheet, ViewStyle } from 'react-native';
 import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
@@ -49,7 +49,7 @@ const DateTimeButton: React.FunctionComponent<IDateTimeButtonProps> = ({
   onPress,
 }: IDateTimeButtonProps) => (
   <TouchCardWithoutPadding onPress={onPress} disabled={isDisabled} style={[styles.buttonContainer, style]}>
-    <Icon name={icon} size={20} color={color} />
+    <Picture type="NamedSvg" name={icon} width={20} height={20} fill={color} />
     <SmallText style={styles.buttonText}>{text}</SmallText>
   </TouchCardWithoutPadding>
 );
@@ -98,7 +98,7 @@ const DateTimePickerAndroid: React.FunctionComponent<IDateTimePickerProps> = ({
   return (
     <>
       <DateTimeButton
-        icon={mode === 'date' ? 'date_range' : 'access_time'}
+        icon={mode === 'date' ? 'ui-calendarLight' : 'ui-clock'}
         color={color}
         text={selectedTime.format(mode === 'date' ? 'L' : 'LT')}
         onPress={() => setModalVisible(true)}
@@ -108,8 +108,8 @@ const DateTimePickerAndroid: React.FunctionComponent<IDateTimePickerProps> = ({
         <DateTimePicker
           mode={mode}
           is24Hour
-          maximumDate={maximumDate && maximumDate.toDate()}
-          minimumDate={minimumDate && minimumDate.toDate()}
+          maximumDate={maximumDate?.toDate()}
+          minimumDate={minimumDate?.toDate()}
           value={selectedTime.toDate()}
           onChange={(event, newDate) => {
             if (event.type === 'dismissed') {

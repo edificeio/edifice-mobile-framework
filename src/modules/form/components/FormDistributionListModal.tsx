@@ -3,8 +3,8 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { Picture } from '~/framework/components/picture';

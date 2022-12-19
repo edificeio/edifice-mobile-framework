@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { CardWithoutPadding, cardPadding } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderTitleAndSubtitle } from '~/framework/components/header';

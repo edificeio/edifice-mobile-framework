@@ -9,11 +9,13 @@ import {
   actionTypeActivationSubmit,
 } from '~/user/actions/activation';
 import { actionTypeActivationContext } from '~/user/actions/initActivation';
-import { ContextState, IActivationContext, SubmitState } from '~/utils/SubmitState';
+import { ContextState, SubmitState } from '~/utils/SubmitState';
+
+import { IUserAuthContext } from '../service';
 
 export interface IActivationState {
   isActivating: boolean;
-  context: IActivationContext;
+  context: IUserAuthContext;
   userinfo: IActivationUserInfo;
   submitted: IActivationModel;
   submitState: SubmitState;
@@ -27,7 +29,8 @@ export const stateDefault: IActivationState = {
   isActivating: false,
   context: {
     cgu: true,
-    passwordRegex: '',
+    passwordRegex: /''/,
+    passwordRegexI18n: {},
     mandatory: { mail: false, phone: false },
   },
   submitted: {

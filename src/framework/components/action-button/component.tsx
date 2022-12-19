@@ -1,26 +1,16 @@
 import * as React from 'react';
-import { ActivityIndicator, LayoutChangeEvent, StyleProp, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { SmallBoldText, TextSizeStyle } from '~/framework/components//text';
-import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { openUrl } from '~/framework/util/linking';
 
-export interface ActionButtonProps {
-  text?: string;
-  iconName?: string;
-  emoji?: string;
-  action?: () => void;
-  url?: string;
-  showConfirmation?: boolean;
-  requireSession?: boolean;
-  disabled?: boolean;
-  loading?: boolean;
-  type?: 'primary' | 'secondary';
-  style?: StyleProp<ViewStyle>;
-  onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
-}
+import styles from './styles';
+import { ActionButtonProps } from './types';
+
+export const pictureSize = TextSizeStyle.Normal.fontSize! + (TextSizeStyle.Normal.lineHeight! - TextSizeStyle.Normal.fontSize!) / 2;
 
 export const ActionButton = ({
   text,
@@ -34,31 +24,11 @@ export const ActionButton = ({
   loading,
   type,
   style,
-  onLayout,
 }: ActionButtonProps) => {
-  const [buttonWidth, setButtonWidth] = React.useState(0);
-  const Component: React.ComponentType<ViewProps> = disabled ? View : TouchableOpacity;
+  const Component = disabled ? View : TouchableOpacity;
+  const [layoutWidth, setLayoutWidth] = useState(0);
 
-  const commonViewStyle = {
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderColor: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-    borderRadius: UI_SIZES.radius.huge,
-    borderWidth: UI_SIZES.elements.actionButtonBorder,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    opacity: disabled ? 0.5 : 1,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
-    width: buttonWidth || undefined,
-  };
-
-  const pictureSize = TextSizeStyle.Normal.fontSize! + (TextSizeStyle.Normal.lineHeight! - TextSizeStyle.Normal.fontSize!) / 2;
-
-  const pictureStyle = {
-    marginLeft: UI_SIZES.spacing.minor,
-  };
-
+  // props depending styles
   const textStyle = {
     primary: {
       color: theme.ui.text.inverse,
@@ -83,12 +53,16 @@ export const ActionButton = ({
   return (
     <Component
       onLayout={e => {
-        if (!buttonWidth) e.nativeEvent.layout.width += 2 * UI_SIZES.elements.actionButtonBorder;
-        const newWidth = e.nativeEvent.layout.width;
-        if (newWidth !== buttonWidth) setButtonWidth(newWidth);
-        if (onLayout) onLayout(e);
+        // memoize button width for setting correct width when loading state
+        if (!layoutWidth) setLayoutWidth(e?.nativeEvent?.layout?.width);
       }}
-      style={[commonViewStyle, viewStyle[type ?? 'primary'], style]}
+      style={[
+        styles.commonView,
+        disabled ? styles.commonViewDisabled : styles.commonViewEnabled,
+        { width: loading ? layoutWidth : undefined },
+        viewStyle[type ?? 'primary'],
+        style,
+      ]}
       {...(!disabled
         ? {
             onPress: () => {
@@ -101,11 +75,7 @@ export const ActionButton = ({
             },
           }
         : {})}
-      {...(loading
-        ? {
-            disabled: true,
-          }
-        : {})}>
+      {...(loading ? { disabled: true } : {})}>
       {loading ? (
         <ActivityIndicator color={textStyle[type ?? 'primary'].color} style={{ height: TextSizeStyle.Normal.lineHeight }} />
       ) : (
@@ -120,7 +90,7 @@ export const ActionButton = ({
               width={pictureSize}
               height={pictureSize}
               fill={pictureFill[type ?? 'primary']}
-              style={pictureStyle}
+              style={styles.picture}
             />
           ) : emoji ? (
             <SmallBoldText numberOfLines={1}>{' ' + emoji}</SmallBoldText>

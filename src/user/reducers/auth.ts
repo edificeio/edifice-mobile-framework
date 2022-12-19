@@ -1,11 +1,23 @@
 import { IEntcoreWidget } from '~/framework/util/moduleTool';
 import { computeUserSession } from '~/framework/util/session';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
-import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoggedOut, actionTypeLoginCancel, actionTypeLoginError, actionTypeRequestLogin } from '~/user/actions/actionTypes/login';
+import {
+  actionTypeLoggedIn,
+  actionTypeLoggedInPartial,
+  actionTypeLoggedOut,
+  actionTypeLoginCancel,
+  actionTypeLoginError,
+  actionTypeRequestLogin,
+} from '~/user/actions/actionTypes/login';
 import { actionTypeSetNotifPrefs } from '~/user/actions/notifPrefs';
 import { actionTypePlatformSelect } from '~/user/actions/platform';
-import { INewVersionAction, IVersionContext, actionTypeNewVersion, actionTypeRequestVersion, actionTypeSkipVersion } from '~/user/actions/version';
-
+import {
+  INewVersionAction,
+  IVersionContext,
+  actionTypeNewVersion,
+  actionTypeRequestVersion,
+  actionTypeSkipVersion,
+} from '~/user/actions/version';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 

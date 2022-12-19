@@ -1,11 +1,10 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
-import { ActionButton } from '~/framework/components/ActionButton';
 import GridList from '~/framework/components/GridList';
+import { ActionButton } from '~/framework/components/action-button';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
@@ -80,12 +79,8 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
 
   public render() {
     const { modules } = this.props;
-    console.log("MODULES", modules);
-    return (
-      <PageView>
-        {this.renderGrid(modules)}
-      </PageView>
-    );
+    console.log('MODULES', modules);
+    return <PageView>{this.renderGrid(modules)}</PageView>;
   }
 }
 

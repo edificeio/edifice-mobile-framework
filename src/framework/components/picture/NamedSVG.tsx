@@ -33,6 +33,7 @@ const imports = {
   'ui-calendarLight': import('ASSETS/icons/uiIcons/calendarLight.svg'),
   'ui-camera': import('ASSETS/icons/uiIcons/camera.svg'),
   'ui-check': import('ASSETS/icons/uiIcons/check.svg'),
+  'ui-clock': import('ASSETS/icons/uiIcons/clock.svg'),
   'ui-close': import('ASSETS/icons/uiIcons/close.svg'),
   'ui-closeFullScreen': import('ASSETS/icons/uiIcons/closeFullScreen.svg'),
   'ui-copy': import('ASSETS/icons/uiIcons/copy.svg'),
@@ -121,6 +122,7 @@ const imports = {
   homeLiaisonDiary: import('ASSETS/icons/moduleIcons/homeLiaisonDiary.svg'),
   homework1D: import('ASSETS/icons/moduleIcons/homework1D.svg'),
   homework2D: import('ASSETS/icons/moduleIcons/homework2D.svg'),
+  homeworkAssistance: import('ASSETS/icons/moduleIcons/homeworkAssistance.svg'),
   mediacentre: import('ASSETS/icons/moduleIcons/mediacentre.svg'),
   messages: import('ASSETS/icons/moduleIcons/messages.svg'),
   newsFeed: import('ASSETS/icons/moduleIcons/newsFeed.svg'),
@@ -167,6 +169,7 @@ const imports = {
   'empty-viesco': import('ASSETS/images/empty-screen/empty-viesco.svg'),
   'empty-workspace': import('ASSETS/images/empty-screen/empty-workspace.svg'),
   'empty-pronote-uri': import('ASSETS/images/empty-screen/pronote-error-uri.svg'),
+  'homework-assistance-home': import('ASSETS/images/homework-assistance-home.svg'),
   'image-not-found': import('ASSETS/images/empty-screen/image-not-found.svg'),
   'form-default': import('ASSETS/images/form-default.svg'),
   'onboarding-0': import('ASSETS/images/onboarding/onboarding_0.svg'),
@@ -190,6 +193,7 @@ const imports = {
   'schoolbook-outing': import('ASSETS/images/schoolbook/outing.svg'),
   'schoolbook-various': import('ASSETS/images/schoolbook/various.svg'),
   'textbook-default': import('ASSETS/images/textbook-default.svg'),
+  'userpage-header': import('ASSETS/images/userpage-header.svg'),
   xmas: import('ASSETS/images/xmas.svg'),
 };
 

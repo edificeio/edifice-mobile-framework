@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FlatList, TouchableOpacity, View } from 'react-native';
+import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel';
