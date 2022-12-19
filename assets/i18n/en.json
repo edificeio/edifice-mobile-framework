@@ -434,6 +434,7 @@
   "homeworkAssistance.requestSent": "Your request has been sent!",
   "homeworkAssistance.sendMyRequest": "Send my request",
   "homeworkAssistance.serviceAvailable": "Service available:",
+  "homeworkAssistance.serviceClosedError": "It is impossible to choose this date, the service is closed.",
   "homeworkAssistance.tabName": "Homework assistance",
   "homeworkAssistance.time": "Time",
   "imageNotAvailable": "Image not available",
