@@ -420,6 +420,8 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
           ref={ref => {
             flatListRef.current = ref;
           }}
+          keyboardShouldPersistTaps="handled"
+          removeClippedSubviews={false}
           data={listElements}
           keyExtractor={element => (getIsElementSection(element) ? 's' : 'q') + element.id.toString()}
           renderItem={({ item }) => renderElement(item)}
