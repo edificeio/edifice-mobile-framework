@@ -104,7 +104,7 @@ export const PageView = connect((state: any) => {
     // xmasTheme: state.user.xmas.xmasTheme,
   };
   return ret;
-})(withNavigationFocus(PageViewContainer));
+})(PageViewContainer);
 
 export const KeyboardPageView = (
   props: React.PropsWithChildren<

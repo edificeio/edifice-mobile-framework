@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
