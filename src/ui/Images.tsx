@@ -3,7 +3,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { ImageProps, ImageURISource, View, ViewStyle } from 'react-native';
 import RNFastImage from 'react-native-fast-image';
-import { withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -91,19 +90,18 @@ class Images extends React.Component<
   {
     images: { src: ImageURISource; alt?: string; linkTo?: string }[];
     style?: ViewStyle;
-    navigation: any;
   },
   any
 > {
   public openImage(startIndex: any) {
-    const { images, navigation } = this.props;
+    const { images } = this.props;
     const data = images.map(img => ({
       type: 'image' as 'image',
       src: img.src,
       ...(img.alt ? { alt: img.alt } : undefined),
       ...(img.linkTo ? { link: img.linkTo } : undefined),
     }));
-    openCarousel({ data, startIndex }, navigation);
+    openCarousel({ data, startIndex });
   }
 
   public images() {
@@ -226,4 +224,4 @@ class Images extends React.Component<
 //   }
 // }
 
-export default /*withWindowDimensions*/ withNavigation(Images);
+export default /*withWindowDimensions*/ Images;

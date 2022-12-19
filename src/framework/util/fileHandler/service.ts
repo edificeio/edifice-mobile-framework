@@ -15,9 +15,9 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { ISession } from '~/framework/modules/auth/model';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { assertPermissions } from '~/framework/util/permissions';
-import { IUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
@@ -48,14 +48,14 @@ export interface IDownloadCallbaks {
 const fileTransferService = {
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
   startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
-    const url = DEPRECATED_getCurrentPlatform()!.url + params.url;
+    const url = session.platform.url + params.url;
     const job = RNFS.uploadFiles({
       files: [{ ...file, name: 'file' }],
       toUrl: url,
@@ -92,7 +92,7 @@ const fileTransferService = {
 
   /** Upload a file to the given url. */
   uploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -108,7 +108,7 @@ const fileTransferService = {
   },
 
   startUploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -119,7 +119,7 @@ const fileTransferService = {
   },
 
   uploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -133,7 +133,7 @@ const fileTransferService = {
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
   startDownloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -145,7 +145,7 @@ const fileTransferService = {
     file.filename = file.filename || file.url.split('/').pop();
     const folderDest = `${RNFS.DocumentDirectoryPath}${file.url}`;
     const downloadDest = `${folderDest}/${file.filename}`;
-    const downloadUrl = `${DEPRECATED_getCurrentPlatform()?.url}${file.url}`;
+    const downloadUrl = `${session.platform.url}${file.url}`;
     const headers = { ...urlSigner.getAuthHeader() };
     const localFile = new LocalFile(
       {
@@ -160,18 +160,26 @@ const fileTransferService = {
     // If destination folder exists, return first (and only!) file
     const exists = await RNFS.exists(folderDest);
     if (exists) {
-      const files = await RNFS.readDir(folderDest);
-      if (files.length !== 1) throw new Error('Malformed documents folder ');
-      localFile.setPath(files[0].path);
-      return new Promise<{
-        jobId: number;
-        promise: Promise<SyncedFileType>;
-      }>(resolve =>
-        resolve({
-          jobId: 0,
-          promise: new Promise(resolve => resolve(new sfclass(localFile, file))),
-        }),
-      );
+      try {
+        const files = await RNFS.readDir(folderDest);
+        if (files.length >= 1) {
+          const foundFile = files.find(f => f.name === file.filename);
+          if (foundFile) {
+            localFile.setPath(foundFile.path);
+            return await new Promise<{
+              jobId: number;
+              promise: Promise<SyncedFileType>;
+            }>(resolve =>
+              resolve({
+                jobId: 0,
+                promise: new Promise(resolve => resolve(new sfclass(localFile, file))),
+              }),
+            );
+          }
+        }
+      } catch (e) {
+        // empty
+      }
     }
     // Assert Permission
     await assertPermissions('documents.write');
@@ -218,7 +226,7 @@ const fileTransferService = {
 
   /** Download a file that exists in the server. */
   downloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -233,7 +241,7 @@ const fileTransferService = {
   },
 
   startDownloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -243,7 +251,7 @@ const fileTransferService = {
   },
 
   downloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,

@@ -2,6 +2,8 @@
  * New implementation of Carousel built with our custom react-native-image-viewer !
  */
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { MenuView } from '@react-native-menu/menu';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
@@ -10,31 +12,31 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
 import Share from 'react-native-share';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/ActionButton';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { FakeHeader } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { navigate } from '~/framework/navigation/helper';
+import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
-import { getUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
 import { EmptyScreen } from '../emptyScreen';
-import { NamedSVG } from '../picture';
-import PopupMenu from '../popupMenu';
+import { IImageSize } from './image-viewer/image-viewer.type';
 
 export interface ICarouselNavParams {
   data: IMedia[];
   startIndex?: number;
 }
 
-export interface ICarouselProps extends NavigationInjectedProps<ICarouselNavParams> {}
+export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
 
 const styles = StyleSheet.create({
   page: { backgroundColor: theme.palette.grey.black },
@@ -91,11 +93,7 @@ async function assertPermissions(permissions: Permission[]) {
   }
 }
 
-export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: boolean; imageViewerRef; popupMenuRef }) => {
-  const dotsButtons = React.useCallback(
-    (onPress: () => void) => <ActionButton disabled={disabled} iconName="ui-options" style={styles.closeButton} action={onPress} />,
-    [disabled],
-  );
+export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   return (
     <>
       <ActionButton
@@ -106,50 +104,75 @@ export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: 
         style={styles.closeButton}
         disabled={disabled}
       />
-      <PopupMenu
-        button={dotsButtons}
-        options={[
+      <MenuView
+        actions={[
           {
-            i18n: 'share',
-            icon: (
-              <NamedSVG
-                name="ui-share"
-                fill={theme.palette.grey.black}
-                width={UI_SIZES.dimensions.width.large}
-                height={UI_SIZES.dimensions.width.large}
-                style={{ marginHorizontal: UI_SIZES.spacing.small }}
-              />
-            ),
-            onClick: () => imageViewerRef.current?.share?.(),
+            id: 'share',
+            title: I18n.t('share'),
+            image: Platform.select({
+              ios: 'square.and.arrow.up',
+              android: 'ic-menu-share',
+            }),
           },
         ]}
-        ref={popupMenuRef as React.LegacyRef<PopupMenu>} // Some type hack here...
-        style={{
-          top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
-        }}
-      />
+        onPressAction={({ nativeEvent }) => {
+          if (nativeEvent.event === 'share') {
+            imageViewerRef.current?.share?.();
+          }
+        }}>
+        <ActionButton disabled={disabled} iconName="ui-options" style={styles.closeButton} />
+      </MenuView>
     </>
   );
 };
 
+export function computeNavBar({
+  navigation,
+  route,
+}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel>): NativeStackNavigationOptions {
+  const baseOptions = navBarOptions({
+    navigation,
+    route,
+  });
+  return {
+    ...baseOptions,
+    title:
+      route.params.data.length !== 1
+        ? I18n.t('carousel.counter', { current: route.params.startIndex ?? 1, total: route.params.data.length })
+        : '',
+    headerTransparent: true,
+    headerBlurEffect: 'dark',
+    headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
+  };
+}
+
 export function Carousel(props: ICarouselProps) {
-  const { navigation } = props;
-  const startIndex = navigation.getParam('startIndex') ?? 0;
-  const data = React.useMemo(() => navigation.getParam('data') ?? [], [navigation]);
+  const { navigation, route } = props;
+  const startIndex = route.params.startIndex ?? 0;
+  const data = React.useMemo(() => route.params.data ?? [], [route]);
   const dataAsImages = React.useMemo(() => data.map(d => ({ url: '', props: { source: urlSigner.signURISource(d.src) } })), [data]);
 
   const [isNavBarVisible, setNavBarVisible] = React.useState(true);
-
-  const closeButton = React.useMemo(
-    () => <ActionButton action={navigation.goBack} iconName="ui-rafterLeft" style={styles.closeButton} />,
-    [navigation],
-  );
+  const toggleNavBarVisibility = React.useCallback(() => {
+    const newValue = !isNavBarVisible;
+    setNavBarVisible(newValue);
+    if (newValue) {
+      navigation.setOptions(computeNavBar({ navigation, route }));
+    } else {
+      navigation.setOptions({
+        headerBlurEffect: undefined,
+        headerStyle: { backgroundColor: 'transparent' },
+        headerLeft: undefined,
+        headerRight: undefined,
+        title: '',
+      });
+    }
+  }, [isNavBarVisible, navigation, route]);
 
   const imageViewerRef = React.useRef<ImageViewer>();
-  const popupMenuRef = React.useRef<PopupMenu>();
   const getButtons = React.useCallback(
-    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} popupMenuRef={popupMenuRef} />,
-    [popupMenuRef, imageViewerRef],
+    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} />,
+    [imageViewerRef],
   );
 
   const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
@@ -160,7 +183,7 @@ export function Carousel(props: ICarouselProps) {
       android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
     })!;
     await assertPermissions(permissions);
-    const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl }, {});
+    const sf = await fileTransferService.downloadFile(assertSession(), { url: realUrl }, {});
     return sf;
   }, []);
 
@@ -196,7 +219,7 @@ export function Carousel(props: ICarouselProps) {
         } else {
           await CameraRoll.save(sf.filepath);
         }
-        Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
+        Toast.showSuccess(I18n.t('save.to.camera.roll.success'), { containerStyle: { zIndex: 150 } });
       } catch (e) {
         Toast.show(I18n.t('save.to.camera.roll.error'));
       }
@@ -232,8 +255,6 @@ export function Carousel(props: ICarouselProps) {
   const loadingComponent = React.useMemo(() => <Loading />, []);
   const renderLoading = React.useCallback(() => loadingComponent, [loadingComponent]);
 
-  const headerStyle = React.useMemo(() => [styles.header, { opacity: isNavBarVisible ? 1 : 0 }], [isNavBarVisible]);
-
   const renderImage = React.useCallback(imageProps => <FastImage {...imageProps} />, []);
 
   const renderFailImage = React.useCallback(imageProps => {
@@ -249,42 +270,66 @@ export function Carousel(props: ICarouselProps) {
     );
   }, []);
 
+  const updateButtons = React.useCallback(
+    (index?: number, imageStatus?: IImageSize['status'], visible?: boolean) => {
+      if (index !== undefined && visible) {
+        navigation.setOptions({ headerRight: () => getButtons(imageStatus !== 'success') });
+      }
+    },
+    // We want to remove `navigation` from the dependencies here to avoid re-rendering when navState changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [getButtons],
+  );
+  const updateIndex = React.useCallback(
+    (index?: number, total?: number, imageStatus?: IImageSize['status']) => {
+      if (index !== undefined) {
+        navigation.setParams({ startIndex: index });
+      }
+    },
+    // We want to remove `navigation` from the dependencies here to avoid re-rendering when navState changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const imageViewer = React.useMemo(
+    () => (
+      <ImageViewer
+        ref={imageViewerRef as React.RefObject<ImageViewer>}
+        enableSwipeDown
+        show
+        useNativeDriver
+        imageUrls={dataAsImages}
+        index={startIndex}
+        onCancel={() => {
+          navigation.goBack();
+        }}
+        onSave={onSave}
+        onShare={onShare}
+        renderImage={renderImage}
+        loadingRender={renderLoading}
+        loadWindow={1}
+        saveToLocalByLongPress={false}
+        onClick={() => {
+          toggleNavBarVisibility();
+        }}
+        renderFailImage={renderFailImage}
+        renderIndicator={(index?: number, total?: number, imageStatus?: IImageSize['status']) => {
+          updateIndex(index, total, imageStatus);
+          updateButtons(index, imageStatus, isNavBarVisible);
+          return null;
+        }}
+      />
+    ),
+    // We want to remove `navigation` and `startIndex` from the dependencies here to avoid re-rendering when navState changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading, updateIndex],
+  );
+
   return (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
-      <PageView navigation={navigation} style={styles.page} showNetworkBar={false}>
-        <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" />
-
-        <ImageViewer
-          ref={imageViewerRef as React.RefObject<ImageViewer>}
-          enableSwipeDown
-          show
-          useNativeDriver
-          imageUrls={dataAsImages}
-          index={startIndex}
-          onCancel={() => {
-            navigation.goBack();
-          }}
-          onSave={onSave}
-          onShare={onShare}
-          renderImage={renderImage}
-          loadingRender={renderLoading}
-          loadWindow={1}
-          renderIndicator={(current, total, imageStatus) => {
-            return (
-              <FakeHeader
-                left={closeButton}
-                style={headerStyle}
-                title={total !== 1 ? I18n.t('carousel.counter', { current, total }) : ''}
-                right={getButtons(imageStatus !== 'success')}
-              />
-            );
-          }}
-          saveToLocalByLongPress={false}
-          onClick={() => {
-            setNavBarVisible(!isNavBarVisible);
-          }}
-          renderFailImage={renderFailImage}
-        />
+      <PageView style={styles.page} showNetworkBar={false}>
+        <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
+        {imageViewer}
       </PageView>
     </GestureHandlerRootView>
   );
@@ -292,6 +337,6 @@ export function Carousel(props: ICarouselProps) {
 
 export default Carousel;
 
-export function openCarousel(props: ICarouselNavParams, navigation: NavigationInjectedProps['navigation']) {
-  navigation.navigate('carouselModal', props);
+export function openCarousel(props: ICarouselNavParams) {
+  navigate(ModalsRouteNames.Carousel, props);
 }

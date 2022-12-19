@@ -5,7 +5,6 @@ import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-n
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -15,12 +14,13 @@ import { openCarousel } from '~/framework/components/carousel';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText } from '~/framework/components/text';
-import { navigate } from '~/framework/navigation/helper';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
+import { urlSigner } from '~/infra/oauth';
 
 import { IconButton } from './IconButton';
 
@@ -131,7 +131,7 @@ class Attachment extends React.PureComponent<
     onError?: () => void;
     onOpen?: () => void;
     dispatch: ThunkDispatch<any, any, any>;
-  } & NavigationInjectedProps,
+  },
   {
     downloadState: DownloadState;
     progress: number; // From 0 to 1
@@ -304,16 +304,13 @@ class Attachment extends React.PureComponent<
       }
       if (onOpen) onOpen();
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
-        openCarousel(
-          {
-            data: carouselImage.map(img => ({
-              type: 'image' as 'image',
-              src: img.src,
-              ...(img.alt ? { alt: img.alt } : undefined),
-            })),
-          },
-          this.props.navigation,
-        );
+        openCarousel({
+          data: carouselImage.map(img => ({
+            type: 'image' as 'image',
+            src: img.src,
+            ...(img.alt ? { alt: img.alt } : undefined),
+          })),
+        });
       } else {
         onOpenFile(notifierId, file);
       }
@@ -325,13 +322,15 @@ class Attachment extends React.PureComponent<
   }
 
   public async startDownload(att: IRemoteAttachment, callback?: (lf: LocalFile) => void) {
+    const url = urlSigner.getRelativeUrl(att.url);
+    if (!url) throw new Error('[Attachment] url invalid');
     const df: IDistantFileWithId = {
       ...att,
       filetype: att.contentType,
       id: att.id!,
       filesize: att.size,
       filename: att.filename || att.displayName,
-      url: att.url.replace(DEPRECATED_getCurrentPlatform()!.url, ''),
+      url,
     };
 
     this.setState({
@@ -373,11 +372,9 @@ class Attachment extends React.PureComponent<
   }
 }
 
-export default withNavigation(
-  connect(null, dispatch => ({
-    onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
-    onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
-      dispatch(downloadFile(notifierId, file, toastMessage)),
-    dispatch,
-  }))(Attachment),
-);
+export default connect(null, dispatch => ({
+  onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
+  onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
+    dispatch(downloadFile(notifierId, file, toastMessage)),
+  dispatch,
+}))(Attachment);
