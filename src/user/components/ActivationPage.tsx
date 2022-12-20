@@ -6,9 +6,10 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
+import AlertCard from '~/framework/components/alert';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { Checkbox } from '~/framework/components/checkbox';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { CaptionText, SmallActionText, SmallText } from '~/framework/components/text';
@@ -147,22 +148,15 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                     <LogoWrapper>
                       <PFLogo />
                     </LogoWrapper>
-                    <InputLogin login={login} form={formModel} onChange={this.onChange('login')} />
+                    {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
+                    {this.props.passwordRegexI18n?.[I18n.currentLocale()] ? (
+                      <AlertCard
+                        type="info"
+                        text={this.props.passwordRegexI18n[I18n.currentLocale()]}
+                        style={{ width: '100%', marginTop: UI_SIZES.spacing.medium }}
+                      />
+                    ) : null}
                     <InputPassword password={password} form={formModel} onChange={this.onChange('password')} />
-                    <View
-                      style={{
-                        backgroundColor: theme.palette.primary.light,
-                        paddingVertical: UI_SIZES.spacing.minor,
-                        paddingHorizontal: UI_SIZES.spacing.medium,
-                        borderColor: theme.palette.primary.regular,
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        flex: 0,
-                      }}>
-                      <CaptionText style={{ color: theme.palette.primary.regular }}>
-                        {this.props.passwordRegexI18n?.[I18n.currentLocale()]}
-                      </CaptionText>
-                    </View>
                     <InputPasswordConfirm confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
                     <InputEmail email={email} form={formModel} onChange={this.onChange('email')} />
                     <InputPhone phone={phone} form={formModel} onChange={this.onChange('phone')} />

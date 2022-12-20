@@ -7,8 +7,10 @@ import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
+import AlertCard from '~/framework/components/alert';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import { IUserSession } from '~/framework/util/session';
 import { Loading } from '~/ui/Loading';
@@ -224,20 +226,9 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                 </View>
               ) : null}
 
-              <View
-                style={{
-                  backgroundColor: theme.palette.primary.light,
-                  paddingVertical: UI_SIZES.spacing.minor,
-                  paddingHorizontal: UI_SIZES.spacing.medium,
-                  borderColor: theme.palette.primary.regular,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  flex: 0,
-                }}>
-                <CaptionText style={{ color: theme.palette.primary.regular }}>
-                  {this.props.passwordRegexI18n?.[I18n.currentLocale()]}
-                </CaptionText>
-              </View>
+              {this.props.passwordRegexI18n?.[I18n.currentLocale()] ? (
+                <AlertCard type="info" text={this.props.passwordRegexI18n?.[I18n.currentLocale()]} />
+              ) : null}
             </View>
             <View style={{ flexShrink: 0 }}>
               <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />
