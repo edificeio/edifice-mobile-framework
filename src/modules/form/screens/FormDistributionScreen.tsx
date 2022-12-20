@@ -220,7 +220,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
         await Promise.all(
           res.map(response => {
             if (response.id) {
-              formService.response.put(
+              return formService.response.put(
                 session,
                 response.id,
                 distributionId,
@@ -230,11 +230,10 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
                 response.customAnswer ?? null,
               );
             } else {
-              formService.question
+              return formService.question
                 .createResponse(session, response.questionId, distributionId, response.choiceId ?? null, response.answer)
                 .then(r => (response.id = r.id));
             }
-            return response;
           }),
         );
         if (question.type === QuestionType.FILE && res[0]?.answer !== '') {
@@ -243,7 +242,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
           await Promise.all(
             response.files!.map(file => {
               if (file.lf) {
-                formService.response.addFile(session, response.id!, file.lf);
+                return formService.response.addFile(session, response.id!, file.lf);
               }
             }),
           );
@@ -257,10 +256,12 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
                 questionId: id,
                 answer: '',
               };
-              formService.question.createResponse(session, response.questionId, distributionId, null, response.answer).then(r => {
-                response.id = r.id;
-                updateResponses(id, [response]);
-              });
+              return formService.question
+                .createResponse(session, response.questionId, distributionId, null, response.answer)
+                .then(r => {
+                  response.id = r.id;
+                  updateResponses(id, [response]);
+                });
             }),
           );
         }
