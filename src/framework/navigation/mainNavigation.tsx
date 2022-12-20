@@ -190,7 +190,10 @@ export function createModuleNavigator<ParamList extends ParamListBase>(
   renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
 ) {
   const TypedRootStack = getTypedRootStack<ParamList>();
-  if (renderScreens)
-    ModuleScreens.register(routeName, <RootStack.Group key={routeName}>{renderScreens(TypedRootStack)}</RootStack.Group>);
-  return routeName;
+  if (renderScreens) {
+    const screens = <RootStack.Group key={routeName}>{renderScreens(TypedRootStack)}</RootStack.Group>;
+    ModuleScreens.register(routeName, screens);
+    return screens;
+  }
+  return <></>;
 }

@@ -3,6 +3,7 @@
  * Everything for managing and declaring modules
  */
 import I18n from 'i18n-js';
+import React from 'react';
 import { ColorValue } from 'react-native';
 import type { Reducer } from 'redux';
 
@@ -438,7 +439,7 @@ export interface INavigableModuleBase<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
-  Root extends React.ComponentType<any>,
+  Root extends React.ReactElement,
 > extends IModule<Name, ConfigType, State> {
   getRoot(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]): Root;
 }
@@ -446,7 +447,7 @@ export interface INavigableModule<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
-  Root extends React.ComponentType<any>,
+  Root extends React.ReactElement,
 > extends INavigableModuleBase<Name, ConfigType, State, Root> {
   // ToDo add Module methods here
 }
@@ -455,7 +456,7 @@ export interface INavigableModuleDeclaration<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
-  Root extends React.ComponentType<any>,
+  Root extends React.ReactElement,
 > extends INavigableModuleBase<Name, ConfigType, State, Root>,
     IModuleRedux<State> {}
 
@@ -463,7 +464,7 @@ export class NavigableModule<
     Name extends string,
     ConfigType extends INavigableModuleConfig<Name, State>,
     State,
-    Root extends React.ComponentType<any>,
+    Root extends React.ReactElement,
   >
   extends Module<Name, ConfigType, State>
   implements IModule<Name, ConfigType, State>
@@ -504,13 +505,8 @@ export class NavigableModule<
   }
 }
 
-export type UnknownNavigableModule = NavigableModule<
-  string,
-  INavigableModuleConfig<string, unknown>,
-  unknown,
-  React.ComponentType<any>
->;
-export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, React.ComponentType<any>>;
+export type UnknownNavigableModule = NavigableModule<string, INavigableModuleConfig<string, unknown>, unknown, React.ReactElement>;
+export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, React.ReactElement>;
 
 //  888b     d888               888          888                 d8888
 //  8888b   d8888               888          888                d88888

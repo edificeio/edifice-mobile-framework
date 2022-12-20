@@ -1,6 +1,5 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Text } from 'react-native';
 
 import { navigate } from '~/framework/navigation/helper';
 import { createModuleNavigator } from '~/framework/navigation/mainNavigation';
