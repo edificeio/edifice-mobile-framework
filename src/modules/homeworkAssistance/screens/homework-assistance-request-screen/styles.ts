@@ -47,7 +47,7 @@ export default StyleSheet.create({
   },
   errorText: {
     marginBottom: UI_SIZES.spacing.medium,
-    color: theme.palette.status.failure,
+    color: theme.palette.status.failure.regular,
     textAlign: 'center',
   },
   actionContainerEnabled: {

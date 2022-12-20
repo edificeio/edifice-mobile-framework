@@ -195,13 +195,18 @@ class Attachment extends React.PureComponent<
                 />
               ) : downloadState === DownloadState.Success ? (
                 <Icon
-                  color={theme.palette.status.success}
+                  color={theme.palette.status.success.regular}
                   size={16}
                   name="checked"
                   style={{ marginRight: UI_SIZES.spacing.minor }}
                 />
               ) : !this.attId || downloadState === DownloadState.Error ? (
-                <Icon color={theme.palette.status.failure} size={16} name="close" style={{ marginRight: UI_SIZES.spacing.minor }} />
+                <Icon
+                  color={theme.palette.status.failure.regular}
+                  size={16}
+                  name="close"
+                  style={{ marginRight: UI_SIZES.spacing.minor }}
+                />
               ) : (
                 <Icon
                   color={theme.ui.text.regular}
@@ -218,7 +223,7 @@ class Attachment extends React.PureComponent<
             </View>
             <View style={{ flex: 1, flexDirection: 'row' }}>
               {downloadState === DownloadState.Error ? (
-                <SmallText style={{ color: theme.palette.status.failure }}>{I18n.t('download-error') + ' '}</SmallText>
+                <SmallText style={{ color: theme.palette.status.failure.regular }}>{I18n.t('download-error') + ' '}</SmallText>
               ) : null}
               <SmallText style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
                 <SmallText

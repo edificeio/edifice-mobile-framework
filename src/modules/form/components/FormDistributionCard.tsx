@@ -35,7 +35,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
 
     if (formDistributions.multiple) {
       const nb = formDistributions.distributions.filter(distribution => distribution.status === DistributionStatus.FINISHED).length;
-      const color = nb ? theme.palette.status.success : theme.palette.status.failure;
+      const color = nb ? theme.palette.status.success.regular : theme.palette.status.failure.regular;
       return (
         <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
           {I18n.t('form.answersNb', { nb })}
@@ -43,7 +43,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
       );
     }
     const { status, dateResponse } = formDistributions.distributions[0];
-    const color = status === DistributionStatus.TO_DO ? theme.palette.status.failure : theme.palette.status.success;
+    const color = status === DistributionStatus.TO_DO ? theme.palette.status.failure.regular : theme.palette.status.success.regular;
     return (
       <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
         {I18n.t(status === DistributionStatus.TO_DO ? 'form.awaitingResponse' : 'form.answeredOnDate', {

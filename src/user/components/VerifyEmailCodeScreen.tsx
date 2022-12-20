@@ -87,7 +87,7 @@ export const VerifyEmailCodeScreen = ({
   const isCodeCorrect = codeState === CodeState.CODE_CORRECT;
   const isCodeStateUnknown = codeState === CodeState.CODE_STATE_UNKNOWN;
   const codeStateType = isCodeCorrect ? 'success' : 'failure';
-  const codeStateColor = theme.palette.status[codeStateType];
+  const codeStateColor = theme.palette.status[codeStateType].regular;
   const isVerifyingActive = isVerifyingEnabled || isVerifying;
   const isResendInactive = isResendDisabled || isResending || isVerifyingActive || isCodeCorrect;
   const isCodeStateDisplayed = !(isCodeStateHidden || isVerifyingActive || isCodeStateUnknown);

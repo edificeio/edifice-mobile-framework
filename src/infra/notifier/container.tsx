@@ -85,9 +85,9 @@ class Notifier extends React.Component<
 
     return {
       info: theme.palette.complementary.blue.regular,
-      success: theme.palette.status.success,
-      warning: theme.palette.status.warning,
-      error: theme.palette.status.failure,
+      success: theme.palette.status.success.regular,
+      warning: theme.palette.status.warning.regular,
+      error: theme.palette.status.failure.regular,
     }[type];
   }
 

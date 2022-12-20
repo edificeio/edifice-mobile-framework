@@ -190,7 +190,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         padding: UI_SIZES.spacing.tiny,
                         textAlign: 'center',
                         alignSelf: 'center',
-                        color: theme.palette.status.failure,
+                        color: theme.palette.status.failure.regular,
                       }}>
                       {' '}
                       {hasErrorKey && !typing ? errorText : ''}{' '}

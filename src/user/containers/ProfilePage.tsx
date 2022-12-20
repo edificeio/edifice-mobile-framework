@@ -278,7 +278,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               color: validator
                 ? this.state[validator.key]
                   ? theme.ui.text.regular
-                  : theme.palette.status.failure
+                  : theme.palette.status.failure.regular
                 : theme.ui.text.regular,
             }}>
             {getter()}

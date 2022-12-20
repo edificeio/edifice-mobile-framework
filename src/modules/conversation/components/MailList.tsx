@@ -450,7 +450,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                             this.setState({ showModal: true, selectedMail: item });
                             row[item.key]?.closeRow();
                           },
-                          backgroundColor: theme.palette.status.success,
+                          backgroundColor: theme.palette.status.success.regular,
                           actionText: I18n.t('conversation.restore'),
                           actionIcon: 'ui-unarchive',
                         },
@@ -462,7 +462,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                             this.toggleRead(item.unread, item.id);
                             row[item.key]?.closeRow();
                           },
-                          backgroundColor: theme.palette.status.info,
+                          backgroundColor: theme.palette.status.info.regular,
                           actionText: I18n.t(`conversation.mark${item.unread ? 'Read' : 'Unread'}`),
                           actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                         },
@@ -474,7 +474,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                         this.delete(item.id);
                         row[item.key]?.closeRow();
                       },
-                      backgroundColor: theme.palette.status.failure,
+                      backgroundColor: theme.palette.status.failure.regular,
                       actionText: I18n.t('conversation.delete'),
                       actionIcon: 'ui-trash',
                     },

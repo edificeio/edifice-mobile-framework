@@ -258,7 +258,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                   padding: UI_SIZES.spacing.tiny,
                   textAlign: 'center',
                   alignSelf: 'center',
-                  color: theme.palette.status.failure,
+                  color: theme.palette.status.failure.regular,
                   marginTop: 0,
                   minHeight: getScaleDimension(20, 'height') * 3,
                 }}>

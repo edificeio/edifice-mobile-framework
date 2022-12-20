@@ -64,7 +64,7 @@ export default class ActionsMenu extends React.PureComponent<ActionsMenuProps> {
               style={style.actions}
               data={data}
               renderItem={({ item }) => {
-                const itemColorStyle = item.icon === 'delete' ? { color: theme.palette.status.failure } : {};
+                const itemColorStyle = item.icon === 'delete' ? { color: theme.palette.status.failure.regular } : {};
                 return (
                   <TouchableOpacity onPress={item.onPress}>
                     <View

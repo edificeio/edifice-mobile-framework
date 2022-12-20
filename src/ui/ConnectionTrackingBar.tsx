@@ -106,12 +106,12 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 
   get barColor(): string {
     if (this.props.loading) {
-      return theme.palette.status.warning;
+      return theme.palette.status.warning.regular;
     }
     if (this.props.connected) {
-      return theme.palette.status.success;
+      return theme.palette.status.success.regular;
     }
-    return theme.palette.status.failure;
+    return theme.palette.status.failure.regular;
   }
 
   public render() {
