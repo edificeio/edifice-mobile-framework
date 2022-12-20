@@ -88,7 +88,7 @@ export const FormSingleAnswerRadioCard = ({
     <FormQuestionCard
       title={title}
       isMandatory={mandatory}
-      onClearAnswer={responses[0].choiceId && !isDisabled ? clearAnswer : undefined}
+      onClearAnswer={responses[0]?.choiceId && !isDisabled ? clearAnswer : undefined}
       onEditQuestion={onEditQuestion}>
       {isDisabled && (!responses.length || !responses[0].choiceId) ? (
         <FormAnswerText />
