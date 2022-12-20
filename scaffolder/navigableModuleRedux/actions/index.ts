@@ -1,10 +1,11 @@
 /**
  * Thunk actions for module {{moduleName}}
  */
+import { ThunkDispatch } from 'redux-thunk';
 
-import { ThunkDispatch } from "redux-thunk";
-import { IGlobalState } from "~/AppStore";
-import { actions } from "../reducer";
+import { IGlobalState } from '~/AppStore';
+
+import { actions } from '../reducer';
 
 export function setFruitAction(fruit: string) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState): Promise<void> {

@@ -8,10 +8,9 @@
 import { navigate } from '~/framework/navigation/helper';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-import { I{{moduleName | capitalize}}NavigationParams, {{moduleName}}RouteNames } from './navigation';
+import { {{moduleName | capitalize}}NavigationParams, {{moduleName}}RouteNames } from './navigation';
 
 const handleSomeNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  
   // @scaffolder extract info from notification here
   
   // @scaffolder navigate somewhere here

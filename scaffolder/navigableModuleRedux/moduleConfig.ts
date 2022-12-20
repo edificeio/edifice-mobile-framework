@@ -1,7 +1,8 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-import { I{{moduleName | capitalize}}State } from './reducer';
 
-export default new NavigableModuleConfig<'{{moduleName}}', I{{moduleName | capitalize}}State>({
+import { {{moduleName | capitalize}}State } from './reducer';
+
+export default new NavigableModuleConfig<'{{moduleName}}', {{moduleName | capitalize}}State>({
   name: '{{moduleName}}',
   entcoreScope: [/* @scaffolder add there entcore scope list that be required for your module */],
   matchEntcoreApp: entcoreApp => true, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp

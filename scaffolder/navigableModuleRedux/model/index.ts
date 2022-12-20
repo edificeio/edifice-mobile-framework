@@ -2,6 +2,6 @@
  * Data model for the module {{moduleName}}
  */
 
-export interface I{{moduleName | capitalize}}Data {
+export interface {{moduleName | capitalize}}Data {
   id: string;
 }

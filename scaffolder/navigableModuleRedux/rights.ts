@@ -5,7 +5,6 @@
  * The rights manager computes the user rights for your module.
  * It also register workflows in other modules (eg; Timeline) if needed.
  */
-
 import { ISession } from '~/framework/modules/auth/model';
 
 // @scaffolder replace the value by a real workflow right string
