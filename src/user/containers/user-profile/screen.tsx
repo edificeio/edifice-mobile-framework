@@ -120,12 +120,14 @@ export class UserScreen extends React.PureComponent<
           </View>
           <View style={styles.section}>
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.configuration')}</HeadingSText>
-            <ButtonLine title="user.page.editEmail" onPress={() => this.props.navigation.navigate('NotifPrefs')} first />
+            <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} first />
             <ButtonLine title="user.page.editPassword" onPress={() => this.props.navigation.navigate('ChangePassword')} />
-            <ButtonLine
-              title="user.sendEmailVerificationCodeScreen.titleModify"
-              onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}
-            />
+            {session.user.type !== 'Student' ? (
+              <ButtonLine
+                title="user.page.editEmail"
+                onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}
+              />
+            ) : null}
             <ButtonLine title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
             {session.user.type === 'Student' ? (
               <ButtonLine title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />

@@ -4,6 +4,7 @@
 import I18n from 'i18n-js';
 import { Alert } from 'react-native';
 
+import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 import { getUserSession } from '~/framework/util/session';
@@ -56,11 +57,27 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
     }
   };
 
+const handleFormResponseNotificationAction: NotifHandlerThunkAction =
+  (notification, trackCategory, navState) => async (dispatch, getState) => {
+    const uri = notification.backupData.params.formResultsUri;
+    if (!uri) return { managed: 0 };
+    openUrl(uri);
+    return {
+      managed: 1,
+      trackInfo: { action: 'Form', name: `${notification.type}.${notification['event-type']}` },
+    };
+  };
+
 export default () =>
   registerNotifHandlers([
     {
       type: 'FORMULAIRE',
       'event-type': 'NEW_FORM_NOTIFICATION',
       notifHandlerAction: handleNewFormNotificationAction,
+    },
+    {
+      type: 'FORMULAIRE',
+      'event-type': 'RESPONSE_NOTIFICATION',
+      notifHandlerAction: handleFormResponseNotificationAction,
     },
   ]);

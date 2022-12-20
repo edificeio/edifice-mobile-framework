@@ -190,11 +190,16 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 editable: userinfo.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
-              {this.renderItem({
-                title: I18n.t('EmailAddress'),
-                getter: () => userinfo.email,
-                modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
-              })}
+              {userinfo.type === UserType.Student
+                ? this.renderItem({
+                    title: I18n.t('EmailAddress'),
+                    getter: () => userinfo.email,
+                  })
+                : this.renderItem({
+                    title: I18n.t('EmailAddress'),
+                    getter: () => userinfo.email,
+                    modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
+                  })}
               {this.renderItem({
                 title: I18n.t('Phone'),
                 getter: () => this.state.homePhone,
