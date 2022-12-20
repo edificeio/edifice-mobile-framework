@@ -42,8 +42,17 @@ export const FormDateCard = ({ isDisabled, question, responses, onChangeAnswer, 
     onChangeAnswer(question.id, responses);
   };
 
+  const clearAnswer = () => {
+    responses[0].answer = '';
+    onChangeAnswer(question.id, responses);
+  };
+
   return (
-    <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
+    <FormQuestionCard
+      title={title}
+      isMandatory={mandatory}
+      onClearAnswer={responses[0]?.answer && !isDisabled ? clearAnswer : undefined}
+      onEditQuestion={onEditQuestion}>
       {isDisabled ? (
         <FormAnswerText answer={responses[0]?.answer} />
       ) : responses[0]?.answer ? (
