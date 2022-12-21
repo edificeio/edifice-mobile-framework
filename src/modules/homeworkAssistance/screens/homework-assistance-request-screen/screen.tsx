@@ -252,7 +252,7 @@ export default connect(
               };
             })
           : undefined,
-      className: gs.user.info.classNames[0] ?? '',
+      className: gs.user.info.classNames ? gs.user.info.classNames[0] : '',
       config: state.config.data,
       initialLoadingState:
         state.config.isPristine || state.services.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
