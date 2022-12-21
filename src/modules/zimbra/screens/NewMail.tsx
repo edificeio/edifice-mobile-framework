@@ -190,7 +190,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }
     },
     getSendDraft: async () => {
-      if (this.state.mail.to.length === 0) {
+      if (!this.state.mail.to.length && !this.state.mail.cc.length && !this.state.mail.bcc.length) {
         Toast.show(I18n.t('zimbra-missing-receiver'), { ...UI_ANIMATIONS.toast });
         return;
       } else if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {

@@ -35,7 +35,7 @@ export default StyleSheet.create({
     marginBottom: 0,
   },
   linkDisconnect: {
-    color: theme.palette.status.failure,
+    color: theme.palette.status.failure.regular,
     textAlign: 'center',
   },
   boxBottomPage: {

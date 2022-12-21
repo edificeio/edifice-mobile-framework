@@ -65,7 +65,9 @@ export const BlogPostResourceCard = ({
         title={
           <>
             {state === 'SUBMITTED' ? (
-              <SmallBoldText style={{ color: theme.palette.status.warning }}>{I18n.t('blog.post.needValidation')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.palette.status.warning.regular }}>
+                {I18n.t('blog.post.needValidation')}
+              </SmallBoldText>
             ) : null}
             <ContentCardTitle>{title}</ContentCardTitle>
           </>

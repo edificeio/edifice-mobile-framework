@@ -162,7 +162,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           padding: UI_SIZES.spacing.tiny,
                           textAlign: 'center',
                           alignSelf: 'center',
-                          color: theme.palette.status.failure,
+                          color: theme.palette.status.failure.regular,
                         }}>
                         {errorText}
                       </SmallText>
@@ -205,7 +205,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
                             borderBottomColor:
                               isError && !editing
-                                ? theme.palette.status.failure
+                                ? theme.palette.status.failure.regular
                                 : showStructurePicker
                                 ? theme.palette.complementary.blue.regular
                                 : theme.palette.grey.grey,
@@ -269,7 +269,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             padding: UI_SIZES.spacing.tiny,
                             textAlign: 'center',
                             alignSelf: 'center',
-                            color: theme.palette.status.failure,
+                            color: theme.palette.status.failure.regular,
                           }}>
                           {I18n.t('forgot-several-emails-no-match')}
                         </SmallText>

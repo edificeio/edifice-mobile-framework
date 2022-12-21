@@ -2,12 +2,9 @@ import * as React from 'react';
 import { StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 import { TextField } from 'rn-material-ui-textfield';
 
-
-
 import theme from '~/app/theme';
 import PasswordInput from '~/framework/components/passwordInput';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
-
 
 export type TextInputLineProps = {
   hasError: boolean;
@@ -53,8 +50,8 @@ export class TextInputLine extends React.Component<
       inputContainerStyle: inputStyle,
       lineWidth: hasError ? 2 : 1,
       activeLineWidth: 2,
-      baseColor: hasError ? theme.palette.status.failure : theme.ui.border.input,
-      tintColor: hasError ? theme.palette.status.failure : theme.palette.primary.regular,
+      baseColor: hasError ? theme.palette.status.failure.regular : theme.ui.border.input,
+      tintColor: hasError ? theme.palette.status.failure.regular : theme.palette.primary.regular,
       invertVisibilityIcon: true,
     };
     const TextComponent = isPasswordField ? PasswordInput : TextField;

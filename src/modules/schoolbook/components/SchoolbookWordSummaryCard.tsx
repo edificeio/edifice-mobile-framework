@@ -126,7 +126,8 @@ export const SchoolbookWordSummaryCard = ({
           ) : (
             <View />
           )}
-          <SmallBoldText style={{ color: isTeacher || isWordAcknowledged ? theme.ui.text.regular : theme.palette.status.warning }}>
+          <SmallBoldText
+            style={{ color: isTeacher || isWordAcknowledged ? theme.ui.text.regular : theme.palette.status.warning.regular }}>
             {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
           </SmallBoldText>
         </View>

@@ -6,12 +6,7 @@ import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { getUserSession } from '~/framework/util/session';
-import {
-  IChangePasswordUserInfo,
-  cancelChangePasswordAction,
-  changePasswordAction,
-  initChangePasswordAction,
-} from '~/user/actions/changePassword';
+import { IChangePasswordUserInfo, changePasswordAction, initChangePasswordAction } from '~/user/actions/changePassword';
 import {
   ChangePasswordPage,
   IChangePasswordPageDataProps,
@@ -41,9 +36,6 @@ const mapDispatchToProps: (
     dispatch,
     onSubmit: async (model, redirectCallback, forceChange) => {
       dispatch(changePasswordAction(model, redirectCallback, forceChange));
-    },
-    onCancelLoad() {
-      dispatch(cancelChangePasswordAction());
     },
     onRetryLoad: async (arg: IChangePasswordUserInfo) => {
       dispatch(initChangePasswordAction(arg));

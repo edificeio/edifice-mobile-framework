@@ -42,13 +42,13 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
     };
     switch (currentFolder) {
       case 'trash':
-        leftButtonProperties.leftActionColor = theme.palette.status.success;
+        leftButtonProperties.leftActionColor = theme.palette.status.success.regular;
         leftButtonProperties.leftActionText = I18n.t('conversation.restore');
         leftButtonProperties.leftActionIcon = 'unarchive';
         leftButtonProperties.leftAction = restoreMail;
         break;
       default:
-        leftButtonProperties.leftActionColor = theme.palette.status.info;
+        leftButtonProperties.leftActionColor = theme.palette.status.info.regular;
         leftButtonProperties.leftActionText = I18n.t(`conversation.mark${unread ? 'Read' : 'Unread'}`);
         leftButtonProperties.leftActionIcon = `eye${unread ? '' : '-slash'}`;
         leftButtonProperties.leftAction = toggleRead;
@@ -116,7 +116,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
       //       )
       // }
       // rightButtons={this.swipeButtons(
-      //   { backgroundColor: theme.palette.status.failure },
+      //   { backgroundColor: theme.palette.status.failure.regular },
       //   () => {
       //     this.swipeableRef?.recenter(); // ToDo
       //     onSwipeRecenter(mailId);
@@ -143,7 +143,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
                       ) : null}
                       <TextContactComponent
                         numberOfLines={1}
-                        style={{ ...(isFolderDrafts ? { color: theme.palette.status.warning } : {}), flex: 1 }}>
+                        style={{ ...(isFolderDrafts ? { color: theme.palette.status.warning.regular } : {}), flex: 1 }}>
                         {contacts.map(c => c[1]).join(', ')}
                       </TextContactComponent>
                     </>

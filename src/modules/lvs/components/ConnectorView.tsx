@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.tiny,
     textAlign: 'center',
     alignSelf: 'center',
-    color: theme.palette.status.failure,
+    color: theme.palette.status.failure.regular,
   },
 });
 

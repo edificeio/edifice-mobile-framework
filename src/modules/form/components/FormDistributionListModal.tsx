@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ModalBox from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/action-button';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -82,6 +83,8 @@ export const FormDistributionListModal = ({
         setLoading(false);
       } catch (e) {
         setLoading(false);
+        modalBoxRef?.current?.doDismissModal();
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
         throw e;
       }
     }

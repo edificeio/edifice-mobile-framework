@@ -19,7 +19,7 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.spacing.medium,
   },
   detailsNeedValidation: {
-    color: theme.palette.status.warning,
+    color: theme.palette.status.warning.regular,
   },
   detailsTitleBlog: {
     color: theme.ui.text.light,

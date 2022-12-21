@@ -5,7 +5,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
-import { IQuestion, IQuestionResponse } from '~/modules/form/reducer';
+import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/modules/form/reducer';
 
 import { FormAnswerText } from './FormAnswerText';
 import Dropdown from './FormDropdown';
@@ -29,6 +29,21 @@ interface IFormSingleAnswerCardProps {
   onEditQuestion?: () => void;
 }
 
+const mapDropdownItems = (choices: IQuestionChoice[]): { id?: string; value: string }[] => {
+  return [
+    {
+      id: undefined,
+      value: I18n.t('form.selectAnOption'),
+    },
+    ...choices.map(choice => {
+      return {
+        id: choice.id.toString(),
+        value: choice.value,
+      };
+    }),
+  ];
+};
+
 export const FormSingleAnswerCard = ({
   isDisabled,
   question,
@@ -36,20 +51,22 @@ export const FormSingleAnswerCard = ({
   onChangeAnswer,
   onEditQuestion,
 }: IFormSingleAnswerCardProps) => {
+  const [items] = React.useState(mapDropdownItems(question.choices));
   const [value, setValue] = React.useState(responses[0]?.choiceId);
   const [customAnswer, setCustomAnswer] = React.useState(responses[0]?.customAnswer ?? '');
-  const items = question.choices.map(choice => {
-    return {
-      id: choice.id.toString(),
-      value: choice.value,
-    };
-  });
   let selectedChoice = question.choices.find(c => c.id === value);
   const { title, mandatory } = question;
 
+  const clearAnswer = () => {
+    responses[0].choiceId = undefined;
+    responses[0].answer = '';
+    responses[0].customAnswer = undefined;
+    onChangeAnswer(question.id, responses);
+  };
+
   const onChangeChoice = (choiceId?: number) => {
     setValue(choiceId);
-    if (!choiceId) return;
+    if (!choiceId) return clearAnswer();
     selectedChoice = question.choices.find(c => c.id === choiceId);
     const answer = selectedChoice?.value ?? '';
 
@@ -78,8 +95,6 @@ export const FormSingleAnswerCard = ({
             data={items}
             value={value?.toString()}
             onSelect={v => onChangeChoice(v ? Number(v) : undefined)}
-            placeholder={I18n.t('form.selectAnOption')}
-            showPlaceholderItem={value === undefined}
             keyExtractor={item => item?.id}
             renderItem={item => item?.value}
           />

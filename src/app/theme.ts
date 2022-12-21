@@ -49,10 +49,10 @@ export interface ITheme {
       white: ColorValue;
     };
     status: {
-      info: ColorValue;
-      success: ColorValue;
-      failure: ColorValue;
-      warning: ColorValue;
+      info: IShades;
+      success: IShades;
+      failure: IShades;
+      warning: IShades;
     };
     flashMessages: {
       'grey-dark': ColorValue;
@@ -230,10 +230,10 @@ export const defaultTheme: ThemeInitializer = {
       white: '#ffffff',
     },
     status: {
-      info: '#4bafd5',
-      success: '#7dbf85',
-      failure: '#e13a3a',
-      warning: '#f59700',
+      info: { evil: 'magenta', dark: '#3499BF', regular: '#4bafd5', light: '#ACD6E6', pale: '#D7E8EE' },
+      success: { evil: 'magenta', dark: '#70A977', regular: '#7dbf85', light: '#BBE1BF', pale: '#DAF1DD' },
+      failure: { evil: 'magenta', dark: '#D12A2A', regular: '#e13a3a', light: '#F3A6A6', pale: '#FFE9E9' },
+      warning: { evil: 'magenta', dark: '#E58D00', regular: '#f59700', light: '#F2C987', pale: '#FDECD2' },
     },
     flashMessages: {
       'grey-dark': '#5b6472',
@@ -318,8 +318,8 @@ export const defaultTheme: ThemeInitializer = {
         },
       },
       schoolbook: {
-        acknowledge: this.palette.status.warning,
-        acknowledged: this.palette.status.success,
+        acknowledge: this.palette.status.warning.regular,
+        acknowledged: this.palette.status.success.regular,
         categories: {
           canteen: this.palette.complementary.blue.regular,
           event: this.palette.complementary.purple.regular,

@@ -190,11 +190,16 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 editable: userinfo.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
-              {this.renderItem({
-                title: I18n.t('EmailAddress'),
-                getter: () => userinfo.email,
-                modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
-              })}
+              {userinfo.type === UserType.Student
+                ? this.renderItem({
+                    title: I18n.t('EmailAddress'),
+                    getter: () => userinfo.email,
+                  })
+                : this.renderItem({
+                    title: I18n.t('EmailAddress'),
+                    getter: () => userinfo.email,
+                    modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
+                  })}
               {this.renderItem({
                 title: I18n.t('Phone'),
                 getter: () => this.state.homePhone,
@@ -273,7 +278,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               color: validator
                 ? this.state[validator.key]
                   ? theme.ui.text.regular
-                  : theme.palette.status.failure
+                  : theme.palette.status.failure.regular
                 : theme.ui.text.regular,
             }}>
             {getter()}

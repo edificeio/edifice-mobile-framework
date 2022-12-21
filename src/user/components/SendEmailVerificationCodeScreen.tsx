@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.radius.medium,
   },
-  errorText: { color: theme.palette.status.failure, marginTop: UI_SIZES.spacing.tiny },
+  errorText: { color: theme.palette.status.failure.regular, marginTop: UI_SIZES.spacing.tiny },
   sendButton: { marginTop: UI_SIZES.spacing.medium },
   logoutButton: { alignSelf: 'center', marginTop: UI_SIZES.spacing.medium },
-  logoutText: { color: theme.palette.status.failure },
+  logoutText: { color: theme.palette.status.failure.regular },
 });
 
 export enum EmailState {
@@ -67,7 +67,7 @@ export const SendEmailVerificationCodeScreen = ({
       : `user.sendEmailVerificationCodeScreen.invalidEmailFormat${isEmailStateAlreadyVerified ? 'Modify' : ''}`,
   );
 
-  const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure;
+  const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular;
 
   const changeEmail = (text: string) => {
     if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);

@@ -127,7 +127,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             {
               text: I18n.t('common.deletionPostBlogTitle'),
               icon: { type: 'NamedSvg', name: 'ui-delete' },
-              color: theme.palette.status.failure,
+              color: theme.palette.status.failure.regular,
               onPress: () => {
                 Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
                   {

@@ -7,8 +7,11 @@ import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
+import AlertCard from '~/framework/components/alert';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { KeyboardPageView } from '~/framework/components/page';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import { IUserSession } from '~/framework/util/session';
 import { Loading } from '~/ui/Loading';
@@ -37,7 +40,6 @@ export interface IChangePasswordPageDataProps extends IChangePasswordModel {
 export interface IChangePasswordPageEventProps {
   onSubmit(model: IChangePasswordModel, redirectCallback?: (dispatch) => void, forceChange?: boolean): Promise<void>;
   onRetryLoad: (arg: IChangePasswordUserInfo) => void;
-  onCancelLoad: () => void;
   dispatch: Dispatch;
 }
 export type IChangePasswordPageProps = IChangePasswordPageDataProps &
@@ -156,36 +158,25 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     });
   }
 
-  componentDidUpdate() {
-    const props = this.props;
-    if (this.props.contextState == ContextState.Failed) {
-      Alert.alert(I18n.t('ErrorNetwork'), I18n.t('activation-errorLoading'), [
-        {
-          text: I18n.t('tryagain'),
-          onPress() {
-            props.onRetryLoad({
-              login: props.session.user.login!,
-            });
-          },
-          style: 'default',
-        },
-        {
-          text: I18n.t('activation-cancelLoad'),
-          onPress() {
-            props.onCancelLoad();
-          },
-          style: 'cancel',
-        },
-      ]);
-    }
-  }
-
   public render() {
     const { externalError, contextState, submitState } = this.props;
     const { oldPassword, newPassword, confirm, typing, showExternalError } = this.state;
 
-    if (contextState === ContextState.Loading || contextState === ContextState.Failed) {
+    if (contextState === ContextState.Loading) {
       return <Loading />;
+    }
+
+    if (contextState === ContextState.Failed) {
+      return (
+        <KeyboardPageView
+          navigation={this.props.navigation}
+          scrollable={true}
+          navBarWithBack={{
+            title: I18n.t('PasswordChange'),
+          }}>
+          <EmptyContentScreen />
+        </KeyboardPageView>
+      );
     }
 
     const formModel = new ChangePasswordFormModel({
@@ -224,20 +215,9 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                 </View>
               ) : null}
 
-              <View
-                style={{
-                  backgroundColor: theme.palette.primary.light,
-                  paddingVertical: UI_SIZES.spacing.minor,
-                  paddingHorizontal: UI_SIZES.spacing.medium,
-                  borderColor: theme.palette.primary.regular,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  flex: 0,
-                }}>
-                <CaptionText style={{ color: theme.palette.primary.regular }}>
-                  {this.props.passwordRegexI18n?.[I18n.currentLocale()]}
-                </CaptionText>
-              </View>
+              {this.props.passwordRegexI18n?.[I18n.currentLocale()] ? (
+                <AlertCard type="info" text={this.props.passwordRegexI18n?.[I18n.currentLocale()]} />
+              ) : null}
             </View>
             <View style={{ flexShrink: 0 }}>
               <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />
@@ -258,7 +238,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                   padding: UI_SIZES.spacing.tiny,
                   textAlign: 'center',
                   alignSelf: 'center',
-                  color: theme.palette.status.failure,
+                  color: theme.palette.status.failure.regular,
                   marginTop: 0,
                   minHeight: getScaleDimension(20, 'height') * 3,
                 }}>
