@@ -126,12 +126,12 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
     let response = responses.find(r => r.questionId === child.id);
 
     if (response) {
-      response.answer = choice.value ?? '';
+      response.answer = choice.value;
       response.choiceId = choice.id;
     } else {
       response = {
         questionId: child.id,
-        answer: choice.value ?? '',
+        answer: choice.value,
         choiceId: choice.id,
       };
     }
@@ -153,7 +153,7 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
       setValues(values);
       res.push({
         choiceId: choice.id,
-        answer: choice.value ?? '',
+        answer: choice.value,
         questionId: child.id,
       });
     }

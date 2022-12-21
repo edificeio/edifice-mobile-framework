@@ -55,13 +55,13 @@ export const FormSingleAnswerRadioCard = ({
   const onChangeChoice = (choice: IQuestionChoice) => {
     setValue(choice.id);
     if (responses.length) {
-      responses[0].answer = choice.value ?? '';
+      responses[0].answer = choice.value;
       responses[0].choiceId = choice.id;
       responses[0].customAnswer = choice.isCustom ? customAnswer : undefined;
     } else {
       responses.push({
         questionId: question.id,
-        answer: choice.value ?? '',
+        answer: choice.value,
         choiceId: choice.id,
         customAnswer: choice.isCustom ? customAnswer : undefined,
       });

@@ -61,13 +61,13 @@ interface IBackendQuestion {
   id: number;
   form_id: number;
   title: string;
-  position?: number;
+  position: number | null;
   question_type: number;
   statement: string;
   mandatory: boolean;
   original_question_id: number;
   section_id: number;
-  section_position: number;
+  section_position: number | null;
   conditional: boolean;
   placeholder?: string;
   matrix_id?: number;
@@ -82,10 +82,10 @@ interface IBackendQuestion {
 interface IBackendQuestionChoice {
   id: number;
   question_id: number;
-  value?: string;
-  type?: string;
-  position?: number;
-  next_section_id?: number | null;
+  value: string;
+  type: string;
+  position: number;
+  next_section_id: number | null;
   is_custom: boolean;
 }
 
@@ -166,8 +166,6 @@ const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
     sectionId: data.section_id,
     conditional: data.conditional,
     placeholder: data.placeholder,
-    matrixId: data.matrix_id,
-    matrixPosition: data.matrix_position,
     cursorMinVal: data.cursor_min_val,
     cursorMaxVal: data.cursor_max_val,
     cursorStep: data.cursor_step,
@@ -176,16 +174,29 @@ const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
   } as IQuestion;
 };
 
+const compareSectionQuestions: (a: IBackendQuestion, b: IBackendQuestion) => number = (a, b) => {
+  if (!a.section_position || !b.section_position) return 0;
+  return a.section_position - b.section_position;
+};
+
+const compareMatrixChildren: (a: IBackendQuestion, b: IBackendQuestion) => number = (a, b) => {
+  if (!a.matrix_position || !b.matrix_position) return 0;
+  return a.matrix_position - b.matrix_position;
+};
+
 const questionChoiceAdapter: (data: IBackendQuestionChoice) => IQuestionChoice = data => {
   return {
     id: data.id,
     questionId: data.question_id,
     value: data.value,
     type: data.type,
-    position: data.position,
     nextSectionId: data.next_section_id,
     isCustom: data.is_custom,
   } as IQuestionChoice;
+};
+
+const compareChoices: (a: IBackendQuestionChoice, b: IBackendQuestionChoice) => number = (a, b) => {
+  return a.position - b.position;
 };
 
 const questionResponseAdapter: (data: IBackendQuestionResponse) => IQuestionResponse = data => {
@@ -312,12 +323,14 @@ export const formService = {
       let api = `/formulaire/questions/choices/all?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const choices = (await fetchJSONWithCache(api)) as IBackendQuestionChoiceList;
+      choices.sort(compareChoices);
       return choices.map(choice => questionChoiceAdapter(choice)) as IQuestionChoice[];
     },
     getChildren: async (session: IUserSession, questionIds: number[]) => {
       let api = `/formulaire/questions/children?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const children = (await fetchJSONWithCache(api)) as IBackendQuestionList;
+      children.sort(compareMatrixChildren);
       return children.map(child => questionAdapter(child)) as IQuestion[];
     },
   },
@@ -346,6 +359,7 @@ export const formService = {
     getChoices: async (session: IUserSession, questionId: number) => {
       const api = `/formulaire/questions/${questionId}/choices`;
       const choices = (await fetchJSONWithCache(api)) as IBackendQuestionChoiceList;
+      choices.sort(compareChoices);
       return choices.map(choice => questionChoiceAdapter(choice)) as IQuestionChoice[];
     },
     getDistributionResponses: async (session: IUserSession, questionId: number, distributionId: number) => {
@@ -441,6 +455,7 @@ export const formService = {
     getQuestions: async (session: IUserSession, sectionId: number) => {
       const api = `/formulaire/sections/${sectionId}/questions`;
       const questions = (await fetchJSONWithCache(api)) as IBackendQuestionList;
+      questions.sort(compareSectionQuestions);
       return questions.map(question => questionAdapter(question)) as IQuestion[];
     },
   },
