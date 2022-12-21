@@ -51,6 +51,7 @@
     "@react-native-cookies/cookies": "6.2.1",
     "@react-native-firebase/app": "16.4.6",
     "@react-native-firebase/messaging": "16.4.6",
+    "@react-native-menu/menu": "^0.7.2",
     "@react-native-picker/picker": "2.4.8",
     "@skele/components": "1.0.0-alpha.40",
     "appcenter": "4.4.5",
