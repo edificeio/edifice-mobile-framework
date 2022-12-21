@@ -33,7 +33,7 @@
     "start": "watchman watch-del-all && react-native start --reset-cache",
     "test": "jest",
     "tsc": "tsc -p tsconfig.json",
-    "scaff-module": "run(){ npx scaffolder-cli create $1 --path-prefix /src/modules -f $2 moduleName=$2; }; run"
+    "scaff-module": "run(){ npx scaffolder-cli create $1 --path-prefix /src/framework/modules -f $2 moduleName=$2; }; run"
   },
   "dependencies": {
     "@emotion/native": "11.10.0",
