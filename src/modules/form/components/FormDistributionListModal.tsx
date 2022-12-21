@@ -58,7 +58,7 @@ export const FormDistributionListModal = ({
 
   const openSentDistribution = async (id: number) => {
     if (form?.editable) {
-      let distribution = distributions.find(d => d.status === DistributionStatus.ON_CHANGE);
+      let distribution = distributions.find(d => d.originalId === id && d.status === DistributionStatus.ON_CHANGE);
       if (!distribution) {
         try {
           const session = getUserSession();
