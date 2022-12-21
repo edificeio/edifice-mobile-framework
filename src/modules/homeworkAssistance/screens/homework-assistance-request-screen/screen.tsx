@@ -12,6 +12,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/action-button';
+import AlertCard from '~/framework/components/alert';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -190,7 +191,9 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
           />
         </View>
         <View>
-          {!isDateValid ? <SmallText style={styles.errorText}>{I18n.t('homeworkAssistance.serviceClosedError')}</SmallText> : null}
+          {!isDateValid ? (
+            <AlertCard type="failure" text={I18n.t('homeworkAssistance.serviceClosedError')} style={styles.errorAlert} />
+          ) : null}
           <ActionButton
             text={I18n.t('homeworkAssistance.sendMyRequest')}
             action={() => sendRequest()}
