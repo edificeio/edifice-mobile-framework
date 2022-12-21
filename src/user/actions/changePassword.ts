@@ -174,9 +174,3 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
     }
   };
 }
-
-export function cancelChangePasswordAction() {
-  return () => {
-    mainNavNavigate('MyProfile');
-  };
-}
