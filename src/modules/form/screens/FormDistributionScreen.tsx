@@ -395,13 +395,14 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     }
     return (
       <View style={styles.actionsContainer}>
-        <ActionButton
-          text={I18n.t('back')}
-          type="secondary"
-          action={() => goToPreviousPosition()}
-          disabled={!positionHistory.length}
-          style={styles.positionActionContainer}
-        />
+        {positionHistory.length ? (
+          <ActionButton
+            text={I18n.t('back')}
+            type="secondary"
+            action={() => goToPreviousPosition()}
+            style={styles.positionActionContainer}
+          />
+        ) : null}
         <ActionButton
           text={I18n.t('next')}
           action={() => goToNextPosition()}
