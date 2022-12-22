@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-21 13:30:04",
-  "notes": "fix(form): AMV2-473, sort questions and choices by position\nfix(MB-1091): new AlertCard component + use in Activation / Change pwd\nrelease: 1.9.1-alpha.3(1090103)",
-  "version": "1.9.1-alpha.4(1090104)",
+  "last": "2022-12-22 12:35:19",
+  "notes": "feat(email-verification): Make email verification compliant with both web 4.6 && 4.7\nfix(blog): change wording popup delete blog post\nfix(blog): error when click on blog notif in timeline\nfix(homework-assistance): set empty class for relative profile\nfix(homework-assistance): AMV2-408, replace text with alert card\nfix(form): AMV2-489, open sent distribution using originalId\n fix(user-profile): MB-1090, show empty screen when dont have connexion when change password\nfix(zimbra): AMVZ-98, undefined header title on notifications\nfix(zimbra): AMVZ-95, allow to send mail with empty recipient as long as cc/cci is filled\nfix(form): AMV2-477, hide back button on empty position history\nrelease: 1.9.1-alpha.4(1090104)",
+  "version": "1.9.1-alpha.5(1090105)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
