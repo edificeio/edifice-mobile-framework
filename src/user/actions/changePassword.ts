@@ -98,7 +98,8 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
       const activationContext: IUserAuthContext = await res.json();
       dispatch(changePasswordContextReceivedAction(activationContext));
       return initChangePasswordAction;
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       dispatch(changePasswordContextErrorAction());
     }
   };
@@ -168,7 +169,8 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
         }),
       );
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD');
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorSubmit')));
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
     }

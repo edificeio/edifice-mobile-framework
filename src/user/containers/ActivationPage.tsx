@@ -20,14 +20,14 @@ const mapStateToProps: (state: any) => IActivationPageDataProps = state => {
     confirm: activationState.submitted.confirm,
     contextState: activationState.contextState,
     email: activationState.submitted.email,
-    emailRequired: activationState.context.mandatory.mail,
+    emailRequired: activationState.context?.mandatory?.mail,
     externalError: activationState.submitError || '',
     login: activationState.userinfo.login,
     password: activationState.submitted.password,
     passwordRegex: activationState.context.passwordRegex,
     passwordRegexI18n: activationState.context.passwordRegexI18n,
     phone: activationState.submitted.phone,
-    phoneRequired: activationState.context.mandatory.phone,
+    phoneRequired: activationState.context?.mandatory?.phone,
     submitState: activationState.submitState,
   };
 };

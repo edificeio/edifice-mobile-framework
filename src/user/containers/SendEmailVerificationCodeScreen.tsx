@@ -12,15 +12,11 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
-import { logout } from '../actions/login';
 import { IUpdatableProfileValues, profileUpdateAction } from '../actions/profile';
 import { EmailState, SendEmailVerificationCodeScreen } from '../components/SendEmailVerificationCodeScreen';
-
-// TYPES ==========================================================================================
 
 export interface ISendEmailVerificationCodeScreenEventProps {
   onLogout(): void;
@@ -28,11 +24,8 @@ export interface ISendEmailVerificationCodeScreenEventProps {
 }
 export type ISendEmailVerificationCodeScreenProps = ISendEmailVerificationCodeScreenEventProps & NavigationInjectedProps;
 
-// COMPONENT ======================================================================================
-
 const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScreenProps) => {
   // EVENTS =====================================================================================
-
   const credentials = props.navigation.getParam('credentials');
   const defaultEmail = props.navigation.getParam('defaultEmail');
   const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
@@ -44,11 +37,9 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
     const isEmailFormatValid = emailValidator.isValid(email);
     if (!isEmailFormatValid) return EmailState.EMAIL_FORMAT_INVALID;
     else {
-      // Temporary condition (remove once email verification is ready on all PF's)
-      const pf = DEPRECATED_getCurrentPlatform();
-      const isPfRecetteParis = pf?.url === 'https://recette-paris.opendigitaleducation.com';
       try {
-        if (isPfRecetteParis) {
+        const userAuthContext = await userService.getUserAuthContext();
+        if (userAuthContext?.mandatory?.needRevalidateEmail) {
           setIsSendingEmailVerificationCode(true);
           const emailValidationInfos = await userService.getEmailValidationInfos();
           const validEmail = emailValidationInfos?.emailState?.valid;
@@ -60,7 +51,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           props.onSaveNewEmail({ email });
         }
       } catch {
-        if (isPfRecetteParis) Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
       } finally {
         setIsSendingEmailVerificationCode(false);
       }
