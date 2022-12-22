@@ -96,8 +96,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const { navigation, session } = this.props;
     const { loadingState, errorState, showMenu, blogPostData, blogInfos } = this.state;
 
-    const blog = navigation.getParam('blog');
-    const blogId = blog!.id;
+    const blogId = blogInfos?.id;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const isBottomSheetVisible =
       (blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight) || blogPostData?.state === 'SUBMITTED';
@@ -121,7 +120,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       },
     };
     const menuData =
-      hasPermissionManager(blog!, session) || blogPostData?.author.userId === session.user.id
+      hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id
         ? [
             menuItemOpenBrowser,
             {
@@ -384,7 +383,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           hasUpdateCommentBlogPostRight ? (comment, commentId) => this.doCreateComment(comment, commentId) : undefined
         }
         onDeleteComment={
-          hasDeleteCommentBlogPostRight || hasPermissionManager(blog!, session)
+          hasDeleteCommentBlogPostRight || hasPermissionManager(blogInfos!, session)
             ? () => {
                 Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.confirmationDelete'), [
                   {
@@ -416,7 +415,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         onEditableLayoutHeight={val => {
           this.editorOffsetRef.current = val;
         }}
-        isManager={hasPermissionManager(blog!, session)}
+        isManager={hasPermissionManager(blogInfos!, session)}
       />
     );
   }
