@@ -124,11 +124,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         ? [
             menuItemOpenBrowser,
             {
-              text: I18n.t('common.deletionPostBlogTitle'),
+              text: I18n.t('common.deletionPostBlogMenu'),
               icon: { type: 'NamedSvg', name: 'ui-delete' },
               color: theme.palette.status.failure.regular,
               onPress: () => {
-                Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
+                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
                   {
                     text: I18n.t('common.cancel'),
                     style: 'default',
