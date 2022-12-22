@@ -1,4 +1,5 @@
 import { MenuView } from '@react-native-menu/menu';
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform, View } from 'react-native';
 
@@ -8,16 +9,26 @@ export const PopupMenu = (props: React.PropsWithChildren<PopupMenuProps>) => {
   const actionsPopup = props.actions.map(action => {
     return {
       id: action.id,
-      title: action.title,
+      title: action.type === 'delete' ? I18n.t('delete') : action.title,
       image:
-        action.iconAndroid && action.iconIos
+        action.type === 'delete'
+          ? Platform.select({
+              ios: 'trash',
+              android: 'ic_menu_delete',
+            })
+          : action.type === 'external-link'
+          ? Platform.select({
+              ios: 'arrow.up.right',
+              android: 'ic_menu_view',
+            })
+          : action.iconAndroid && action.iconIos
           ? Platform.select({
               ios: action.iconIos,
               android: action.iconAndroid,
             })
           : undefined,
       attributes: {
-        destructive: action.destructive ?? false,
+        destructive: !!(action.destructive || action.type === 'delete'),
       },
     };
   });

@@ -5,6 +5,7 @@ export interface PopupMenuAction {
   iconIos?: string;
   iconAndroid?: string;
   destructive?: boolean;
+  type?: string;
 }
 
 export interface PopupMenuProps {
