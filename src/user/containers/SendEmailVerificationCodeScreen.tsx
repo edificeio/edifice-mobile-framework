@@ -31,6 +31,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
   const modifyString = isModifyingEmail ? 'Modify' : '';
   const [isSendingEmailVerificationCode, setIsSendingEmailVerificationCode] = React.useState(false);
+  const [emailIsEmpty, setEmailIsEmpty] = React.useState(true);
 
   const sendEmailVerificationCode = async (email: string) => {
     const emailValidator = new ValidatorBuilder().withEmail().build<string>();
@@ -67,7 +68,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   };
 
   const displayConfirmationAlert = () => {
-    if (isModifyingEmail) {
+    if (!emailIsEmpty) {
       Alert.alert(
         I18n.t('user.sendEmailVerificationCodeScreen.alertTitle'),
         I18n.t('user.sendEmailVerificationCodeScreen.alertContent'),
@@ -83,7 +84,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           },
         ],
       );
-    } else return false;
+    } else props.navigation.goBack();
   };
 
   // HEADER =====================================================================================
@@ -113,6 +114,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         sendAction={email => sendEmailVerificationCode(email)}
         isSending={isSendingEmailVerificationCode}
         refuseAction={() => refuseEmailVerification()}
+        emailEmpty={data => setEmailIsEmpty(data)}
       />
     </KeyboardPageView>
   );

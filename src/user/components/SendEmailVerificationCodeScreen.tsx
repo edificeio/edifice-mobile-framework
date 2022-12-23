@@ -46,12 +46,14 @@ export const SendEmailVerificationCodeScreen = ({
   isSending,
   refuseAction,
   isModifyingEmail,
+  emailEmpty,
 }: {
   defaultEmail: string;
   sendAction: (email: string) => Promise<EmailState | undefined>;
   isSending: boolean;
   refuseAction: () => void;
   isModifyingEmail: boolean;
+  emailEmpty: (data: boolean) => void;
 }) => {
   const [email, setEmail] = React.useState(defaultEmail || '');
   const [emailState, setEmailState] = React.useState<EmailState>(EmailState.PRISTINE);
@@ -84,6 +86,7 @@ export const SendEmailVerificationCodeScreen = ({
   const changeEmail = (text: string) => {
     if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
     setEmail(text);
+    emailEmpty(text === '');
   };
 
   const sendEmail = async () => {
