@@ -9,11 +9,11 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
-import ActionsMenu from '~/framework/components/actionsMenu';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { HeaderAction } from '~/framework/components/header';
+import { HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import PopupMenu from '~/framework/components/popup-menu';
 import { HeadingSText } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -57,17 +57,18 @@ class MailContentContainer extends React.PureComponent<
   any
 > {
   _subjectRef?: React.Ref<any> = undefined;
+
   constructor(props) {
     super(props);
 
     this.state = {
       mailId: this.props.navigation.state.params?.mailId,
-      showMenu: false,
       showModal: false,
       showHeaderSubject: false,
       htmlError: false,
     };
   }
+
   public componentDidMount() {
     this.props.clearContent();
     this.props.fetchMailContentAction(this.props.navigation.state.params?.mailId);
@@ -80,13 +81,6 @@ class MailContentContainer extends React.PureComponent<
       this.setState({ mailId: this.props.navigation.state.params?.mailId });
     }
   }
-
-  public showMenu = () => {
-    const { showMenu } = this.state;
-    this.setState({
-      showMenu: !showMenu,
-    });
-  };
 
   public showModal = () => {
     this.setState({
@@ -155,18 +149,32 @@ class MailContentContainer extends React.PureComponent<
 
   public render() {
     const { navigation, mail, error } = this.props;
-    const { showMenu, showModal, htmlError } = this.state;
+    const { showModal, htmlError } = this.state;
     const currentFolder = navigation.getParam('currentFolder');
     const isCurrentFolderTrash = currentFolder === 'trash';
     const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
-    const menuData = [
-      { text: I18n.t('conversation.markUnread'), icon: 'eye', onPress: this.markAsRead },
-      { text: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`), icon: 'unarchive', onPress: this.showModal },
-      // { text: I18n.t("conversation.downloadAll"), icon: "download", onPress: () => {} },
-      { text: I18n.t('conversation.delete'), icon: 'delete', onPress: this.delete },
+    const popupActionsMenu = [
+      {
+        id: '1',
+        title: I18n.t('conversation.markUnread'),
+        action: () => this.markAsRead(),
+        iconIos: 'eye.slash',
+        iconAndroid: 'ic_menu_view',
+      },
+      {
+        id: '2',
+        title: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
+        action: () => this.showModal(),
+        iconIos: 'arrow.up.square',
+        iconAndroid: 'ic_menu_upload',
+      },
+      {
+        id: '3',
+        title: '',
+        action: () => this.delete(),
+        type: 'delete',
+      },
     ];
-    isCurrentFolderTrash && menuData.splice(0, 1);
-    isCurrentFolderSentOrDrafts && menuData.splice(0, 2);
 
     const ViewportAwareSubject = Viewport.Aware(View);
 
@@ -174,7 +182,16 @@ class MailContentContainer extends React.PureComponent<
       title: this.state.showHeaderSubject ? mail.subject : undefined,
       right:
         this.props.isFetching || error || htmlError ? undefined : (
-          <HeaderAction onPress={this.showMenu} iconName="more_vert" iconSize={24} />
+          <PopupMenu
+            actions={
+              isCurrentFolderTrash
+                ? popupActionsMenu.splice(1, 2)
+                : isCurrentFolderSentOrDrafts
+                ? popupActionsMenu.splice(2, 1)
+                : popupActionsMenu
+            }>
+            <HeaderIcon name="more_vert" iconSize={24} />
+          </PopupMenu>
         ),
     };
 
@@ -217,7 +234,6 @@ class MailContentContainer extends React.PureComponent<
           restoreToFolder={this.props.restoreToFolder}
           restoreToInbox={this.props.restoreToInbox}
         />
-        <ActionsMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
   }
