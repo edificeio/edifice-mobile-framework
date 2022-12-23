@@ -37,7 +37,9 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
     else {
       try {
         const userAuthContext = await userService.getUserAuthContext();
-        if (!isEmpty(userAuthContext?.mandatory)) {
+        // Web 4.7+ compliance:
+        //   Email verification APIs are available only if mandatory contains at least needRevalidateEmail field
+        if (userAuthContext?.mandatory?.needRevalidateEmail !== null) {
           setIsSendingEmailVerificationCode(true);
           const emailValidationInfos = await userService.getEmailValidationInfos();
           const validEmail = emailValidationInfos?.emailState?.valid;
