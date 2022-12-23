@@ -1,6 +1,3 @@
-/**
- * Send email verification code screen
- */
 import I18n from 'i18n-js';
 import React from 'react';
 import { Alert } from 'react-native';
@@ -12,15 +9,12 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { isEmpty } from '~/framework/util/object';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
-import { logout } from '../actions/login';
 import { IUpdatableProfileValues, profileUpdateAction } from '../actions/profile';
 import { EmailState, SendEmailVerificationCodeScreen } from '../components/SendEmailVerificationCodeScreen';
-
-// TYPES ==========================================================================================
 
 export interface ISendEmailVerificationCodeScreenEventProps {
   onLogout(): void;
@@ -28,27 +22,24 @@ export interface ISendEmailVerificationCodeScreenEventProps {
 }
 export type ISendEmailVerificationCodeScreenProps = ISendEmailVerificationCodeScreenEventProps & NavigationInjectedProps;
 
-// COMPONENT ======================================================================================
-
 const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScreenProps) => {
-  // EVENTS =====================================================================================
-
   const credentials = props.navigation.getParam('credentials');
   const defaultEmail = props.navigation.getParam('defaultEmail');
   const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
   const modifyString = isModifyingEmail ? 'Modify' : '';
   const [isSendingEmailVerificationCode, setIsSendingEmailVerificationCode] = React.useState(false);
+  const [emailIsEmpty, setEmailIsEmpty] = React.useState(true);
 
   const sendEmailVerificationCode = async (email: string) => {
     const emailValidator = new ValidatorBuilder().withEmail().build<string>();
     const isEmailFormatValid = emailValidator.isValid(email);
     if (!isEmailFormatValid) return EmailState.EMAIL_FORMAT_INVALID;
     else {
-      // Temporary condition (remove once email verification is ready on all PF's)
-      const pf = DEPRECATED_getCurrentPlatform();
-      const isPfRecetteParis = pf?.url === 'https://recette-paris.opendigitaleducation.com';
       try {
-        if (isPfRecetteParis) {
+        const userAuthContext = await userService.getUserAuthContext();
+        // Web 4.7+ compliance:
+        //   Email verification APIs are available only if mandatory contains at least needRevalidateEmail field
+        if (userAuthContext?.mandatory?.needRevalidateEmail !== null) {
           setIsSendingEmailVerificationCode(true);
           const emailValidationInfos = await userService.getEmailValidationInfos();
           const validEmail = emailValidationInfos?.emailState?.valid;
@@ -56,11 +47,11 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           await userService.sendEmailVerificationCode(email);
           props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail });
         } else {
-          props.navigation.navigate('MyProfile');
+          props.navigation.goBack();
           props.onSaveNewEmail({ email });
         }
       } catch {
-        if (isPfRecetteParis) Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
       } finally {
         setIsSendingEmailVerificationCode(false);
       }
@@ -76,7 +67,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   };
 
   const displayConfirmationAlert = () => {
-    if (isModifyingEmail) {
+    if (!emailIsEmpty) {
       Alert.alert(
         I18n.t('user.sendEmailVerificationCodeScreen.alertTitle'),
         I18n.t('user.sendEmailVerificationCodeScreen.alertContent'),
@@ -92,16 +83,12 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           },
         ],
       );
-    } else return false;
+    } else props.navigation.goBack();
   };
-
-  // HEADER =====================================================================================
 
   const navBarInfo = {
     title: I18n.t(`user.sendEmailVerificationCodeScreen.title${modifyString}`),
   };
-
-  // RENDER =======================================================================================
 
   return (
     <KeyboardPageView
@@ -122,12 +109,11 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         sendAction={email => sendEmailVerificationCode(email)}
         isSending={isSendingEmailVerificationCode}
         refuseAction={() => refuseEmailVerification()}
+        emailEmpty={data => setEmailIsEmpty(data)}
       />
     </KeyboardPageView>
   );
 };
-
-// MAPPING ========================================================================================
 
 export default connect(
   () => ({}),

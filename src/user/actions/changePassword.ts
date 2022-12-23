@@ -78,9 +78,6 @@ function changePasswordSubmitReceivedAction(): Action {
 function changePasswordSubmitErrorAction(message: string): IChangePasswordSubmitErrorAction {
   return { type: actionTypeChangePasswordSubmit.fetchError, message };
 }
-export function changePasswordResetAction(): Action {
-  return { type: actionTypeChangePasswordReset };
-}
 
 // THUNKS -----------------------------------------------------------------------------------------
 
@@ -98,7 +95,8 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
       const activationContext: IUserAuthContext = await res.json();
       dispatch(changePasswordContextReceivedAction(activationContext));
       return initChangePasswordAction;
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       dispatch(changePasswordContextErrorAction());
     }
   };
@@ -157,7 +155,7 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
       dispatch(changePasswordSubmitReceivedAction());
 
       if (redirectCallback) redirectCallback(dispatch);
-      else mainNavNavigate('MyProfile');
+      else mainNavNavigate('Profile');
 
       dispatch(
         notifierShowAction({
@@ -168,7 +166,8 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
         }),
       );
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD');
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorSubmit')));
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
     }

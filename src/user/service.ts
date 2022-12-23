@@ -298,28 +298,9 @@ class UserService {
     }
   }
 
-  async getUserAuthContext(session?: IUserSession) {
-    try {
-      let res;
-      if (session) {
-        res = await fetchJSONWithCache('/auth/context');
-      } else {
-        res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
-        if (!res.ok) {
-          throw new Error('[UserService] getUserAuthContext: response not 20x');
-        }
-        res = await res.json();
-      }
-      return {
-        callBack: res.callBack,
-        cgu: res.cgu,
-        passwordRegex: new RegExp(res.passwordRegex),
-        passwordRegexI18n: res.passwordRegexI18n,
-        mandatory: res.mandatory,
-      } as IUserAuthContext;
-    } catch (e) {
-      // console.warn('[UserService] getUserAuthContext: could not verify email code', e);
-    }
+  async getUserAuthContext() {
+    const userAuthContext = await fetchJSONWithCache('/auth/context');
+    return userAuthContext;
   }
 }
 

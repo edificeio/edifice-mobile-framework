@@ -43,13 +43,7 @@ export const getBlogPostRight = (blog: IBlog, session: IUserSession) => {
 };
 
 export const hasPermissionManager = (blog: IBlog, session: IUserSession) => {
-  if (blog.author.userId === session.user.id) {
-    return true;
-  } else if (resourceHasRight(blog, deleteBlogResourceRight, session)) {
-    return true;
-  } else {
-    return false;
-  }
+  return blog && (blog.author.userId === session.user.id || resourceHasRight(blog, deleteBlogResourceRight, session));
 };
 
 export const getBlogWorkflowInformation = (session: IUserSession) => ({

@@ -15,7 +15,7 @@ import Label from '~/framework/components/label';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
-import { getDayOfTheWeek } from '~/framework/util/date';
+import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
@@ -24,7 +24,6 @@ import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryLis
 import { IHomeworkTask } from '~/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { Loading } from '~/ui/Loading';
-import today from '~/utils/today';
 
 import HomeworkCard from './HomeworkCard';
 import HomeworkDayCheckpoint from './HomeworkDayCheckpoint';
