@@ -47,9 +47,8 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           props.navigation.goBack();
           props.onSaveNewEmail({ email });
         }
-      } catch (err) {
-        Toast.show(err.message);
-        //Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      } catch {
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
       } finally {
         setIsSendingEmailVerificationCode(false);
       }
