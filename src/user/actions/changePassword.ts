@@ -78,9 +78,6 @@ function changePasswordSubmitReceivedAction(): Action {
 function changePasswordSubmitErrorAction(message: string): IChangePasswordSubmitErrorAction {
   return { type: actionTypeChangePasswordSubmit.fetchError, message };
 }
-export function changePasswordResetAction(): Action {
-  return { type: actionTypeChangePasswordReset };
-}
 
 // THUNKS -----------------------------------------------------------------------------------------
 

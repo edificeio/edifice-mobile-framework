@@ -33,7 +33,6 @@ import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { PageContainer } from '~/ui/ContainerContent';
 import { ContainerTextInput, ContainerView } from '~/ui/button-line';
-import { changePasswordResetAction } from '~/user/actions/changePassword';
 import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
 import UserCard from '~/user/components/user-card';
 import { IUserAuthState } from '~/user/reducers/auth';
@@ -166,16 +165,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 validator: { key: 'loginAliasValid', regex: /^[0-9a-z\-\.]+$/ },
                 placeholder: userinfo.login,
               })}
-              {!userinfo.federated
-                ? this.renderItem({
-                    title: I18n.t('Password'),
-                    getter: () => I18n.t('PasswordPlaceholder'),
-                    modifyAction: () => {
-                      this.props.dispatch(changePasswordResetAction());
-                      this.props.navigation.navigate('ChangePassword');
-                    },
-                  })
-                : null}
               {this.renderItem({
                 title: I18n.t('Firstname'),
                 getter: () => userinfo.firstName,
@@ -198,7 +187,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 : this.renderItem({
                     title: I18n.t('EmailAddress'),
                     getter: () => userinfo.email,
-                    modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
                   })}
               {this.renderItem({
                 title: I18n.t('Phone'),
@@ -234,7 +222,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     title,
     getter,
     editable = false,
-    modifyAction,
     setter,
     keyboardType,
     validator,
@@ -244,7 +231,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     title: string;
     getter: () => string | undefined;
     editable?: boolean;
-    modifyAction?: () => void;
     setter?: (val: any) => void;
     keyboardType?: KeyboardTypeOptions;
     validator?: { key: keyof IProfilePageState; regex: RegExp };
@@ -289,7 +275,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
             {getter()}
           </SmallText>
-          {modifyAction ? <SmallActionText>{I18n.t('common.modify')}</SmallActionText> : null}
         </ContainerView>
       );
     } else {
@@ -298,11 +283,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
             {getter()}
           </SmallText>
-          {modifyAction ? (
-            <TouchableOpacity onPress={() => modifyAction()}>
-              <SmallActionText>{I18n.t('common.modify')}</SmallActionText>
-            </TouchableOpacity>
-          ) : null}
         </ContainerView>
       );
     }
