@@ -158,7 +158,7 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
       dispatch(changePasswordSubmitReceivedAction());
 
       if (redirectCallback) redirectCallback(dispatch);
-      else mainNavNavigate('MyProfile');
+      else mainNavNavigate('Profile');
 
       dispatch(
         notifierShowAction({

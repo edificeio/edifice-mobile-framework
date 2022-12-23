@@ -86,7 +86,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   const redirectUser = async () => {
     try {
       if (isModifyingEmail) {
-        props.navigation.navigate('MyProfile');
+        props.navigation.navigate('Profile');
         props.onSaveNewEmail({ email });
       } else {
         props.onLogin(credentials);
@@ -101,7 +101,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       Alert.alert(I18n.t('user.verifyEmailCodeScreen.alertTitle'), I18n.t('user.verifyEmailCodeScreen.alertContent'), [
         {
           text: I18n.t('common.discard'),
-          onPress: () => props.navigation.navigate('MyProfile'),
+          onPress: () => props.navigation.navigate('Profile'),
           style: 'destructive',
         },
         {

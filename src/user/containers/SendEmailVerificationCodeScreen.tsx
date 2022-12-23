@@ -48,7 +48,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           await userService.sendEmailVerificationCode(email);
           props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail });
         } else {
-          props.navigation.navigate('MyProfile');
+          props.navigation.goBack();
           props.onSaveNewEmail({ email });
         }
       } catch {
