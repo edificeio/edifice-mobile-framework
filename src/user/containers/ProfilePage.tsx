@@ -179,15 +179,10 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 editable: userinfo.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
-              {userinfo.type === UserType.Student
-                ? this.renderItem({
-                    title: I18n.t('EmailAddress'),
-                    getter: () => userinfo.email,
-                  })
-                : this.renderItem({
-                    title: I18n.t('EmailAddress'),
-                    getter: () => userinfo.email,
-                  })}
+              {this.renderItem({
+                title: I18n.t('EmailAddress'),
+                getter: () => userinfo.email,
+              })}
               {this.renderItem({
                 title: I18n.t('Phone'),
                 getter: () => this.state.homePhone,
@@ -250,6 +245,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     if (isEditMode) {
       box = editable ? (
         <ContainerTextInput
+          style={{
+            paddingVertical: UI_SIZES.spacing.small,
+          }}
           onChangeText={text => {
             validator && this.setState({ [validator.key]: validator.regex.test(text) });
             setter!(text);
