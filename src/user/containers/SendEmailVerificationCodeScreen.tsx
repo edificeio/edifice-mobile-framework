@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { isEmpty } from '~/framework/util/object';
 import { userService } from '~/user/service';
