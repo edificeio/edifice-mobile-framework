@@ -59,3 +59,7 @@ export const getDayOfTheWeek = (date: Moment) => {
   }
   return date.locale('en').format('dddd').toLowerCase();
 };
+
+export const today = () => {
+  return moment();
+};

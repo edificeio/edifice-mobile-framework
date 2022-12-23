@@ -5,9 +5,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { BodyBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
-import { getDayOfTheWeek } from '~/framework/util/date';
+import { getDayOfTheWeek, today } from '~/framework/util/date';
 import HtmlToText from '~/infra/htmlConverter/text';
-import today from '~/utils/today';
 
 export interface IHomeworkCardProps {
   title: string;

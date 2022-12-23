@@ -1,6 +1,3 @@
-/**
- * Send email verification code screen
- */
 import I18n from 'i18n-js';
 import React from 'react';
 import { Alert } from 'react-native';
@@ -10,8 +7,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
+import { isEmpty } from '~/framework/util/object';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
@@ -25,7 +22,6 @@ export interface ISendEmailVerificationCodeScreenEventProps {
 export type ISendEmailVerificationCodeScreenProps = ISendEmailVerificationCodeScreenEventProps & NavigationInjectedProps;
 
 const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScreenProps) => {
-  // EVENTS =====================================================================================
   const credentials = props.navigation.getParam('credentials');
   const defaultEmail = props.navigation.getParam('defaultEmail');
   const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
@@ -40,7 +36,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
     else {
       try {
         const userAuthContext = await userService.getUserAuthContext();
-        if (userAuthContext?.mandatory?.needRevalidateEmail) {
+        if (!isEmpty(userAuthContext?.mandatory)) {
           setIsSendingEmailVerificationCode(true);
           const emailValidationInfos = await userService.getEmailValidationInfos();
           const validEmail = emailValidationInfos?.emailState?.valid;
@@ -51,8 +47,9 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
           props.navigation.goBack();
           props.onSaveNewEmail({ email });
         }
-      } catch {
-        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      } catch (err) {
+        Toast.show(err.message);
+        //Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
       } finally {
         setIsSendingEmailVerificationCode(false);
       }
@@ -87,13 +84,9 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
     } else props.navigation.goBack();
   };
 
-  // HEADER =====================================================================================
-
   const navBarInfo = {
     title: I18n.t(`user.sendEmailVerificationCodeScreen.title${modifyString}`),
   };
-
-  // RENDER =======================================================================================
 
   return (
     <KeyboardPageView
@@ -119,8 +112,6 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
     </KeyboardPageView>
   );
 };
-
-// MAPPING ========================================================================================
 
 export default connect(
   () => ({}),

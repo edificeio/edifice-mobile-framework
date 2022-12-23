@@ -4,9 +4,8 @@ import * as React from 'react';
 
 import theme from '~/app/theme';
 import Label from '~/framework/components/label';
-import { displayDate, getDayOfTheWeek } from '~/framework/util/date';
+import { displayDate, getDayOfTheWeek, today } from '~/framework/util/date';
 import { uppercaseFirstLetter } from '~/framework/util/string';
-import today from '~/utils/today';
 
 export interface IHomeworkDayCheckpointProps {
   date: moment.Moment;
