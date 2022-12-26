@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { isEmpty } from '~/framework/util/object';
+import { containsKey } from '~/framework/util/object';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
@@ -39,7 +39,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         const userAuthContext = await userService.getUserAuthContext();
         // Web 4.7+ compliance:
         //   Email verification APIs are available only if mandatory contains at least needRevalidateEmail field
-        if (userAuthContext?.mandatory?.needRevalidateEmail !== null) {
+        if (containsKey(userAuthContext?.mandatory, 'needRevalidateEmail')) {
           setIsSendingEmailVerificationCode(true);
           const emailValidationInfos = await userService.getEmailValidationInfos();
           const validEmail = emailValidationInfos?.emailState?.valid;
