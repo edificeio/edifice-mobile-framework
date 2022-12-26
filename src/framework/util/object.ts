@@ -1,4 +1,21 @@
 /**
+ * Test if given object contains given key or not.
+ * @param something
+ * @param key
+ */
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
+export const containsKey = (something: object, key: string): boolean => !isEmpty(something) && Object.keys(something).includes(key);
+
+/**
+ * Test if given object contains given value or not.
+ * @param something
+ * @param key
+ */
+export const containsValue = (something: object, value: string): boolean =>
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  !isEmpty(something) && Object.values(something).includes(value);
+
+/**
  * Flatten a nested object.
  * @param object
  */

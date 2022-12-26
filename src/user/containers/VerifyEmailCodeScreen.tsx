@@ -6,7 +6,8 @@ import React from 'react';
 import { Alert } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { KeyboardPageView } from '~/framework/components/page';
@@ -144,16 +145,13 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
 
 export default connect(
   () => ({}),
-  dispatch =>
-    bindActionCreators(
-      {
-        onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
-          dispatch<any>(checkVersionThenLogin(false, credentials));
-        },
-        onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
-          dispatch(profileUpdateAction(updatedProfileValues));
-        },
-      },
-      dispatch,
-    ),
+  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
+    onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
+      dispatch(checkVersionThenLogin(false, credentials));
+    },
+    onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
+      dispatch(profileUpdateAction(updatedProfileValues));
+    },
+    dispatch,
+  }),
 )(VerifyEmailCodeContainer);

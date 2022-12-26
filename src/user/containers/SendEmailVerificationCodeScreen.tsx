@@ -1,20 +1,20 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { Alert } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { isEmpty } from '~/framework/util/object';
+import { containsKey } from '~/framework/util/object';
+import { logout } from '~/user/actions/login';
+import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
+import { EmailState, SendEmailVerificationCodeScreen } from '~/user/components/SendEmailVerificationCodeScreen';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
-
-import { IUpdatableProfileValues, profileUpdateAction } from '../actions/profile';
-import { EmailState, SendEmailVerificationCodeScreen } from '../components/SendEmailVerificationCodeScreen';
 
 export interface ISendEmailVerificationCodeScreenEventProps {
   onLogout(): void;
@@ -36,24 +36,24 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
     if (!isEmailFormatValid) return EmailState.EMAIL_FORMAT_INVALID;
     else {
       try {
-        const userAuthContext = await userService.getUserAuthContext();
         // Web 4.7+ compliance:
         //   Email verification APIs are available only if mandatory contains at least needRevalidateEmail field
-        if (userAuthContext?.mandatory?.needRevalidateEmail !== null) {
+        const userAuthContext = await userService.getUserAuthContext();
+        if (containsKey(userAuthContext?.mandatory, 'needRevalidateEmail')) {
           setIsSendingEmailVerificationCode(true);
           const emailValidationInfos = await userService.getEmailValidationInfos();
           const validEmail = emailValidationInfos?.emailState?.valid;
           if (email === validEmail) return EmailState.EMAIL_ALREADY_VERIFIED;
           await userService.sendEmailVerificationCode(email);
+          setIsSendingEmailVerificationCode(false);
           props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail });
         } else {
-          props.navigation.goBack();
           props.onSaveNewEmail({ email });
+          setIsSendingEmailVerificationCode(false);
+          props.navigation.goBack();
         }
-      } catch {
+      } catch (err) {
         Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
-      } finally {
-        setIsSendingEmailVerificationCode(false);
       }
     }
   };
@@ -62,7 +62,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
     try {
       props.onLogout();
     } catch {
-      // console.warn('refuseEmailVerification: could not refuse email verification');
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 
@@ -117,14 +117,11 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
 
 export default connect(
   () => ({}),
-  dispatch =>
-    bindActionCreators(
-      {
-        onLogout: () => dispatch<any>(logout()),
-        onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
-          dispatch(profileUpdateAction(updatedProfileValues));
-        },
-      },
-      dispatch,
-    ),
+  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
+    onLogout: () => dispatch(logout()),
+    onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
+      dispatch(profileUpdateAction(updatedProfileValues));
+    },
+    dispatch,
+  }),
 )(SendEmailVerificationCodeContainer);
