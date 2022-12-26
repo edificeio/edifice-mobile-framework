@@ -1,15 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  KeyboardTypeOptions,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, SafeAreaView, ScrollView, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
@@ -19,7 +10,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { CaptionText, SmallActionText, SmallText } from '~/framework/components/text';
+import { CaptionText, SmallText } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
