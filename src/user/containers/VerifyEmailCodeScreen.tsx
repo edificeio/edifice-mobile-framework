@@ -2,7 +2,7 @@
  * Verify email code screen
  */
 import I18n from 'i18n-js';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Alert } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -10,6 +10,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { KeyboardPageView } from '~/framework/components/page';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { userService } from '~/user/service';
@@ -20,6 +21,7 @@ import { VerifyEmailCodeScreen } from '../components/VerifyEmailCodeScreen';
 // TYPES ==========================================================================================
 
 export interface IVerifyEmailCodeScreenEventProps {
+  connected: boolean;
   onLogin(credentials?: { username: string; password: string; rememberMe: boolean }): void;
   onSaveNewEmail: (updatedProfileValues: IUpdatableProfileValues) => void;
 }
@@ -50,6 +52,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   const [isVerifyingEmailCode, setIsVerifyingEmailCode] = React.useState(false);
   const [isResendingEmailVerificationCode, setIsResendingEmailVerificationCode] = React.useState(false);
   const [codeState, setCodeState] = React.useState<CodeState>(CodeState.PRISTINE);
+  const [hasConnection, setHasConnection] = React.useState(false);
 
   const verifyEmailCode = async (code: string) => {
     try {
@@ -120,6 +123,10 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
 
   // RENDER =======================================================================================
 
+  useEffect(() => {
+    setHasConnection(props.connected);
+  }, [props.connected]);
+
   return (
     <KeyboardPageView
       isFocused={false}
@@ -128,15 +135,19 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       navigation={props.navigation}
       navBarWithBack={navBarInfo}
       onBack={() => displayConfirmationAlert()}>
-      <VerifyEmailCodeScreen
-        email={email}
-        verifyAction={code => verifyEmailCode(code)}
-        isVerifying={isVerifyingEmailCode}
-        codeState={codeState}
-        resendAction={() => resendEmailVerificationCode()}
-        isResending={isResendingEmailVerificationCode}
-        redirectUserAction={() => redirectUser()}
-      />
+      {hasConnection ? (
+        <VerifyEmailCodeScreen
+          email={email}
+          verifyAction={code => verifyEmailCode(code)}
+          isVerifying={isVerifyingEmailCode}
+          codeState={codeState}
+          resendAction={() => resendEmailVerificationCode()}
+          isResending={isResendingEmailVerificationCode}
+          redirectUserAction={() => redirectUser()}
+        />
+      ) : (
+        <EmptyConnectionScreen />
+      )}
     </KeyboardPageView>
   );
 };
@@ -144,7 +155,9 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
 // MAPPING ========================================================================================
 
 export default connect(
-  () => ({}),
+  (state: any) => ({
+    connected: !!state.connectionTracker.connected,
+  }),
   (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
     onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
       dispatch(checkVersionThenLogin(false, credentials));
