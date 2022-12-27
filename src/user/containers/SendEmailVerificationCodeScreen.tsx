@@ -1,5 +1,6 @@
 import I18n from 'i18n-js';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Alert } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -8,6 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
 import { containsKey } from '~/framework/util/object';
 import { logout } from '~/user/actions/login';
@@ -26,35 +28,43 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   const credentials = props.navigation.getParam('credentials');
   const defaultEmail = props.navigation.getParam('defaultEmail');
   const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
-  const modifyString = isModifyingEmail ? 'Modify' : '';
-  const [isSendingEmailVerificationCode, setIsSendingEmailVerificationCode] = React.useState(false);
-  const [emailIsEmpty, setEmailIsEmpty] = React.useState(true);
+
+  const [isCheckEmail, setIsCheckEmail] = React.useState(false);
+  const [isEmptyEmail, setIsEmptyEmail] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isSendingCode, setIsSendingCode] = React.useState(false);
+
+  // Web 4.7+ compliance :
+  //   Email verification APIs are available only if mandatory contains at least needRevalidateEmail field
+  useEffect(() => {
+    async function getUserAuthContext() {
+      const userAuthContext = await userService.getUserAuthContext();
+      setIsCheckEmail(containsKey(userAuthContext?.mandatory, 'needRevalidateEmail'));
+      setIsLoading(false);
+    }
+    getUserAuthContext();
+  }, [isCheckEmail, isLoading]);
 
   const sendEmailVerificationCode = async (email: string) => {
-    const emailValidator = new ValidatorBuilder().withEmail().build<string>();
-    const isEmailFormatValid = emailValidator.isValid(email);
-    if (!isEmailFormatValid) return EmailState.EMAIL_FORMAT_INVALID;
-    else {
-      try {
-        // Web 4.7+ compliance:
-        //   Email verification APIs are available only if mandatory contains at least needRevalidateEmail field
-        const userAuthContext = await userService.getUserAuthContext();
-        if (containsKey(userAuthContext?.mandatory, 'needRevalidateEmail')) {
-          setIsSendingEmailVerificationCode(true);
-          const emailValidationInfos = await userService.getEmailValidationInfos();
-          const validEmail = emailValidationInfos?.emailState?.valid;
-          if (email === validEmail) return EmailState.EMAIL_ALREADY_VERIFIED;
-          await userService.sendEmailVerificationCode(email);
-          setIsSendingEmailVerificationCode(false);
-          props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail });
-        } else {
-          props.onSaveNewEmail({ email });
-          setIsSendingEmailVerificationCode(false);
-          props.navigation.goBack();
-        }
-      } catch (err) {
-        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    // Exit if email is not valid
+    if (!new ValidatorBuilder().withEmail().build<string>().isValid(email)) return EmailState.EMAIL_FORMAT_INVALID;
+    // Check email or save email depending on web 4.7+ compliance or not
+    try {
+      if (isCheckEmail) {
+        setIsSendingCode(true);
+        const emailValidationInfos = await userService.getEmailValidationInfos();
+        const validEmail = emailValidationInfos?.emailState?.valid;
+        if (email === validEmail) return EmailState.EMAIL_ALREADY_VERIFIED;
+        await userService.sendEmailVerificationCode(email);
+        setIsSendingCode(false);
+        props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail });
+      } else {
+        props.onSaveNewEmail({ email });
+        setIsSendingCode(false);
+        props.navigation.goBack();
       }
+    } catch {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
 
@@ -67,7 +77,7 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   };
 
   const displayConfirmationAlert = () => {
-    if (!emailIsEmpty) {
+    if (!isEmptyEmail) {
       Alert.alert(
         I18n.t('user.sendEmailVerificationCodeScreen.alertTitle'),
         I18n.t('user.sendEmailVerificationCodeScreen.alertContent'),
@@ -87,11 +97,15 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   };
 
   const navBarInfo = {
-    title: I18n.t(`user.sendEmailVerificationCodeScreen.title${modifyString}`),
+    title: I18n.t(`user.sendEmailVerificationCodeScreen.title${isModifyingEmail ? 'Modify' : ''}`),
   };
 
-  return (
+  // Display a loading screen during /auth/context call.
+  return isLoading ? (
+    <LoadingIndicator />
+  ) : (
     <KeyboardPageView
+      isFocused={false}
       style={{ backgroundColor: theme.ui.background.card }}
       scrollable
       navigation={props.navigation}
@@ -105,11 +119,12 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
       onBack={() => displayConfirmationAlert()}>
       <SendEmailVerificationCodeScreen
         defaultEmail={defaultEmail}
+        emailEmpty={data => setIsEmptyEmail(data)}
+        isCheckEmail={isCheckEmail}
         isModifyingEmail={isModifyingEmail}
-        sendAction={email => sendEmailVerificationCode(email)}
-        isSending={isSendingEmailVerificationCode}
+        isSending={isSendingCode}
         refuseAction={() => refuseEmailVerification()}
-        emailEmpty={data => setEmailIsEmpty(data)}
+        sendAction={email => sendEmailVerificationCode(email)}
       />
     </KeyboardPageView>
   );

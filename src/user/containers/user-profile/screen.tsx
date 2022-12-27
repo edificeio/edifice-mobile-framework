@@ -67,7 +67,7 @@ export class UserScreen extends React.PureComponent<
 
   headerTop = Math.ceil(54 * (this.headerWidth / 375)) - this.headerHeight;
 
-  public onDiconnect = () => {
+  public onDisconnect = () => {
     Alert.alert('', I18n.t('auth-disconnectConfirm'), [
       {
         text: I18n.t('common.cancel'),
@@ -156,7 +156,7 @@ export class UserScreen extends React.PureComponent<
             )}
           </View>
           <View style={styles.boxBottomPage}>
-            <SmallBoldText style={styles.linkDisconnect} onPress={() => this.onDiconnect()}>
+            <SmallBoldText style={styles.linkDisconnect} onPress={() => this.onDisconnect()}>
               {I18n.t('directory-disconnectButton')}
             </SmallBoldText>
             <SmallBoldText style={styles.textVersion} onLongPress={() => this.setState({ showVersionType: !showVersionType })}>

@@ -42,24 +42,29 @@ export enum EmailState {
 
 export const SendEmailVerificationCodeScreen = ({
   defaultEmail,
-  sendAction,
+  emailEmpty,
+  isCheckEmail,
+  isModifyingEmail,
   isSending,
   refuseAction,
-  isModifyingEmail,
-  emailEmpty,
+  sendAction,
 }: {
   defaultEmail: string;
-  sendAction: (email: string) => Promise<EmailState | undefined>;
+  emailEmpty: (data: boolean) => void;
+  isCheckEmail: boolean;
+  isModifyingEmail: boolean;
   isSending: boolean;
   refuseAction: () => void;
-  isModifyingEmail: boolean;
-  emailEmpty: (data: boolean) => void;
+  sendAction: (email: string) => Promise<EmailState | undefined>;
 }) => {
   const [email, setEmail] = React.useState(defaultEmail || '');
   const [emailState, setEmailState] = React.useState<EmailState>(EmailState.PRISTINE);
+
   const isEmailEmpty = email === '';
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
   const isEmailStateAlreadyVerified = emailState === EmailState.EMAIL_ALREADY_VERIFIED;
+
+  const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular;
 
   const errorString = I18n.t(
     isEmailStatePristine
@@ -67,21 +72,21 @@ export const SendEmailVerificationCodeScreen = ({
       : `user.sendEmailVerificationCodeScreen.invalidEmailFormat${isEmailStateAlreadyVerified ? 'Modify' : ''}`,
   );
 
-  const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular;
-
-  const texts = isModifyingEmail
+  const texts: Record<string, any> = isModifyingEmail
     ? {
         title: I18n.t('user.sendEmailVerificationCodeScreen.emailVerificationModify'),
         message: I18n.t('user.sendEmailVerificationCodeScreen.modify'),
         label: I18n.t('user.sendEmailVerificationCodeScreen.emailAddressModify'),
-        button: I18n.t('user.sendEmailVerificationCodeScreen.modifyMyEmail'),
       }
     : {
         title: I18n.t('user.sendEmailVerificationCodeScreen.emailVerification'),
         message: I18n.t('user.sendEmailVerificationCodeScreen.mustVerify'),
         label: I18n.t('user.sendEmailVerificationCodeScreen.emailAddress'),
-        button: I18n.t('user.sendEmailVerificationCodeScreen.verifyMyEmail'),
       };
+
+  texts.button = isCheckEmail
+    ? I18n.t('user.sendEmailVerificationCodeScreen.verifyMyEmail')
+    : I18n.t('user.sendEmailVerificationCodeScreen.modifyMyEmail');
 
   const changeEmail = (text: string) => {
     if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);

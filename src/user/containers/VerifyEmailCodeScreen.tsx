@@ -46,7 +46,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   const credentials = props.navigation.getParam('credentials');
   const email = props.navigation.getParam('email');
   const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
-  const modifyString = isModifyingEmail ? 'Modify' : '';
+
   const [isVerifyingEmailCode, setIsVerifyingEmailCode] = React.useState(false);
   const [isResendingEmailVerificationCode, setIsResendingEmailVerificationCode] = React.useState(false);
   const [codeState, setCodeState] = React.useState<CodeState>(CodeState.PRISTINE);
@@ -59,7 +59,6 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       const isValid = emailValidationInfos?.emailState?.state === 'valid';
       const isOutdated = emailValidationInfos?.emailState?.ttl === 0;
       const hasNoTriesLeft = emailValidationInfos?.emailState?.tries === 0;
-
       if (isValid) {
         setCodeState(CodeState.CODE_CORRECT);
       } else if (isOutdated || hasNoTriesLeft) {
@@ -116,13 +115,14 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   // HEADER =====================================================================================
 
   const navBarInfo = {
-    title: I18n.t(`user.verifyEmailCodeScreen.title${modifyString}`),
+    title: I18n.t(`user.verifyEmailCodeScreen.title${isModifyingEmail ? 'Modify' : ''}`),
   };
 
   // RENDER =======================================================================================
 
   return (
     <KeyboardPageView
+      isFocused={false}
       style={{ backgroundColor: theme.ui.background.card }}
       scrollable
       navigation={props.navigation}
