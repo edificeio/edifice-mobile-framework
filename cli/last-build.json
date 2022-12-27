@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-27 19:42:56",
-  "notes": "fix: MB-1122, Change FastImage cache strategy\nfix(verifyEmailCodeScreen): MB-1118: show empty connection screen when dont have connection\nfix(forgot-page): MB-1099, Looping spinner when requesting id/password\nfix: MB-1110, Looping spinner when changing password.\nfix(blog): MB-1133, empty screen when no posts\nfix(email-verification): MB-1117, Wrong button title when modifying email with web 4.7+\nfix(user-profile): [android] alert permission denied when change avatar\nfix(user-profile): MB-1100, add alert when try to change avatar when permission denied\nfix(email-verification): MB-1103, Toast error always shown (i.e. even when success).\nchore(prettier): Unused imports removal.\nfix(email-verification): MB-1109, Make email verification compliant with both web 4.6 && 4.7\nfix(user-page): MB-1037, update profil when go back on user page after update avatar\nrelease: 1.9.1-alpha.6(1090106)",
-  "version": "1.9.1-alpha.7(1090107)",
+  "last": "2022-12-27 20:44:10",
+  "notes": "release: 1.9.1-alpha.7(1090107)",
+  "version": "1.9.1-alpha.8(1090108)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
