@@ -66,10 +66,10 @@ export class ImagePicker extends React.PureComponent<
       },
       gallery: async () => {
         try {
+          await assertPermissions('galery.read');
           LocalFile.pick({ source: 'galery', multiple }, undefined, galeryOptions)
             .then(realCallback)
             .finally(() => this.setState({ showModal: false }));
-          await assertPermissions('galery.read');
         } catch (e) {
           Alert.alert(
             I18n.t('galery.read.permission.blocked.title'),
