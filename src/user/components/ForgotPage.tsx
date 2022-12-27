@@ -14,8 +14,6 @@ import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
 
-// TYPES ---------------------------------------------------------------------------
-
 export type IForgotPageState = {
   login: string;
   firstName: string | null;
@@ -24,17 +22,17 @@ export type IForgotPageState = {
   editing: boolean;
   structures: any[];
 };
+
 export interface IForgotPageDataProps {
   fetching: boolean;
   result: { error?: string; status?: string; structures?: any[]; ok: boolean | undefined };
 }
+
 export interface IForgotPageEventProps {
   onSubmit(model: IForgotModel, forgotId?: boolean): Promise<void>;
   onReset(): Promise<void>;
 }
 export type IForgotPageProps = IForgotPageDataProps & IForgotPageEventProps & { navigation: any };
-
-// Forgot Page Component -------------------------------------------------------------
 
 export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPageState> {
   // fully controller component
@@ -46,13 +44,15 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
     editing: false,
     structures: [],
   };
+
+  private inputLogin = null;
+
   private handleSubmit = async () => {
     const { navigation } = this.props;
     const { login, firstName, structureName, structures } = this.state;
     const forgotId = navigation.getParam('forgotId');
     const selectedStructure = structures && structures.find(structure => structure.structureName === structureName);
     const structureId = selectedStructure && selectedStructure.structureId;
-
     this.props.onSubmit({ login, firstName, structureId }, forgotId);
     this.setState({ editing: false });
   };
@@ -77,6 +77,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
         structures: [],
       });
       this.props.onReset();
+      this.inputLogin = null;
     });
   }
 
@@ -85,6 +86,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
     if (result?.structures && !prevProps.result?.structures) {
       this.setState({ structures: result?.structures });
     }
+  }
+
+  public componentWillUnmount() {
+    this.didFocusSubscription?.unsubscribe();
   }
 
   public render() {
