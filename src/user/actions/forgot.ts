@@ -47,11 +47,10 @@ function actionCreateForgotReceive(result: { error?: string; status?: string; st
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function action_forgotSubmit(userInfo: IForgotModel, forgotId?: boolean) {
+export function actionForgotSubmit(userInfo: IForgotModel, forgotId?: boolean) {
   return async dispatch => {
     try {
       dispatch(actionCreateForgotRequest(userInfo.login));
-
       const payLoad = forgotId
         ? {
             mail: userInfo.login,
@@ -78,7 +77,7 @@ export function action_forgotSubmit(userInfo: IForgotModel, forgotId?: boolean) 
   };
 }
 
-export function action_forgotReset() {
+export function actionForgotReset() {
   return async dispatch => {
     dispatch(actionCreateForgotReceive({ status: '', ok: false }));
   };

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { action_forgotSubmit, action_forgotReset } from '~/user/actions/forgot';
+import { actionForgotReset, actionForgotSubmit } from '~/user/actions/forgot';
 import { ForgotPage, IForgotPageDataProps, IForgotPageEventProps } from '~/user/components/ForgotPage';
 import userConfig from '~/user/config';
 import { IUserForgotState } from '~/user/reducers/forgot';
@@ -18,10 +18,10 @@ const mapDispatchToProps: (dispatch) => IForgotPageEventProps = dispatch => {
   return {
     dispatch,
     onSubmit(model, forgotId) {
-      return dispatch(action_forgotSubmit(model, forgotId));
+      return dispatch(actionForgotSubmit(model, forgotId));
     },
     onReset() {
-      return dispatch(action_forgotReset());
+      return dispatch(actionForgotReset());
     },
   };
 };
