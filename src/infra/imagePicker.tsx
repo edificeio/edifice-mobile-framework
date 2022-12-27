@@ -1,12 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import type { GestureResponderEvent, TouchableOpacityProps } from 'react-native';
+import { Alert, GestureResponderEvent, TouchableOpacityProps } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { assertPermissions } from '~/framework/util/permissions';
 import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
@@ -58,7 +60,7 @@ export class ImagePicker extends React.PureComponent<
           LocalFile.pick({ source: 'camera' }, cameraOptions, undefined)
             .then(realCallback)
             .finally(() => this.setState({ showModal: false }));
-        } catch (error) {
+        } catch (e) {
           //TODO: Manage error
         }
       },
@@ -67,8 +69,13 @@ export class ImagePicker extends React.PureComponent<
           LocalFile.pick({ source: 'galery', multiple }, undefined, galeryOptions)
             .then(realCallback)
             .finally(() => this.setState({ showModal: false }));
-        } catch (error) {
-          //TODO: Manage error
+          await assertPermissions('galery.read');
+        } catch (e) {
+          Alert.alert(
+            I18n.t('galery.read.permission.blocked.title'),
+            I18n.t('galery.read.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+          );
+          return undefined;
         }
       },
       cancel: () => {
