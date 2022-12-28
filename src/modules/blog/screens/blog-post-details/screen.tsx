@@ -1,7 +1,7 @@
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -12,7 +12,6 @@ import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
-import ActionsMenu from '~/framework/components/actionsMenu';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -21,6 +20,7 @@ import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/heade
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
+import PopupMenu from '~/framework/components/popup-menu';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -86,7 +86,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     blogPostData: undefined,
     errorState: false,
     showHeaderTitle: false,
-    showMenu: false,
     isCommentFieldFocused: false,
   };
 
@@ -94,7 +93,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   render() {
     const { navigation, session } = this.props;
-    const { loadingState, errorState, showMenu, blogPostData, blogInfos } = this.state;
+    const { loadingState, errorState, blogPostData, blogInfos } = this.state;
 
     const blogId = blogInfos?.id;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
@@ -105,50 +104,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     if (!resourceUri && blogPostData && blogId) {
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
-
-    const menuItemOpenBrowser = {
-      text: I18n.t('common.openInBrowser'),
-      icon: { type: 'NamedSvg', name: 'ui-externalLink' },
-      onPress: () => {
-        //TODO: create generic function inside oauth (use in myapps, etc.)
-        if (!DEPRECATED_getCurrentPlatform()) {
-          return null;
-        }
-        const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-        openUrl(url);
-        Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-      },
-    };
-    const menuData =
-      hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id
-        ? [
-            menuItemOpenBrowser,
-            {
-              text: I18n.t('common.deletionPostBlogMenu'),
-              icon: { type: 'NamedSvg', name: 'ui-delete' },
-              color: theme.palette.status.failure.regular,
-              onPress: () => {
-                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
-                  {
-                    text: I18n.t('common.cancel'),
-                    style: 'default',
-                  },
-                  {
-                    text: I18n.t('common.delete'),
-                    style: 'destructive',
-                    onPress: () => {
-                      //TODO: supprimer le billet
-                      console.log(blogPostData!._id, 'postID', blogId, 'blogID');
-                      this.doDeleteBlogPost(blogPostData!._id).then(() => {
-                        navigation.dispatch(NavigationActions.back());
-                      });
-                    },
-                  },
-                ]);
-              },
-            },
-          ]
-        : [menuItemOpenBrowser];
 
     const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
 
@@ -175,7 +130,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             this.renderContent()
           )}
         </PageComponent>
-        <ActionsMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
   }
@@ -200,9 +154,47 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         resourceUri &&
         (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
         !errorState ? (
-          <TouchableOpacity onPress={this.showMenu}>
+          <PopupMenu
+            actions={[
+              {
+                id: '1',
+                title: I18n.t('common.openInBrowser'),
+                action: () => {
+                  //TODO: create generic function inside oauth (use in myapps, etc.)
+                  if (!DEPRECATED_getCurrentPlatform()) {
+                    return null;
+                  }
+                  const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
+                  openUrl(url);
+                  Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
+                },
+                type: 'external-link',
+              },
+              {
+                id: '2',
+                title: '',
+                action: () => {
+                  Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
+                    {
+                      text: I18n.t('common.cancel'),
+                      style: 'default',
+                    },
+                    {
+                      text: I18n.t('common.delete'),
+                      style: 'destructive',
+                      onPress: () => {
+                        this.doDeleteBlogPost(blogPostData!._id).then(() => {
+                          navigation.dispatch(NavigationActions.back());
+                        });
+                      },
+                    },
+                  ]);
+                },
+                type: 'delete',
+              },
+            ]}>
             <HeaderIcon name="more_vert" iconSize={24} />
-          </TouchableOpacity>
+          </PopupMenu>
         ) : undefined,
     };
   }
@@ -486,13 +478,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     if (showHeaderTitle && isVisible) this.setState({ showHeaderTitle: false });
     else if (!showHeaderTitle && !isVisible) this.setState({ showHeaderTitle: true });
   }
-
-  public showMenu = () => {
-    const { showMenu } = this.state;
-    this.setState({
-      showMenu: !showMenu,
-    });
-  };
 
   // METHODS ======================================================================================
 
