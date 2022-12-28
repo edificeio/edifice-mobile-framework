@@ -7,12 +7,12 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 
-const imageSize = getScaleDimension(150, 'image');
+const imageSize = getScaleImageSize(150);
 
 const styles = StyleSheet.create({
   container: { paddingHorizontal: UI_SIZES.spacing.medium },

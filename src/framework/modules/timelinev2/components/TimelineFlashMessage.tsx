@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
@@ -42,7 +42,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const contentsLanguages = contents && Object.keys(contents);
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];
     const maxLines = 4,
-      maxHeight = getScaleDimension(20, 'height') * maxLines;
+      maxHeight = getScaleHeight(20) * maxLines;
 
     return contents && contentsLanguages.length > 0 ? (
       <ArticleContainer style={{ width: '100%', opacity: measuredText ? 1 : 0 }}>
@@ -73,7 +73,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                   ? {}
                   : longText
                   ? {
-                      maxHeight: getScaleDimension(20, 'height') * (4 + 1),
+                      maxHeight: getScaleHeight(20) * (4 + 1),
                       overflow: 'hidden',
                     }
                   : {}

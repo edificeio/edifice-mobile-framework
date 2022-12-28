@@ -1,18 +1,17 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, Pressable, TextInput, View } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { Dispatch } from 'redux';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
 import AlertCard from '~/framework/components/alert';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { KeyboardPageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
-import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
+import { BodyText, SmallText } from '~/framework/components/text';
 import { IUserSession } from '~/framework/util/session';
 import { Loading } from '~/ui/Loading';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
@@ -240,7 +239,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
                   alignSelf: 'center',
                   color: theme.palette.status.failure.regular,
                   marginTop: 0,
-                  minHeight: getScaleDimension(20, 'height') * 3,
+                  minHeight: getScaleHeight(20) * 3,
                 }}>
                 {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
                   ? errorText

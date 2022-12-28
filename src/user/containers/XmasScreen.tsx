@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -16,8 +16,8 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
 import { setXmasThemeAction } from '../actions/xmas';
 
-const imageWidth = getScaleDimension(270, 'image');
-const imageHeight = getScaleDimension(300, 'image');
+const imageWidth = getScaleImageSize(270);
+const imageHeight = getScaleImageSize(300);
 const style = StyleSheet.create({
   textContainer: { paddingHorizontal: UI_SIZES.spacing.medium },
   toggleContainer: {

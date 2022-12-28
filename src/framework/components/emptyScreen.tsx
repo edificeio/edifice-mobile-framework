@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
 import { ActionButton } from './action-button';
-import { UI_SIZES, getScaleDimension } from './constants';
+import { UI_SIZES, getScaleImageSize } from './constants';
 import { PageViewStyle } from './page';
 import { HeadingSText, SmallText } from './text';
 
@@ -38,8 +38,8 @@ export const EmptyScreen = ({
   svgFillColor?: ColorValue;
   textColor?: ColorValue;
 }) => {
-  const imageWidth = getScaleDimension(280, 'image');
-  const imageHeight = getScaleDimension(200, 'image');
+  const imageWidth = getScaleImageSize(280);
+  const imageHeight = getScaleImageSize(200);
   const hasButton = buttonText && (buttonUrl || buttonAction);
   return (
     <PageViewStyle

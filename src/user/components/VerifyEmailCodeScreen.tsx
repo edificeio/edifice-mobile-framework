@@ -8,14 +8,14 @@ import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES, getScaleHeight, getScaleImageSize, getScaleWidth } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText, TextSizeStyle } from '~/framework/components/text';
 
 import { CodeState, ResendResponse } from '../containers/VerifyEmailCodeScreen';
 
-const imageSize = getScaleDimension(150, 'image');
+const imageSize = getScaleImageSize(150);
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: UI_SIZES.spacing.medium },
   contentContainer: { flex: 1 },
@@ -25,9 +25,9 @@ const styles = StyleSheet.create({
   content: { textAlign: 'center' },
   codeFieldContainer: { marginTop: UI_SIZES.spacing.large, paddingHorizontal: UI_SIZES.spacing.medium },
   codeFieldCell: {
-    width: getScaleDimension(45, 'width'),
-    height: getScaleDimension(58, 'height'),
-    lineHeight: Platform.select({ ios: getScaleDimension(58, 'height'), android: TextSizeStyle.Huge.lineHeight }),
+    width: getScaleWidth(45),
+    height: getScaleHeight(58),
+    lineHeight: Platform.select({ ios: getScaleHeight(58), android: TextSizeStyle.Huge.lineHeight }),
     textAlignVertical: 'center',
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.dimensions.width.tiny,
