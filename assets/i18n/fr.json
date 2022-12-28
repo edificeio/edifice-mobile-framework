@@ -602,6 +602,8 @@
   "save.to.camera.roll.success": "Enregistré dans la Galerie",
   "galery.read.permission.blocked.title": "Accès à la galerie refusé",
   "galery.read.permission.blocked.text": "{{appName}} ne peut pas accéder à la Galerie. Vous pouvez autoriser l'accès à la Galerie via les paramètres de confidentialité.",
+  "camera.permission.blocked.title": "Accès à la caméra refusé",
+  "camera.permission.blocked.text": "{{appName}} ne peut pas accéder à la Caméra. Vous pouvez autoriser l'accès à la Caméra via les paramètres de confidentialité.",
   "share-error": "Erreur lors du partage.",
   "share-permission-blocked-text": "{{appName}} ne peut partager le document. Vous pouvez autoriser l'accès aux documents via les paramètres de confidentialité.",
   "share-permission-blocked-title": "Partage bloqué",

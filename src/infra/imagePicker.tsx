@@ -57,11 +57,16 @@ export class ImagePicker extends React.PureComponent<
     const actions = {
       camera: async () => {
         try {
+          await assertPermissions('camera');
           LocalFile.pick({ source: 'camera' }, cameraOptions, undefined)
             .then(realCallback)
             .finally(() => this.setState({ showModal: false }));
         } catch (e) {
-          //TODO: Manage error
+          Alert.alert(
+            I18n.t('camera.permission.blocked.title'),
+            I18n.t('camera.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+          );
+          return undefined;
         }
       },
       gallery: async () => {

@@ -105,6 +105,50 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
 
+    const menuItemOpenBrowser = {
+      text: I18n.t('common.openInBrowser'),
+      icon: { type: 'NamedSvg', name: 'ui-externalLink' },
+      onPress: () => {
+        //TODO: create generic function inside oauth (use in myapps, etc.)
+        if (!DEPRECATED_getCurrentPlatform()) {
+          return null;
+        }
+        const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
+        openUrl(url);
+        Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
+      },
+    };
+    const menuData =
+      hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id
+        ? [
+            menuItemOpenBrowser,
+            {
+              text: I18n.t('common.deletionPostBlogMenu'),
+              icon: { type: 'NamedSvg', name: 'ui-delete' },
+              color: theme.palette.status.failure.regular,
+              onPress: () => {
+                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
+                  {
+                    text: I18n.t('common.cancel'),
+                    style: 'default',
+                  },
+                  {
+                    text: I18n.t('common.delete'),
+                    style: 'destructive',
+                    onPress: () => {
+                      //TODO: supprimer le billet
+                      console.log(blogPostData!._id, 'postID', blogId, 'blogID');
+                      this.doDeleteBlogPost(blogPostData!._id).then(() => {
+                        navigation.dispatch(NavigationActions.back());
+                      });
+                    },
+                  },
+                ]);
+              },
+            },
+          ]
+        : [menuItemOpenBrowser];
+
     const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
 
     return (
