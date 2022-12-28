@@ -210,28 +210,25 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           ...UI_ANIMATIONS.toast,
         });
         return;
+      } else if (!this.state.mail.body || !this.state.mail.subject) {
+        Keyboard.dismiss();
+        Alert.alert(
+          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Title`),
+          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Message`),
+          [
+            {
+              text: I18n.t('common.send'),
+              onPress: () => this.sendDraft(),
+            },
+            {
+              text: I18n.t('common.cancel'),
+              style: 'cancel',
+            },
+          ],
+        );
+        return;
       }
-
-      try {
-        const { navigation, sendMail } = this.props;
-        const { mail, id, replyTo } = this.state;
-        const draftType = navigation.getParam('type');
-
-        sendMail(this.getMailData(), id, replyTo);
-
-        Toast.show(I18n.t('conversation.sendMail'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
-
-        const navParams = navigation.state;
-        if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
-        navigation.goBack();
-      } catch (e) {
-        // TODO: Manage error
-      }
+      this.sendDraft();
     },
     getDeleteDraft: async () => {
       const { trashMessage, deleteMessage, navigation } = this.props;
@@ -617,6 +614,28 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       if (isForward) this.forwardDraft();
     } else {
       this.props.updateDraft(this.state.id, this.getMailData());
+    }
+  };
+
+  sendDraft = async () => {
+    try {
+      const { navigation, sendMail } = this.props;
+      const { id, replyTo } = this.state;
+
+      sendMail(this.getMailData(), id, replyTo);
+
+      Toast.show(I18n.t('conversation.sendMail'), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+        ...UI_ANIMATIONS.toast,
+      });
+
+      const navParams = navigation.state;
+      if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
+      navigation.goBack();
+    } catch (e) {
+      // TODO: Manage error
     }
   };
 
