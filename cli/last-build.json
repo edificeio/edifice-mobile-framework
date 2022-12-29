@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-27 20:44:10",
-  "notes": "release: 1.9.1-alpha.7(1090107)",
-  "version": "1.9.1-alpha.8(1090108)",
+  "last": "2022-12-29 18:19:34",
+  "notes": "feat: MB-803, custom legal documents\nSquashed commit of the following:\nSquashed commit of the following:\nchore(responsive): Improve scale dimension retrieval\nfeat(conversation): MB-1070, alert if no content/subject\nfix: MB-812, display icon if image erased (explorer)\nfix(blog): change current menu by popup menu",
+  "version": "1.9.2-alpha.1(1090201)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
