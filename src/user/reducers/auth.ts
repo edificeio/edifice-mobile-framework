@@ -19,6 +19,8 @@ import {
   actionTypeSkipVersion,
 } from '~/user/actions/version';
 
+import { actionTypeLegalDocuments } from '../actions/actionTypes/legalDocuments';
+
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
 export type backendUserApp = {
@@ -27,6 +29,13 @@ export type backendUserApp = {
   displayName: string;
   display: boolean;
   prefix: string;
+};
+
+export type LegalUrls = {
+  userCharter: string | null;
+  cgu: string | null;
+  personalDataProtection: string | null;
+  cookies: string | null;
 };
 
 export interface IUserAuthState {
@@ -51,6 +60,8 @@ export interface IUserAuthState {
   skipVersion: boolean;
   versionContext: IVersionContext;
   widgets: IEntcoreWidget[];
+  //legal documents
+  legalUrls: LegalUrls;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -67,6 +78,12 @@ export const stateDefault: IUserAuthState = {
   synced: false,
   skipVersion: false,
   versionContext: null,
+  legalUrls: {
+    userCharter: null,
+    cgu: null,
+    personalDataProtection: null,
+    cookies: null,
+  },
 };
 
 const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthState => {
@@ -171,6 +188,11 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
       return {
         ...state,
         platformId: action.platformId,
+      };
+    case actionTypeLegalDocuments:
+      return {
+        ...state,
+        legalUrls: { ...state.legalUrls, ...action.legalUrls },
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

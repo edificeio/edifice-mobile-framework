@@ -5,6 +5,7 @@ import Pdf from 'react-native-pdf';
 import theme from '~/app/theme';
 
 import { BackdropModal } from './backdropModal';
+import { EmptyConnectionScreen } from './emptyConnectionScreen';
 import { EmptyContentScreen } from './emptyContentScreen';
 
 export interface IBackdropPdfReaderProps {
@@ -13,7 +14,7 @@ export interface IBackdropPdfReaderProps {
   headerColor?: ColorValue;
   indicatorColor?: ColorValue;
   title?: string;
-  uri: string;
+  uri: string | null;
   visible: boolean;
 }
 
@@ -33,7 +34,11 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
       <BackdropModal
         content={
           error ? (
-            <EmptyContentScreen />
+            uri ? (
+              <EmptyContentScreen />
+            ) : (
+              <EmptyConnectionScreen />
+            )
           ) : (
             <Pdf
               activityIndicatorProps={{

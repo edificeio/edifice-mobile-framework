@@ -5,7 +5,6 @@ import AppLink from 'react-native-app-link';
 import DeviceInfo from 'react-native-device-info';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
@@ -37,6 +36,8 @@ export interface IEntcoreEmailValidationState {
   ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
   tries?: number; // (optional) Remaining number of times a validation code can be typed in
 }
+
+export type languages = 'fr' | 'en' | 'es';
 
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
@@ -301,6 +302,19 @@ class UserService {
   async getUserAuthContext() {
     const userAuthContext = await fetchJSONWithCache('/auth/context');
     return userAuthContext;
+  }
+
+  async getAuthTranslationKeys(language: languages) {
+    try {
+      // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/i18n`, { headers: { 'Accept-Language': language } });
+      if (res.ok) {
+        const authTranslationKeys = await res.json();
+        return authTranslationKeys;
+      } else throw new Error('error in res.json()');
+    } catch (e) {
+      // console.warn('[UserService] getAuthTranslationKeys: could not get auth translation keys', e);
+    }
   }
 }
 

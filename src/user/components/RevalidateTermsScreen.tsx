@@ -12,15 +12,18 @@ import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
-export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAction: () => void; acceptAction: () => void }) => {
+export const RevalidateTermsScreen = ({
+  cguUrl,
+  refuseAction,
+  acceptAction,
+}: {
+  cguUrl: string;
+  refuseAction: () => void;
+  acceptAction: () => void;
+}) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-
   const imageSize = getScaleImageSize(200);
-  const platform = DEPRECATED_getCurrentPlatform()!.url;
-  const path = I18n.t('common.url.cgu');
-  const eulaUrl = `${platform}${path}`;
 
   return (
     <PageViewStyle
@@ -55,7 +58,7 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
         handleOpen={() => setIsModalVisible(true)}
         visible={isModalVisible}
         title={I18n.t('user.revalidateTermsScreen.EULA')}
-        uri={eulaUrl}
+        uri={cguUrl}
       />
     </PageViewStyle>
   );

@@ -13,9 +13,12 @@ import {
 import userConfig from '~/user/config';
 import { IActivationState } from '~/user/reducers/activation';
 
+import { getAuthState } from '../selectors';
+
 const mapStateToProps: (state: any) => IActivationPageDataProps = state => {
   const activationState: IActivationState = state[userConfig.reducerName].activation;
   return {
+    auth: getAuthState(state),
     activationCode: activationState.userinfo.activationCode,
     confirm: activationState.submitted.confirm,
     contextState: activationState.contextState,
