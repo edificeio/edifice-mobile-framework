@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-27 20:44:10",
-  "notes": "release: 1.9.1-alpha.7(1090107)",
-  "version": "1.9.1-alpha.8(1090108)",
+  "last": "2022-12-29 14:27:51",
+  "notes": "fix(user-profil): MB-1123, Add toast message on successful password change\nfix(email-verification): Avoid checkAuthContext reentrance\nfeat(user-profile): MB-1100: add alert when want to use camera to change avatar but permission denied\nrelease: 1.9.1-alpha.8(1090108)",
+  "version": "1.9.1-alpha.9(1090109)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
