@@ -22,37 +22,8 @@ import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 
-export interface ILoginPageDataProps {
-  auth: IUserAuthState;
-  headerHeight: number;
-  // version
-  versionContext: IVersionContext | null;
-  versionModal: boolean;
-  version: string;
-  versionMandatory: boolean;
-  // connection
-  connected: boolean;
-}
-
-export interface ILoginPageEventProps {
-  onSkipVersion(versionContext: IVersionContext): void;
-  onUpdateVersion(versionContext: IVersionContext): void;
-  onLogin(userlogin: string, password: string, rememberMe: boolean): void;
-}
-
-export interface ILoginPageOtherProps {
-  navigation?: any;
-}
-
-export type ILoginPageProps = ILoginPageDataProps & ILoginPageEventProps & ILoginPageOtherProps;
-
-export interface ILoginPageState {
-  login?: string;
-  password?: string;
-  typing: boolean;
-  rememberMe: boolean;
-  isLoggingIn: boolean;
-}
+import styles from './styles';
+import { ILoginPageDataProps, ILoginPageEventProps, ILoginPageProps, ILoginPageState } from './types';
 
 const initialState: ILoginPageState = {
   login: undefined,
@@ -80,9 +51,21 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
 
   private setInputPasswordRef = (el: TextInput) => (this.inputPassword = el);
 
+  private blurListener?: NavigationEventSubscription;
+
   constructor(props: ILoginPageProps) {
     super(props);
     this.state = initialState;
+  }
+
+  public componentDidMount(): void {
+    this.blurListener = this.props.navigation.addListener('didBlur', () => {
+      this.setState({ isLoggingIn: false });
+    });
+  }
+
+  public componentWillUnmount(): void {
+    this.blurListener?.remove();
   }
 
   changeLogin(login: string) {
@@ -91,11 +74,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
 
   protected async handleLogin() {
     this.setState({ isLoggingIn: true });
-    await this.props.onLogin(
-      this.state.login || this.props.auth.login, // ToDo: fix this TS issue
-      this.state.password,
-      this.state.rememberMe,
-    );
+    await this.props.onLogin(this.state.login || this.props.auth.login, this.state.password, this.state.rememberMe);
     this.setState({ typing: false });
   }
 
@@ -108,7 +87,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
   }
 
   handlePasswordChanged(password: string) {
-    this.setState({ password, typing: true });
+    this.setState({ password: password.trim(), typing: true });
   }
 
   get isSubmitDisabled() {
@@ -120,39 +99,26 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     this.inputPassword && this.inputPassword.blur();
   }
 
+  protected renderLogo = () => {
+    return (
+      <View style={styles.logo}>
+        <PFLogo />
+      </View>
+    );
+  };
+
   protected renderForm() {
     const { error, errtype } = this.props.auth;
     const { login, password, typing, rememberMe, isLoggingIn } = this.state;
     const FederationTextComponent = error ? SmallBoldText : SmallText;
-    const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === 'Somme numérique'; // WTF ??!! 🤪🤪🤪
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.view}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           alwaysBounceVertical={false}
           overScrollMode="never"
-          contentContainerStyle={{ flexGrow: 1 }}>
-          {/* Temporary banner displayed for Somme Numérique */}
-          {isSommeNumerique ? (
-            <View
-              style={{
-                backgroundColor: theme.palette.complementary.red.pale,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: UI_SIZES.spacing.minor,
-                borderColor: theme.palette.status.failure.regular,
-                borderWidth: 1,
-                borderRadius: 15,
-                width: '90%',
-                alignSelf: 'center',
-                position: 'absolute',
-              }}>
-              <SmallBoldText style={{ textAlign: 'center', color: theme.palette.status.failure.regular }}>
-                {I18n.t('common.sommeNumeriqueAlert_temp')}
-              </SmallBoldText>
-            </View>
-          ) : null}
+          contentContainerStyle={styles.scrollview}>
           <FormContainer>
             {this.renderLogo()}
             <TextInputLine
@@ -174,7 +140,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               value={password}
               hasError={(error && !typing && !errtype) as boolean}
             />
-            <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium }}>
+            <View style={styles.inputCheckbox}>
               <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('AutoLogin')}</CaptionText>
               <Toggle
                 checked={rememberMe}
@@ -183,14 +149,12 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               />
             </View>
             <SmallText
-              style={{
-                flexGrow: 0,
-                marginTop: UI_SIZES.spacing.medium,
-                padding: UI_SIZES.spacing.tiny,
-                textAlign: 'center',
-                alignSelf: 'center',
-                color: errtype === 'warning' ? theme.palette.status.warning.regular : theme.palette.status.failure.regular,
-              }}>
+              style={[
+                styles.textError,
+                {
+                  color: errtype === 'warning' ? theme.palette.status.warning.regular : theme.palette.status.failure.regular,
+                },
+              ]}>
               {this.state.typing
                 ? ''
                 : error &&
@@ -202,12 +166,12 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
             </SmallText>
 
             <View
-              style={{
-                alignItems: 'center',
-                flexGrow: 2,
-                justifyContent: 'flex-start',
-                marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
-              }}>
+              style={[
+                styles.boxButtonAndTextForgot,
+                {
+                  marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
+                },
+              ]}>
               {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
                 <ActionButton text={I18n.t('LoginWeb')} url="/" />
               ) : (
@@ -218,20 +182,16 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                   loading={isLoggingIn && !error}
                 />
               )}
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
+              <View style={styles.boxTextForgot}>
                 <SmallText
-                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.major, color: theme.ui.text.light }}
+                  style={styles.textForgotPassword}
                   onPress={() => {
                     navigate('Forgot', { forgotId: false });
                   }}>
                   {I18n.t('forgot-password')}
                 </SmallText>
                 <SmallText
-                  style={{ textDecorationLine: 'underline', marginTop: UI_SIZES.spacing.medium, color: theme.ui.text.light }}
+                  style={styles.textForgotId}
                   onPress={() => {
                     navigate('Forgot', { forgotId: true });
                   }}>
@@ -239,12 +199,12 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 </SmallText>
                 {DEPRECATED_getCurrentPlatform()!.federation && (
                   <FederationTextComponent
-                    style={{
-                      textDecorationLine: 'underline',
-                      marginTop: UI_SIZES.spacing.major,
-                      textAlign: 'center',
-                      color: error ? theme.palette.complementary.orange.regular : theme.ui.text.light,
-                    }}
+                    style={[
+                      styles.federatedAccount,
+                      {
+                        color: error ? theme.palette.complementary.orange.regular : theme.ui.text.light,
+                      },
+                    ]}
                     onPress={() => {
                       navigate('FederatedAccount');
                     }}>
@@ -259,20 +219,13 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     );
   }
 
-  protected renderLogo = () => {
-    return (
-      <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-        <PFLogo />
-      </View>
-    );
-  };
-
   public render() {
     const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion, navigation } = this.props;
     const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
 
     return (
       <KeyboardPageView
+        isFocused={false}
         navigation={navigation}
         navBarWithBack={{ title: platformDisplayName }}
         style={{ backgroundColor: theme.ui.background.card }}>
@@ -286,18 +239,6 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
         {this.renderForm()}
       </KeyboardPageView>
     );
-  }
-
-  private blurListener?: NavigationEventSubscription;
-
-  public componentDidMount(): void {
-    this.blurListener = this.props.navigation.addListener('didBlur', () => {
-      this.setState({ isLoggingIn: false });
-    });
-  }
-
-  public componentWillUnmount(): void {
-    this.blurListener?.remove();
   }
 }
 
