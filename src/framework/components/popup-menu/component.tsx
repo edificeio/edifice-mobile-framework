@@ -14,12 +14,12 @@ export const PopupMenu = (props: React.PropsWithChildren<PopupMenuProps>) => {
         action.type === 'delete'
           ? Platform.select({
               ios: 'trash',
-              android: 'ic_menu_delete',
+              android: 'ic_delete_item',
             })
           : action.type === 'external-link'
           ? Platform.select({
               ios: 'arrow.up.right',
-              android: 'ic_menu_view',
+              android: 'ic_open_in_browser',
             })
           : action.iconAndroid && action.iconIos
           ? Platform.select({

@@ -159,14 +159,14 @@ class MailContentContainer extends React.PureComponent<
         title: I18n.t('conversation.markUnread'),
         action: () => this.markAsRead(),
         iconIos: 'eye.slash',
-        iconAndroid: 'ic_menu_view',
+        iconAndroid: 'ic_visibility_off',
       },
       {
         id: '2',
         title: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
         action: () => this.showModal(),
         iconIos: 'arrow.up.square',
-        iconAndroid: 'ic_menu_upload',
+        iconAndroid: 'ic_move_to_inbox',
       },
       {
         id: '3',
