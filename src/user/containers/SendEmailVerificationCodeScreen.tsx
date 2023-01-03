@@ -67,6 +67,15 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         props.onSaveNewEmail({ email });
         setIsSendingCode(false);
         props.navigation.goBack();
+        setTimeout(
+          () =>
+            Toast.showSuccess(I18n.t('user.sendEmailVerificationCodeScreen.emailChangeSuccess'), {
+              position: Toast.position.BOTTOM,
+              mask: false,
+              ...UI_ANIMATIONS.toast,
+            }),
+          100,
+        );
       }
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
