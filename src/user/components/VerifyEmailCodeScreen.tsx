@@ -146,15 +146,6 @@ export const VerifyEmailCodeScreen = ({
         const redirectUserTimer = setTimeout(() => {
           redirectUserAction();
         }, 500);
-        setTimeout(
-          () =>
-            Toast.showSuccess(I18n.t('user.verifyEmailCodeScreen.codeCorrect'), {
-              position: Toast.position.BOTTOM,
-              mask: false,
-              ...UI_ANIMATIONS.toast,
-            }),
-          500,
-        );
         return () => clearTimeout(redirectUserTimer);
       }
     }

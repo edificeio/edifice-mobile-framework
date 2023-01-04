@@ -1,6 +1,6 @@
 {
-  "last": "2022-12-29 14:27:51",
-  "notes": "fix(user-profil): MB-1123, Add toast message on successful password change\nfix(email-verification): Avoid checkAuthContext reentrance\nfeat(user-profile): MB-1100: add alert when want to use camera to change avatar but permission denied\nrelease: 1.9.1-alpha.8(1090108)",
-  "version": "1.9.1-alpha.9(1090109)",
+  "last": "2022-12-29 18:19:34",
+  "notes": "feat: MB-803, custom legal documents\nSquashed commit of the following:\nSquashed commit of the following:\nchore(responsive): Improve scale dimension retrieval\nfeat(conversation): MB-1070, alert if no content/subject\nfix: MB-812, display icon if image erased (explorer)\nfix(blog): change current menu by popup menu",
+  "version": "1.9.2-alpha.1(1090201)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

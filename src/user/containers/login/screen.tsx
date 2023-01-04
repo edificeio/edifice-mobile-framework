@@ -118,27 +118,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
           keyboardShouldPersistTaps="handled"
           alwaysBounceVertical={false}
           overScrollMode="never"
-          contentContainerStyle={{ flexGrow: 1 }}>
-          {/* Temporary banner displayed for Somme Numérique */}
-          {isSommeNumerique ? (
-            <View
-              style={{
-                backgroundColor: theme.palette.complementary.red.pale,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: UI_SIZES.spacing.minor,
-                borderColor: theme.palette.status.failure.regular,
-                borderWidth: 1,
-                borderRadius: 15,
-                width: '90%',
-                alignSelf: 'center',
-                position: 'absolute',
-              }}>
-              <SmallBoldText style={{ textAlign: 'center', color: theme.palette.status.failure.regular }}>
-                {I18n.t('common.sommeNumeriqueAlert_temp')}
-              </SmallBoldText>
-            </View>
-          ) : null}
+          contentContainerStyle={styles.scrollview}>
           <FormContainer>
             {this.renderLogo()}
             <TextInputLine
@@ -169,14 +149,12 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
               />
             </View>
             <SmallText
-              style={{
-                flexGrow: 0,
-                marginTop: UI_SIZES.spacing.medium,
-                padding: UI_SIZES.spacing.tiny,
-                textAlign: 'center',
-                alignSelf: 'center',
-                color: errtype === 'warning' ? theme.palette.status.warning.regular : theme.palette.status.failure.regular,
-              }}>
+              style={[
+                styles.textError,
+                {
+                  color: errtype === 'warning' ? theme.palette.status.warning.regular : theme.palette.status.failure.regular,
+                },
+              ]}>
               {this.state.typing
                 ? ''
                 : error &&
