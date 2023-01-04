@@ -5,7 +5,7 @@ import { addViewTrackingToStackRoutes } from '~/framework/util/tracker/withViewT
 
 import moduleConfig from './moduleConfig';
 import WorkspaceFileDetailsScreen from './screens/WorkspaceFileDetailsScreen';
-import WorkspaceFileListScreen from './screens/WorkspaceFileListScreen';
+import WorkspaceFileListScreen from './screens/file-list';
 
 export const timelineRoutes = addViewTrackingToStackRoutes({
   [moduleConfig.routeName]: {

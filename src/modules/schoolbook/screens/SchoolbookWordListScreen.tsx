@@ -19,6 +19,7 @@ import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popup-menu';
+import { linkAction } from '~/framework/components/popup-menu/actions';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
@@ -252,8 +253,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
         (loadingState === AsyncPagedLoadingState.DONE || loadingState === AsyncPagedLoadingState.REFRESH) ? (
           <PopupMenu
             actions={[
-              {
-                id: '1',
+              linkAction({
                 title: I18n.t('schoolbook.word.create'),
                 action: () => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
@@ -263,8 +263,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
                   const url = `${DEPRECATED_getCurrentPlatform()!.url}/schoolbook#/list`;
                   openUrl(url);
                 },
-                type: 'external-link',
-              },
+              }),
             ]}>
             <HeaderIcon name="more_vert" iconSize={24} />
           </PopupMenu>

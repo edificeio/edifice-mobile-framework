@@ -15,6 +15,7 @@ import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popup-menu';
+import { deleteAction } from '~/framework/components/popup-menu/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
@@ -211,15 +212,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
     title: I18n.t('schoolbook.appName'),
     right:
       isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
-        <PopupMenu
-          actions={[
-            {
-              id: '1',
-              title: '',
-              action: () => showDeleteSchoolbookWordAlert(),
-              type: 'delete',
-            },
-          ]}>
+        <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
           <HeaderIcon name="more_vert" iconSize={24} />
         </PopupMenu>
       ) : undefined,

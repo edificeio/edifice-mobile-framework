@@ -21,6 +21,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import PopupMenu from '~/framework/components/popup-menu';
+import { deleteAction, linkAction } from '~/framework/components/popup-menu/actions';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
@@ -200,8 +201,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         !errorState ? (
           <PopupMenu
             actions={[
-              {
-                id: '1',
+              linkAction({
                 title: I18n.t('common.openInBrowser'),
                 action: () => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
@@ -212,11 +212,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                   openUrl(url);
                   Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
                 },
-                type: 'external-link',
-              },
-              {
-                id: '2',
-                title: '',
+              }),
+              deleteAction({
                 action: () => {
                   Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
                     {
@@ -234,8 +231,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                     },
                   ]);
                 },
-                type: 'delete',
-              },
+              }),
             ]}>
             <HeaderIcon name="more_vert" iconSize={24} />
           </PopupMenu>

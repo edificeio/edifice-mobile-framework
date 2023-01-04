@@ -14,6 +14,7 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popup-menu';
+import { deleteAction } from '~/framework/components/popup-menu/actions';
 import { HeadingSText } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -155,25 +156,18 @@ class MailContentContainer extends React.PureComponent<
     const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
     const popupActionsMenu = [
       {
-        id: '1',
         title: I18n.t('conversation.markUnread'),
         action: () => this.markAsRead(),
         iconIos: 'eye.slash',
         iconAndroid: 'ic_visibility_off',
       },
       {
-        id: '2',
         title: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
         action: () => this.showModal(),
-        iconIos: 'arrow.up.square',
-        iconAndroid: 'ic_move_to_inbox',
+        iconIos: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
+        iconAndroid: `${isCurrentFolderTrash ? 'ic_restore' : 'ic_move_to_inbox'}`,
       },
-      {
-        id: '3',
-        title: '',
-        action: () => this.delete(),
-        type: 'delete',
-      },
+      deleteAction({ action: () => this.delete() }),
     ];
 
     const ViewportAwareSubject = Viewport.Aware(View);
