@@ -13,8 +13,13 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import PopupMenu, { PopupMenuAction } from '~/framework/components/popup-menu';
-import { cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/popup-menu/actions';
+import PopupMenu, {
+  PopupMenuAction,
+  cameraAction,
+  deleteAction,
+  documentAction,
+  galleryAction,
+} from '~/framework/components/popup-menu';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { getUserSession } from '~/framework/util/session';

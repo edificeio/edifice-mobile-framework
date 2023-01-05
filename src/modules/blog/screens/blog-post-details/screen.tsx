@@ -20,8 +20,7 @@ import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/heade
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import PopupMenu from '~/framework/components/popup-menu';
-import { deleteAction, linkAction } from '~/framework/components/popup-menu/actions';
+import PopupMenu, { deleteAction, linkAction } from '~/framework/components/popup-menu';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
