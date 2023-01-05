@@ -78,14 +78,6 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
     this.setState({ typing: false });
   }
 
-  handleLoginChanged(login: string) {
-    if (Platform.OS === 'ios') this.changeLogin(login);
-    else
-      InteractionManager.runAfterInteractions(() => {
-        this.changeLogin(login);
-      });
-  }
-
   handlePasswordChanged(password: string) {
     this.setState({ password: password.trim(), typing: true });
   }
@@ -124,7 +116,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
             <TextInputLine
               inputRef={this.setInputLoginRef}
               placeholder={I18n.t('Login')}
-              onChangeText={this.handleLoginChanged.bind(this)}
+              onChangeText={this.changeLogin.bind(this)}
               value={login}
               hasError={(error && !typing && !errtype) as boolean}
               keyboardType="email-address"
