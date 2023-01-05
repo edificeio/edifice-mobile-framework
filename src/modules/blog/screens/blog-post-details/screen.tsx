@@ -137,7 +137,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                     style: 'destructive',
                     onPress: () => {
                       //TODO: supprimer le billet
-                      console.log(blogPostData!._id, 'postID', blogId, 'blogID');
                       this.doDeleteBlogPost(blogPostData!._id).then(() => {
                         navigation.dispatch(NavigationActions.back());
                       });

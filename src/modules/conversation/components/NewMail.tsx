@@ -259,7 +259,6 @@ const MailContactField = connect((state: IGlobalState) => ({
 
     const removeUser = (id: string) => onChange?.(selectedUsersOrGroups.filter(user => user.id !== id));
     const addUser = userOrGroup => {
-      console.log('test');
       onChange?.([
         ...selectedUsersOrGroups,
         { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
