@@ -574,10 +574,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }));
     } catch (e) {
       Keyboard.dismiss();
-      Toast.show(I18n.t('conversation.attachmentError'), {
-        position: Toast.position.BOTTOM,
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.show(
+        e.response.body === '{"error":"file.too.large"}' ? I18n.t('fullStorage') : I18n.t('conversation.attachmentError'),
+        {
+          position: Toast.position.BOTTOM,
+          ...UI_ANIMATIONS.toast,
+        },
+      );
       this.setState({ tempAttachment: null });
       throw e;
     }

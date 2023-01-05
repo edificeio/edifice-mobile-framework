@@ -1,13 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Keyboard, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -341,7 +342,12 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         }),
       );
     } catch (e) {
-      // ToDo: Error handling
+      if (e.response.body === '{"error":"file.too.large"}') {
+        Toast.show(I18n.t('fullStorage'), {
+          position: Toast.position.BOTTOM,
+          ...UI_ANIMATIONS.toast,
+        });
+      }
       const { dispatch } = this.props;
       dispatch(
         notifierShowAction({
