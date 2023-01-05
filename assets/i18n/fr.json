@@ -855,6 +855,7 @@
   "user.sendEmailVerificationCodeScreen.titleModify": "Modifier mon email",
   "user.sendEmailVerificationCodeScreen.typeEmailAddress": "Entrez votre adresse mail",
   "user.sendEmailVerificationCodeScreen.verifyMyEmail": "Vérifier mon email",
+  "user.sendEmailVerificationCodeScreen.emailChangeSuccess": "Email modifié avec succès.",
   "user.verifyEmailCodeScreen.alertContent": "Votre adresse e-mail ne sera pas modifiée. Êtes-vous sûr d'abandonner ?",
   "user.verifyEmailCodeScreen.alertTitle": "Modifications non enregistrées",
   "user.verifyEmailCodeScreen.codeCorrect": "Vérification de l'adresse mail réussie !",
