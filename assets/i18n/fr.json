@@ -326,6 +326,8 @@
   "conversation.unknown": "Inconnu",
   "conversation.warning.webDraft.text": "Le brouillon a été initié depuis un ordinateur. En continuant sur l'application mobile, l'expérience sera dégradée. Souhaitez-vous continuer ?",
   "conversation.warning.webDraft.title": "Brouillon incompatible",
+  "conversation.errorUser.title": "{{user}} n'est pas un utilisateur de l'ENT",
+  "conversation.errorUser.text": "Veuillez sélectionner uniquement un des utilisateurs de l'ENT dans la liste qui vous est proposée.",
   "copy": "Copier",
   "copy-documents": "Copier documents vers",
   "create": "Créer",

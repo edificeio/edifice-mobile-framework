@@ -59,7 +59,7 @@ export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }
   );
 };
 
-export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key }) => {
+export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key, onEndEditing = () => {} }) => {
   const textInputStyle = {
     ...TextFontStyle.Regular,
     ...TextSizeStyle.Normal,
@@ -87,6 +87,7 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
       value={value}
       onChangeText={onChangeText}
       onSubmitEditing={onSubmit}
+      onEndEditing={onEndEditing}
     />
   );
 };
