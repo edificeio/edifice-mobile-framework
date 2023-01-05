@@ -1,4 +1,4 @@
-import { ImagePicked } from '~/infra/filePicker';
+import { ImagePicked } from '~/framework/components/popup-menu';
 
 export interface IUserCardProps {
   id: string;

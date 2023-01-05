@@ -13,6 +13,7 @@ import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import PopupMenu, { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/popup-menu';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -20,7 +21,6 @@ import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
-import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
 import {
@@ -653,9 +653,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         <View style={{ flexDirection: 'row' }}>
           {addGivenAttachment && (
             <View style={{ width: 48, alignItems: 'center' }}>
-              <FilePicker multiple synchrone callback={addGivenAttachment}>
+              <PopupMenu
+                actions={[
+                  cameraAction({ callback: addGivenAttachment, synchrone: true }),
+                  galleryAction({ callback: addGivenAttachment, synchrone: true, multiple: true }),
+                  documentAction({ callback: addGivenAttachment, synchrone: true }),
+                ]}>
                 <HeaderIcon name="attachment" />
-              </FilePicker>
+              </PopupMenu>
             </View>
           )}
           {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}

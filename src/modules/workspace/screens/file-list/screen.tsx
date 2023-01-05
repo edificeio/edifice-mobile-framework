@@ -14,6 +14,7 @@ import FlatList from '~/framework/components/flatList';
 import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import PopupMenu, {
+  DocumentPicked,
   PopupMenuAction,
   cameraAction,
   deleteAction,
@@ -23,7 +24,6 @@ import PopupMenu, {
 import { LocalFile } from '~/framework/util/fileHandler';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { getUserSession } from '~/framework/util/session';
-import { DocumentPicked } from '~/infra/filePicker';
 import {
   copyWorkspaceFilesAction,
   createWorkspaceFolderAction,
