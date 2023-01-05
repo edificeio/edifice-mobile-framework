@@ -5,7 +5,8 @@ import DeviceInfo from 'react-native-device-info';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { assertPermissions } from '~/framework/util/permissions';
 
-import { ImagePicked, PopupPickerActionProps } from './types';
+import { ImagePicked } from '../types';
+import { PopupPickerActionProps } from './types';
 
 export default function cameraAction(props: PopupPickerActionProps) {
   const imageCallback = async (images: LocalFile[]) => {

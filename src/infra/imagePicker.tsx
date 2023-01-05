@@ -124,13 +124,3 @@ export class ImagePicker extends React.PureComponent<
     );
   }
 }
-
-export const imagePickedToLocalFile = (img: ImagePicked) =>
-  new LocalFile(
-    {
-      filename: img.fileName as string,
-      filepath: img.uri as string,
-      filetype: img.type as string,
-    },
-    { _needIOSReleaseSecureAccess: false },
-  );
