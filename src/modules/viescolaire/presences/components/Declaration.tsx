@@ -7,9 +7,15 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import PopupMenu, {
+  DocumentPicked,
+  ImagePicked,
+  cameraAction,
+  documentAction,
+  galleryAction,
+} from '~/framework/components/popup-menu';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
 import DateTimePicker from '~/ui/DateTimePicker';
@@ -234,10 +240,17 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               onChangeText={updateComment}
             />
             {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
-              <FilePicker callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
-                <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-                <SmallText>{I18n.t('viesco-attachment')}</SmallText>
-              </FilePicker>
+              <PopupMenu
+                actions={[
+                  cameraAction({ callback: att => this.props.onPickAttachment(att) }),
+                  galleryAction({ callback: att => this.props.onPickAttachment(att) }),
+                  documentAction({ callback: att => this.props.onPickAttachment(att) }),
+                ]}>
+                <View style={styles.filePickerStyle}>
+                  <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
+                  <SmallText>{I18n.t('viesco-attachment')}</SmallText>
+                </View>
+              </PopupMenu>
             ) : null}
           </View>
           {attachment ? (
