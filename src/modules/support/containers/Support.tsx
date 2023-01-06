@@ -9,10 +9,10 @@ import { bindActionCreators } from 'redux';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import { DocumentPicked } from '~/framework/components/popup-menu';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { IUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { DocumentPicked } from '~/infra/filePicker';
 import { addAttachmentAction, createTicketAction, deleteAttachmentAction } from '~/modules/support/actions/support';
 import Support from '~/modules/support/components/Support';
 
