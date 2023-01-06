@@ -75,20 +75,21 @@ export interface IUserAuthContext {
   passwordRegex: RegExp;
   passwordRegexI18n: { [lang: string]: string };
   mandatory?: {
-    // Only if user is logged
-    forceChangePassword?: boolean;
-    needRevalidateEmail?: boolean;
-    needRevalidateTerms?: boolean;
-    // No needed session
     mail?: boolean;
     phone?: boolean;
   };
 }
 
+export interface IUserRequirements {
+  forceChangePassword?: boolean;
+  needRevalidateEmail?: boolean;
+  needRevalidateTerms?: boolean;
+}
+
 class UserService {
   static FCM_TOKEN_TODELETE_KEY = 'users.fcmtokens.todelete';
 
-  lastRegisteredToken: string;
+  lastRegisteredToken: string = '';
 
   pendingRegistration: 'initial' | 'delayed' | 'registered' = 'initial';
 
@@ -299,11 +300,6 @@ class UserService {
     }
   }
 
-  async getUserAuthContext() {
-    const userAuthContext = await fetchJSONWithCache('/auth/context');
-    return userAuthContext;
-  }
-
   async getAuthTranslationKeys(language: languages) {
     try {
       // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
@@ -315,6 +311,11 @@ class UserService {
     } catch (e) {
       // console.warn('[UserService] getAuthTranslationKeys: could not get auth translation keys', e);
     }
+  }
+
+  async getUserRequirements(): Promise<IUserRequirements | null> {
+    const resp = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/user/requirements`);
+    return resp.status === 404 ? null : resp.json();
   }
 }
 

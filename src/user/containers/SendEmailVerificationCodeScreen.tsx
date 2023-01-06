@@ -35,20 +35,20 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   const [isSendingCode, setIsSendingCode] = React.useState(false);
 
   // Web 4.7+ compliance :
-  //   Email verification APIs are available if (/auth/context).mandatory contains at least needRevalidateEmail field
-  //   Use isUserContextChecked to avoid multiple calls to /auth/context (useEffect can be called multiple times)
-  const [isAuthContextChecked, setIsAuthContextChecked] = React.useState(false);
+  //   Email verification APIs are available if /auth/user/requirements contains at least needRevalidateEmail field
+  //   Use requirementsChecked to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
+  const [requirementsChecked, setRequirementsChecked] = React.useState(false);
 
   useEffect(() => {
-    async function checkAuthContext() {
-      setIsAuthContextChecked(true);
-      const userAuthContext = await userService.getUserAuthContext();
-      setIsCheckEmail(containsKey(userAuthContext?.mandatory as object, 'needRevalidateEmail'));
+    async function checkRequirements() {
+      setRequirementsChecked(true);
+      const requirements = await userService.getUserRequirements();
+      setIsCheckEmail(containsKey(requirements as object, 'needRevalidateEmail'));
       setIsLoading(false);
     }
     // Avoid reentrance by using isLoading to know if /auth/context as been called or not
-    if (!isAuthContextChecked) checkAuthContext();
-  }, [isAuthContextChecked]);
+    if (!requirementsChecked) checkRequirements();
+  }, [requirementsChecked]);
 
   const sendEmailVerificationCode = async (email: string) => {
     // Exit if email is not valid

@@ -39,6 +39,11 @@ interface IFormDistributionListModalProps {
   openDistribution: (id: number, status: DistributionStatus, form: IForm) => void;
 }
 
+const compareDistributions = (a: IDistribution, b: IDistribution): number => {
+  if (!a.dateResponse || !b.dateResponse || a.dateResponse.isSame(b.dateResponse)) return 0;
+  return a.dateResponse.isAfter(b.dateResponse) ? 1 : -1;
+};
+
 export const FormDistributionListModal = ({
   modalBoxRef,
   distributions = [],
@@ -46,9 +51,7 @@ export const FormDistributionListModal = ({
   openDistribution,
 }: IFormDistributionListModalProps) => {
   const [isLoading, setLoading] = React.useState(false);
-  const data = distributions
-    .filter(distribution => distribution.status === DistributionStatus.FINISHED)
-    .sort((a, b) => (a.dateResponse! > b.dateResponse! ? 1 : -1));
+  const data = distributions.filter(distribution => distribution.status === DistributionStatus.FINISHED).sort(compareDistributions);
 
   const openDistributionCallback = (id: number, status: DistributionStatus) => {
     if (form) {
@@ -64,6 +67,7 @@ export const FormDistributionListModal = ({
           const session = getUserSession();
           distribution = await formService.distribution.duplicate(session, id);
         } catch (e) {
+          Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
           throw e;
         }
       }
@@ -117,6 +121,7 @@ export const FormDistributionListModal = ({
           <BodyText style={styles.titleMargin}>{`${I18n.t('form.myAnswers')} - ${form?.title}`}</BodyText>
           <FlatList
             data={data}
+            initialNumToRender={data.length}
             keyExtractor={distribution => distribution.id.toString()}
             renderItem={({ item, index }) => renderListItem(item, index + 1)}
             persistentScrollbar
