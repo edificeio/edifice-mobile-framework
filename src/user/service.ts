@@ -5,7 +5,6 @@ import AppLink from 'react-native-app-link';
 import DeviceInfo from 'react-native-device-info';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
@@ -74,20 +73,21 @@ export interface IUserAuthContext {
   passwordRegex: RegExp;
   passwordRegexI18n: { [lang: string]: string };
   mandatory?: {
-    // Only if user is logged
-    forceChangePassword?: boolean;
-    needRevalidateEmail?: boolean;
-    needRevalidateTerms?: boolean;
-    // No needed session
     mail?: boolean;
     phone?: boolean;
   };
 }
 
+export interface IUserRequirements {
+  forceChangePassword?: boolean;
+  needRevalidateEmail?: boolean;
+  needRevalidateTerms?: boolean;
+}
+
 class UserService {
   static FCM_TOKEN_TODELETE_KEY = 'users.fcmtokens.todelete';
 
-  lastRegisteredToken: string;
+  lastRegisteredToken: string = '';
 
   pendingRegistration: 'initial' | 'delayed' | 'registered' = 'initial';
 
@@ -298,9 +298,9 @@ class UserService {
     }
   }
 
-  async getUserAuthContext() {
-    const userAuthContext = await fetchJSONWithCache('/auth/context');
-    return userAuthContext;
+  async getUserRequirements(): Promise<IUserRequirements | null> {
+    const resp = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/user/requirements`);
+    return resp.status === 404 ? null : resp.json();
   }
 }
 

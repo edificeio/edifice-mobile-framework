@@ -11,7 +11,7 @@ import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oaut
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
-import { IEntcoreEmailValidationInfos, IUserAuthContext, userService } from '~/user/service';
+import { IEntcoreEmailValidationInfos, IUserRequirements, userService } from '~/user/service';
 
 import {
   actionTypeLoggedIn,
@@ -146,9 +146,9 @@ export function loginAction(
       }
 
       // === 3: Gather user mandatory context
-      let userAuthContext: IUserAuthContext;
+      let requirements: IUserRequirements | null = null;
       try {
-        userAuthContext = await userService.getUserAuthContext();
+        requirements = await userService.getUserRequirements();
       } catch (err) {
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
@@ -162,12 +162,12 @@ export function loginAction(
         const err = new Error("[loginAction]: User's structure is not premium.");
         (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
         throw err;
-      } else if (userAuthContext?.mandatory?.forceChangePassword) {
+      } else if (requirements?.forceChangePassword) {
         const err = new Error('[loginAction]: User must change password.');
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
-      } else if (userAuthContext?.mandatory?.needRevalidateEmail) {
+      } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
         try {
           const emailValidationInfos = await userService.getEmailValidationInfos();
@@ -179,7 +179,7 @@ export function loginAction(
           throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', e as Error);
         }
         throw err;
-      } else if (userAuthContext?.mandatory?.needRevalidateTerms) {
+      } else if (requirements?.needRevalidateTerms) {
         const err = new Error('[loginAction]: User must revalidate terms.');
         (err as any).type = LoginFlowErrorType.MUST_REVALIDATE_TERMS;
         throw err;
