@@ -27,7 +27,7 @@ export default function cameraAction(props: PopupPickerActionProps) {
   const action = async () => {
     try {
       await assertPermissions('camera');
-      LocalFile.pick({ source: 'camera' }).then(lf => {
+      LocalFile.pick({ source: 'camera' }, props.options).then(lf => {
         return imageCallback(lf);
       });
     } catch {

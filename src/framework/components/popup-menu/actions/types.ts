@@ -12,6 +12,5 @@ export interface PopupActionProps {
 export interface PopupPickerActionProps {
   callback: (document: ImagePicked | DocumentPicked, sourceType?: string) => Promise<void> | void;
   options?: Partial<ImageLibraryOptions & CameraOptions & DocumentPickerOptions<keyof PlatformTypes>>;
-  multiple?: boolean;
   synchrone?: boolean;
 }

@@ -10,6 +10,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { ImagePicked } from '~/framework/components/popup-menu';
 import { CaptionText, SmallText } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -19,7 +20,6 @@ import { IUserSession, UserType, getUserSession } from '~/framework/util/session
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
-import { ImagePicked } from '~/infra/imagePicker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { PageContainer } from '~/ui/ContainerContent';

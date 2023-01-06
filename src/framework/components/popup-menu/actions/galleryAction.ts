@@ -8,7 +8,7 @@ import { assertPermissions } from '~/framework/util/permissions';
 import { ImagePicked } from '../types';
 import { PopupPickerActionProps } from './types';
 
-export default function galleryAction(props: PopupPickerActionProps) {
+export default function galleryAction(props: PopupPickerActionProps & { multiple?: boolean }) {
   const imageCallback = async (images: LocalFile[]) => {
     try {
       for (const img of images) {
