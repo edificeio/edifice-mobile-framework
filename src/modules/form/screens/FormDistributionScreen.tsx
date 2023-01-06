@@ -236,7 +236,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
             }
           }),
         );
-        if (question.type === QuestionType.FILE && res[0]?.answer !== '') {
+        if (question.type === QuestionType.FILE && res[0]?.files?.some(f => f.lf)) {
           const response = res[0];
           await formService.response.deleteFiles(session, response.id!);
           await Promise.all(
