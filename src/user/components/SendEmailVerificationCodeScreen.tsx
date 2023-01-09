@@ -11,7 +11,6 @@ import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 const imageSize = getScaleDimension(150, 'image');
 
@@ -29,10 +28,10 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.radius.medium,
   },
-  errorText: { color: theme.palette.status.failure, marginTop: UI_SIZES.spacing.tiny },
+  errorText: { color: theme.palette.status.failure.regular, marginTop: UI_SIZES.spacing.tiny },
   sendButton: { marginTop: UI_SIZES.spacing.medium },
   logoutButton: { alignSelf: 'center', marginTop: UI_SIZES.spacing.medium },
-  logoutText: { color: theme.palette.status.failure },
+  logoutText: { color: theme.palette.status.failure.regular },
 });
 
 export enum EmailState {
@@ -43,23 +42,29 @@ export enum EmailState {
 
 export const SendEmailVerificationCodeScreen = ({
   defaultEmail,
-  sendAction,
+  emailEmpty,
+  isCheckEmail,
+  isModifyingEmail,
   isSending,
   refuseAction,
-  isModifyingEmail,
+  sendAction,
 }: {
   defaultEmail: string;
-  sendAction: (email: string) => Promise<EmailState | undefined>;
+  emailEmpty: (data: boolean) => void;
+  isCheckEmail: boolean;
+  isModifyingEmail: boolean;
   isSending: boolean;
   refuseAction: () => void;
-  isModifyingEmail: boolean;
+  sendAction: (email: string) => Promise<EmailState | undefined>;
 }) => {
   const [email, setEmail] = React.useState(defaultEmail || '');
   const [emailState, setEmailState] = React.useState<EmailState>(EmailState.PRISTINE);
+
   const isEmailEmpty = email === '';
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
   const isEmailStateAlreadyVerified = emailState === EmailState.EMAIL_ALREADY_VERIFIED;
-  const modifyString = isModifyingEmail ? 'Modify' : '';
+
+  const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular;
 
   const errorString = I18n.t(
     isEmailStatePristine
@@ -67,11 +72,26 @@ export const SendEmailVerificationCodeScreen = ({
       : `user.sendEmailVerificationCodeScreen.invalidEmailFormat${isEmailStateAlreadyVerified ? 'Modify' : ''}`,
   );
 
-  const borderColor = isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure;
+  const texts: Record<string, any> = isModifyingEmail
+    ? {
+        title: I18n.t('user.sendEmailVerificationCodeScreen.emailVerificationModify'),
+        message: I18n.t('user.sendEmailVerificationCodeScreen.modify'),
+        label: I18n.t('user.sendEmailVerificationCodeScreen.emailAddressModify'),
+      }
+    : {
+        title: I18n.t('user.sendEmailVerificationCodeScreen.emailVerification'),
+        message: I18n.t('user.sendEmailVerificationCodeScreen.mustVerify'),
+        label: I18n.t('user.sendEmailVerificationCodeScreen.emailAddress'),
+      };
+
+  texts.button = isCheckEmail
+    ? I18n.t('user.sendEmailVerificationCodeScreen.verifyMyEmail')
+    : I18n.t('user.sendEmailVerificationCodeScreen.modifyMyEmail');
 
   const changeEmail = (text: string) => {
     if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
     setEmail(text);
+    emailEmpty(text === '');
   };
 
   const sendEmail = async () => {
@@ -79,21 +99,13 @@ export const SendEmailVerificationCodeScreen = ({
     if (sendResponse) setEmailState(sendResponse);
   };
 
-  // Temporary condition (remove once email verification is ready on all PF's)
-  const pf = DEPRECATED_getCurrentPlatform();
-  const isPfRecetteParis = pf?.url === 'https://recette-paris.opendigitaleducation.com';
-
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <NamedSVG name="empty-email" width={imageSize} height={imageSize} />
       </View>
-      <HeadingSText style={styles.title}>
-        {I18n.t(`user.sendEmailVerificationCodeScreen.emailVerification${modifyString}`)}
-      </HeadingSText>
-      <SmallText style={styles.content}>
-        {I18n.t(`user.sendEmailVerificationCodeScreen.${isPfRecetteParis ? `mustVerify${modifyString}` : 'modify'}`)}
-      </SmallText>
+      <HeadingSText style={styles.title}>{texts.title}</HeadingSText>
+      <SmallText style={styles.content}>{texts.message}</SmallText>
       <View style={styles.inputTitleContainer}>
         <Picture
           type="NamedSvg"
@@ -102,9 +114,7 @@ export const SendEmailVerificationCodeScreen = ({
           width={UI_SIZES.dimensions.width.mediumPlus}
           height={UI_SIZES.dimensions.height.mediumPlus}
         />
-        <SmallBoldText style={styles.inputTitle}>
-          {I18n.t(`user.sendEmailVerificationCodeScreen.emailAddress${modifyString}`)}
-        </SmallBoldText>
+        <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
       </View>
       <TextInput
         autoCorrect={false}
@@ -119,7 +129,7 @@ export const SendEmailVerificationCodeScreen = ({
       <CaptionItalicText style={styles.errorText}>{errorString}</CaptionItalicText>
       <ActionButton
         style={styles.sendButton}
-        text={I18n.t(`user.sendEmailVerificationCodeScreen.${isPfRecetteParis ? 'verify' : 'modify'}MyEmail`)}
+        text={texts.button}
         disabled={isEmailEmpty}
         loading={isSending}
         action={() => sendEmail()}

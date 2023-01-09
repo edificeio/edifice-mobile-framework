@@ -194,7 +194,7 @@ const fileTransferService = {
       begin: res => {
         const type = res?.headers['Content-Type'];
         if (res.contentLength) file.filesize = res.contentLength;
-        if (!file.filetype && type?.length) localFile.filetype = type;
+        if (!file.filetype && type?.length) localFile.filetype = type === 'image/jpg' ? 'image/jpeg' : type;
         callbacks?.onBegin?.(res);
       },
       progress: callbacks?.onProgress,

@@ -100,7 +100,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
         ))}
         {skipped ? (
           <SkippedContainer>
-            <CaptionText style={{ color: theme.palette.status.warning, textAlign: 'center' }}>+{skipped}</CaptionText>
+            <CaptionText style={{ color: theme.palette.status.warning.regular, textAlign: 'center' }}>+{skipped}</CaptionText>
           </SkippedContainer>
         ) : (
           <View />

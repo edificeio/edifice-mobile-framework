@@ -9,8 +9,6 @@ import { notifierShowAction } from '~/infra/notifier/actions';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 import userConfig from '~/user/config';
 
-// TYPES
-
 export interface IUpdatableProfileValues {
   displayName?: string;
   email?: string;
@@ -21,13 +19,9 @@ export interface IUpdatableProfileValues {
   photo?: string;
 }
 
-// ACTION TYPES
-
 export const actionTypeProfileUpdateRequested = userConfig.createActionType('PROFILE_UPDATE_REQUESTED');
 export const actionTypeProfileUpdateSuccess = userConfig.createActionType('PROFILE_UPDATE_SUCCESS');
 export const actionTypeProfileUpdateError = userConfig.createActionType('PROFILE_UPDATE_ERROR');
-
-// ACTION BUILDERS
 
 const profileUpdateActionBuilder = (type: string) => (updatedProfileValues: IUpdatableProfileValues) => ({
   type,
@@ -39,8 +33,6 @@ export const profileUpdateRequestedAction = profileUpdateActionBuilder(actionTyp
 export const profileUpdateSuccessAction = profileUpdateActionBuilder(actionTypeProfileUpdateSuccess);
 
 export const profileUpdateErrorAction = profileUpdateActionBuilder(actionTypeProfileUpdateError);
-
-// THUNKS
 
 export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar?: boolean) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
@@ -55,6 +47,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
     };
 
     if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+
     for (const index in updatedProfileValues) {
       if (updatedProfileValues.hasOwnProperty(index)) {
         if (index.match(/Valid/) || updatedProfileValues[index as keyof IUpdatableProfileValues] === getState().user.info[index]) {

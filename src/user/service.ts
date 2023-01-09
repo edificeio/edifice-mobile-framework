@@ -5,7 +5,6 @@ import AppLink from 'react-native-app-link';
 import DeviceInfo from 'react-native-device-info';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
@@ -74,20 +73,21 @@ export interface IUserAuthContext {
   passwordRegex: RegExp;
   passwordRegexI18n: { [lang: string]: string };
   mandatory?: {
-    // Only if user is logged
-    forceChangePassword?: boolean;
-    needRevalidateEmail?: boolean;
-    needRevalidateTerms?: boolean;
-    // No needed session
     mail?: boolean;
     phone?: boolean;
   };
 }
 
+export interface IUserRequirements {
+  forceChangePassword?: boolean;
+  needRevalidateEmail?: boolean;
+  needRevalidateTerms?: boolean;
+}
+
 class UserService {
   static FCM_TOKEN_TODELETE_KEY = 'users.fcmtokens.todelete';
 
-  lastRegisteredToken: string;
+  lastRegisteredToken: string = '';
 
   pendingRegistration: 'initial' | 'delayed' | 'registered' = 'initial';
 
@@ -298,28 +298,9 @@ class UserService {
     }
   }
 
-  async getUserAuthContext(session?: IUserSession) {
-    try {
-      let res;
-      if (session) {
-        res = await fetchJSONWithCache('/auth/context');
-      } else {
-        res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
-        if (!res.ok) {
-          throw new Error('[UserService] getUserAuthContext: response not 20x');
-        }
-        res = await res.json();
-      }
-      return {
-        callBack: res.callBack,
-        cgu: res.cgu,
-        passwordRegex: new RegExp(res.passwordRegex),
-        passwordRegexI18n: res.passwordRegexI18n,
-        mandatory: res.mandatory,
-      } as IUserAuthContext;
-    } catch (e) {
-      // console.warn('[UserService] getUserAuthContext: could not verify email code', e);
-    }
+  async getUserRequirements(): Promise<IUserRequirements | null> {
+    const resp = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/user/requirements`);
+    return resp.status === 404 ? null : resp.json();
   }
 }
 

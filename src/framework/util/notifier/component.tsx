@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallInverse } from '~/framework/components/text';
+import { SmallInverseText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 import type { NotifierState } from './reducer';
@@ -100,9 +100,9 @@ class Notifier extends React.Component<
 
     return {
       info: theme.palette.complementary.blue.regular,
-      success: theme.palette.status.success,
-      warning: theme.palette.status.warning,
-      error: theme.palette.status.failure,
+      success: theme.palette.status.success.regular,
+      warning: theme.palette.status.warning.regular,
+      error: theme.palette.status.failure.regular,
     }[type];
   }
 
@@ -164,9 +164,9 @@ class Notifier extends React.Component<
         <NotifierWrapper style={{ backgroundColor: this.barColor }}>
           <View style={[styles.innerAnimatedView, icon && !loading && styles.alignCenter]}>
             {text ? (
-              <SmallInverse onTextLayout={this.measureText} style={styles.textAnimated}>
+              <SmallInverseText onTextLayout={this.measureText} style={styles.textAnimated}>
                 {text}
-              </SmallInverse>
+              </SmallInverseText>
             ) : null}
             {loading ? (
               <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.big }} />

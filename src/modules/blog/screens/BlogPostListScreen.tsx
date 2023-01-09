@@ -141,7 +141,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
       const session = props.session;
       const newBlogPosts = await blogService.posts.page(session, blogId, pageToFetch, ['PUBLISHED', 'SUBMITTED']);
       let pagingSize = pagingSize_state;
-      if (pagingSize === undefined) {
+      if (!pagingSize) {
         setPagingSize(newBlogPosts.length);
         pagingSize = newBlogPosts.length;
       }
@@ -153,13 +153,13 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
             ...(flushAfter ? [] : blogPosts.slice(pagingSize * (pageToFetch + 1))),
           ]);
 
-        if (fromPage === undefined) {
+        if (!fromPage) {
           setNextPageToFetch(newBlogPosts.length === 0 || newBlogPosts.length < pagingSize ? -1 : pageToFetch + 1);
         } else if (flushAfter) {
           setNextPageToFetch(fromPage + 1);
         }
         // Only increment pagecount when fromPage is not specified
-      }
+      } else setBlogPosts([]);
     } catch (e) {
       throw e;
     }

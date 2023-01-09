@@ -137,7 +137,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
     if (prevProps.events.error !== events.error) {
       Toast.show(I18n.t('viesco-history-load-error'), {
         position: Toast.position.CENTER,
-        containerStyle: { padding: UI_SIZES.spacing.big, backgroundColor: theme.palette.status.failure },
+        containerStyle: { padding: UI_SIZES.spacing.big, backgroundColor: theme.palette.status.failure.regular },
         textStyle: {},
         ...UI_ANIMATIONS.toast,
       });

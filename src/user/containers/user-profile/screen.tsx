@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, ImageURISource, ScrollView, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
@@ -36,6 +36,7 @@ export class UserScreen extends React.PureComponent<
     updatingAvatar: boolean;
     versionOverride: string;
     versionType: string;
+    avatarPhoto?: '' | ImageURISource;
   }
 > {
   public state = {
@@ -43,6 +44,7 @@ export class UserScreen extends React.PureComponent<
     updatingAvatar: false,
     versionOverride: RNConfigReader.BundleVersionOverride,
     versionType: RNConfigReader.BundleVersionType,
+    avatarPhoto: undefined,
   };
 
   showWhoAreWe = this.props.session.platform.showWhoAreWe;
@@ -65,7 +67,7 @@ export class UserScreen extends React.PureComponent<
 
   headerTop = Math.ceil(54 * (this.headerWidth / 375)) - this.headerHeight;
 
-  public onDiconnect = () => {
+  public onDisconnect = () => {
     Alert.alert('', I18n.t('auth-disconnectConfirm'), [
       {
         text: I18n.t('common.cancel'),
@@ -82,6 +84,12 @@ export class UserScreen extends React.PureComponent<
   public render() {
     const { userinfo, session } = this.props;
     const { showVersionType, versionOverride, versionType } = this.state;
+    this.props.navigation.addListener('didFocus', () => {
+      this.setState({
+        avatarPhoto:
+          getUserSession().user.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${getUserSession().user.photo}`),
+      });
+    });
 
     return (
       <PageView
@@ -102,10 +110,10 @@ export class UserScreen extends React.PureComponent<
             />
             {userinfo.photo === '' ? (
               <TouchableOpacity onPress={() => this.props.navigation.navigate('MyProfile')}>
-                <Avatar sourceOrId={this.sourceWithParam} size={Size.verylarge} id="" />
+                <Avatar sourceOrId={this.state.avatarPhoto} size={Size.verylarge} id="" />
               </TouchableOpacity>
             ) : (
-              <Avatar sourceOrId={this.sourceWithParam} size={Size.verylarge} id="" />
+              <Avatar sourceOrId={this.state.avatarPhoto} size={Size.verylarge} id="" />
             )}
             <BodyBoldText style={styles.userInfo_name}>{userinfo.displayName}</BodyBoldText>
             <SmallText style={styles.userInfo_type}>{I18n.t(`profileTypes.${session.user.type}`)}</SmallText>
@@ -148,7 +156,7 @@ export class UserScreen extends React.PureComponent<
             )}
           </View>
           <View style={styles.boxBottomPage}>
-            <SmallBoldText style={styles.linkDisconnect} onPress={() => this.onDiconnect()}>
+            <SmallBoldText style={styles.linkDisconnect} onPress={() => this.onDisconnect()}>
               {I18n.t('directory-disconnectButton')}
             </SmallBoldText>
             <SmallBoldText style={styles.textVersion} onLongPress={() => this.setState({ showVersionType: !showVersionType })}>

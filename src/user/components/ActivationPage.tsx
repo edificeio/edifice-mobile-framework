@@ -6,11 +6,12 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
+import AlertCard from '~/framework/components/alert';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
-import { CaptionText, SmallActionText, SmallText } from '~/framework/components/text';
+import { SmallActionText, SmallText } from '~/framework/components/text';
 import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
@@ -21,7 +22,6 @@ import { ContextState, SubmitState } from '~/utils/SubmitState';
 import {
   ActivationFormModel,
   InputEmail,
-  InputLogin,
   InputPassword,
   InputPasswordConfirm,
   InputPhone,
@@ -81,6 +81,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
       this.setState(newState as any);
     };
   };
+
   private handleOpenCGU = () => {
     this.setState({ isModalVisible: true });
     Trackers.trackEvent('Auth', 'READ NOTICE', 'cgu');
@@ -147,22 +148,15 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                     <LogoWrapper>
                       <PFLogo />
                     </LogoWrapper>
-                    <InputLogin login={login} form={formModel} onChange={this.onChange('login')} />
+                    {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
+                    {this.props.passwordRegexI18n?.[I18n.currentLocale()] ? (
+                      <AlertCard
+                        type="info"
+                        text={this.props.passwordRegexI18n[I18n.currentLocale()]}
+                        style={{ width: '100%', marginTop: UI_SIZES.spacing.medium }}
+                      />
+                    ) : null}
                     <InputPassword password={password} form={formModel} onChange={this.onChange('password')} />
-                    <View
-                      style={{
-                        backgroundColor: theme.palette.primary.light,
-                        paddingVertical: UI_SIZES.spacing.minor,
-                        paddingHorizontal: UI_SIZES.spacing.medium,
-                        borderColor: theme.palette.primary.regular,
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        flex: 0,
-                      }}>
-                      <CaptionText style={{ color: theme.palette.primary.regular }}>
-                        {this.props.passwordRegexI18n?.[I18n.currentLocale()]}
-                      </CaptionText>
-                    </View>
                     <InputPasswordConfirm confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
                     <InputEmail email={email} form={formModel} onChange={this.onChange('email')} />
                     <InputPhone phone={phone} form={formModel} onChange={this.onChange('phone')} />
@@ -190,7 +184,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         padding: UI_SIZES.spacing.tiny,
                         textAlign: 'center',
                         alignSelf: 'center',
-                        color: theme.palette.status.failure,
+                        color: theme.palette.status.failure.regular,
                       }}>
                       {' '}
                       {hasErrorKey && !typing ? errorText : ''}{' '}

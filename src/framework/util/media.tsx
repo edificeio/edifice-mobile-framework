@@ -15,14 +15,17 @@ export interface IVideoAttributes extends IMediaCommonAttributes {
   poster?: string | ImageURISource;
   ratio?: number;
 }
+
 export interface IAudioAttributes extends IMediaCommonAttributes {}
 
 export interface IImageMedia extends IImageAttributes {
   type: 'image';
 }
+
 export interface IVideoMedia extends IVideoAttributes {
   type: 'video';
 }
+
 export interface IAudioMedia extends IAudioAttributes {
   type: 'audio';
 }
@@ -32,9 +35,11 @@ export type IMedia = IImageMedia | IVideoMedia | IAudioMedia;
 export function formatSource(src: string | ImageURISource) {
   return typeof src === 'string' ? { uri: src } : src;
 }
+
 export function formatMediaSource(media: IMediaCommonAttributes) {
   return { ...media, src: formatSource(media.src) };
 }
+
 export function formatMediaSourceArray(medias: IMediaCommonAttributes[]) {
   return medias.map(m => formatMediaSource(m));
 }
@@ -46,10 +51,13 @@ export class Image extends React.PureComponent<ImageProps> {
     return <RNImage source={hasSource ? urlSigner.signURISource(source) : undefined} {...rest} />;
   }
 }
+
 export class FastImage extends React.PureComponent<FastImageProps> {
   render() {
     const { source, ...rest } = this.props;
     const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
-    return <RNFastImage source={hasSource ? urlSigner.signURISource(source) : undefined} {...rest} />;
+    const newSource = hasSource ? urlSigner.signURISource(source) : undefined;
+    if (newSource) newSource.cache = RNFastImage.cacheControl.web;
+    return <RNFastImage source={newSource} {...rest} />;
   }
 }

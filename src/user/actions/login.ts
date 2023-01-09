@@ -10,7 +10,7 @@ import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oau
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
-import { IEntcoreEmailValidationInfos, IUserAuthContext, userService } from '~/user/service';
+import { IEntcoreEmailValidationInfos, IUserRequirements, userService } from '~/user/service';
 
 import {
   actionTypeLoggedIn,
@@ -20,14 +20,11 @@ import {
   actionTypeLoginError,
   actionTypeRequestLogin,
 } from './actionTypes/login';
-// eslint-disable-next-line import/order
 import { initActivationAccount as initActivationAccountAction } from './initActivation';
 import { PLATFORM_STORAGE_KEY } from './platform';
 import { letItSnowAction } from './xmas';
 
-// TYPES ------------------------------------------------------------------------------------------------
-
-enum LoginFlowErrorType {
+export enum LoginFlowErrorType {
   RUNTIME_ERROR = 'runtime_error',
   FIREBASE_ERROR = 'firebase_error',
   NOT_PREMIUM = 'not_premium',
@@ -50,34 +47,41 @@ export interface LoginErrorDetails {
   error?: string;
   description?: string;
 }
+
 export type LoginError = Error & LoginErrorDetails;
 
-function createLoginError<T extends object>(
+export function createLoginError<T extends object>(
   type: LoginErrorType,
   error: string,
   description?: string,
   additionalData?: T,
 ): LoginError & T {
-  let err: LoginError = new Error('LOGIN: returned error') as any;
+  const err: LoginError = new Error('LOGIN: returned error') as any;
   err.name = 'LOGIN';
   err.type = type;
   err.error = error;
   err.description = description;
-  additionalData && Object.assign(err, additionalData);
+  if (additionalData) Object.assign(err, additionalData);
   return err as LoginError & T;
 }
 
-export enum DEPRECATED_LoginResult {
+export enum DEPRECATEDLoginResult {
   success,
   passwordError,
   connectionError,
 }
 
-// ACTION TYPES --------------------------------------------------------------------------------------
-
-// Now in ./actionTypes/login.ts
-
-// THUNKS -----------------------------------------------------------------------------------------
+function endSessionAction() {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[endSessionAction] no active oauth connection');
+    // Unregister the device token from the backend
+    await userService.unregisterFCMToken();
+    // Erase stored oauth2 token and cache information
+    await OAuth2RessourceOwnerPasswordClient.connection.eraseToken();
+    // Validate log out
+    dispatch({ type: actionTypeLoggedOut });
+  };
+}
 
 export function loginAction(
   redirectOnError: boolean = false,
@@ -97,6 +101,7 @@ export function loginAction(
       }
 
       // === 1: Get oAuth token from somewhere (server or local storage)
+      // eslint-disable-next-line no-useless-catch
       try {
         if (credentials) {
           await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
@@ -130,7 +135,6 @@ export function loginAction(
         })) as any;
         userinfo2.appsInfo = userinfo2.apps;
         userinfo2.apps = userinfo2.apps.map((e: any) => e.name);
-
         // Some applications haven't a precise name... ☹️
         if (userinfo2.apps.includes('Cahier de texte')) userinfo2.apps.push('Homeworks');
         if (userinfo2.apps.includes('Espace documentaire')) userinfo2.apps.push('Workspace');
@@ -140,18 +144,14 @@ export function loginAction(
       }
 
       // === 3: Gather user mandatory context
-      let userAuthContext: IUserAuthContext;
+      let requirements: IUserRequirements | null = null;
       try {
-        userAuthContext = await fetchJSONWithCache('/auth/context');
-        if (!userAuthContext.mandatory) {
-          throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '');
-        }
+        requirements = await userService.getUserRequirements();
       } catch (err) {
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
       // === 4: check user validity
-
       if (userinfo2.deletePending) {
         const err = new Error('[loginAction]: User is predeleted.');
         (err as any).type = LoginFlowErrorType.PRE_DELETED;
@@ -160,12 +160,12 @@ export function loginAction(
         const err = new Error("[loginAction]: User's structure is not premium.");
         (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
         throw err;
-      } else if (userAuthContext.mandatory!.forceChangePassword) {
+      } else if (requirements?.forceChangePassword) {
         const err = new Error('[loginAction]: User must change password.');
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
-      } else if (userAuthContext.mandatory!.needRevalidateEmail) {
+      } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
         try {
           const emailValidationInfos = await userService.getEmailValidationInfos();
@@ -177,7 +177,7 @@ export function loginAction(
           throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', e as Error);
         }
         throw err;
-      } else if (userAuthContext.mandatory!.needRevalidateTerms) {
+      } else if (requirements?.needRevalidateTerms) {
         const err = new Error('[loginAction]: User must revalidate terms.');
         (err as any).type = LoginFlowErrorType.MUST_REVALIDATE_TERMS;
         throw err;
@@ -194,7 +194,7 @@ export function loginAction(
 
         userPublicInfo = await fetchJSONWithCache('/userbook/api/person?id=' + userinfo2.userId);
       } catch (err) {
-        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
       // === 6: Get firebase device token and store it in the backend
@@ -204,7 +204,7 @@ export function loginAction(
           await userService.registerFCMToken();
         }
       } catch (err) {
-        throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err);
+        throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err as Error);
       }
 
       // === 7: validate login
@@ -215,9 +215,9 @@ export function loginAction(
           userdata,
           userPublicInfo: userPublicInfo.result[0],
         });
-        (credentials?.rememberMe || pf.wayf) && OAuth2RessourceOwnerPasswordClient.connection.saveToken();
+        if (credentials?.rememberMe || pf.wayf) OAuth2RessourceOwnerPasswordClient.connection.saveToken();
       } catch (err) {
-        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
+        throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
       // === 8: Tracking reporting (only on success)
@@ -252,7 +252,7 @@ export function loginAction(
       let routeToGo;
       let routeParams;
       // === 1: Check if user is in activation mode
-      if (err.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
+      if ((err as any).type === OAuth2ErrorCode.BAD_CREDENTIALS) {
         try {
           if (credentials) {
             const res = await fetch(`${pf!.url}/auth/activation/match`, {
@@ -284,17 +284,18 @@ export function loginAction(
               }
             }
           }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (activationErr) {
           // TODO: Manage error
         }
-      } else if (err.type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
+      } else if ((err as any).type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
         routeToGo = 'ChangePassword';
-      } else if (err.type === LoginFlowErrorType.MUST_REVALIDATE_TERMS) {
+      } else if ((err as any).type === LoginFlowErrorType.MUST_REVALIDATE_TERMS) {
         routeToGo = 'RevalidateTerms';
         routeParams = { credentials };
-      } else if (err.type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
+      } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
         routeToGo = 'SendEmailVerificationCode';
-        routeParams = { credentials, defaultEmail: err?.emailValidationInfos?.email };
+        routeParams = { credentials, defaultEmail: (err as any)?.emailValidationInfos?.email };
       }
 
       if (routeToGo) {
@@ -325,14 +326,14 @@ export function loginAction(
         // === 2: dispatch error
         dispatch({
           type: actionTypeLoginError,
-          errmsg: err.type,
+          errmsg: (err as any).type,
         });
 
         // Track
 
-        if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', err.type);
+        if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', (err as any).type);
         // Track manual login (with credentials)
-        else await Trackers.trackEvent('Auth', 'RESTORE ERROR', err.type); // track separately auto login (with stored token)
+        else await Trackers.trackEvent('Auth', 'RESTORE ERROR', (err as any).type); // track separately auto login (with stored token)
 
         // === 3: Redirect if asked
         if (redirectOnError) {
@@ -354,18 +355,6 @@ export function loginAction(
   };
 }
 
-function endSessionAction() {
-  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[endSessionAction] no active oauth connection');
-    // Unregister the device token from the backend
-    await userService.unregisterFCMToken();
-    // Erase stored oauth2 token and cache information
-    await OAuth2RessourceOwnerPasswordClient.connection.eraseToken();
-    // Validate log out
-    dispatch({ type: actionTypeLoggedOut });
-  };
-}
-
 export function logout() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
@@ -382,6 +371,7 @@ export function logout() {
 
       // === 3: Tracking
       Trackers.trackEvent('Auth', 'LOGOUT');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
       reset(getLoginStackToDisplay(platformId));
@@ -395,11 +385,10 @@ export function refreshToken(newToken: string) {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       const authState = getState().user.auth;
       if (!authState.loggingIn) return false;
-      //
       await userService.unregisterFCMToken();
-      //
       await userService.registerFCMToken(newToken as any);
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       // TODO: Manage error
     }
   };

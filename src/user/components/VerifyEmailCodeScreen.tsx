@@ -87,7 +87,7 @@ export const VerifyEmailCodeScreen = ({
   const isCodeCorrect = codeState === CodeState.CODE_CORRECT;
   const isCodeStateUnknown = codeState === CodeState.CODE_STATE_UNKNOWN;
   const codeStateType = isCodeCorrect ? 'success' : 'failure';
-  const codeStateColor = theme.palette.status[codeStateType];
+  const codeStateColor = theme.palette.status[codeStateType].regular;
   const isVerifyingActive = isVerifyingEnabled || isVerifying;
   const isResendInactive = isResendDisabled || isResending || isVerifyingActive || isCodeCorrect;
   const isCodeStateDisplayed = !(isCodeStateHidden || isVerifyingActive || isCodeStateUnknown);
@@ -146,6 +146,15 @@ export const VerifyEmailCodeScreen = ({
         const redirectUserTimer = setTimeout(() => {
           redirectUserAction();
         }, 500);
+        setTimeout(
+          () =>
+            Toast.showSuccess(I18n.t('user.verifyEmailCodeScreen.codeCorrect'), {
+              position: Toast.position.BOTTOM,
+              mask: false,
+              ...UI_ANIMATIONS.toast,
+            }),
+          500,
+        );
         return () => clearTimeout(redirectUserTimer);
       }
     }

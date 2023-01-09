@@ -45,10 +45,8 @@ export default StyleSheet.create({
     height: 100,
     color: theme.ui.text.regular,
   },
-  errorText: {
+  errorAlert: {
     marginBottom: UI_SIZES.spacing.medium,
-    color: theme.palette.status.failure,
-    textAlign: 'center',
   },
   actionContainerEnabled: {
     marginBottom: UI_SIZES.spacing.medium,

@@ -10,55 +10,66 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
+import { containsKey } from '~/framework/util/object';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { IForgotModel } from '~/user/actions/forgot';
 import { ValidatorBuilder } from '~/utils/form';
 
-// TYPES ---------------------------------------------------------------------------
-
 export type IForgotPageState = {
   login: string;
-  firstName: string | null;
-  structureName: string | null;
+  firstName: string | undefined;
+  structureName: string | undefined;
   showStructurePicker: boolean;
   editing: boolean;
   structures: any[];
 };
+
 export interface IForgotPageDataProps {
   fetching: boolean;
   result: { error?: string; status?: string; structures?: any[]; ok: boolean | undefined };
 }
+
 export interface IForgotPageEventProps {
   onSubmit(model: IForgotModel, forgotId?: boolean): Promise<void>;
   onReset(): Promise<void>;
 }
+
 export type IForgotPageProps = IForgotPageDataProps & IForgotPageEventProps & { navigation: any };
 
-// Forgot Page Component -------------------------------------------------------------
+const FormPage = styled.View({
+  backgroundColor: theme.ui.background.card,
+  flex: 1,
+});
+
+const FormWrapper = styled.View({ flex: 1 });
+
+const FormContainer = styled.View({
+  alignItems: 'center',
+  flex: 1,
+  flexDirection: 'column',
+  justifyContent: 'center',
+  padding: UI_SIZES.spacing.large,
+  paddingTop: UI_SIZES.spacing.huge,
+});
+
+const LogoWrapper = styled.View({
+  flexGrow: 2,
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const initialState: IForgotPageState = {
+  login: '',
+  firstName: undefined,
+  structureName: undefined,
+  showStructurePicker: false,
+  editing: false,
+  structures: [],
+};
 
 export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPageState> {
   // fully controller component
-  public state: IForgotPageState = {
-    login: '',
-    firstName: null,
-    structureName: null,
-    showStructurePicker: false,
-    editing: false,
-    structures: [],
-  };
-  private handleSubmit = async () => {
-    const { navigation } = this.props;
-    const { login, firstName, structureName, structures } = this.state;
-    const forgotId = navigation.getParam('forgotId');
-    const selectedStructure = structures && structures.find(structure => structure.structureName === structureName);
-    const structureId = selectedStructure && selectedStructure.structureId;
-
-    this.props.onSubmit({ login, firstName, structureId }, forgotId);
-    this.setState({ editing: false });
-  };
-
-  // Refs
-  private setInputLoginRef = el => (this.inputLogin = el);
+  public state: IForgotPageState = initialState;
 
   private didFocusSubscription;
 
@@ -67,15 +78,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
 
   constructor(props: IForgotPageProps) {
     super(props);
-    this.didFocusSubscription = this.props.navigation.addListener('didFocus', payload => {
-      this.setState({
-        login: '',
-        editing: false,
-        firstName: null,
-        structureName: null,
-        showStructurePicker: false,
-        structures: [],
-      });
+    this.didFocusSubscription = this.props.navigation.addListener('didFocus', (_: any) => {
+      this.setState(initialState);
       this.props.onReset();
     });
   }
@@ -87,12 +91,28 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
     }
   }
 
+  public componentWillUnmount() {
+    this.didFocusSubscription.remove();
+  }
+
+  private handleSubmit = async () => {
+    const { navigation } = this.props;
+    const { login, firstName, structureName, structures } = this.state;
+    const forgotId = navigation.getParam('forgotId');
+    const selectedStructure = structures && structures.find(structure => structure.structureName === structureName);
+    const structureId = selectedStructure && selectedStructure.structureId;
+    this.props.onSubmit({ login, firstName, structureId }, forgotId);
+    this.setState({ editing: false });
+  };
+
+  private setInputLoginRef() {} // Avoid typescript error on TextInputLine
+
   public render() {
     const { fetching, result, navigation } = this.props;
     const { editing, login, firstName, structureName, showStructurePicker, structures } = this.state;
     const forgotId = navigation.getParam('forgotId');
     const hasStructures = structures.length > 0;
-    const isError = result.hasOwnProperty('error');
+    const isError = containsKey(result, 'error');
     const errorMsg = isError ? (result as { error: string }).error : null;
     const errorText = hasStructures
       ? I18n.t('forgot-several-emails')
@@ -100,9 +120,9 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
       ? I18n.t(`forgot-${errorMsg.replace(/\./g, '-')}${forgotId ? '-id' : ''}`)
       : I18n.t('common-ErrorUnknown');
     const isSuccess =
-      !result.hasOwnProperty('error') &&
-      !result.hasOwnProperty('structures') &&
-      result.hasOwnProperty('ok') &&
+      !containsKey(result, 'error') &&
+      !containsKey(result, 'structures') &&
+      containsKey(result, 'ok') &&
       (result as { ok: boolean }).ok === true;
     const isValidEmail = this.emailValidator.isValid(login);
     const canSubmit =
@@ -162,7 +182,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                           padding: UI_SIZES.spacing.tiny,
                           textAlign: 'center',
                           alignSelf: 'center',
-                          color: theme.palette.status.failure,
+                          color: theme.palette.status.failure.regular,
                         }}>
                         {errorText}
                       </SmallText>
@@ -205,7 +225,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
                             borderBottomColor:
                               isError && !editing
-                                ? theme.palette.status.failure
+                                ? theme.palette.status.failure.regular
                                 : showStructurePicker
                                 ? theme.palette.complementary.blue.regular
                                 : theme.palette.grey.grey,
@@ -269,7 +289,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                             padding: UI_SIZES.spacing.tiny,
                             textAlign: 'center',
                             alignSelf: 'center',
-                            color: theme.palette.status.failure,
+                            color: theme.palette.status.failure.regular,
                           }}>
                           {I18n.t('forgot-several-emails-no-match')}
                         </SmallText>
@@ -285,22 +305,3 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
     );
   }
 }
-
-const FormPage = styled.View({
-  backgroundColor: theme.ui.background.card,
-  flex: 1,
-});
-const FormWrapper = styled.View({ flex: 1 });
-const FormContainer = styled.View({
-  alignItems: 'center',
-  flex: 1,
-  flexDirection: 'column',
-  justifyContent: 'center',
-  padding: UI_SIZES.spacing.large,
-  paddingTop: UI_SIZES.spacing.huge,
-});
-const LogoWrapper = styled.View({
-  flexGrow: 2,
-  alignItems: 'center',
-  justifyContent: 'center',
-});

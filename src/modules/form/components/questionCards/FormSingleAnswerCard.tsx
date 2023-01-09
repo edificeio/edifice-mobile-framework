@@ -29,7 +29,7 @@ interface IFormSingleAnswerCardProps {
   onEditQuestion?: () => void;
 }
 
-const mapDropdownItems = (choices: IQuestionChoice[]): { id?: string; value?: string }[] => {
+const mapDropdownItems = (choices: IQuestionChoice[]): { id?: string; value: string }[] => {
   return [
     {
       id: undefined,
