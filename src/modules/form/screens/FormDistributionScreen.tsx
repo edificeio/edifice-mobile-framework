@@ -12,6 +12,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
@@ -106,6 +107,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   const editable = props.navigation.getParam('editable');
   const formId = props.navigation.getParam('formId');
   const status = props.navigation.getParam('status');
+  const [hasResponderRight, setHasResponderRight] = React.useState(true);
   const [position, setPosition] = React.useState(0);
   const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
   const [responses, setResponses] = React.useState<IQuestionResponse[]>([]);
@@ -124,6 +126,11 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
 
   const fetchDistribution = async () => {
     try {
+      const session = getUserSession();
+      if (!(await formService.form.hasResponderRight(session, formId))) {
+        setHasResponderRight(false);
+        return;
+      }
       const content = await props.fetchFormContent(formId);
       if (content) {
         const res = await props.fetchDistributionResponses(distributionId);
@@ -342,6 +349,12 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       ) : undefined,
   };
 
+  // EMPTY SCREEN =================================================================================
+
+  const renderEmpty = () => {
+    return <EmptyScreen svgImage="empty-form-access" title={I18n.t('form.formDistributionScreen.emptyScreen.title')} />;
+  };
+
   // ERROR ========================================================================================
 
   const renderError = () => {
@@ -416,7 +429,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   // DISTRIBUTION =================================================================================
 
   const renderDistribution = () => {
-    return (
+    return hasResponderRight ? (
       <>
         <FlatList
           ref={ref => {
@@ -440,6 +453,8 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
           onSubmit={submitDistribution}
         />
       </>
+    ) : (
+      renderEmpty()
     );
   };
 
