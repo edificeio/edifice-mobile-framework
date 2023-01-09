@@ -164,6 +164,7 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend): I
   const user = {
     id: userinfo.userId,
     login: userinfo.login,
+    // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
   return {
     platform,
@@ -171,6 +172,7 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend): I
     apps: userinfo.apps,
     widgets: userinfo.widgets,
     authorizedActions: userinfo.authorizedActions,
+    // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
     user,
   };
 }

@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     marginTop: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.tiny,
     textAlign: 'center',
-    height: 38,
   },
 });
 
@@ -214,7 +213,9 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                       <SmallText style={styles.errorMsg}>{errorText}</SmallText>
                     ) : null}
                     {isSuccess ? (
-                      <SmallText style={styles.infoMsg}>{editing ? '' : isSuccess && I18n.t('forgot-success')}</SmallText>
+                      <SmallText style={styles.infoMsg}>
+                        {editing ? '' : isSuccess && I18n.t(`forgot-success-${forgotMode}`)}
+                      </SmallText>
                     ) : null}
                     {forgotMode === 'id' && hasStructures && !isSuccess ? (
                       <>
