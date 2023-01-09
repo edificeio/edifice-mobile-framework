@@ -7,6 +7,7 @@ import {
 import { actions as notifFiltersAsyncActions } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { actions as notifTypesAsyncActions } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifTypes';
 import { notifFiltersService, registeredNotificationsService } from '~/framework/modules/timelinev2/service';
+
 import { assertSession } from '../../auth/reducer';
 
 export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatch, getState: () => any) => {
@@ -32,7 +33,6 @@ export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatc
     dispatch(notifFiltersAsyncActions.receipt(detailedFilters));
   } catch (e) {
     console.error(e);
-    debugger;
     dispatch(notifFiltersAsyncActions.error(e));
   }
 };
