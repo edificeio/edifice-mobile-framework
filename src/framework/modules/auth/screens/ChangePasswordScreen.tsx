@@ -10,6 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
+import AlertCard from '~/framework/components/alert';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
@@ -128,15 +129,6 @@ const styles = StyleSheet.create({
     flex: 0,
   },
   infoBubbleText: { ...TextSizeStyle.Medium, textAlign: 'center' },
-  infoRules: {
-    backgroundColor: theme.palette.primary.light,
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
-    borderRadius: 10,
-    flex: 0,
-  },
   flexShrink0: { flexShrink: 0 },
   refuse: { color: theme.palette.status.failure.regular, textAlign: 'center' },
   errorMsg: {
@@ -277,8 +269,9 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
     const { error, submitState } = this.state;
     const { oldPassword, newPassword, confirm, typing } = this.state;
 
+    const authContext = this.props.route.params.context;
     const formModel = new ChangePasswordFormModel({
-      passwordRegex: this.props.route.params.context.passwordRegex,
+      passwordRegex: authContext.passwordRegex,
       oldPassword: () => oldPassword,
       newPassword: () => newPassword,
     });
@@ -288,8 +281,6 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState === 'RUNNING';
     const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
-
-    const isIDF = this.props.route.params.platform.displayName === 'MonLycée.net'; // WTF ??!! 🤪🤪🤪
 
     return (
       <KeyboardPageView scrollable>
@@ -303,12 +294,8 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
                   <MiniSpacer />
                 </View>
               ) : null}
-              {isIDF ? (
-                <View style={styles.infoRules}>
-                  <SmallText style={{ color: theme.palette.primary.regular, ...TextSizeStyle.Small }}>
-                    {I18n.t('common.idf.passwordRules')}
-                  </SmallText>
-                </View>
+              {authContext.passwordRegexI18n?.[I18n.currentLocale()] ? (
+                <AlertCard type="info" text={authContext.passwordRegexI18n?.[I18n.currentLocale()]} />
               ) : null}
             </View>
             <View style={styles.flexShrink0}>
