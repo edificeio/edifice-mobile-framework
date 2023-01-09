@@ -79,14 +79,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: UI_SIZES.spacing.minor,
-    borderColor: theme.palette.status.failure,
+    borderColor: theme.palette.status.failure.regular,
     borderWidth: 1,
     borderRadius: 15,
     width: '90%',
     alignSelf: 'center',
     position: 'absolute',
   },
-  sommeNumeriqueInfoBubbleText: { textAlign: 'center', color: theme.palette.status.failure },
+  sommeNumeriqueInfoBubbleText: { textAlign: 'center', color: theme.palette.status.failure.regular },
   autoLoginWrapper: { flexDirection: 'row', alignSelf: 'flex-end', marginTop: UI_SIZES.spacing.medium },
   autoLoginWrapperText: { marginRight: UI_SIZES.spacing.small, ...TextSizeStyle.Small },
   buttonWrapper: {
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.tiny,
     textAlign: 'center',
     alignSelf: 'center',
-    color: theme.palette.status.failure,
+    color: theme.palette.status.failure.regular,
   },
 });
 

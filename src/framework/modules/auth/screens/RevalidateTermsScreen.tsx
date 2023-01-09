@@ -117,7 +117,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
         </SmallText>
         <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.t('common.accept')} action={doRevalidateTerms} />
         <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={doRefuseTerms}>
-          <SmallBoldText style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
+          <SmallBoldText style={{ color: theme.palette.status.failure.regular, textAlign: 'center' }}>
             {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
           </SmallBoldText>
         </TouchableOpacity>
