@@ -1,17 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import I18n from 'i18n-js';
 import { NavigationActions } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
+import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { IEntcoreEmailValidationInfos, IUserRequirements, userService } from '~/user/service';
 
+import { LegalUrls } from '../reducers/auth';
+import { actionTypeLegalDocuments } from './actionTypes/legalDocuments';
 import {
   actionTypeLoggedIn,
   actionTypeLoggedInPartial,
@@ -100,7 +103,26 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 1: Get oAuth token from somewhere (server or local storage)
+      // === 1: Load legal document urls
+      let legalUrls: LegalUrls = {
+        userCharter: null,
+        cgu: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cgu')),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.personalDataProtection')),
+        cookies: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cookies')),
+      };
+      try {
+        const authTranslationKeys = await userService.getAuthTranslationKeys(I18n.locale as languages);
+        if (authTranslationKeys) {
+          legalUrls.userCharter = urlSigner.getAbsoluteUrl(
+            authTranslationKeys['auth.charter'] || I18n.t('user.legalUrl.userCharter'),
+          );
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+      dispatch({ type: actionTypeLegalDocuments, legalUrls });
+
+      // === 2: Get oAuth token from somewhere (server or local storage)
       // eslint-disable-next-line no-useless-catch
       try {
         if (credentials) {
@@ -125,7 +147,7 @@ export function loginAction(
         throw err;
       }
 
-      // === 2: Gather logged user information
+      // === 3: Gather logged user information
       let userinfo2;
       try {
         userinfo2 = (await fetchJSONWithCache('/auth/oauth2/userinfo', {
@@ -151,7 +173,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 4: check user validity
+      // === 5: check user validity
       if (userinfo2.deletePending) {
         const err = new Error('[loginAction]: User is predeleted.');
         (err as any).type = LoginFlowErrorType.PRE_DELETED;
@@ -183,7 +205,7 @@ export function loginAction(
         throw err;
       }
 
-      // === 5: Gather another user information
+      // === 6: Gather more user information
       let userdata: any, userPublicInfo: any;
       try {
         userdata = (await fetchJSONWithCache(`/directory/user/${userinfo2.userId}`)) as any;
@@ -197,7 +219,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 6: Get firebase device token and store it in the backend
+      // === 7: Get firebase device token and store it in the backend
       try {
         const authorizationStatus = await messaging().requestPermission();
         if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
@@ -207,7 +229,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err as Error);
       }
 
-      // === 7: validate login
+      // === 8: validate login
       try {
         dispatch({
           type: actionTypeLoggedIn,
@@ -220,7 +242,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 8: Tracking reporting (only on success)
+      // === 9: Tracking reporting (only on success)
 
       // ToDo
       await Promise.all([
@@ -241,10 +263,10 @@ export function loginAction(
       // Track manual login (with credentials)
       else await Trackers.trackDebugEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
-      // === 9: Store Curreet Platform
+      // === 10: Store Current Platform
       await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, pf.name);
 
-      // === 10: navigate back to the main screen
+      // === 11: navigate back to the main screen
       navigate('Main');
       dispatch(letItSnowAction());
     } catch (err) {

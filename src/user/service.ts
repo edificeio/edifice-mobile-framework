@@ -37,6 +37,8 @@ export interface IEntcoreEmailValidationState {
   tries?: number; // (optional) Remaining number of times a validation code can be typed in
 }
 
+export type languages = 'fr' | 'en' | 'es';
+
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
   if (version1 === version2) {
@@ -295,6 +297,19 @@ class UserService {
       });
     } catch (e) {
       // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
+    }
+  }
+
+  async getAuthTranslationKeys(language: languages) {
+    try {
+      // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/i18n`, { headers: { 'Accept-Language': language } });
+      if (res.ok) {
+        const authTranslationKeys = await res.json();
+        return authTranslationKeys;
+      } else throw new Error('error in res.json()');
+    } catch (e) {
+      // console.warn('[UserService] getAuthTranslationKeys: could not get auth translation keys', e);
     }
   }
 

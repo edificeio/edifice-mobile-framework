@@ -13,12 +13,12 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
 import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 
+import { IUserAuthState } from '../reducers/auth';
 import {
   ActivationFormModel,
   InputEmail,
@@ -38,6 +38,7 @@ export interface IActivationPageState extends IActivationModel {
   isModalVisible: boolean;
 }
 export interface IActivationPageDataProps extends IActivationModel {
+  auth: IUserAuthState;
   passwordRegex: RegExp;
   passwordRegexI18n: { [lang: string]: string };
   emailRequired: boolean;
@@ -113,9 +114,10 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   }
 
   public render() {
-    const { externalError, contextState, submitState, navigation } = this.props;
-    const { login, password, confirm, email, phone, isCGUAccepted, isModalVisible, typing } = this.state;
-    if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
+    const { auth, externalError, contextState, submitState, navigation } = this.props;
+    const { password, confirm, email, phone, isCGUAccepted, isModalVisible, typing } = this.state;
+    const cguUrl = auth.legalUrls.cgu;
+    if (contextState === ContextState.Loading || contextState === ContextState.Failed) {
       return <Loading />;
     }
     const formModel = new ActivationFormModel({
@@ -126,10 +128,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const errorKey = formModel.firstErrorKey({ ...this.state });
     const errorText = errorKey ? I18n.t(errorKey) : externalError;
     const hasErrorKey = !!errorText;
-    const isSubmitLoading = submitState == SubmitState.Loading;
-    const platform = DEPRECATED_getCurrentPlatform()!.url;
-    const path = I18n.t('common.url.cgu');
-    const cguUrl = `${platform}${path}`;
+    const isSubmitLoading = submitState === SubmitState.Loading;
 
     return (
       <PageView
@@ -205,9 +204,9 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
           <BackdropPdfReaderScreen
             handleClose={() => this.setState({ isModalVisible: false })}
             handleOpen={() => this.setState({ isModalVisible: true })}
+            visible={isModalVisible}
             title={I18n.t('activation-cgu')}
             uri={cguUrl}
-            visible={isModalVisible}
           />
         </SafeAreaView>
       </PageView>
@@ -215,10 +214,6 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   }
 }
 
-const FormPage = styled.View({
-  backgroundColor: theme.ui.background.card,
-  flex: 1,
-});
 const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
 const FormWrapper = styled.View({ flex: 1 });
 const FormContainer = styled.View({

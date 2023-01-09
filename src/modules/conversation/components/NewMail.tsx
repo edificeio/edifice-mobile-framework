@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
-import { Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
+import { Alert, Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -20,7 +20,7 @@ import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 
 import Attachment from './Attachment';
-import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';
+import { FoundList, Input, SelectedList } from './SearchUserMail';
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -228,6 +228,23 @@ const MailContactField = connect((state: IGlobalState) => ({
     const searchTimeout = React.useRef<NodeJS.Timeout>();
     const inputRef: { current: TextInput | undefined } = { current: undefined };
 
+    const onUserType = (s: string) => {
+      updateSearch(s);
+      if (s.length >= 3) {
+        updateFoundUsersOrGroups([]);
+        onOpenSearch?.(true);
+        searchTimeout.current && clearTimeout(searchTimeout.current);
+        searchTimeout.current = setTimeout(() => {
+          const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
+          updateFoundUsersOrGroups(searchResults);
+        }, 500);
+      } else {
+        updateFoundUsersOrGroups([]);
+        onOpenSearch?.(false);
+        clearTimeout(searchTimeout.current);
+      }
+    };
+
     // Update search results whenever visibles are loaded
     React.useEffect(() => {
       previousVisibles.current = visibles;
@@ -240,28 +257,6 @@ const MailContactField = connect((state: IGlobalState) => ({
       }
     });
 
-    const filterUsersOrGroups = found => selectedUsersOrGroups.every(selected => selected.id !== found.id);
-    // React.useEffect(() => {
-    //   if (search.length >= 3) {
-    //     updateFoundUsersOrGroups([]);
-    //     onOpenSearch?.(true);
-    //     window.clearTimeout(searchTimeout.current);
-    //     searchTimeout.current = window.setTimeout(() => {
-    //       newMailService.searchUsers(search).then(({ groups, users }) => {
-    //         const filteredUsers = users.filter(filterUsersOrGroups);
-    //         const filteredGroups = groups.filter(filterUsersOrGroups);
-    //         updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
-    //       });
-    //     }, 500);
-    //   }
-
-    //   return () => {
-    //     updateFoundUsersOrGroups([]);
-    //     onOpenSearch?.(false);
-    //     window.clearTimeout(searchTimeout.current);
-    //   };
-    // }, [search]);
-
     const removeUser = (id: string) => onChange?.(selectedUsersOrGroups.filter(user => user.id !== id));
     const addUser = userOrGroup => {
       onChange?.([
@@ -272,27 +267,12 @@ const MailContactField = connect((state: IGlobalState) => ({
       inputRef.current?.focus();
     };
 
-    const onUserType = (s: string) => {
-      updateSearch(s);
-      if (s.length >= 3) {
-        updateFoundUsersOrGroups([]);
-        onOpenSearch?.(true);
-        searchTimeout.current && clearTimeout(searchTimeout.current);
-        searchTimeout.current = setTimeout(() => {
-          // This commented area is the old searching method that query the backend
-          // newMailService.searchUsers(search).then(({ groups, users }) => {
-          //   const filteredUsers = users.filter(filterUsersOrGroups);
-          //   const filteredGroups = groups.filter(filterUsersOrGroups);
-          //   updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
-          // });
-          const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
-          updateFoundUsersOrGroups(searchResults);
-        }, 500);
-      } else {
-        updateFoundUsersOrGroups([]);
-        onOpenSearch?.(false);
-        clearTimeout(searchTimeout.current);
+    const noUserFound = text => {
+      if (text) {
+        Alert.alert(I18n.t('conversation.errorUser.title', { user: text }), I18n.t('conversation.errorUser.text'));
       }
+      onUserType('');
+      inputRef.current?.focus();
     };
 
     const inputStyle = {
@@ -317,7 +297,10 @@ const MailContactField = connect((state: IGlobalState) => ({
                 autoFocus={autoFocus}
                 value={search}
                 onChangeText={onUserType}
-                onSubmit={() => addUser({ displayName: search, id: search })}
+                onSubmit={() => noUserFound(search)}
+                onEndEditing={() => {
+                  updateSearch('');
+                }}
                 key={key}
               />
             </View>
@@ -331,38 +314,6 @@ const MailContactField = connect((state: IGlobalState) => ({
     );
   },
 );
-
-const HeaderUsers = ({
-  style,
-  title,
-  onChange,
-  value,
-  children,
-  autoFocus,
-}: React.PropsWithChildren<{
-  autoFocus?: boolean;
-  style?: ViewStyle;
-  title: string;
-  onChange;
-  forUsers?: boolean;
-  value: any;
-}>) => {
-  const headerStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: UI_SIZES.spacing.small,
-    borderBottomColor: theme.palette.grey.cloudy,
-    borderBottomWidth: 2,
-  } as ViewStyle;
-
-  return (
-    <View style={[headerStyle, style]}>
-      <SmallText style={{ color: theme.ui.text.light }}>{title} : </SmallText>
-      <SearchUserMail selectedUsersOrGroups={value} onChange={val => onChange(val)} autoFocus={autoFocus} />
-      {children}
-    </View>
-  );
-};
 
 const HeaderSubject = ({
   style,
@@ -401,47 +352,6 @@ const HeaderSubject = ({
     <View style={[headerStyle, style]}>
       <SmallText style={{ color: theme.ui.text.light }}>{title} : </SmallText>
       <TextInput style={inputStyle} defaultValue={value} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />
-    </View>
-  );
-};
-
-const Headers = ({ style, headers, onChange, autofocus }) => {
-  const [showExtraFields, toggleExtraFields] = React.useState(false);
-  const { to, cc, cci, subject } = headers;
-
-  return (
-    <View style={[styles.mailPart, style]}>
-      <HeaderUsers
-        autoFocus={autofocus}
-        style={{ zIndex: 4 }}
-        value={to}
-        onChange={to => onChange({ ...headers, to })}
-        title={I18n.t('conversation.to')}>
-        <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
-          <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
-        </TouchableOpacity>
-      </HeaderUsers>
-      {showExtraFields && (
-        <>
-          <HeaderUsers
-            style={{ zIndex: 3 }}
-            title={I18n.t('conversation.cc')}
-            value={cc}
-            onChange={cc => onChange({ ...headers, cc })}
-          />
-          <HeaderUsers
-            style={{ zIndex: 2 }}
-            title={I18n.t('conversation.bcc')}
-            value={cci}
-            onChange={cci => onChange({ ...headers, cci })}
-          />
-        </>
-      )}
-      <HeaderSubject
-        title={I18n.t('conversation.subject')}
-        value={subject}
-        onChange={subject => onChange({ ...headers, subject })}
-      />
     </View>
   );
 };

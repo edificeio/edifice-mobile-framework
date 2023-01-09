@@ -8,11 +8,11 @@ import { ThunkAction } from 'redux-thunk';
 import { getUserSession } from '~/framework/util/session';
 import { IChangePasswordUserInfo, changePasswordAction, initChangePasswordAction } from '~/user/actions/changePassword';
 import {
-  ChangePasswordPage,
+  default as ChangePasswordPage,
   IChangePasswordPageDataProps,
   IChangePasswordPageEventProps,
   IChangePasswordPageProps,
-} from '~/user/components/ChangePasswordPage';
+} from '~/user/components/change-password';
 import userConfig from '~/user/config';
 import { IChangePasswordState } from '~/user/reducers/changePassword';
 

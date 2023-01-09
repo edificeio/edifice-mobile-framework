@@ -3,7 +3,7 @@ import { FlatList, TextInput, TouchableOpacity, View, ViewStyle } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/modules/conversation/service/newMail';
@@ -59,7 +59,7 @@ export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }
   );
 };
 
-export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key }) => {
+export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key, onEndEditing = () => {} }) => {
   const textInputStyle = {
     ...TextFontStyle.Regular,
     ...TextSizeStyle.Normal,
@@ -68,7 +68,7 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
     paddingVertical: UI_SIZES.spacing.tiny,
     color: theme.ui.text.regular,
     marginVertical: 2, // Hack to compensate the position of TextInput baseline compared to regular text.
-    height: getScaleDimension(20, 'font') * 1.5, // Some magic here.
+    height: getScaleFontSize(20) * 1.5, // Some magic here.
   } as ViewStyle;
 
   return (
@@ -87,6 +87,7 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
       value={value}
       onChangeText={onChangeText}
       onSubmitEditing={onSubmit}
+      onEndEditing={onEndEditing}
     />
   );
 };

@@ -14,17 +14,26 @@ import { checkVersionThenLogin } from '~/user/actions/version';
 import { RevalidateTermsScreen } from '~/user/components/RevalidateTermsScreen';
 import { userService } from '~/user/service';
 
+import { IUserAuthState } from '../reducers/auth';
+import { getAuthState } from '../selectors';
+
 // TYPES ==========================================================================================
 
-export interface IRevalidateTermsScreen_EventProps {
+export interface IRevalidateTermsScreenDataProps {
+  auth: IUserAuthState;
+}
+
+export interface IRevalidateTermsScreenEventProps {
   onLogout(): void;
   onLogin(credentials?: { username: string; password: string; rememberMe: boolean }): void;
 }
-export type IRevalidateTermsScreen_Props = IRevalidateTermsScreen_EventProps & NavigationInjectedProps;
+export type IRevalidateTermsScreenProps = IRevalidateTermsScreenDataProps &
+  IRevalidateTermsScreenEventProps &
+  NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
 
-const RevalidateTermsContainer = (props: IRevalidateTermsScreen_Props) => {
+const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
   // EVENTS =====================================================================================
 
   const refuseTerms = async () => {
@@ -55,7 +64,11 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreen_Props) => {
 
   return (
     <PageView style={{ backgroundColor: theme.ui.background.card }} navigation={props.navigation} navBar={navBarInfo}>
-      <RevalidateTermsScreen acceptAction={() => revalidateTerms()} refuseAction={() => refuseTerms()} />
+      <RevalidateTermsScreen
+        cguUrl={props.auth.legalUrls.cgu}
+        acceptAction={() => revalidateTerms()}
+        refuseAction={() => refuseTerms()}
+      />
     </PageView>
   );
 };
@@ -63,7 +76,11 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreen_Props) => {
 // MAPPING ========================================================================================
 
 export default connect(
-  () => ({}),
+  (state: any): IRevalidateTermsScreenDataProps => {
+    return {
+      auth: getAuthState(state),
+    };
+  },
   dispatch =>
     bindActionCreators(
       {

@@ -30,7 +30,7 @@ export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => as
     Toast.showSuccess(I18n.t('workspace.file-added'), { ...UI_ANIMATIONS.toast });
   } catch (e) {
     if (e && e?.response && e.response.body === `{"error":"file.too.large"}`) {
-      Toast.show(I18n.t('workspace.quota.overflowText'), { ...UI_ANIMATIONS.toast });
+      Toast.show(I18n.t('fullStorage'), { ...UI_ANIMATIONS.toast });
     }
     dispatch(workspaceUploadActionsCreators.error(e as Error));
   }

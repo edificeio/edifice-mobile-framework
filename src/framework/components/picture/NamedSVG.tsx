@@ -158,6 +158,7 @@ const imports = {
   'empty-eula': import('ASSETS/images/empty-screen/empty-eula.svg'),
   'empty-evaluations': import('ASSETS/images/empty-screen/empty-evaluations.svg'),
   'empty-form': import('ASSETS/images/empty-screen/empty-form.svg'),
+  'empty-form-access': import('ASSETS/images/empty-screen/empty-form-access.svg'),
   'empty-hammock': import('ASSETS/images/empty-screen/empty-hammock.svg'),
   'empty-homework': import('ASSETS/images/empty-screen/empty-homework.svg'),
   'empty-light': import('ASSETS/images/empty-screen/empty-light.svg'),

@@ -25,7 +25,6 @@ const NotifierWrapper = styled(TouchableOpacity)({
   flexDirection: 'row',
 });
 
-// ToDo : refacto this using the function component syntax.
 class Notifier extends React.Component<
   {
     id: string;

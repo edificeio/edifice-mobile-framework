@@ -317,6 +317,11 @@ export const formService = {
       const sections = (await fetchJSONWithCache(api)) as IBackendSectionList;
       return sections.map(section => sectionAdapter(section)) as ISection[];
     },
+    hasResponderRight: async (session: IUserSession, formId: number) => {
+      const api = `/formulaire/forms/${formId}/rights`;
+      const rights = (await fetchJSONWithCache(api)) as { action: string }[];
+      return rights.some(r => r.action === 'fr-openent-formulaire-controllers-FormController|initResponderResourceRight');
+    },
   },
   questions: {
     getAllChoices: async (session: IUserSession, questionIds: number[]) => {

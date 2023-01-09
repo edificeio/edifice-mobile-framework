@@ -69,7 +69,7 @@ export const computeUserSession = (platform: Platform, authState?: IUserAuthStat
   } as IUserSession;
 };
 
-// News session cache for compatibility
+// New session cache for compatibility
 
 let activeSession: ISession | undefined;
 /** @deprecated use assertSession() instead */

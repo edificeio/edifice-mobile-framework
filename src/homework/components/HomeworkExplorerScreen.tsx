@@ -93,11 +93,8 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
       return {
         ...b,
         color: config?.picture?.fill ?? theme.palette.complementary.green.regular,
-        ...(thumbnail
-          ? { thumbnail: formatSource(thumbnail) }
-          : {
-              icon: config.displayPicture,
-            }),
+        icon: config.displayPicture,
+        ...(thumbnail && { thumbnail: formatSource(thumbnail) }),
       };
     });
 

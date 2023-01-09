@@ -13,6 +13,7 @@ import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import PopupMenu, { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/popup-menu';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -20,7 +21,6 @@ import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
-import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
 import {
@@ -106,8 +106,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
     const draftType = this.props.navigation.getParam('type');
     if (draftType === DraftType.REPLY) {
+      /* empty */
     }
     if (draftType === DraftType.REPLY_ALL) {
+      /* empty */
     }
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
@@ -131,7 +133,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     } else if (
       this.props.navigation.getParam('mailId') !== undefined &&
       this.state.id === undefined &&
-      this.props.navigation.getParam('type') == DraftType.DRAFT
+      this.props.navigation.getParam('type') === DraftType.DRAFT
     )
       this.setState({ id: this.props.navigation.getParam('mailId') });
 
@@ -164,17 +166,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   navigationHeaderFunction = {
-    // getAskForAttachment: (dispatch: Dispatch) => {
-    //   pickFile()
-    //     .then(file => {
-    //       this.getAttachmentData(file);
-    //     })
-    //     .catch(err => {
-    //       if (err.message === 'Error picking image' || err.message === 'Error picking document') {
-    //         this.props.onPickFileError('conversation');
-    //       }
-    //     });
-    // },
     addGivenAttachment: async (file: Asset | DocumentPicked, sourceType: string) => {
       const actionName =
         'Rédaction mail - Insérer - Pièce jointe - ' +
@@ -186,7 +177,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       try {
         await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
-      } catch (err) {
+      } catch {
         this.props.onPickFileError('conversation');
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
       }
@@ -210,28 +201,25 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           ...UI_ANIMATIONS.toast,
         });
         return;
+      } else if (!this.state.mail.body || !this.state.mail.subject) {
+        Keyboard.dismiss();
+        Alert.alert(
+          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Title`),
+          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Message`),
+          [
+            {
+              text: I18n.t('common.send'),
+              onPress: () => this.sendDraft(),
+            },
+            {
+              text: I18n.t('common.cancel'),
+              style: 'cancel',
+            },
+          ],
+        );
+        return;
       }
-
-      try {
-        const { navigation, sendMail } = this.props;
-        const { mail, id, replyTo } = this.state;
-        const draftType = navigation.getParam('type');
-
-        sendMail(this.getMailData(), id, replyTo);
-
-        Toast.show(I18n.t('conversation.sendMail'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
-
-        const navParams = navigation.state;
-        if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
-        navigation.goBack();
-      } catch (e) {
-        // TODO: Manage error
-      }
+      this.sendDraft();
     },
     getDeleteDraft: async () => {
       const { trashMessage, deleteMessage, navigation } = this.props;
@@ -248,7 +236,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
             ...UI_ANIMATIONS.toast,
           });
-        } catch (error) {
+        } catch {
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
         }
       }
@@ -298,7 +286,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                         'Ecrire un mail',
                         'Rédaction mail - Sortir - Supprimer le brouillon - Succès',
                       );
-                    } catch (err) {
+                    } catch {
                       Trackers.trackEventOfModule(
                         moduleConfig,
                         'Ecrire un mail',
@@ -351,7 +339,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                   'Ecrire un mail',
                   'Rédaction mail - Sortir - Sauvegarder le brouillon - Succès',
                 );
-              } catch (err) {
+              } catch {
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -586,10 +574,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }));
     } catch (e) {
       Keyboard.dismiss();
-      Toast.show(I18n.t('conversation.attachmentError'), {
-        position: Toast.position.BOTTOM,
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.show(
+        e.response.body === '{"error":"file.too.large"}' ? I18n.t('fullStorage') : I18n.t('conversation.attachmentError'),
+        {
+          position: Toast.position.BOTTOM,
+          ...UI_ANIMATIONS.toast,
+        },
+      );
       this.setState({ tempAttachment: null });
       throw e;
     }
@@ -598,7 +589,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   forwardDraft = async () => {
     try {
       this.props.forwardMail(this.state.id, this.state.replyTo);
-    } catch (e) {
+    } catch {
       // TODO: Manage error
     }
   };
@@ -620,6 +611,28 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
+  sendDraft = async () => {
+    try {
+      const { navigation, sendMail } = this.props;
+      const { id, replyTo } = this.state;
+
+      sendMail(this.getMailData(), id, replyTo);
+
+      Toast.show(I18n.t('conversation.sendMail'), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
+        ...UI_ANIMATIONS.toast,
+      });
+
+      const navParams = navigation.state;
+      if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
+      navigation.goBack();
+    } catch {
+      // TODO: Manage error
+    }
+  };
+
   navBarInfo = () => {
     const { navigation } = this.props;
     // const askForAttachment = navigation.getParam('getAskForAttachment');
@@ -634,9 +647,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         <View style={{ flexDirection: 'row' }}>
           {addGivenAttachment && (
             <View style={{ width: 48, alignItems: 'center' }}>
-              <FilePicker multiple synchrone callback={addGivenAttachment}>
+              <PopupMenu
+                actions={[
+                  cameraAction({ callback: addGivenAttachment, synchrone: true }),
+                  galleryAction({ callback: addGivenAttachment, synchrone: true, multiple: true }),
+                  documentAction({ callback: addGivenAttachment, synchrone: true }),
+                ]}>
                 <HeaderIcon name="attachment" />
-              </FilePicker>
+              </PopupMenu>
             </View>
           )}
           {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}

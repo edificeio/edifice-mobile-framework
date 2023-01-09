@@ -9,10 +9,10 @@ import { bindActionCreators } from 'redux';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import { DocumentPicked, ImagePicked } from '~/framework/components/popup-menu';
 import { LocalFile } from '~/framework/util/fileHandler';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';
-import { DocumentPicked, ImagePicked } from '~/infra/filePicker';
 import { getSelectedChild } from '~/modules/viescolaire/dashboard/state/children';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { declareAbsenceAction, declareAbsenceWithFileAction } from '~/modules/viescolaire/presences/actions/declaration';

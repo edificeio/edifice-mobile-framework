@@ -6,8 +6,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/picture';
+import PopupMenu, { cameraAction, documentAction, galleryAction } from '~/framework/components/popup-menu';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { FilePicker } from '~/infra/filePicker';
 import { IApp, IEstablishment, ITicket } from '~/modules/support/containers/Support';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -174,10 +174,17 @@ export default class Support extends React.PureComponent<SupportProps, any> {
               <SmallText style={styles.informationText}>{I18n.t('support-mobile-only')}</SmallText>
             </View>
             {this.renderForm()}
-            <FilePicker multiple callback={this.props.uploadAttachment} style={styles.attachmentsContainer}>
-              <Icon name="attachment" size={16} style={styles.attachmentsIcon} />
-              <SmallText>{I18n.t('support-add-attachments')}</SmallText>
-            </FilePicker>
+            <PopupMenu
+              actions={[
+                cameraAction({ callback: this.props.uploadAttachment }),
+                galleryAction({ callback: this.props.uploadAttachment, multiple: true }),
+                documentAction({ callback: this.props.uploadAttachment }),
+              ]}>
+              <View style={styles.attachmentsContainer}>
+                <Icon name="attachment" size={16} style={styles.attachmentsIcon} />
+                <SmallText>{I18n.t('support-add-attachments')}</SmallText>
+              </View>
+            </PopupMenu>
             {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
             <TouchableOpacity
               onPress={sendTicket}

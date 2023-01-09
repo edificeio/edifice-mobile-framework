@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { TextField } from 'rn-material-ui-textfield';
 import { ColorValue, StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+import { TextField } from 'rn-material-ui-textfield';
 
 import theme from '~/app/theme';
 import PasswordInput from '~/framework/components/passwordInput';

@@ -1,17 +1,19 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Keyboard, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
+import PopupMenu, { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/popup-menu';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import { SyncedFile } from '~/framework/util/fileHandler';
@@ -19,7 +21,6 @@ import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
-import { ImagePicked, ImagePicker, imagePickedToLocalFile } from '~/infra/imagePicker';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/modules/blog/actions';
 import { IBlog } from '~/modules/blog/reducer';
 import {
@@ -202,6 +203,10 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     );
   }
 
+  imageCallback = image => {
+    this.setState(prevState => ({ images: [...prevState.images, image] }));
+  };
+
   renderPostMedia() {
     const { images } = this.state;
     const imagesAdded = images.length > 0;
@@ -213,11 +218,16 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           borderWidth: 1,
           borderRadius: 5,
         }}>
-        <ImagePicker
-          multiple
-          callback={image => {
-            this.setState(prevState => ({ images: [...prevState.images, image] }));
-          }}>
+        <PopupMenu
+          actions={[
+            cameraAction({
+              callback: this.imageCallback,
+            }),
+            galleryAction({
+              callback: this.imageCallback,
+              multiple: true,
+            }),
+          ]}>
           <View
             style={{
               alignItems: 'center',
@@ -233,7 +243,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>
-        </ImagePicker>
+        </PopupMenu>
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           onlyImages
@@ -341,7 +351,12 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         }),
       );
     } catch (e) {
-      // ToDo: Error handling
+      if (e.response.body === '{"error":"file.too.large"}') {
+        Toast.show(I18n.t('fullStorage'), {
+          position: Toast.position.BOTTOM,
+          ...UI_ANIMATIONS.toast,
+        });
+      }
       const { dispatch } = this.props;
       dispatch(
         notifierShowAction({

@@ -1,9 +1,9 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Platform, RefreshControl, StyleSheet } from 'react-native';
+import { Platform, RefreshControl } from 'react-native';
 import { Asset } from 'react-native-image-picker';
-import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -11,13 +11,19 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
-import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
+import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import PopupMenu, {
+  DocumentPicked,
+  PopupMenuAction,
+  cameraAction,
+  deleteAction,
+  documentAction,
+  galleryAction,
+} from '~/framework/components/popup-menu';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { computeRelativePath } from '~/framework/util/navigation';
-import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
-import { DocumentPicked } from '~/infra/filePicker';
 import {
   copyWorkspaceFilesAction,
   createWorkspaceFolderAction,
@@ -33,52 +39,18 @@ import {
   uploadWorkspaceFileAction,
 } from '~/modules/workspace/actions';
 import { WorkspaceFileListItem } from '~/modules/workspace/components/WorkspaceFileListItem';
-import { IWorkspaceModalEventProps, WorkspaceModal, WorkspaceModalType } from '~/modules/workspace/components/WorkspaceModal';
+import { WorkspaceModal, WorkspaceModalType } from '~/modules/workspace/components/WorkspaceModal';
 import moduleConfig from '~/modules/workspace/moduleConfig';
-import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
-import { DropdownMenu, DropdownMenuAction } from '~/ui/DropdownMenu';
+import { Filter, IFile } from '~/modules/workspace/reducer';
 
-const styles = StyleSheet.create({
-  listContainer: {
-    backgroundColor: theme.palette.grey.fog,
-    flexGrow: 1,
-  },
-});
+import styles from './styles';
+import { IWorkspaceFileListScreenEventProps, IWorkspaceFileListScreenProps } from './types';
 
-// TYPES ==========================================================================================
-
-interface IWorkspaceFileListScreen_DataProps {
-  files: IFile[];
-  filter: Filter;
-  folderTree: AsyncState<IFolder[]>;
-  isFetching: boolean;
-  parentId: string;
-}
-
-interface IWorkspaceFileListScreen_EventProps {
-  modalEvents: IWorkspaceModalEventProps;
-  fetchFiles: (filter: Filter, parentId: string) => void;
-  listFolders: () => void;
-  previewFile: (file: IFile) => void;
-  restoreFiles: (parentId: string, ids: string[]) => void;
-  uploadFile: (parentId: string, lf: LocalFile) => void;
-  dispatch: ThunkDispatch<any, any, any>;
-}
-
-type IWorkspaceFileListScreen_Props = IWorkspaceFileListScreen_DataProps &
-  IWorkspaceFileListScreen_EventProps &
-  NavigationInjectedProps;
-
-// COMPONENT ======================================================================================
-
-const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
+const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-  const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [modalType, setModalType] = useState<WorkspaceModalType>(WorkspaceModalType.NONE);
   const modalBoxRef: { current: any } = React.createRef();
   const isSelectionActive = selectedFiles.length > 0;
-
-  // LOADER =======================================================================================
 
   const fetchFiles = (parentId: string = props.parentId, shouldRefreshFolderList?: boolean) => {
     props.fetchFiles(props.filter, parentId);
@@ -91,13 +63,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
     fetchFiles();
   }, []);
 
-  // EVENTS =======================================================================================
-
   const onGoBack = () => {
-    if (isDropdownVisible) {
-      setDropdownVisible(false);
-      return false;
-    } else if (isSelectionActive) {
+    if (isSelectionActive) {
       setSelectedFiles([]);
       return false;
     }
@@ -108,10 +75,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
     if (onGoBack()) {
       props.navigation.dispatch(NavigationActions.back());
     }
-  };
-
-  const showDropdown = () => {
-    setDropdownVisible(!isDropdownVisible);
   };
 
   const openModal = (type: WorkspaceModalType) => {
@@ -183,67 +146,92 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
     }
   };
 
-  // HEADER =======================================================================================
-
   const getMenuActions = (): {
-    navBarActions: { icon: string; onPress: () => void }[];
-    dropdownActions: DropdownMenuAction[];
+    navBarActions: { icon: string };
+    popupMenuActions: PopupMenuAction[];
   } => {
     if (isSelectionActive) {
       const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
-      const actions = [
+      const popupMenuActions = [
         ...(selectedFiles.length === 1 && props.filter === Filter.OWNER
-          ? [{ text: I18n.t('rename'), icon: 'pencil', onPress: () => openModal(WorkspaceModalType.EDIT) }]
-          : []),
-        ...((selectedFiles.length > 1 && props.filter === Filter.OWNER) || props.filter === Filter.TRASH
           ? [
               {
-                text: I18n.t('delete'),
-                icon: 'delete',
-                onPress: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+                title: I18n.t('rename'),
+                action: () => openModal(WorkspaceModalType.EDIT),
+                iconIos: 'pencil',
+                iconAndroid: 'ic_pencil',
               },
             ]
           : []),
         ...(props.filter !== Filter.TRASH
-          ? [{ text: I18n.t('copy'), icon: 'content-copy', onPress: () => openModal(WorkspaceModalType.DUPLICATE) }]
-          : []),
-        ...(props.filter === Filter.OWNER
-          ? [{ text: I18n.t('move'), icon: 'package-up', onPress: () => openModal(WorkspaceModalType.MOVE) }]
-          : []),
-        ...(props.filter === Filter.TRASH
-          ? [{ text: I18n.t('conversation.restore'), icon: 'restore', onPress: restoreSelectedFiles }]
-          : []),
-        ...(Platform.OS !== 'ios' && !isFolderSelected
-          ? [{ text: I18n.t('download'), icon: 'download', onPress: () => openModal(WorkspaceModalType.DOWNLOAD) }]
-          : []),
-        ...(selectedFiles.length === 1 && props.filter === Filter.OWNER
           ? [
               {
-                text: I18n.t('delete'),
-                icon: 'delete',
-                onPress: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+                title: I18n.t('copy'),
+                action: () => openModal(WorkspaceModalType.DUPLICATE),
+                iconIos: 'square.on.square',
+                iconAndroid: 'ic_content_copy',
+              },
+            ]
+          : []),
+        ...(props.filter === Filter.OWNER
+          ? [
+              {
+                title: I18n.t('move'),
+                action: () => openModal(WorkspaceModalType.MOVE),
+                iconIos: 'arrow.up.square',
+                iconAndroid: 'ic_move_to_inbox',
+              },
+            ]
+          : []),
+        ...(props.filter === Filter.TRASH
+          ? [
+              {
+                title: I18n.t('conversation.restore'),
+                action: () => restoreSelectedFiles,
+                iconIos: 'arrow.uturn.backward.circle',
+                iconAndroid: 'ic_restore',
+              },
+            ]
+          : []),
+        ...(Platform.OS !== 'ios' && !isFolderSelected
+          ? [
+              {
+                title: I18n.t('download'),
+                action: () => openModal(WorkspaceModalType.DOWNLOAD),
+                iconIos: 'square.and.arrow.down',
+                iconAndroid: 'ic_download',
+              },
+            ]
+          : []),
+        ...((selectedFiles.length >= 1 && props.filter === Filter.OWNER) || props.filter === Filter.TRASH
+          ? [
+              deleteAction({
+                action: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+              }),
+            ]
+          : []),
+      ];
+      return { navBarActions: { icon: 'more_vert' }, popupMenuActions };
+    }
+    if (props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED)) {
+      const popupMenuActions = [
+        cameraAction({ callback: uploadFile }),
+        galleryAction({ callback: uploadFile, multiple: true }),
+        documentAction({ callback: uploadFile }),
+        ...(props.filter === Filter.OWNER
+          ? [
+              {
+                title: I18n.t('create-folder'),
+                action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
+                iconIos: 'folder.badge.plus',
+                iconAndroid: 'ic_create_new_folder',
               },
             ]
           : []),
       ];
-      if (actions.length > 2) {
-        const firstAction = actions[0] as { icon: string; onPress: () => void };
-        const navBarActions = [firstAction, { icon: 'more_vert', onPress: showDropdown }];
-        return { navBarActions, dropdownActions: actions.slice(1) };
-      }
-      return { navBarActions: actions, dropdownActions: [] };
+      return { navBarActions: { icon: 'add' }, popupMenuActions };
     }
-    if (props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED)) {
-      const navBarActions = [{ icon: isDropdownVisible ? 'close' : 'add', onPress: showDropdown }];
-      const dropdownActions = [
-        { text: I18n.t('add-file'), icon: 'file-plus', isFilePicker: true, onPress: () => true, onFilePick: uploadFile },
-        ...(props.filter === Filter.OWNER
-          ? [{ text: I18n.t('create-folder'), icon: 'added_files', onPress: () => openModal(WorkspaceModalType.CREATE_FOLDER) }]
-          : []),
-      ];
-      return { navBarActions, dropdownActions };
-    }
-    return { navBarActions: [], dropdownActions: [] };
+    return { navBarActions: { icon: '' }, popupMenuActions: [] };
   };
 
   const menuActions = getMenuActions();
@@ -255,41 +243,30 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
       </>
     ),
     title: isSelectionActive ? null : props.navigation.getParam('title'),
-    right: menuActions.navBarActions.map(action => (
-      <HeaderAction iconName={action.icon} iconSize={isSelectionActive ? 24 : 20} onPress={action.onPress} />
-    )),
+    right: (
+      <PopupMenu actions={menuActions.popupMenuActions}>
+        <HeaderIcon name={menuActions.navBarActions.icon} iconSize={menuActions.navBarActions.icon === 'more_vert' ? 26 : 20} />
+      </PopupMenu>
+    ),
     style: {
-      backgroundColor: isSelectionActive ? theme.palette.secondary.regular : theme.palette.primary.regular,
+      backgroundColor: theme.palette.primary.regular,
     },
   };
 
-  // MENUS ========================================================================================
-
   const renderMenus = () => {
-    const dropdownColor = isSelectionActive ? theme.palette.secondary.regular : theme.palette.primary.regular;
     const files = props.files.filter(file => selectedFiles.includes(file.id));
     return (
-      <>
-        <DropdownMenu
-          data={menuActions.dropdownActions}
-          isVisible={isDropdownVisible}
-          color={dropdownColor}
-          onTapOutside={showDropdown}
-        />
-        <WorkspaceModal
-          filter={props.filter}
-          folderTree={props.folderTree.data}
-          modalBoxRef={modalBoxRef}
-          parentId={props.parentId}
-          selectedFiles={files}
-          type={modalType}
-          onAction={onModalAction}
-        />
-      </>
+      <WorkspaceModal
+        filter={props.filter}
+        folderTree={props.folderTree.data}
+        modalBoxRef={modalBoxRef}
+        parentId={props.parentId}
+        selectedFiles={files}
+        type={modalType}
+        onAction={onModalAction}
+      />
     );
   };
-
-  // EMPTY SCREEN =================================================================================
 
   const renderEmpty = () => {
     if (props.isFetching) return null;
@@ -303,8 +280,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
       />
     );
   };
-
-  // RENDER =======================================================================================
 
   return (
     <PageView navigation={props.navigation} navBar={navBarInfo} onBack={onGoBack}>
@@ -328,8 +303,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreen_Props) => {
   );
 };
 
-// MAPPING ========================================================================================
-
 const mapStateToProps = (gs: any, props: any) => {
   const state = moduleConfig.getState(gs);
   const parentId = props.navigation.getParam('parentId');
@@ -347,7 +320,7 @@ const mapStateToProps = (gs: any, props: any) => {
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
   getState: () => IGlobalState,
-) => IWorkspaceFileListScreen_EventProps = (dispatch, getState) => ({
+) => IWorkspaceFileListScreenEventProps = (dispatch, getState) => ({
   modalEvents: {
     createFolder: async (name: string, parentId: string) => {
       return dispatch(createWorkspaceFolderAction(name, parentId));

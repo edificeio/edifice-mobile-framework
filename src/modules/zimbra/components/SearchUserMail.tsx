@@ -89,6 +89,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
         <FoundUserOrGroup profile={item.profile} displayName={item.name || item.displayName} onPress={() => addUser(item)} />
       )}
       keyboardShouldPersistTaps="handled"
+      nestedScrollEnabled
     />
   ) : (
     <View />

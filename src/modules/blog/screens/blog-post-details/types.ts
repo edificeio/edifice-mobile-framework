@@ -56,6 +56,5 @@ export interface IBlogPostDetailsScreenState {
   blogPostData: IBlogPost | undefined;
   errorState: boolean;
   showHeaderTitle: boolean;
-  showMenu: boolean;
   isCommentFieldFocused: boolean;
 }

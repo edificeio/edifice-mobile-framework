@@ -332,7 +332,7 @@ async function _git_getAvailableBranchName(uri, branch, username, password) {
   if (!remoteInfo[branch]) {
     const ode = await _ode_getPackageJsonOde();
     const defaultBranch = ode.override.defaultBranch || 'master';
-    console.log(`  Branch "${branch}" does not exists. Using "${defaultBranch}" instead.`);
+    console.log(`  Branch "${branch}" does not exist. Using "${defaultBranch}" instead.`);
     return defaultBranch;
   }
   return branch;

@@ -1,8 +1,7 @@
-import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import React from 'react';
-import { TextStyle, TouchableOpacityProps, View, ViewStyle } from 'react-native';
+import { TextStyle, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
 
-import { UI_SIZES, getScaleDimension } from '../constants';
+import { UI_SIZES } from '../constants';
 import { Picture, PictureProps } from '../picture';
 import { SmallText } from '../text';
 import { Card, CardWithoutPadding, TouchCard } from './base';
@@ -12,9 +11,9 @@ export type PictureCardProps = {
   textStyle?: TextStyle;
   picture: PictureProps;
   pictureStyle?: ViewStyle;
-} & ViewPropTypes;
+} & ViewProps;
 
-function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewPropTypes> }) {
+function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
   const { cardComponent, text, textStyle, picture, style, ...viewProps } = props;
   const CC = cardComponent ?? CardWithoutPadding;
   return (
@@ -27,7 +26,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               justifyContent: 'center',
               alignItems: 'center',
               marginTop: UI_SIZES.spacing.minor,
-              height: getScaleDimension(20, 'height') * 2,
+              height: getScaleHeight(20) * 2,
             }}>
             <SmallText
               numberOfLines={2}
@@ -55,7 +54,7 @@ export function TouchablePictureCard(props: PictureCardProps & TouchableOpacityP
   return <PictureCard_Base cardComponent={TouchCard} {...props} />;
 }
 
-function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewPropTypes> }) {
+function SelectorPictureCard_Base(props: PictureCardProps & { cardComponent?: React.ComponentType<ViewProps> }) {
   const { style, picture, pictureStyle, ...rest } = props;
   picture['style'] = { maxWidth: '100%', ...pictureStyle };
   picture['resizeMode'] = 'contain';
@@ -79,4 +78,4 @@ export type OverviewCardProps = {
   picture?: PictureProps;
   pictureStyle?: PictureProps['style'];
   pictureWrapperStyle?: ViewStyle;
-} & ViewPropTypes;
+} & ViewProps;

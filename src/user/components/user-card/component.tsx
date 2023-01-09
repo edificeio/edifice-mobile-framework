@@ -4,8 +4,8 @@ import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
+import PopupMenu, { cameraAction, galleryAction } from '~/framework/components/popup-menu';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
-import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
@@ -30,16 +30,20 @@ export const UserCard = ({
     </View>
   );
 
-  const renderActions = (avatar: boolean, changeAvatar: (image: ImagePicked) => void, deleteAvatar: () => void) => (
+  const renderActions = (avatar: boolean, changeAvatar: (image) => void, deleteAvatar: () => void) => (
     <View style={styles.buttonsActionAvatar}>
       {avatar ? (
         <>
-          <ImagePicker
-            callback={image => (updatingAvatar ? null : changeAvatar(image))}
-            activeOpacity={updatingAvatar ? 1 : 0}
-            cameraOptions={{ cameraType: 'front' }}>
+          <PopupMenu
+            actions={[
+              cameraAction({
+                callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
+                options: { cameraType: 'front' },
+              }),
+              galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
+            ]}>
             <IconButton disabled={updatingAvatar} iconName="pencil" iconColor={theme.ui.text.inverse} iconSize={15} />
-          </ImagePicker>
+          </PopupMenu>
           <TouchableOpacity
             disallowInterruption
             onPress={() => (updatingAvatar ? null : deleteAvatar())}
@@ -50,12 +54,16 @@ export const UserCard = ({
       ) : (
         <>
           <View style={styles.viewNoAvatar} />
-          <ImagePicker
-            callback={image => (updatingAvatar ? null : changeAvatar(image))}
-            activeOpacity={updatingAvatar ? 1 : 0}
-            cameraOptions={{ cameraType: 'front' }}>
+          <PopupMenu
+            actions={[
+              cameraAction({
+                callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
+                options: { cameraType: 'front' },
+              }),
+              galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
+            ]}>
             <IconButton disabled={updatingAvatar} iconName="camera-on" iconColor={theme.ui.text.inverse} iconSize={15} />
-          </ImagePicker>
+          </PopupMenu>
         </>
       )}
     </View>

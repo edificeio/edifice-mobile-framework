@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
@@ -16,11 +16,13 @@ const styles = StyleSheet.create({
   answerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 25,
   },
   containerMargin: {
     marginTop: UI_SIZES.spacing.minor,
   },
   answerText: {
+    flexShrink: 1,
     marginLeft: UI_SIZES.spacing.minor,
   },
   customAnswerInput: {
@@ -102,7 +104,7 @@ export const FormSingleAnswerRadioCard = ({
               disabled={isDisabled}
               style={[styles.answerContainer, index > 0 && styles.containerMargin]}>
               <FormRadio active={item.id === value} disabled={isDisabled} />
-              <SmallText style={[styles.answerText, !item.isCustom && UI_STYLES.flex1]}>{item.value}</SmallText>
+              <SmallText style={styles.answerText}>{item.value}</SmallText>
               {item.isCustom ? (
                 <TextInput
                   value={customAnswer}
