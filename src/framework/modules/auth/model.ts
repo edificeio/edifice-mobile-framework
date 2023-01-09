@@ -68,9 +68,10 @@ export enum PartialSessionScenario {
 export interface IAuthContext {
   cgu: boolean;
   passwordRegex: string;
-  mandatory: {
-    mail: boolean;
-    phone: boolean;
+  passwordRegexI18n?: { [lang: string]: string };
+  mandatory?: {
+    mail?: boolean;
+    phone?: boolean;
   };
 }
 

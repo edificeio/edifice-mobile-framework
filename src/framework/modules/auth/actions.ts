@@ -24,7 +24,7 @@ import {
   createActivationError,
   createChangePasswordError,
 } from './model';
-import { actions, actions as authActions } from './reducer';
+import { assertSession, actions as authActions } from './reducer';
 import {
   createSession,
   ensureCredentialsMatchActivationCode,
@@ -235,31 +235,27 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
 // ToDo : type the return value
 export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgotMode: ForgotMode) {
   return async (dispatch: ThunkDispatch<any, any, any>) => {
-    try {
-      const payLoad =
-        forgotMode === 'id'
-          ? {
-              mail: userInfo.login,
-              firstName: userInfo.firstName,
-              structureId: userInfo.structureId,
-              service: 'mail',
-            }
-          : {
-              login: userInfo.login,
-              service: 'mail',
-            };
-      const res = await fetch(`${platform.url}/auth/forgot-${forgotMode === 'id' ? 'id' : 'password'}`, {
-        body: JSON.stringify(payLoad),
-        method: 'POST',
-      });
-      const resJson = await res.json();
-      const resStatus = await res.status;
-      const ok = resStatus >= 200 && resStatus < 300;
-      const response = { ...resJson, ok };
-      return response;
-    } catch (err) {
-      throw err;
-    }
+    const payLoad =
+      forgotMode === 'id'
+        ? {
+            mail: userInfo.login,
+            firstName: userInfo.firstName,
+            structureId: userInfo.structureId,
+            service: 'mail',
+          }
+        : {
+            login: userInfo.login,
+            service: 'mail',
+          };
+    const res = await fetch(`${platform.url}/auth/forgot-${forgotMode === 'id' ? 'id' : 'password'}`, {
+      body: JSON.stringify(payLoad),
+      method: 'POST',
+    });
+    const resJson = await res.json();
+    const resStatus = await res.status;
+    const ok = resStatus >= 200 && resStatus < 300;
+    const response = { ...resJson, ok };
+    return response;
   };
 }
 
@@ -271,7 +267,7 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
  */
 export function markLoginErrorTimestampAction(errcode: AuthErrorCode, timestamp: number) {
   return async (dispatch: ThunkDispatch<any, any, any>) => {
-    dispatch(actions.sessionError(errcode, timestamp));
+    dispatch(authActions.sessionError(errcode, timestamp));
   };
 }
 
@@ -285,12 +281,16 @@ function sessionDestroyAction(platform: Platform) {
     // Erase stored oauth2 token and cache information
     await destroyOAuth2();
     // Validate log out
-    dispatch(actions.sessionEnd());
+    dispatch(authActions.sessionEnd());
   };
 }
 
-export function logoutAction(platform: Platform) {
+/** Clear the current session and track logout event.
+ * Session must exist and this action will throw if no session is active.
+ */
+export function logoutAction() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const platform = assertSession().platform;
     await dispatch(sessionDestroyAction(platform));
     Trackers.trackEvent('Auth', 'LOGOUT');
   };

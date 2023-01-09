@@ -245,7 +245,7 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
         }, 500);
       } catch (e) {
         // If error during the login phase, redirect to login screen
-        this.props.handleLogout(this.props.route.params.platform);
+        this.props.handleLogout();
         this.props.navigation.reset(getAuthNavigationState(this.props.route.params.platform));
       }
     } catch (e) {
@@ -266,7 +266,7 @@ export class ChangePasswordScreen extends React.PureComponent<IChangePasswordPag
 
   public doRefuseTerms = async () => {
     try {
-      this.props.handleLogout(this.props.route.params.platform);
+      this.props.handleLogout();
       this.props.navigation.reset(getAuthNavigationState(this.props.route.params.platform));
     } catch (e) {
       // console.warn('refuseTerms: could not refuse terms', e);

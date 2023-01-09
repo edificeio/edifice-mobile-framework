@@ -13,8 +13,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
-import { PageView } from '~/framework/components/page';
-import { PageViewStyle } from '~/framework/components/page';
+import { PageView, PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -46,12 +45,15 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
 
   const doRefuseTerms = React.useCallback(async () => {
     try {
-      props.handleLogout(props.route.params.platform);
+      props.handleLogout();
       props.navigation.reset(getAuthNavigationState(props.route.params.platform));
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       // console.warn('refuseTerms: could not refuse terms', e);
     }
-  }, [props.handleLogout]);
+    // Manually specified deps here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.handleLogout, props.navigation]);
 
   const doRevalidateTerms = React.useCallback(async () => {
     try {
@@ -64,9 +66,12 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
       const rememberMe = props.route.params.rememberMe;
       const redirect = await props.handleLogin(platform, credentials, rememberMe);
       redirectLoginNavAction(redirect, platform, props.navigation);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       // console.warn('revalidateTerms: could not revalidate terms', e);
     }
+    // Manually specified deps here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation, props.handleLogin]);
 
   const openCGU = React.useCallback(
@@ -97,7 +102,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
         }}>
         <View style={{ paddingHorizontal: UI_SIZES.spacing.big }}>
           <View style={{ height: imageHeight }}>
-            <NamedSVG name={'empty-eula'} width={imageWidth} height={imageHeight} />
+            <NamedSVG name="empty-eula" width={imageWidth} height={imageHeight} />
           </View>
         </View>
         <HeadingSText

@@ -9,7 +9,6 @@ import { ActionButton, getActionButtonWidth } from '~/framework/components/actio
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { selectPlatform } from '~/user/actions/platform';
 
@@ -85,4 +84,4 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
 }
 
 const OnboardingScreenConnected = connect()(OnboardingScreen);
-export default withViewTracking('user/onboarding')(OnboardingScreenConnected);
+export default OnboardingScreenConnected;

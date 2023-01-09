@@ -16,6 +16,7 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
+import AlertCard from '~/framework/components/alert';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
   },
+  alertCard: { width: '100%', marginTop: UI_SIZES.spacing.medium },
 });
 
 const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
@@ -159,11 +161,12 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   };
 
   public render() {
-    const { login, password, confirmPassword, mail, phone, acceptCGU, typing, error, activationState } = this.state;
+    const { password, confirmPassword, mail, phone, acceptCGU, typing, error, activationState } = this.state;
+    const authContext = this.props.route.params.context;
     const formModel = new ActivationFormModel({
-      ...this.props.route.params.context,
-      phoneRequired: this.props.route.params.context.mandatory.phone,
-      emailRequired: this.props.route.params.context.mandatory.mail,
+      ...authContext,
+      phoneRequired: authContext?.mandatory?.phone,
+      emailRequired: authContext?.mandatory?.mail,
       password: () => password,
     });
     const isNotValid = !acceptCGU || !formModel.validate({ ...this.state });
@@ -186,7 +189,10 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                     <LogoWrapper>
                       <PFLogo pf={this.props.route.params.platform} />
                     </LogoWrapper>
-                    <InputLogin login={login} form={formModel} onChange={this.onFieldChange('login')} />
+                    {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
+                    {authContext.passwordRegexI18n?.[I18n.currentLocale()] ? (
+                      <AlertCard type="info" text={authContext.passwordRegexI18n[I18n.currentLocale()]} style={styles.alertCard} />
+                    ) : null}
                     <InputPassword password={password} form={formModel} onChange={this.onFieldChange('password')} />
                     <InputPasswordConfirm
                       confirm={confirmPassword}
