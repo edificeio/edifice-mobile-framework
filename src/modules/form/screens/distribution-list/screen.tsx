@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { RefreshControl, View } from 'react-native';
-import { NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
+import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -17,42 +17,18 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { IUserSession, getUserSession } from '~/framework/util/session';
+import { getUserSession } from '~/framework/util/session';
 import { fetchFormDistributionsAction, fetchFormsReceivedAction } from '~/modules/form/actions';
 import { FormDistributionCard } from '~/modules/form/components/FormDistributionCard';
 import { FormDistributionListModal } from '~/modules/form/components/FormDistributionListModal';
 import moduleConfig from '~/modules/form/moduleConfig';
-import { DistributionStatus, IDistribution, IForm } from '~/modules/form/reducer';
+import { DistributionStatus, IForm } from '~/modules/form/reducer';
 
-// TYPES ==========================================================================================
+import { IFormDistributionListScreenProps, IFormDistributions } from './types';
 
-export type IFormDistributions = IForm & {
-  distributions: IDistribution[];
-};
-
-interface IFormDistributionListScreen_DataProps {
-  formDistributions: IFormDistributions[];
-  initialLoadingState: AsyncPagedLoadingState;
-  session: IUserSession;
-}
-
-interface IFormDistributionListScreen_EventProps {
-  fetchDistributions: () => Promise<IDistribution[]>;
-  fetchForms: () => Promise<IForm[]>;
-  dispatch: ThunkDispatch<any, any, any>;
-}
-
-type IFormDistributionListScreen_Props = IFormDistributionListScreen_DataProps &
-  IFormDistributionListScreen_EventProps &
-  NavigationInjectedProps;
-
-// COMPONENT ======================================================================================
-
-const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) => {
+const FormDistributionListScreen = (props: IFormDistributionListScreenProps) => {
   const modalRef: { current: any } = React.createRef();
   const [modalDistributions, setModalDistributions] = React.useState<IFormDistributions | undefined>();
-
-  // LOADER =======================================================================================
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -111,8 +87,6 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
     };
   }, []);
 
-  // EVENTS =======================================================================================
-
   const onOpenDistribution = (id: number, status: DistributionStatus, form: IForm) => {
     modalRef?.current?.doDismissModal();
     props.navigation.navigate(`${moduleConfig.routeName}/distribution`, {
@@ -134,8 +108,6 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
     }
   };
 
-  // EMPTY SCREEN =================================================================================
-
   const renderEmpty = () => {
     return (
       <EmptyScreen
@@ -146,8 +118,6 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
     );
   };
 
-  // ERROR ========================================================================================
-
   const renderError = () => {
     return (
       <ScrollView
@@ -156,8 +126,6 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
       </ScrollView>
     );
   };
-
-  // DISTRIBUTION LIST ============================================================================
 
   const renderDistributionList = () => {
     return (
@@ -181,8 +149,6 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
       </>
     );
   };
-
-  // RENDER =======================================================================================
 
   const renderPage = () => {
     switch (loadingState) {
@@ -208,8 +174,6 @@ const FormDistributionListScreen = (props: IFormDistributionListScreen_Props) =>
     </PageView>
   );
 };
-
-// MAPPING ========================================================================================
 
 export default connect(
   (gs: IGlobalState) => {

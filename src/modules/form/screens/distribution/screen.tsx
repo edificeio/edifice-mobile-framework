@@ -1,8 +1,8 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { Platform, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, RefreshControl, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/action-button';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
@@ -21,7 +21,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { IUserSession, getUserSession } from '~/framework/util/session';
+import { getUserSession } from '~/framework/util/session';
 import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/modules/form/actions';
 import { FormSectionCard } from '~/modules/form/components/FormSectionCard';
 import { FormSubmissionModal } from '~/modules/form/components/FormSubmissionModal';
@@ -29,7 +29,6 @@ import { getQuestionCard } from '~/modules/form/components/questionCards';
 import moduleConfig from '~/modules/form/moduleConfig';
 import {
   DistributionStatus,
-  IFormContent,
   IFormElement,
   IQuestion,
   IQuestionResponse,
@@ -42,67 +41,10 @@ import {
 } from '~/modules/form/reducer';
 import { formService } from '~/modules/form/service';
 
-const styles = StyleSheet.create({
-  saveActionContainer: {
-    height: '100%',
-    width: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  summaryText: {
-    alignSelf: 'center',
-    color: theme.palette.primary.regular,
-    marginBottom: UI_SIZES.spacing.small,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  positionActionContainer: {
-    width: 100,
-  },
-  listFooterContainer: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
-  },
-  listContainer: {
-    flexGrow: 1,
-    paddingVertical: UI_SIZES.spacing.medium,
-  },
-});
+import styles from './styles';
+import { IFormDistributionScreenProps } from './types';
 
-// TYPES ==========================================================================================
-
-interface IFormDistributionScreen_DataProps {
-  elements: IFormElement[];
-  elementsCount: number;
-  initialLoadingState: AsyncPagedLoadingState;
-  session: IUserSession;
-  structures: { label: string; value: string }[];
-}
-
-interface IFormDistributionScreen_EventProps {
-  fetchDistributionResponses: (distributionId: number) => Promise<IQuestionResponse[]>;
-  fetchFormContent: (formId: number) => Promise<IFormContent | undefined>;
-  dispatch: ThunkDispatch<any, any, any>;
-}
-
-interface IFormDistributionScreen_NavigationParams {
-  editable: boolean;
-  formId: number;
-  id: number;
-  status: DistributionStatus;
-  title: string;
-}
-
-type IFormDistributionScreen_Props = IFormDistributionScreen_DataProps &
-  IFormDistributionScreen_EventProps &
-  NavigationInjectedProps<IFormDistributionScreen_NavigationParams>;
-
-// COMPONENT ======================================================================================
-
-const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
+const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
   const distributionId = props.navigation.getParam('id');
   const editable = props.navigation.getParam('editable');
   const formId = props.navigation.getParam('formId');
@@ -116,8 +58,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
   const isPositionAtSummary = position === props.elementsCount;
   const listElements = isPositionAtSummary ? formatSummary(props.elements, responses) : formatElement(props.elements[position]);
   const isMandatoryAnswerMissing = getIsMandatoryAnswerMissing(listElements, responses);
-
-  // LOADER =======================================================================================
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -172,8 +112,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       focusEventListener.current?.remove();
     };
   }, []);
-
-  // EVENTS =======================================================================================
 
   React.useEffect(() => {
     flatListRef.current?.scrollToOffset({ x: 0, y: 0, animated: false });
@@ -331,8 +269,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     }
   };
 
-  // HEADER =======================================================================================
-
   const navBarInfo = {
     title: props.navigation.getParam('title'),
     right:
@@ -343,13 +279,9 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       ) : undefined,
   };
 
-  // EMPTY SCREEN =================================================================================
-
   const renderEmpty = () => {
     return <EmptyScreen svgImage="empty-form-access" title={I18n.t('form.formDistributionScreen.emptyScreen.title')} />;
   };
-
-  // ERROR ========================================================================================
 
   const renderError = () => {
     return (
@@ -359,8 +291,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       </ScrollView>
     );
   };
-
-  // ELEMENT ======================================================================================
 
   const renderSummaryHeading = () => {
     return isPositionAtSummary ? <HeadingSText style={styles.summaryText}>{I18n.t('form.summary')}</HeadingSText> : null;
@@ -392,8 +322,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     );
   };
 
-  // POSITION ACTIONS =============================================================================
-
   const renderPositionActions = () => {
     if (isPositionAtSummary) {
       return status !== DistributionStatus.FINISHED || editable ? (
@@ -419,8 +347,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
       </View>
     );
   };
-
-  // DISTRIBUTION =================================================================================
 
   const renderDistribution = () => {
     return hasResponderRight ? (
@@ -452,8 +378,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     );
   };
 
-  // RENDER =======================================================================================
-
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
@@ -478,8 +402,6 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     </PageComponent>
   );
 };
-
-// MAPPING ========================================================================================
 
 export default connect(
   (gs: IGlobalState) => {
