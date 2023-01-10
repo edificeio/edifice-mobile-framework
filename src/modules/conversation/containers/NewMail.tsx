@@ -649,9 +649,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             <View style={{ width: 48, alignItems: 'center' }}>
               <PopupMenu
                 actions={[
-                  cameraAction({ callback: addGivenAttachment, synchrone: true }),
-                  galleryAction({ callback: addGivenAttachment, synchrone: true, multiple: true }),
-                  documentAction({ callback: addGivenAttachment, synchrone: true }),
+                  cameraAction({ callback: addGivenAttachment }),
+                  galleryAction({ callback: addGivenAttachment, multiple: true }),
+                  documentAction({ callback: addGivenAttachment }),
                 ]}>
                 <HeaderIcon name="attachment" />
               </PopupMenu>

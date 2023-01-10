@@ -16,8 +16,7 @@ export default function galleryAction(props: PopupPickerActionProps & { multiple
           ...img.nativeInfo,
           ...img,
         };
-        if (props.synchrone) await props.callback!(imgFormatted as ImagePicked);
-        else props.callback!(imgFormatted as ImagePicked);
+        props.callback!(imgFormatted as ImagePicked);
       }
     } catch {
       /* empty */

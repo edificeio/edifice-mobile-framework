@@ -16,8 +16,7 @@ export default function documentAction(props: PopupPickerActionProps) {
           android: getPath(file.uri),
           default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
         });
-        if (props.synchrone) await props.callback!({ fileName: file.name!, fileSize: file.size!, uri: file.uri, type: file.type });
-        else props.callback!({ fileName: file.name!, fileSize: file.size!, uri: file.uri, type: file.type });
+        props.callback!({ fileName: file.name!, fileSize: file.size!, uri: file.uri, type: file.type });
       }
     } catch {
       /* empty */
@@ -32,7 +31,6 @@ export default function documentAction(props: PopupPickerActionProps) {
           | PlatformTypes[keyof PlatformTypes][keyof PlatformTypes[keyof PlatformTypes]][]
           | DocumentType[keyof PlatformTypes],
         presentationStyle: 'fullScreen',
-        ...props.options,
       }).then(file => {
         return documentCallback(file);
       });

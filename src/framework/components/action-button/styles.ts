@@ -4,9 +4,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  picture: {
-    marginLeft: UI_SIZES.spacing.minor,
-  },
   commonView: {
     alignItems: 'center',
     alignSelf: 'center',

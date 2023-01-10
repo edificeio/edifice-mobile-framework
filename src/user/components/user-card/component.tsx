@@ -38,7 +38,7 @@ export const UserCard = ({
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
-                options: { cameraType: 'front' },
+                useFrontCamera: true,
               }),
               galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
             ]}>
@@ -58,7 +58,7 @@ export const UserCard = ({
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
-                options: { cameraType: 'front' },
+                useFrontCamera: true,
               }),
               galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
             ]}>
