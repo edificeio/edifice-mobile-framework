@@ -5,7 +5,7 @@ import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ModalBox from '~/framework/components/ModalBox';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { Picture } from '~/framework/components/picture';

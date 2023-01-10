@@ -8,7 +8,7 @@ import { assertPermissions } from '~/framework/util/permissions';
 import { ImagePicked } from '../types';
 import { PopupPickerActionProps } from './types';
 
-export default function cameraAction(props: PopupPickerActionProps) {
+export default function cameraAction(props: PopupPickerActionProps & { useFrontCamera?: boolean }) {
   const imageCallback = async (images: LocalFile[]) => {
     try {
       for (const img of images) {
@@ -16,8 +16,7 @@ export default function cameraAction(props: PopupPickerActionProps) {
           ...img.nativeInfo,
           ...img,
         };
-        if (props.synchrone) await props.callback!(imgFormatted as ImagePicked);
-        else props.callback!(imgFormatted as ImagePicked);
+        props.callback!(imgFormatted as ImagePicked);
       }
     } catch {
       /* empty */
@@ -27,7 +26,7 @@ export default function cameraAction(props: PopupPickerActionProps) {
   const action = async () => {
     try {
       await assertPermissions('camera');
-      LocalFile.pick({ source: 'camera' }, props.options).then(lf => {
+      LocalFile.pick({ source: 'camera' }, props.useFrontCamera ? { cameraType: 'front' } : undefined).then(lf => {
         return imageCallback(lf);
       });
     } catch {

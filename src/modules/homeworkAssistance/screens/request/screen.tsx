@@ -11,8 +11,8 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/action-button';
 import AlertCard from '~/framework/components/alert';
+import ActionButton from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -32,11 +32,9 @@ import { getIsDateValid } from '~/modules/homeworkAssistance/reducer';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
-import { IHomeworkAssistanceRequestScreen_Props } from './types';
+import { IHomeworkAssistanceRequestScreenProps } from './types';
 
-// COMPONENT ======================================================================================
-
-const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen_Props) => {
+const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreenProps) => {
   const [isChildDropdownOpen, setChildDropdownOpen] = React.useState(false);
   const [isServiceDropdownOpen, setServiceDropdownOpen] = React.useState(false);
   const [child, setChild] = React.useState(props.children ? props.children[0]?.value : null);
@@ -46,8 +44,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
   const [time, setTime] = React.useState(props.config.settings.openingTime.start);
   const [information, setInformation] = React.useState('');
   const [isSendingRequest, setSendingRequest] = React.useState(false);
-
-  // LOADER =======================================================================================
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -91,8 +87,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
     };
   }, []);
 
-  // EVENTS =======================================================================================
-
   const sendRequest = async () => {
     try {
       const { services, children, structureName, className, addRequest } = props;
@@ -110,8 +104,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
     }
   };
 
-  // ERROR ========================================================================================
-
   const renderError = () => {
     return (
       <ScrollView
@@ -120,8 +112,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
       </ScrollView>
     );
   };
-
-  // REQUEST ======================================================================================
 
   const renderRequest = () => {
     const { openingTime } = props.config.settings;
@@ -206,8 +196,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
     );
   };
 
-  // RENDER =======================================================================================
-
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
@@ -235,8 +223,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
     </PageComponent>
   );
 };
-
-// MAPPING ========================================================================================
 
 export default connect(
   (gs: IGlobalState) => {

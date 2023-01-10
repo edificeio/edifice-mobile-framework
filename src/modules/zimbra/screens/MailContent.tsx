@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
-import { HeaderAction } from '~/framework/components/header';
+import { HeaderIcon } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import PopupMenu, { deleteAction } from '~/framework/components/popup-menu';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { downloadAttachmentAction } from '~/modules/zimbra/actions/download';
 import { deleteMailsAction, restoreMailsAction, toggleReadAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
@@ -19,7 +20,6 @@ import MoveModal from '~/modules/zimbra/components/Modals/MoveToFolderModal';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
 import { getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
-import { DropdownMenu } from '~/ui/DropdownMenu';
 
 type MailContentContainerProps = {
   isFetching: boolean;
@@ -35,7 +35,6 @@ type MailContentContainerProps = {
 } & NavigationInjectedProps<any>;
 
 type MailContentContainerState = {
-  showMenu: boolean;
   showMoveModal: boolean;
   deleteModal: { isShown: boolean; mailsIds: string[] };
   isShownStorageWarning: boolean;
@@ -47,7 +46,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     super(props);
 
     this.state = {
-      showMenu: false,
       showMoveModal: false,
       deleteModal: { isShown: false, mailsIds: [] },
       isShownStorageWarning: false,
@@ -59,13 +57,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
     this.props.fetchStorage();
   }
-
-  public showMenu = () => {
-    const { showMenu } = this.state;
-    this.setState({
-      showMenu: !showMenu,
-    });
-  };
 
   public showMoveModal = () => this.setState({ showMoveModal: true });
 
@@ -135,21 +126,40 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   setMenuData = () => {
     const { navigation } = this.props;
     let menuData = [
-      { text: I18n.t('zimbra-mark-unread'), icon: 'email', onPress: this.markAsRead },
-      { text: I18n.t('zimbra-move'), icon: 'unarchive', onPress: this.showMoveModal },
-      // { text: I18n.t("zimbra-download-all"), icon: "download", onPress: () => {} },
-      { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.delete },
+      {
+        title: I18n.t('zimbra-mark-unread'),
+        action: this.markAsRead,
+        iconIos: 'eye.slash',
+        iconAndroid: 'ic_visibility_off',
+      },
+      {
+        title: I18n.t('zimbra-move'),
+        action: this.showMoveModal,
+        iconIos: 'arrow.up.square',
+        iconAndroid: 'ic_move_to_inbox',
+      },
+      deleteAction({ action: this.delete }),
     ];
     if (navigation.getParam('isSended') || navigation.state.routeName === 'sendMessages') {
       menuData = [
-        { text: I18n.t('zimbra-mark-unread'), icon: 'email', onPress: this.markAsRead },
-        { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.delete },
+        {
+          title: I18n.t('zimbra-mark-unread'),
+          action: this.markAsRead,
+          iconIos: 'eye.slash',
+          iconAndroid: 'ic_visibility_off',
+        },
+        deleteAction({ action: this.delete }),
       ];
     }
     if (navigation.getParam('isTrashed') || navigation.state.routeName === 'trash') {
       menuData = [
-        { text: I18n.t('zimbra-restore'), icon: 'delete-restore', onPress: this.restore },
-        { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.delete },
+        {
+          title: I18n.t('zimbra-restore'),
+          action: this.restore,
+          iconIos: 'arrow.uturn.backward.circle',
+          iconAndroid: 'ic_restore',
+        },
+        deleteAction({ action: this.delete }),
       ];
     }
     return menuData;
@@ -157,12 +167,17 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
 
   public render() {
     const { error, navigation, mail } = this.props;
-    const { htmlError, showMenu, showMoveModal } = this.state;
+    const { htmlError, showMoveModal } = this.state;
     const menuData = this.setMenuData();
 
     const navBarInfo = {
       title: navigation.state.params.subject ?? mail?.subject,
-      right: error || htmlError ? undefined : <HeaderAction iconName="more_vert" iconSize={24} onPress={this.showMenu} />,
+      right:
+        error || htmlError ? undefined : (
+          <PopupMenu actions={menuData}>
+            <HeaderIcon name="more_vert" iconSize={24} />
+          </PopupMenu>
+        ),
     };
 
     return (
@@ -174,7 +189,6 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
           restore={this.restore}
           checkStorage={this.checkStorage}
         />
-        <DropdownMenu data={menuData} isVisible={showMenu} onTapOutside={this.showMenu} />
         <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />
         <ModalPermanentDelete
           deleteModal={this.state.deleteModal}

@@ -3,8 +3,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
-import { ActionButton } from '~/framework/components/action-button';
 import AlertCard from '~/framework/components/alert';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { KeyboardPageView } from '~/framework/components/page';

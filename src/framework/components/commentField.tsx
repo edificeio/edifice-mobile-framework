@@ -5,12 +5,12 @@ import { Alert, LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpa
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
+import RoundButton from '~/framework/components/buttons/round';
+import { UI_SIZES } from '~/framework/components/constants';
 import { displayPastDate } from '~/framework/util/date';
 import { getUserSession } from '~/framework/util/session';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { RoundButton } from './RoundButton';
-import { UI_SIZES } from './constants';
 import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
 
 // TYPES ==========================================================================================

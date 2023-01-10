@@ -615,9 +615,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     try {
       const { navigation, sendMail } = this.props;
       const { id, replyTo } = this.state;
+      const navParams = navigation.state;
 
       sendMail(this.getMailData(), id, replyTo);
-
+      Keyboard.dismiss();
       Toast.show(I18n.t('conversation.sendMail'), {
         position: Toast.position.BOTTOM,
         mask: false,
@@ -625,7 +626,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         ...UI_ANIMATIONS.toast,
       });
 
-      const navParams = navigation.state;
       if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       navigation.goBack();
     } catch {
@@ -649,9 +649,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             <View style={{ width: 48, alignItems: 'center' }}>
               <PopupMenu
                 actions={[
-                  cameraAction({ callback: addGivenAttachment, synchrone: true }),
-                  galleryAction({ callback: addGivenAttachment, synchrone: true, multiple: true }),
-                  documentAction({ callback: addGivenAttachment, synchrone: true }),
+                  cameraAction({ callback: addGivenAttachment }),
+                  galleryAction({ callback: addGivenAttachment, multiple: true }),
+                  documentAction({ callback: addGivenAttachment }),
                 ]}>
                 <HeaderIcon name="attachment" />
               </PopupMenu>

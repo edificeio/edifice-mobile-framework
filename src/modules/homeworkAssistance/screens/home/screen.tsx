@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/action-button';
+import ActionButton from '~/framework/components/buttons/action';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -22,11 +22,9 @@ import { fetchHomeworkAssistanceConfigAction } from '~/modules/homeworkAssistanc
 import moduleConfig from '~/modules/homeworkAssistance/moduleConfig';
 
 import styles from './styles';
-import { IHomeworkAssistanceHomeScreen_Props } from './types';
+import { IHomeworkAssistanceHomeScreenProps } from './types';
 
-const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreen_Props) => {
-  // LOADER =======================================================================================
-
+const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -62,13 +60,9 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreen_Props
     };
   }, []);
 
-  // EVENTS =======================================================================================
-
   const goToRequest = () => {
     props.navigation.navigate(`${moduleConfig.routeName}/request`);
   };
-
-  // ERROR ========================================================================================
 
   const renderError = () => {
     return (
@@ -78,8 +72,6 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreen_Props
       </ScrollView>
     );
   };
-
-  // INFORMATION ==================================================================================
 
   const renderInformation = () => {
     const { header, body, days, time, info } = props.config.messages;
@@ -115,8 +107,6 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreen_Props
     );
   };
 
-  // RENDER =======================================================================================
-
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
@@ -139,8 +129,6 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreen_Props
     </PageView>
   );
 };
-
-// MAPPING ========================================================================================
 
 export default connect(
   (gs: IGlobalState) => {
