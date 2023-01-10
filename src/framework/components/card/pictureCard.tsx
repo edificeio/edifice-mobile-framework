@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextStyle, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
 
-import { UI_SIZES } from '../constants';
+import { UI_SIZES, getScaleHeight } from '../constants';
 import { Picture, PictureProps } from '../picture';
 import { SmallText } from '../text';
 import { Card, CardWithoutPadding, TouchCard } from './base';

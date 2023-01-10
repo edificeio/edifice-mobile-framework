@@ -49,7 +49,7 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
 
     return (
       <>
-        <PageView statusBar='light'>
+        <PageView statusBar="light">
           <GridList
             data={appConf.platforms}
             renderItem={({ item }) => (

@@ -11,7 +11,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
+import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { Platform } from '~/framework/util/appConf';
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
     marginTop: 0,
-    minHeight: getScaleDimension(20, 'height') * 3,
+    minHeight: getScaleHeight(20) * 3,
   },
 });
 

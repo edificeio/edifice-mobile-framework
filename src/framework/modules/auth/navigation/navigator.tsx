@@ -1,7 +1,6 @@
 /**
  * Navigator for the auth section
  */
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 

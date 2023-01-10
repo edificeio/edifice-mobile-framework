@@ -71,9 +71,6 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: theme.ui.background.card },
   keyboardAvoidingView: { flex: 1, backgroundColor: theme.ui.background.card },
   flexGrow1: { flexGrow: 1 },
-  infoMessage: {
-    height: 38,
-  },
   inputWrapper: {
     alignSelf: 'stretch',
     flex: 0,

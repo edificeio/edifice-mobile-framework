@@ -165,8 +165,8 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const authContext = this.props.route.params.context;
     const formModel = new ActivationFormModel({
       ...authContext,
-      phoneRequired: authContext?.mandatory?.phone,
-      emailRequired: authContext?.mandatory?.mail,
+      phoneRequired: authContext?.mandatory?.phone ?? false,
+      emailRequired: authContext?.mandatory?.mail ?? false,
       password: () => password,
     });
     const isNotValid = !acceptCGU || !formModel.validate({ ...this.state });

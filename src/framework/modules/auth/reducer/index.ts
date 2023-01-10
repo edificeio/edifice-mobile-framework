@@ -101,15 +101,16 @@ export function assertSession() {
   if (!session) throw new Error('[assertSession] no session');
   return session;
 }
+
 /**
  * Get the current active session from Redux state.
  * This is the recommended way to get the session in a component.
  * Though `assertSession` should work, `getSession` does NOT throw exceptions, and return undefined instead,
  * letting you deal with the undefined value as you wish.
- * @param state 
- * @returns 
+ * @param state
+ * @returns
  */
-export function getSession(state: IGlobalState){
+export function getSession(state: IGlobalState) {
   return getState(state).session;
 }
 
