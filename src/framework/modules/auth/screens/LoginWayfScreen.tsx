@@ -5,7 +5,7 @@ import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';

@@ -5,7 +5,7 @@ import deviceInfoModule from 'react-native-device-info';
 import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 
-import { ActionButton, getActionButtonWidth } from '~/framework/components/action-button';
+import { ActionButton, getActionButtonWidth } from '~/framework/components/buttons/action';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';

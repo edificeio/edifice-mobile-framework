@@ -15,8 +15,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
 import AlertCard from '~/framework/components/alert';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
