@@ -849,7 +849,7 @@
   "user.sendEmailVerificationCodeScreen.invalidEmailFormatModify": "The email must be different from the one currently entered.",
   "user.sendEmailVerificationCodeScreen.modify": "Please enter your new email address.",
   "user.sendEmailVerificationCodeScreen.modifyMyEmail": "Change my email",
-  "user.sendEmailVerificationCodeScreen.mustVerify": "En tant qu'administrateur de votre établissement, vous avez accès à des informations sensibles. Pour améliorer la sécurité de votre compte vous devez vérifier votre adresse mail.",
+  "user.sendEmailVerificationCodeScreen.mustVerify": "As an administrator for your school, you have access to sensitive information. To improve your account's security, you must verify your email address.",
   "user.sendEmailVerificationCodeScreen.mustVerifyModify": "By changing your email address, you will be asked to verify it for security reasons.",
   "user.sendEmailVerificationCodeScreen.refuseAndDisconnect": "Decline and sign out",
   "user.sendEmailVerificationCodeScreen.title": "Email verification",
