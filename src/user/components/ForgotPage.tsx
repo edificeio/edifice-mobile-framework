@@ -141,7 +141,11 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
             <KeyboardAvoidingView
               style={{ flex: 1, backgroundColor: theme.ui.background.card }}
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-              <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={{ flexGrow: 1 }}>
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                alwaysBounceVertical={false}
+                overScrollMode="never"
+                contentContainerStyle={{ flexGrow: 1 }}>
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
