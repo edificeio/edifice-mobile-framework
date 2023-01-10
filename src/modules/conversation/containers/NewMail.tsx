@@ -615,9 +615,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     try {
       const { navigation, sendMail } = this.props;
       const { id, replyTo } = this.state;
+      const navParams = navigation.state;
 
       sendMail(this.getMailData(), id, replyTo);
-
+      Keyboard.dismiss();
       Toast.show(I18n.t('conversation.sendMail'), {
         position: Toast.position.BOTTOM,
         mask: false,
@@ -625,7 +626,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         ...UI_ANIMATIONS.toast,
       });
 
-      const navParams = navigation.state;
       if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       navigation.goBack();
     } catch {
