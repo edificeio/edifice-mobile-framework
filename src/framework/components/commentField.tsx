@@ -5,8 +5,8 @@ import { Alert, LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpa
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
+import RoundButton from '~/framework/components/buttons/round';
 import { UI_SIZES } from '~/framework/components/constants';
-import RoundButton from '~/framework/components/round-button';
 import { displayPastDate } from '~/framework/util/date';
 import { getUserSession } from '~/framework/util/session';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';

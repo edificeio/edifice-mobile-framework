@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import ActionButton from '~/framework/components/action-button';
+import ActionButton from '~/framework/components/buttons/action';
 
 import styles from './styles';
 import { RoundButtonProps } from './types';

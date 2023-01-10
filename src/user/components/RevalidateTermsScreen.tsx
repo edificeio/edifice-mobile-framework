@@ -6,8 +6,8 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';

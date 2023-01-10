@@ -8,9 +8,9 @@ import * as React from 'react';
 import { ColorValue, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
-import { ActionButton } from './action-button';
 import { UI_SIZES, getScaleImageSize } from './constants';
 import { PageViewStyle } from './page';
 import { HeadingSText, SmallText } from './text';

@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { IFolder } from '~/modules/conversation/state/initMails';

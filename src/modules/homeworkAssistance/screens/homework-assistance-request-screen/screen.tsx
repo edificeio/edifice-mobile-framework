@@ -11,8 +11,8 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/action-button';
 import AlertCard from '~/framework/components/alert';
+import ActionButton from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
