@@ -8,8 +8,9 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
-import { HeaderAction, HeaderBackAction, HeaderTitle } from '~/framework/components/header';
+import { HeaderAction, HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import PopupMenu, { deleteAction } from '~/framework/components/popup-menu';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
@@ -28,7 +29,6 @@ import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaMod
 import { IFolder, getInitMailListState } from '~/modules/zimbra/state/initMails';
 import { IMail, getMailListState } from '~/modules/zimbra/state/mailList';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
-import { DropdownMenu } from '~/ui/DropdownMenu';
 
 import { IInit } from './DrawerMenuContainer';
 
@@ -67,7 +67,6 @@ type MailListContainerState = {
   unsubscribe: any;
   fetchRequested: boolean;
   firstFetch: boolean;
-  isDropdownMenuVisible: boolean;
   isShownMoveModal: boolean;
   isHeaderSelectVisible: boolean;
   deleteModal: { isShown: boolean; mailsIds: string[] };
@@ -85,7 +84,6 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       }),
       fetchRequested: false,
       firstFetch: false,
-      isDropdownMenuVisible: false,
       isShownMoveModal: false,
       isHeaderSelectVisible: false,
       deleteModal: { isShown: false, mailsIds: [] },
@@ -165,7 +163,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     const { mails } = this.state;
     const newMails = mails.map(mail => (mail.isChecked = false));
 
-    this.setState({ mails: newMails, isHeaderSelectVisible: false, isDropdownMenuVisible: false });
+    this.setState({ mails: newMails, isHeaderSelectVisible: false });
     if (this.props.isSearch) this.props.setSearchHeaderVisibility(false);
     this.props.navigation.setParams({ selectedMails: false });
     if (!goBack) this.fetchMails(0);
@@ -283,11 +281,6 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     this.fetchMails(0);
   };
 
-  showDropdown = () => {
-    const { isDropdownMenuVisible } = this.state;
-    this.setState({ isDropdownMenuVisible: !isDropdownMenuVisible });
-  };
-
   getNavBarActions = () => {
     const { navigation } = this.props;
     const isTrash = navigation.getParam('isTrashed') || navigation.state.routeName === 'trash';
@@ -298,17 +291,22 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         ]
       : [
           { icon: this.checkMailReadState() ? 'email' : 'email-open', onPress: this.markSelectedMailsAsUnread },
-          { icon: 'more_vert', onPress: this.showDropdown },
+          { icon: 'more_vert' },
         ];
   };
 
   getDropdownActions = (route: string) => {
     if (route === 'sendMessages') {
-      return [{ text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.deleteSelectedMails }];
+      return [deleteAction({ action: this.deleteSelectedMails })];
     }
     return [
-      { text: I18n.t('zimbra-move'), icon: 'package-up', onPress: this.showMoveModal },
-      { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.deleteSelectedMails },
+      {
+        title: I18n.t('zimbra-move'),
+        action: this.showMoveModal,
+        iconIos: 'arrow.up.square',
+        iconAndroid: 'ic_move_to_inbox',
+      },
+      deleteAction({ action: this.deleteSelectedMails }),
     ];
   };
 
@@ -324,7 +322,15 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
           <HeaderTitle>{this.getListSelectedMails().length}</HeaderTitle>
         </>
       ),
-      right: navBarActions.map(action => <HeaderAction iconName={action.icon} iconSize={24} onPress={action.onPress} />),
+      right: navBarActions.map(action =>
+        action.icon === 'more_vert' ? (
+          <PopupMenu actions={this.getDropdownActions(navigation.state.routeName)}>
+            <HeaderIcon name={action.icon} iconSize={24} />
+          </PopupMenu>
+        ) : (
+          <HeaderAction iconName={action.icon} iconSize={24} onPress={action.onPress} />
+        ),
+      ),
       style: {
         backgroundColor: theme.palette.secondary.regular,
       },
@@ -343,12 +349,6 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
           isHeaderSelectVisible={this.state.isHeaderSelectVisible}
           selectMails={this.selectMails}
           goBack={this.onGoBack}
-        />
-        <DropdownMenu
-          data={this.getDropdownActions(navigation.state.routeName)}
-          isVisible={this.state.isDropdownMenuVisible}
-          onTapOutside={this.showDropdown}
-          color={theme.palette.secondary.regular}
         />
         {this.isStorageFull() && (
           <ModalStorageWarning
