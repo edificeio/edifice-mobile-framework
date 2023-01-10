@@ -1,6 +1,6 @@
 {
-  "last": "2023-01-06 19:33:46",
-  "notes": "fix(email-check): Change /auth/context by /auth/user/requirements\nrelease: 1.9.1-alpha.10(1090110)",
-  "version": "1.9.1-alpha.11(1090111)",
+  "last": "2023-01-10 19:06:17",
+  "notes": "chore(i18n): MB-1022, Fix translations mismatch\nchore(i18n): MB-1022, Add missing translations\nfix(zimbra): AMZ-120, found users list android nested scroll\nrelease: 1.9.1-alpha.11(1090111)",
+  "version": "1.9.1-alpha.12(1090112)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
