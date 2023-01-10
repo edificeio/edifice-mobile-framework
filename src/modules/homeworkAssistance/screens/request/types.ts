@@ -13,7 +13,7 @@ interface IChild {
   lastName: string;
 }
 
-export interface IHomeworkAssistanceRequestScreen_DataProps {
+export interface IHomeworkAssistanceRequestScreenDataProps {
   className: string;
   config: IConfig;
   initialLoadingState: AsyncPagedLoadingState;
@@ -23,7 +23,7 @@ export interface IHomeworkAssistanceRequestScreen_DataProps {
   children?: IChild[];
 }
 
-export interface IHomeworkAssistanceRequestScreen_EventProps {
+export interface IHomeworkAssistanceRequestScreenEventProps {
   addRequest: (
     service: IService,
     phoneNumber: string,
@@ -39,6 +39,6 @@ export interface IHomeworkAssistanceRequestScreen_EventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 
-export type IHomeworkAssistanceRequestScreen_Props = IHomeworkAssistanceRequestScreen_DataProps &
-  IHomeworkAssistanceRequestScreen_EventProps &
+export type IHomeworkAssistanceRequestScreenProps = IHomeworkAssistanceRequestScreenDataProps &
+  IHomeworkAssistanceRequestScreenEventProps &
   NavigationInjectedProps;
