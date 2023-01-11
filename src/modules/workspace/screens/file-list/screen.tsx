@@ -407,6 +407,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                   ]
                 : [],
           })}
+          bottomInset
         />
         {renderModal()}
       </>
