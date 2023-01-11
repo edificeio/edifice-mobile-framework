@@ -11,7 +11,6 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
 import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -24,6 +23,7 @@ import PopupMenu, {
   galleryAction,
 } from '~/framework/components/popup-menu';
 import ScrollView from '~/framework/components/scrollView';
+import SwipeableList from '~/framework/components/swipeableList';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -163,32 +163,32 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     props.fetchFiles(props.filter, props.parentId);
   };
 
-  const onModalAction = (files: IFile[], value: string, destinationId: string) => {
+  const onModalAction = async (files: IFile[], value: string, destinationId: string) => {
     const { parentId } = props;
     const ids = files.map(f => f.id);
     setSelectedFiles([]);
     modalBoxRef?.current?.doDismissModal();
     switch (modalType) {
       case WorkspaceModalType.CREATE_FOLDER:
-        props.createFolder(value, parentId);
+        await props.createFolder(value, parentId);
         return fetchList(parentId, true);
       case WorkspaceModalType.DELETE:
-        props.deleteFiles(parentId, ids);
+        await props.deleteFiles(parentId, ids);
         return fetchList(parentId, true);
       case WorkspaceModalType.DOWNLOAD:
         return props.downloadFiles(files);
       case WorkspaceModalType.DUPLICATE:
-        props.duplicateFiles(parentId, ids, destinationId);
+        await props.duplicateFiles(parentId, ids, destinationId);
         return fetchList(destinationId, true);
       case WorkspaceModalType.EDIT:
-        props.renameFile(files[0], value);
+        await props.renameFile(files[0], value);
         return fetchList(parentId, true);
       case WorkspaceModalType.MOVE:
-        props.moveFiles(parentId, ids, destinationId);
+        await props.moveFiles(parentId, ids, destinationId);
         props.fetchFiles(props.filter, destinationId);
         return fetchList(parentId, true);
       case WorkspaceModalType.TRASH:
-        props.trashFiles(parentId, ids);
+        await props.trashFiles(parentId, ids);
         return fetchList(parentId, true);
     }
   };
@@ -339,7 +339,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   const renderFileList = () => {
     return (
       <>
-        <FlatList
+        <SwipeableList
           data={props.files}
           keyExtractor={(item: IFile) => item.id}
           renderItem={({ item }) => (
@@ -353,6 +353,60 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListEmptyComponent={renderEmpty()}
           contentContainerStyle={styles.listContainer}
+          rightOpenValue={-140}
+          leftOpenValue={140}
+          swipeActionWidth={140}
+          itemSwipeActionProps={({ item }) => ({
+            left:
+              props.filter === Filter.TRASH
+                ? [
+                    {
+                      action: async row => {
+                        if (selectedFiles.includes(item.key)) {
+                          selectFile(item);
+                        }
+                        props.restoreFiles(props.parentId, [item.key]).then(() => fetchList(props.parentId, true));
+                        row[item.key]?.closeRow();
+                      },
+                      backgroundColor: theme.palette.status.success.regular,
+                      actionText: I18n.t('conversation.restore'),
+                      actionIcon: 'ui-unarchive',
+                    },
+                  ]
+                : [],
+            right:
+              props.filter === Filter.OWNER
+                ? [
+                    {
+                      action: async row => {
+                        if (selectedFiles.includes(item.key)) {
+                          selectFile(item);
+                        }
+                        props.trashFiles(props.parentId, [item.key]).then(() => fetchList(props.parentId, true));
+                        row[item.key]?.closeRow();
+                      },
+                      backgroundColor: theme.palette.status.failure.regular,
+                      actionText: I18n.t('delete'),
+                      actionIcon: 'ui-trash',
+                    },
+                  ]
+                : props.filter === Filter.TRASH
+                ? [
+                    {
+                      action: async row => {
+                        if (selectedFiles.includes(item.key)) {
+                          selectFile(item);
+                        }
+                        props.deleteFiles(props.parentId, [item.key]).then(() => fetchList(props.parentId, true));
+                        row[item.key]?.closeRow();
+                      },
+                      backgroundColor: theme.palette.status.failure.regular,
+                      actionText: I18n.t('delete'),
+                      actionIcon: 'ui-trash',
+                    },
+                  ]
+                : [],
+          })}
         />
         {renderModal()}
       </>

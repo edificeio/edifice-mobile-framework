@@ -14,18 +14,18 @@ export interface IWorkspaceFileListScreenDataProps {
 }
 
 export interface IWorkspaceFileListScreenEventProps {
-  createFolder: (name: string, parentId: string) => void;
-  deleteFiles: (parentId: string, ids: string[]) => void;
-  downloadFiles: (files: IFile[]) => void;
-  duplicateFiles: (parentId: string, ids: string[], destinationId: string) => void;
-  fetchFiles: (filter: Filter, parentId: string) => void;
-  listFolders: () => void;
-  moveFiles: (parentId: string, ids: string[], destinationId: string) => void;
-  previewFile: (file: IFile) => void;
-  renameFile: (file: IFile, name: string) => void;
-  restoreFiles: (parentId: string, ids: string[]) => void;
-  trashFiles: (parentId: string, ids: string[]) => void;
-  uploadFile: (parentId: string, lf: LocalFile) => void;
+  createFolder: (name: string, parentId: string) => Promise<void>;
+  deleteFiles: (parentId: string, ids: string[]) => Promise<void>;
+  downloadFiles: (files: IFile[]) => Promise<void>;
+  duplicateFiles: (parentId: string, ids: string[], destinationId: string) => Promise<void>;
+  fetchFiles: (filter: Filter, parentId: string) => Promise<IFile[]>;
+  listFolders: () => Promise<IFolder[]>;
+  moveFiles: (parentId: string, ids: string[], destinationId: string) => Promise<void>;
+  previewFile: (file: IFile) => Promise<void>;
+  renameFile: (file: IFile, name: string) => Promise<void>;
+  restoreFiles: (parentId: string, ids: string[]) => Promise<void>;
+  trashFiles: (parentId: string, ids: string[]) => Promise<void>;
+  uploadFile: (parentId: string, lf: LocalFile) => Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
 }
 
