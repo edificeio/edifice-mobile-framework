@@ -1,3 +1,3 @@
-import UserScreen from './screen';
+import UserProfileScreen from './screen';
 
-export default UserScreen;
+export default UserProfileScreen;

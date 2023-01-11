@@ -141,6 +141,7 @@
   "common-ErrorStorageAccessAlertText": "Erreur lors de l'ajout de document. L'application n'a pas accès au stockage de votre appareil. Vous pouvez modifier cette autorisation dans les paramètres de l'application.",
   "common-ErrorStorageAccessAlertTitle": "Accès au stockage de l'appareil refusé",
   "common-ErrorUnknown": "Erreur",
+  "common-ErrorUnknown2": "Une erreur est survenue",
   "common-InvalidDate": "Date invalide",
   "common-VersionContent": "Une nouvelle version ({{version}}) est disponible sur le store si vous le souhaitez.",
   "common-VersionContentMandatory": "Une nouvelle version ({{version}}) est disponible sur le store. Veuillez mettre à jour votre application.",
