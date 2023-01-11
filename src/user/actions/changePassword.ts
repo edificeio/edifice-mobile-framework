@@ -7,6 +7,7 @@ import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
+import { signedFetch } from '~/infra/fetchWithCache';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
@@ -117,7 +118,7 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
       }
       // === 2 - Send change password information
       dispatch(changePasswordSubmitRequestedAction(model));
-      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/reset`, {
+      const res = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/reset`, {
         body: formdata,
         headers: {
           Accept: 'application/json',
