@@ -9,6 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
@@ -25,6 +26,7 @@ import PopupMenu, {
 import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { IMedia } from '~/framework/util/media';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -135,11 +137,27 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
+  const openMedia = (file: IFile) => {
+    const data = props.files
+      .filter(f => f.contentType?.startsWith('image'))
+      .map(f => ({
+        type: 'image',
+        src: { uri: f.url },
+        link: f.url,
+      })) as IMedia[];
+    const startIndex = data.findIndex(f => f.link === file.url);
+    openCarousel({ data, startIndex }, props.navigation);
+  };
+
   const onPressFile = (file: IFile) => {
-    if (Platform.OS === 'ios' && !isSelectionActive && !file.isFolder) {
-      return props.previewFile(file);
-    } else if (isSelectionActive) {
+    if (isSelectionActive) {
       return selectFile(file);
+    }
+    if (file.contentType?.startsWith('image')) {
+      return openMedia(file);
+    }
+    if (Platform.OS === 'ios' && !file.isFolder) {
+      return props.previewFile(file);
     }
     const { id, name: title, isFolder } = file;
     if (isFolder) {
@@ -295,9 +313,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         <HeaderIcon name={menuActions.navBarActions.icon} iconSize={menuActions.navBarActions.icon === 'more_vert' ? 26 : 20} />
       </PopupMenu>
     ),
-    style: {
-      backgroundColor: theme.palette.primary.regular,
-    },
   };
 
   const renderEmpty = () => {
