@@ -8,6 +8,7 @@
  * - Handle keyboard
  */
 import styled from '@emotion/native';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
 import {
@@ -119,15 +120,16 @@ export const KeyboardPageView = (
     ios: 'padding',
     android: undefined,
   }) as KeyboardAvoidingViewProps['behavior'];
-  // BEWARE of adding keyboardVerticalOffset in the future when we'll get back the real React Navigation headers.
   const { children, gutters, ...pageProps } = props;
   const InnerViewComponent = props.scrollable ? ScrollView : View;
   const AreaComponent = props.safeArea ?? true ? SafeAreaView : View;
+  const headerHeight = useHeaderHeight();
   return (
     <PageView gutters={gutters} {...pageProps}>
       <KeyboardAvoidingView
         behavior={keyboardAvoidingViewBehavior}
-        keyboardVerticalOffset={UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset}
+        keyboardVerticalOffset={headerHeight} // top inset height is included in headerHeight by React Navigation
+        contentContainerStyle={styles.flexGrow1}
         style={styles.flex1}>
         <InnerViewComponent
           style={styles.flex1}
