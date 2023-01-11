@@ -7,10 +7,8 @@ import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
 
 export interface IWorkspaceFileListScreenDataProps {
   files: IFile[];
-  filter: Filter;
   folderTree: IFolder[];
   initialLoadingState: AsyncPagedLoadingState;
-  parentId: string;
 }
 
 export interface IWorkspaceFileListScreenEventProps {
@@ -29,6 +27,12 @@ export interface IWorkspaceFileListScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 
+export interface IWorkspaceFileListScreenNavigationParams {
+  filter: Filter;
+  parentId: string;
+  title: string;
+}
+
 export type IWorkspaceFileListScreenProps = IWorkspaceFileListScreenDataProps &
   IWorkspaceFileListScreenEventProps &
-  NavigationInjectedProps;
+  NavigationInjectedProps<IWorkspaceFileListScreenNavigationParams>;

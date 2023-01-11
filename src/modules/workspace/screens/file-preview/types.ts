@@ -15,6 +15,11 @@ export interface IWorkspaceFilePreviewScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 
+export interface IWorkspaceFilePreviewScreenNavigationParams {
+  file: IFile;
+  title: string;
+}
+
 export type IWorkspaceFilePreviewScreenProps = IWorkspaceFilePreviewScreenDataProps &
   IWorkspaceFilePreviewScreenEventProps &
-  NavigationInjectedProps;
+  NavigationInjectedProps<IWorkspaceFilePreviewScreenNavigationParams>;

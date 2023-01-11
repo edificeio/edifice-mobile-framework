@@ -54,6 +54,8 @@ import styles from './styles';
 import { IWorkspaceFileListScreenProps } from './types';
 
 const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
+  const filter = props.navigation.getParam('filter');
+  const parentId = props.navigation.getParam('parentId');
   const [selectedFiles, setSelectedFiles] = React.useState<string[]>([]);
   const [modalType, setModalType] = React.useState<WorkspaceModalType>(WorkspaceModalType.NONE);
   const modalBoxRef: { current: any } = React.createRef();
@@ -64,11 +66,12 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  const fetchList = async (parentId: string = props.parentId, shouldRefreshFolderList?: boolean) => {
+  const fetchList = async (id: string = parentId, shouldRefreshFolderList?: boolean) => {
     try {
-      await props.fetchFiles(props.filter, parentId);
-      if (!props.folderTree.length || shouldRefreshFolderList) {
-        await props.listFolders();
+      const { fetchFiles, listFolders, folderTree } = props;
+      await fetchFiles(filter, id);
+      if (!folderTree.length || shouldRefreshFolderList) {
+        await listFolders();
       }
     } catch (e) {
       throw e;
@@ -138,7 +141,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   };
 
   const openMedia = (file: IFile) => {
-    const data = props.files
+    const { files, navigation } = props;
+    const data = files
       .filter(f => f.contentType?.startsWith('image'))
       .map(f => ({
         type: 'image',
@@ -146,7 +150,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         link: f.url,
       })) as IMedia[];
     const startIndex = data.findIndex(f => f.link === file.url);
-    openCarousel({ data, startIndex }, props.navigation);
+    openCarousel({ data, startIndex }, navigation);
   };
 
   const onPressFile = (file: IFile) => {
@@ -159,30 +163,30 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     if (Platform.OS === 'ios' && !file.isFolder) {
       return props.previewFile(file);
     }
+    const { navigation } = props;
     const { id, name: title, isFolder } = file;
     if (isFolder) {
-      const filter = props.filter === Filter.ROOT ? id : props.filter;
-      props.navigation.push(computeRelativePath(moduleConfig.routeName, props.navigation.state), { filter, parentId: id, title });
+      const newFilter = filter === Filter.ROOT ? id : filter;
+      navigation.push(computeRelativePath(moduleConfig.routeName, navigation.state), { filter: newFilter, parentId: id, title });
     } else {
-      props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/preview`, props.navigation.state), { file, title });
+      navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/preview`, navigation.state), { file, title });
     }
   };
 
   const uploadFile = async (file: Asset | DocumentPicked) => {
     const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
-    await props.uploadFile(props.parentId, lf);
-    props.fetchFiles(props.filter, props.parentId);
+    await props.uploadFile(parentId, lf);
+    fetchList();
   };
 
   const restoreSelectedFiles = async () => {
     const ids = selectedFiles;
     setSelectedFiles([]);
-    props.restoreFiles(props.parentId, ids);
-    props.fetchFiles(props.filter, props.parentId);
+    props.restoreFiles(parentId, ids);
+    fetchList();
   };
 
   const onModalAction = async (files: IFile[], value: string, destinationId: string) => {
-    const { parentId } = props;
     const ids = files.map(f => f.id);
     setSelectedFiles([]);
     modalBoxRef?.current?.doDismissModal();
@@ -203,7 +207,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         return fetchList(parentId, true);
       case WorkspaceModalType.MOVE:
         await props.moveFiles(parentId, ids, destinationId);
-        props.fetchFiles(props.filter, destinationId);
+        fetchList(destinationId);
         return fetchList(parentId, true);
       case WorkspaceModalType.TRASH:
         await props.trashFiles(parentId, ids);
@@ -218,7 +222,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     if (isSelectionActive) {
       const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
       const popupMenuActions = [
-        ...(selectedFiles.length === 1 && props.filter === Filter.OWNER
+        ...(selectedFiles.length === 1 && filter === Filter.OWNER
           ? [
               {
                 title: I18n.t('rename'),
@@ -228,7 +232,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               },
             ]
           : []),
-        ...(props.filter !== Filter.TRASH
+        ...(filter !== Filter.TRASH
           ? [
               {
                 title: I18n.t('copy'),
@@ -238,7 +242,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               },
             ]
           : []),
-        ...(props.filter === Filter.OWNER
+        ...(filter === Filter.OWNER
           ? [
               {
                 title: I18n.t('move'),
@@ -248,7 +252,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               },
             ]
           : []),
-        ...(props.filter === Filter.TRASH
+        ...(filter === Filter.TRASH
           ? [
               {
                 title: I18n.t('conversation.restore'),
@@ -268,22 +272,22 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               },
             ]
           : []),
-        ...((selectedFiles.length >= 1 && props.filter === Filter.OWNER) || props.filter === Filter.TRASH
+        ...((selectedFiles.length >= 1 && filter === Filter.OWNER) || filter === Filter.TRASH
           ? [
               deleteAction({
-                action: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+                action: () => openModal(filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
               }),
             ]
           : []),
       ];
       return { navBarActions: { icon: 'more_vert' }, popupMenuActions };
     }
-    if (props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED)) {
+    if (filter === Filter.OWNER || (filter === Filter.SHARED && parentId !== Filter.SHARED)) {
       const popupMenuActions = [
         cameraAction({ callback: uploadFile }),
         galleryAction({ callback: uploadFile, multiple: true }),
         documentAction({ callback: uploadFile }),
-        ...(props.filter === Filter.OWNER
+        ...(filter === Filter.OWNER
           ? [
               {
                 title: I18n.t('create-folder'),
@@ -316,8 +320,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   };
 
   const renderEmpty = () => {
-    const image = props.parentId === Filter.TRASH ? 'empty-trash' : 'empty-workspace';
-    const screen = Object.values(Filter).includes(props.parentId as Filter) ? props.parentId : 'subfolder';
+    const image = parentId === Filter.TRASH ? 'empty-trash' : 'empty-workspace';
+    const screen = Object.values(Filter).includes(parentId as Filter) ? parentId : 'subfolder';
     return (
       <EmptyScreen
         svgImage={image}
@@ -340,10 +344,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     const files = props.files.filter(file => selectedFiles.includes(file.id));
     return (
       <WorkspaceModal
-        filter={props.filter}
+        filter={filter}
         folderTree={props.folderTree}
         modalBoxRef={modalBoxRef}
-        parentId={props.parentId}
+        parentId={parentId}
         selectedFiles={files}
         type={modalType}
         onAction={onModalAction}
@@ -374,14 +378,14 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           swipeActionWidth={140}
           itemSwipeActionProps={({ item }) => ({
             left:
-              props.filter === Filter.TRASH
+              filter === Filter.TRASH
                 ? [
                     {
                       action: async row => {
                         if (selectedFiles.includes(item.key)) {
                           selectFile(item);
                         }
-                        props.restoreFiles(props.parentId, [item.key]).then(() => fetchList(props.parentId, true));
+                        props.restoreFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.success.regular,
@@ -391,14 +395,14 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                   ]
                 : [],
             right:
-              props.filter === Filter.OWNER
+              filter === Filter.OWNER
                 ? [
                     {
                       action: async row => {
                         if (selectedFiles.includes(item.key)) {
                           selectFile(item);
                         }
-                        props.trashFiles(props.parentId, [item.key]).then(() => fetchList(props.parentId, true));
+                        props.trashFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
@@ -406,14 +410,14 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                       actionIcon: 'ui-trash',
                     },
                   ]
-                : props.filter === Filter.TRASH
+                : filter === Filter.TRASH
                 ? [
                     {
                       action: async row => {
                         if (selectedFiles.includes(item.key)) {
                           selectFile(item);
                         }
-                        props.deleteFiles(props.parentId, [item.key]).then(() => fetchList(props.parentId, true));
+                        props.deleteFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
@@ -458,11 +462,9 @@ export default connect(
     const parentId = props.navigation.getParam('parentId');
     return {
       files: state.directories.data[parentId] ?? [],
-      filter: props.navigation.getParam('filter'),
       folderTree: state.folderTree.data,
       initialLoadingState:
         state.directories[parentId] === undefined ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
-      parentId,
       session: getUserSession(),
     };
   },
