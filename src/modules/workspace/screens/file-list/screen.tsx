@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, RefreshControl } from 'react-native';
+import { Platform, RefreshControl, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { NavigationActions, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -57,6 +57,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   const filter = props.navigation.getParam('filter');
   const parentId = props.navigation.getParam('parentId');
   const [selectedFiles, setSelectedFiles] = React.useState<string[]>([]);
+  const [isUploading, setUploading] = React.useState(false);
   const [modalType, setModalType] = React.useState<WorkspaceModalType>(WorkspaceModalType.NONE);
   const modalBoxRef: { current: any } = React.createRef();
   const isSelectionActive = selectedFiles.length > 0;
@@ -174,8 +175,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   };
 
   const uploadFile = async (file: Asset | DocumentPicked) => {
-    const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
-    await props.uploadFile(parentId, lf);
+    setUploading(true);
+    await props.uploadFile(parentId, new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
+    setUploading(false);
     fetchList();
   };
 
@@ -428,6 +430,11 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                 : [],
           })}
         />
+        {isUploading ? (
+          <View style={styles.uploadIndicatorContainer}>
+            <LoadingIndicator />
+          </View>
+        ) : null}
         {renderModal()}
       </>
     );
