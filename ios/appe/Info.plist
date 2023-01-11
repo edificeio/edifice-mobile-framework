@@ -5,7 +5,7 @@
 	<key>BundleVersionOverride</key>
 	<string>dev/default</string>
 	<key>BundleVersionType</key>
-	<string>alpha.12</string>
+	<string>rc.1</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
@@ -25,7 +25,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1090112</string>
+	<string>1090113</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
