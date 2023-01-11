@@ -9,13 +9,13 @@ import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { AuthRouteNames, IAuthNavigationParams } from '.';
 import ActivationScreen from '../screens/ActivationScreen';
-import ChangePasswordScreen from '../screens/ChangePasswordScreen';
 import ForgotScreen from '../screens/ForgotScreen';
 import LoginHomeScreen from '../screens/LoginHomeScreen';
 import LoginWayfScreen from '../screens/LoginWayfScreen';
 import PlatformSelectScreen from '../screens/PlatformSelectScreen';
 import RevalidateTermsScreen from '../screens/RevalidateTermsScreen';
 import WayfScreen from '../screens/WayfScreen';
+import ChangePasswordScreen from '../screens/change-password';
 import OnboardingScreen from '../screens/onboarding';
 
 const Stack = getTypedRootStack<IAuthNavigationParams>();

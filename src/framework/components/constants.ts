@@ -82,6 +82,7 @@ export const UI_SIZES = {
     icon: 24,
     actionButtonBorder: 2,
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
+    /** @deprecated use useHeaderHeight() instead */
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,

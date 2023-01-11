@@ -10,6 +10,7 @@ import appConf, { Platform } from '~/framework/util/appConf';
 
 import { ILoginResult } from '../actions';
 import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '../model';
+import type { ChangePasswordScreenNavParams } from '../screens/change-password/types';
 
 export enum AuthRouteNames {
   loginHome = 'LoginHome',
@@ -29,13 +30,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.activation]: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
   [AuthRouteNames.forgot]: { platform: Platform; mode: ForgotMode };
   [AuthRouteNames.revalidateTerms]: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
-  [AuthRouteNames.changePassword]: {
-    platform: Platform;
-    context: IAuthContext;
-    credentials?: IAuthCredentials;
-    rememberMe?: boolean;
-    forceChange?: boolean;
-  };
+  [AuthRouteNames.changePassword]: ChangePasswordScreenNavParams;
 }
 
 export const getLoginRouteName = (platform?: Platform) => {
