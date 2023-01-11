@@ -47,16 +47,6 @@ interface IWorkspaceModalSettings {
   hasInput?: boolean;
 }
 
-export interface IWorkspaceModalEventProps {
-  createFolder: (name: string, parentId: string) => void;
-  deleteFiles: (parentId: string, files: IFile[]) => void;
-  downloadFiles: (files: IFile[]) => void;
-  duplicateFiles: (parentId: string, files: IFile[], destinationId: string) => void;
-  moveFiles: (parentId: string, files: IFile[], destinationId: string) => void;
-  renameFile: (file: IFile, name: string) => void;
-  trashFiles: (parentId: string, files: IFile[]) => void;
-}
-
 interface IWorkspaceModalProps {
   filter: Filter;
   folderTree: IFolder[];
