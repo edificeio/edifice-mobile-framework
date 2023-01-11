@@ -21,7 +21,7 @@ import { getActiveSession } from '~/framework/util/session';
 
 import { navigationRef } from './helper';
 import { MainNavigation } from './mainNavigation';
-import modals from './modals';
+import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
 

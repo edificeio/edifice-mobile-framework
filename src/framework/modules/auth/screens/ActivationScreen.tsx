@@ -22,6 +22,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
+import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -154,10 +155,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   };
 
   private handleOpenCGU = (url: string) => {
-    this.props.navigation.navigate({
-      name: '$pdf',
-      params: { src: url, title: I18n.t('activation-cgu') },
-    });
+    openPdfReader({ src: url, title: I18n.t('activation-cgu') });
   };
 
   public render() {
