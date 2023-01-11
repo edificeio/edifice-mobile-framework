@@ -289,6 +289,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
   }
 
   async doSend() {
+    Keyboard.dismiss();
     try {
       this.setState({ sendLoadingState: true });
       await this.doSendPost();
