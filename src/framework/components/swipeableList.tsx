@@ -186,6 +186,7 @@ export default React.forwardRef(
       data,
       bottomInset,
       ListFooterComponent,
+      scrollIndicatorInsets,
       renderItem,
       ...otherListProps
     } = props;
@@ -330,6 +331,7 @@ export default React.forwardRef(
         onRowOpen={onRowOpen}
         onRowClose={onRowClose}
         ListFooterComponent={realListFooterComponent}
+        scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }}
       />
     );
   },

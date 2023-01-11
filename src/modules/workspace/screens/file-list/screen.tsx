@@ -368,6 +368,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListEmptyComponent={renderEmpty()}
           contentContainerStyle={styles.listContainer}
+          bottomInset
           rightOpenValue={-140}
           leftOpenValue={140}
           swipeActionWidth={140}
@@ -422,7 +423,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                   ]
                 : [],
           })}
-          bottomInset
         />
         {renderModal()}
       </>
