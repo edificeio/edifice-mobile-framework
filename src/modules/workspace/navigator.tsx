@@ -4,15 +4,15 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { addViewTrackingToStackRoutes } from '~/framework/util/tracker/withViewTracking';
 
 import moduleConfig from './moduleConfig';
-import WorkspaceFileDetailsScreen from './screens/WorkspaceFileDetailsScreen';
 import WorkspaceFileListScreen from './screens/file-list';
+import WorkspaceFilePreviewScreen from './screens/file-preview';
 
 export const timelineRoutes = addViewTrackingToStackRoutes({
   [moduleConfig.routeName]: {
     screen: WorkspaceFileListScreen,
   },
-  [`${moduleConfig.routeName}/details`]: {
-    screen: WorkspaceFileDetailsScreen,
+  [`${moduleConfig.routeName}/preview`]: {
+    screen: WorkspaceFilePreviewScreen,
   },
 });
 

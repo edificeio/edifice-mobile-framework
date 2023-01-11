@@ -146,7 +146,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       const filter = props.filter === Filter.ROOT ? id : props.filter;
       props.navigation.push(computeRelativePath(moduleConfig.routeName, props.navigation.state), { filter, parentId: id, title });
     } else {
-      props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), { file, title });
+      props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/preview`, props.navigation.state), { file, title });
     }
   };
 
