@@ -166,7 +166,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
               placeholder={I18n.t('Login')}
               onChangeText={this.onLoginChanged.bind(this)}
               value={login}
-              hasError={showError}
+              hasError={!!error && showError}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -178,7 +178,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
               placeholder={I18n.t('Password')}
               onChangeText={this.onPasswordChanged.bind(this)}
               value={password}
-              hasError={showError}
+              hasError={!!error && showError}
             />
             <View style={styles.inputCheckbox}>
               <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('AutoLogin')}</CaptionText>
