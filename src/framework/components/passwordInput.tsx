@@ -5,11 +5,16 @@ import { TextField } from 'rn-material-ui-textfield';
 
 import theme from '~/app/theme';
 
+import { UI_SIZES } from './constants';
+
 const styles = StyleSheet.create({
   icon: {
     position: 'absolute',
     top: 33,
     right: 0,
+  },
+  input: {
+    paddingRight: UI_SIZES.dimensions.width.largePlus,
   },
 });
 
@@ -30,7 +35,7 @@ const PasswordInput = ({ iconSize = 25, iconColor = theme.ui.text.light, label =
 
   return (
     <View style={style}>
-      <TextField {...rest} ref={passReference} secureTextEntry={isPassword} label={label} />
+      <TextField {...rest} ref={passReference} secureTextEntry={isPassword} label={label} style={styles.input} />
       <Icon style={styles.icon} name={eyeIcon} size={iconSize} color={iconColor} onPress={changePwdType} />
     </View>
   );
