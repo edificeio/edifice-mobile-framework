@@ -39,8 +39,10 @@ export default function cameraAction(props: PopupPickerActionProps & { useFrontC
 
   return {
     title: I18n.t('common-photoPicker-take'),
-    iconIos: 'camera',
-    iconAndroid: 'ic_camera',
+    icon: {
+      ios: 'camera',
+      android: 'ic_camera',
+    },
     action,
   };
 }

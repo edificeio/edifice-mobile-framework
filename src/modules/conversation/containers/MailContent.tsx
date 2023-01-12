@@ -136,7 +136,7 @@ class MailContentContainer extends React.PureComponent<
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         ...UI_ANIMATIONS.toast,
       });
-    } catch (error) {
+    } catch {
       // TODO: Manage error
     }
   };
@@ -157,14 +157,18 @@ class MailContentContainer extends React.PureComponent<
       {
         title: I18n.t('conversation.markUnread'),
         action: () => this.markAsRead(),
-        iconIos: 'eye.slash',
-        iconAndroid: 'ic_visibility_off',
+        icon: {
+          ios: 'eye.slash',
+          android: 'ic_visibility_off',
+        },
       },
       {
         title: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
         action: () => this.showModal(),
-        iconIos: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
-        iconAndroid: `${isCurrentFolderTrash ? 'ic_restore' : 'ic_move_to_inbox'}`,
+        icon: {
+          ios: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
+          android: `${isCurrentFolderTrash ? 'ic_restore' : 'ic_move_to_inbox'}`,
+        },
       },
       deleteAction({ action: () => this.delete() }),
     ];

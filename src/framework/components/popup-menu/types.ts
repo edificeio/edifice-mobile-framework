@@ -4,8 +4,10 @@ import { Asset } from 'react-native-image-picker';
 export interface PopupMenuAction {
   title: string;
   action: () => void;
-  iconIos: string;
-  iconAndroid: string;
+  icon: {
+    ios: string;
+    android: string;
+  };
   destructive?: boolean;
 }
 

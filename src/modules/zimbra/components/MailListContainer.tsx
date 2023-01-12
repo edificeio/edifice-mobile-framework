@@ -303,8 +303,10 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       {
         title: I18n.t('zimbra-move'),
         action: this.showMoveModal,
-        iconIos: 'arrow.up.square',
-        iconAndroid: 'ic_move_to_inbox',
+        icon: {
+          ios: 'arrow.up.square',
+          android: 'ic_move_to_inbox',
+        },
       },
       deleteAction({ action: this.deleteSelectedMails }),
     ];

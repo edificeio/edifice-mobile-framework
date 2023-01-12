@@ -562,8 +562,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       {
         title: I18n.t('zimbra-signature-add'),
         action: this.showSignatureModal,
-        iconIos: 'pencil',
-        iconAndroid: 'ic_pencil',
+        icon: {
+          ios: 'pencil',
+          android: 'ic_pencil',
+        },
       },
       deleteAction({ action: deleteDraft }),
     ];

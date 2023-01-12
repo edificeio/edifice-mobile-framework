@@ -229,8 +229,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               {
                 title: I18n.t('rename'),
                 action: () => openModal(WorkspaceModalType.EDIT),
-                iconIos: 'pencil',
-                iconAndroid: 'ic_pencil',
+                icon: {
+                  ios: 'pencil',
+                  android: 'ic_pencil',
+                },
               },
             ]
           : []),
@@ -239,8 +241,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               {
                 title: I18n.t('copy'),
                 action: () => openModal(WorkspaceModalType.DUPLICATE),
-                iconIos: 'square.on.square',
-                iconAndroid: 'ic_content_copy',
+                icon: {
+                  ios: 'square.on.square',
+                  android: 'ic_content_copy',
+                },
               },
             ]
           : []),
@@ -249,8 +253,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               {
                 title: I18n.t('move'),
                 action: () => openModal(WorkspaceModalType.MOVE),
-                iconIos: 'arrow.up.square',
-                iconAndroid: 'ic_move_to_inbox',
+                icon: {
+                  ios: 'arrow.up.square',
+                  android: 'ic_move_to_inbox',
+                },
               },
             ]
           : []),
@@ -259,8 +265,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               {
                 title: I18n.t('conversation.restore'),
                 action: () => restoreSelectedFiles,
-                iconIos: 'arrow.uturn.backward.circle',
-                iconAndroid: 'ic_restore',
+                icon: {
+                  ios: 'arrow.uturn.backward.circle',
+                  android: 'ic_restore',
+                },
               },
             ]
           : []),
@@ -269,8 +277,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               {
                 title: I18n.t('download'),
                 action: () => openModal(WorkspaceModalType.DOWNLOAD),
-                iconIos: 'square.and.arrow.down',
-                iconAndroid: 'ic_download',
+                icon: {
+                  ios: 'square.and.arrow.down',
+                  android: 'ic_download',
+                },
               },
             ]
           : []),
@@ -294,8 +304,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               {
                 title: I18n.t('create-folder'),
                 action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
-                iconIos: 'folder.badge.plus',
-                iconAndroid: 'ic_create_new_folder',
+                icon: {
+                  ios: 'folder.badge.plus',
+                  android: 'ic_create_new_folder',
+                },
               },
             ]
           : []),
