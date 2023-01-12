@@ -305,7 +305,7 @@ class UserService {
         return authTranslationKeys;
       } else throw new Error('error in res.json()');
     } catch (e) {
-      // console.warn('[UserService] getAuthTranslationKeys: could not get auth translation keys', e);
+      throw '[UserService] getAuthTranslationKeys: ' + e;
     }
   }
 
