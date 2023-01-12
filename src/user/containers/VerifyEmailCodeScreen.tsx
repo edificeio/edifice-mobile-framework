@@ -52,7 +52,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   const [isVerifyingEmailCode, setIsVerifyingEmailCode] = React.useState(false);
   const [isResendingEmailVerificationCode, setIsResendingEmailVerificationCode] = React.useState(false);
   const [codeState, setCodeState] = React.useState<CodeState>(CodeState.PRISTINE);
-  const [hasConnection, setHasConnection] = React.useState(false);
+  const hasConnection = props.navigation.getParam('connection') ?? true;
 
   const verifyEmailCode = async (code: string) => {
     try {
@@ -123,10 +123,6 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
 
   // RENDER =======================================================================================
 
-  useEffect(() => {
-    setHasConnection(props.connected);
-  }, [props.connected]);
-
   return (
     <KeyboardPageView
       isFocused={false}
@@ -154,17 +150,12 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
 
 // MAPPING ========================================================================================
 
-export default connect(
-  (state: any) => ({
-    connected: !!state.connectionTracker.connected,
-  }),
-  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
-    onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
-      dispatch(checkVersionThenLogin(false, credentials));
-    },
-    onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
-      dispatch(profileUpdateAction(updatedProfileValues));
-    },
-    dispatch,
-  }),
-)(VerifyEmailCodeContainer);
+export default connect((dispatch: ThunkDispatch<any, void, AnyAction>) => ({
+  onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
+    dispatch(checkVersionThenLogin(false, credentials));
+  },
+  onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
+    dispatch(profileUpdateAction(updatedProfileValues));
+  },
+  dispatch,
+}))(VerifyEmailCodeContainer);

@@ -11,6 +11,7 @@ import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
+import { ContentLoader } from '~/framework/hooks/loader';
 import { containsKey } from '~/framework/util/object';
 import { logout } from '~/user/actions/login';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
@@ -31,24 +32,14 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
 
   const [isCheckEmail, setIsCheckEmail] = React.useState(false);
   const [isEmptyEmail, setIsEmptyEmail] = React.useState(true);
-  const [isLoading, setIsLoading] = React.useState(true);
   const [isSendingCode, setIsSendingCode] = React.useState(false);
 
   // Web 4.7+ compliance :
   //   Email verification APIs are available if /auth/user/requirements contains at least needRevalidateEmail field
-  //   Use requirementsChecked to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
-  const [requirementsChecked, setRequirementsChecked] = React.useState(false);
-
-  useEffect(() => {
-    async function checkRequirements() {
-      setRequirementsChecked(true);
-      const requirements = await userService.getUserRequirements();
-      setIsCheckEmail(containsKey(requirements as object, 'needRevalidateEmail'));
-      setIsLoading(false);
-    }
-    // Avoid reentrance by using isLoading to know if /auth/context as been called or not
-    if (!requirementsChecked) checkRequirements();
-  }, [requirementsChecked]);
+  async function checkRequirements() {
+    const requirements = await userService.getUserRequirements();
+    setIsCheckEmail(containsKey(requirements as object, 'needRevalidateEmail'));
+  }
 
   const sendEmailVerificationCode = async (email: string) => {
     // Exit if email is not valid
@@ -61,11 +52,9 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         const validEmail = emailValidationInfos?.emailState?.valid;
         if (email === validEmail) return EmailState.EMAIL_ALREADY_VERIFIED;
         await userService.sendEmailVerificationCode(email);
-        setIsSendingCode(false);
         props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail });
       } else {
         props.onSaveNewEmail({ email });
-        setIsSendingCode(false);
         props.navigation.goBack();
         setTimeout(
           () =>
@@ -78,7 +67,9 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
         );
       }
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      props.navigation.navigate('VerifyEmailCode', { credentials, email, isModifyingEmail, connection: false });
+    } finally {
+      setIsSendingCode(false);
     }
   };
 
@@ -113,11 +104,8 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
   const navBarInfo = {
     title: I18n.t(`user.sendEmailVerificationCodeScreen.title${isModifyingEmail ? 'Modify' : ''}`),
   };
-
-  // Display a loading screen during /auth/context call.
-  return isLoading ? (
-    <LoadingIndicator />
-  ) : (
+  return (
+    // Display a loading screen during /auth/context call.
     <KeyboardPageView
       isFocused={false}
       style={{ backgroundColor: theme.ui.background.card }}
@@ -131,14 +119,19 @@ const SendEmailVerificationCodeContainer = (props: ISendEmailVerificationCodeScr
             navBar: navBarInfo,
           })}
       onBack={() => displayConfirmationAlert()}>
-      <SendEmailVerificationCodeScreen
-        defaultEmail={defaultEmail}
-        emailEmpty={data => setIsEmptyEmail(data)}
-        isCheckEmail={isCheckEmail}
-        isModifyingEmail={isModifyingEmail}
-        isSending={isSendingCode}
-        refuseAction={() => refuseEmailVerification()}
-        sendAction={email => sendEmailVerificationCode(email)}
+      <ContentLoader
+        loadContent={checkRequirements}
+        renderContent={() => (
+          <SendEmailVerificationCodeScreen
+            defaultEmail={defaultEmail}
+            emailEmpty={data => setIsEmptyEmail(data)}
+            isCheckEmail={isCheckEmail}
+            isModifyingEmail={isModifyingEmail}
+            isSending={isSendingCode}
+            refuseAction={() => refuseEmailVerification()}
+            sendAction={email => sendEmailVerificationCode(email)}
+          />
+        )}
       />
     </KeyboardPageView>
   );
