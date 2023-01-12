@@ -331,7 +331,7 @@ export default React.forwardRef(
         onRowOpen={onRowOpen}
         onRowClose={onRowClose}
         ListFooterComponent={realListFooterComponent}
-        scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }}
+        scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
       />
     );
   },

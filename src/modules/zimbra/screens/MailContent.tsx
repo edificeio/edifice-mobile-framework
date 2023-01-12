@@ -18,12 +18,12 @@ import MailContent from '~/modules/zimbra/components/MailContent';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import MoveModal from '~/modules/zimbra/components/Modals/MoveToFolderModal';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
-import { getMailContentState } from '~/modules/zimbra/state/mailContent';
+import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 
 type MailContentContainerProps = {
   isFetching: boolean;
-  mail: any;
+  mail: IMail;
   storage: IQuota;
   fetchMailContentAction: (mailId: string) => void;
   moveToInbox: (mailIds: string[]) => void;
@@ -214,11 +214,10 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
 
 const mapStateToProps: (state: any) => any = state => {
   const { isPristine, isFetching, data, error } = getMailContentState(state);
-
   return {
     isPristine,
     isFetching,
-    error,
+    error: data !== [] && data.subject === undefined ? true : error,
     mail: data,
     storage: getQuotaState(state).data,
   };
