@@ -60,6 +60,7 @@ const workspaceFileAdapter = (file: IEntcoreWorkspaceDocument | IEntcoreWorkspac
         contentType: file.metadata['content-type'],
         date: moment(file.modified, 'YYYY-MM-DD HH:mm.ss.SSS').toDate().getTime(),
         id: file._id,
+        key: file._id,
         isFolder: false,
         name: file.name,
         owner: file.owner as Filter,
@@ -70,6 +71,7 @@ const workspaceFileAdapter = (file: IEntcoreWorkspaceDocument | IEntcoreWorkspac
     : {
         date: moment(file.modified, 'YYYY-MM-DD HH:mm.ss.SSS').toDate().getTime(),
         id: file._id,
+        key: file._id,
         isFolder: true,
         name: file.name,
         owner: file.owner as Filter,
@@ -81,6 +83,7 @@ const workspaceFileAdapter = (file: IEntcoreWorkspaceDocument | IEntcoreWorkspac
 export const factoryRootFolder = (filter: Filter): IFile => {
   return {
     id: filter,
+    key: filter,
     date: 0,
     isFolder: true,
     name: I18n.t(filter),

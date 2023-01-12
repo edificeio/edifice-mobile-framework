@@ -11,10 +11,7 @@ export const PopupMenu = (props: React.PropsWithChildren<PopupMenuProps>) => {
     return {
       id: id.toString(),
       title: action.title,
-      image: Platform.select({
-        ios: action.iconIos,
-        android: action.iconAndroid,
-      }),
+      image: action.icon[Platform.OS],
       attributes: {
         destructive: action.destructive ?? false,
       },

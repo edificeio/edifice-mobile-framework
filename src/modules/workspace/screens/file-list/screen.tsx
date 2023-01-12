@@ -1,17 +1,19 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { Platform, RefreshControl } from 'react-native';
+import { Platform, RefreshControl, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
 import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import PopupMenu, {
   DocumentPicked,
@@ -21,8 +23,13 @@ import PopupMenu, {
   documentAction,
   galleryAction,
 } from '~/framework/components/popup-menu';
+import ScrollView from '~/framework/components/scrollView';
+import SwipeableList from '~/framework/components/swipeableList';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { IMedia } from '~/framework/util/media';
 import { computeRelativePath } from '~/framework/util/navigation';
+import { tryAction } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { getUserSession } from '~/framework/util/session';
 import {
   copyWorkspaceFilesAction,
@@ -44,23 +51,67 @@ import moduleConfig from '~/modules/workspace/moduleConfig';
 import { Filter, IFile } from '~/modules/workspace/reducer';
 
 import styles from './styles';
-import { IWorkspaceFileListScreenEventProps, IWorkspaceFileListScreenProps } from './types';
+import { IWorkspaceFileListScreenProps } from './types';
 
 const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-  const [modalType, setModalType] = useState<WorkspaceModalType>(WorkspaceModalType.NONE);
+  const filter = props.navigation.getParam('filter');
+  const parentId = props.navigation.getParam('parentId');
+  const [selectedFiles, setSelectedFiles] = React.useState<string[]>([]);
+  const [isUploading, setUploading] = React.useState(false);
+  const [modalType, setModalType] = React.useState<WorkspaceModalType>(WorkspaceModalType.NONE);
   const modalBoxRef: { current: any } = React.createRef();
   const isSelectionActive = selectedFiles.length > 0;
 
-  const fetchFiles = (parentId: string = props.parentId, shouldRefreshFolderList?: boolean) => {
-    props.fetchFiles(props.filter, parentId);
-    if ((!props.folderTree.data.length && !props.folderTree.isFetching) || shouldRefreshFolderList) {
-      props.listFolders();
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
+
+  const fetchList = async (id: string = parentId, shouldRefreshFolderList?: boolean) => {
+    try {
+      const { fetchFiles, listFolders, folderTree } = props;
+      await fetchFiles(filter, id);
+      if (!folderTree.length || shouldRefreshFolderList) {
+        await listFolders();
+      }
+    } catch (e) {
+      throw e;
     }
   };
 
-  useEffect(() => {
-    fetchFiles();
+  const init = () => {
+    setLoadingState(AsyncPagedLoadingState.INIT);
+    fetchList()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    fetchList()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    fetchList()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
+  const fetchOnNavigation = () => {
+    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+  };
+
+  const focusEventListener = React.useRef<NavigationEventSubscription>();
+  React.useEffect(() => {
+    focusEventListener.current = props.navigation.addListener('didFocus', () => {
+      fetchOnNavigation();
+    });
+    return () => {
+      focusEventListener.current?.remove();
+    };
   }, []);
 
   const onGoBack = () => {
@@ -90,59 +141,79 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
+  const openMedia = (file: IFile) => {
+    const { files, navigation } = props;
+    const data = files
+      .filter(f => f.contentType?.startsWith('image'))
+      .map(f => ({
+        type: 'image',
+        src: { uri: f.url },
+        link: f.url,
+      })) as IMedia[];
+    const startIndex = data.findIndex(f => f.link === file.url);
+    openCarousel({ data, startIndex }, navigation);
+  };
+
   const onPressFile = (file: IFile) => {
-    if (Platform.OS === 'ios' && !isSelectionActive && !file.isFolder) {
-      return props.previewFile(file);
-    } else if (isSelectionActive) {
+    if (isSelectionActive) {
       return selectFile(file);
     }
+    if (file.contentType?.startsWith('image')) {
+      return openMedia(file);
+    }
+    if (Platform.OS === 'ios' && !file.isFolder) {
+      return props.previewFile(file);
+    }
+    const { navigation } = props;
     const { id, name: title, isFolder } = file;
     if (isFolder) {
-      const filter = props.filter === Filter.ROOT ? id : props.filter;
-      props.navigation.push(computeRelativePath(moduleConfig.routeName, props.navigation.state), { filter, parentId: id, title });
+      const newFilter = filter === Filter.ROOT ? id : filter;
+      navigation.push(computeRelativePath(moduleConfig.routeName, navigation.state), { filter: newFilter, parentId: id, title });
     } else {
-      props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), { file, title });
+      navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/preview`, navigation.state), { file, title });
     }
   };
 
   const uploadFile = async (file: Asset | DocumentPicked) => {
-    const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
-    await props.uploadFile(props.parentId, lf);
-    props.fetchFiles(props.filter, props.parentId);
+    setUploading(true);
+    await props.uploadFile(parentId, new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
+    setUploading(false);
+    fetchList();
   };
 
   const restoreSelectedFiles = async () => {
+    const ids = selectedFiles;
     setSelectedFiles([]);
-    props.restoreFiles(props.parentId, selectedFiles);
-    props.fetchFiles(props.filter, props.parentId);
+    props.restoreFiles(parentId, ids);
+    fetchList();
   };
 
-  const onModalAction = (files: IFile[], value: string, destinationId: string) => {
-    const { parentId } = props;
+  const onModalAction = async (files: IFile[], value: string, destinationId: string) => {
+    const ids = files.map(f => f.id);
     setSelectedFiles([]);
     modalBoxRef?.current?.doDismissModal();
     switch (modalType) {
       case WorkspaceModalType.CREATE_FOLDER:
-        props.modalEvents.createFolder(value, parentId);
-        return fetchFiles(parentId, true);
+        await props.createFolder(value, parentId);
+        return fetchList(parentId, true);
       case WorkspaceModalType.DELETE:
-        props.modalEvents.deleteFiles(parentId, files);
-        return fetchFiles(parentId, true);
+        await props.deleteFiles(parentId, ids);
+        return fetchList(parentId, true);
       case WorkspaceModalType.DOWNLOAD:
-        return props.modalEvents.downloadFiles(files);
+        return props.downloadFiles(files);
       case WorkspaceModalType.DUPLICATE:
-        props.modalEvents.duplicateFiles(parentId, files, destinationId);
-        return fetchFiles(destinationId, true);
+        await props.duplicateFiles(parentId, ids, destinationId);
+        return fetchList(destinationId, true);
       case WorkspaceModalType.EDIT:
-        props.modalEvents.renameFile(files[0], value);
-        return fetchFiles(parentId, true);
+        await props.renameFile(files[0], value);
+        return fetchList(parentId, true);
       case WorkspaceModalType.MOVE:
-        props.modalEvents.moveFiles(parentId, files, destinationId);
-        props.fetchFiles(props.filter, destinationId);
-        return fetchFiles(parentId, true);
+        await props.moveFiles(parentId, ids, destinationId);
+        fetchList(destinationId);
+        return fetchList(parentId, true);
       case WorkspaceModalType.TRASH:
-        props.modalEvents.trashFiles(parentId, files);
-        return fetchFiles(parentId, true);
+        await props.trashFiles(parentId, ids);
+        return fetchList(parentId, true);
     }
   };
 
@@ -153,43 +224,51 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     if (isSelectionActive) {
       const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
       const popupMenuActions = [
-        ...(selectedFiles.length === 1 && props.filter === Filter.OWNER
+        ...(selectedFiles.length === 1 && filter === Filter.OWNER
           ? [
               {
                 title: I18n.t('rename'),
                 action: () => openModal(WorkspaceModalType.EDIT),
-                iconIos: 'pencil',
-                iconAndroid: 'ic_pencil',
+                icon: {
+                  ios: 'pencil',
+                  android: 'ic_pencil',
+                },
               },
             ]
           : []),
-        ...(props.filter !== Filter.TRASH
+        ...(filter !== Filter.TRASH
           ? [
               {
                 title: I18n.t('copy'),
                 action: () => openModal(WorkspaceModalType.DUPLICATE),
-                iconIos: 'square.on.square',
-                iconAndroid: 'ic_content_copy',
+                icon: {
+                  ios: 'square.on.square',
+                  android: 'ic_content_copy',
+                },
               },
             ]
           : []),
-        ...(props.filter === Filter.OWNER
+        ...(filter === Filter.OWNER
           ? [
               {
                 title: I18n.t('move'),
                 action: () => openModal(WorkspaceModalType.MOVE),
-                iconIos: 'arrow.up.square',
-                iconAndroid: 'ic_move_to_inbox',
+                icon: {
+                  ios: 'arrow.up.square',
+                  android: 'ic_move_to_inbox',
+                },
               },
             ]
           : []),
-        ...(props.filter === Filter.TRASH
+        ...(filter === Filter.TRASH
           ? [
               {
                 title: I18n.t('conversation.restore'),
                 action: () => restoreSelectedFiles,
-                iconIos: 'arrow.uturn.backward.circle',
-                iconAndroid: 'ic_restore',
+                icon: {
+                  ios: 'arrow.uturn.backward.circle',
+                  android: 'ic_restore',
+                },
               },
             ]
           : []),
@@ -198,33 +277,37 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
               {
                 title: I18n.t('download'),
                 action: () => openModal(WorkspaceModalType.DOWNLOAD),
-                iconIos: 'square.and.arrow.down',
-                iconAndroid: 'ic_download',
+                icon: {
+                  ios: 'square.and.arrow.down',
+                  android: 'ic_download',
+                },
               },
             ]
           : []),
-        ...((selectedFiles.length >= 1 && props.filter === Filter.OWNER) || props.filter === Filter.TRASH
+        ...((selectedFiles.length >= 1 && filter === Filter.OWNER) || filter === Filter.TRASH
           ? [
               deleteAction({
-                action: () => openModal(props.filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+                action: () => openModal(filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
               }),
             ]
           : []),
       ];
       return { navBarActions: { icon: 'more_vert' }, popupMenuActions };
     }
-    if (props.filter === Filter.OWNER || (props.filter === Filter.SHARED && props.parentId !== Filter.SHARED)) {
+    if (filter === Filter.OWNER || (filter === Filter.SHARED && parentId !== Filter.SHARED)) {
       const popupMenuActions = [
         cameraAction({ callback: uploadFile }),
         galleryAction({ callback: uploadFile, multiple: true }),
         documentAction({ callback: uploadFile }),
-        ...(props.filter === Filter.OWNER
+        ...(filter === Filter.OWNER
           ? [
               {
                 title: I18n.t('create-folder'),
                 action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
-                iconIos: 'folder.badge.plus',
-                iconAndroid: 'ic_create_new_folder',
+                icon: {
+                  ios: 'folder.badge.plus',
+                  android: 'ic_create_new_folder',
+                },
               },
             ]
           : []),
@@ -248,30 +331,11 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         <HeaderIcon name={menuActions.navBarActions.icon} iconSize={menuActions.navBarActions.icon === 'more_vert' ? 26 : 20} />
       </PopupMenu>
     ),
-    style: {
-      backgroundColor: theme.palette.primary.regular,
-    },
-  };
-
-  const renderMenus = () => {
-    const files = props.files.filter(file => selectedFiles.includes(file.id));
-    return (
-      <WorkspaceModal
-        filter={props.filter}
-        folderTree={props.folderTree.data}
-        modalBoxRef={modalBoxRef}
-        parentId={props.parentId}
-        selectedFiles={files}
-        type={modalType}
-        onAction={onModalAction}
-      />
-    );
   };
 
   const renderEmpty = () => {
-    if (props.isFetching) return null;
-    const image = props.parentId === Filter.TRASH ? 'empty-trash' : 'empty-workspace';
-    const screen = Object.values(Filter).includes(props.parentId as Filter) ? props.parentId : 'subfolder';
+    const image = parentId === Filter.TRASH ? 'empty-trash' : 'empty-workspace';
+    const screen = Object.values(Filter).includes(parentId as Filter) ? parentId : 'subfolder';
     return (
       <EmptyScreen
         svgImage={image}
@@ -281,89 +345,164 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     );
   };
 
+  const renderError = () => {
+    return (
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+        <EmptyContentScreen />
+      </ScrollView>
+    );
+  };
+
+  const renderModal = () => {
+    const files = props.files.filter(file => selectedFiles.includes(file.id));
+    return (
+      <WorkspaceModal
+        filter={filter}
+        folderTree={props.folderTree}
+        modalBoxRef={modalBoxRef}
+        parentId={parentId}
+        selectedFiles={files}
+        type={modalType}
+        onAction={onModalAction}
+      />
+    );
+  };
+
+  const renderFileList = () => {
+    return (
+      <>
+        <SwipeableList
+          data={props.files}
+          keyExtractor={(item: IFile) => item.id}
+          renderItem={({ item }) => (
+            <WorkspaceFileListItem
+              item={item}
+              isSelected={selectedFiles.includes(item.id)}
+              onPress={onPressFile}
+              onLongPress={selectFile}
+            />
+          )}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          ListEmptyComponent={renderEmpty()}
+          contentContainerStyle={styles.listContainer}
+          bottomInset
+          rightOpenValue={-140}
+          leftOpenValue={140}
+          swipeActionWidth={140}
+          itemSwipeActionProps={({ item }) => ({
+            left:
+              filter === Filter.TRASH
+                ? [
+                    {
+                      action: async row => {
+                        if (selectedFiles.includes(item.key)) {
+                          selectFile(item);
+                        }
+                        props.restoreFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
+                        row[item.key]?.closeRow();
+                      },
+                      backgroundColor: theme.palette.status.success.regular,
+                      actionText: I18n.t('conversation.restore'),
+                      actionIcon: 'ui-unarchive',
+                    },
+                  ]
+                : [],
+            right:
+              filter === Filter.OWNER
+                ? [
+                    {
+                      action: async row => {
+                        if (selectedFiles.includes(item.key)) {
+                          selectFile(item);
+                        }
+                        props.trashFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
+                        row[item.key]?.closeRow();
+                      },
+                      backgroundColor: theme.palette.status.failure.regular,
+                      actionText: I18n.t('delete'),
+                      actionIcon: 'ui-trash',
+                    },
+                  ]
+                : filter === Filter.TRASH
+                ? [
+                    {
+                      action: async row => {
+                        if (selectedFiles.includes(item.key)) {
+                          selectFile(item);
+                        }
+                        props.deleteFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
+                        row[item.key]?.closeRow();
+                      },
+                      backgroundColor: theme.palette.status.failure.regular,
+                      actionText: I18n.t('delete'),
+                      actionIcon: 'ui-trash',
+                    },
+                  ]
+                : [],
+          })}
+        />
+        {isUploading ? (
+          <View style={styles.uploadIndicatorContainer}>
+            <LoadingIndicator />
+          </View>
+        ) : null}
+        {renderModal()}
+      </>
+    );
+  };
+
+  const renderPage = () => {
+    switch (loadingState) {
+      case AsyncPagedLoadingState.DONE:
+      case AsyncPagedLoadingState.REFRESH:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
+      case AsyncPagedLoadingState.REFRESH_SILENT:
+        return renderFileList();
+      case AsyncPagedLoadingState.PRISTINE:
+      case AsyncPagedLoadingState.INIT:
+        return <LoadingIndicator />;
+      case AsyncPagedLoadingState.INIT_FAILED:
+      case AsyncPagedLoadingState.RETRY:
+        return renderError();
+    }
+  };
+
   return (
     <PageView navigation={props.navigation} navBar={navBarInfo} onBack={onGoBack}>
-      <FlatList
-        data={props.files}
-        renderItem={({ item }) => (
-          <WorkspaceFileListItem
-            item={item}
-            isSelected={selectedFiles.includes(item.id)}
-            onPress={onPressFile}
-            onLongPress={selectFile}
-          />
-        )}
-        keyExtractor={(item: IFile) => item.id}
-        refreshControl={<RefreshControl refreshing={props.isFetching} onRefresh={fetchFiles} />}
-        ListEmptyComponent={renderEmpty()}
-        contentContainerStyle={styles.listContainer}
-      />
-      {renderMenus()}
+      {renderPage()}
     </PageView>
   );
 };
 
-const mapStateToProps = (gs: any, props: any) => {
-  const state = moduleConfig.getState(gs);
-  const parentId = props.navigation.getParam('parentId');
-
-  return {
-    files: state.directories.data[parentId] || [],
-    filter: props.navigation.getParam('filter'),
-    folderTree: state.folderTree,
-    isFetching: state.directories.isFetching || !state.directories.data[parentId],
-    parentId,
-    session: getUserSession(),
-  };
-};
-
-const mapDispatchToProps: (
-  dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
-) => IWorkspaceFileListScreenEventProps = (dispatch, getState) => ({
-  modalEvents: {
-    createFolder: async (name: string, parentId: string) => {
-      return dispatch(createWorkspaceFolderAction(name, parentId));
-    },
-    deleteFiles: async (parentId: string, files: IFile[]) => {
-      const ids = files.map(file => file.id);
-      return dispatch(deleteWorkspaceFilesAction(parentId, ids));
-    },
-    downloadFiles: async (files: IFile[]) => {
-      return dispatch(downloadWorkspaceFilesAction(files));
-    },
-    duplicateFiles: async (parentId: string, files: IFile[], destinationId: string) => {
-      const ids = files.map(file => file.id);
-      return dispatch(copyWorkspaceFilesAction(parentId, ids, destinationId));
-    },
-    moveFiles: async (parentId: string, files: IFile[], destinationId: string) => {
-      const ids = files.map(file => file.id);
-      return dispatch(moveWorkspaceFilesAction(parentId, ids, destinationId));
-    },
-    renameFile: async (file: IFile, name: string) => {
-      return dispatch(renameWorkspaceFileAction(file, name));
-    },
-    trashFiles: async (parentId: string, files: IFile[]) => {
-      const ids = files.map(file => file.id);
-      return dispatch(trashWorkspaceFilesAction(parentId, ids));
-    },
+export default connect(
+  (gs: IGlobalState, props: any) => {
+    const state = moduleConfig.getState(gs);
+    const parentId = props.navigation.getParam('parentId');
+    return {
+      files: state.directories.data[parentId] ?? [],
+      folderTree: state.folderTree.data,
+      initialLoadingState:
+        state.directories[parentId] === undefined ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
+      session: getUserSession(),
+    };
   },
-  fetchFiles: async (filter: Filter, parentId: string) => {
-    return dispatch(fetchWorkspaceFilesAction(filter, parentId));
-  },
-  listFolders: async () => {
-    return dispatch(listWorkspaceFoldersAction());
-  },
-  previewFile: async (file: IFile) => {
-    return dispatch(downloadThenOpenWorkspaceFileAction(file));
-  },
-  restoreFiles: async (parentId: string, ids: string[]) => {
-    return dispatch(restoreWorkspaceFilesAction(parentId, ids));
-  },
-  uploadFile: async (parentId: string, lf: LocalFile) => {
-    return dispatch(uploadWorkspaceFileAction(parentId, lf));
-  },
-  dispatch,
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(WorkspaceFileListScreen);
+  (dispatch: ThunkDispatch<any, any, any>) =>
+    bindActionCreators(
+      {
+        createFolder: tryAction(createWorkspaceFolderAction, undefined, true),
+        deleteFiles: tryAction(deleteWorkspaceFilesAction, undefined, true),
+        downloadFiles: tryAction(downloadWorkspaceFilesAction, undefined, true),
+        duplicateFiles: tryAction(copyWorkspaceFilesAction, undefined, true),
+        fetchFiles: tryAction(fetchWorkspaceFilesAction, undefined, true),
+        listFolders: tryAction(listWorkspaceFoldersAction, undefined, true),
+        moveFiles: tryAction(moveWorkspaceFilesAction, undefined, true),
+        previewFile: tryAction(downloadThenOpenWorkspaceFileAction, undefined, true),
+        renameFile: tryAction(renameWorkspaceFileAction, undefined, true),
+        restoreFiles: tryAction(restoreWorkspaceFilesAction, undefined, true),
+        trashFiles: tryAction(trashWorkspaceFilesAction, undefined, true),
+        uploadFile: tryAction(uploadWorkspaceFileAction, undefined, true),
+      },
+      dispatch,
+    ),
+)(WorkspaceFileListScreen);

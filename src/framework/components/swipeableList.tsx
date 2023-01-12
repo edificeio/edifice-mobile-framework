@@ -42,7 +42,6 @@ import {
   GestureResponderEvent,
   ListRenderItemInfo,
   StyleSheet,
-  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -167,6 +166,7 @@ const SwipeAction = <ItemT extends { key: string }>(
 
 export interface SwipeableListProps<ItemT extends { key: string }>
   extends Partial<Omit<IPropsSwipeListView<ItemT>, 'renderHiddenItem'>> {
+  bottomInset?: boolean;
   hiddenRowStyle?: ViewStyle;
   hiddenItemStyle?: ViewStyle;
   swipeActionWidth?: number;
@@ -178,11 +178,29 @@ export default React.forwardRef(
     props: SwipeableListProps<ItemT> & FlatListProps<ItemT>,
     ref: React.Ref<SwipeListView<ItemT>>,
   ) => {
-    const { itemSwipeActionProps, hiddenRowStyle, hiddenItemStyle, swipeActionWidth, data, renderItem, ...otherListProps } = props;
+    const {
+      itemSwipeActionProps,
+      hiddenRowStyle,
+      hiddenItemStyle,
+      swipeActionWidth,
+      data,
+      bottomInset,
+      ListFooterComponent,
+      scrollIndicatorInsets,
+      renderItem,
+      ...otherListProps
+    } = props;
     const animatedRefs = React.useRef<{ [key: string]: Animated.Value }>({});
     const preventTouchRefs = React.useRef<{ [key: string]: boolean }>({});
     const rowMapRef = React.useRef<RowMap<ItemT>>();
     const rowTouchableViewRefs = React.useRef<{ [key: string]: View | null }>({});
+    const realListFooterComponent = React.useMemo(() => {
+      return bottomInset ? (
+        <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }}>{ListFooterComponent}</View>
+      ) : (
+        ListFooterComponent
+      );
+    }, [bottomInset, ListFooterComponent]);
 
     const renderHiddenItem = React.useCallback(
       (info: ListRenderItemInfo<ItemT>, rowmap: RowMap<ItemT>) => {
@@ -314,6 +332,8 @@ export default React.forwardRef(
         renderItem={realRenderItem}
         onRowOpen={onRowOpen}
         onRowClose={onRowClose}
+        ListFooterComponent={realListFooterComponent}
+        scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
       />
     );
   },

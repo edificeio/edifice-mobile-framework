@@ -18,12 +18,12 @@ import MailContent from '~/modules/zimbra/components/MailContent';
 import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
 import MoveModal from '~/modules/zimbra/components/Modals/MoveToFolderModal';
 import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
-import { getMailContentState } from '~/modules/zimbra/state/mailContent';
+import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { IQuota, getQuotaState } from '~/modules/zimbra/state/quota';
 
 type MailContentContainerProps = {
   isFetching: boolean;
-  mail: any;
+  mail: IMail;
   storage: IQuota;
   fetchMailContentAction: (mailId: string) => void;
   moveToInbox: (mailIds: string[]) => void;
@@ -129,14 +129,18 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       {
         title: I18n.t('zimbra-mark-unread'),
         action: this.markAsRead,
-        iconIos: 'eye.slash',
-        iconAndroid: 'ic_visibility_off',
+        icon: {
+          ios: 'eye.slash',
+          android: 'ic_visibility_off',
+        },
       },
       {
         title: I18n.t('zimbra-move'),
         action: this.showMoveModal,
-        iconIos: 'arrow.up.square',
-        iconAndroid: 'ic_move_to_inbox',
+        icon: {
+          ios: 'arrow.up.square',
+          android: 'ic_move_to_inbox',
+        },
       },
       deleteAction({ action: this.delete }),
     ];
@@ -145,8 +149,10 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
         {
           title: I18n.t('zimbra-mark-unread'),
           action: this.markAsRead,
-          iconIos: 'eye.slash',
-          iconAndroid: 'ic_visibility_off',
+          icon: {
+            ios: 'eye.slash',
+            android: 'ic_visibility_off',
+          },
         },
         deleteAction({ action: this.delete }),
       ];
@@ -156,8 +162,10 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
         {
           title: I18n.t('zimbra-restore'),
           action: this.restore,
-          iconIos: 'arrow.uturn.backward.circle',
-          iconAndroid: 'ic_restore',
+          icon: {
+            ios: 'arrow.uturn.backward.circle',
+            android: 'ic_restore',
+          },
         },
         deleteAction({ action: this.delete }),
       ];
@@ -206,11 +214,10 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
 
 const mapStateToProps: (state: any) => any = state => {
   const { isPristine, isFetching, data, error } = getMailContentState(state);
-
   return {
     isPristine,
     isFetching,
-    error,
+    error: data !== [] && data.subject === undefined ? true : error,
     mail: data,
     storage: getQuotaState(state).data,
   };

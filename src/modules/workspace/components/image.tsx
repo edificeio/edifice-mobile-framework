@@ -5,8 +5,8 @@ import FastImage from 'react-native-fast-image';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { formatSource, Image } from '~/framework/util/media';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Image, formatSource } from '~/framework/util/media';
 import { Filter, IFile } from '~/modules/workspace/reducer';
 import ImageOptional from '~/ui/ImageOptional';
 
@@ -110,14 +110,7 @@ export const renderIcon = (id: string | null, isFolder: boolean, name: string, c
   } else {
     const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
     const style = { width: 50, height: 50 };
-    return (
-      <ImageOptional
-        style={style}
-        imageComponent={Image}
-        errorComponent={<UnavailableIcon />}
-        source={formatSource(uri)}
-      />
-    );
+    return <ImageOptional style={style} imageComponent={Image} errorComponent={<UnavailableIcon />} source={formatSource(uri)} />;
   }
 };
 

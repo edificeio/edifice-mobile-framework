@@ -2,7 +2,7 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import I18n from 'i18n-js';
 import { Alert, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import DocumentPicker, { DocumentPickerResponse, DocumentType, PlatformTypes } from 'react-native-document-picker';
+import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 
 import { assertPermissions } from '~/framework/util/permissions';
 
@@ -27,9 +27,7 @@ export default function documentAction(props: PopupPickerActionProps) {
     try {
       await assertPermissions('documents.read');
       DocumentPicker.pick({
-        type: DocumentPicker.types.allFiles as
-          | PlatformTypes[keyof PlatformTypes][keyof PlatformTypes[keyof PlatformTypes]][]
-          | DocumentType[keyof PlatformTypes],
+        type: DocumentPicker.types.allFiles,
         presentationStyle: 'fullScreen',
       }).then(file => {
         return documentCallback(file);
@@ -44,8 +42,10 @@ export default function documentAction(props: PopupPickerActionProps) {
 
   return {
     title: I18n.t('common-picker-document'),
-    iconIos: 'doc.badge.plus',
-    iconAndroid: 'ic_upload_file',
+    icon: {
+      ios: 'doc.badge.plus',
+      android: 'ic_upload_file',
+    },
     action,
   };
 }

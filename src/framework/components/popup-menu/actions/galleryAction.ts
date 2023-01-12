@@ -40,8 +40,10 @@ export default function galleryAction(props: PopupPickerActionProps & { multiple
 
   return {
     title: I18n.t('common-photoPicker-pick'),
-    iconIos: 'photo.on.rectangle.angled',
-    iconAndroid: 'ic_gallery',
+    icon: {
+      ios: 'photo.on.rectangle.angled',
+      android: 'ic_gallery',
+    },
     action,
   };
 }

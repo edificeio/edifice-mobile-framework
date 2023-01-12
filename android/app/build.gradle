@@ -128,7 +128,8 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            shrinkResources true
+            // Leave shrinkResources to false as some resources are used React Native side only
+            shrinkResources false
             signingConfig signingConfigs.release
         }
     }
@@ -147,16 +148,13 @@ android {
         pickFirst '**/libjsc.so'
         pickFirst '**/libc++_shared.so'
     }
-    /*dexOptions {
-        javaMaxHeapSize "4G"
-    }*/
 }
 
 dependencies {
-     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     if (enableHermes) {
         //noinspection GradleDynamicVersion
         implementation("com.facebook.react:hermes-engine:+") {
@@ -165,12 +163,15 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    //noinspection GradleDependency
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
+    //noinspection GradleDependency
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
+    //noinspection GradleDependency
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'

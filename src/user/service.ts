@@ -279,14 +279,10 @@ class UserService {
   }
 
   async sendEmailVerificationCode(email: string) {
-    try {
-      await fetchJSONWithCache('/directory/user/mailstate', {
-        method: 'PUT',
-        body: JSON.stringify({ email }),
-      });
-    } catch (e) {
-      // console.warn('[UserService] sendEmailVerificationCode: could not send email verification code', e);
-    }
+    await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mailstate', {
+      method: 'PUT',
+      body: JSON.stringify({ email }),
+    });
   }
 
   async verifyEmailCode(key: string) {
