@@ -22,7 +22,7 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       } catch (err) {
         // ToDo : logout here ?
         // navigate(getLoginRouteName());
-        Alert.alert('signedFetch failed', (err as any).toString);
+        Alert.alert('ToDo : signedFetch.refreshToken failed', (err as any).toString);
       }
     }
     const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
