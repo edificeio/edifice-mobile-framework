@@ -3,7 +3,7 @@ import createReducer from '~/framework/util/redux/reducerFactory';
 import { cacheActiveSession } from '~/framework/util/session';
 
 import { ILoginResult } from '../actions';
-import type { AuthErrorCode, ISession } from '../model';
+import type { AuthErrorCode, ISession, LegalUrls } from '../model';
 import moduleConfig from '../moduleConfig';
 
 // State type
@@ -13,11 +13,13 @@ export interface IAuthState {
   errorTimestamp?: number; // Login screen render timestamp of last error to known what screen the error belongs to
   logged: boolean;
   autoLoginResult?: ILoginResult;
+  legalUrls: LegalUrls;
 }
 
 // Initial state
 export const initialState: IAuthState = {
   logged: false,
+  legalUrls: {},
 };
 
 // Actions definitions
@@ -28,6 +30,7 @@ export const actionTypes = {
   sessionError: moduleConfig.namespaceActionType('SESSION_ERROR'),
   sessionEnd: moduleConfig.namespaceActionType('SESSION_END'),
   redirectAutoLogin: moduleConfig.namespaceActionType('REDIRECT_AUTO_LOGIN'),
+  getLegalDocuments: moduleConfig.namespaceActionType('GET_LEGAL_DOCUMENTS'),
 };
 
 export interface IActionPayloads {
@@ -37,6 +40,7 @@ export interface IActionPayloads {
   sessionError: Pick<Required<IAuthState>, 'error' | 'errorTimestamp'>;
   sessionEnd: undefined;
   redirectAutoLogin: Pick<Required<IAuthState>, 'autoLoginResult'>;
+  getLegalDocuments: Pick<Required<IAuthState>, 'legalUrls'>;
 }
 
 export const actions = {
@@ -50,23 +54,24 @@ export const actions = {
   }),
   sessionEnd: () => ({ type: actionTypes.sessionEnd }),
   redirectAutoLogin: (result: ILoginResult) => ({ type: actionTypes.redirectAutoLogin, autoLoginResult: result }),
+  getLegalDocuments: (legalUrls: LegalUrls) => ({ type: actionTypes.getLegalDocuments, legalUrls }),
 };
 
 const reducer = createReducer(initialState, {
   [actionTypes.sessionCreate]: (state, action) => {
     const { session }: IActionPayloads['sessionCreate'] = action as any;
     cacheActiveSession(session);
-    return { ...initialState, session, logged: true };
+    return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionPartial]: (state, action) => {
     const { session }: IActionPayloads['sessionCreate'] = action as any;
     cacheActiveSession(session);
-    return { ...initialState, session, logged: false };
+    return { ...initialState, session, logged: false, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionRefresh]: (state, action) => {
     const { session }: IActionPayloads['sessionRefresh'] = action as any;
     cacheActiveSession(session);
-    return { ...initialState, session, logged: true };
+    return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionError]: (state, action) => {
     const { error, errorTimestamp }: IActionPayloads['sessionError'] = action as any;
@@ -80,6 +85,10 @@ const reducer = createReducer(initialState, {
   [actionTypes.redirectAutoLogin]: (state, action) => {
     const { autoLoginResult }: IActionPayloads['redirectAutoLogin'] = action as any;
     return { ...state, autoLoginResult };
+  },
+  [actionTypes.getLegalDocuments]: (state, action) => {
+    const { legalUrls }: IActionPayloads['getLegalDocuments'] = action as any;
+    return { ...state, legalUrls: { ...state.legalUrls, ...legalUrls } };
   },
 });
 

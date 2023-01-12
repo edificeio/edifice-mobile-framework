@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 
+import { SupportedLocales } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { UserType } from '~/framework/util/session';
@@ -374,11 +375,20 @@ export async function removeFirebaseToken(platform: Platform) {
 }
 
 export async function revalidateTerms(session: ISession) {
+  await signedFetch(session.platform.url + '/auth/cgu/revalidate', {
+    method: 'PUT',
+  });
+}
+
+export async function getAuthTranslationKeys(platform: Platform, language: SupportedLocales) {
   try {
-    await fetchJSONWithCache('/auth/cgu/revalidate', {
-      method: 'PUT',
-    });
+    // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
+    const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language } });
+    if (res.ok) {
+      const authTranslationKeys = await res.json();
+      return authTranslationKeys;
+    } else throw new Error('http response not 2xx');
   } catch (e) {
-    // console.warn('[UserService] revalidateTerms: could not revalidate terms', e);
+    throw createAuthError(RuntimeAuthErrorCode.LOAD_I18N_ERROR, '', '', e as Error);
   }
 }

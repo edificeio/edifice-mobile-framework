@@ -2,10 +2,11 @@ import CookieManager from '@react-native-cookies/cookies';
 import I18n from 'i18n-js';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { SupportedLocales } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache } from '~/infra/fetchWithCache';
-import { OAuth2ErrorCode, destroyOAuth2 } from '~/infra/oauth';
+import { OAuth2ErrorCode, destroyOAuth2, urlSigner } from '~/infra/oauth';
 import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoginError } from '~/user/actions/actionTypes/login';
 
 import {
@@ -19,6 +20,7 @@ import {
   IChangePasswordError,
   IChangePasswordPayload,
   IForgotPayload,
+  LegalUrls,
   PartialSessionScenario,
   RuntimeAuthErrorCode,
   createActivationError,
@@ -33,6 +35,7 @@ import {
   fetchUserPublicInfo,
   formatSession,
   getAuthContext,
+  getAuthTranslationKeys,
   getPartialSessionScenario,
   manageFirebaseToken as initFirebaseToken,
   removeFirebaseToken,
@@ -56,9 +59,45 @@ interface ILoginActionResultPartialScenario {
 }
 export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPartialScenario | void;
 
+/**
+ *
+ * @param platform
+ * @returns
+ */
+function getLegalUrlsAction(platform: Platform) {
+  return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<LegalUrls | undefined> {
+    // === 1: Load legal document urls
+    try {
+      const legalUrls: LegalUrls = {
+        cgu: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cgu'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.personalDataProtection'), platform),
+        cookies: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cookies'), platform),
+      };
+      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.locale as SupportedLocales);
+      if (authTranslationKeys) {
+        legalUrls.userCharter = urlSigner.getAbsoluteUrl(
+          authTranslationKeys['auth.charter'] || I18n.t('user.legalUrl.userCharter'),
+          platform,
+        );
+      }
+      dispatch(authActions.getLegalDocuments(legalUrls));
+      return legalUrls;
+    } catch (e) {
+      const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+      if (authError?.type === RuntimeAuthErrorCode.LOAD_I18N_ERROR) {
+        // Do nothing, this kind of error is non-blocking
+      } else {
+        throw e;
+      }
+    }
+  };
+}
+
 export function loginAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean, timestamp?: number) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<ILoginResult> {
     try {
+      await dispatch(getLegalUrlsAction(platform));
+
       // 1. Get token from somewhere
 
       if (credentials) {

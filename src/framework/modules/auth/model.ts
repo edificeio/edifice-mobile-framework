@@ -36,6 +36,7 @@ export enum RuntimeAuthErrorCode {
   PLATFORM_NOT_EXISTS = 'platform-not-exists',
   ACTIVATION_ERROR = 'activation-error',
   UNKNOWN_ERROR = 'unknown-error',
+  LOAD_I18N_ERROR = 'load-i18n-error',
 }
 export type AuthErrorCode = OAuth2ErrorCode | RuntimeAuthErrorCode;
 
@@ -146,3 +147,10 @@ export function createChangePasswordError<T extends object>(
   err.description = description;
   return { ...err, ...additionalData } as IChangePasswordError & T;
 }
+
+export type LegalUrls = {
+  userCharter?: string;
+  cgu?: string;
+  personalDataProtection?: string;
+  cookies?: string;
+};

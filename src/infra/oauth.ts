@@ -568,9 +568,12 @@ export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ..
 export const urlSigner = {
   /**
    * Prepend url with domain name if needed.
+   * Uses the current platform as domain, but custom platform can be used as a second optional argument.
    */
-  getAbsoluteUrl: (url?: string) => {
-    const pf = assertSession().platform;
+  getAbsoluteUrl: (url?: string, pf?: Platform) => {
+    if (!pf) {
+      pf = assertSession().platform;
+    }
     return url && (url.startsWith('//') ? `https:${url}` : url.startsWith('/') ? `${pf.url}${url}` : url);
   },
 

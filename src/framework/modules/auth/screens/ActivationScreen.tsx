@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform as RNPlatform,
   SafeAreaView,
@@ -14,6 +15,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -30,14 +32,14 @@ import { ILoginResult, activateAccountAction } from '../actions';
 import {
   ActivationFormModel,
   InputEmail,
-  InputLogin,
   InputPassword,
   InputPasswordConfirm,
   InputPhone,
   ValueChangeArgs,
 } from '../components/ActivationForm';
-import { IActivationError, IActivationPayload } from '../model';
+import { IActivationError, IActivationPayload, LegalUrls } from '../model';
 import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigation';
+import { getState as getAuthState } from '../reducer';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -49,10 +51,14 @@ export interface IActivationPageState extends IActivationPayload {
   error?: string;
   activationState: 'IDLE' | 'RUNNING' | 'DONE';
 }
+export interface IActivationPageDataProps {
+  legalUrls: LegalUrls;
+}
 export interface IActivationPageEventProps {
   handleSubmit(platform: Platform, payload: IActivationPayload, rememberMe?: boolean): Promise<ILoginResult>;
 }
 export type IActivationPageProps = IActivationPageEventProps &
+  IActivationPageDataProps &
   NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.activation>;
 
 // Activation Page Component -------------------------------------------------------------
@@ -154,7 +160,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     };
   };
 
-  private handleOpenCGU = (url: string) => {
+  private doOpenCGU = (url?: string) => {
     openPdfReader({ src: url, title: I18n.t('activation-cgu') });
   };
 
@@ -172,9 +178,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const errorText = errorKey ? I18n.t(errorKey) : error;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = activationState === 'RUNNING';
-    const platformUrl = this.props.route.params.platform.url;
-    const path = I18n.t('common.url.cgu');
-    const cguUrl = `${platformUrl}${path}`;
+    const cguUrl = this.props.legalUrls.cgu;
 
     return (
       <PageView>
@@ -207,7 +211,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                       />
                       <View style={styles.cguText}>
                         <SmallText>{I18n.t('activation-cgu-accept')}</SmallText>
-                        <TouchableOpacity onPress={() => this.handleOpenCGU(cguUrl)}>
+                        <TouchableOpacity onPress={() => this.doOpenCGU(cguUrl)}>
                           <SmallActionText>{I18n.t('activation-cgu')}</SmallActionText>
                         </TouchableOpacity>
                       </View>
@@ -242,11 +246,17 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   }
 }
 
-export default connect(undefined, dispatch =>
-  bindActionCreators(
-    {
-      handleSubmit: tryAction(activateAccountAction, undefined, true) as unknown as IActivationPageEventProps['handleSubmit'], // Redux-thunk types suxx
-    },
-    dispatch,
-  ),
+export default connect(
+  (state: IGlobalState) => {
+    return {
+      legalUrls: getAuthState(state).legalUrls,
+    };
+  },
+  dispatch =>
+    bindActionCreators(
+      {
+        handleSubmit: tryAction(activateAccountAction, undefined, true) as unknown as IActivationPageEventProps['handleSubmit'], // Redux-thunk types suxx
+      },
+      dispatch,
+    ),
 )(ActivationPage);

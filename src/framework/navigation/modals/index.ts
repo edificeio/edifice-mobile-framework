@@ -11,7 +11,7 @@ export enum ModalsRouteNames {
 }
 
 export interface IModalsNavigationParams extends ParamListBase {
-  [ModalsRouteNames.Pdf]: { title: string; src: string };
+  [ModalsRouteNames.Pdf]: { title: string; src?: string };
   [ModalsRouteNames.Carousel]: {
     data: IMedia[];
     startIndex?: number;

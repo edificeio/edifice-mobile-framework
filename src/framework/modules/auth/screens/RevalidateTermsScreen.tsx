@@ -16,10 +16,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView, PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import { ILoginResult, loginAction, logoutAction } from '../actions';
-import { ISession } from '../model';
+import { ISession, LegalUrls } from '../model';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState, redirectLoginNavAction } from '../navigation';
 import { getState as getAuthState } from '../reducer';
 import { revalidateTerms } from '../service';
@@ -28,6 +29,7 @@ import { revalidateTerms } from '../service';
 
 export interface IRevalidateTermsScreenDataProps {
   session?: ISession;
+  legalUrls: LegalUrls;
 }
 
 export interface IRevalidateTermsScreenEventProps {
@@ -74,26 +76,22 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation, props.handleLogin]);
 
-  const openCGU = React.useCallback(
-    (url: string) => {
-      props.navigation.navigate({
-        name: '$pdf',
-        params: { src: url, title: I18n.t('activation-cgu') },
-      });
-    },
-    [props.navigation],
-  );
+  const doOpenCGU = React.useCallback((url?: string) => {
+    openPdfReader({
+      src: url,
+      title: I18n.t('activation-cgu'),
+    });
+  }, []);
 
   // RENDER =======================================================================================
 
   const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.big;
   const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
-  const path = I18n.t('common.url.cgu');
-  const eulaUrl = `${props.route.params.platform.url}${path}`;
+  const eulaUrl = props.legalUrls.cgu;
+  console.debug(props.legalUrls);
 
   return (
     <PageView>
-      {/* <RevalidateTermsScreen acceptAction={() => revalidateTerms()} refuseAction={() => refuseTerms()} /> */}
       <PageViewStyle
         style={{
           backgroundColor: theme.ui.background.empty,
@@ -116,7 +114,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
         </HeadingSText>
         <SmallText numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
           {`${I18n.t('user.revalidateTermsScreen.mustAccept')} `}
-          <SmallActionText onPress={() => openCGU(eulaUrl)} style={{ textDecorationLine: 'underline' }}>
+          <SmallActionText onPress={() => doOpenCGU(eulaUrl)} style={{ textDecorationLine: 'underline' }}>
             {I18n.t('user.revalidateTermsScreen.newEndUserLicenseAgreement')}
           </SmallActionText>
         </SmallText>
@@ -136,6 +134,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
 export default connect(
   (state: IGlobalState) => ({
     session: getAuthState(state).session,
+    legalUrls: getAuthState(state).legalUrls,
   }),
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(

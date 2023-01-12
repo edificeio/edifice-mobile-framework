@@ -8,6 +8,8 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
+import { EmptyConnectionScreen } from '../components/emptyConnectionScreen';
+
 export interface IBackdropPdfReaderState {
   error: boolean;
 }
@@ -33,6 +35,8 @@ export class BackdropPdfReaderScreen extends React.PureComponent<
     const { error } = this.state;
     return error ? (
       <EmptyContentScreen />
+    ) : !uri ? (
+      <EmptyConnectionScreen />
     ) : (
       <Pdf
         activityIndicatorProps={{
