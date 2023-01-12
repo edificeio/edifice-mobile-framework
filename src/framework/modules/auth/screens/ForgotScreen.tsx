@@ -22,6 +22,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
+import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { ValidatorBuilder } from '~/utils/form';
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingRight: UI_SIZES.spacing.small,
   },
-  inputLine: { color: theme.ui.text.inverse },
+  // inputLine: { color: theme.ui.text.inverse },
   touchable: { height: '100%', width: '100%', position: 'absolute' },
   picker: { width: '100%', borderWidth: 1, borderColor: theme.palette.grey.grey, borderTopWidth: 0 },
   textColorLight: { color: theme.ui.text.light },
@@ -97,6 +98,11 @@ const styles = StyleSheet.create({
     marginTop: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.tiny,
     textAlign: 'center',
+  },
+  buttonWrapper: {
+    alignItems: 'center',
+    flexGrow: 2,
+    justifyContent: 'flex-start',
   },
 });
 
@@ -120,7 +126,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
       const structureId = selectedStructure && selectedStructure.structureId;
       const result = await this.props.handleSubmit(route.params.platform, { login, firstName, structureId }, forgotMode);
       this.setState({ editing: false, forgotState: 'DONE', result });
-    } catch (e) {
+    } catch {
       this.setState({
         forgotState: 'IDLE',
         editing: false,
@@ -132,7 +138,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
   // Refs
   private inputLoginRef = React.createRef<TextInput>();
 
-  private setInputLoginRef = (ref: TextInput) => (this.inputLoginRef.current = ref); // ToDo : change how ref is managed
+  private setInputLoginRef = (ref: TextInput) => (this.inputLoginRef.current = ref);
 
   // Email ValidatorBuilder
   private emailValidator = new ValidatorBuilder().withRequired(true).withEmail().build<string>();
@@ -149,7 +155,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
     const { result, editing, login, firstName, structureName, showStructurePicker, structures } = this.state;
     const forgotMode = route.params.mode;
     const hasStructures = structures.length > 0;
-    const isError = result?.hasOwnProperty('error');
+    const isError = result && containsKey(result, 'error');
     const errorMsg = isError ? (result as { error: string }).error : null;
     const errorText = hasStructures
       ? I18n.t('forgot-several-emails')
@@ -157,9 +163,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
       ? I18n.t(`forgot-${errorMsg.replace(/\./g, '-')}${forgotMode === 'id' ? '-id' : ''}`)
       : I18n.t('common-ErrorUnknown');
     const isSuccess =
-      !result?.hasOwnProperty('error') &&
-      !result?.hasOwnProperty('structures') &&
-      result?.hasOwnProperty('ok') &&
+      result &&
+      !containsKey(result, 'error') &&
+      !containsKey(result, 'structures') &&
+      containsKey(result, 'ok') &&
       (result as { ok: boolean }).ok === true;
     const isValidEmail = this.emailValidator.isValid(login);
     const canSubmit =
@@ -172,7 +179,11 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
         <SafeAreaView style={styles.safeArea}>
           <FormPage>
             <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={RNPlatform.OS === 'ios' ? 'padding' : undefined}>
-              <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.flexGrow1}>
+              <ScrollView
+                alwaysBounceVertical={false}
+                overScrollMode="never"
+                contentContainerStyle={styles.flexGrow1}
+                keyboardShouldPersistTaps="handled">
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
@@ -194,10 +205,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                           });
                         }}
                         value={login}
-                        hasError={isError && !editing && !(hasStructures && errorMsg)}
+                        hasError={(isError && !editing && !(hasStructures && errorMsg)) ?? false}
                         keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
                         editable={!hasStructures}
-                        inputStyle={hasStructures ? styles.input : undefined}
+                        // inputStyle={hasStructures ? styles.inputLine : undefined}
                         returnKeyLabel={I18n.t('forgot-submit')}
                         returnKeyType="done"
                         onSubmitEditing={() => this.doSubmit()}
@@ -231,6 +242,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                         <View
                           style={[
                             styles.inputWrapper,
+                            // Strangely, eslint considers this style is inline-defined.
+                            // eslint-disable-next-line react-native/no-inline-styles
                             {
                               backgroundColor: structureName ? theme.palette.complementary.blue.regular : undefined,
                               borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
@@ -249,7 +262,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                             placeholder={I18n.t('School')}
                             value={structureName}
                             style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
-                            inputStyle={styles.inputLine}
+                            // inputStyle={styles.inputLine}
                           />
                           <Icon
                             name="arrow_down"
@@ -279,12 +292,12 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                       </>
                     ) : null}
                     <View
-                      style={{
-                        alignItems: 'center',
-                        flexGrow: 2,
-                        justifyContent: 'flex-start',
-                        marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
-                      }}>
+                      style={[
+                        styles.buttonWrapper,
+                        {
+                          marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
+                        },
+                      ]}>
                       {!isSuccess || editing ? (
                         <ActionButton
                           action={() => this.doSubmit()}
