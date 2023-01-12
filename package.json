@@ -68,6 +68,8 @@
     "hoist-non-react-statics": "3.3.2",
     "html-entities": "2.3.3",
     "i18n-js": "3.9.2",
+    "lottie-ios": "3.4.1",
+    "lottie-react-native": "5.1.4",
     "mime": "3.0.0",
     "moment": "2.29.4",
     "pager-rn": "0.0.2",
