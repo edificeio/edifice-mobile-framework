@@ -11,6 +11,7 @@ import appConf, { Platform } from '~/framework/util/appConf';
 import { ILoginResult } from '../actions';
 import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '../model';
 import type { ChangePasswordScreenNavParams } from '../screens/change-password/types';
+import type { LoginHomeScreenNavParams } from '../screens/login-home/types';
 
 export enum AuthRouteNames {
   loginHome = 'LoginHome',
@@ -24,7 +25,7 @@ export enum AuthRouteNames {
   changePassword = 'ChangePassword',
 }
 export interface IAuthNavigationParams extends ParamListBase {
-  [AuthRouteNames.loginHome]: { platform: Platform };
+  [AuthRouteNames.loginHome]: LoginHomeScreenNavParams;
   [AuthRouteNames.loginWayf]: { platform: Platform };
   [AuthRouteNames.wayf]: { platform: Platform };
   [AuthRouteNames.activation]: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
