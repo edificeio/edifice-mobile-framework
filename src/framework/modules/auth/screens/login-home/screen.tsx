@@ -19,7 +19,7 @@ import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 
 import { loginAction, markLoginErrorTimestampAction } from '../../actions';
-import { redirectLoginNavAction } from '../../navigation';
+import { AuthRouteNames, redirectLoginNavAction } from '../../navigation';
 import { getState as getAuthState } from '../../reducer';
 import styles from './styles';
 import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginHomeScreenState } from './types';
@@ -231,14 +231,14 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                 <SmallText
                   style={styles.textForgotPassword}
                   onPress={() => {
-                    navigation.navigate('Forgot', { platform, mode: 'password' });
+                    navigation.navigate(AuthRouteNames.forgot, { platform, mode: 'password' });
                   }}>
                   {I18n.t('forgot-password')}
                 </SmallText>
                 <SmallText
                   style={styles.textForgotId}
                   onPress={() => {
-                    navigation.navigate('Forgot', { platform, mode: 'id' });
+                    navigation.navigate(AuthRouteNames.forgot, { platform, mode: 'id' });
                   }}>
                   {I18n.t('forgot-id')}
                 </SmallText>
