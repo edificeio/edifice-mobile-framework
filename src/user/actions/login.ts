@@ -313,7 +313,7 @@ export function loginAction(
         routeToGo = 'RevalidateTerms';
         routeParams = { credentials };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
-        routeToGo = 'SendEmailVerificationCode';
+        routeToGo = 'UserEmail';
         routeParams = { credentials, defaultEmail: (err as any)?.emailValidationInfos?.email };
       }
 

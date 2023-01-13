@@ -79,14 +79,15 @@ export const UI_SIZES = {
     },
   },
   elements: {
-    icon: 24,
     actionButtonBorder: 2,
+    icon: 24,
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
     tabbarIconSize: 24,
     textFieldMaxHeight: 105,
+    thumbnail: getScaleImageSize(150),
   },
   radius: {
     small: 4,

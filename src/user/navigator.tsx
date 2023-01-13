@@ -5,11 +5,11 @@ import ChildrenPage from './containers/ChildrenPage';
 import LegalNoticeScreen from './containers/LegalNoticeScreen';
 import PushNotifsSettingsScreen from './containers/PushNotifsSettingsScreen';
 import RelativesPage from './containers/RelativesPage';
-import SendEmailVerificationCodeScreen from './containers/SendEmailVerificationCodeScreen';
 import StructuresPage from './containers/StructuresPage';
-import VerifyEmailCodeScreen from './containers/VerifyEmailCodeScreen';
 import WhoAreWeScreen from './containers/WhoAreWeScreen';
 import XmasScreen from './containers/XmasScreen';
+import UserEmailScreen from './containers/email';
+import MFAScreen from './containers/mfa';
 import UserAccountScreen from './containers/user-account';
 import UserProfileScreen from './containers/user-profile';
 
@@ -43,12 +43,12 @@ export default createStackNavigator(
       screen: ChangePasswordPage,
     },
 
-    SendEmailVerificationCode: {
-      screen: SendEmailVerificationCodeScreen,
+    UserEmail: {
+      screen: UserEmailScreen,
     },
 
-    VerifyEmailCode: {
-      screen: VerifyEmailCodeScreen,
+    MFA: {
+      screen: MFAScreen,
     },
 
     Structures: {

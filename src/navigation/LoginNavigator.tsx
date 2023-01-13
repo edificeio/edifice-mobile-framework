@@ -11,10 +11,10 @@ import ForgotPage from '~/user/containers/ForgotPage';
 import LoginWAYFPage from '~/user/containers/LoginWAYFPage';
 import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
 import RevalidateTermsScreen from '~/user/containers/RevalidateTermsScreen';
-import SendEmailVerificationCodeScreen from '~/user/containers/SendEmailVerificationCodeScreen';
-import VerifyEmailCodeScreen from '~/user/containers/VerifyEmailCodeScreen';
 import WAYFPage from '~/user/containers/WAYFPage';
+import UserEmailScreen from '~/user/containers/email';
 import LoginPage from '~/user/containers/login';
+import MFAScreen from '~/user/containers/mfa';
 import OnboardingScreen from '~/user/containers/onboarding';
 
 import { loginRouteNames } from './helpers/loginRouteName';
@@ -52,14 +52,14 @@ export default createStackNavigator(
         gestureEnabled: false,
       },
     },
-    SendEmailVerificationCode: {
-      screen: SendEmailVerificationCodeScreen,
+    UserEmail: {
+      screen: UserEmailScreen,
       navigationOptions: {
         gestureEnabled: false,
       },
     },
-    VerifyEmailCode: {
-      screen: VerifyEmailCodeScreen,
+    MFA: {
+      screen: MFAScreen,
     },
   },
   {

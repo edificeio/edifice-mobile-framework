@@ -136,7 +136,7 @@ export class UserAccountScreen extends React.PureComponent<
               {session.user.type !== 'Student' ? (
                 <LineButton
                   title="user.page.editEmail"
-                  onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}
+                  onPress={() => this.props.navigation.navigate('UserEmail', { isModifyingEmail: true })}
                 />
               ) : null}
               <LineButton title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
