@@ -194,7 +194,7 @@ export const defaultTheme: ThemeInitializer = {
         evil: 'magenta',
         dark: 'magenta',
         regular: '#2A9CC8',
-        light: 'magenta',
+        light: '#AADAED',
         pale: '#E4F4FF',
       },
       indigo: {

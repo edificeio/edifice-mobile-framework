@@ -5,6 +5,7 @@ import { ImageBackground, StyleSheet, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Picture } from '~/framework/components/picture';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { BottomColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
@@ -55,7 +56,14 @@ export default ({
       resizeMode="contain">
       <View style={styles.itemContent}>
         <View style={styles.itemRowStyle}>
-          <Icon style={styles.iconMarginRight} size={20} name="access_time" />
+          <Picture
+            type="NamedSvg"
+            name="ui-clock"
+            width={20}
+            height={20}
+            fill={theme.ui.text.regular}
+            style={styles.iconMarginRight}
+          />
           <SmallText>
             {moment(item.startDate).format('LT')} - {moment(item.endDate).format('LT')}
           </SmallText>

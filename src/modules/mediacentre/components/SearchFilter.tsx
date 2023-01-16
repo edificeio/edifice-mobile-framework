@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { IResource } from '~/modules/mediacentre/reducer';
 
@@ -115,7 +115,7 @@ const FilterItem: React.FunctionComponent<IFilterItemProps> = (props: IFilterIte
 
 const FilterSection: React.FunctionComponent<IFilterSectionProps> = (props: IFilterSectionProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const iconName = expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+  const iconName = expanded ? 'ui-rafterUp' : 'ui-rafterDown';
   const expandSection = () => {
     setExpanded(!expanded);
   };
@@ -123,7 +123,7 @@ const FilterSection: React.FunctionComponent<IFilterSectionProps> = (props: IFil
     <View>
       <TouchableOpacity style={styles.sectionHeaderContainer} onPress={expandSection}>
         <SmallText>{I18n.t(`mediacentre.${props.title}`)}</SmallText>
-        <Icon name={iconName} size={30} />
+        <Picture type="NamedSvg" name={iconName} width={18} height={18} fill={theme.ui.text.regular} />
       </TouchableOpacity>
       {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} key={item.value} />) : null}
     </View>
@@ -148,7 +148,14 @@ export const SearchFilter: React.FunctionComponent<ISearchFilterProps> = (props:
   return (
     <View style={[styles.mainContainer, props.containerStyle]}>
       <TouchableOpacity style={styles.titleContainer} onPress={expand}>
-        <Icon name="filter" size={16} style={styles.iconContainer} />
+        <Picture
+          type="NamedSvg"
+          name="ui-filter"
+          width={18}
+          height={18}
+          fill={theme.ui.text.regular}
+          style={styles.iconContainer}
+        />
         <SmallText>{I18n.t('mediacentre.filter').toUpperCase()}</SmallText>
       </TouchableOpacity>
       {expanded ? (

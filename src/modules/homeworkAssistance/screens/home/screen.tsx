@@ -17,7 +17,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText, SmallText } from '~/framework/components/text';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { UserType, getUserSession } from '~/framework/util/session';
+import { getUserSession } from '~/framework/util/session';
 import { fetchHomeworkAssistanceConfigAction } from '~/modules/homeworkAssistance/actions';
 import moduleConfig from '~/modules/homeworkAssistance/moduleConfig';
 
@@ -75,8 +75,6 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps)
 
   const renderInformation = () => {
     const { header, body, days, time, info } = props.config.messages;
-    const userType = props.session.user.type;
-    const isActionDisabled = ![UserType.Student, UserType.Relative].includes(userType);
     return (
       <SafeAreaView style={styles.container}>
         <BodyBoldText style={styles.primaryText}>{header}</BodyBoldText>
@@ -100,8 +98,7 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps)
         <ActionButton
           text={I18n.t('homeworkAssistance.makeARequest')}
           action={() => goToRequest()}
-          disabled={isActionDisabled}
-          style={isActionDisabled ? styles.actionContainerDisabled : styles.actionContainerEnabled}
+          style={styles.actionContainer}
         />
       </SafeAreaView>
     );

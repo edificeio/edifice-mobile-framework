@@ -14,15 +14,16 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
-import PopupMenu, {
+import {
   DocumentPicked,
-  PopupMenuAction,
+  MenuAction,
   cameraAction,
   deleteAction,
   documentAction,
   galleryAction,
-} from '~/framework/components/popup-menu';
+} from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
+import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -219,7 +220,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   const getMenuActions = (): {
     navBarActions: { icon: string };
-    popupMenuActions: PopupMenuAction[];
+    popupMenuActions: MenuAction[];
   } => {
     if (isSelectionActive) {
       const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);

@@ -19,9 +19,11 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { ButtonLine } from '~/ui/button-line';
+import { ButtonLineGroup } from '~/ui/button-line/component';
 import { logout } from '~/user/actions/login';
 import { IUserInfoState } from '~/user/state/info';
 
+import { isXmasDateLimitCrossed } from '../../actions/xmas';
 import styles from './styles';
 
 export class UserAccountScreen extends React.PureComponent<
@@ -128,32 +130,34 @@ export class UserAccountScreen extends React.PureComponent<
           </View>
           <View style={styles.section}>
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.configuration')}</HeadingSText>
-            <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} first />
-            <ButtonLine title="user.page.editPassword" onPress={() => this.props.navigation.navigate('ChangePassword')} />
-            {session.user.type !== 'Student' ? (
-              <ButtonLine
-                title="user.page.editEmail"
-                onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}
-              />
-            ) : null}
-            <ButtonLine title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
-            {session.user.type === 'Student' ? (
-              <ButtonLine title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />
-            ) : session.user.type === 'Relative' ? (
-              <ButtonLine title="directory-childrenTitle" onPress={() => this.props.navigation.navigate('Children')} />
-            ) : null}
-            <ButtonLine title="directory-xmasTitle" onPress={() => this.props.navigation.navigate('Xmas')} last />
+            <ButtonLineGroup>
+              <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
+              <ButtonLine title="user.page.editPassword" onPress={() => this.props.navigation.navigate('ChangePassword')} />
+              {session.user.type !== 'Student' ? (
+                <ButtonLine
+                  title="user.page.editEmail"
+                  onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}
+                />
+              ) : null}
+              <ButtonLine title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
+              {session.user.type === 'Student' ? (
+                <ButtonLine title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />
+              ) : session.user.type === 'Relative' ? (
+                <ButtonLine title="directory-childrenTitle" onPress={() => this.props.navigation.navigate('Children')} />
+              ) : null}
+              {!isXmasDateLimitCrossed ? (
+                <ButtonLine title="directory-xmasTitle" onPress={() => this.props.navigation.navigate('Xmas')} />
+              ) : null}
+            </ButtonLineGroup>
           </View>
           <View style={[styles.section, styles.sectionLast]}>
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.others')}</HeadingSText>
-            {this.showWhoAreWe ? (
-              <>
-                <ButtonLine title="directory-whoAreWeTitle" onPress={() => this.props.navigation.navigate('WhoAreWe')} first />
-                <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} last />
-              </>
-            ) : (
-              <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} alone />
-            )}
+            <ButtonLineGroup>
+              {this.showWhoAreWe ? (
+                <ButtonLine title="directory-whoAreWeTitle" onPress={() => this.props.navigation.navigate('WhoAreWe')} />
+              ) : null}
+              <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
+            </ButtonLineGroup>
           </View>
           <View style={styles.boxBottomPage}>
             <SmallBoldText style={styles.linkDisconnect} onPress={() => this.onDisconnect()}>

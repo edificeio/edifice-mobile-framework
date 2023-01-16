@@ -26,14 +26,8 @@ export default StyleSheet.create({
   secondaryText: {
     marginLeft: UI_SIZES.spacing.minor,
   },
-  actionContainerEnabled: {
+  actionContainer: {
     backgroundColor: theme.palette.secondary.regular,
     borderColor: theme.palette.secondary.regular,
-    opacity: 1,
-  },
-  actionContainerDisabled: {
-    backgroundColor: theme.ui.text.light,
-    borderColor: theme.ui.text.light,
-    opacity: 0.5,
   },
 });

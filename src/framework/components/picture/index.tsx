@@ -15,17 +15,17 @@ export interface IAnyPictureSource {
   source: any;
 }
 
-interface IPicture_Icon extends IconProps {
+interface IPictureIcon extends IconProps {
   type: 'Icon';
 }
-interface IPicture_Image extends ImageProps {
+interface IPictureImage extends ImageProps {
   type: 'Image';
 }
-interface IPicture_NamedSvg extends NamedSVGProps {
+interface IPictureNamedSvg extends NamedSVGProps {
   type: 'NamedSvg';
 }
 
-export type PictureProps = IPicture_Icon | IPicture_Image | IPicture_NamedSvg;
+export type PictureProps = IPictureIcon | IPictureImage | IPictureNamedSvg;
 
 export function Picture(props: PictureProps) {
   const { type, ...rest } = props;

@@ -7,7 +7,7 @@ import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   LeftColoredItemInfoBar: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
     flexDirection: 'row',
   },
   pageTitle: {
@@ -123,8 +123,8 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
               <LeftColoredItem shadow style={styles.LeftColoredItemInfoBar} color={viescoTheme.palette.diary}>
                 {sessionList && sessionList[indexSelectedSession]?.date ? (
                   <>
-                    <Icon size={20} color={viescoTheme.palette.diary} name="date_range" />
-                    <SmallText>&emsp;{moment(sessionList[indexSelectedSession].date).format('DD/MM/YY')}</SmallText>
+                    <Picture type="NamedSvg" name="ui-calendarLight" width={20} height={20} fill={viescoTheme.palette.diary} />
+                    <SmallText>&ensp;{moment(sessionList[indexSelectedSession].date).format('DD/MM/YY')}</SmallText>
                   </>
                 ) : null}
                 {sessionList && sessionList[indexSelectedSession]?.subject ? (

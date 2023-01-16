@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
 import { Homework } from '~/modules/viescolaire/utils/diary';
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   LeftColoredItemInfoBar: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
     flexDirection: 'row',
   },
   homeworkPart: {
@@ -64,8 +64,14 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
             <LeftColoredItem shadow style={styles.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
               {homeworkList && homeworkList[0]?.due_date ? (
                 <>
-                  <Icon size={20} color={theme.palette.complementary.orange.regular} name="date_range" />
-                  <SmallText>&emsp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</SmallText>
+                  <Picture
+                    type="NamedSvg"
+                    name="ui-calendarLight"
+                    width={20}
+                    height={20}
+                    fill={theme.palette.complementary.orange.regular}
+                  />
+                  <SmallText>&ensp;{moment(homeworkList[0].due_date).format('DD/MM/YY')}</SmallText>
                 </>
               ) : null}
               {subject ? <SmallBoldText style={styles.course}>{subject}</SmallBoldText> : null}

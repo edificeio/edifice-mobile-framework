@@ -1,11 +1,14 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import Support from './containers/Support';
+import moduleConfig from './moduleConfig';
+import SupportCreateTicketScreen from './screens/create-ticket';
 
 export default () =>
   createStackNavigator(
     {
-      Support,
+      [moduleConfig.routeName]: {
+        screen: SupportCreateTicketScreen,
+      },
     },
     {
       headerMode: 'none',

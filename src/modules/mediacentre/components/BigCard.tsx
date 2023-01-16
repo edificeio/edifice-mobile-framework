@@ -35,6 +35,9 @@ const styles = StyleSheet.create({
     marginLeft: UI_SIZES.spacing.medium,
     justifyContent: 'space-between',
   },
+  sourceImage: {
+    alignSelf: 'flex-end',
+  },
   cardActionIcon: {
     flex: 1,
     flexDirection: 'row',
@@ -119,7 +122,7 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
             <FavoriteAction {...this.props} />
             <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={this.copyToClipboard} />
           </View>
-          {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={25} /> : null}
+          {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={25} style={styles.sourceImage} /> : null}
         </View>
       </TouchableResourceCard>
     );

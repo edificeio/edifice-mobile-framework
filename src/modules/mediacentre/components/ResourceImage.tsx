@@ -2,15 +2,9 @@ import React, { useState } from 'react';
 import { ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 'react-native';
 
 import { NamedSVG } from '~/framework/components/picture';
-import { Image } from '~/framework/util/media';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Image } from '~/framework/util/media';
 import { Source } from '~/modules/mediacentre/reducer';
-
-const styles = StyleSheet.create({
-  sourceImageContainer: {
-    alignSelf: 'flex-end',
-  },
-});
 
 interface IResourceImageProps {
   image: string;
@@ -21,6 +15,7 @@ interface IResourceImageProps {
 interface ISourceImageProps {
   size: number;
   source: string;
+  style?: StyleProp<ImageStyle>;
 }
 
 const getImageUri = (value: string): string => {
@@ -44,14 +39,7 @@ export const ResourceImage: React.FunctionComponent<IResourceImageProps> = (prop
       </View>
     );
   }
-  return (
-    <Image
-      source={{ uri: getImageUri(props.image) }}
-      onError={onError}
-      style={props.style}
-      resizeMode={props.resizeMode}
-    />
-  );
+  return <Image source={{ uri: getImageUri(props.image) }} onError={onError} style={props.style} resizeMode={props.resizeMode} />;
 };
 
 export const SourceImage: React.FunctionComponent<ISourceImageProps> = (props: ISourceImageProps) => {
@@ -70,7 +58,5 @@ export const SourceImage: React.FunctionComponent<ISourceImageProps> = (props: I
       image = require('ASSETS/images/logo-gar.png');
       break;
   }
-  return (
-    <Image source={image} style={[styles.sourceImageContainer, { height: props.size, width: props.size }]} resizeMode="contain" />
-  );
+  return <Image source={image} style={[props.style, { height: props.size, width: props.size }]} resizeMode="contain" />;
 };
