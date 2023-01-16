@@ -5,10 +5,9 @@ import DeviceInfo from 'react-native-device-info';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { assertPermissions } from '~/framework/util/permissions';
 
-import { ImagePicked } from '../types';
-import { PopupPickerActionProps } from './types';
+import { ImagePicked, MenuPickerActionProps } from './types';
 
-export default function cameraAction(props: PopupPickerActionProps & { useFrontCamera?: boolean }) {
+export default function galleryAction(props: MenuPickerActionProps & { multiple?: boolean }) {
   const imageCallback = async (images: LocalFile[]) => {
     try {
       for (const img of images) {
@@ -25,23 +24,24 @@ export default function cameraAction(props: PopupPickerActionProps & { useFrontC
 
   const action = async () => {
     try {
-      await assertPermissions('camera');
-      LocalFile.pick({ source: 'camera' }, props.useFrontCamera ? { cameraType: 'front' } : undefined).then(lf => {
+      await assertPermissions('galery.read');
+      LocalFile.pick({ source: 'galery', multiple: props.multiple }).then(lf => {
         return imageCallback(lf);
       });
     } catch {
       Alert.alert(
-        I18n.t('camera.permission.blocked.title'),
-        I18n.t('camera.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.t('galery.read.permission.blocked.title'),
+        I18n.t('galery.read.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
       );
+      return undefined;
     }
   };
 
   return {
-    title: I18n.t('common-photoPicker-take'),
+    title: I18n.t('common-photoPicker-pick'),
     icon: {
-      ios: 'camera',
-      android: 'ic_camera',
+      ios: 'photo.on.rectangle.angled',
+      android: 'ic_gallery',
     },
     action,
   };

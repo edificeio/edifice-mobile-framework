@@ -12,8 +12,9 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView } from '~/framework/components/page';
-import PopupMenu, { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/popup-menu';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import { SyncedFile } from '~/framework/util/fileHandler';
@@ -218,6 +219,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           borderWidth: 1,
           borderRadius: 5,
         }}>
+        {/* POC in progress
         <PopupMenu
           actions={[
             cameraAction({
@@ -243,7 +245,34 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>
-        </PopupMenu>
+        </PopupMenu> */}
+        <BottomMenu
+          title={I18n.t('bottom-menu-add-media')}
+          actions={[
+            cameraAction({
+              callback: this.imageCallback,
+            }),
+            galleryAction({
+              callback: this.imageCallback,
+              multiple: true,
+            }),
+          ]}>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: imagesAdded ? 'row' : 'column',
+              marginTop: UI_SIZES.spacing.big,
+              marginBottom: imagesAdded ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
+            }}
+            // onPress={() => this.attachmentPickerRef.onPickAttachment()}
+          >
+            <SmallActionText style={{ width: 300, marginRight: imagesAdded ? UI_SIZES.spacing.minor : 0, textAlign: 'center' }}>
+              {I18n.t('createPost-create-mediaField')}
+            </SmallActionText>
+            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
+          </View>
+        </BottomMenu>
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           onlyImages
@@ -370,10 +399,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     }
   }
 }
-
-// UTILS ==========================================================================================
-
-// Add some util functions here
 
 // MAPPING ========================================================================================
 

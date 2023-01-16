@@ -1,6 +1,6 @@
-import { PopupActionProps } from './types';
+import { MenuActionProps } from './types';
 
-export default function linkAction(props: PopupActionProps) {
+export default function linkAction(props: MenuActionProps) {
   return {
     title: props.title ?? '',
     icon: {

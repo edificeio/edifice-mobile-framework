@@ -6,9 +6,9 @@ import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-pi
 
 import { assertPermissions } from '~/framework/util/permissions';
 
-import { PopupPickerActionProps } from './types';
+import { MenuPickerActionProps } from './types';
 
-export default function documentAction(props: PopupPickerActionProps) {
+export default function documentAction(props: MenuPickerActionProps) {
   const documentCallback = async (files: DocumentPickerResponse[]) => {
     try {
       for (const file of files) {

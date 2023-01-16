@@ -82,6 +82,8 @@
   "auth-error-unknown_denied": "Un problème est survenu. Veuillez réessayer. (Code 1)",
   "auth-error-unknown_response": "Un problème est survenu. Veuillez réessayer. (Code 2)",
   "back": "Retour",
+  "bottom-menu-add-media": "Ajouter du contenu multimédia",
+  "bottom-menu-change-avatar": "Changer votre photo de profil",
   "blog-emptyScreenButton": "Créer un Blog",
   "blog-emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
   "blog-emptyScreenTitle": "C'est un peu calme ici...",

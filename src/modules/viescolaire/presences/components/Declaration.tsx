@@ -6,15 +6,9 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, Touc
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture } from '~/framework/components/picture';
-import PopupMenu, {
-  DocumentPicked,
-  ImagePicked,
-  cameraAction,
-  documentAction,
-  galleryAction,
-} from '~/framework/components/popup-menu';
-import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
@@ -237,7 +231,8 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               onChangeText={updateComment}
             />
             {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
-              <PopupMenu
+              <BottomMenu
+                title={I18n.t('viesco-attachment')}
                 actions={[
                   cameraAction({ callback: att => this.props.onPickAttachment(att) }),
                   galleryAction({ callback: att => this.props.onPickAttachment(att) }),
@@ -254,7 +249,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                   />
                   <SmallActionText>{I18n.t('viesco-attachment')}</SmallActionText>
                 </View>
-              </PopupMenu>
+              </BottomMenu>
             ) : null}
           </View>
           {attachment ? (

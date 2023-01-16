@@ -7,8 +7,9 @@ import { bindActionCreators } from 'redux';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderIcon } from '~/framework/components/header';
+import { deleteAction } from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
-import PopupMenu, { deleteAction } from '~/framework/components/popup-menu';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { downloadAttachmentAction } from '~/modules/zimbra/actions/download';
 import { deleteMailsAction, restoreMailsAction, toggleReadAction, trashMailsAction } from '~/modules/zimbra/actions/mail';

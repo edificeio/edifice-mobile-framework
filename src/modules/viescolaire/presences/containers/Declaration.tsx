@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
+import { DocumentPicked, ImagePicked } from '~/framework/components/menus/actions';
 import { PageView } from '~/framework/components/page';
-import { DocumentPicked, ImagePicked } from '~/framework/components/popup-menu';
 import { LocalFile } from '~/framework/util/fileHandler';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';

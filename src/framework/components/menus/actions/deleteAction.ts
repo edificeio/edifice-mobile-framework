@@ -1,8 +1,8 @@
 import I18n from 'i18n-js';
 
-import { PopupActionProps } from './types';
+import { MenuActionProps } from './types';
 
-export default function deleteAction(props: PopupActionProps) {
+export default function deleteAction(props: MenuActionProps) {
   return {
     title: I18n.t('delete'),
     icon: {

@@ -6,8 +6,8 @@ import { Asset } from 'react-native-image-picker';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
-import { Picture } from '~/framework/components/picture';
-import PopupMenu, { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/popup-menu';
+import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
 import { SmallActionText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
@@ -99,7 +99,8 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
         <FormAnswerText answer={responses[0]?.answer ? files.map(a => a.filename).join('\n') : undefined} />
       ) : (
         <View style={styles.container}>
-          <PopupMenu
+          <BottomMenu
+            title={I18n.t('common.addFiles')}
             actions={[
               cameraAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
               galleryAction({ callback: file => addFile(filePickedToLocalFile(file)), multiple: true }),
@@ -109,7 +110,7 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
               <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
               <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
             </View>
-          </PopupMenu>
+          </BottomMenu>
           <FlatList
             data={files}
             keyExtractor={attachment => attachment.filename}
