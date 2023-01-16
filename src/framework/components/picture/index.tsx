@@ -6,32 +6,36 @@
 import * as React from 'react';
 import { ImageProps } from 'react-native';
 
-import NamedSVG, { NamedSVGProps } from './NamedSVG';
-import { Icon, IconProps } from './Icon';
 import { Image } from '~/framework/util/media';
+
+import { Icon, IconProps } from './Icon';
+import NamedSVG, { NamedSVGProps } from './NamedSVG';
 
 export interface IAnyPictureSource {
   source: any;
 }
 
-interface IPicture_Icon extends IconProps {
+interface IPictureIcon extends IconProps {
   type: 'Icon';
 }
-interface IPicture_Image extends ImageProps {
+interface IPictureImage extends ImageProps {
   type: 'Image';
 }
-interface IPicture_NamedSvg extends NamedSVGProps {
+interface IPictureNamedSvg extends NamedSVGProps {
   type: 'NamedSvg';
 }
 
-export type PictureProps = IPicture_Icon | IPicture_Image | IPicture_NamedSvg;
+export type PictureProps = IPictureIcon | IPictureImage | IPictureNamedSvg;
 
 export function Picture(props: PictureProps) {
   const { type, ...rest } = props;
   switch (type) {
-    case 'Icon': return <Icon {...(rest as IconProps)} />;
-    case 'Image': return <Image {...(rest as ImageProps)} />;
-    case 'NamedSvg': return <NamedSVG {...(rest as NamedSVGProps)} />;
+    case 'Icon':
+      return <Icon {...(rest as IconProps)} />;
+    case 'Image':
+      return <Image {...(rest as ImageProps)} />;
+    case 'NamedSvg':
+      return <NamedSVG {...(rest as NamedSVGProps)} />;
   }
 }
 
