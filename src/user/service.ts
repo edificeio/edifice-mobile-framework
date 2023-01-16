@@ -305,7 +305,7 @@ class UserService {
         return authTranslationKeys;
       } else throw new Error('error in res.json()');
     } catch (e) {
-      throw '[UserService] getAuthTranslationKeys: ' + e;
+      throw new Error(`[UserService] getAuthTranslationKeys: ${(e as Error).message}`);
     }
   }
 

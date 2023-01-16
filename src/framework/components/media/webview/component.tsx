@@ -4,7 +4,7 @@ import WebView, { WebViewProps } from 'react-native-webview';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import appConf from '~/framework/util/appConf';
 
-export function SafeWebView<P>(props: WebViewProps & P) {
+export default function SafeWebView<P>(props: WebViewProps & P) {
   const id = DEPRECATED_getCurrentPlatform()!.webviewIdentifier || appConf.webviewIdentifier || 'ode-unknown';
   return (
     <WebView

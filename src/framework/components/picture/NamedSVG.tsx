@@ -105,6 +105,7 @@ const imports = {
   'ui-video': import('ASSETS/icons/uiIcons/video.svg'),
   'ui-warning': import('ASSETS/icons/uiIcons/warning.svg'),
   'ui-write': import('ASSETS/icons/uiIcons/write.svg'),
+  'ui-wavering': import('ASSETS/icons/uiIcons/wavering.svg'),
   // ModuleIcons
   admin: import('ASSETS/icons/moduleIcons/admin.svg'),
   adressBook: import('ASSETS/icons/moduleIcons/adressBook.svg'),

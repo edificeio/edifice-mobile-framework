@@ -12,6 +12,8 @@ import { bindActionCreators } from 'redux';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
+import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
 import PopupMenu, { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/popup-menu';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';

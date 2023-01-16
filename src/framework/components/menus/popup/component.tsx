@@ -2,16 +2,16 @@ import { MenuView } from '@react-native-menu/menu';
 import * as React from 'react';
 import { Platform, View } from 'react-native';
 
-import { PopupMenuProps } from './types';
+import { MenuProps } from '../types/types';
 
-export const PopupMenu = (props: React.PropsWithChildren<PopupMenuProps>) => {
-  let id = 0;
+const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
+  let id = -1;
   const actionsPopup = props.actions.map(action => {
     id++;
     return {
       id: id.toString(),
       title: action.title,
-      image: action.icon[Platform.OS],
+      image: action.icon ? action.icon[Platform.OS] : '',
       attributes: {
         destructive: action.destructive ?? false,
       },
@@ -23,13 +23,7 @@ export const PopupMenu = (props: React.PropsWithChildren<PopupMenuProps>) => {
       <MenuView
         isAnchoredToRight
         onPressAction={({ nativeEvent }) => {
-          let idAction = 0;
-          props.actions.forEach(action => {
-            idAction++;
-            if (nativeEvent.event === idAction.toString()) {
-              action.action();
-            }
-          });
+          props.actions[+nativeEvent.event].action();
         }}
         actions={actionsPopup}>
         <View>{props.children}</View>
@@ -37,3 +31,5 @@ export const PopupMenu = (props: React.PropsWithChildren<PopupMenuProps>) => {
     </View>
   );
 };
+
+export default PopupMenu;
