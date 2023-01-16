@@ -74,6 +74,7 @@
     "query-string": "8.1.0",
     "querystring": "0.2.1",
     "react": "18.2.0",
+    "react-is": "18.2.0",
     "react-native": "0.69.7",
     "react-native-action-sheet": "2.2.0",
     "react-native-app-link": "1.0.1",
