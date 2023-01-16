@@ -6,7 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
 import { ICourse } from '~/modules/viescolaire/dashboard/state/courses';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -136,7 +136,13 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
             this.props.navigation.navigate(`${diaryConfig.routeName}/homework`, homeworkListDetailsTeacherAdapter(homeworks))
           }
           disabled={isEmpty}>
-          <Icon name="inbox" size={24} color={isEmpty ? theme.palette.grey.cloudy : theme.palette.complementary.orange.regular} />
+          <Picture
+            type="NamedSvg"
+            name="ui-inbox"
+            width={24}
+            height={24}
+            fill={isEmpty ? theme.palette.grey.cloudy : theme.palette.complementary.orange.regular}
+          />
         </TouchableOpacity>
       </View>
     );
@@ -168,10 +174,12 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
         style={!isHalfCourse && styles.homeworkMargin}
         onPress={navigateToHomeworks}
         disabled={!isHomeWorkPublished}>
-        <Icon
-          name="inbox"
-          size={24}
-          color={isHomeWorkPublished ? theme.palette.complementary.orange.regular : theme.palette.grey.cloudy}
+        <Picture
+          type="NamedSvg"
+          name="ui-inbox"
+          width={24}
+          height={24}
+          fill={isHomeWorkPublished ? theme.palette.complementary.orange.regular : theme.palette.grey.cloudy}
         />
       </TouchableOpacity>
     );
@@ -188,10 +196,12 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
           navigation.navigate(`${diaryConfig.routeName}/session`, sessionListDetailsTeacherAdapter(course.session || course))
         }
         disabled={!isSessionPublished}>
-        <Icon
-          name="insert_drive_file1"
-          size={24}
-          color={isSessionPublished ? viescoTheme.palette.diary : theme.palette.grey.cloudy}
+        <Picture
+          type="NamedSvg"
+          name="ui-textPage"
+          width={24}
+          height={24}
+          fill={isSessionPublished ? viescoTheme.palette.diary : theme.palette.grey.cloudy}
         />
       </TouchableOpacity>
     );

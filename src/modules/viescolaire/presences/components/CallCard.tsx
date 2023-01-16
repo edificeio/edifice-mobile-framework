@@ -5,6 +5,7 @@ import { ImageBackground, StyleSheet, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Picture } from '~/framework/components/picture';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
@@ -69,7 +70,14 @@ export class CallCard extends React.PureComponent<ICallCardProps> {
           imageStyle={styles.backgroundImage}>
           <View style={styles.itemContent}>
             <View style={styles.rowContainer}>
-              <Icon style={styles.iconMarginRight} size={20} name="access_time" />
+              <Picture
+                type="NamedSvg"
+                name="ui-clock"
+                width={20}
+                height={20}
+                fill={theme.ui.text.regular}
+                style={styles.iconMarginRight}
+              />
               <SmallText>{hoursText}</SmallText>
               {course.roomLabels[0] !== '' ? (
                 <View style={styles.roomContainer}>

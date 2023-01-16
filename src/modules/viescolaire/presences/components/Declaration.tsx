@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, Touc
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import PopupMenu, {
   DocumentPicked,
   ImagePicked,
@@ -14,7 +14,7 @@ import PopupMenu, {
   documentAction,
   galleryAction,
 } from '~/framework/components/popup-menu';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
@@ -88,13 +88,10 @@ const styles = StyleSheet.create({
   },
   filePickerStyle: {
     flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: UI_SIZES.spacing.medium,
   },
-  iconAttMarginRight: { marginRight: UI_SIZES.spacing.small },
-  dialogButtonOk: {
-    alignSelf: 'center',
-    marginVertical: UI_SIZES.spacing.minor,
-  },
+  iconAttMarginRight: { marginRight: UI_SIZES.spacing.minor },
 });
 
 type DeclarationProps = {
@@ -247,8 +244,15 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                   documentAction({ callback: att => this.props.onPickAttachment(att) }),
                 ]}>
                 <View style={styles.filePickerStyle}>
-                  <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-                  <SmallText>{I18n.t('viesco-attachment')}</SmallText>
+                  <Picture
+                    type="NamedSvg"
+                    name="ui-attachment"
+                    width={20}
+                    height={20}
+                    fill={theme.palette.primary.regular}
+                    style={styles.iconAttMarginRight}
+                  />
+                  <SmallActionText>{I18n.t('viesco-attachment')}</SmallActionText>
                 </View>
               </PopupMenu>
             ) : null}

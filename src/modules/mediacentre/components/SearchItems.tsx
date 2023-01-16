@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { SmallActionText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
@@ -87,7 +87,14 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<IS
 
 export const IconButtonText: React.FunctionComponent<IIconButtonTextProps> = (props: IIconButtonTextProps) => (
   <TouchableOpacity style={styles.buttonContainer} onPress={props.onPress}>
-    <Icon style={styles.buttonIcon} size={16} color={props.color ?? theme.palette.primary.regular} name={props.icon} />
+    <Picture
+      type="NamedSvg"
+      name="ui-search"
+      width={18}
+      height={18}
+      fill={props.color ?? theme.palette.primary.regular}
+      style={styles.buttonIcon}
+    />
     <SmallActionText>{props.text}</SmallActionText>
   </TouchableOpacity>
 );
