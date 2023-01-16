@@ -78,8 +78,8 @@ export const ButtonLineGroup = ({
       return (
         <ButtonLine
           {...((node as React.ReactElement).props ?? {})}
-          first={allowFirst && childrenAsArray.length > 1 && index === 0}
-          last={allowLast && childrenAsArray.length > 1 && index === childrenAsArray.length - 1}
+          first={allowFirst && (childrenAsArray.length > 1 || !allowAlone) && index === 0}
+          last={allowLast && (childrenAsArray.length > 1 || !allowAlone) && index === childrenAsArray.length - 1}
           alone={allowAlone && childrenAsArray.length === 1}
         />
       );

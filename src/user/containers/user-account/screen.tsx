@@ -154,13 +154,9 @@ export class UserAccountScreen extends React.PureComponent<
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.others')}</HeadingSText>
             <ButtonLineGroup>
               {this.showWhoAreWe ? (
-                <>
-                  <ButtonLine title="directory-whoAreWeTitle" onPress={() => this.props.navigation.navigate('WhoAreWe')} />
-                  <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
-                </>
-              ) : (
-                <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
-              )}
+                <ButtonLine title="directory-whoAreWeTitle" onPress={() => this.props.navigation.navigate('WhoAreWe')} />
+              ) : null}
+              <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
             </ButtonLineGroup>
           </View>
           <View style={styles.boxBottomPage}>
