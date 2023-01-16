@@ -5,7 +5,6 @@ import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-n
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -132,7 +131,7 @@ class Attachment extends React.PureComponent<
     onError?: () => void;
     onOpen?: () => void;
     dispatch: ThunkDispatch<any, any, any>;
-  } & NavigationInjectedProps,
+  },
   {
     downloadState: DownloadState;
     progress: number; // From 0 to 1
@@ -378,11 +377,9 @@ class Attachment extends React.PureComponent<
   }
 }
 
-export default withNavigation(
-  connect(null, dispatch => ({
-    onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
-    onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
-      dispatch(downloadFile(notifierId, file, toastMessage)),
-    dispatch,
-  }))(Attachment),
-);
+export default connect(null, dispatch => ({
+  onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
+  onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
+    dispatch(downloadFile(notifierId, file, toastMessage)),
+  dispatch,
+}))(Attachment);
