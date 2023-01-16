@@ -10,7 +10,7 @@ import { ColorValue, View, ViewStyle } from 'react-native';
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
-import { ActionButton } from './ActionButton';
+import { ActionButton } from './action-button';
 import { UI_SIZES, getScaleDimension } from './constants';
 import { PageViewStyle } from './page';
 import { HeadingSText, SmallText } from './text';

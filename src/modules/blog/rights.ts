@@ -1,12 +1,11 @@
 /**
  * Blog workflow
  */
-
-import { IBlog } from './reducer';
-
 import { registerTimelineWorkflow } from '~/framework/modules/timelinev2/timelineModules';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { IUserSession } from '~/framework/util/session';
+
+import { IBlog } from './reducer';
 
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
 export const submitBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|submit';
@@ -21,6 +20,7 @@ export const viewBlogResourceRight = 'org.entcore.blog.controllers.BlogControlle
 export const createBlogResourceRight = 'org.entcore.blog.controllers.BlogController|create';
 export const createPublicBlogResourceRight = 'org.entcore.blog.controllers.BlogController|createPublicBlog';
 export const publishBlogResourceRight = 'org.entcore.blog.controllers.BlogController|publish';
+export const deleteBlogResourceRight = 'org-entcore-blog-controllers-BlogController|delete';
 
 export const addBlogFolderResourceRight = 'org.entcore.blog.controllers.FoldersController|add';
 
@@ -40,6 +40,10 @@ export const getBlogPostRight = (blog: IBlog, session: IUserSession) => {
   } else if (hasCreateRight) {
     return { actionRight: createBlogPostResourceRight, displayRight: createBlogPostResourceRight };
   } else return undefined;
+};
+
+export const hasPermissionManager = (blog: IBlog, session: IUserSession) => {
+  return blog && (blog.author.userId === session.user.id || resourceHasRight(blog, deleteBlogResourceRight, session));
 };
 
 export const getBlogWorkflowInformation = (session: IUserSession) => ({

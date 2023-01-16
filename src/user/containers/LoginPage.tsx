@@ -7,7 +7,7 @@ import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
@@ -141,14 +141,14 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 justifyContent: 'center',
                 alignItems: 'center',
                 padding: UI_SIZES.spacing.minor,
-                borderColor: theme.palette.status.failure,
+                borderColor: theme.palette.status.failure.regular,
                 borderWidth: 1,
                 borderRadius: 15,
                 width: '90%',
                 alignSelf: 'center',
                 position: 'absolute',
               }}>
-              <SmallBoldText style={{ textAlign: 'center', color: theme.palette.status.failure }}>
+              <SmallBoldText style={{ textAlign: 'center', color: theme.palette.status.failure.regular }}>
                 {I18n.t('common.sommeNumeriqueAlert_temp')}
               </SmallBoldText>
             </View>
@@ -189,7 +189,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
                 padding: UI_SIZES.spacing.tiny,
                 textAlign: 'center',
                 alignSelf: 'center',
-                color: errtype === 'warning' ? theme.palette.status.warning : theme.palette.status.failure,
+                color: errtype === 'warning' ? theme.palette.status.warning.regular : theme.palette.status.failure.regular,
               }}>
               {this.state.typing
                 ? ''

@@ -12,8 +12,8 @@ import { asyncActionTypes } from '~/infra/redux/async';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
-import { IActivationContext } from '~/utils/SubmitState';
 
+import { IUserAuthContext } from '../service';
 import { loginAction } from './login';
 
 // TYPES ------------------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ export interface IActivationSubmitPayload {
 // ACTION INTERFACES --------------------------------------------------------------------------------
 
 export interface IActivationContextFetchedAction extends Action {
-  context: IActivationContext;
+  context: IUserAuthContext;
 }
 
 export interface IActivationContextRequestedAction extends Action {

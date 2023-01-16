@@ -9,7 +9,7 @@ import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
@@ -42,9 +42,40 @@ export interface IWAYFPageProps {
 interface IWAYFPageState {
   // User selection dropdown opened?
   dropdownOpened: boolean;
+  // To prevent java.util.concurrent.TimeoutException crashes
+  loadStarted: boolean;
   // Current display mode: Error Message | Loading Indicator | User Selection | WebView
   mode: WAYFPageMode;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'space-around',
+    paddingHorizontal: UI_SIZES.spacing.large,
+    paddingVertical: UI_SIZES.spacing.huge * 1.5,
+  },
+  error: {
+    flexGrow: 0,
+    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.tiny,
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: theme.palette.status.failure.regular,
+  },
+  //help: { marginTop: UI_SIZES.spacing.large, textAlign: 'center' },
+  safeView: { flex: 1, backgroundColor: theme.ui.background.card },
+  select: { borderColor: theme.palette.primary.regular, borderWidth: 1 },
+  selectBackDrop: { flex: 1 },
+  selectContainer: { borderColor: theme.palette.primary.regular, borderWidth: 1, maxHeight: 120 },
+  selectPlaceholder: { color: theme.ui.text.light },
+  selectText: { color: theme.ui.text.light },
+  text: { textAlign: 'center' },
+  webview: { flex: 1, overflow: 'hidden' },
+  webviewHidden: { opacity: 0 },
+  webviewVisible: { opacity: 1 },
+});
 
 export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Used to post HTML content and retrieve it via onMessage
@@ -52,28 +83,6 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Executed each time WebView url changes
   static get POST_HTML_CONTENT() {
     return 'ReactNativeWebView.postMessage(document.documentElement.innerHTML); true;';
-  }
-
-  // Styles sheet
-  static get STYLES() {
-    return StyleSheet.create({
-      container: {
-        alignItems: 'center',
-        flex: 1,
-        justifyContent: 'space-around',
-        paddingHorizontal: UI_SIZES.spacing.large,
-        paddingVertical: UI_SIZES.spacing.huge * 1.5,
-      },
-      help: { marginTop: UI_SIZES.spacing.large, textAlign: 'center' },
-      safeView: { flex: 1, backgroundColor: theme.ui.background.card },
-      select: { borderColor: theme.palette.primary.regular, borderWidth: 1 },
-      selectBackDrop: { flex: 1 },
-      selectContainer: { borderColor: theme.palette.primary.regular, borderWidth: 1, maxHeight: 120 },
-      selectPlaceholder: { color: theme.ui.text.light },
-      selectText: { color: theme.ui.text.light },
-      text: { textAlign: 'center' },
-      webview: { flex: 1 },
-    });
   }
 
   // User selection dropdown items
@@ -143,17 +152,9 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     () => {
       Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
       return (
-        <View style={WAYFPage.STYLES.container}>
+        <View style={styles.container}>
           <PFLogo />
-          <SmallText
-            style={{
-              flexGrow: 0,
-              marginTop: UI_SIZES.spacing.medium,
-              padding: UI_SIZES.spacing.tiny,
-              textAlign: 'center',
-              alignSelf: 'center',
-              color: theme.palette.status.failure,
-            }}>
+          <SmallText style={styles.error}>
             {I18n.t('auth-error-' + this.error, {
               version: DeviceInfo.getVersion(),
               errorcode: this.error,
@@ -168,9 +169,9 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     () => {
       Trackers.trackDebugEvent('Auth', 'WAYF', 'LOADING');
       return (
-        <View style={WAYFPage.STYLES.container}>
+        <View style={styles.container}>
           <PFLogo />
-          <SmallText style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-loading-text')}</SmallText>
+          <SmallText style={styles.text}>{I18n.t('login-wayf-loading-text')}</SmallText>
           <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
@@ -180,18 +181,18 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
       Trackers.trackDebugEvent('Auth', 'WAYF', 'SELECT');
       return (
         <TouchableWithoutFeedback
-          style={WAYFPage.STYLES.selectBackDrop}
+          style={styles.selectBackDrop}
           onPress={() => {
             this.setState({ dropdownOpened: false });
           }}>
-          <View style={WAYFPage.STYLES.container}>
-            <SmallText style={WAYFPage.STYLES.text}>{I18n.t('login-wayf-select-text')}</SmallText>
+          <View style={styles.container}>
+            <SmallText style={styles.text}>{I18n.t('login-wayf-select-text')}</SmallText>
             <DropDownPicker
-              dropDownContainerStyle={WAYFPage.STYLES.selectContainer}
+              dropDownContainerStyle={styles.selectContainer}
               items={this.dropdownItems}
               open={this.state.dropdownOpened}
               placeholder={I18n.t('login-wayf-select-placeholder')}
-              placeholderStyle={WAYFPage.STYLES.selectPlaceholder}
+              placeholderStyle={styles.selectPlaceholder}
               setOpen={() =>
                 this.setState({
                   dropdownOpened: !dropdownOpened,
@@ -199,8 +200,8 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
               }
               setValue={callback => (this.dropdownValue = callback())}
               showTickIcon={false}
-              style={WAYFPage.STYLES.select}
-              textStyle={WAYFPage.STYLES.selectText}
+              style={styles.select}
+              textStyle={styles.selectText}
               value={this.dropdownValue}
             />
             <View>
@@ -209,7 +210,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
                 disabled={this.dropdownValue === null}
                 action={() => this.loginWithCustomToken()}
               />
-              {/*<SmallText style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</SmallText>*/}
+              {/*<SmallText style={styles.help}>{I18n.t('login-wayf-select-help')}</SmallText>*/}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -217,6 +218,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     },
     // case WAYFPageMode.WEBVIEW: Display WebView
     () => {
+      const { loadStarted } = this.state;
       Trackers.trackDebugEvent('Auth', 'WAYF', 'WEBVIEW');
       return (
         <WebView
@@ -226,6 +228,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           onError={this.onError.bind(this)}
           onHttpError={this.onHttpError.bind(this)}
           onLoad={this.onLoad.bind(this)}
+          onLoadStart={this.onLoadStart.bind(this)}
           onMessage={this.onMessage.bind(this)}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
@@ -235,7 +238,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           source={{ uri: this.wayfUrl }}
           setSupportMultipleWindows={false}
           startInLoadingState
-          style={WAYFPage.STYLES.webview}
+          style={[styles.webview, loadStarted ? styles.webviewVisible : styles.webviewHidden]}
         />
       );
     },
@@ -246,7 +249,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     const pfConf = DEPRECATED_getCurrentPlatform();
     this.pfUrl = pfConf?.url || '';
     this.wayfUrl = pfConf?.wayf || '';
-    this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
+    this.state = { dropdownOpened: false, loadStarted: false, mode: WAYFPageMode.WEBVIEW };
     this.backActions.forEach(action => {
       action.bind(this);
     });
@@ -412,6 +415,13 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     this.isFirstLoadFinished = true;
   }
 
+  onLoadStart() {
+    // Prevent java.util.concurrent.TimeoutException crashes
+    setTimeout(() => {
+      this.setState({ loadStarted: true });
+    }, 500);
+  }
+
   // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)
   // See WebView onMessage property
   onMessage(event: WebViewMessageEvent) {
@@ -467,7 +477,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
         {...(mode === WAYFPageMode.LOADING
           ? { navBar: navBarInfo }
           : { navBarWithBack: navBarInfo, onBack: () => this.onBack(mode) })}>
-        <SafeAreaView style={WAYFPage.STYLES.safeView}>{this.contentComponents[mode](dropdownOpened)}</SafeAreaView>
+        <SafeAreaView style={styles.safeView}>{this.contentComponents[mode](dropdownOpened)}</SafeAreaView>
       </PageView>
     );
   }

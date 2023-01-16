@@ -6,6 +6,7 @@ import { Grayscale } from 'react-native-color-matrix-image-filters';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { FastImage } from '~/framework/util/media';
 import { getUserSession } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
 import { FastImage } from '~/framework/util/media';

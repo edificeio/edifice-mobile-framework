@@ -1,5 +1,5 @@
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
-import { actionTypeForgotRequest, actionTypeForgetReceive } from '~/user/actions/forgot';
+import { actionTypeForgetReceive, actionTypeForgotRequest } from '~/user/actions/forgot';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -15,6 +15,7 @@ export const stateDefault: IUserForgotState = {
   result: { status: '', ok: undefined },
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const authReducer = (state: IUserForgotState = stateDefault, action): IUserForgotState => {
   switch (action.type) {
     case actionTypeForgotRequest: {

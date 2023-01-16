@@ -227,7 +227,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                           row[item.data.id]?.closeRow();
                         } catch (e) {} // Do nothing, just to prevent error
                       },
-                      actionColor: theme.palette.status.warning,
+                      actionColor: theme.palette.status.warning.regular,
                       actionText: I18n.t('timeline.reportAction.button'),
                       actionIcon: 'ui-warning',
                     },
@@ -241,7 +241,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                           row[item.data.id]?.closeRow();
                         } catch (e) {} // Do nothing, just to prevent error
                       },
-                      actionColor: theme.palette.status.failure,
+                      actionColor: theme.palette.status.failure.regular,
                       actionText: I18n.t('common.close'),
                       actionIcon: 'ui-close',
                     },

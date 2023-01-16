@@ -1,11 +1,12 @@
 import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
-import { UI_SIZES } from '~/framework/components/constants';
+import { ActionButton } from '~/framework/components/action-button';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -38,6 +39,11 @@ interface IFormDistributionListModalProps {
   openDistribution: (id: number, status: DistributionStatus, form: IForm) => void;
 }
 
+const compareDistributions = (a: IDistribution, b: IDistribution): number => {
+  if (!a.dateResponse || !b.dateResponse || a.dateResponse.isSame(b.dateResponse)) return 0;
+  return a.dateResponse.isAfter(b.dateResponse) ? 1 : -1;
+};
+
 export const FormDistributionListModal = ({
   modalBoxRef,
   distributions = [],
@@ -45,9 +51,7 @@ export const FormDistributionListModal = ({
   openDistribution,
 }: IFormDistributionListModalProps) => {
   const [isLoading, setLoading] = React.useState(false);
-  const data = distributions
-    .filter(distribution => distribution.status === DistributionStatus.FINISHED)
-    .sort((a, b) => (a.dateResponse! > b.dateResponse! ? 1 : -1));
+  const data = distributions.filter(distribution => distribution.status === DistributionStatus.FINISHED).sort(compareDistributions);
 
   const openDistributionCallback = (id: number, status: DistributionStatus) => {
     if (form) {
@@ -57,12 +61,13 @@ export const FormDistributionListModal = ({
 
   const openSentDistribution = async (id: number) => {
     if (form?.editable) {
-      let distribution = distributions.find(d => d.status === DistributionStatus.ON_CHANGE);
+      let distribution = distributions.find(d => d.originalId === id && d.status === DistributionStatus.ON_CHANGE);
       if (!distribution) {
         try {
           const session = getUserSession();
           distribution = await formService.distribution.duplicate(session, id);
         } catch (e) {
+          Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
           throw e;
         }
       }
@@ -82,6 +87,8 @@ export const FormDistributionListModal = ({
         setLoading(false);
       } catch (e) {
         setLoading(false);
+        modalBoxRef?.current?.doDismissModal();
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
         throw e;
       }
     }
@@ -114,6 +121,7 @@ export const FormDistributionListModal = ({
           <BodyText style={styles.titleMargin}>{`${I18n.t('form.myAnswers')} - ${form?.title}`}</BodyText>
           <FlatList
             data={data}
+            initialNumToRender={data.length}
             keyExtractor={distribution => distribution.id.toString()}
             renderItem={({ item, index }) => renderListItem(item, index + 1)}
             persistentScrollbar

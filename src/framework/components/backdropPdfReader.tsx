@@ -22,13 +22,9 @@ export interface IBackdropPdfReaderState {
 }
 
 export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderProps, IBackdropPdfReaderState> {
-  // DECLARATIONS =================================================================================
-
   state: IBackdropPdfReaderState = {
     error: false,
   };
-
-  // RENDER =======================================================================================
 
   render() {
     const { handleOpen, handleClose, headerColor, indicatorColor, title, uri, visible } = this.props;
@@ -46,10 +42,11 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
               }}
               source={{ cache: true, uri }}
               style={{ flex: 1, backgroundColor: theme.palette.grey.fog }}
-              onError={err => {
+              trustAllCerts={false}
+              onError={_ => {
                 // Note: when the backdrop is dimissed, the "uri" prop becomes undefined and onError activates;
                 // therefore, we only use setState if the modal is displayed (the "visible" prop is true).
-                visible && this.setState({ error: true });
+                if (visible) this.setState({ error: true });
               }}
             />
           )

@@ -60,10 +60,9 @@ export interface IForm {
 export interface IQuestionChoice {
   id: number;
   questionId: number;
-  value?: string;
-  type?: string;
-  position?: number;
-  nextSectionId?: number | null;
+  value: string;
+  type: string;
+  nextSectionId: number | null;
   isCustom: boolean;
 }
 
@@ -81,15 +80,13 @@ export interface IQuestion {
   id: number;
   formId: number;
   title: string;
-  position?: number;
+  position: number | null;
   type: QuestionType;
   statement?: string;
   mandatory: boolean;
   sectionId: number;
   conditional: boolean;
   placeholder?: string;
-  matrixId?: number;
-  matrixPosition?: number;
   cursorMinVal?: number;
   cursorMaxVal?: number;
   cursorStep?: number;

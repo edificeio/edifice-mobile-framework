@@ -8,8 +8,8 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
 import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
+import { ActionButton } from '~/framework/components/action-button';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -18,24 +18,24 @@ import { PictureProps } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { displayDate } from '~/framework/util/date';
+import { IEntcoreApp } from '~/framework/util/moduleTool';
 import { tryAction } from '~/framework/util/redux/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
+  PronoteCdbInitError,
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   getSummaryItem,
-  PronoteCdbInitError,
 } from '~/modules/pronote/model/carnetDeBord';
 import moduleConfig from '~/modules/pronote/moduleConfig';
 import redirect from '~/modules/pronote/service/redirect';
 import { loadCarnetDeBordAction } from '~/modules/pronote/state/carnetDeBord/actions';
 import { ICarnetDeBordStateData } from '~/modules/pronote/state/carnetDeBord/reducer';
 import { IUserInfoState } from '~/user/state/info';
-import { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export interface CarnetDeBordScreenDataProps {
   session: IUserSession;
@@ -108,17 +108,23 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
       }}>
       <ContentLoader
         renderError={refreshControl => {
-          return <ScrollView refreshControl={refreshControl}>
-          {is50xError ? <EmptyScreen
-            svgImage="empty-pronote-uri"
-            title={I18n.t('pronote.carnetDeBord.initFailed.title')}
-            text={I18n.t('pronote.carnetDeBord.initFailed.text')}
-          /> : <EmptyScreen
-            svgImage="empty-light"
-            title={I18n.t('pronote.carnetDeBord.noData.title')}
-            text={I18n.t('pronote.carnetDeBord.noData.text')}
-          />}
-        </ScrollView>
+          return (
+            <ScrollView refreshControl={refreshControl}>
+              {is50xError ? (
+                <EmptyScreen
+                  svgImage="empty-pronote-uri"
+                  title={I18n.t('pronote.carnetDeBord.initFailed.title')}
+                  text={I18n.t('pronote.carnetDeBord.initFailed.text')}
+                />
+              ) : (
+                <EmptyScreen
+                  svgImage="empty-light"
+                  title={I18n.t('pronote.carnetDeBord.noData.title')}
+                  text={I18n.t('pronote.carnetDeBord.noData.text')}
+                />
+              )}
+            </ScrollView>
+          );
         }}
         loadContent={loadData}
         renderContent={renderContent}

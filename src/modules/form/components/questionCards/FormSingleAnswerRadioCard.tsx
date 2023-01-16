@@ -55,17 +55,25 @@ export const FormSingleAnswerRadioCard = ({
   const onChangeChoice = (choice: IQuestionChoice) => {
     setValue(choice.id);
     if (responses.length) {
-      responses[0].answer = choice.value ?? '';
+      responses[0].answer = choice.value;
       responses[0].choiceId = choice.id;
       responses[0].customAnswer = choice.isCustom ? customAnswer : undefined;
     } else {
       responses.push({
         questionId: question.id,
-        answer: choice.value ?? '',
+        answer: choice.value,
         choiceId: choice.id,
         customAnswer: choice.isCustom ? customAnswer : undefined,
       });
     }
+    onChangeAnswer(question.id, responses);
+  };
+
+  const clearAnswer = () => {
+    setValue(undefined);
+    responses[0].answer = '';
+    responses[0].choiceId = undefined;
+    responses[0].customAnswer = undefined;
     onChangeAnswer(question.id, responses);
   };
 
@@ -77,7 +85,11 @@ export const FormSingleAnswerRadioCard = ({
   };
 
   return (
-    <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
+    <FormQuestionCard
+      title={title}
+      isMandatory={mandatory}
+      onClearAnswer={responses[0]?.choiceId && !isDisabled ? clearAnswer : undefined}
+      onEditQuestion={onEditQuestion}>
       {isDisabled && (!responses.length || !responses[0].choiceId) ? (
         <FormAnswerText />
       ) : (

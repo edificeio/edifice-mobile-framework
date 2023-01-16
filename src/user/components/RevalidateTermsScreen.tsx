@@ -6,7 +6,7 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { UI_SIZES, getScaleDimension } from '~/framework/components/constants';
 import { PageViewStyle } from '~/framework/components/page';
@@ -46,7 +46,7 @@ export const RevalidateTermsScreen = ({ refuseAction, acceptAction }: { refuseAc
       </SmallText>
       <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.t('common.accept')} action={acceptAction} />
       <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={refuseAction}>
-        <SmallBoldText style={{ color: theme.palette.status.failure, textAlign: 'center' }}>
+        <SmallBoldText style={{ color: theme.palette.status.failure.regular, textAlign: 'center' }}>
           {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
         </SmallBoldText>
       </TouchableOpacity>

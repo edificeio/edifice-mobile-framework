@@ -3,7 +3,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
-import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -18,18 +18,18 @@ import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon, HeaderTitleAndSubtitle } from '~/framework/components/header';
-import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
-import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { IUserSession, getUserSession } from '~/framework/util/session';
+import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import {
+  deleteBlogPostAction,
   deleteBlogPostCommentAction,
   getBlogPostDetailsAction,
   publishBlogPostAction,
@@ -38,85 +38,44 @@ import {
 } from '~/modules/blog/actions';
 import { commentsString } from '~/modules/blog/components/BlogPostResourceCard';
 import moduleConfig from '~/modules/blog/moduleConfig';
-import { IBlog, IBlogPost, IBlogPostComment } from '~/modules/blog/reducer';
+import { IBlogPost, IBlogPostComment } from '~/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
+  hasPermissionManager,
   publishBlogPostResourceRight,
   updateCommentBlogPostResourceRight,
 } from '~/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
-import { IDisplayedBlog } from './BlogExplorerScreen';
-
-// TYPES ==========================================================================================
-
-export interface IBlogPostDetailsScreenDataProps {
-  session: IUserSession;
-}
-export interface IBlogPostDetailsScreenEventProps {
-  handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<IBlogPost | undefined>;
-  handlePublishBlogPostComment(blogPostId: { blogId: string; postId: string }, comment: string): Promise<number | undefined>;
-  handleUpdateBlogPostComment(
-    blogPostCommentId: { blogId: string; postId: string; commentId: string },
-    comment: string,
-  ): Promise<number | undefined>;
-  handleDeleteBlogPostComment(blogPostCommentId: {
-    blogId: string;
-    postId: string;
-    commentId: string;
-  }): Promise<number | undefined>;
-  handlePublishBlogPost(blogPostId: { blogId: string; postId: string }): Promise<{ number: number } | undefined>;
-  dispatch: ThunkDispatch<any, any, any>;
-}
-export interface IBlogPostDetailsScreenNavParams {
-  notification: ITimelineNotification & IResourceUriNotification;
-  blogPost?: IBlogPost;
-  blogId?: string;
-  blog: IDisplayedBlog;
-  useNotification?: boolean;
-}
-export type IBlogPostDetailsScreenProps = IBlogPostDetailsScreenDataProps &
-  IBlogPostDetailsScreenEventProps &
-  NavigationInjectedProps<Partial<IBlogPostDetailsScreenNavParams>>;
-
-export enum BlogPostDetailsLoadingState {
-  PRISTINE,
-  INIT,
-  REFRESH,
-  DONE,
-}
-export enum BlogPostCommentLoadingState {
-  PRISTINE,
-  PUBLISH,
-  DONE,
-}
-export interface IBlogPostDetailsScreenState {
-  loadingState: BlogPostDetailsLoadingState;
-  publishCommentLoadingState: BlogPostCommentLoadingState;
-  updateCommentLoadingState: BlogPostCommentLoadingState;
-  blogInfos: IDisplayedBlog | IBlog | undefined;
-  blogPostData: IBlogPost | undefined;
-  errorState: boolean;
-  showHeaderTitle: boolean;
-  showMenu: boolean;
-  isCommentFieldFocused: boolean;
-}
-
-// COMPONENT ======================================================================================
+import styles from './styles';
+import {
+  BlogPostCommentLoadingState,
+  BlogPostDetailsLoadingState,
+  IBlogPostDetailsScreenDataProps,
+  IBlogPostDetailsScreenEventProps,
+  IBlogPostDetailsScreenProps,
+  IBlogPostDetailsScreenState,
+} from './types';
 
 export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsScreenProps, IBlogPostDetailsScreenState> {
-  // DECLARATIONS =================================================================================
-
   _titleRef?: React.Ref<any> = undefined;
+
   flatListRef = React.createRef<FlatList | KeyboardAvoidingFlatList>();
+
   commentFieldRefs = [];
+
   editedCommentId?: string = undefined;
+
   bottomEditorSheetRef: { current: any } = React.createRef();
+
   event: string | null = null;
+
   showSubscription: EmitterSubscription | undefined;
+
   hideSubscription: EmitterSubscription | undefined;
+
   editorOffsetRef = React.createRef<number>(0);
 
   state: IBlogPostDetailsScreenState = {
@@ -136,30 +95,60 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   render() {
     const { navigation, session } = this.props;
     const { loadingState, errorState, showMenu, blogPostData, blogInfos } = this.state;
+
+    const blogId = blogInfos?.id;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const isBottomSheetVisible =
       (blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight) || blogPostData?.state === 'SUBMITTED';
     const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
-    const blogId = navigation.getParam('blog')?.id;
     let resourceUri = notification && notification?.resource.uri;
     if (!resourceUri && blogPostData && blogId) {
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
-    const menuData = [
-      {
-        text: I18n.t('common.openInBrowser'),
-        icon: { type: 'NamedSvg', name: 'ui-externalLink' },
-        onPress: () => {
-          //TODO: create generic function inside oauth (use in myapps, etc.)
-          if (!DEPRECATED_getCurrentPlatform()) {
-            return null;
-          }
-          const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-          openUrl(url);
-          Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-        },
+
+    const menuItemOpenBrowser = {
+      text: I18n.t('common.openInBrowser'),
+      icon: { type: 'NamedSvg', name: 'ui-externalLink' },
+      onPress: () => {
+        //TODO: create generic function inside oauth (use in myapps, etc.)
+        if (!DEPRECATED_getCurrentPlatform()) {
+          return null;
+        }
+        const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
+        openUrl(url);
+        Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
       },
-    ];
+    };
+    const menuData =
+      hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id
+        ? [
+            menuItemOpenBrowser,
+            {
+              text: I18n.t('common.deletionPostBlogMenu'),
+              icon: { type: 'NamedSvg', name: 'ui-delete' },
+              color: theme.palette.status.failure.regular,
+              onPress: () => {
+                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
+                  {
+                    text: I18n.t('common.cancel'),
+                    style: 'default',
+                  },
+                  {
+                    text: I18n.t('common.delete'),
+                    style: 'destructive',
+                    onPress: () => {
+                      //TODO: supprimer le billet
+                      console.log(blogPostData!._id, 'postID', blogId, 'blogID');
+                      this.doDeleteBlogPost(blogPostData!._id).then(() => {
+                        navigation.dispatch(NavigationActions.back());
+                      });
+                    },
+                  },
+                ]);
+              },
+            },
+          ]
+        : [menuItemOpenBrowser];
 
     const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
 
@@ -246,7 +235,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             }}
             initialNumToRender={blogPostComments?.length}
             keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.ui.background.page }}
+            contentContainerStyle={styles.content}
             data={blogPostComments}
             keyExtractor={(item: IBlogPostComment) => item.id.toString()}
             ListHeaderComponent={this.renderBlogPostDetails()}
@@ -259,7 +248,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             }
             renderItem={({ item, index }) => this.renderComment(item, index)}
             scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-            style={{ backgroundColor: theme.ui.background.page, flex: 1 }}
+            style={styles.contentStyle2}
             onContentSizeChange={(width, height) => {
               this.listHeight = height;
             }}
@@ -289,7 +278,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           isPublishingComment={isPublishingComment}
         />
       ) : (
-        <View style={{ height: 0 }} />
+        <View style={styles.footerNoComment} />
       )
     ) : blogPostData?.state === 'SUBMITTED' ? (
       hasPublishBlogPostRight ? (
@@ -320,11 +309,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         />
       ) : (
         <BottomSheet
-          content={
-            <SmallBoldText style={{ color: theme.palette.secondary.regular }}>
-              {I18n.t('blog.post.waitingValidation')}
-            </SmallBoldText>
-          }
+          content={<SmallBoldText style={styles.footerWaitingValidation}>{I18n.t('blog.post.waitingValidation')}</SmallBoldText>}
         />
       )
     ) : null;
@@ -336,8 +321,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const blogPostComments = blogPostData?.comments;
     const ViewportAwareTitle = Viewport.Aware(View);
     return (
-      <View style={{ backgroundColor: theme.ui.background.card }}>
-        <View style={{ marginTop: UI_SIZES.spacing.medium }}>
+      <View style={styles.detailsMain}>
+        <View style={styles.detailsPost}>
           <ResourceView
             header={
               <ContentCardHeader
@@ -351,11 +336,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
               />
             }>
             {blogPostData?.state === 'SUBMITTED' ? (
-              <SmallBoldText style={{ color: theme.palette.status.warning }}>{I18n.t('blog.post.needValidation')}</SmallBoldText>
+              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.t('blog.post.needValidation')}</SmallBoldText>
             ) : null}
-            <SmallBoldText style={{ color: theme.ui.text.light }}>{blogInfos?.title}</SmallBoldText>
+            <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <ViewportAwareTitle
-              style={{ marginBottom: UI_SIZES.spacing.medium }}
+              style={styles.detailsTitlePost}
               onViewportEnter={() => this.updateVisible(true)}
               onViewportLeave={() => this.updateVisible(false)}
               innerRef={ref => (this._titleRef = ref)}>
@@ -372,21 +357,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: UI_SIZES.spacing.minor,
-              padding: UI_SIZES.spacing.small,
-              borderTopWidth: 1,
-              borderBottomWidth: 1,
-              borderTopColor: theme.ui.border.input,
-              borderBottomColor: theme.ui.border.input,
-            }}>
-            <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
-            <CaptionBoldText style={{ color: theme.ui.text.light }}>
-              {commentsString(blogPostComments?.length || 0)}
-            </CaptionBoldText>
+          <View style={styles.detailsNbComments}>
+            <Icon style={styles.detailsIconComments} size={18} name="chat3" color={theme.ui.text.regular} />
+            <CaptionBoldText style={styles.detailsTextNbComments}>{commentsString(blogPostComments?.length || 0)}</CaptionBoldText>
           </View>
         ) : null}
       </View>
@@ -394,8 +367,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   renderComment(blogPostComment: IBlogPostComment, index: number) {
-    const { session } = this.props;
+    const { navigation, session } = this.props;
     const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;
+
+    const blog = navigation.getParam('blog');
     const isUpdatingComment = updateCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasUpdateCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
     const hasDeleteCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
@@ -408,7 +383,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
           hasUpdateCommentBlogPostRight ? (comment, commentId) => this.doCreateComment(comment, commentId) : undefined
         }
         onDeleteComment={
-          hasDeleteCommentBlogPostRight
+          hasDeleteCommentBlogPostRight || hasPermissionManager(blogInfos!, session)
             ? () => {
                 Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.confirmationDelete'), [
                   {
@@ -440,6 +415,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         onEditableLayoutHeight={val => {
           this.editorOffsetRef.current = val;
         }}
+        isManager={hasPermissionManager(blogInfos!, session)}
       />
     );
   }
@@ -615,6 +591,21 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     }
   }
 
+  async doDeleteBlogPost(postId: string) {
+    try {
+      const { handleDeleteBlogPost } = this.props;
+      if (!postId) {
+        throw new Error('failed to call api (commentId is undefined)');
+      }
+      const ids = this.getBlogPostIds();
+      ids.postID = postId;
+
+      await handleDeleteBlogPost(ids);
+    } catch (e) {
+      Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+    }
+  }
+
   async doGetBlogInfos() {
     try {
       const { session } = this.props;
@@ -653,8 +644,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 }
 
-// UTILS ==========================================================================================
-
 // MAPPING ========================================================================================
 
 const mapStateToProps: (s: IGlobalState) => IBlogPostDetailsScreenDataProps = s => ({
@@ -680,11 +669,14 @@ const mapDispatchToProps: (
   handleDeleteBlogPostComment: async (blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
     return (await dispatch(deleteBlogPostCommentAction(blogPostCommentId))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
+  handleDeleteBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
+    return (await dispatch(deleteBlogPostAction(blogPostId))) as unknown as number | undefined;
+  }, // TS BUG: dispatch mishandled
   handlePublishBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
     return await dispatch(publishBlogPostAction(blogPostId.blogId, blogPostId.postId));
   },
   dispatch,
 });
 
-const BlogPostDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);
-export default BlogPostDetailsScreen_Connected;
+const BlogPostDetailsScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);
+export default BlogPostDetailsScreenConnected;

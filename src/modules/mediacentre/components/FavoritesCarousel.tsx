@@ -75,7 +75,7 @@ interface IFavoritesCarouselProps {
 
 const getCardColors = (length: number): string[] => {
   const colors = [
-    theme.palette.status.info,
+    theme.palette.status.info.regular,
     theme.palette.complementary.green.regular,
     theme.palette.complementary.yellow.regular,
     theme.palette.complementary.red.regular,

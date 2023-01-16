@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   childrenContainer: {
     flexGrow: 100,
   },
-  modifyActionContainer: {
+  actionContainer: {
     flexGrow: 1,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
@@ -32,12 +32,13 @@ interface IFormQuestionCardProps {
   title: string;
   children?: React.ReactNode;
   isMandatory?: boolean;
+  onClearAnswer?: () => void;
   onEditQuestion?: () => void;
 }
 
 export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps> {
   public render() {
-    const { title, children, isMandatory, onEditQuestion } = this.props;
+    const { title, children, isMandatory, onClearAnswer, onEditQuestion } = this.props;
     const mandatoryText = ' *';
     return (
       <ArticleContainer>
@@ -48,8 +49,13 @@ export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps
           </BodyBoldText>
           <View style={styles.lowerContainer}>
             <View style={styles.childrenContainer}>{children}</View>
+            {onClearAnswer ? (
+              <View style={styles.actionContainer}>
+                <ButtonTextIcon title={I18n.t('form.clearAnswer')} onPress={() => onClearAnswer()} />
+              </View>
+            ) : null}
             {onEditQuestion ? (
-              <View style={styles.modifyActionContainer}>
+              <View style={styles.actionContainer}>
                 <ButtonTextIcon title={I18n.t('common.modify')} onPress={() => onEditQuestion()} />
               </View>
             ) : null}

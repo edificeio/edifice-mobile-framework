@@ -4,7 +4,7 @@ import { Alert, View } from 'react-native';
 import Rate, { AndroidMarket } from 'react-native-rate';
 import { NavigationInjectedProps } from 'react-navigation';
 
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';

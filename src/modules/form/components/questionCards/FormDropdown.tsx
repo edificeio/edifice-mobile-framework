@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.ui.background.card,
   },
   androidPickerColor: {
-    color: theme.ui.text.light,
+    color: theme.ui.text.regular,
   },
   rowContainer: {
     paddingVertical: UI_SIZES.spacing.tiny,
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   valueText: {
-    color: theme.ui.text.light,
+    color: theme.ui.text.regular,
   },
   modalContent: {
     width: 350,
@@ -44,8 +44,6 @@ const styles = StyleSheet.create({
 interface IDropdownProps {
   data: any[];
   keyId?: string;
-  placeholder?: string;
-  showPlaceholderItem?: boolean;
   style?: ViewStyle;
   title?: string;
   value?: string;
@@ -56,8 +54,6 @@ interface IDropdownProps {
 
 const DropdownAndroid = ({
   data,
-  placeholder,
-  showPlaceholderItem,
   style,
   title,
   value,
@@ -72,7 +68,6 @@ const DropdownAndroid = ({
         onValueChange={(itemValue, itemIndex) => onSelect(itemValue)}
         prompt={title}
         style={styles.androidPickerColor}>
-        {showPlaceholderItem ? <Picker.Item label={placeholder} /> : null}
         {data.map(item => (
           <Picker.Item label={renderItem(item)} value={keyExtractor(item)} />
         ))}
@@ -84,7 +79,6 @@ const DropdownAndroid = ({
 const DropdownIOS = ({
   data,
   keyId,
-  placeholder,
   style,
   title,
   value,
@@ -104,9 +98,9 @@ const DropdownIOS = ({
     <>
       <TouchableOpacity style={[styles.container, styles.rowContainer, style]} onPress={() => setModalVisible(true)}>
         <SmallText style={styles.valueText} numberOfLines={1}>
-          {selectedValue ? renderItem(selectedValue) : placeholder}
+          {renderItem(selectedValue)}
         </SmallText>
-        <Picture type="NamedSvg" name="ui-rafterDown" width={20} height={20} fill={theme.ui.text.light} />
+        <Picture type="NamedSvg" name="ui-rafterDown" width={20} height={20} fill={theme.ui.text.regular} />
       </TouchableOpacity>
       <ModalBox isVisible={isModalVisible} onDismiss={() => setModalVisible(false)}>
         <ModalContent style={styles.modalContent}>

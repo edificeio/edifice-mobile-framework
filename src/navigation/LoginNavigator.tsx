@@ -10,12 +10,12 @@ import FederatedAccountPage from '~/user/containers/FederatedAccount';
 import ForgotPage from '~/user/containers/ForgotPage';
 import LoginPage from '~/user/containers/LoginPage';
 import LoginWAYFPage from '~/user/containers/LoginWAYFPage';
-import OnboardingScreen from '~/user/containers/OnboardingScreen';
 import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
 import RevalidateTermsScreen from '~/user/containers/RevalidateTermsScreen';
 import SendEmailVerificationCodeScreen from '~/user/containers/SendEmailVerificationCodeScreen';
 import VerifyEmailCodeScreen from '~/user/containers/VerifyEmailCodeScreen';
 import WAYFPage from '~/user/containers/WAYFPage';
+import OnboardingScreen from '~/user/containers/onboarding';
 
 import { loginRouteNames } from './helpers/loginRouteName';
 

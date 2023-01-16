@@ -1,4 +1,3 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Dispatch } from 'react';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
@@ -6,15 +5,16 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-
-
-import { PageView } from '~/framework/components/page';
 import { getUserSession } from '~/framework/util/session';
-import { IChangePasswordUserInfo, cancelChangePasswordAction, changePasswordAction, initChangePasswordAction } from '~/user/actions/changePassword';
-import { ChangePasswordPage, IChangePasswordPageDataProps, IChangePasswordPageEventProps, IChangePasswordPageProps } from '~/user/components/ChangePasswordPage';
+import { IChangePasswordUserInfo, changePasswordAction, initChangePasswordAction } from '~/user/actions/changePassword';
+import {
+  ChangePasswordPage,
+  IChangePasswordPageDataProps,
+  IChangePasswordPageEventProps,
+  IChangePasswordPageProps,
+} from '~/user/components/ChangePasswordPage';
 import userConfig from '~/user/config';
 import { IChangePasswordState } from '~/user/reducers/changePassword';
-
 
 const mapStateToProps: (state: any) => IChangePasswordPageDataProps = state => {
   const activationState: IChangePasswordState = state[userConfig.reducerName].changePassword;
@@ -22,6 +22,7 @@ const mapStateToProps: (state: any) => IChangePasswordPageDataProps = state => {
     contextState: activationState.contextState,
     externalError: activationState.submitError || '',
     passwordRegex: activationState.context.passwordRegex,
+    passwordRegexI18n: activationState.context.passwordRegexI18n,
     submitState: activationState.submitState,
     session: getUserSession(),
     ...state[userConfig.reducerName].changePassword.submitted,
@@ -35,9 +36,6 @@ const mapDispatchToProps: (
     dispatch,
     onSubmit: async (model, redirectCallback, forceChange) => {
       dispatch(changePasswordAction(model, redirectCallback, forceChange));
-    },
-    onCancelLoad() {
-      dispatch(cancelChangePasswordAction());
     },
     onRetryLoad: async (arg: IChangePasswordUserInfo) => {
       dispatch(initChangePasswordAction(arg));

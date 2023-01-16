@@ -1,12 +1,13 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
-import BlogPostDetailsScreen from './screens/BlogPostDetailsScreen';
-import BlogSelectScreen from './screens/BlogSelectScreen';
-import BlogCreatePostScreen from './screens/BlogCreatePostScreen';
-import moduleConfig from './moduleConfig';
 import { addViewTrackingToStackRoutes } from '~/framework/util/tracker/withViewTracking';
+
+import moduleConfig from './moduleConfig';
+import BlogCreatePostScreen from './screens/BlogCreatePostScreen';
 import BlogExplorerScreen from './screens/BlogExplorerScreen';
 import BlogPostListScreen from './screens/BlogPostListScreen';
+import BlogSelectScreen from './screens/BlogSelectScreen';
+import BlogPostDetailsScreen from './screens/blog-post-details';
 
 export const timelineRoutes = addViewTrackingToStackRoutes({
   [`${moduleConfig.routeName}`]: {

@@ -72,7 +72,7 @@ export const FormMultipleAnswerCard = ({
       //responses = responses.filter(r => r.choiceId);
       responses.push({
         questionId: question.id,
-        answer: value ?? '',
+        answer: value,
         choiceId: id,
         customAnswer: choice.isCustom ? customAnswer : undefined,
       });

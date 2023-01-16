@@ -2,13 +2,15 @@
  * Verify email code screen
  */
 import I18n from 'i18n-js';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Alert } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { KeyboardPageView } from '~/framework/components/page';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { userService } from '~/user/service';
@@ -19,6 +21,7 @@ import { VerifyEmailCodeScreen } from '../components/VerifyEmailCodeScreen';
 // TYPES ==========================================================================================
 
 export interface IVerifyEmailCodeScreenEventProps {
+  connected: boolean;
   onLogin(credentials?: { username: string; password: string; rememberMe: boolean }): void;
   onSaveNewEmail: (updatedProfileValues: IUpdatableProfileValues) => void;
 }
@@ -45,10 +48,11 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   const credentials = props.navigation.getParam('credentials');
   const email = props.navigation.getParam('email');
   const isModifyingEmail = props.navigation.getParam('isModifyingEmail');
-  const modifyString = isModifyingEmail ? 'Modify' : '';
+
   const [isVerifyingEmailCode, setIsVerifyingEmailCode] = React.useState(false);
   const [isResendingEmailVerificationCode, setIsResendingEmailVerificationCode] = React.useState(false);
   const [codeState, setCodeState] = React.useState<CodeState>(CodeState.PRISTINE);
+  const [hasConnection, setHasConnection] = React.useState(false);
 
   const verifyEmailCode = async (code: string) => {
     try {
@@ -58,7 +62,6 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       const isValid = emailValidationInfos?.emailState?.state === 'valid';
       const isOutdated = emailValidationInfos?.emailState?.ttl === 0;
       const hasNoTriesLeft = emailValidationInfos?.emailState?.tries === 0;
-
       if (isValid) {
         setCodeState(CodeState.CODE_CORRECT);
       } else if (isOutdated || hasNoTriesLeft) {
@@ -86,7 +89,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   const redirectUser = async () => {
     try {
       if (isModifyingEmail) {
-        props.navigation.navigate('MyProfile');
+        props.navigation.navigate('Profile');
         props.onSaveNewEmail({ email });
       } else {
         props.onLogin(credentials);
@@ -101,7 +104,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       Alert.alert(I18n.t('user.verifyEmailCodeScreen.alertTitle'), I18n.t('user.verifyEmailCodeScreen.alertContent'), [
         {
           text: I18n.t('common.discard'),
-          onPress: () => props.navigation.navigate('MyProfile'),
+          onPress: () => props.navigation.navigate('Profile'),
           style: 'destructive',
         },
         {
@@ -115,27 +118,36 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
   // HEADER =====================================================================================
 
   const navBarInfo = {
-    title: I18n.t(`user.verifyEmailCodeScreen.title${modifyString}`),
+    title: I18n.t(`user.verifyEmailCodeScreen.title${isModifyingEmail ? 'Modify' : ''}`),
   };
 
   // RENDER =======================================================================================
 
+  useEffect(() => {
+    setHasConnection(props.connected);
+  }, [props.connected]);
+
   return (
     <KeyboardPageView
+      isFocused={false}
       style={{ backgroundColor: theme.ui.background.card }}
       scrollable
       navigation={props.navigation}
       navBarWithBack={navBarInfo}
       onBack={() => displayConfirmationAlert()}>
-      <VerifyEmailCodeScreen
-        email={email}
-        verifyAction={code => verifyEmailCode(code)}
-        isVerifying={isVerifyingEmailCode}
-        codeState={codeState}
-        resendAction={() => resendEmailVerificationCode()}
-        isResending={isResendingEmailVerificationCode}
-        redirectUserAction={() => redirectUser()}
-      />
+      {hasConnection ? (
+        <VerifyEmailCodeScreen
+          email={email}
+          verifyAction={code => verifyEmailCode(code)}
+          isVerifying={isVerifyingEmailCode}
+          codeState={codeState}
+          resendAction={() => resendEmailVerificationCode()}
+          isResending={isResendingEmailVerificationCode}
+          redirectUserAction={() => redirectUser()}
+        />
+      ) : (
+        <EmptyConnectionScreen />
+      )}
     </KeyboardPageView>
   );
 };
@@ -143,17 +155,16 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
 // MAPPING ========================================================================================
 
 export default connect(
-  () => ({}),
-  dispatch =>
-    bindActionCreators(
-      {
-        onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
-          dispatch<any>(checkVersionThenLogin(false, credentials));
-        },
-        onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
-          dispatch(profileUpdateAction(updatedProfileValues));
-        },
-      },
-      dispatch,
-    ),
+  (state: any) => ({
+    connected: !!state.connectionTracker.connected,
+  }),
+  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
+    onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
+      dispatch(checkVersionThenLogin(false, credentials));
+    },
+    onSaveNewEmail(updatedProfileValues: IUpdatableProfileValues) {
+      dispatch(profileUpdateAction(updatedProfileValues));
+    },
+    dispatch,
+  }),
 )(VerifyEmailCodeContainer);

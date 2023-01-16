@@ -3,7 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';

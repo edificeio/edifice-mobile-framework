@@ -64,6 +64,7 @@ export const UI_SIZES = {
     },
   },
   elements: {
+    icon: 24,
     actionButtonBorder: 2,
     logoSize: { height: getScaleDimension(64, 'height'), width: getScaleDimension(300, 'width') },
     navbarHeight: 56,

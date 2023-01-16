@@ -1,15 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  KeyboardTypeOptions,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, SafeAreaView, ScrollView, View } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction, Dispatch } from 'redux';
@@ -19,17 +10,22 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
-import { CaptionText, SmallActionText, SmallText } from '~/framework/components/text';
+import { CaptionText, SmallText } from '~/framework/components/text';
+import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { formatSource } from '~/framework/util/media';
 import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
+import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { pickFileError } from '~/infra/actions/pickFile';
+import { ImagePicked } from '~/infra/imagePicker';
+import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
-import { ContainerTextInput, ContainerView } from '~/ui/ButtonLine';
 import { PageContainer } from '~/ui/ContainerContent';
-import { changePasswordResetAction } from '~/user/actions/changePassword';
+import { ContainerTextInput, ContainerView } from '~/ui/button-line';
 import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
-import { UserCard } from '~/user/components/UserCard';
+import UserCard from '~/user/components/user-card';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { IUserInfoState } from '~/user/state/info';
 import { ValidatorBuilder } from '~/utils/form';
@@ -45,13 +41,21 @@ export interface IProfilePageEventProps {
   dispatch: Dispatch;
 }
 
-export type IProfilePageProps = IProfilePageDataProps & IProfilePageEventProps & NavigationInjectedProps;
+export type IProfilePageProps = IProfilePageDataProps &
+  IProfilePageEventProps &
+  NavigationInjectedProps & {
+    onUploadAvatar: (avatar: LocalFile) => Promise<SyncedFile>;
+    onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
+    onPickFileError: (notifierId: string) => void;
+    onUploadAvatarError: () => void;
+  };
 
 export type IProfilePageState = IUpdatableProfileValues & {
   emailValid?: boolean;
   homePhoneValid?: boolean;
   mobileValid?: boolean;
   loginAliasValid?: boolean;
+  updatingAvatar?: boolean;
 };
 
 // tslint:disable-next-line:max-classes-per-file
@@ -66,6 +70,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     mobileValid: true,
     loginAlias: this.props.userinfo.loginAlias,
     loginAliasValid: true,
+    updatingAvatar: false,
   });
 
   state = this.defaultState();
@@ -79,11 +84,47 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     });
   }
 
+  public async onChangeAvatar(image: ImagePicked) {
+    const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError } = this.props;
+    try {
+      const lc = new LocalFile(
+        {
+          filename: image.fileName as string,
+          filepath: image.uri as string,
+          filetype: image.type as string,
+        },
+        { _needIOSReleaseSecureAccess: false },
+      );
+      this.setState({ updatingAvatar: true });
+      const sc = await onUploadAvatar(lc);
+      await onUpdateAvatar(sc.url);
+    } catch (err: any) {
+      if (err.message === 'Error picking image') {
+        onPickFileError('profileOne');
+      } else if (!(err instanceof Error)) {
+        onUploadAvatarError();
+      }
+    } finally {
+      this.setState({ updatingAvatar: false });
+    }
+  }
+
+  public async onDeleteAvatar() {
+    const { onUpdateAvatar } = this.props;
+    try {
+      this.setState({ updatingAvatar: true });
+      await onUpdateAvatar('');
+    } finally {
+      this.setState({ updatingAvatar: false });
+    }
+  }
+
   public render() {
+    const { userinfo } = this.props;
     const isEditMode = this.props.navigation.getParam('edit', false);
     return (
       <PageContainer>
-        <Notifier id="profileTwo" />
+        <Notifier id="profileOne" />
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: theme.ui.background.card }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -91,55 +132,47 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           <ScrollView alwaysBounceVertical={false} overScrollMode="never">
             <SafeAreaView>
               <UserCard
-                id={
-                  this.props.userinfo.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
-                }
-                displayName={this.props.userinfo.displayName!}
+                id={userinfo.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`)}
+                displayName={userinfo.displayName!}
                 type={
-                  this.props.userinfo.type! as
+                  userinfo.type! as
                     | 'Student'
                     | 'Relative'
                     | 'Teacher'
                     | 'Personnel'
                     | ('Student' | 'Relative' | 'Teacher' | 'Personnel')[]
                 }
+                canEdit
+                hasAvatar={userinfo.photo !== ''}
+                updatingAvatar={this.state.updatingAvatar}
+                onChangeAvatar={this.onChangeAvatar.bind(this)}
+                onDeleteAvatar={this.onDeleteAvatar.bind(this)}
               />
               {this.renderItem({
                 title: I18n.t('Login'),
-                getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || this.props.userinfo.login),
+                getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || userinfo.login),
                 editable: true,
                 setter: loginAlias => this.setState({ loginAlias }),
                 validator: { key: 'loginAliasValid', regex: /^[0-9a-z\-\.]+$/ },
-                placeholder: this.props.userinfo.login,
+                placeholder: userinfo.login,
               })}
-              {!this.props.userinfo.federated
-                ? this.renderItem({
-                    title: I18n.t('Password'),
-                    getter: () => I18n.t('PasswordPlaceholder'),
-                    modifyAction: () => {
-                      this.props.dispatch(changePasswordResetAction());
-                      this.props.navigation.navigate('ChangePassword');
-                    },
-                  })
-                : null}
               {this.renderItem({
                 title: I18n.t('Firstname'),
-                getter: () => this.props.userinfo.firstName,
+                getter: () => userinfo.firstName,
               })}
               {this.renderItem({
                 title: I18n.t('Lastname'),
-                getter: () => this.props.userinfo.lastName,
+                getter: () => userinfo.lastName,
               })}
               {this.renderItem({
                 title: I18n.t('DisplayName'),
                 getter: () => this.state.displayName,
-                editable: this.props.userinfo.type !== 'Relative',
+                editable: userinfo.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
               {this.renderItem({
                 title: I18n.t('EmailAddress'),
-                getter: () => this.props.userinfo.email,
-                modifyAction: () => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true }),
+                getter: () => userinfo.email,
               })}
               {this.renderItem({
                 title: I18n.t('Phone'),
@@ -160,9 +193,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               {this.renderItem({
                 title: I18n.t('Birthdate'),
                 getter: () =>
-                  this.props.userinfo.birthDate!.format('L') === 'Invalid date'
+                  userinfo.birthDate!.format('L') === 'Invalid date'
                     ? I18n.t('common-InvalidDate')
-                    : this.props.userinfo.birthDate!.format('L'),
+                    : userinfo.birthDate!.format('L'),
               })}
             </SafeAreaView>
           </ScrollView>
@@ -175,7 +208,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     title,
     getter,
     editable = false,
-    modifyAction,
     setter,
     keyboardType,
     validator,
@@ -185,7 +217,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     title: string;
     getter: () => string | undefined;
     editable?: boolean;
-    modifyAction?: () => void;
     setter?: (val: any) => void;
     keyboardType?: KeyboardTypeOptions;
     validator?: { key: keyof IProfilePageState; regex: RegExp };
@@ -205,6 +236,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     if (isEditMode) {
       box = editable ? (
         <ContainerTextInput
+          style={{
+            paddingVertical: UI_SIZES.spacing.small,
+          }}
           onChangeText={text => {
             validator && this.setState({ [validator.key]: validator.regex.test(text) });
             setter!(text);
@@ -219,7 +253,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               color: validator
                 ? this.state[validator.key]
                   ? theme.ui.text.regular
-                  : theme.palette.status.failure
+                  : theme.palette.status.failure.regular
                 : theme.ui.text.regular,
             }}>
             {getter()}
@@ -230,7 +264,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
             {getter()}
           </SmallText>
-          {modifyAction ? <SmallActionText>{I18n.t('common.modify')}</SmallActionText> : null}
         </ContainerView>
       );
     } else {
@@ -239,11 +272,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
             {getter()}
           </SmallText>
-          {modifyAction ? (
-            <TouchableOpacity onPress={() => modifyAction()}>
-              <SmallActionText>{I18n.t('common.modify')}</SmallActionText>
-            </TouchableOpacity>
-          ) : null}
         </ContainerView>
       );
     }
@@ -318,6 +346,24 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps 
   }
 }
 
+const uploadAvatarError = () => {
+  return dispatch => {
+    dispatch(
+      notifierShowAction({
+        id: 'profileOne',
+        text: I18n.t('ProfileChangeAvatarErrorUpload'),
+        icon: 'close',
+        type: 'error',
+      }),
+    );
+    Trackers.trackEvent('Profile', 'UPDATE ERROR', 'AvatarChangeError');
+  };
+};
+
+const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch) => {
+  return workspaceService.uploadFile(getUserSession(), avatar, {});
+};
+
 const ProfilePageConnected = connect(
   (state: any) => {
     const ret = {
@@ -332,6 +378,11 @@ const ProfilePageConnected = connect(
       dispatch(profileUpdateAction(updatedProfileValues));
     },
     dispatch,
+    onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
+    onUploadAvatarError: () => dispatch(uploadAvatarError()),
+    onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
+    onUpdateAvatar: (imageWorkspaceUrl: string) =>
+      dispatch(profileUpdateAction({ picture: imageWorkspaceUrl }, true)) as unknown as Promise<void>,
   }),
 )(ProfilePageContainer);
 

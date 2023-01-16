@@ -196,19 +196,19 @@ export default (props: HomeworkListProps) => {
     let newProps = {};
     switch (Platform.OS) {
       case 'android': {
-        newProps = { thumbColor: value ? viescoTheme.palette.diary : theme.palette.status.warning, ...newProps };
+        newProps = { thumbColor: value ? viescoTheme.palette.diary : theme.palette.status.warning.regular, ...newProps };
         break;
       }
       case 'ios': {
         newProps = {
-          trackColor: { false: theme.palette.status.warning, true: viescoTheme.palette.diary },
-          ios_backgroundColor: theme.palette.status.warning,
+          trackColor: { false: theme.palette.status.warning.regular, true: viescoTheme.palette.diary },
+          ios_backgroundColor: theme.palette.status.warning.regular,
           ...newProps,
         };
         break;
       }
       default: {
-        newProps = { trackColor: { false: theme.palette.status.warning, true: viescoTheme.palette.diary }, ...newProps };
+        newProps = { trackColor: { false: theme.palette.status.warning.regular, true: viescoTheme.palette.diary }, ...newProps };
         break;
       }
     }

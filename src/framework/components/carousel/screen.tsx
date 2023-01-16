@@ -13,7 +13,7 @@ import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { FakeHeader } from '~/framework/components/header';
@@ -217,12 +217,12 @@ export function Carousel(props: ICarouselProps) {
       } catch (e) {
         if (e instanceof PermissionError) {
           Alert.alert(
-            I18n.t('share.permission.blocked.title'),
-            I18n.t('share.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+            I18n.t('share-permission-blocked-title'),
+            I18n.t('share-permission-blocked-text', { appName: DeviceInfo.getApplicationName() }),
           );
           return undefined;
         } else {
-          Toast.show(I18n.t('share.error'));
+          Toast.show(I18n.t('share-error'));
         }
       }
     },

@@ -9,7 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
+import { ActionButton } from '~/framework/components/action-button';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
@@ -220,7 +220,7 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
         await Promise.all(
           res.map(response => {
             if (response.id) {
-              formService.response.put(
+              return formService.response.put(
                 session,
                 response.id,
                 distributionId,
@@ -230,20 +230,19 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
                 response.customAnswer ?? null,
               );
             } else {
-              formService.question
+              return formService.question
                 .createResponse(session, response.questionId, distributionId, response.choiceId ?? null, response.answer)
                 .then(r => (response.id = r.id));
             }
-            return response;
           }),
         );
-        if (question.type === QuestionType.FILE && res[0]?.answer !== '') {
+        if (question.type === QuestionType.FILE && res[0]?.files?.some(f => f.lf)) {
           const response = res[0];
           await formService.response.deleteFiles(session, response.id!);
           await Promise.all(
             response.files!.map(file => {
               if (file.lf) {
-                formService.response.addFile(session, response.id!, file.lf);
+                return formService.response.addFile(session, response.id!, file.lf);
               }
             }),
           );
@@ -257,10 +256,12 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
                 questionId: id,
                 answer: '',
               };
-              formService.question.createResponse(session, response.questionId, distributionId, null, response.answer).then(r => {
-                response.id = r.id;
-                updateResponses(id, [response]);
-              });
+              return formService.question
+                .createResponse(session, response.questionId, distributionId, null, response.answer)
+                .then(r => {
+                  response.id = r.id;
+                  updateResponses(id, [response]);
+                });
             }),
           );
         }
@@ -394,13 +395,14 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
     }
     return (
       <View style={styles.actionsContainer}>
-        <ActionButton
-          text={I18n.t('back')}
-          type="secondary"
-          action={() => goToPreviousPosition()}
-          disabled={!positionHistory.length}
-          style={styles.positionActionContainer}
-        />
+        {positionHistory.length ? (
+          <ActionButton
+            text={I18n.t('back')}
+            type="secondary"
+            action={() => goToPreviousPosition()}
+            style={styles.positionActionContainer}
+          />
+        ) : null}
         <ActionButton
           text={I18n.t('next')}
           action={() => goToNextPosition()}
@@ -420,6 +422,8 @@ const FormDistributionScreen = (props: IFormDistributionScreen_Props) => {
           ref={ref => {
             flatListRef.current = ref;
           }}
+          keyboardShouldPersistTaps="handled"
+          removeClippedSubviews={false}
           data={listElements}
           keyExtractor={element => (getIsElementSection(element) ? 's' : 'q') + element.id.toString()}
           renderItem={({ item }) => renderElement(item)}

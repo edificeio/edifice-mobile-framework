@@ -255,7 +255,8 @@ const SchoolbookWordDetailsCard = (
             </SmallText>
           </View>
         ) : !isTeacher && !isWordAcknowledged ? (
-          <SmallBoldText style={{ marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning }}>
+          <SmallBoldText
+            style={{ marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning.regular }}>
             {unacknowledgedString(userType)}
           </SmallBoldText>
         ) : null}

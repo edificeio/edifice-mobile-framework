@@ -1,17 +1,17 @@
 import I18n from 'i18n-js';
+import Toast from 'react-native-tiny-toast';
 import { Action, AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
-import { notifierShowAction } from '~/infra/notifier/actions';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
-import { IActivationContext } from '~/utils/SubmitState';
-import { getUserSession } from '~/framework/util/session';
 
-// TYPES ------------------------------------------------------------------------------------------------
+import { IUserAuthContext } from '../service';
 
 export interface IChangePasswordModel {
   oldPassword: string;
@@ -31,10 +31,8 @@ export interface IChangePasswordSubmitPayload {
   callback: string;
 }
 
-// ACTION INTERFACES --------------------------------------------------------------------------------
-
 export interface IChangePasswordContextFetchedAction extends Action {
-  context: IActivationContext;
+  context: IUserAuthContext;
 }
 
 export interface IChangePasswordContextRequestedAction extends Action {
@@ -48,22 +46,20 @@ export interface IChangePasswordSubmitErrorAction extends Action {
   message?: string;
 }
 
-// ACTION TYPES --------------------------------------------------------------------------------------
-
 export const actionTypeActivationContext = asyncActionTypes(userConfig.createActionType('CHANGE_PASSWORD_CONTEXT'));
 
 export const actionTypeChangePasswordSubmit = asyncActionTypes(userConfig.createActionType('CHANGE_PASSWORD_SUBMIT'));
 
 export const actionTypeChangePasswordReset = userConfig.createActionType('CHANGE_PASSWORD_RESET');
 
-// ACTION CREATORS --------------------------------------------------------------------------------------
-
 function changePasswordContextRequestedAction(args: IChangePasswordUserInfo): IChangePasswordContextRequestedAction {
   return { type: actionTypeActivationContext.requested, userinfo: args };
 }
-function changePasswordContextReceivedAction(context: IActivationContext): IChangePasswordContextFetchedAction {
+
+function changePasswordContextReceivedAction(context: IUserAuthContext): IChangePasswordContextFetchedAction {
   return { type: actionTypeActivationContext.received, context };
 }
+
 function changePasswordContextErrorAction(): Action {
   return { type: actionTypeActivationContext.fetchError };
 }
@@ -71,17 +67,14 @@ function changePasswordContextErrorAction(): Action {
 function changePasswordSubmitRequestedAction(model: IChangePasswordModel): IChangePasswordSubmitRequestedAction {
   return { type: actionTypeChangePasswordSubmit.requested, model };
 }
+
 function changePasswordSubmitReceivedAction(): Action {
   return { type: actionTypeChangePasswordSubmit.received };
 }
+
 function changePasswordSubmitErrorAction(message: string): IChangePasswordSubmitErrorAction {
   return { type: actionTypeChangePasswordSubmit.fetchError, message };
 }
-export function changePasswordResetAction(): Action {
-  return { type: actionTypeChangePasswordReset };
-}
-
-// THUNKS -----------------------------------------------------------------------------------------
 
 export function initChangePasswordAction(args: IChangePasswordUserInfo) {
   return async (dispatch: Dispatch) => {
@@ -94,10 +87,11 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
         dispatch(changePasswordContextErrorAction());
         return;
       }
-      const activationContext: IActivationContext = await res.json();
+      const activationContext: IUserAuthContext = await res.json();
       dispatch(changePasswordContextReceivedAction(activationContext));
       return initChangePasswordAction;
-    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
       dispatch(changePasswordContextErrorAction());
     }
   };
@@ -154,28 +148,21 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
 
       // === 5 - change password finished successfully
       dispatch(changePasswordSubmitReceivedAction());
-
       if (redirectCallback) redirectCallback(dispatch);
-      else mainNavNavigate('MyProfile');
-
-      dispatch(
-        notifierShowAction({
-          id: 'profile',
-          text: I18n.t('PasswordChangeSuccess'),
-          icon: 'checked',
-          type: 'success',
-        }),
+      else mainNavNavigate('Profile');
+      setTimeout(
+        () =>
+          Toast.showSuccess(I18n.t('PasswordChangeSuccess'), {
+            position: Toast.position.BOTTOM,
+            mask: false,
+            ...UI_ANIMATIONS.toast,
+          }),
+        0,
       );
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD');
-    } catch (e) {
+    } catch {
       dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorSubmit')));
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
     }
-  };
-}
-
-export function cancelChangePasswordAction() {
-  return () => {
-    mainNavNavigate('MyProfile');
   };
 }

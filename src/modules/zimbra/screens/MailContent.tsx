@@ -161,7 +161,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     const menuData = this.setMenuData();
 
     const navBarInfo = {
-      title: navigation.state.params.subject,
+      title: navigation.state.params.subject ?? mail?.subject,
       right: error || htmlError ? undefined : <HeaderAction iconName="more_vert" iconSize={24} onPress={this.showMenu} />,
     };
 
