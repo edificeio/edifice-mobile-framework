@@ -6,9 +6,8 @@ import { Asset } from 'react-native-image-picker';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
-import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
-import BottomMenu from '~/framework/components/menus/bottom';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
+import PopupMenu, { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/popup-menu';
 import { SmallActionText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
@@ -100,8 +99,7 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
         <FormAnswerText answer={responses[0]?.answer ? files.map(a => a.filename).join('\n') : undefined} />
       ) : (
         <View style={styles.container}>
-          <BottomMenu
-            title={I18n.t('common.addFiles')}
+          <PopupMenu
             actions={[
               cameraAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
               galleryAction({ callback: file => addFile(filePickedToLocalFile(file)), multiple: true }),
@@ -109,9 +107,9 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
             ]}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
               <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
-              <Icon name="attachment" size={18} color={theme.palette.primary.regular} />
+              <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
             </View>
-          </BottomMenu>
+          </PopupMenu>
           <FlatList
             data={files}
             keyExtractor={attachment => attachment.filename}

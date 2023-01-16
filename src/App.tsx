@@ -1,10 +1,10 @@
 import messaging from '@react-native-firebase/messaging';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { AppState, AppStateStatus, EventSubscription, Platform, StatusBar, UIManager, View } from 'react-native';
+import { AppState, AppStateStatus, Platform, StatusBar, UIManager, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import 'react-native-gesture-handler';
 // import needed for side-effects https://docs.swmansion.com/react-native-gesture-handler/docs/installation#ios
+import 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
@@ -19,7 +19,6 @@ import { createMainStore } from './AppStore';
 import { initI18n } from './app/i18n';
 import AppModules from './app/modules';
 import theme from './app/theme';
-import { UI_STYLES } from './framework/components/constants';
 import { AllModulesBackup, OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
 import { getLoginStackToDisplay } from './navigation/helpers/loginRouteName';
 import { reset } from './navigation/helpers/navHelper';
@@ -30,7 +29,15 @@ import { IUserAuthState } from './user/reducers/auth';
 import { isInActivatingMode } from './user/selectors';
 import { IUserInfoState } from './user/state/info';
 
+// Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
+// require('./myAppMenu');
+// require("./timelinev2");
+// require('./mailbox');
+//require("./pronote");
+//require("./lvs");
 require('./homework');
+//require("./viescolaire");
+//require("./support");
 require('./user');
 
 if (Platform.OS === 'android') {
@@ -40,10 +47,7 @@ if (Platform.OS === 'android') {
 }
 
 class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: boolean }> {
-  private appStateSubscription?: EventSubscription;
-
   private notificationOpenedListener?: () => void;
-
   private onTokenRefreshListener?: () => void;
 
   state = {
@@ -54,7 +58,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     return (
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={this.props.store}>
-          <View style={UI_STYLES.flex1}>
+          <View style={{ flex: 1 }}>
             <StatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />
             <AppScreen />
           </View>
@@ -64,9 +68,12 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
   }
 
   public async componentDidMount() {
+    // Enable react-native-screens
+    //enableScreens();
+
     // Event handlers
     RNLocalize.addEventListener('change', this.handleLocalizationChange);
-    this.appStateSubscription = AppState.addEventListener('change', this.handleAppStateChange) as EventSubscription;
+    AppState.addEventListener('change', this.handleAppStateChange);
 
     // Tracking
     await Trackers.init();
@@ -74,14 +81,14 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     Trackers.setCustomDimension(4, 'App Name', DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.
-    let platformId: string | null = null;
-    if (AppConf?.platforms?.length === 1) {
+    let platformId: string;
+    if (AppConf.platforms && AppConf.platforms.length === 1) {
       const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
       const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
       if (hasOnboardingTexts) {
         try {
           platformId = await this.props.store.dispatch(loadCurrentPlatform());
-        } catch {
+        } catch (e) {
           // TODO: Manage error
         }
       } else {
@@ -91,7 +98,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     } else {
       try {
         platformId = await this.props.store.dispatch(loadCurrentPlatform());
-      } catch {
+      } catch (e) {
         // TODO: Manage error
       }
     }
@@ -125,7 +132,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
 
   public componentWillUnmount() {
     RNLocalize.removeEventListener('change', this.handleLocalizationChange);
-    if (this.appStateSubscription) this.appStateSubscription.remove();
+    AppState.removeEventListener('change', this.handleAppStateChange);
     if (this.notificationOpenedListener) this.notificationOpenedListener();
     if (this.onTokenRefreshListener) this.onTokenRefreshListener();
   }
@@ -157,7 +164,7 @@ function connectWithStore(store: any, WrappedComponent: any, ...args: [any?, any
 
 const theStore: any = { store: undefined };
 const getStore = () => {
-  if (!theStore.store) theStore.store = createMainStore();
+  if (theStore.store == undefined) theStore.store = createMainStore();
   return theStore.store;
 };
 

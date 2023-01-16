@@ -1,17 +1,17 @@
 import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import * as React from 'react';
-
 import theme from '~/app/theme';
+
 import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
-import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { IRemoteAttachment } from '~/ui/Attachment';
 import { AttachmentGroup } from '~/ui/AttachmentGroup';
+import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
-
+import Player from '~/ui/Player';
 import { formatSource } from '../media';
 
 /**
@@ -128,14 +128,10 @@ const renderAudioVideoPreview = (media: IMedia) => {
   const videoDimensions = media['video-resolution'] ? extractVideoResolution(media['video-resolution']) : undefined;
   const videoId = media['document-id'] as string | undefined;
   if (!media.src) {
-    return (
-      <SmallItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
-        {I18n.t(`${media.type || 'media'}NotAvailable`)}
-      </SmallItalicText>
-    );
+    return <SmallItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>{I18n.t(`${media.type || 'media'}NotAvailable`)}</SmallItalicText>
   }
   return (
-    <MediaButton
+    <Player
       type={media.type as 'audio' | 'video'}
       source={formatSource(media.src as string)}
       posterSource={videoId && videoDimensions ? formatSource(computeVideoThumbnail(videoId, videoDimensions)) : undefined}
@@ -145,7 +141,7 @@ const renderAudioVideoPreview = (media: IMedia) => {
 };
 
 const renderIframePreview = (media: IMedia) => {
-  return <MediaButton type="web" source={formatSource(media.src as string)} />;
+  return <IFrame source={media.src as string} />;
 };
 
 const renderImagesPreview = (medias: IMedia[]) => {

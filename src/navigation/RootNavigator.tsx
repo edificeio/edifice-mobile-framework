@@ -7,11 +7,11 @@ import { connect } from 'react-redux';
 
 import AllModules, { setUpModulesAccess } from '~/app/modules';
 import CarouselScreen from '~/framework/components/carousel';
-import MediaPlayer from '~/framework/components/media/player';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray, tabModules } from '~/framework/util/moduleTool';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { IAppModule } from '~/infra/moduleTool/types';
 import withLinkingAppWrapper from '~/infra/wrapper/withLinkingAppWrapper';
+import { IFrame } from '~/ui/IFrame';
 
 import LoginNavigator from './LoginNavigator';
 import NavigationService from './NavigationService';
@@ -63,8 +63,8 @@ function getMainNavigator(appsInfo: any[], widgetsInfo: IEntcoreWidget[]) {
       carouselModal: {
         screen: CarouselScreen,
       },
-      mediaPlayerModal: {
-        screen: MediaPlayer,
+      iframeModal: {
+        screen: IFrame,
       },
     },
     {

@@ -1,7 +1,6 @@
 package com.ode.appe;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
@@ -15,7 +14,6 @@ public class MainActivity extends ReactActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         SplashScreen.show(this, R.style.SplashScreenTheme, true);
         super.onCreate(null);
     }

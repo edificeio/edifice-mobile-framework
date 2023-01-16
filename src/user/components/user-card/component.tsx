@@ -4,8 +4,7 @@ import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
-import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
-import BottomMenu from '~/framework/components/menus/bottom';
+import PopupMenu, { cameraAction, galleryAction } from '~/framework/components/popup-menu';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
@@ -35,8 +34,7 @@ export const UserCard = ({
     <View style={styles.buttonsActionAvatar}>
       {avatar ? (
         <>
-          <BottomMenu
-            title={I18n.t('bottom-menu-change-avatar')}
+          <PopupMenu
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
@@ -45,7 +43,7 @@ export const UserCard = ({
               galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
             ]}>
             <IconButton disabled={updatingAvatar} iconName="pencil" iconColor={theme.ui.text.inverse} iconSize={15} />
-          </BottomMenu>
+          </PopupMenu>
           <TouchableOpacity
             disallowInterruption
             onPress={() => (updatingAvatar ? null : deleteAvatar())}
@@ -56,8 +54,7 @@ export const UserCard = ({
       ) : (
         <>
           <View style={styles.viewNoAvatar} />
-          <BottomMenu
-            title={I18n.t('bottom-menu-change-avatar')}
+          <PopupMenu
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
@@ -66,7 +63,7 @@ export const UserCard = ({
               galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
             ]}>
             <IconButton disabled={updatingAvatar} iconName="camera-on" iconColor={theme.ui.text.inverse} iconSize={15} />
-          </BottomMenu>
+          </PopupMenu>
         </>
       )}
     </View>

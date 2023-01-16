@@ -8,7 +8,6 @@ import { ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import MediaButton from '~/framework/components/media/button';
 import {
   BodyItalicText,
   NestedActionText,
@@ -21,9 +20,11 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
+import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
+import Player from '~/ui/Player';
 
-import { Image, formatMediaSourceArray, formatSource } from '../media';
+import { formatMediaSourceArray, formatSource, Image } from '../media';
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -328,7 +329,7 @@ function renderParseInlineImage(nugget: IInlineImageNugget, key: string, style: 
 function renderParseIframe(nugget: IIframeNugget, key: string, style: ViewStyle = {}): JSX.Element {
   return (
     <View key={key}>
-      <MediaButton type="web" source={formatSource(nugget.src)} />
+      <IFrame source={nugget.src} style={style} />
     </View>
   );
 }
@@ -349,7 +350,7 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
   }
   return (
     <View key={key}>
-      <MediaButton type="audio" source={formatSource(nugget.src)} style={style} />
+      <Player type="audio" source={formatSource(nugget.src)} style={style} />
     </View>
   );
 }
@@ -370,7 +371,7 @@ function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = 
   }
   return (
     <View key={key}>
-      <MediaButton
+      <Player
         type="video"
         source={formatSource(nugget.src)}
         style={style}

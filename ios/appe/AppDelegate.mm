@@ -1,5 +1,4 @@
 #import "AppDelegate.h"
-#import "Orientation.h"
 #import "RNSplashScreen.h"
 
 #import <AppCenterReactNative.h>
@@ -52,11 +51,6 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   RCTAppSetupPrepareApp(application);
   
   //
-  // Force portrait mode
-  //
-  [Orientation setOrientation:UIInterfaceOrientationMaskPortrait];
-  
-  //
   // AppCenter Initialization
   // @see https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native
   //
@@ -105,10 +99,6 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   
   return YES;
   
-}
-
--(UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
-  return [Orientation getOrientation]; // react-native-orientation-locker
 }
 
 -(BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {

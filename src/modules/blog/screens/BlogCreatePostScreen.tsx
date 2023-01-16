@@ -12,8 +12,6 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
-import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView } from '~/framework/components/page';
 import PopupMenu, { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/popup-menu';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -220,8 +218,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           borderWidth: 1,
           borderRadius: 5,
         }}>
-        <BottomMenu
-          title={I18n.t('bottom-menu-add-media')}
+        <PopupMenu
           actions={[
             cameraAction({
               callback: this.imageCallback,
@@ -246,7 +243,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>
-        </BottomMenu>
+        </PopupMenu>
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           onlyImages
@@ -373,6 +370,10 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     }
   }
 }
+
+// UTILS ==========================================================================================
+
+// Add some util functions here
 
 // MAPPING ========================================================================================
 
