@@ -3,7 +3,7 @@ import * as React from 'react';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 
-import { {{moduleName | capitalize}}HomeScreenPrivateProps } from './type';
+import { {{moduleName | capitalize}}HomeScreenPrivateProps } from './types';
 
 export default function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenPrivateProps) {
   // HOOKS ========================================================================================

@@ -9,7 +9,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 
 import { setFruitAction } from '../../actions';
 import { getFruit } from '../../reducer';
-import { {{moduleName | capitalize}}HomeScreenPrivateProps, {{moduleName | capitalize}}HomeScreenDispatchProps } from './type';
+import { {{moduleName | capitalize}}HomeScreenPrivateProps, {{moduleName | capitalize}}HomeScreenDispatchProps } from './types';
 
 function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenPrivateProps) {
   // HOOKS ========================================================================================

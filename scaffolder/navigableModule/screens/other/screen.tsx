@@ -5,7 +5,7 @@ import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 import { NavBarAction } from '~/framework/navigation/navBar';
 
-import { {{moduleName | capitalize}}OtherScreenPrivateProps } from './type';
+import { {{moduleName | capitalize}}OtherScreenPrivateProps } from './types';
 
 // NAVBAR =========================================================================================
 
