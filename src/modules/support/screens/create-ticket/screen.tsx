@@ -16,7 +16,6 @@ import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
-import PopupMenu from '~/framework/components/menus/popup';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';

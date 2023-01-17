@@ -2,7 +2,7 @@
  * Verify email code screen
  */
 import I18n from 'i18n-js';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Alert } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -99,22 +99,6 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
     }
   };
 
-  const displayConfirmationAlert = () => {
-    if (isModifyingEmail) {
-      Alert.alert(I18n.t('user.verifyEmailCodeScreen.alertTitle'), I18n.t('user.verifyEmailCodeScreen.alertContent'), [
-        {
-          text: I18n.t('common.discard'),
-          onPress: () => props.navigation.navigate('Profile'),
-          style: 'destructive',
-        },
-        {
-          text: I18n.t('common.continue'),
-          style: 'cancel',
-        },
-      ]);
-    } else return true;
-  };
-
   // HEADER =====================================================================================
 
   const navBarInfo = {
@@ -129,8 +113,7 @@ const VerifyEmailCodeContainer = (props: IVerifyEmailCodeScreenProps) => {
       style={{ backgroundColor: theme.ui.background.card }}
       scrollable
       navigation={props.navigation}
-      navBarWithBack={navBarInfo}
-      onBack={() => displayConfirmationAlert()}>
+      navBarWithBack={navBarInfo}>
       {hasConnection ? (
         <VerifyEmailCodeScreen
           email={email}
