@@ -36,7 +36,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         component={{{moduleName | capitalize}}OtherScreen}
         options={{
           title: I18n.t('{{moduleName}}.otherScreen.title'),
-          ...computeNavBar(true) // @scaffolding this navBar is dynamic, we implet it within the screen file
+          ...computeNavBar(true), // @scaffolding this navBar is dynamic, we implet it within the screen file
         }}
         initialParams={undefined}
       />
