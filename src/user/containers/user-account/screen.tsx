@@ -8,6 +8,8 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
+import { LineButton } from '~/framework/components/buttons/line';
+import { ButtonLineGroup } from '~/framework/components/buttons/line/component';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
@@ -18,8 +20,6 @@ import { IUserSession, getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
-import { ButtonLine } from '~/ui/button-line';
-import { ButtonLineGroup } from '~/ui/button-line/component';
 import { logout } from '~/user/actions/login';
 import { IUserInfoState } from '~/user/state/info';
 
@@ -131,22 +131,22 @@ export class UserAccountScreen extends React.PureComponent<
           <View style={styles.section}>
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.configuration')}</HeadingSText>
             <ButtonLineGroup>
-              <ButtonLine title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
-              <ButtonLine title="user.page.editPassword" onPress={() => this.props.navigation.navigate('ChangePassword')} />
+              <LineButton title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
+              <LineButton title="user.page.editPassword" onPress={() => this.props.navigation.navigate('ChangePassword')} />
               {session.user.type !== 'Student' ? (
-                <ButtonLine
+                <LineButton
                   title="user.page.editEmail"
                   onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}
                 />
               ) : null}
-              <ButtonLine title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
+              <LineButton title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
               {session.user.type === 'Student' ? (
-                <ButtonLine title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />
+                <LineButton title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />
               ) : session.user.type === 'Relative' ? (
-                <ButtonLine title="directory-childrenTitle" onPress={() => this.props.navigation.navigate('Children')} />
+                <LineButton title="directory-childrenTitle" onPress={() => this.props.navigation.navigate('Children')} />
               ) : null}
               {!isXmasDateLimitCrossed ? (
-                <ButtonLine title="directory-xmasTitle" onPress={() => this.props.navigation.navigate('Xmas')} />
+                <LineButton title="directory-xmasTitle" onPress={() => this.props.navigation.navigate('Xmas')} />
               ) : null}
             </ButtonLineGroup>
           </View>
@@ -154,9 +154,9 @@ export class UserAccountScreen extends React.PureComponent<
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.others')}</HeadingSText>
             <ButtonLineGroup>
               {this.showWhoAreWe ? (
-                <ButtonLine title="directory-whoAreWeTitle" onPress={() => this.props.navigation.navigate('WhoAreWe')} />
+                <LineButton title="directory-whoAreWeTitle" onPress={() => this.props.navigation.navigate('WhoAreWe')} />
               ) : null}
-              <ButtonLine title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
+              <LineButton title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
             </ButtonLineGroup>
           </View>
           <View style={styles.boxBottomPage}>

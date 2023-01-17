@@ -7,6 +7,7 @@ import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
+import { ContainerTextInput, ContainerView } from '~/framework/components/buttons/line';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { ImagePicked } from '~/framework/components/menus/actions';
@@ -24,7 +25,6 @@ import { pickFileError } from '~/infra/actions/pickFile';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { PageContainer } from '~/ui/ContainerContent';
-import { ContainerTextInput, ContainerView } from '~/ui/button-line';
 import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
 import UserCard from '~/user/components/user-card';
 import { ValidatorBuilder } from '~/utils/form';

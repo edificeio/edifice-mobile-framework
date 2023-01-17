@@ -33,7 +33,7 @@ export const ContainerTextInput = styled.TextInput({
   padding: UI_SIZES.spacing.medium,
 });
 
-export const ButtonLine = ({
+export const LineButton = ({
   onPress,
   title,
   first = false,
@@ -50,8 +50,8 @@ export const ButtonLine = ({
     <TouchableOpacity
       style={[styles.container, first ? styles.containerFirst : last ? styles.containerLast : alone ? styles.containerAlone : null]}
       onPress={() => onPress()}>
-      <SmallText style={styles.buttonLine_text}>{I18n.t(title)}</SmallText>
-      <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.buttonLine_icon} />
+      <SmallText style={styles.lineButtonText}>{I18n.t(title)}</SmallText>
+      <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.lineButtonIcon} />
     </TouchableOpacity>
   );
 };
@@ -76,7 +76,7 @@ export const ButtonLineGroup = ({
       );
     } else if (ReactIs.isElement(node)) {
       return (
-        <ButtonLine
+        <LineButton
           {...((node as React.ReactElement).props ?? {})}
           first={allowFirst && (childrenAsArray.length > 1 || !allowAlone) && index === 0}
           last={allowLast && (childrenAsArray.length > 1 || !allowAlone) && index === childrenAsArray.length - 1}

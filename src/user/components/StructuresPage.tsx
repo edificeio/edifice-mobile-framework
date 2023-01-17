@@ -3,11 +3,11 @@ import * as React from 'react';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { ContainerView } from '~/framework/components/buttons/line';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { NestedText, SmallText } from '~/framework/components/text';
-import { ContainerView } from '~/ui/button-line';
 
 // TYPES ------------------------------------------------------------------------------------------
 
