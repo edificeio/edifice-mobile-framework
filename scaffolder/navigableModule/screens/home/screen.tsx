@@ -3,9 +3,9 @@ import * as React from 'react';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 
-import { {{moduleName | capitalize}}HomeScreenAllProps } from './type';
+import { {{moduleName | capitalize}}HomeScreenPrivateProps } from './type';
 
-export default function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenAllProps) {
+export default function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenPrivateProps) {
   // HOOKS ========================================================================================
 
   const [someState, setSomeState] = React.useState<boolean>(false);

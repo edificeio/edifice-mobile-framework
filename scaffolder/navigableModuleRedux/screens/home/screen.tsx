@@ -9,9 +9,9 @@ import { tryAction } from '~/framework/util/redux/actions';
 
 import { setFruitAction } from '../../actions';
 import { getFruit } from '../../reducer';
-import { {{moduleName | capitalize}}HomeScreenAllProps, {{moduleName | capitalize}}HomeScreenDispatchProps } from './type';
+import { {{moduleName | capitalize}}HomeScreenPrivateProps, {{moduleName | capitalize}}HomeScreenDispatchProps } from './type';
 
-function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenAllProps) {
+function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenPrivateProps) {
   // HOOKS ========================================================================================
 
   const [someState, setSomeState] = React.useState<boolean>(false);

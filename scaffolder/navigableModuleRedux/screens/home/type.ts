@@ -16,7 +16,7 @@ export interface {{moduleName | capitalize}}HomeScreenDispatchProps {
   handleChangeFruit: (...args: Parameters<typeof setFruitAction>) => Promise<void>;
 }
 
-export interface {{moduleName | capitalize}}HomeScreenAllProps
+export interface {{moduleName | capitalize}}HomeScreenPrivateProps
   extends NativeStackScreenProps<{{moduleName | capitalize}}NavigationParams, 'Home'>,
     {{moduleName | capitalize}}HomeScreenProps,
     {{moduleName | capitalize}}HomeScreenStoreProps,

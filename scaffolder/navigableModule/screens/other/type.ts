@@ -6,6 +6,6 @@ export interface {{moduleName | capitalize}}OtherScreenProps {
   // @scaffolder add props here
 }
 
-export interface {{moduleName | capitalize}}OtherScreenAllProps extends NativeStackScreenProps<{{moduleName | capitalize}}NavigationParams, 'Other'>, {{moduleName | capitalize}}OtherScreenProps {
+export interface {{moduleName | capitalize}}OtherScreenPrivateProps extends NativeStackScreenProps<{{moduleName | capitalize}}NavigationParams, 'Other'>, {{moduleName | capitalize}}OtherScreenProps {
   // @scaffolder add HOC props here
 }
