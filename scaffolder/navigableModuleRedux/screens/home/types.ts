@@ -1,8 +1,8 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { setFruitAction } from '../../actions';
-import { {{moduleName | capitalize}}NavigationParams } from '../../navigation';
-import { {{moduleName | capitalize}}State } from '../../reducer';
+import type { setFruitAction } from '../../actions';
+import type { {{moduleName | capitalize}}NavigationParams } from '../../navigation';
+import type { {{moduleName | capitalize}}State } from '../../reducer';
 
 export interface {{moduleName | capitalize}}HomeScreenProps {
   // @scaffolder add props here

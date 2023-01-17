@@ -1,6 +1,6 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { {{moduleName | capitalize}}NavigationParams } from '../../navigation';
+import type { {{moduleName | capitalize}}NavigationParams } from '../../navigation';
 
 export interface {{moduleName | capitalize}}OtherScreenProps {
   // @scaffolder add props here
