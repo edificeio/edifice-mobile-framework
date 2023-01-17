@@ -14,7 +14,7 @@ export interface IBackdropPdfReaderProps {
   headerColor?: ColorValue;
   indicatorColor?: ColorValue;
   title?: string;
-  uri: string | null;
+  uri?: string;
   visible: boolean;
 }
 
@@ -34,11 +34,7 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
       <BackdropModal
         content={
           error ? (
-            uri ? (
-              <EmptyContentScreen />
-            ) : (
-              <EmptyConnectionScreen />
-            )
+            <EmptyConnectionScreen />
           ) : (
             <Pdf
               activityIndicatorProps={{

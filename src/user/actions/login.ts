@@ -106,8 +106,8 @@ export function loginAction(
       }
 
       // === 1: Load legal document urls
-      let legalUrls: LegalUrls = {
-        userCharter: null,
+      const legalUrls: LegalUrls = {
+        userCharter: undefined,
         cgu: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cgu')),
         personalDataProtection: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.personalDataProtection')),
         cookies: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cookies')),
@@ -125,28 +125,23 @@ export function loginAction(
       dispatch({ type: actionTypeLegalDocuments, legalUrls });
 
       // === 2: Get oAuth token from somewhere (server or local storage)
-      // eslint-disable-next-line no-useless-catchb
-      try {
-        if (credentials) {
-          await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
-            credentials.username,
-            credentials.password,
-            false, // Do not save token until login is completely successful
-          );
-        } else {
-          // Here, an offline user will try to load a token.
-          // If a token is stored, it allows the user to be offline.
-          await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
-          if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
-            // No token, redirect to login page without error.
-            dispatch(endSessionAction());
-            const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
-            reset(getLoginStackToDisplay(platformId));
-            return;
-          }
+      if (credentials) {
+        await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
+          credentials.username,
+          credentials.password,
+          false, // Do not save token until login is completely successful
+        );
+      } else {
+        // Here, an offline user will try to load a token.
+        // If a token is stored, it allows the user to be offline.
+        await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
+        if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
+          // No token, redirect to login page without error.
+          dispatch(endSessionAction());
+          const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+          reset(getLoginStackToDisplay(platformId));
+          return;
         }
-      } catch (err) {
-        throw err;
       }
 
       // === 3: Gather logged user information

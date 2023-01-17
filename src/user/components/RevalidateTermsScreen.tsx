@@ -18,7 +18,7 @@ export const RevalidateTermsScreen = ({
   refuseAction,
   acceptAction,
 }: {
-  cguUrl: string;
+  cguUrl?: string;
   refuseAction: () => void;
   acceptAction: () => void;
 }) => {
