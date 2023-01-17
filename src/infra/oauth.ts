@@ -625,7 +625,15 @@ export const urlSigner = {
   /**
    * Returns a signed URISource from a url or an imageURISource.
    */
-  signURISource: (URISource: ImageURISource | string | ImageRequireSource | ImageURISource[] | Source | undefined) => {
+  signURISource: (
+    URISource:
+      | (ImageURISource & { isLocal?: boolean })
+      | string
+      | ImageRequireSource
+      | (ImageURISource & { isLocal?: boolean })[]
+      | (Source & { isLocal?: boolean })
+      | undefined,
+  ) => {
     if (URISource === undefined) return URISource;
     if (typeof URISource === 'number') return URISource;
     if (Array.isArray(URISource)) {
@@ -635,6 +643,7 @@ export const urlSigner = {
 
     if (typeof URISource === 'object') {
       if (!URISource.uri) throw new Error('[oAuth] signURISource: no uri');
+      if (URISource.isLocal) return URISource;
       const absUri = urlSigner.getAbsoluteUrl(URISource.uri)!;
       if (urlSigner.getIsUrlSignable(absUri)) {
         return { ...URISource, uri: absUri, headers: { ...URISource.headers, ...urlSigner.getAuthHeader() } };

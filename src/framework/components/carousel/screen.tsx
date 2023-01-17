@@ -93,12 +93,15 @@ async function assertPermissions(permissions: Permission[]) {
 
 export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: boolean; imageViewerRef; popupMenuRef }) => {
   const dotsButtons = React.useCallback(
-    (onPress: () => void) => <ActionButton disabled={disabled} iconName="ui-options" style={styles.closeButton} action={onPress} />,
+    (onPress: () => void) => (
+      <ActionButton text="" disabled={disabled} iconName="ui-options" style={styles.closeButton} action={onPress} />
+    ),
     [disabled],
   );
   return (
     <>
       <ActionButton
+        text=""
         action={() => {
           imageViewerRef.current?.saveToLocal?.();
         }}
@@ -137,6 +140,7 @@ export function Carousel(props: ICarouselProps) {
   const startIndex = navigation.getParam('startIndex') ?? 0;
   const data = React.useMemo(() => navigation.getParam('data') ?? [], [navigation]);
   const dataAsImages = React.useMemo(() => data.map(d => ({ url: '', props: { source: urlSigner.signURISource(d.src) } })), [data]);
+  const isAttachmentLocal = dataAsImages[0].props.source.isLocal;
 
   const [isNavBarVisible, setNavBarVisible] = React.useState(true);
 
@@ -197,7 +201,7 @@ export function Carousel(props: ICarouselProps) {
           await CameraRoll.save(sf.filepath);
         }
         Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
-      } catch (e) {
+      } catch {
         Toast.show(I18n.t('save.to.camera.roll.error'));
       }
     },
@@ -275,7 +279,7 @@ export function Carousel(props: ICarouselProps) {
                 left={closeButton}
                 style={headerStyle}
                 title={total !== 1 ? I18n.t('carousel.counter', { current, total }) : ''}
-                right={getButtons(imageStatus !== 'success')}
+                right={!isAttachmentLocal ? getButtons(imageStatus !== 'success') : null}
               />
             );
           }}

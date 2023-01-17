@@ -95,13 +95,13 @@ const openFile = (notifierId: string, file?: SyncedFile) => {
     if (file) {
       try {
         file.open();
-      } catch (e) {
+      } catch {
         Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
   };
 };
-let lastToast = undefined;
+let lastToast;
 const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: string) => {
   return dispatch => {
     if (file) {
@@ -111,7 +111,7 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
         lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }), {
           ...UI_ANIMATIONS.toast,
         });
-      } catch (e) {
+      } catch {
         Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
@@ -154,7 +154,7 @@ class Attachment extends React.PureComponent<
   }
 
   public async componentDidUpdate(prevProps: any) {
-    const { starDownload, attachment } = this.props;
+    const { starDownload } = this.props;
     const { downloadState } = this.state;
     const canDownload = this.attId && downloadState !== DownloadState.Success && downloadState !== DownloadState.Downloading;
     const notifierId = `attachment/${this.attId}`;
@@ -164,7 +164,7 @@ class Attachment extends React.PureComponent<
           requestAnimationFrame(() => {
             this.props.onDownloadFile && this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'));
           });
-        }).catch(err => {
+        }).catch(() => {
           // TODO: Manage error
         }));
       // canDownload && this.startDownload(attachment as IRemoteAttachment).catch(err => {// TODO: Manage error});
@@ -260,7 +260,7 @@ class Attachment extends React.PureComponent<
                       requestAnimationFrame(() => {
                         onDownloadFile && onDownloadFile(notifierId, lf);
                       });
-                    }).catch(err => {
+                    }).catch(() => {
                       // TODO: Manage error
                     });
                   }}
@@ -297,9 +297,8 @@ class Attachment extends React.PureComponent<
     const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
     const carouselImage =
       Platform.OS === 'android'
-        ? [{ src: { uri: 'file://' + file?.filepath }, alt: 'image' }]
-        : [{ src: { uri: file?.filepath }, alt: 'image' }];
-
+        ? [{ src: { uri: 'file://' + file?.filepath, isLocal: true }, alt: 'image' }]
+        : [{ src: { uri: file?.filepath, isLocal: true }, alt: 'image' }];
     if (!this.attId) {
       return undefined;
     } else if (editMode || downloadState === DownloadState.Success) {
@@ -322,7 +321,7 @@ class Attachment extends React.PureComponent<
         onOpenFile(notifierId, file);
       }
     } else {
-      this.startDownload(attachment as IRemoteAttachment).catch(err => {
+      this.startDownload(attachment as IRemoteAttachment).catch(() => {
         /*TODO: Manage error*/
       });
     }
@@ -365,7 +364,7 @@ class Attachment extends React.PureComponent<
           });
           callback && callback(lf);
         })
-        .catch(e => {
+        .catch(() => {
           this.props.onError && this.props.onError();
           this.setState({
             downloadState: DownloadState.Error,
