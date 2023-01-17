@@ -15,6 +15,7 @@ import ActionButton from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
 import PopupMenu from '~/framework/components/menus/popup';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
@@ -137,7 +138,8 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             style={styles.descriptionInput}
           />
           <View style={styles.attachmentsContainer}>
-            <PopupMenu
+            <BottomMenu
+              title={I18n.t('common.addFiles')}
               actions={[
                 cameraAction({ callback: addAttachment }),
                 galleryAction({ callback: addAttachment, multiple: true }),
@@ -147,7 +149,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
                 <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
                 <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
               </View>
-            </PopupMenu>
+            </BottomMenu>
             {attachments.map(attachment => (
               <Attachment
                 key={attachment.filename}

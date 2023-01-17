@@ -8,6 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
+import { Picture } from '~/framework/components/picture';
 import { SmallActionText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
