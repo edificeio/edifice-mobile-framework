@@ -1,4 +1,4 @@
-import {{moduleName | capitalize}}HomeScreen from './component';
+import {{moduleName | capitalize}}HomeScreen from './screen';
 
 export default {{moduleName | capitalize}}HomeScreen;
 
