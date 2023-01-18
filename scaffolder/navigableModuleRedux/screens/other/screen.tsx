@@ -5,7 +5,7 @@ import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 import { NavBarAction } from '~/framework/navigation/navBar';
 
-import type { {{moduleName | capitalize}}OtherScreenPrivateProps } from './types';
+import type { {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps } from './types';
 
 // NAVBAR =========================================================================================
 
@@ -17,7 +17,7 @@ export function computeNavBar(disabled: boolean, onPress?: () => void) {
 
 // COMPONENT ======================================================================================
 
-export default function {{moduleName | capitalize}}OtherScreen(props: {{moduleName | capitalize}}OtherScreenPrivateProps) {
+export default function {{moduleName | toCamelCase | capitalize}}OtherScreen(props: {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps) {
   // HOOKS ========================================================================================
 
   const [someState, setSomeState] = React.useState<boolean>(false);
@@ -26,7 +26,7 @@ export default function {{moduleName | capitalize}}OtherScreen(props: {{moduleNa
 
   return (
     <PageView>
-      <BodyBoldText>{{moduleName}} Other</BodyBoldText>
+      <BodyBoldText>{{moduleName | toCamelCase}} Other</BodyBoldText>
     </PageView>
   );
 }

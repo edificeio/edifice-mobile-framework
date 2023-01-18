@@ -1,5 +1,5 @@
 /**
- * {{moduleName | capitalize}} notif handler
+ * {{moduleName | toCamelCase | capitalize}} notif handler
  * @scaffolder Remove this file if your module handles no notification.
  *
  * The notifHandler registers some behaviours for given notif types and event-types.
@@ -8,7 +8,7 @@
 import { navigate } from '~/framework/navigation/helper';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-import { {{moduleName | capitalize}}NavigationParams, {{moduleName}}RouteNames } from './navigation';
+import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from './navigation';
 
 const handleSomeNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
   // @scaffolder extract info from notification here
@@ -19,7 +19,7 @@ const handleSomeNotificationAction: NotifHandlerThunkAction = notification => as
   
   return {
     managed: 1,
-    trackInfo: { action: '{{moduleName | capitalize}}', name: `${notification.type}.${notification['event-type']}` },
+    trackInfo: { action: '{{moduleName | toCamelCase | capitalize}}', name: `${notification.type}.${notification['event-type']}` },
   };
 };
 

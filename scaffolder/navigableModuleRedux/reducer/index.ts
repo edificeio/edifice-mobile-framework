@@ -1,18 +1,18 @@
 import { IGlobalState, Reducers } from '~/app/store';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
-import { {{moduleName | capitalize}}Data } from '../model';
+import { {{moduleName | toCamelCase | capitalize}}Data } from '../model';
 import moduleConfig from '../moduleConfig';
 
 // State type
 
-export interface {{moduleName | capitalize}}State extends {{moduleName | capitalize}}Data {
+export interface {{moduleName | toCamelCase | capitalize}}State extends {{moduleName | toCamelCase | capitalize}}Data {
   fruit: string;
 }
 
 // Initial state value
 
-export const initialState: {{moduleName | capitalize}}State = {
+export const initialState: {{moduleName | toCamelCase | capitalize}}State = {
   id: 'abcdef',
   fruit: 'Physalis',
 };
@@ -25,7 +25,7 @@ export const actionTypes = {
 };
 
 export interface IActionPayloads {
-  setFruit: Pick<{{moduleName | capitalize}}State, 'fruit'>;
+  setFruit: Pick<{{moduleName | toCamelCase | capitalize}}State, 'fruit'>;
   // @scaffolder : add action payload types here
 }
 
@@ -46,7 +46,7 @@ const reducer = createReducer(initialState, {
 
 // State getters
 
-export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as {{moduleName | capitalize}}State;
+export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as {{moduleName | toCamelCase | capitalize}}State;
 export const getFruit = (state: IGlobalState) => getState(state).fruit;
 
 // Register the reducer

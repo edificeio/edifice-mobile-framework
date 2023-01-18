@@ -1,7 +1,7 @@
 /**
- * Data model for the module {{moduleName}}
+ * Data model for the module {{moduleName | toCamelCase}}
  */
 
-export interface {{moduleName | capitalize}}Data {
+export interface {{moduleName | toCamelCase | capitalize}}Data {
   id: string;
 }

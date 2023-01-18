@@ -9,9 +9,9 @@ import { tryAction } from '~/framework/util/redux/actions';
 
 import { setFruitAction } from '../../actions';
 import { getFruit } from '../../reducer';
-import type { {{moduleName | capitalize}}HomeScreenDispatchProps, {{moduleName | capitalize}}HomeScreenPrivateProps } from './types';
+import type { {{moduleName | toCamelCase | capitalize}}HomeScreenDispatchProps, {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps } from './types';
 
-function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenPrivateProps) {
+function {{moduleName | toCamelCase | capitalize}}HomeScreen(props: {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps) {
   // HOOKS ========================================================================================
 
   const [someState, setSomeState] = React.useState<boolean>(false);
@@ -20,7 +20,7 @@ function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}
 
   return (
     <PageView>
-      <BodyBoldText>{{moduleName}} Home</BodyBoldText>
+      <BodyBoldText>{{moduleName | toCamelCase}} Home</BodyBoldText>
       <BodyBoldText>{props.fruit}</BodyBoldText>
     </PageView>
   );
@@ -37,8 +37,8 @@ export default connect(
   dispatch =>
     bindActionCreators(
       {
-        handleChangeFruit: tryAction(setFruitAction, undefined) as unknown as {{moduleName | capitalize}}HomeScreenDispatchProps['handleChangeFruit'], // TS for react-redux still sux at this moment.
+        handleChangeFruit: tryAction(setFruitAction, undefined) as unknown as {{moduleName | toCamelCase | capitalize}}HomeScreenDispatchProps['handleChangeFruit'], // TS for react-redux still sux at this moment.
       },
       dispatch,
     ),
-)({{moduleName | capitalize}}HomeScreen);
+)({{moduleName | toCamelCase | capitalize}}HomeScreen);

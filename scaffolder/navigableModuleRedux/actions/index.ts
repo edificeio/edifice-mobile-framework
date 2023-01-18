@@ -1,5 +1,5 @@
 /**
- * Thunk actions for module {{moduleName}}
+ * Thunk actions for module {{moduleName | toCamelCase}}
  */
 import { ThunkDispatch } from 'redux-thunk';
 

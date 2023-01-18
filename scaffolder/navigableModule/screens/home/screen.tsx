@@ -3,9 +3,9 @@ import * as React from 'react';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 
-import type { {{moduleName | capitalize}}HomeScreenPrivateProps } from './types';
+import type { {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps } from './types';
 
-export default function {{moduleName | capitalize}}HomeScreen(props: {{moduleName | capitalize}}HomeScreenPrivateProps) {
+export default function {{moduleName | toCamelCase | capitalize}}HomeScreen(props: {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps) {
   // HOOKS ========================================================================================
 
   const [someState, setSomeState] = React.useState<boolean>(false);
@@ -14,7 +14,7 @@ export default function {{moduleName | capitalize}}HomeScreen(props: {{moduleNam
 
   return (
     <PageView>
-      <BodyBoldText>{{moduleName}} Home</BodyBoldText>
+      <BodyBoldText>{{moduleName | toCamelCase}} Home</BodyBoldText>
     </PageView>
   );
 }
