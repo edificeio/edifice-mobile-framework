@@ -269,7 +269,7 @@ const MailContactField = connect((state: IGlobalState) => ({
 
     const noUserFound = text => {
       if (text) {
-        Alert.alert(I18n.t('conversation.errorUser.title', { user: text }), I18n.t('conversation.errorUser.text'));
+        Alert.alert(I18n.t('conversation-errorUser-title', { user: text }), I18n.t('conversation-errorUser-text'));
       }
       onUserType('');
       inputRef.current?.focus();
