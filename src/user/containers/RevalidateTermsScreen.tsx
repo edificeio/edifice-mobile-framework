@@ -34,22 +34,25 @@ export type IRevalidateTermsScreenProps = IRevalidateTermsScreenDataProps &
 // COMPONENT ======================================================================================
 
 const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   // EVENTS =====================================================================================
 
   const refuseTerms = async () => {
     try {
       props.onLogout();
-    } catch (e) {
+    } catch {
       // console.warn('refuseTerms: could not refuse terms', e);
     }
   };
 
   const revalidateTerms = async () => {
     try {
+      setIsLoading(true);
       await userService.revalidateTerms();
       const credentials = props.navigation.getParam('credentials');
       props.onLogin(credentials);
-    } catch (e) {
+    } catch {
+      setIsLoading(false);
       // console.warn('revalidateTerms: could not revalidate terms', e);
     }
   };
@@ -66,6 +69,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
     <PageView style={{ backgroundColor: theme.ui.background.card }} navigation={props.navigation} navBar={navBarInfo}>
       <RevalidateTermsScreen
         cguUrl={props.auth.legalUrls.cgu}
+        loading={isLoading}
         acceptAction={() => revalidateTerms()}
         refuseAction={() => refuseTerms()}
       />

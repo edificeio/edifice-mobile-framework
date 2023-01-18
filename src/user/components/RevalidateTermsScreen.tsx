@@ -15,10 +15,12 @@ import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/frame
 
 export const RevalidateTermsScreen = ({
   cguUrl,
+  loading,
   refuseAction,
   acceptAction,
 }: {
   cguUrl?: string;
+  loading?: boolean;
   refuseAction: () => void;
   acceptAction: () => void;
 }) => {
@@ -47,7 +49,12 @@ export const RevalidateTermsScreen = ({
           {I18n.t('user.revalidateTermsScreen.newEndUserLicenseAgreement')}
         </SmallActionText>
       </SmallText>
-      <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.t('common.accept')} action={acceptAction} />
+      <ActionButton
+        loading={loading}
+        style={{ marginTop: UI_SIZES.spacing.large }}
+        text={I18n.t('common.accept')}
+        action={acceptAction}
+      />
       <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={refuseAction}>
         <SmallBoldText style={{ color: theme.palette.status.failure.regular, textAlign: 'center' }}>
           {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
