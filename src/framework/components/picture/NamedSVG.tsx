@@ -69,6 +69,7 @@ const imports = {
   'ui-options': import('ASSETS/icons/uiIcons/options.svg'),
   'ui-pause': import('ASSETS/icons/uiIcons/pause.svg'),
   'ui-play': import('ASSETS/icons/uiIcons/play.svg'),
+  'ui-play-filled': import('ASSETS/icons/uiIcons/play-filled.svg'),
   'ui-plus': import('ASSETS/icons/uiIcons/plus.svg'),
   'ui-print': import('ASSETS/icons/uiIcons/print.svg'),
   'ui-question': import('ASSETS/icons/uiIcons/question.svg'),

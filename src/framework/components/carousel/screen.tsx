@@ -97,6 +97,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
   return (
     <>
       <ActionButton
+        text=""
         action={() => {
           imageViewerRef.current?.saveToLocal?.();
         }}
@@ -151,6 +152,7 @@ export function Carousel(props: ICarouselProps) {
   const startIndex = route.params.startIndex ?? 0;
   const data = React.useMemo(() => route.params.data ?? [], [route]);
   const dataAsImages = React.useMemo(() => data.map(d => ({ url: '', props: { source: urlSigner.signURISource(d.src) } })), [data]);
+  const isAttachmentLocal = dataAsImages[0].props.source.isLocal;
 
   const [isNavBarVisible, setNavBarVisible] = React.useState(true);
   const toggleNavBarVisibility = React.useCallback(() => {

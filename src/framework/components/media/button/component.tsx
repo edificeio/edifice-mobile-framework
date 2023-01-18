@@ -36,7 +36,7 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
 
     // styles depends props
     const playerStyle = {
-      aspectRatio: ratio || 7 / 5,
+      aspectRatio: ratio || 16 / 10,
     };
 
     const getPreviewVideo = () => {
@@ -46,7 +46,7 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
         <TouchableOpacity onPress={() => this.showMediaPlayer()} style={[styles.previewVideo, style]}>
           <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" />
           <View style={styles.viewVideo}>
-            <MediaIcon icon="ui-recordVideo" height={getScaleImageSize(38)} width={getScaleImageSize(38)} />
+            <MediaIcon icon="ui-play-filled" height={getScaleImageSize(26)} width={getScaleImageSize(24)} />
           </View>
         </TouchableOpacity>
       );
@@ -56,8 +56,13 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
       return (
         <TouchableOpacity onPress={() => this.showMediaPlayer()}>
           <View style={styles.previewAudio}>
-            <MediaIcon icon="ui-audio" height={getScaleImageSize(24)} width={getScaleImageSize(24)} style={styles.iconAudio} />
-            <NamedSVG fill={theme.palette.complementary.blue.light} name="ui-wavering" />
+            <MediaIcon
+              icon="ui-play-filled"
+              height={getScaleImageSize(20)}
+              width={getScaleImageSize(18)}
+              style={styles.iconAudio}
+            />
+            <NamedSVG fill={theme.palette.primary.regular} name="ui-wavering" />
           </View>
         </TouchableOpacity>
       );

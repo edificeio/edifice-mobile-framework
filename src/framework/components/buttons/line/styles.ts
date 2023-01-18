@@ -4,11 +4,11 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  buttonLine_text: {
+  lineButtonText: {
     flex: 1,
     color: theme.ui.text.regular,
   },
-  buttonLine_icon: {
+  lineButtonIcon: {
     transform: [{ rotate: '270deg' }],
   },
   container: {

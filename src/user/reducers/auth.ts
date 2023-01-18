@@ -32,10 +32,10 @@ export type backendUserApp = {
 };
 
 export type LegalUrls = {
-  userCharter: string | null;
-  cgu: string | null;
-  personalDataProtection: string | null;
-  cookies: string | null;
+  userCharter?: string;
+  cgu?: string;
+  personalDataProtection?: string;
+  cookies?: string;
 };
 
 export interface IUserAuthState {
@@ -79,10 +79,10 @@ export const stateDefault: IUserAuthState = {
   skipVersion: false,
   versionContext: null,
   legalUrls: {
-    userCharter: null,
-    cgu: null,
-    personalDataProtection: null,
-    cookies: null,
+    userCharter: undefined,
+    cgu: undefined,
+    personalDataProtection: undefined,
+    cookies: undefined,
   },
 };
 

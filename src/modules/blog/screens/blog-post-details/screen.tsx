@@ -106,49 +106,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
 
-    const menuItemOpenBrowser = {
-      text: I18n.t('common.openInBrowser'),
-      icon: { type: 'NamedSvg', name: 'ui-externalLink' },
-      onPress: () => {
-        //TODO: create generic function inside oauth (use in myapps, etc.)
-        if (!DEPRECATED_getCurrentPlatform()) {
-          return null;
-        }
-        const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-        openUrl(url);
-        Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-      },
-    };
-    const menuData =
-      hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id
-        ? [
-            menuItemOpenBrowser,
-            {
-              text: I18n.t('common.deletionPostBlogMenu'),
-              icon: { type: 'NamedSvg', name: 'ui-delete' },
-              color: theme.palette.status.failure.regular,
-              onPress: () => {
-                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
-                  {
-                    text: I18n.t('common.cancel'),
-                    style: 'default',
-                  },
-                  {
-                    text: I18n.t('common.delete'),
-                    style: 'destructive',
-                    onPress: () => {
-                      //TODO: supprimer le billet
-                      this.doDeleteBlogPost(blogPostData!._id).then(() => {
-                        navigation.dispatch(NavigationActions.back());
-                      });
-                    },
-                  },
-                ]);
-              },
-            },
-          ]
-        : [menuItemOpenBrowser];
-
     const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
 
     return (
@@ -179,14 +136,53 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   }
 
   navBarInfo() {
-    const { navigation } = this.props;
-    const { blogPostData, errorState, loadingState } = this.state;
+    const { navigation, session } = this.props;
+    const { blogPostData, blogInfos, errorState, loadingState } = this.state;
     const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
     const blogId = navigation.getParam('blog')?.id;
     let resourceUri = notification && notification?.resource.uri;
     if (!resourceUri && blogPostData && blogId) {
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
+    const menuItemOpenBrowser = linkAction({
+      title: I18n.t('common.openInBrowser'),
+      action: () => {
+        //TODO: create generic function inside oauth (use in myapps, etc.)
+        if (!DEPRECATED_getCurrentPlatform()) {
+          return null;
+        }
+        const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
+        openUrl(url);
+        Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
+      },
+    });
+
+    const menuData =
+      hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id
+        ? [
+            menuItemOpenBrowser,
+            deleteAction({
+              action: () => {
+                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
+                  {
+                    text: I18n.t('common.cancel'),
+                    style: 'default',
+                  },
+                  {
+                    text: I18n.t('common.delete'),
+                    style: 'destructive',
+                    onPress: () => {
+                      this.doDeleteBlogPost(blogPostData!._id).then(() => {
+                        navigation.dispatch(NavigationActions.back());
+                      });
+                    },
+                  },
+                ]);
+              },
+            }),
+          ]
+        : [menuItemOpenBrowser];
+
     return {
       title:
         blogPostData?.title && this.state.showHeaderTitle ? (
@@ -198,40 +194,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         resourceUri &&
         (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
         !errorState ? (
-          <PopupMenu
-            actions={[
-              linkAction({
-                title: I18n.t('common.openInBrowser'),
-                action: () => {
-                  //TODO: create generic function inside oauth (use in myapps, etc.)
-                  if (!DEPRECATED_getCurrentPlatform()) {
-                    return null;
-                  }
-                  const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                  openUrl(url);
-                  Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-                },
-              }),
-              deleteAction({
-                action: () => {
-                  Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
-                    {
-                      text: I18n.t('common.cancel'),
-                      style: 'default',
-                    },
-                    {
-                      text: I18n.t('common.delete'),
-                      style: 'destructive',
-                      onPress: () => {
-                        this.doDeleteBlogPost(blogPostData!._id).then(() => {
-                          navigation.dispatch(NavigationActions.back());
-                        });
-                      },
-                    },
-                  ]);
-                },
-              }),
-            ]}>
+          <PopupMenu actions={menuData}>
             <HeaderIcon name="more_vert" iconSize={24} />
           </PopupMenu>
         ) : undefined,
@@ -541,9 +504,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
 
   async doCreateComment(comment: string, commentId?: string) {
     try {
-      commentId
-        ? this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.PUBLISH })
-        : this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
+      if (commentId) {
+        this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
+      } else {
+        this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.PUBLISH });
+      }
       await this.doCreateBlogPostComment(comment, commentId);
       await this.doGetBlogPostDetails();
       // Note #1: setTimeout is used to wait for the FlatList height to update (after a comment is added).
@@ -557,9 +522,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         }, 50);
       } else this.commentFieldRefs[commentId]?.setIsEditingFalse();
     } finally {
-      commentId
-        ? this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.DONE })
-        : this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.DONE });
+      if (commentId) {
+        this.setState({ updateCommentLoadingState: BlogPostCommentLoadingState.DONE });
+      } else {
+        this.setState({ publishCommentLoadingState: BlogPostCommentLoadingState.DONE });
+      }
     }
   }
 
@@ -574,13 +541,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       const notification = navigation.getParam('notification');
       const useNotification = navigation.getParam('useNotification', true);
       const ids = this.getBlogPostIds();
-      let blogPostState: string | undefined = undefined;
+      let blogPostState: string | undefined;
       if (notification && useNotification && notification['event-type'] === 'SUBMIT-POST') {
         blogPostState = undefined; // Will be got by an additional request to api
       } else blogPostState = navigation.getParam('blogPost')?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       this.setState({ blogPostData });
-    } catch (e) {
+    } catch {
       // ToDo: Error handling
       this.setState({ errorState: true });
     }
@@ -594,7 +561,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         ids.commentId = commentId;
         await handleUpdateBlogPostComment(ids, comment);
       } else await handlePublishBlogPostComment(ids, comment);
-    } catch (e) {
+    } catch {
       // ToDo: Error handling
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
     }
@@ -609,7 +576,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       const ids = this.getBlogPostIds();
       ids.commentId = commentId;
       await handleDeleteBlogPostComment(ids);
-    } catch (e) {
+    } catch {
       // ToDo: Error handling
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
     }
@@ -625,7 +592,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       ids.postID = postId;
 
       await handleDeleteBlogPost(ids);
-    } catch (e) {
+    } catch {
       Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
     }
   }
@@ -637,7 +604,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       const blogId = ids?.blogId;
       const blogInfos = await blogService.get(session, blogId);
       this.setState({ blogInfos });
-    } catch (e) {
+    } catch {
       // ToDo: Error handling
     }
   }
@@ -697,7 +664,7 @@ const mapDispatchToProps: (
     return (await dispatch(deleteBlogPostAction(blogPostId))) as unknown as number | undefined;
   }, // TS BUG: dispatch mishandled
   handlePublishBlogPost: async (blogPostId: { blogId: string; postId: string }) => {
-    return await dispatch(publishBlogPostAction(blogPostId.blogId, blogPostId.postId));
+    return dispatch(publishBlogPostAction(blogPostId.blogId, blogPostId.postId));
   },
   dispatch,
 });
