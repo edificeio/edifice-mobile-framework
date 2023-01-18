@@ -34,8 +34,6 @@ export class BackdropPdfReaderScreen extends React.PureComponent<
     const { src: uri } = this.props.route.params;
     const { error } = this.state;
     return error ? (
-      <EmptyContentScreen />
-    ) : !uri ? (
       <EmptyConnectionScreen />
     ) : (
       <Pdf
