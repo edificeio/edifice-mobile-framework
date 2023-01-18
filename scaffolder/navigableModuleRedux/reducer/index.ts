@@ -6,12 +6,14 @@ import moduleConfig from '../moduleConfig';
 
 // State type
 
+// @scaffolder : empty this interface, replace it by your own
 export interface {{moduleName | toCamelCase | capitalize}}State extends {{moduleName | toCamelCase | capitalize}}Data {
   fruit: string;
 }
 
 // Initial state value
 
+// @scaffolder : empty this exemple initialState, replace it by your own
 export const initialState: {{moduleName | toCamelCase | capitalize}}State = {
   id: 'abcdef',
   fruit: 'Physalis',
@@ -19,35 +21,35 @@ export const initialState: {{moduleName | toCamelCase | capitalize}}State = {
 
 // Actions definitions
 
+// @scaffolder : empty this exemple actionType, replace it by your own
 export const actionTypes = {
   setFruit: moduleConfig.namespaceActionType('FRUIT_SET'),
-  // @scaffolder : add action types here
 };
 
-export interface IActionPayloads {
+// @scaffolder : empty this exemple action payload, replace it by your own
+export interface ActionPayloads {
   setFruit: Pick<{{moduleName | toCamelCase | capitalize}}State, 'fruit'>;
-  // @scaffolder : add action payload types here
 }
 
+// @scaffolder : empty this exemple action creator, replace it by your own
 export const actions = {
   setFruit: (fruit: string) => ({ type: actionTypes.setFruit, fruit }),
-  // @scaffolder : add action creators here
 };
 
 // Reducer
 
+// @scaffolder : empty this exemple reducing function, replace it by your own
 const reducer = createReducer(initialState, {
   [actionTypes.setFruit]: (state, action) => {
-    const { fruit }: IActionPayloads['setFruit'] = action as any;
+    const { fruit }: ActionPayloads['setFruit'] = action as any;
     return { ...state, fruit };
   },
-  // @scaffolder : add reducing functions here
 });
 
 // State getters
 
 export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as {{moduleName | toCamelCase | capitalize}}State;
-export const getFruit = (state: IGlobalState) => getState(state).fruit;
+export const getFruit = (state: IGlobalState) => getState(state).fruit; // @scaffolder : remove this example
 
 // Register the reducer
 

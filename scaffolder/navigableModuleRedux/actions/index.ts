@@ -7,6 +7,7 @@ import { IGlobalState } from '~/AppStore';
 
 import { actions } from '../reducer';
 
+// @scaffolder : remove this example thunk-action
 export function setFruitAction(fruit: string) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState): Promise<void> {
     // Just do something here.

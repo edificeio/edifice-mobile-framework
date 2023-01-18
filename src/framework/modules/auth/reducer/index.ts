@@ -33,7 +33,7 @@ export const actionTypes = {
   getLegalDocuments: moduleConfig.namespaceActionType('GET_LEGAL_DOCUMENTS'),
 };
 
-export interface IActionPayloads {
+export interface ActionPayloads {
   sessionCreate: Pick<Required<IAuthState>, 'session'>;
   sessionPartial: Pick<Required<IAuthState>, 'session'>;
   sessionRefresh: Pick<Required<IAuthState>, 'session'>;
@@ -59,22 +59,22 @@ export const actions = {
 
 const reducer = createReducer(initialState, {
   [actionTypes.sessionCreate]: (state, action) => {
-    const { session }: IActionPayloads['sessionCreate'] = action as any;
+    const { session }: ActionPayloads['sessionCreate'] = action as any;
     cacheActiveSession(session);
     return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionPartial]: (state, action) => {
-    const { session }: IActionPayloads['sessionCreate'] = action as any;
+    const { session }: ActionPayloads['sessionCreate'] = action as any;
     cacheActiveSession(session);
     return { ...initialState, session, logged: false, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionRefresh]: (state, action) => {
-    const { session }: IActionPayloads['sessionRefresh'] = action as any;
+    const { session }: ActionPayloads['sessionRefresh'] = action as any;
     cacheActiveSession(session);
     return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionError]: (state, action) => {
-    const { error, errorTimestamp }: IActionPayloads['sessionError'] = action as any;
+    const { error, errorTimestamp }: ActionPayloads['sessionError'] = action as any;
     cacheActiveSession(initialState.session);
     return { ...initialState, error, errorTimestamp };
   },
@@ -83,11 +83,11 @@ const reducer = createReducer(initialState, {
     return { ...initialState, error: state.error, errorTimestamp: state.errorTimestamp }; // Logout preserve error
   },
   [actionTypes.redirectAutoLogin]: (state, action) => {
-    const { autoLoginResult }: IActionPayloads['redirectAutoLogin'] = action as any;
+    const { autoLoginResult }: ActionPayloads['redirectAutoLogin'] = action as any;
     return { ...state, autoLoginResult };
   },
   [actionTypes.getLegalDocuments]: (state, action) => {
-    const { legalUrls }: IActionPayloads['getLegalDocuments'] = action as any;
+    const { legalUrls }: ActionPayloads['getLegalDocuments'] = action as any;
     return { ...state, legalUrls: { ...state.legalUrls, ...legalUrls } };
   },
 });
