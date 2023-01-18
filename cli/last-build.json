@@ -1,6 +1,6 @@
 {
-  "last": "2023-01-17 08:01:58",
-  "notes": "fix(merge): Fix merge errors.\nrelease: 1.9.2-alpha.3(1090203)",
-  "version": "1.9.2-alpha.4(1090204)",
+  "last": "2023-01-18 13:17:38",
+  "notes": "chore: fix error merge\nfix(carousel): MB-1181, show pic on carousel when attachment is image && hide actions buttons (saveToCameraRoll & share)\nchore: fix lint errors in login.ts\nchore(blog): no delete action in popup menu when its not blog manager\nchore: move + rename ButtonLine->LineButton\nfeat(change-email): MB-1163, on screen verify email code when back no alert\nfix: crashes bottom menu\nrelease: 1.9.2-alpha.4(1090204)",
+  "version": "1.9.2-alpha.5(1090205)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
