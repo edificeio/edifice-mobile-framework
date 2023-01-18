@@ -163,7 +163,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
             menuItemOpenBrowser,
             deleteAction({
               action: () => {
-                Alert.alert(I18n.t('common.deletion'), I18n.t('common.deletionPostBlog'), [
+                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
                   {
                     text: I18n.t('common.cancel'),
                     style: 'default',

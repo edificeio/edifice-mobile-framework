@@ -5,7 +5,7 @@ import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 
 const sizeIconAudio = getScaleHeight(36);
 const gradientBlack = 'rgba(0,0,0,.3)';
-const heightPreviewVideo = 0.25 * UI_SIZES.screen.height;
+const heightPreviewVideo = (10 / 16) * UI_SIZES.screen.width;
 
 export default StyleSheet.create({
   absolute: {
@@ -15,6 +15,7 @@ export default StyleSheet.create({
     position: 'relative',
     height: sizeIconAudio,
     width: sizeIconAudio,
+    marginRight: UI_SIZES.spacing.small,
   },
   player: {
     width: '100%',
@@ -24,7 +25,6 @@ export default StyleSheet.create({
     padding: UI_SIZES.spacing.small,
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
     borderRadius: UI_SIZES.radius.huge,

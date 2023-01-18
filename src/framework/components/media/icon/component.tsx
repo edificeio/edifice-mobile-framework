@@ -10,7 +10,14 @@ import { MediaIconProps } from './types';
 export default function MediaIcon({ icon, style, width, height, color }: MediaIconProps) {
   return (
     <View style={[styles.mediaIcon, style]}>
-      <Picture type="NamedSvg" name={icon} width={width} height={height} fill={color || theme.ui.text.inverse} />
+      <Picture
+        style={styles.icon}
+        type="NamedSvg"
+        name={icon}
+        width={width}
+        height={height}
+        fill={color || theme.ui.text.inverse}
+      />
     </View>
   );
 }
