@@ -1,0 +1,55 @@
+diff --git a/node_modules/react-native-media-console/lib/typescript/types.d.ts b/node_modules/react-native-media-console/lib/typescript/types.d.ts
+index 35580ce..0669f6e 100644
+--- a/node_modules/react-native-media-console/lib/typescript/types.d.ts
++++ b/node_modules/react-native-media-console/lib/typescript/types.d.ts
+@@ -52,6 +52,12 @@ export interface VideoPlayerProps extends VideoProperties {
+      * @default false
+      */
+     showOnStart?: boolean;
++    /**
++     * Show or hide the controls on end
++     *
++     * @default false
++     */
++    showOnEnd?: boolean;
+     /**
+      * Title of the video
+      */
+diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
+index 232490a..39977c6 100644
+--- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
++++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
+@@ -29,6 +29,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     resizeMode = 'contain',
+     isFullscreen = false,
+     showOnStart = false,
++    showOnEnd = false,
+     paused = false,
+     muted = false,
+     volume = 1,
+@@ -125,6 +126,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     if (currentTime < duration) {
+       setCurrentTime(duration);
+       setPaused(true);
++      if(showOnEnd) setShowControls(true)
+     }
+     if (typeof onEnd === 'function') {
+       onEnd();
+diff --git a/node_modules/react-native-media-console/src/types.ts b/node_modules/react-native-media-console/src/types.ts
+index f746fb3..9b578fc 100644
+--- a/node_modules/react-native-media-console/src/types.ts
++++ b/node_modules/react-native-media-console/src/types.ts
+@@ -55,6 +55,13 @@ export interface VideoPlayerProps extends VideoProperties {
+    */
+   showOnStart?: boolean;
+ 
++  /**
++   * Show or hide the controls on end
++   *
++   * @default false
++   */
++  showOnEnd?: boolean;
++
+   /**
+    * Title of the video
+    */

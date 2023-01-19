@@ -15,6 +15,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
   const source = props.navigation.getParam('source');
   const isAudio = props.navigation.getParam('type') === MediaType.AUDIO;
   const isWebView = props.navigation.getParam('type') === MediaType.WEB;
+  const [controlTimeoutDelay, setControlTimeoutDelay] = React.useState(isAudio ? undefined : 3000);
 
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
@@ -27,6 +28,10 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     props.navigation.goBack();
   };
 
+  const onEnd = () => {
+    setControlTimeoutDelay(undefined);
+  };
+
   return (
     <PageView style={styles.page} showNetworkBar={false}>
       {isWebView ? (
@@ -36,12 +41,13 @@ export default function MediaPlayer(props: MediaPlayerProps) {
         </>
       ) : (
         <VideoPlayer
-          controlTimeoutDelay={isAudio ? undefined : 3000}
+          controlTimeoutDelay={controlTimeoutDelay}
           disableFullscreen
           showOnStart
+          showOnEnd
           source={source}
           onBack={onBack}
-          onEnd={onBack}
+          onEnd={onEnd}
         />
       )}
     </PageView>
