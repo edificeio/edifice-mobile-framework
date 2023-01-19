@@ -62,7 +62,7 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
               width={getScaleImageSize(18)}
               style={styles.iconAudio}
             />
-            <NamedSVG fill={theme.palette.primary.regular} name="ui-wavering" />
+            <NamedSVG fill={theme.palette.primary.light} name="ui-wavering" />
           </View>
         </TouchableOpacity>
       );
