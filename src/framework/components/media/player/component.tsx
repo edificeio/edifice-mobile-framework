@@ -36,9 +36,9 @@ export default function MediaPlayer(props: MediaPlayerProps) {
         </>
       ) : (
         <VideoPlayer
-          controlTimeoutDelay={30000}
+          controlTimeoutDelay={isAudio ? undefined : 3000}
           disableFullscreen
-          showOnStart={isAudio}
+          showOnStart
           source={source}
           onBack={onBack}
           onEnd={onBack}
