@@ -16,10 +16,18 @@ index 35580ce..0669f6e 100644
       * Title of the video
       */
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 232490a..39977c6 100644
+index 232490a..e766893 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-@@ -29,6 +29,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -12,6 +12,7 @@ import {
+   TopControls,
+   BottomControls,
+   PlayPause,
++  Overlay
+ } from './components';
+ import {PlatformSupport} from './OSSupport';
+ import {_onBack} from './utils';
+@@ -29,6 +30,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
      resizeMode = 'contain',
      isFullscreen = false,
      showOnStart = false,
@@ -27,7 +35,7 @@ index 232490a..39977c6 100644
      paused = false,
      muted = false,
      volume = 1,
-@@ -125,6 +126,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -125,6 +127,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
      if (currentTime < duration) {
        setCurrentTime(duration);
        setPaused(true);
@@ -35,6 +43,64 @@ index 232490a..39977c6 100644
      }
      if (typeof onEnd === 'function') {
        onEnd();
+@@ -397,6 +400,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+         ) : (
+           <>
+             <Error error={error} />
++            <Overlay animations={animations} />
+             <TopControls
+               panHandlers={volumePanResponder.panHandlers}
+               animations={animations}
+diff --git a/node_modules/react-native-media-console/src/components/Overlay.tsx b/node_modules/react-native-media-console/src/components/Overlay.tsx
+new file mode 100644
+index 0000000..f873798
+--- /dev/null
++++ b/node_modules/react-native-media-console/src/components/Overlay.tsx
+@@ -0,0 +1,35 @@
++import React from 'react';
++import {
++  Animated,
++  StyleSheet,
++} from 'react-native';
++import type {VideoAnimations} from '../types';
++
++export const Overlay = ({
++  animations,
++}: {animations: VideoAnimations;}) => {
++
++  return (
++    <Animated.View
++      style={[
++        _styles.overlay,
++        {
++          opacity: animations.controlsOpacity,
++          marginBottom: animations.bottomControl.marginBottom,
++        },
++      ]}>
++    </Animated.View>
++  );
++};
++
++const _styles = StyleSheet.create({
++  overlay: {
++    position: 'absolute',
++    top: 0,
++    right: 0,
++    left: 0,
++    bottom: 0,
++    backgroundColor:'rgba(0,0,0,.3)',
++    opacity: 0
++  },
++});
+diff --git a/node_modules/react-native-media-console/src/components/index.ts b/node_modules/react-native-media-console/src/components/index.ts
+index 72d57dc..31d85e3 100644
+--- a/node_modules/react-native-media-console/src/components/index.ts
++++ b/node_modules/react-native-media-console/src/components/index.ts
+@@ -11,3 +11,4 @@ export * from './NullControl';
+ export * from './BottomControls';
+ export * from './TopControls';
+ export * from './PlayPause';
++export * from './Overlay';
 diff --git a/node_modules/react-native-media-console/src/types.ts b/node_modules/react-native-media-console/src/types.ts
 index f746fb3..9b578fc 100644
 --- a/node_modules/react-native-media-console/src/types.ts
