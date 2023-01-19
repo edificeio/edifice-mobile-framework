@@ -1,10 +1,10 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { {{moduleName | toCamelCase | capitalize}}State } from './reducer';
-
-export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', {{moduleName | toCamelCase | capitalize}}State>({
+export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', null>({
   name: '{{moduleName | toCamelCase}}',
-  entcoreScope: [/* @scaffolder add there entcore scope list that be required for your module */],
+  entcoreScope: [
+    /* @scaffolder add there entcore scope list that be required for your module */
+  ],
   matchEntcoreApp: entcoreApp => true, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp
 
   displayI18n: '{{moduleName | toCamelCase}}.tabName',

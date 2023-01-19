@@ -6,11 +6,10 @@ export interface {{moduleName | toCamelCase | capitalize}}OtherScreenProps {
   // @scaffolder add props here
 }
 
-export type {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams = undefined;
-// @scaffolder use interface and add nav params here
+export type {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams = undefined; // @scaffolder declare interface if you have navParams for this screen
 
-export interface {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps
-  extends NativeStackScreenProps<{{moduleName | toCamelCase | capitalize}}NavigationParams, 'Other'>,
+export interface {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps 
+  extends NativeStackScreenProps<{{moduleName | toCamelCase | capitalize}}NavigationParams, 'other'>,
     {{moduleName | toCamelCase | capitalize}}OtherScreenProps {
   // @scaffolder add HOC props here
 }

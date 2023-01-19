@@ -5,10 +5,10 @@ import type { {{moduleName | toCamelCase | capitalize}}HomeScreenNavParams } fro
 import type { {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams } from '../screens/other';
 
 export const {{moduleName | toCamelCase}}RouteNames = {
-  Home: `${moduleConfig.routeName}` as 'Home', // keep 'Home' as Typescript type for the main screen
-  Other: `${moduleConfig.routeName}/other` as 'Other', // @scaffolder Typescript must have static types for code-completion. Use PascalCase for the type
+  home: `${moduleConfig.routeName}` as 'home', // keep 'Home' as Typescript type for the main screen
+  other: `${moduleConfig.routeName}/other` as 'other', // @scaffolder Typescript must have static types for code-completion. Use PascalCase for the type
 };
 export interface {{moduleName | toCamelCase | capitalize}}NavigationParams extends ParamListBase {
-  Home: {{moduleName | toCamelCase | capitalize}}HomeScreenNavParams;
-  Other: {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams;
+  home: {{moduleName | toCamelCase | capitalize}}HomeScreenNavParams;
+  other: {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams;
 }

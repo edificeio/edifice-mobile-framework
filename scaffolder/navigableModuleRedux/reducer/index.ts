@@ -7,42 +7,43 @@ import moduleConfig from '../moduleConfig';
 // State type
 
 // @scaffolder : empty this interface, replace it by your own
+// @scaffolder : place here only values that are not related to the abstract data model defined in model/index.ts.
 export interface {{moduleName | toCamelCase | capitalize}}State extends {{moduleName | toCamelCase | capitalize}}Data {
-  fruit: string;
+  nbUpdates: number;
 }
 
 // Initial state value
 
-// @scaffolder : empty this exemple initialState, replace it by your own
 export const initialState: {{moduleName | toCamelCase | capitalize}}State = {
-  id: 'abcdef',
+  // @scaffolder : empty this exemple initialState, replace it by your own
   fruit: 'Physalis',
+  nbUpdates: 0,
 };
 
 // Actions definitions
 
-// @scaffolder : empty this exemple actionType, replace it by your own
 export const actionTypes = {
+  // @scaffolder : empty this exemple actionType, replace it by your own
   setFruit: moduleConfig.namespaceActionType('FRUIT_SET'),
 };
 
-// @scaffolder : empty this exemple action payload, replace it by your own
 export interface ActionPayloads {
+  // @scaffolder : empty this exemple action payload, replace it by your own
   setFruit: Pick<{{moduleName | toCamelCase | capitalize}}State, 'fruit'>;
 }
 
-// @scaffolder : empty this exemple action creator, replace it by your own
 export const actions = {
+  // @scaffolder : empty this exemple action creator, replace it by your own
   setFruit: (fruit: string) => ({ type: actionTypes.setFruit, fruit }),
 };
 
 // Reducer
 
-// @scaffolder : empty this exemple reducing function, replace it by your own
 const reducer = createReducer(initialState, {
+  // @scaffolder : empty this exemple reducing function, add by your own
   [actionTypes.setFruit]: (state, action) => {
     const { fruit }: ActionPayloads['setFruit'] = action as any;
-    return { ...state, fruit };
+    return { ...state, fruit, nbUpdates: state.nbUpdates + 1 };
   },
 });
 
@@ -50,6 +51,7 @@ const reducer = createReducer(initialState, {
 
 export const getState = (state: IGlobalState) => state[moduleConfig.reducerName] as {{moduleName | toCamelCase | capitalize}}State;
 export const getFruit = (state: IGlobalState) => getState(state).fruit; // @scaffolder : remove this example
+export const getNbUpdates = (state: IGlobalState) => getState(state).nbUpdates; // @scaffolder : remove this example
 
 // Register the reducer
 

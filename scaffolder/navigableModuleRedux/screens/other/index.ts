@@ -1,7 +1,7 @@
-import {{moduleName | toCamelCase | capitalize}}OtherScreen, { computeNavBar } from './screen';
+import {{moduleName | toCamelCase | capitalize}}OtherScreen from './screen';
 
-export { computeNavBar };
 export default {{moduleName | toCamelCase | capitalize}}OtherScreen;
 export { {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams, {{moduleName | toCamelCase | capitalize}}OtherScreenProps } from './types';
+export { computeNavBar } from './screen';
 
 // @scaffolder add other exports here

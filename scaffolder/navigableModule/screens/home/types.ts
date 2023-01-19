@@ -7,13 +7,13 @@ export interface {{moduleName | toCamelCase | capitalize}}HomeScreenProps {
 }
 
 export interface {{moduleName | toCamelCase | capitalize}}HomeScreenNavParams {
-  requiredFoo: string;
-  optionalBar?: number;
-  // @scaffolder remove examples add nav params here
+  requiredFoo: string; // @scaffolder remove example
+  optionalBar?: number; // @scaffolder remove example
+  // @scaffolder add nav params here
 }
 
 export interface {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps 
-  extends NativeStackScreenProps<{{moduleName | toCamelCase | capitalize}}NavigationParams, 'Home'>,
+  extends NativeStackScreenProps<{{moduleName | toCamelCase | capitalize}}NavigationParams, 'home'>,
     {{moduleName | toCamelCase | capitalize}}HomeScreenProps {
   // @scaffolder add HOC props here
 }

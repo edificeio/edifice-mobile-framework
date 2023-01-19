@@ -1,32 +1,47 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import { setFruitAction } from '../../actions';
+import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '../../navigation';
 import { getFruit } from '../../reducer';
 import type { {{moduleName | toCamelCase | capitalize}}HomeScreenDispatchProps, {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps } from './types';
 
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<{{moduleName | toCamelCase | capitalize}}NavigationParams, typeof {{moduleName | toCamelCase}}RouteNames.home>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('{{moduleName}}-home-title'),
+  // @scaffolder add nav options here if necessary
+  headerLeft: () => ( // @scaffolder remove this example
+    <NavBarAction
+      iconName="ui-filter"
+      onPress={() => {
+        navigation.navigate({{moduleName | toCamelCase}}RouteNames.other);
+      }}
+    />
+  ),
+});
+
 function {{moduleName | toCamelCase | capitalize}}HomeScreen(props: {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps) {
-  // HOOKS ========================================================================================
-
-  const [someState, setSomeState] = React.useState<boolean>(false);
-
-  // RENDER =======================================================================================
-
   return (
     <PageView>
       <BodyBoldText>{{moduleName | toCamelCase}} Home</BodyBoldText>
-      <BodyBoldText>{props.fruit}</BodyBoldText>
     </PageView>
   );
 }
-
-// REDUX ==========================================================================================
 
 export default connect(
   (state: IGlobalState) => {
