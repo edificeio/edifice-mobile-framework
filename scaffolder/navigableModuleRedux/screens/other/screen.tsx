@@ -39,7 +39,7 @@ function {{moduleName | toCamelCase | capitalize}}OtherScreen(props: {{moduleNam
     navigation.setOptions({
       headerLeft: () => (
         <NavBarAction
-          iconName="ui-camera"
+          iconName="ui-plus"
           onPress={() => {
             handleChangeFruit(fruits[Math.floor(Math.random() * fruits.length)]);
           }}
