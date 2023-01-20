@@ -49,6 +49,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
           onBack={onBack}
           onEnd={onEnd}
           ignoreSilentSwitch="ignore"
+          disableVolume
         />
       )}
     </PageView>
