@@ -24,7 +24,7 @@ export const computeNavBar = ({
     <NavBarAction
       iconName="ui-filter"
       onPress={() => {
-        navigation.navigate({{moduleName | toCamelCase}}RouteNames.other);
+        // navigation.navigate({{moduleName | toCamelCase}}RouteNames.other);
       }}
     />
   ),

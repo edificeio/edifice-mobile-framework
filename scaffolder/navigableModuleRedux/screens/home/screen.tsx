@@ -30,7 +30,7 @@ export const computeNavBar = ({
     <NavBarAction
       iconName="ui-filter"
       onPress={() => {
-        navigation.navigate({{moduleName | toCamelCase}}RouteNames.other, {}); // @scaffolder, second argument must be defined unless navParams for this screen are typed undefined.
+        // navigation.navigate({{moduleName | toCamelCase}}RouteNames.other, {}); // @scaffolder, second argument must be defined unless navParams for this screen are typed undefined.
       }}
     />
   ),
