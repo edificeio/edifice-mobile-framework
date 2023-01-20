@@ -4,7 +4,7 @@ import theme from '~/app/theme';
 
 export default StyleSheet.create({
   page: {
-    backgroundColor: theme.palette.grey.black,
+    backgroundColor: theme.palette.grey.darkness,
   },
   backButtonWebview: {
     position: 'absolute',
