@@ -61,7 +61,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
   // LOADER =====================================================================================
 
-  // ToDo : Make this in a useLoadingState.
+  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState);
 

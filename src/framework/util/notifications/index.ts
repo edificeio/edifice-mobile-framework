@@ -2,7 +2,6 @@
  * Notifications
  * Types and tools for managing Notification data
  */
-
 import moment, { Moment } from 'moment';
 import { ImageURISource } from 'react-native';
 

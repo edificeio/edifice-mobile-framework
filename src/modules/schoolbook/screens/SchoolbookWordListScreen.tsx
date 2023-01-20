@@ -53,7 +53,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
 
   // LOADER =====================================================================================
 
-  // ToDo : Make this in a useLoadingState.
+  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -256,7 +256,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreen_Props) => {
               linkAction({
                 title: I18n.t('schoolbook.word.create'),
                 action: () => {
-                  //TODO: create generic function inside oauth (use in myapps, etc.)
+                  //TODO: get session.platform from redux
                   if (!DEPRECATED_getCurrentPlatform()) {
                     return null;
                   }

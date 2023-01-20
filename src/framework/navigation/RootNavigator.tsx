@@ -16,8 +16,7 @@ import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { getActiveSession } from '~/framework/util/session';
+import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 
 import { navigationRef } from './helper';
 import { MainNavigation } from './mainNavigation';
@@ -45,7 +44,7 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 
 const RootStack = getTypedRootStack();
 
-function RootNavigatorUnconnected(props: RootNavigatorProps) {
+function RootNavigator(props: RootNavigatorProps) {
   const { logged, session, isReady, autoLoginResult, dispatch } = props;
   const isFullyLogged = logged && session; // Partial sessions scenarios have session = true && logged = false, and must stay on auth stack.
 
@@ -90,8 +89,8 @@ function RootNavigatorUnconnected(props: RootNavigatorProps) {
 }
 
 export default connect((state: IGlobalState) => ({
-  session: getActiveSession(),
+  session: getSession(state),
   logged: getAuthState(state).logged,
   isReady: getAppStartupState(state).isReady,
   autoLoginResult: getAuthState(state).autoLoginResult,
-}))(RootNavigatorUnconnected);
+}))(RootNavigator);

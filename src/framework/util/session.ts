@@ -20,7 +20,7 @@ export enum UserType {
 export interface IUserAuthorizedAction {
   name: string;
   displayName: string;
-  type: 'SECURED_ACTION_WORKFLOW'; // ToDo add other types here
+  type: 'SECURED_ACTION_WORKFLOW'; // ToDo add other types here from backend info
 }
 export interface IUserDefinition {
   login: string;

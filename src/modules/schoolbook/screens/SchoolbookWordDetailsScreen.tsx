@@ -45,7 +45,7 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
 
   // LOADER =====================================================================================
 
-  // ToDo : Make this in a useLoadingState.
+  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
 
   const [schoolbookWordId, setSchoolbookWordId] = React.useState('');
   const [studentId, setStudentId] = React.useState('');

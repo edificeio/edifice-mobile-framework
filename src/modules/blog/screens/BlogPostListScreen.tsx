@@ -54,7 +54,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   // LOADER =====================================================================================
 
-  // ToDo : Make this in a useLoadingState.
+  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();

@@ -1,6 +1,8 @@
 import { UI_SIZES } from '~/framework/components/constants';
 
-const getStatusBarHeight = () => 20; // ToDo use react navigation iPhone X support here
+// ToDo : remove this file in favor of react-navigation 6 navBar handling
+
+const getStatusBarHeight = () => 20;
 
 interface UiState {
   headerHeight: number;

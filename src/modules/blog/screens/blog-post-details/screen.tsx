@@ -147,7 +147,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const menuItemOpenBrowser = linkAction({
       title: I18n.t('common.openInBrowser'),
       action: () => {
-        //TODO: create generic function inside oauth (use in myapps, etc.)
+        // ToDo : get session.platform from redux
         if (!DEPRECATED_getCurrentPlatform()) {
           return null;
         }

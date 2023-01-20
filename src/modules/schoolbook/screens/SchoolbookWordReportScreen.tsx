@@ -37,7 +37,7 @@ const SchoolbookWordReportScreen = (props: ISchoolbookWordReportScreen_Props) =>
 
   // LOADER =====================================================================================
 
-  // ToDo : Make this in a useLoadingState.
+  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
 
   const [schoolbookWordId, setSchoolbookWordId] = React.useState('');
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
