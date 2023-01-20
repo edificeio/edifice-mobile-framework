@@ -13,6 +13,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { setFruitAction } from '../../actions';
 import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '../../navigation';
 import { getFruit } from '../../reducer';
+import styles from './styles';
 import type { {{moduleName | toCamelCase | capitalize}}HomeScreenDispatchProps, {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -29,7 +30,7 @@ export const computeNavBar = ({
     <NavBarAction
       iconName="ui-filter"
       onPress={() => {
-        navigation.navigate({{moduleName | toCamelCase}}RouteNames.other);
+        navigation.navigate({{moduleName | toCamelCase}}RouteNames.other, {}); // @scaffolder, second argument must be defined unless navParams for this screen are typed undefined.
       }}
     />
   ),

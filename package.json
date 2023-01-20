@@ -34,7 +34,7 @@
     "test": "jest",
     "tsc": "tsc -p tsconfig.json",
     "scaff-module": "run(){ npx scaffolder-cli create $1 --path-prefix /src/framework/modules -f $2 moduleName=$2; }; run",
-    "scaff-screen": "run(){ npx scaffolder-cli create $1 --path-prefix /src/framework/modules/$2/screens -f $3 screenName=$3 moduleName=$2 && echo \"❗️ \\033[1;33mManual steps required ! See src/framework/modules/$3/screens/$2/index.ts \\033[0m\"; }; run"
+    "scaff-screen": "run(){ npx scaffolder-cli create $1 --path-prefix /src/framework/modules/$2/screens -f $3 screenName=$3 moduleName=$2 && echo \"❗️ \\033[1;33mManual steps required ! See comments in \\033[4m./src/framework/modules/$2/screens/$3/index.ts\\033[0m\"; }; run"
   },
   "dependencies": {
     "@emotion/native": "11.10.0",

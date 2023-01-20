@@ -7,8 +7,8 @@ export interface {{moduleName | toCamelCase | capitalize}}{{screenName | toCamel
 }
 
 export interface {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenNavParams {
-  requiredFoo: string; // @scaffolder remove example
-  optionalBar?: number; // @scaffolder remove example
+  // requiredFoo: string; // @scaffolder remove example
+  // optionalBar?: number; // @scaffolder remove example
   // @scaffolder add nav params here
 }
 

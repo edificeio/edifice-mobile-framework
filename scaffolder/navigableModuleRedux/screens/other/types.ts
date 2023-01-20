@@ -9,7 +9,7 @@ export interface {{moduleName | toCamelCase | capitalize}}OtherScreenProps {
 }
 
 export interface {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams {
-  handleAdd?: () => void;
+  // @scaffolder add nav params here
 }
 
 export interface {{moduleName | toCamelCase | capitalize}}OtherScreenStoreProps {

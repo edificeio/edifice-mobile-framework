@@ -13,6 +13,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { setFruitAction } from '../../actions';
 import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '../../navigation';
 import { getFruit, getNbUpdates } from '../../reducer';
+import styles from './styles';
 import type { {{moduleName | toCamelCase | capitalize}}OtherScreenDispatchProps, {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps } from './types';
 
 export const computeNavBar = ({

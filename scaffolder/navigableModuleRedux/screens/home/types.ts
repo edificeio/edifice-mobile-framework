@@ -9,8 +9,8 @@ export interface {{moduleName | toCamelCase | capitalize}}HomeScreenProps {
 }
 
 export interface {{moduleName | toCamelCase | capitalize}}HomeScreenNavParams {
-  requiredFoo: string; // @scaffolder remove example
-  optionalBar?: number; // @scaffolder remove example
+  // requiredFoo: string; // @scaffolder remove example
+  // optionalBar?: number; // @scaffolder remove example
   // @scaffolder add nav params here
 }
 
