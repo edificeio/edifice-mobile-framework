@@ -2,15 +2,42 @@ import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
-import { IAuthorizedAction } from './service';
+import { IAuthorizedAction, UserPrivateData, UserType } from './service';
 
+/**
+ * Describes a generic user (public info)
+ */
 export interface IUser {
   id: string;
   login: string;
+  type: UserType;
+  displayName: string;
+  photo?: string;
 }
 
-export interface ILoggedUser extends IUser {}
+/** user children, not regrouped by structure */
+export type UserChildrenFlattened = {
+  classNames: string[];
+  displayName: string;
+  externalId?: string;
+  id: string;
+  structureName: string;
+}[];
 
+/**
+ * Describes the user that is logged in currently (private info)
+ */
+export interface ILoggedUser extends IUser {
+  firstName?: string;
+  lastName?: string;
+  groups: string[];
+  children?: UserPrivateData['childrenStructure'];
+  relatives?: UserPrivateData['parents'];
+}
+
+/**
+ * Current session information including authentification, rights & user info.
+ */
 export interface ISession {
   platform: Platform;
   oauth2: OAuth2RessourceOwnerPasswordClient;
@@ -150,3 +177,19 @@ export type LegalUrls = {
   personalDataProtection?: string;
   cookies?: string;
 };
+
+/**
+ * returns all the children in a single array.
+ * @param children children as it exists in session
+ * @returns children in a array, not regrouped by structure.
+ */
+export function getFlattenedChildren(children: ILoggedUser['children']): UserChildrenFlattened | undefined {
+  if (!children) return children;
+  const flattenedChildren: UserChildrenFlattened = [];
+  for (const structure of children) {
+    for (const child of structure.children) {
+      flattenedChildren.push({ ...child, structureName: structure.structureName });
+    }
+  }
+  return flattenedChildren;
+}

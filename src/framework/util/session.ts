@@ -10,6 +10,7 @@ import type { IUserInfoState } from '~/user/state/info';
 import type { Platform } from './appConf';
 import type { IEntcoreApp, IEntcoreWidget } from './moduleTool';
 
+/** @deprecated use the one from src/framework/modules/auth/model.ts */
 export enum UserType {
   Student = 'Student',
   Relative = 'Relative',
@@ -17,6 +18,8 @@ export enum UserType {
   Personnel = 'Personnel',
   Guest = 'Guest',
 }
+
+/** @deprecated use the one from src/framework/modules/auth/model.ts */
 export interface IUserAuthorizedAction {
   name: string;
   displayName: string;

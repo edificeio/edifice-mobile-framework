@@ -4,12 +4,27 @@ import messaging from '@react-native-firebase/messaging';
 import { SupportedLocales } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { UserType } from '~/framework/util/session';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2 } from '~/infra/oauth';
 
-import { IAuthContext, IAuthCredentials, ISession, PartialSessionScenario, RuntimeAuthErrorCode, createAuthError } from './model';
+import {
+  IAuthContext,
+  IAuthCredentials,
+  ILoggedUser,
+  ISession,
+  PartialSessionScenario,
+  RuntimeAuthErrorCode,
+  createAuthError,
+} from './model';
+
+export enum UserType {
+  Student = 'Student',
+  Relative = 'Relative',
+  Teacher = 'Teacher',
+  Personnel = 'Personnel',
+  Guest = 'Guest',
+}
 
 export interface IAuthorizedAction {
   name: string;
@@ -17,9 +32,18 @@ export interface IAuthorizedAction {
   type: 'SECURED_ACTION_WORKFLOW'; // ToDo add other types here
 }
 
+export enum UserTypeBackend {
+  Student = 'Student',
+  Relative = 'Relative',
+  Teacher = 'Teacher',
+  Personnel = 'Personnel',
+  Guest = 'Guest',
+}
+
 export interface IUserInfoBackend {
   // ToDo: type it !
   userId?: string;
+  username?: string;
   login?: string;
   type?: UserType;
   deletePending?: boolean;
@@ -29,6 +53,26 @@ export interface IUserInfoBackend {
   apps?: IEntcoreApp[];
   widgets?: IEntcoreWidget[];
   authorizedActions?: IAuthorizedAction[];
+  firstName?: string;
+  lastName?: string;
+  groupsIds?: string[];
+}
+
+export interface UserPrivateData {
+  childrenStructure?: {
+    structureName: string;
+    children: {
+      classNames: string[];
+      displayName: string;
+      externalId?: string;
+      id: string;
+    }[];
+  }[];
+  parents?: {
+    displayName: string;
+    externalId?: string;
+    id: string;
+  }[];
 }
 
 export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
@@ -132,13 +176,24 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
     }
 
     const userdata = (await fetchJSONWithCache(`/directory/user/${userinfo.userId}`, {}, true, platform.url)) as any;
-    userdata.childrenStructure =
-      userinfo.type === 'Relative'
+
+    // We fetch children information only for relative users
+    const childrenStructure: UserPrivateData['childrenStructure'] =
+      userinfo.type === UserType.Relative
         ? await (fetchJSONWithCache('/directory/user/' + userinfo.userId + '/children', {}, true, platform.url) as any)
         : undefined;
+    if (childrenStructure) {
+      userdata.childrenStructure = childrenStructure;
+    }
 
-    const userPublicInfo = await fetchJSONWithCache('/userbook/api/person?id=' + userinfo.userId, {}, true, platform.url);
-    return { userdata, userPublicInfo };
+    // We enforce undefined parents for non-student users becase backend populates this with null data
+    if (userinfo.type !== UserType.Student) {
+      userdata.parents = undefined;
+    }
+
+    // currently, userPublicInfo is not used anywhere. Uncomment this whenever the data becomes useful.
+    // const userPublicInfo = await fetchJSONWithCache('/userbook/api/person?id=' + userinfo.userId, {}, true, platform.url);
+    return { userdata, userPublicInfo: { result: [] } } as { userdata?: UserPrivateData; userPublicInfo?: any };
   } catch (err) {
     throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', '', err as Error);
   }
@@ -155,18 +210,38 @@ export async function saveSession() {
   }
 }
 
-export function formatSession(platform: Platform, userinfo: IUserInfoBackend): ISession {
+export function formatSession(platform: Platform, userinfo: IUserInfoBackend, userPrivateData?: UserPrivateData): ISession {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
   }
-  if (!userinfo.apps || !userinfo.widgets || !userinfo.authorizedActions || !userinfo.userId || !userinfo.login) {
+  if (
+    !userinfo.apps ||
+    !userinfo.widgets ||
+    !userinfo.authorizedActions ||
+    !userinfo.userId ||
+    !userinfo.login ||
+    !userinfo.type ||
+    !userinfo.username ||
+    !userinfo.groupsIds
+  ) {
     throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing data in user info', '');
   }
-  const user = {
+  const user: ILoggedUser = {
     id: userinfo.userId,
     login: userinfo.login,
+    type: userinfo.type,
+    displayName: userinfo.username,
+    firstName: userinfo.firstName,
+    lastName: userinfo.lastName,
+    groups: userinfo.groupsIds,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
+  if (userPrivateData?.childrenStructure) {
+    user.children = userPrivateData.childrenStructure;
+  }
+  if (userPrivateData?.parents) {
+    user.relatives = userPrivateData.parents;
+  }
   return {
     platform,
     oauth2: OAuth2RessourceOwnerPasswordClient.connection,
@@ -275,7 +350,7 @@ export class FcmService {
       } else {
         //console.debug("not an array?", tokens)
       }
-    } catch (e) {
+    } catch {
       // TODO: Manage error
     }
     return [];
@@ -299,7 +374,7 @@ export class FcmService {
     }
     //merge is not supported by all implementation
     let tokens = await this._getTokenToDeleteQueue();
-    tokens = tokens.filter(t => t != token);
+    tokens = tokens.filter(t => t !== token);
     const json = JSON.stringify(tokens);
     await AsyncStorage.setItem(FcmService.FCM_TOKEN_TODELETE_KEY, json);
   }
@@ -309,11 +384,11 @@ export class FcmService {
       if (!token) {
         token = await messaging().getToken();
       }
-      const deleteTokenResponse = await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
+      await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
         method: 'delete',
       });
       this._removeTokenFromDeleteQueue(token);
-    } catch (err) {
+    } catch {
       //unregistering fcm token should not crash the login process
       if (Connection.isOnline) {
         //console.debug(err);
@@ -332,14 +407,14 @@ export class FcmService {
         token = await messaging().getToken();
       }
       this.lastRegisteredToken = token;
-      const putTokenResponse = await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
+      await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
         method: 'put',
       });
       this.pendingRegistration = 'registered';
       //try to unregister queue
       this._cleanQueue(); //clean queue on login
       //
-    } catch (err) {
+    } catch {
       //registering fcm token should not crash the login process
       if (Connection.isOnline) {
         //console.debug(err);

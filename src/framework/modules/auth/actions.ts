@@ -144,26 +144,29 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 8. Validate session + return redirect scenario
 
+      const sessionInfo = formatSession(platform, userinfo, userdata);
       if (partialSessionScenario) {
         const context = await getAuthContext(platform);
         dispatch({
           // For legacy compat
+          // Todo : remove legacy session information when not useful anymore
           type: actionTypeLoggedInPartial,
           userbook: userinfo,
           userdata,
           userPublicInfo: userPublicInfo.result[0],
         });
-        dispatch(authActions.sessionPartial(formatSession(platform, userinfo)));
+        dispatch(authActions.sessionPartial(sessionInfo));
         return { action: partialSessionScenario, context, credentials, rememberMe };
       } else {
         dispatch({
           // For legacy compat
+          // Todo : remove legacy session information when not useful anymore
           type: actionTypeLoggedIn,
           userbook: userinfo,
           userdata,
           userPublicInfo: userPublicInfo.result[0],
         });
-        dispatch(authActions.sessionCreate(formatSession(platform, userinfo)));
+        dispatch(authActions.sessionCreate(sessionInfo));
       }
     } catch (e) {
       let authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
@@ -184,6 +187,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
         else await Trackers.trackEvent('Auth', 'RESTORE ERROR', authError?.type);
         dispatch({
           // For legacy compat
+          // Todo : remove legacy session information when not useful anymore
           type: actionTypeLoginError,
           errmsg: authError?.type,
         });

@@ -79,7 +79,6 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
 
   public render() {
     const { modules } = this.props;
-    console.log('MODULES', modules);
     return <PageView>{this.renderGrid(modules)}</PageView>;
   }
 }
