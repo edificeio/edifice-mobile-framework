@@ -27,8 +27,7 @@ export default () => {
       require('~/framework/modules/timelinev2'),
 
       // Included modules from override
-      // ...(IncludedModules || []),
-      require('~/framework/modules/peter-parker'),
+      ...(IncludedModules || []),
 
       // Built-in modules that depends on other
       // CAUTION ! Modules that depends on other (ex myAppMenu) must be listed at the end !
