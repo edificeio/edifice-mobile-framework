@@ -92,6 +92,7 @@ export class UserAccountScreen extends React.PureComponent<
           getUserSession().user.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${getUserSession().user.photo}`),
       });
     });
+    const isMFANeeded = true;
 
     return (
       <PageView
@@ -132,11 +133,23 @@ export class UserAccountScreen extends React.PureComponent<
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.configuration')}</HeadingSText>
             <ButtonLineGroup>
               <LineButton title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
-              <LineButton title="user.page.editPassword" onPress={() => this.props.navigation.navigate('ChangePassword')} />
+              <LineButton
+                title="user.page.editPassword"
+                onPress={() =>
+                  isMFANeeded
+                    ? this.props.navigation.navigate('MFA', { navBarTitle: I18n.t('user.page.editPassword') })
+                    : this.props.navigation.navigate('ChangePassword')
+                }
+              />
               {session.user.type !== 'Student' ? (
                 <LineButton
                   title="user.page.editEmail"
-                  onPress={() => this.props.navigation.navigate('UserEmail', { isModifyingEmail: true })}
+                  onPress={() =>
+                    this.props.navigation.navigate(isMFANeeded ? 'MFA' : 'UserEmail', {
+                      navBarTitle: I18n.t('user.page.editEmail'),
+                      isModifyingEmail: true,
+                    })
+                  }
                 />
               ) : null}
               <LineButton title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />

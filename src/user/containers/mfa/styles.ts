@@ -5,14 +5,10 @@ import { UI_SIZES, getScaleHeight, getScaleWidth } from '~/framework/components/
 import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
-  page: { backgroundColor: theme.ui.background.card },
-  container: { flex: 1, paddingHorizontal: UI_SIZES.spacing.medium },
-  contentContainer: { flex: 1 },
-  imageContainer: { paddingTop: UI_SIZES.spacing.medium, alignSelf: 'center' },
-  title: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
-  contentSent: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
-  content: { textAlign: 'center' },
-  codeFieldContainer: { marginTop: UI_SIZES.spacing.large, paddingHorizontal: UI_SIZES.spacing.medium },
+  animation: {
+    width: UI_SIZES.elements.thumbnail,
+    height: UI_SIZES.elements.thumbnail,
+  },
   codeFieldCell: {
     width: getScaleWidth(45),
     height: getScaleHeight(58),
@@ -22,15 +18,21 @@ export default StyleSheet.create({
     borderWidth: UI_SIZES.dimensions.width.tiny,
     textAlign: 'center',
   },
+  codeFieldContainer: { marginTop: UI_SIZES.spacing.large, paddingHorizontal: UI_SIZES.spacing.medium },
   codeFieldWrapper: {
     width: '100%',
     height: '100%',
     position: 'absolute',
   },
-  feedbackContainer: { alignItems: 'center', marginTop: UI_SIZES.spacing.medium },
   codeStateText: { textAlign: 'center', marginTop: UI_SIZES.spacing.small },
-  resendContainer: { justifyContent: 'flex-end' },
+  container: { flex: 1, paddingHorizontal: UI_SIZES.spacing.medium },
+  content: { textAlign: 'center' },
+  contentContainer: { flex: 1 },
+  contentSent: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
+  feedbackContainer: { alignItems: 'center', marginTop: UI_SIZES.spacing.medium },
+  imageContainer: { paddingTop: UI_SIZES.spacing.medium, alignSelf: 'center' },
   issueText: { textAlign: 'center' },
+  page: { backgroundColor: theme.ui.background.card },
   resendButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -39,5 +41,7 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.spacing.small,
     marginBottom: UI_SIZES.spacing.big,
   },
+  resendContainer: { justifyContent: 'flex-end' },
   resendText: { marginLeft: UI_SIZES.spacing.minor },
+  title: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },
 });

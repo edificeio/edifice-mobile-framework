@@ -1,6 +1,6 @@
 /**
  * Session getter
- * TEMPORARY MODULE : In waiting to a proper session management (auth module), this compatibility module exposes IUserSession getter from global redux state
+ * TEMPORARY MODULE : While waiting for a proper session management (auth module), this compatibility module exposes the IUserSession getter from the global redux state
  */
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { IUserAuthState } from '~/user/reducers/auth';
@@ -29,6 +29,7 @@ export interface IUserDefinition {
   firstName: string;
   lastName: string;
   photo: string;
+  mobile: string;
   type: UserType;
   entcoreApps: IEntcoreApp[];
   entcoreWidgets: IEntcoreWidget[];
@@ -58,6 +59,7 @@ export const computeUserSession = (authState?: IUserAuthState, infoState?: IUser
       firstName: infoState ? infoState.firstName : sessionCache?.user?.firstName,
       lastName: infoState ? infoState.lastName : sessionCache?.user?.lastName,
       photo: infoState ? infoState.photo : sessionCache?.user?.photo,
+      mobile: infoState ? infoState.mobile : sessionCache?.user?.mobile,
     },
   } as IUserSession;
 };
