@@ -6,6 +6,7 @@ import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 
 import { ActionButton, getActionButtonWidth } from '~/framework/components/buttons/action';
+import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
@@ -40,7 +41,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
     const { buttonsWidth } = this.state;
 
     return (
-      <SafeAreaView style={styles.page}>
+      <PageView style={styles.page} statusBar="light">
         <View style={styles.mainContainer}>
           <HeadingLText style={styles.title}>
             {this.showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
@@ -78,7 +79,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
             />
           ) : null}
         </View>
-      </SafeAreaView>
+      </PageView>
     );
   }
 }

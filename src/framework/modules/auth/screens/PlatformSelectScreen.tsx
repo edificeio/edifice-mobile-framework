@@ -48,37 +48,33 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
     const { navigation } = this.props;
 
     return (
-      <>
-        <PageView statusBar="light">
-          <GridList
-            data={appConf.platforms}
-            renderItem={({ item }) => (
-              <TouchableSelectorPictureCard
-                picture={
-                  item.logoType === 'Image' ? { type: 'Image', source: item.logo } : { type: item.logoType, name: item.logo }
-                }
-                pictureStyle={styles.picture}
-                text={item.displayName}
-                onPress={() => {
-                  navigation.navigate(getLoginRouteName(item), { platform: item });
-                }}
-              />
-            )}
-            keyExtractor={item => item.url}
-            ListHeaderComponent={
-              <>
-                <HeadingSText style={styles.heading}>{I18n.t('welcome')}</HeadingSText>
-                <SmallText style={styles.lightP}>{I18n.t('select-platform')}</SmallText>
-              </>
-            }
-            alwaysBounceVertical={false}
-            overScrollMode="never"
-            ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
-            gap={UI_SIZES.spacing.big}
-            gapOutside={UI_SIZES.spacing.big}
-          />
-        </PageView>
-      </>
+      <PageView statusBar="light">
+        <GridList
+          data={appConf.platforms}
+          renderItem={({ item }) => (
+            <TouchableSelectorPictureCard
+              picture={item.logoType === 'Image' ? { type: 'Image', source: item.logo } : { type: item.logoType, name: item.logo }}
+              pictureStyle={styles.picture}
+              text={item.displayName}
+              onPress={() => {
+                navigation.navigate(getLoginRouteName(item), { platform: item });
+              }}
+            />
+          )}
+          keyExtractor={item => item.url}
+          ListHeaderComponent={
+            <>
+              <HeadingSText style={styles.heading}>{I18n.t('welcome')}</HeadingSText>
+              <SmallText style={styles.lightP}>{I18n.t('select-platform')}</SmallText>
+            </>
+          }
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+          ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
+          gap={UI_SIZES.spacing.big}
+          gapOutside={UI_SIZES.spacing.big}
+        />
+      </PageView>
     );
   }
 

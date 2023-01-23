@@ -17,8 +17,6 @@ export default StyleSheet.create({
     flex: 4,
   },
   page: {
-    flex: 1,
-    backgroundColor: theme.ui.background.page,
     paddingVertical: UI_SIZES.spacing.big,
   },
   swiper: {
