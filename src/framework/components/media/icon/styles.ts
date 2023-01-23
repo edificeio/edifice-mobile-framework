@@ -15,7 +15,4 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.primary.regular,
     opacity: 1,
   },
-  icon: {
-    transform: [{ translateX: 2 }],
-  },
 });

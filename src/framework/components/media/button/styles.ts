@@ -5,7 +5,7 @@ import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 
 const sizeIconAudio = getScaleHeight(36);
 const gradientBlack = 'rgba(0,0,0,.3)';
-const heightPreviewVideo = (10 / 16) * UI_SIZES.screen.width;
+const heightPreviewVideo = (10 / 16) * (UI_SIZES.screen.width - UI_SIZES.spacing.medium * 4);
 
 export default StyleSheet.create({
   absolute: {

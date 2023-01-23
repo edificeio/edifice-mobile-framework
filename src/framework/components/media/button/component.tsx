@@ -7,7 +7,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { getScaleImageSize } from '~/framework/components/constants';
+import { UI_SIZES, getScaleHeight, getScaleImageSize } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { SmallItalicText } from '~/framework/components/text';
@@ -29,6 +29,14 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
     );
   }
 
+  iconSizeAudio = getScaleImageSize(20);
+
+  iconSizeVideo = getScaleImageSize(24);
+
+  widthWaves = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.medium - getScaleHeight(36) - 3 * UI_SIZES.spacing.small;
+
+  heightWaves = Math.round(this.widthWaves * (36 / 237));
+
   public render() {
     const { type, source, ratio, posterSource, style } = this.props;
     const isAudio = type === 'audio';
@@ -46,7 +54,7 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
         <TouchableOpacity onPress={() => this.showMediaPlayer()} style={[styles.previewVideo, style]}>
           <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" />
           <View style={styles.viewVideo}>
-            <MediaIcon icon="ui-play-filled" height={getScaleImageSize(26)} width={getScaleImageSize(24)} />
+            <MediaIcon icon="ui-play-filled" iconSize={this.iconSizeVideo} />
           </View>
         </TouchableOpacity>
       );
@@ -56,13 +64,8 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
       return (
         <TouchableOpacity onPress={() => this.showMediaPlayer()}>
           <View style={styles.previewAudio}>
-            <MediaIcon
-              icon="ui-play-filled"
-              height={getScaleImageSize(20)}
-              width={getScaleImageSize(18)}
-              style={styles.iconAudio}
-            />
-            <NamedSVG fill={theme.palette.primary.light} name="ui-wavering" />
+            <MediaIcon icon="ui-play-filled" iconSize={this.iconSizeAudio} style={styles.iconAudio} />
+            <NamedSVG width={this.widthWaves} height={this.heightWaves} fill={theme.palette.primary.light} name="ui-wavering" />
           </View>
         </TouchableOpacity>
       );
