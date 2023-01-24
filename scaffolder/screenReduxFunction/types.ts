@@ -28,7 +28,3 @@ export interface {{moduleName | toCamelCase | capitalize}}{{screenName | toCamel
     {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenDispatchProps {
   // @scaffolder add HOC props here
 }
-
-export interface {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenState {
-  // @scaffolder add internal component state here
-}
