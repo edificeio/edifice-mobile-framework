@@ -361,7 +361,11 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
   const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;
   if (picture) {
     if (picture.type === 'Image') picture.resizeMode = 'contain';
-    if (picture.type === 'NamedSvg') picture.fill = theme.ui.text.inverse;
+    if (picture.type === 'NamedSvg') {
+      picture.fill = theme.ui.text.inverse;
+      picture.width = OverviewCardBase.styles.picture.width;
+      picture.height = OverviewCardBase.styles.picture.height;
+    }
   }
   const CC = cardComponent ?? ContentCard;
   return (
