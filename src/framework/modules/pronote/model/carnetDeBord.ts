@@ -11,6 +11,7 @@ export enum CarnetDeBordSection {
 export type IPronoteConnectorInfo = {
   structureId: string;
   address: string;
+  idPronote: string;
 };
 
 export type IUserBasic = {
@@ -18,27 +19,38 @@ export type IUserBasic = {
   displayName: string;
   firstName: string;
   lastName: string;
-  idPronote: string;
 };
 
 export type ICarnetDeBord = IUserBasic &
-  IPronoteConnectorInfo & {
-    PageCahierDeTextes: {
+  Partial<IPronoteConnectorInfo> & {
+    PageCahierDeTextes?: {
       Titre: string;
-      CahierDeTextes?: ICarnetDeBordCahierDeTextes[];
+      // CahierDeTextes?: ICarnetDeBordCahierDeTextes[]; // Not used in our front.
+      TravailAFairePast: ICarnetDeBordCahierDeTextesTravailAFaire[];
+      TravailAFaireFuture: ICarnetDeBordCahierDeTextesTravailAFaire[];
     };
-    PageCompetences: {
+    PageCompetences?: {
       Titre: string;
-      Competences?: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
+      CompetencesPast: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
+      CompetencesFuture: (ICarnetDeBordCompetencesEvaluation | ICarnetDeBordCompetencesItem | ICarnetDeBordCompetencesDomaine)[];
     };
-    PageReleveDeNotes: {
+    PageReleveDeNotes?: {
       Titre: string;
       Message?: string;
-      Devoir?: ICarnetDeBordReleveDeNotesDevoir[];
+      DevoirsPast: ICarnetDeBordReleveDeNotesDevoir[];
+      DevoirsFuture: ICarnetDeBordReleveDeNotesDevoir[];
     };
-    PageVieScolaire: {
+    PageVieScolaire?: {
       Titre: string;
-      VieScolaire?: (
+      VieScolairePast?: (
+        | ICarnetDeBordVieScolaireAbsence
+        | ICarnetDeBordVieScolaireRetard
+        | ICarnetDeBordVieScolairePassageInfirmerie
+        | ICarnetDeBordVieScolairePunition
+        | ICarnetDeBordVieScolaireSanction
+        | ICarnetDeBordVieScolaireObservation
+      )[];
+      VieScolaireFuture?: (
         | ICarnetDeBordVieScolaireAbsence
         | ICarnetDeBordVieScolaireRetard
         | ICarnetDeBordVieScolairePassageInfirmerie
@@ -53,38 +65,38 @@ export type ICarnetDeBord = IUserBasic &
   };
 
 export type ICarnetDeBordCahierDeTextes = {
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Matiere?: string;
   TravailAFaire?: ICarnetDeBordCahierDeTextesTravailAFaire[];
   ContenuDeCours?: ICarnetDeBordCahierDeTextesContenuDeCours[];
 };
 export type ICarnetDeBordCahierDeTextesTravailAFaire = {
   Descriptif?: string;
-  PourLeString: string;
-  PourLe: moment.Moment;
+  PourLeString?: string;
+  PourLe?: moment.Moment;
   PieceJointe?: string[];
   SiteInternet?: string[];
-};
+} & Pick<ICarnetDeBordCahierDeTextes, 'Matiere'>;
 export type ICarnetDeBordCahierDeTextesContenuDeCours = {
   Titre?: string;
   Descriptif?: string;
   Categorie?: string;
   PieceJointe?: string[];
   SiteInternet?: string[];
-};
+} & Pick<ICarnetDeBordCahierDeTextes, 'Matiere'>;
 
 export type ICarnetDeBordCompetencesItem = {
   type: 'Item';
   Competence?: string;
   Intitule?: string;
   Matiere?: string;
-  NiveauDAcquisition: {
-    Genre: number;
-    Libelle: string;
+  NiveauDAcquisition?: {
+    Genre?: number;
+    Libelle?: string;
   };
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
 };
 export type ICarnetDeBordCompetencesEvaluation = Omit<ICarnetDeBordCompetencesItem, 'type'> & {
   type: 'Evaluation';
@@ -94,38 +106,58 @@ export type ICarnetDeBordCompetencesDomaine = Omit<ICarnetDeBordCompetencesItem,
 
 export type ICarnetDeBordReleveDeNotesDevoir = {
   Note: string;
-  Bareme: string;
+  Bareme?: string;
   Matiere?: string;
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
 };
+const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
+  abs: 'pronote.carnetDeBord.releveDeNotes.value.abs',
+  disp: 'pronote.carnetDeBord.releveDeNotes.value.disp',
+  'n.not': 'pronote.carnetDeBord.releveDeNotes.value.nnot',
+  inap: 'pronote.carnetDeBord.releveDeNotes.value.inap',
+  'n.rdu': 'pronote.carnetDeBord.releveDeNotes.value.nrdu',
+};
+export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
+  if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
+  const noteLowerCase = note.toString().toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(carnetDeBordReleveDeNotesDevoirSpecialValueI18n, noteLowerCase)) {
+    return I18n.t(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
+  } else
+    return bareme
+      ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
+          note,
+          bareme,
+        })
+      : note.toString();
+}
 
 export type ICarnetDeBordVieScolaireAbsence = {
   type: 'Absence';
-  DateDebut: moment.Moment;
-  DateDebutString: string;
-  DateFin: moment.Moment;
-  DateFinString: string;
-  EstOuverte: boolean;
-  Justifie: boolean;
+  DateDebut?: moment.Moment;
+  DateDebutString?: string;
+  DateFin?: moment.Moment;
+  DateFinString?: string;
+  EstOuverte?: boolean;
+  Justifie?: boolean;
   Motif?: string;
 };
 export type ICarnetDeBordVieScolaireRetard = {
   type: 'Retard';
-  Date: moment.Moment;
-  DateString: string;
-  Justifie: boolean;
+  Date?: moment.Moment;
+  DateString?: string;
+  Justifie?: boolean;
   Motif?: string;
 };
 export type ICarnetDeBordVieScolairePassageInfirmerie = {
   type: 'PassageInfirmerie';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
 };
 export type ICarnetDeBordVieScolairePunition = {
   type: 'Punition';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Nature?: string;
   Matiere?: string;
   Motif?: string;
@@ -133,8 +165,8 @@ export type ICarnetDeBordVieScolairePunition = {
 };
 export type ICarnetDeBordVieScolaireSanction = {
   type: 'Sanction';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Nature?: string;
   Motif?: string;
   Circonstances?: string;
@@ -142,8 +174,8 @@ export type ICarnetDeBordVieScolaireSanction = {
 };
 export type ICarnetDeBordVieScolaireObservation = {
   type: 'Observation';
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
   Demandeur?: string;
   Matiere?: string;
   Observation?: string;
@@ -200,8 +232,4 @@ export function formatCarnetDeBordCompetencesValue(value?: number) {
     : I18n.t('pronote.carnetDeBord.noInfo');
 }
 
-export class PronoteCdbInitError extends Error {
-  constructor(...args: Parameters<typeof Error>) {
-    super(...args);
-  }
-}
+export class PronoteCdbInitError extends Error {}

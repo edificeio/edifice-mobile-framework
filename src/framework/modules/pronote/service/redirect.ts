@@ -1,5 +1,4 @@
 import { ISession } from '~/framework/modules/auth/model';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { openUrl } from '~/framework/util/linking';
 import { signedFetch } from '~/infra/fetchWithCache';
 
@@ -15,7 +14,7 @@ const getRedirectUrl = (session: ISession, connectorAddress: string, pageId?: st
     const service = decodeURIComponent(link);
     return service.charAt(service.length - 1) === '/' ? '' : '%2F';
   };
-  let link = `${DEPRECATED_getCurrentPlatform()!.url}/cas/oauth/login?service=${encodeURIComponent(connectorAddress)}`;
+  let link = `${session.platform.url}/cas/oauth/login?service=${encodeURIComponent(connectorAddress)}`;
   const role = profileMap[session.user.type.toUpperCase()];
   link += `${getSlash(link)}mobile.${role}.html`;
   if (pageId) {

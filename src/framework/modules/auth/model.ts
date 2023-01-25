@@ -15,25 +15,65 @@ export interface IUser {
   photo?: string;
 }
 
-/** user children, not regrouped by structure */
-export type UserChildrenFlattened = {
-  classNames: string[];
-  displayName: string;
-  externalId?: string;
+export interface StructureNode {
+  SIRET: string;
+  UAI: string;
+  academy: string;
+  address: string;
+  area: string;
+  checksum: string;
+  city: string;
+  contract: string;
+  created: string;
+  distributions: any[];
+  externalId: string;
+  feederName: string;
+  hasApp: boolean;
   id: string;
-  structureName: string;
-}[];
+  joinKey: string[];
+  levelsOfEducation: number[];
+  manualName: boolean;
+  ministry: string;
+  modified: string;
+  name: string;
+  oldName: string;
+  phone: string;
+  source: string;
+  type: string;
+  zipCode: string;
+}
 
 /**
  * Describes the user that is logged in currently (private info)
  */
 export interface ILoggedUser extends IUser {
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   groups: string[];
-  children?: UserPrivateData['childrenStructure'];
+  children?: UserChildren;
   relatives?: UserPrivateData['parents'];
+  structures?: StructureNode[];
 }
+
+export interface UserChild {
+  classNames: string[];
+  displayName: string;
+  externalId?: string;
+  lastName: string;
+  firstName: string;
+  id: string;
+}
+
+/** user children, grouped by structure */
+export type UserChildren = {
+  structureName: string;
+  children: UserChild[];
+}[];
+
+/** user children, not regrouped by structure */
+export type UserChildrenFlattened = (UserChild & {
+  structureName: string;
+})[];
 
 /**
  * Current session information including authentification, rights & user info.

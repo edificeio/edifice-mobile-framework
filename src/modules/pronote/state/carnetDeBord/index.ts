@@ -78,12 +78,12 @@ export type ICarnetDeBordCompetencesItem = {
   Competence?: string;
   Intitule?: string;
   Matiere?: string;
-  NiveauDAcquisition: {
-    Genre: number;
-    Libelle: string;
+  NiveauDAcquisition?: {
+    Genre?: number;
+    Libelle?: string;
   };
-  Date: moment.Moment;
-  DateString: string;
+  Date?: moment.Moment;
+  DateString?: string;
 };
 export type ICarnetDeBordCompetencesEvaluation = Omit<ICarnetDeBordCompetencesItem, 'type'> & {
   type: 'Evaluation';

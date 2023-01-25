@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 
-import { getActiveSession } from '~/framework/util/session';
+import { assertSession } from '~/framework/modules/auth/reducer';
 
 // import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 // import { navigate } from '~/navigation/helpers/navHelper';
@@ -14,22 +14,18 @@ import { OAuth2RessourceOwnerPasswordClient } from './oauth';
  * @param init request options
  */
 export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit): Promise<Response> {
-  try {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
-    if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
-      try {
-        await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
-      } catch (err) {
-        // ToDo : logout here ?
-        // navigate(getLoginRouteName());
-        Alert.alert('ToDo : signedFetch.refreshToken failed', (err as any).toString);
-      }
+  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
+  if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
+    try {
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
+    } catch (err) {
+      // ToDo : logout here ?
+      // navigate(getLoginRouteName());
+      Alert.alert('ToDo : signedFetch.refreshToken failed', (err as any).toString);
     }
-    const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
-    return await fetch(req);
-  } catch (err) {
-    throw err;
   }
+  const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
+  return fetch(req);
 }
 
 /**
@@ -39,17 +35,13 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
  * @param init request options
  */
 export async function signedFetchJson(url: string | Request, init?: RequestInit): Promise<unknown> {
-  try {
-    const response = await signedFetch(url, init);
-    // TODO check if response is OK
-    return await response.json();
-  } catch (err) {
-    throw err;
-  }
+  const response = await signedFetch(url, init);
+  // TODO check if response is OK
+  return response.json();
 }
 
 export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
-  const session = getActiveSession();
+  const session = assertSession();
   if (!session) {
     throw new Error('Fetch : no active session');
   }
@@ -74,44 +66,40 @@ export async function fetchWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string | undefined = getActiveSession()?.platform.url,
-  getBody = (r: Response) => r.text(),
+  platform: string | undefined = assertSession().platform.url,
+  getBody: (r: Response) => any = r => r.text(),
   getCacheResult = (cr: any) => new Response(...cr),
 ) {
-  try {
-    if (!platform) throw new Error('must specify a platform');
-    // TODO bugfix : cache key must depends on userID and platformID.
-    const cacheKey = CACHE_KEY_PREFIX + path;
-    const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
-    if (Connection.isOnline && (forceSync || !dataFromCache)) {
-      let response =
-        path.indexOf(platform) === -1 ? await signedFetch(`${platform}${path}`, init) : await signedFetch(`${path}`, init);
-      const r2 = response.clone();
-      response = r2;
+  if (!platform) throw new Error('must specify a platform');
+  // TODO bugfix : cache key must depends on userID and platformID.
+  const cacheKey = CACHE_KEY_PREFIX + path;
+  const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
+  if (Connection.isOnline && (forceSync || !dataFromCache)) {
+    let response =
+      path.indexOf(platform) === -1 ? await signedFetch(`${platform}${path}`, init) : await signedFetch(`${path}`, init);
+    const r2 = response.clone();
+    response = r2;
 
-      // TODO: check if response is OK
-      const cacheResponse = {
-        body: await getBody(response.clone()),
-        init: {
-          headers: response.headers,
-          status: response.status,
-          statusText: response.statusText,
-        },
-      };
-      await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
-      const ret = await getBody(response);
-      return ret;
-    }
-
-    if (dataFromCache) {
-      const cacheResponse = JSON.parse(dataFromCache);
-      return getCacheResult(cacheResponse);
-    }
-
-    return null;
-  } catch (e) {
-    throw e;
+    // TODO: check if response is OK
+    const cacheResponse = {
+      body: await getBody(response.clone()),
+      init: {
+        headers: response.headers,
+        status: response.status,
+        statusText: response.statusText,
+      },
+    };
+    await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
+    const ret = await getBody(response);
+    return ret;
   }
+
+  if (dataFromCache) {
+    const cacheResponse = JSON.parse(dataFromCache);
+    return getCacheResult(cacheResponse);
+  }
+
+  return null;
 }
 
 /**
@@ -127,7 +115,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string | undefined = getActiveSession()?.platform.url,
+  platform: string | undefined = assertSession().platform.url,
 ) {
   return fetchWithCache(
     path,

@@ -15,6 +15,9 @@ import {
   ISession,
   PartialSessionScenario,
   RuntimeAuthErrorCode,
+  StructureNode,
+  UserChild,
+  UserChildren,
   createAuthError,
 } from './model';
 
@@ -56,6 +59,7 @@ export interface IUserInfoBackend {
   firstName?: string;
   lastName?: string;
   groupsIds?: string[];
+  children?: { [userId: string]: { lastName: string; firstName: string } };
 }
 
 export interface UserPrivateData {
@@ -73,6 +77,7 @@ export interface UserPrivateData {
     externalId?: string;
     id: string;
   }[];
+  structureNodes?: StructureNode[];
 }
 
 export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
@@ -222,7 +227,9 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend, us
     !userinfo.login ||
     !userinfo.type ||
     !userinfo.username ||
-    !userinfo.groupsIds
+    !userinfo.groupsIds ||
+    !userinfo.firstName ||
+    !userinfo.lastName
   ) {
     throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing data in user info', '');
   }
@@ -234,10 +241,27 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend, us
     firstName: userinfo.firstName,
     lastName: userinfo.lastName,
     groups: userinfo.groupsIds,
+    structures: userPrivateData?.structureNodes,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
+  // compute here detailed data about children (laborious)
   if (userPrivateData?.childrenStructure) {
-    user.children = userPrivateData.childrenStructure;
+    const children: {
+      structureName: string;
+      children: (Partial<UserChild> & Pick<UserChild, 'id'>)[];
+    }[] = userPrivateData.childrenStructure;
+    for (const structure of children) {
+      if (!structure) continue;
+      for (const child of structure.children) {
+        const foundChild = userinfo.children?.[child.id];
+        if (!foundChild) {
+          throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing data in user children', '');
+        }
+        child.lastName = foundChild.lastName;
+        child.firstName = foundChild.firstName;
+      }
+    }
+    user.children = children as UserChildren;
   }
   if (userPrivateData?.parents) {
     user.relatives = userPrivateData.parents;
