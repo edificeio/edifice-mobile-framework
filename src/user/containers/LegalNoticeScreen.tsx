@@ -13,9 +13,8 @@ import { PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-
-import { IUserAuthState } from '../reducers/auth';
-import { getAuthState } from '../selectors';
+import { IUserAuthState } from '~/user/reducers/auth';
+import { getAuthState } from '~/user/selectors';
 
 // TYPES ==========================================================================================
 

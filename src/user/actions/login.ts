@@ -12,9 +12,9 @@ import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType, urlSigner } from '~
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
+import { LegalUrls } from '~/user/reducers/auth';
 import { IEntcoreEmailValidationInfos, IUserRequirements, languages, userService } from '~/user/service';
 
-import { LegalUrls } from '../reducers/auth';
 import { actionTypeLegalDocuments } from './actionTypes/legalDocuments';
 import {
   actionTypeLoggedIn,

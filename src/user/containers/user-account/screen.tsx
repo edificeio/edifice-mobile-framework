@@ -21,9 +21,9 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { logout } from '~/user/actions/login';
+import { isXmasDateLimitCrossed } from '~/user/actions/xmas';
 import { IUserInfoState } from '~/user/state/info';
 
-import { isXmasDateLimitCrossed } from '../../actions/xmas';
 import styles from './styles';
 
 export class UserAccountScreen extends React.PureComponent<

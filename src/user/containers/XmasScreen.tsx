@@ -13,8 +13,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
 import { Toggle } from '~/framework/components/toggle';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-
-import { setXmasThemeAction } from '../actions/xmas';
+import { setXmasThemeAction } from '~/user/actions/xmas';
 
 const imageWidth = getScaleImageSize(270);
 const imageHeight = getScaleImageSize(300);

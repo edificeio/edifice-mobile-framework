@@ -1,4 +1,4 @@
-import { MenuAction } from '../actions/index';
+import { MenuAction } from '~/framework/components/menus/actions/index';
 
 export interface MenuProps {
   actions: MenuAction[];

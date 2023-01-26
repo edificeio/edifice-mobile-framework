@@ -16,18 +16,17 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { FakeHeader } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
+import { NamedSVG } from '~/framework/components/picture';
+import PopupMenu from '~/framework/components/popupMenu';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { getUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
-
-import { EmptyScreen } from '../emptyScreen';
-import { NamedSVG } from '../picture';
-import PopupMenu from '../popupMenu';
 
 export interface ICarouselNavParams {
   data: IMedia[];

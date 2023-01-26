@@ -12,8 +12,8 @@ import { asyncActionTypes } from '~/infra/redux/async';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
+import { IUserAuthContext } from '~/user/service';
 
-import { IUserAuthContext } from '../service';
 import { loginAction } from './login';
 
 // TYPES ------------------------------------------------------------------------------------------------

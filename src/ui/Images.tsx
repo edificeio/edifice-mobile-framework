@@ -6,12 +6,12 @@ import RNFastImage from 'react-native-fast-image';
 import { withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallInverseText, SmallItalicText } from '~/framework/components/text';
 import { FastImage } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
-import { openCarousel } from '../framework/components/carousel';
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
 import ImageOptional from './ImageOptional';

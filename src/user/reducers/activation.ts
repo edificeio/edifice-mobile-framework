@@ -9,9 +9,8 @@ import {
   actionTypeActivationSubmit,
 } from '~/user/actions/activation';
 import { actionTypeActivationContext } from '~/user/actions/initActivation';
+import { IUserAuthContext } from '~/user/service';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
-
-import { IUserAuthContext } from '../service';
 
 export interface IActivationState {
   isActivating: boolean;

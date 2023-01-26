@@ -8,7 +8,7 @@ import React from 'react';
 import { Picture } from '~/framework/components//picture';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { Image } from '../util/media';
+import { Image } from '~/framework/util/media';
 
 const logoHeight = 64;
 const logoWidth = 300;

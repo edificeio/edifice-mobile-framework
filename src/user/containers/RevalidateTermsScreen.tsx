@@ -12,10 +12,9 @@ import { PageView } from '~/framework/components/page';
 import { logout } from '~/user/actions/login';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { RevalidateTermsScreen } from '~/user/components/RevalidateTermsScreen';
+import { IUserAuthState } from '~/user/reducers/auth';
+import { getAuthState } from '~/user/selectors';
 import { userService } from '~/user/service';
-
-import { IUserAuthState } from '../reducers/auth';
-import { getAuthState } from '../selectors';
 
 // TYPES ==========================================================================================
 

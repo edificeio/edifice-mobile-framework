@@ -3,10 +3,10 @@ import * as React from 'react';
 import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { ActionButton } from '~/framework/components/buttons/action';
+import { Image } from '~/framework/util/media';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
 
-import { Image } from '../util/media';
 import { Card, InfoCard } from './card';
 import { UI_SIZES } from './constants';
 import { CaptionText, SmallBoldText, SmallText } from './text';

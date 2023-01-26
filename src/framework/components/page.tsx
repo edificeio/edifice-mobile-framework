@@ -37,9 +37,9 @@ import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import Notifier from '~/framework/util/notifier';
+import { getUserSession } from '~/framework/util/session';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
-import { getUserSession } from '../util/session';
 import SnowFlakes from './SnowFlakes';
 import { UI_SIZES } from './constants';
 import { FakeHeader, FakeHeaderProps, HeaderBackAction } from './header';

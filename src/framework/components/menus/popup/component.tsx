@@ -2,7 +2,7 @@ import { MenuView } from '@react-native-menu/menu';
 import * as React from 'react';
 import { Platform, View } from 'react-native';
 
-import { MenuProps } from '../types/types';
+import { MenuProps } from '~/framework/components/menus/types/types';
 
 const PopupMenu = (props: React.PropsWithChildren<MenuProps>) => {
   let id = -1;

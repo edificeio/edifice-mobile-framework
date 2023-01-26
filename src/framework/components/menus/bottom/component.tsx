@@ -3,7 +3,7 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import BottomSheet from 'react-native-bottomsheet';
 
-import { MenuProps } from '../types/types';
+import { MenuProps } from '~/framework/components/menus/types/types';
 
 const BottomMenu = (props: React.PropsWithChildren<MenuProps & { title: string }>) => {
   //add cancel action to actions

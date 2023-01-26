@@ -9,16 +9,16 @@ import AlertCard from '~/framework/components/alert';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { Checkbox } from '~/framework/components/checkbox';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
+import { IUserAuthState } from '~/user/reducers/auth';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 
-import { IUserAuthState } from '../reducers/auth';
 import {
   ActivationFormModel,
   InputEmail,

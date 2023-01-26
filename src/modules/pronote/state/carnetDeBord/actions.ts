@@ -2,10 +2,10 @@ import { Dispatch } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
 import { getUserSession } from '~/framework/util/session';
+import moduleConfig from '~/modules/pronote/moduleConfig';
 import carnetDeBordService, { IChildrenInfo } from '~/modules/pronote/service/carnetDeBord';
 import { actions as carnetDeBordAsyncActions } from '~/modules/pronote/state/carnetDeBord/reducer';
 import { IUserInfoState } from '~/user/state/info';
-import moduleConfig from '../../moduleConfig';
 
 export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState: () => IGlobalState) => {
   try {
