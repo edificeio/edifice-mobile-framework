@@ -12,7 +12,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import type { IEntcoreApp } from '~/framework/util/moduleTool';
 
 import { getSession } from '../../auth/reducer';
-import DropdownSelector from '../components/DropdownSelector';
+import DropdownSelector from '../components/dropdown-selector';
 import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
 import redirect from '../service/redirect';
 

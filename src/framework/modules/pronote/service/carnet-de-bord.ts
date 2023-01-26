@@ -26,7 +26,7 @@ import {
   IPronoteConnectorInfo,
   PronoteCdbInitError,
   sortCarnetDeBordItems,
-} from '../model/carnetDeBord';
+} from '../model/carnet-de-bord';
 import redirect from './redirect';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {

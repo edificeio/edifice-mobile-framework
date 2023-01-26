@@ -6,8 +6,8 @@ import {
   createSessionAsyncReducer,
 } from '~/framework/util/redux/async';
 
-import { ICarnetDeBord } from '../model/carnetDeBord';
-import moduleConfig from '../moduleConfig';
+import { ICarnetDeBord } from '../model/carnet-de-bord';
+import moduleConfig from '../module-config';
 
 export type ICarnetDeBordStateData = ICarnetDeBord[];
 export type ICarnetDeBordState = AsyncState<ICarnetDeBordStateData>;

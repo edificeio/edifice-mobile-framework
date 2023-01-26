@@ -4,9 +4,9 @@ import { IGlobalState } from '~/AppStore';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 
-import moduleConfig from '../moduleConfig';
+import moduleConfig from '../module-config';
 import { actions as carnetDeBordAsyncActions } from '../reducer/carnet-de-bord';
-import carnetDeBordService from '../service/carnetDeBord';
+import carnetDeBordService from '../service/carnet-de-bord';
 
 export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState: () => IGlobalState) => {
   try {

@@ -27,7 +27,7 @@ import {
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
-} from '../model/carnetDeBord';
+} from '../model/carnet-de-bord';
 import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
 import redirect from '../service/redirect';
 

@@ -4,11 +4,11 @@ import { createModuleNavigator } from '~/framework/navigation/mainNavigation';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { PronoteNavigationParams, pronoteRouteNames } from '.';
-import moduleConfig from '../moduleConfig';
-import PronoteCarnetDeBordScreen, { computeNavBar as carnetDeBordNavBar } from '../screens/CarnetDeBord';
-import PronoteCarnetDeBordDetailsScreen, { computeNavBar as carnetDeBordDetailsNavBar } from '../screens/CarnetDeBordDetails';
-import PronoteConnectorRedirectScreen, { computeNavBar as connectorRedirectNavBar } from '../screens/ConnectorRedirect';
-import PronoteConnectorSelectorScreen, { computeNavBar as connectorSelectorNavBar } from '../screens/ConnectorSelector';
+import moduleConfig from '../module-config';
+import PronoteCarnetDeBordScreen, { computeNavBar as carnetDeBordNavBar } from '../screens/carnet-de-bord';
+import PronoteCarnetDeBordDetailsScreen, { computeNavBar as carnetDeBordDetailsNavBar } from '../screens/carnet-de-bord-details';
+import PronoteConnectorRedirectScreen, { computeNavBar as connectorRedirectNavBar } from '../screens/connector-redirect';
+import PronoteConnectorSelectorScreen, { computeNavBar as connectorSelectorNavBar } from '../screens/connector-selector';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<PronoteNavigationParams>(moduleConfig.name, Stack => {

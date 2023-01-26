@@ -33,8 +33,8 @@ import {
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   getSummaryItem,
-} from '../model/carnetDeBord';
-import moduleConfig from '../moduleConfig';
+} from '../model/carnet-de-bord';
+import moduleConfig from '../module-config';
 import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
 import { ICarnetDeBordStateData } from '../reducer/carnet-de-bord';
 import redirect from '../service/redirect';
