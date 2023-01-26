@@ -22,3 +22,5 @@ export type TypedNativeStackNavigator<ParamList extends ParamListBase> = import(
 export function getTypedRootStack<T extends ParamListBase>() {
   return RootStack as TypedNativeStackNavigator<T>;
 }
+
+// export const RootStack = getTypedRootStack();

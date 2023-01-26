@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { createModuleNavigator } from '~/framework/navigation/mainNavigation';
+import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '.';

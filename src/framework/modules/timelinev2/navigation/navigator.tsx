@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 
 import { navigate } from '~/framework/navigation/helper';
-import { createModuleNavigator } from '~/framework/navigation/mainNavigation';
+import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { NavBarAction } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 

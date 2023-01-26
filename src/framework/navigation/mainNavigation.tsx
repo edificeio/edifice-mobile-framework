@@ -19,7 +19,7 @@ import { Picture, PictureProps } from '../components/picture';
 import { TextSizeStyle } from '../components/text';
 import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '../util/moduleTool';
 import { ModuleScreens } from './moduleScreens';
-import { TypedNativeStackNavigator, getTypedRootStack } from './navigators';
+import { getTypedRootStack } from './navigators';
 import { tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
@@ -35,7 +35,6 @@ import { tabModules } from './tabModules';
 //                                                                "Y88P"
 
 const Tab = createBottomTabNavigator();
-const RootStack = getTypedRootStack();
 
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
@@ -88,6 +87,7 @@ const resetTabStacksOnBlur = ({ navigation }: { navigation: NavigationHelpers<Pa
 });
 
 export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?: IEntcoreWidget[] }) {
+  const RootStack = getTypedRootStack();
   const tabRoutes = React.useMemo(() => {
     const modules = tabModules.get().filterAvailables(apps ?? []);
     return modules
@@ -155,6 +155,7 @@ export enum MainRouteNames {
  * @returns
  */
 export function MainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+  const RootStack = getTypedRootStack();
   setUpModulesAccess(apps ?? [], widgets ?? []);
 
   const Tabs = () => <TabNavigator apps={apps} widgets={widgets} />;
@@ -163,37 +164,4 @@ export function MainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[])
       <RootStack.Screen name={MainRouteNames.Tabs} component={Tabs} options={{ headerShown: false }} />
     </RootStack.Group>
   );
-}
-
-//  888b     d888               888          888          888b    888                   d8b                   888
-//  8888b   d8888               888          888          8888b   888                   Y8P                   888
-//  88888b.d88888               888          888          88888b  888                                         888
-//  888Y88888P888  .d88b.   .d88888 888  888 888  .d88b.  888Y88b 888  8888b.  888  888 888  .d88b.   8888b.  888888  .d88b.  888d888
-//  888 Y888P 888 d88""88b d88" 888 888  888 888 d8P  Y8b 888 Y88b888     "88b 888  888 888 d88P"88b     "88b 888    d88""88b 888P"
-//  888  Y8P  888 888  888 888  888 888  888 888 88888888 888  Y88888 .d888888 Y88  88P 888 888  888 .d888888 888    888  888 888
-//  888   "   888 Y88..88P Y88b 888 Y88b 888 888 Y8b.     888   Y8888 888  888  Y8bd8P  888 Y88b 888 888  888 Y88b.  Y88..88P 888
-//  888       888  "Y88P"   "Y88888  "Y88888 888  "Y8888  888    Y888 "Y888888   Y88P   888  "Y88888 "Y888888  "Y888  "Y88P"  888
-//                                                                                               888
-//                                                                                          Y8b d88P
-//                                                                                           "Y88P"
-
-/**
- * Register rendered screens into the stack screens. They will be included in each tab.
- *
- * @param moduleName got from moduleConfig, it's the name of the homescreen of the module.
- * @param renderScreens Function that takes the navigator utility as a parameter and reders every screen or group
- * @returns
- */
-
-export function createModuleNavigator<ParamList extends ParamListBase>(
-  moduleName: string,
-  renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
-) {
-  const TypedRootStack = getTypedRootStack<ParamList>();
-  if (renderScreens) {
-    const screens = <RootStack.Group key={moduleName}>{renderScreens(TypedRootStack)}</RootStack.Group>;
-    ModuleScreens.register(moduleName, screens);
-    return screens;
-  }
-  return <></>;
 }
