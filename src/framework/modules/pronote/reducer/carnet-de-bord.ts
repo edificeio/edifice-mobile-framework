@@ -1,4 +1,4 @@
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import {
   AsyncState,
   createAsyncActionCreators,
