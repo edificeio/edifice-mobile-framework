@@ -1,6 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '../moduleConfig';
+import moduleConfig from '../module-config';
 import type { {{moduleName | toCamelCase | capitalize}}HomeScreenNavParams } from '../screens/home';
 // import type { {{moduleName | toCamelCase | capitalize}}OtherScreenNavParams } from '../screens/other';
 

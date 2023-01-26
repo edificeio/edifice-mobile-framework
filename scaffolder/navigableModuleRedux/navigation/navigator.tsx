@@ -4,7 +4,7 @@ import { createModuleNavigator } from '~/framework/navigation/mainNavigation';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '.';
-import moduleConfig from '../moduleConfig';
+import moduleConfig from '../module-config';
 import {{moduleName | toCamelCase | capitalize}}HomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
 // import {{moduleName | toCamelCase | capitalize}}OtherScreen, { computeNavBar as otherNavBar } from '../screens/other';
 

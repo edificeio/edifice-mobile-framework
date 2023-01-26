@@ -2,7 +2,7 @@ import { IGlobalState, Reducers } from '~/app/store';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
 import { {{moduleName | toCamelCase | capitalize}}Data } from '../model';
-import moduleConfig from '../moduleConfig';
+import moduleConfig from '../module-config';
 
 // State type
 
