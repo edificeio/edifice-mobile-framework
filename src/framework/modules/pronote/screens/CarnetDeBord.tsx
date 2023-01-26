@@ -1,11 +1,10 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ScrollView, ScrollViewProps, StyleSheet, View } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
@@ -50,7 +49,9 @@ export interface CarnetDeBordScreenEventProps {
   handleLoadData: () => Promise<ICarnetDeBord[]>;
 }
 export type CarnetDeBordScreenNavParams = undefined;
-export type CarnetDeBordScreenProps = CarnetDeBordScreenDataProps & CarnetDeBordScreenEventProps & NavigationInjectedProps;
+export type CarnetDeBordScreenProps = CarnetDeBordScreenDataProps &
+  CarnetDeBordScreenEventProps &
+  NativeStackScreenProps<PronoteNavigationParams, typeof pronoteRouteNames.carnetDeBord>;
 
 export const computeNavBar = ({
   navigation,
@@ -348,7 +349,7 @@ CarnetDeBordScreen.SectionContent = function (props: {
   // React ESLint doesn't allow hooks in components that are defined with `CarnetDeBord.SectionContent = ...`
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const goToDetails = React.useCallback(() => {
-    props.navigation.navigate(`${moduleConfig.routeName}/carnetDeBord/details`, { type: props.type, data: props.data });
+    props.navigation.navigate(pronoteRouteNames.carnetDeBordDetails, { type: props.type, data: props.data });
   }, [props.navigation, props.type, props.data]);
   const isNotEmpty = props.textLabel && props.valueLabel;
   const CC = isNotEmpty ? TouchableOverviewCard : OverviewCard;

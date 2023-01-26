@@ -1,39 +1,38 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { CardWithoutPadding, cardPadding } from '~/framework/components/card';
+import { CardWithoutPadding, cardPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
-import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
+import type { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
-import { IUserSession, getUserSession } from '~/framework/util/session';
 import { splitWords } from '~/framework/util/string';
+
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
-} from '~/modules/pronote/model/carnetDeBord';
-import redirect from '~/modules/pronote/service/redirect';
-
+} from '../model/carnetDeBord';
 import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
+import redirect from '../service/redirect';
 
 export interface CarnetDeBordDetailsScreenDataProps {
-  session: IUserSession;
+  session?: ISession;
 }
 
 export interface CarnetDeBordDetailsScreenEventProps {}
@@ -45,7 +44,14 @@ export interface CarnetDeBordDetailsScreenNavigationParams {
 
 export type CarnetDeBordDetailsScreenProps = CarnetDeBordDetailsScreenDataProps &
   CarnetDeBordDetailsScreenEventProps &
-  NavigationInjectedProps<CarnetDeBordDetailsScreenNavigationParams>;
+  NativeStackScreenProps<PronoteNavigationParams, typeof pronoteRouteNames.carnetDeBordDetails>;
+
+const PAGE_TITLE_I18N = {
+  [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'pronote.carnetDeBord.cahierDeTextes.title',
+  [CarnetDeBordSection.NOTES]: 'pronote.carnetDeBord.releveDeNotes.title',
+  [CarnetDeBordSection.COMPETENCES]: 'pronote.carnetDeBord.competences.title',
+  [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote.carnetDeBord.vieScolaire.title',
+};
 
 export const computeNavBar = ({
   navigation,
@@ -58,33 +64,62 @@ export const computeNavBar = ({
     navigation,
     route,
   }),
-  title: I18n.t('pronote-home-title'),
+  title: I18n.t(PAGE_TITLE_I18N[route.params.type]),
+});
+
+const styles = StyleSheet.create({
+  card: {
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  section: {
+    ...cardPadding,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sectionLeft: {
+    flex: 1,
+  },
+  sectionRight: {
+    flex: 0,
+    textAlign: 'right',
+    marginLeft: UI_SIZES.spacing.small,
+  },
+  sectionWithBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.cloudy,
+  },
+  textDate: {
+    color: theme.palette.grey.graphite,
+  },
+  textDateMargin: {
+    marginBottom: UI_SIZES.spacing.tiny,
+  },
+  button: {
+    marginTop: UI_SIZES.spacing.large,
+    marginBottom: UI_SIZES.screen.bottomInset
+      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
+      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
+  },
+  message: {
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginTop: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.big - UI_SIZES.spacing.medium,
+  },
 });
 
 function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
-  const type = props.navigation.getParam('type');
-  const data = props.navigation.getParam('data');
-  const pageTitleComponent = React.useMemo(() => {
-    const title = type && CarnetDeBordDetailsScreen.pageTiteI18n[type];
-    return <HeaderTitleAndSubtitle title={I18n.t(title)} subtitle={I18n.t(`CarnetDeBord`)} />;
-  }, [type]);
+  const type = props.route.params.type;
+  const data = props.route.params.data;
   const items = React.useMemo(() => {
     const itemArray = CarnetDeBordDetailsScreen.getItems(type, data);
     return itemArray?.map((item, index) => (
-      <View
-        key={index}
-        style={[
-          CarnetDeBordDetailsScreen.styles.section,
-          index + 1 < itemArray.length ? CarnetDeBordDetailsScreen.styles.sectionWithBorder : {},
-        ]}>
-        <View style={CarnetDeBordDetailsScreen.styles.sectionLeft}>
+      <View key={index} style={[styles.section, index + 1 < itemArray.length ? styles.sectionWithBorder : {}]}>
+        <View style={styles.sectionLeft}>
           {item.title ? <SmallBoldText numberOfLines={1}>{item.title}</SmallBoldText> : null}
           {item.date ? (
             <CaptionBoldText
-              style={[
-                CarnetDeBordDetailsScreen.styles.textDate,
-                item.label || item.description ? CarnetDeBordDetailsScreen.styles.textDateMargin : undefined,
-              ]}
+              style={[styles.textDate, item.label || item.description ? styles.textDateMargin : undefined]}
               numberOfLines={1}>
               {item.date}
             </CaptionBoldText>
@@ -93,7 +128,7 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
           {item.description ? <SmallText numberOfLines={1}>{extractTextFromHtml(item.description)}</SmallText> : null}
         </View>
         {item.value ? (
-          <SmallText numberOfLines={2} style={CarnetDeBordDetailsScreen.styles.sectionRight}>
+          <SmallText numberOfLines={2} style={styles.sectionRight}>
             {item.value}
           </SmallText>
         ) : null}
@@ -115,21 +150,17 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
   }, [data, type]);
 
   return (
-    <PageView
-      navigation={props.navigation}
-      navBarWithBack={{
-        title: pageTitleComponent,
-      }}>
+    <PageView>
       <ScrollView alwaysBounceVertical={false}>
         {type === CarnetDeBordSection.NOTES && data.PageReleveDeNotes?.Message ? (
-          <SmallText style={CarnetDeBordDetailsScreen.styles.message}>{data.PageReleveDeNotes.Message}</SmallText>
+          <SmallText style={styles.message}>{data.PageReleveDeNotes.Message}</SmallText>
         ) : null}
-        <CardWithoutPadding style={CarnetDeBordDetailsScreen.styles.card}>{items}</CardWithoutPadding>
+        <CardWithoutPadding style={styles.card}>{items}</CardWithoutPadding>
         <ActionButton
-          style={CarnetDeBordDetailsScreen.styles.button}
+          style={styles.button}
           type="secondary"
           action={() => {
-            if (data.address) redirect(props.session, data.address, pageId);
+            if (data.address && props.session) redirect(props.session, data.address, pageId);
           }}
           iconName="pictos-external-link"
           text={I18n.t('pronote.carnetDeBord.openInPronote')}
@@ -138,12 +169,6 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
     </PageView>
   );
 }
-CarnetDeBordDetailsScreen.pageTiteI18n = {
-  [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'pronote.carnetDeBord.cahierDeTextes.title',
-  [CarnetDeBordSection.NOTES]: 'pronote.carnetDeBord.releveDeNotes.title',
-  [CarnetDeBordSection.COMPETENCES]: 'pronote.carnetDeBord.competences.title',
-  [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote.carnetDeBord.vieScolaire.title',
-};
 CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDeBord) => {
   switch (type) {
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
@@ -210,50 +235,10 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
     }
   }
 };
-CarnetDeBordDetailsScreen.styles = StyleSheet.create({
-  card: {
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginTop: UI_SIZES.spacing.medium,
-  },
-  section: {
-    ...cardPadding,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  sectionLeft: {
-    flex: 1,
-  },
-  sectionRight: {
-    flex: 0,
-    textAlign: 'right',
-    marginLeft: UI_SIZES.spacing.small,
-  },
-  sectionWithBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: theme.palette.grey.cloudy,
-  },
-  textDate: {
-    color: theme.palette.grey.graphite,
-  },
-  textDateMargin: {
-    marginBottom: UI_SIZES.spacing.tiny,
-  },
-  button: {
-    marginTop: UI_SIZES.spacing.large,
-    marginBottom: UI_SIZES.screen.bottomInset
-      ? UI_SIZES.spacing.large + UI_SIZES.spacing.big - UI_SIZES.screen.bottomInset
-      : UI_SIZES.spacing.large + UI_SIZES.spacing.medium,
-  },
-  message: {
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginTop: UI_SIZES.spacing.big,
-    marginBottom: UI_SIZES.spacing.big - UI_SIZES.spacing.medium,
-  },
-});
 
 export default connect(
   (state: IGlobalState) => ({
-    session: getUserSession(),
+    session: getSession(state),
   }),
   (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
 )(CarnetDeBordDetailsScreen);

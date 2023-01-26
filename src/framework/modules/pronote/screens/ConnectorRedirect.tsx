@@ -1,21 +1,20 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import type { IGlobalState } from '~/AppStore';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
-import { ISession } from '~/framework/modules/auth/model';
+import type { ISession } from '~/framework/modules/auth/model';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { IEntcoreApp } from '~/framework/util/moduleTool';
-import redirect from '~/modules/pronote/service/redirect';
+import type { IEntcoreApp } from '~/framework/util/moduleTool';
 
 import { getSession } from '../../auth/reducer';
 import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
+import redirect from '../service/redirect';
 
 export interface IConnectorRedirectScreenDataProps {
   session?: ISession;
@@ -26,7 +25,10 @@ export interface IConnectorRedirectScreenNavigationParams {
   pageId?: string;
 }
 
-export type IConnectorRedirectScreenProps = NavigationInjectedProps<IConnectorRedirectScreenNavigationParams> &
+export type IConnectorRedirectScreenProps = NativeStackScreenProps<
+  PronoteNavigationParams,
+  typeof pronoteRouteNames.connectorRedirect
+> &
   IConnectorRedirectScreenDataProps;
 
 export const computeNavBar = ({
@@ -42,8 +44,8 @@ export const computeNavBar = ({
 
 function ConnectorRedirectScreen(props: IConnectorRedirectScreenProps) {
   const { session } = props;
-  const connector = props.navigation.getParam('connector');
-  const pageId = props.navigation.getParam('pageId');
+  const connector = props.route.params.connector;
+  const pageId = props.route.params.pageId;
 
   if (!session) {
     return <EmptyConnectionScreen />;
@@ -52,7 +54,7 @@ function ConnectorRedirectScreen(props: IConnectorRedirectScreenProps) {
     redirect(session, connector.address, pageId).catch(e => {
       Alert.alert('Error' + e);
     });
-    props.navigation.goBack(null);
+    props.navigation.goBack();
     return <View />;
   }
 }

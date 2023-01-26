@@ -5,13 +5,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
-import { IEntcoreApp } from '~/framework/util/moduleTool';
-import { IUserSession, getUserSession } from '~/framework/util/session';
+import type { IGlobalState } from '~/AppStore';
+import type { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import type { IEntcoreApp } from '~/framework/util/moduleTool';
 import redirect from '~/modules/pronote/service/redirect';
 
 export interface IConnectorRedirectScreenDataProps {
-  session: IUserSession;
+  session: ISession;
 }
 
 export interface IConnectorRedirectScreenNavigationParams {
@@ -38,7 +39,7 @@ function ConnectorRedirectScreen(props: IConnectorRedirectScreenProps) {
 
 export default connect(
   (state: IGlobalState) => ({
-    session: getUserSession(),
+    session: getSession(),
   }),
   (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
 )(ConnectorRedirectScreen);

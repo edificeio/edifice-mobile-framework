@@ -200,8 +200,25 @@ export function formatCarnetDeBordCompetencesValue(value?: number) {
     : I18n.t('pronote.carnetDeBord.noInfo');
 }
 
-export class PronoteCdbInitError extends Error {
-  constructor(...args: Parameters<typeof Error>) {
-    super(...args);
-  }
+const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
+  abs: 'pronote.carnetDeBord.releveDeNotes.value.abs',
+  disp: 'pronote.carnetDeBord.releveDeNotes.value.disp',
+  'n.not': 'pronote.carnetDeBord.releveDeNotes.value.nnot',
+  inap: 'pronote.carnetDeBord.releveDeNotes.value.inap',
+  'n.rdu': 'pronote.carnetDeBord.releveDeNotes.value.nrdu',
+};
+export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
+  if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
+  const noteLowerCase = note.toString().toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(carnetDeBordReleveDeNotesDevoirSpecialValueI18n, noteLowerCase)) {
+    return I18n.t(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
+  } else
+    return bareme
+      ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
+          note,
+          bareme,
+        })
+      : note.toString();
 }
+
+export class PronoteCdbInitError extends Error {}

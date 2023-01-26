@@ -15,9 +15,11 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     // <Stack.Screen name={pronoteRouteNames.home} component={PronoteHomeScreen} options={homeNavBar} initialParams={{}} />
 
     const screens: React.ReactElement[] = [];
+    const hasCarnetDeBord = widgets.length > 0;
+    const hasMultipleConnectors = apps.length > 1;
 
     // If widgets are available, the module shows Carnet de Bord as home
-    if (widgets.length > 0) {
+    if (hasCarnetDeBord) {
       screens.push(
         <Stack.Screen
           key={pronoteRouteNames.carnetDeBord}
@@ -38,18 +40,18 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     }
 
     // If no widget, and if multiple connectors, the user will have to choose one to redirect
-    else if (apps.length > 1) {
+    else if (hasMultipleConnectors) {
       screens.push(
         <Stack.Screen
           key={pronoteRouteNames.connectorSelector}
           name={pronoteRouteNames.connectorSelector}
           component={PronoteConnectorSelectorScreen}
           options={connectorSelectorNavBar}
-          initialParams={{}}
+          initialParams={{ connectors: apps }}
         />,
       );
       moduleConfig.routeName = pronoteRouteNames.connectorSelector;
-    } /* widgets.length <= 0 && apps.length <= 1 */ else {
+    } /* !hasCarnetDeBord && !hasMultipleConnectors */ else {
       moduleConfig.routeName = pronoteRouteNames.connectorRedirect;
     }
 
@@ -60,7 +62,13 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         name={pronoteRouteNames.connectorRedirect}
         component={PronoteConnectorRedirectScreen}
         options={connectorRedirectNavBar}
-        initialParams={{}}
+        initialParams={
+          !hasCarnetDeBord && !hasMultipleConnectors
+            ? {
+                connector: apps[0],
+              }
+            : undefined
+        }
       />,
     );
 
