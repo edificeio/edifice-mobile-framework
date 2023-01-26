@@ -6,7 +6,7 @@ import { combineReducers } from 'redux';
 import { Reducers } from '~/app/store';
 
 import moduleConfig from '../moduleConfig';
-import carnetDeBord from './carnetDeBord/reducer';
+import carnetDeBord from './carnet-de-bord';
 
 const reducer = combineReducers({
   carnetDeBord,

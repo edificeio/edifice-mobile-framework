@@ -25,6 +25,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 import { getSession } from '../../auth/reducer';
+import { loadCarnetDeBordAction } from '../actions/carnet-de-bord';
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
@@ -36,9 +37,8 @@ import {
 } from '../model/carnetDeBord';
 import moduleConfig from '../moduleConfig';
 import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
+import { ICarnetDeBordStateData } from '../reducer/carnet-de-bord';
 import redirect from '../service/redirect';
-import { loadCarnetDeBordAction } from '../state/carnetDeBord/actions';
-import { ICarnetDeBordStateData } from '../state/carnetDeBord/reducer';
 
 export interface CarnetDeBordScreenDataProps {
   session?: ISession;

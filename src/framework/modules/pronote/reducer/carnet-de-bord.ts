@@ -7,7 +7,7 @@ import {
 } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/pronote/moduleConfig';
 
-import { ICarnetDeBord } from '../../model/carnetDeBord';
+import { ICarnetDeBord } from '../model/carnetDeBord';
 
 export type ICarnetDeBordStateData = ICarnetDeBord[];
 export type ICarnetDeBordState = AsyncState<ICarnetDeBordStateData>;
