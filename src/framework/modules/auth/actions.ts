@@ -7,8 +7,8 @@ import { Platform } from '~/framework/util/appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, destroyOAuth2, urlSigner } from '~/infra/oauth';
-import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoginError } from '~/user/actions/actionTypes/login';
 
+// import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoginError } from '~/user/actions/actionTypes/login';
 import {
   AuthError,
   AuthErrorCode,
@@ -147,25 +147,25 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       const sessionInfo = formatSession(platform, userinfo, userdata);
       if (partialSessionScenario) {
         const context = await getAuthContext(platform);
-        dispatch({
-          // For legacy compat
-          // Todo : remove legacy session information when not useful anymore
-          type: actionTypeLoggedInPartial,
-          userbook: userinfo,
-          userdata,
-          userPublicInfo: userPublicInfo.result[0],
-        });
+        // dispatch({
+        //   // For legacy compat
+        //   // Todo : remove legacy session information when not useful anymore
+        //   type: actionTypeLoggedInPartial,
+        //   userbook: userinfo,
+        //   userdata,
+        //   userPublicInfo: userPublicInfo.result[0],
+        // });
         dispatch(authActions.sessionPartial(sessionInfo));
         return { action: partialSessionScenario, context, credentials, rememberMe };
       } else {
-        dispatch({
-          // For legacy compat
-          // Todo : remove legacy session information when not useful anymore
-          type: actionTypeLoggedIn,
-          userbook: userinfo,
-          userdata,
-          userPublicInfo: userPublicInfo.result[0],
-        });
+        // dispatch({
+        //   // For legacy compat
+        //   // Todo : remove legacy session information when not useful anymore
+        //   type: actionTypeLoggedIn,
+        //   userbook: userinfo,
+        //   userdata,
+        //   userPublicInfo: userPublicInfo.result[0],
+        // });
         dispatch(authActions.sessionCreate(sessionInfo));
       }
     } catch (e) {
@@ -185,12 +185,12 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       } else {
         if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', authError?.type);
         else await Trackers.trackEvent('Auth', 'RESTORE ERROR', authError?.type);
-        dispatch({
-          // For legacy compat
-          // Todo : remove legacy session information when not useful anymore
-          type: actionTypeLoginError,
-          errmsg: authError?.type,
-        });
+        // dispatch({
+        //   // For legacy compat
+        //   // Todo : remove legacy session information when not useful anymore
+        //   type: actionTypeLoginError,
+        //   errmsg: authError?.type,
+        // });
         dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR, timestamp));
         throw e;
       }

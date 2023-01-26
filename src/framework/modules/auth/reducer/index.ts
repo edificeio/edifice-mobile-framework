@@ -1,7 +1,7 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
 import createReducer from '~/framework/util/redux/reducerFactory';
-import { cacheActiveSession } from '~/framework/util/session';
 
+// import { cacheActiveSession } from '~/framework/util/session';
 import { ILoginResult } from '../actions';
 import type { AuthErrorCode, ISession, LegalUrls } from '../model';
 import moduleConfig from '../moduleConfig';
@@ -60,26 +60,26 @@ export const actions = {
 const reducer = createReducer(initialState, {
   [actionTypes.sessionCreate]: (state, action) => {
     const { session }: ActionPayloads['sessionCreate'] = action as any;
-    cacheActiveSession(session);
+    // cacheActiveSession(session);
     return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionPartial]: (state, action) => {
     const { session }: ActionPayloads['sessionCreate'] = action as any;
-    cacheActiveSession(session);
+    // cacheActiveSession(session);
     return { ...initialState, session, logged: false, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionRefresh]: (state, action) => {
     const { session }: ActionPayloads['sessionRefresh'] = action as any;
-    cacheActiveSession(session);
+    // cacheActiveSession(session);
     return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
   },
   [actionTypes.sessionError]: (state, action) => {
     const { error, errorTimestamp }: ActionPayloads['sessionError'] = action as any;
-    cacheActiveSession(initialState.session);
+    // cacheActiveSession(initialState.session);
     return { ...initialState, error, errorTimestamp };
   },
   [actionTypes.sessionEnd]: (state, action) => {
-    cacheActiveSession(initialState.session);
+    // cacheActiveSession(initialState.session);
     return { ...initialState, error: state.error, errorTimestamp: state.errorTimestamp }; // Logout preserve error
   },
   [actionTypes.redirectAutoLogin]: (state, action) => {

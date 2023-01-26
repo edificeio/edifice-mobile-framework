@@ -77,6 +77,7 @@ export const computeUserSession = (platform: Platform, authState?: IUserAuthStat
 let activeSession: ISession | undefined;
 /** @deprecated use assertSession() instead */
 export const getActiveSession = () => activeSession;
+/** @deprecated session is no longer cached. use assertSession() to get the session directly from redux store */
 export const cacheActiveSession = (s?: ISession) => {
   activeSession = s;
 };
