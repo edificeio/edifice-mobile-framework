@@ -12,7 +12,7 @@ import MyAppsHomeScreen from '../screens/MyAppsHomeScreen';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
   const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(apps, widgets));
   const MyAppsContainer = props => <MyAppsHomeScreen {...props} modules={modules} />;
-  return createModuleNavigator<IMyAppsNavigationParams>(moduleConfig.routeName, Stack => (
+  return createModuleNavigator<IMyAppsNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen
         name={myAppsRouteNames.Home}

@@ -11,7 +11,7 @@ export class ModuleScreens {
   }
 
   static get(name: string) {
-    if (this.$items.hasOwnProperty(name)) {
+    if (Object.prototype.hasOwnProperty.call(this.$items, name)) {
       return this.$items[name];
     } else {
       throw new Error(`[ModuleScreens] No reducer of name ${name} has been registred.`);

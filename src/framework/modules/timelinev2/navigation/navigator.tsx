@@ -12,7 +12,7 @@ import TimelineFiltersScreen, { computeNavBar } from '../screens/TimelineFilters
 import TimelineScreen from '../screens/TimelineScreen';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
-  createModuleNavigator<ITimelineNavigationParams>(moduleConfig.routeName, Stack => (
+  createModuleNavigator<ITimelineNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen
         name={timelineRouteNames.Home}

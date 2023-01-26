@@ -9,7 +9,7 @@ import {{moduleName | toCamelCase | capitalize}}HomeScreen, { computeNavBar as h
 // import {{moduleName | toCamelCase | capitalize}}OtherScreen, { computeNavBar as otherNavBar } from '../screens/other';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
-  createModuleNavigator<{{moduleName | toCamelCase | capitalize}}NavigationParams>(moduleConfig.routeName, Stack => (
+  createModuleNavigator<{{moduleName | toCamelCase | capitalize}}NavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen
         name={{{moduleName | toCamelCase}}RouteNames.home}

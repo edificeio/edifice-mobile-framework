@@ -11,8 +11,10 @@ import PronoteConnectorRedirectScreen, { computeNavBar as connectorRedirectNavBa
 import PronoteConnectorSelectorScreen, { computeNavBar as connectorSelectorNavBar } from '../screens/ConnectorSelector';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
-  createModuleNavigator<PronoteNavigationParams>(moduleConfig.routeName, Stack => {
-    // <Stack.Screen name={pronoteRouteNames.home} component={PronoteHomeScreen} options={homeNavBar} initialParams={{}} />
+  createModuleNavigator<PronoteNavigationParams>(moduleConfig.name, Stack => {
+    /**
+     * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of apps & widgets.
+     */
 
     const screens: React.ReactElement[] = [];
     const hasCarnetDeBord = widgets.length > 0;

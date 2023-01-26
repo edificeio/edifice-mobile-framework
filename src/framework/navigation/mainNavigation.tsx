@@ -180,19 +180,19 @@ export function MainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[])
 /**
  * Register rendered screens into the stack screens. They will be included in each tab.
  *
- * @param routeName got from moduleConfig, it's the name of the homescreen of the module.
+ * @param moduleName got from moduleConfig, it's the name of the homescreen of the module.
  * @param renderScreens Function that takes the navigator utility as a parameter and reders every screen or group
  * @returns
  */
 
 export function createModuleNavigator<ParamList extends ParamListBase>(
-  routeName: string,
+  moduleName: string,
   renderScreens: (Stack: TypedNativeStackNavigator<ParamList>) => React.ReactNode,
 ) {
   const TypedRootStack = getTypedRootStack<ParamList>();
   if (renderScreens) {
-    const screens = <RootStack.Group key={routeName}>{renderScreens(TypedRootStack)}</RootStack.Group>;
-    ModuleScreens.register(routeName, screens);
+    const screens = <RootStack.Group key={moduleName}>{renderScreens(TypedRootStack)}</RootStack.Group>;
+    ModuleScreens.register(moduleName, screens);
     return screens;
   }
   return <></>;
