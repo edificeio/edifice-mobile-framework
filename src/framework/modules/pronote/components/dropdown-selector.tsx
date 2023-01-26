@@ -86,6 +86,7 @@ export default function DropdownSelectorTemplate(props: DropdownSelectorTemplate
         {props.picture ? <Picture {...props.picture} /> : null}
         {props.message ? <BodyText style={styles.text}>{props.message}</BodyText> : null}
         <View>
+          {/* I don't know how to fix this lint error. Seems to ba a typeing issue with react-native-dropdown-picker */}
           <DropDownPicker
             open={open ?? dropdownOpen}
             dropDownContainerStyle={[styles.selectContainer, dropDownContainerStyle]}
