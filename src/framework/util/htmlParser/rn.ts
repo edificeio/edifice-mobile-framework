@@ -572,7 +572,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     // 1 - Build iframe ojbect representation
     let src = tag.attrs.src;
     if (src) {
-      src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
+      src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in MediaPlayer, manually add "https" if needed)
     }
     const iframeNugget: IIframeNugget = {
       src,

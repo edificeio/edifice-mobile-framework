@@ -3,9 +3,9 @@ import * as React from 'react';
 import { StatusBar } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation from 'react-native-orientation-locker';
+import WebView from 'react-native-webview';
 
 import ActionButton from '~/framework/components/buttons/action';
-import SafeWebView from '~/framework/components/media/webview';
 import { PageView } from '~/framework/components/page';
 
 import styles from './styles';
@@ -36,7 +36,14 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     <PageView style={styles.page} showNetworkBar={false}>
       {isWebView ? (
         <>
-          <SafeWebView source={source} scrollEnabled={false} startInLoadingState mediaPlaybackRequiresUserAction />
+          <WebView
+            {...props}
+            allowsInlineMediaPlayback
+            mediaPlaybackRequiresUserAction={false}
+            scrollEnabled={false}
+            source={source}
+            startInLoadingState
+          />
           <ActionButton style={styles.backButtonWebview} text={I18n.t('back')} action={onBack} />
         </>
       ) : (
