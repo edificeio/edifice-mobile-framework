@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StatusBar } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
-import Orientation, { LANDSCAPE, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
+import Orientation, { LANDSCAPE, PORTRAIT, useOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
 
 import ActionButton from '~/framework/components/buttons/action';
@@ -23,8 +23,9 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     StatusBar.setHidden(true);
   });
 
-  useDeviceOrientationChange(current => {
-    setOrientation(current.indexOf(LANDSCAPE) > -1 ? LANDSCAPE : PORTRAIT);
+  useOrientationChange(current => {
+    if (current.indexOf(LANDSCAPE) > -1) setOrientation(LANDSCAPE);
+    else if (current.indexOf(PORTRAIT) > -1) setOrientation(PORTRAIT);
   });
 
   const onBack = () => {
