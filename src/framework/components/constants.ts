@@ -79,8 +79,8 @@ export const UI_SIZES = {
     },
   },
   elements: {
-    icon: 24,
     actionButtonBorder: 2,
+    icon: 24,
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
     /** @deprecated use useHeaderHeight() instead */
     navbarHeight: 56,
@@ -91,6 +91,7 @@ export const UI_SIZES = {
     textFieldMaxHeight: 105,
     tabBarIconSize: Platform.select({ ios: 25, default: 19 }),
     tabBarLabelMargin: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
+    thumbnail: getScaleImageSize(150),
   },
   radius: {
     small: 4,

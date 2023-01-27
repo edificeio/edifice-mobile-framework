@@ -2,10 +2,10 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { StatusBar } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
-import Orientation from 'react-native-orientation-locker';
+import Orientation, { LANDSCAPE, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
+import WebView from 'react-native-webview';
 
 import ActionButton from '~/framework/components/buttons/action';
-import SafeWebView from '~/framework/components/media/webview';
 import { PageView } from '~/framework/components/page';
 
 import styles from './styles';
@@ -13,13 +13,18 @@ import { MediaPlayerProps, MediaType } from './types';
 
 export default function MediaPlayer(props: MediaPlayerProps) {
   const source = props.navigation.getParam('source');
-  const isAudio = props.navigation.getParam('type') === MediaType.AUDIO;
-  const isWebView = props.navigation.getParam('type') === MediaType.WEB;
-  const [controlTimeoutDelay, setControlTimeoutDelay] = React.useState(isAudio ? undefined : 3000);
+  const type = props.navigation.getParam('type');
+
+  const [orientation, setOrientation] = React.useState(PORTRAIT);
+  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? undefined : 3000);
 
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
     StatusBar.setHidden(true);
+  });
+
+  useDeviceOrientationChange(current => {
+    setOrientation(current.indexOf(LANDSCAPE) > -1 ? LANDSCAPE : PORTRAIT);
   });
 
   const onBack = () => {
@@ -28,30 +33,44 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     props.navigation.goBack();
   };
 
-  const onEnd = () => {
-    setControlTimeoutDelay(undefined);
+  const onVPEnd = () => {
+    setVPControlTimeoutDelay(undefined);
   };
 
-  return (
-    <PageView style={styles.page} showNetworkBar={false}>
-      {isWebView ? (
-        <>
-          <SafeWebView source={source} scrollEnabled={false} startInLoadingState mediaPlaybackRequiresUserAction />
-          <ActionButton style={styles.backButtonWebview} text={I18n.t('back')} action={onBack} />
-        </>
-      ) : (
+  const getPlayer = () => {
+    if (type !== MediaType.WEB)
+      return (
         <VideoPlayer
-          controlTimeoutDelay={controlTimeoutDelay}
+          controlTimeoutDelay={vpControlTimeoutDelay}
           disableFullscreen
+          disableVolume
+          ignoreSilentSwitch="ignore"
           showOnStart
           showOnEnd
           source={source}
           onBack={onBack}
-          onEnd={onEnd}
-          ignoreSilentSwitch="ignore"
-          disableVolume
+          onEnd={onVPEnd}
         />
-      )}
+      );
+
+    return (
+      <>
+        <WebView
+          allowsInlineMediaPlayback
+          mediaPlaybackRequiresUserAction={false}
+          scrollEnabled={false}
+          source={source}
+          startInLoadingState
+          style={orientation === LANDSCAPE ? styles.playerLandscape : styles.playerPortrait}
+        />
+        <ActionButton style={styles.backButton} text={I18n.t('back')} action={onBack} />
+      </>
+    );
+  };
+
+  return (
+    <PageView style={styles.page} showNetworkBar={false}>
+      {getPlayer()}
     </PageView>
   );
 }

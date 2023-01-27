@@ -9,9 +9,8 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
+import { IUserSession, getUserSession } from '~/framework/util/session';
 import { importXmasThemeAction, letItSnowAction, setXmasThemeAction, stopItSnowAction } from '~/user/actions/xmas';
-
-import { IUserSession, getUserSession } from '../util/session';
 
 export interface SnowFlakesProps extends NavigationInjectedProps, NavigationFocusInjectedProps {}
 

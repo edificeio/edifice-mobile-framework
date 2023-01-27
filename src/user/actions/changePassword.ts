@@ -11,8 +11,7 @@ import { signedFetch } from '~/infra/fetchWithCache';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
-
-import { IUserAuthContext } from '../service';
+import { IUserAuthContext } from '~/user/service';
 
 export interface IChangePasswordModel {
   oldPassword: string;

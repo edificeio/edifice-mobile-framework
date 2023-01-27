@@ -21,9 +21,9 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { logout } from '~/user/actions/login';
+import { isXmasDateLimitCrossed } from '~/user/actions/xmas';
 import { IUserInfoState } from '~/user/state/info';
 
-import { isXmasDateLimitCrossed } from '../../actions/xmas';
 import styles from './styles';
 
 export class UserAccountScreen extends React.PureComponent<
@@ -136,7 +136,7 @@ export class UserAccountScreen extends React.PureComponent<
               {session.user.type !== 'Student' ? (
                 <LineButton
                   title="user.page.editEmail"
-                  onPress={() => this.props.navigation.navigate('SendEmailVerificationCode', { isModifyingEmail: true })}
+                  onPress={() => this.props.navigation.navigate('UserEmail', { isModifyingEmail: true })}
                 />
               ) : null}
               <LineButton title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />

@@ -5,12 +5,12 @@ import { ImageProps, ImageURISource, View, ViewStyle } from 'react-native';
 import RNFastImage from 'react-native-fast-image';
 
 import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallInverseText, SmallItalicText } from '~/framework/components/text';
 import { FastImage } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
-import { openCarousel } from '../framework/components/carousel';
 import TouchableOpacity from './CustomTouchableOpacity';
 import { Row } from './Grid';
 import ImageOptional from './ImageOptional';

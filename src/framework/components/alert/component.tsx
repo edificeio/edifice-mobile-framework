@@ -4,8 +4,8 @@ import { View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
+import { SmallText } from '~/framework/components/text';
 
-import { SmallText } from '../text';
 import style from './style';
 import { AlertCardProps } from './type';
 

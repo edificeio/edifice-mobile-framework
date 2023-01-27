@@ -21,9 +21,8 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { openUrl } from '~/framework/util/linking';
+import { Image, formatMediaSourceArray, formatSource } from '~/framework/util/media';
 import Images from '~/ui/Images';
-
-import { Image, formatMediaSourceArray, formatSource } from '../media';
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -320,7 +319,7 @@ function renderParseInlineImage(nugget: IInlineImageNugget, key: string, style: 
 }
 
 /**
- * Build JSX <SafeWebView> Element from an IframeNugget
+ * Build JSX Element from an IframeNugget
  * @param nugget IHtmlConverterIframeNugget A Top-level IframeNugget.
  * @param key string the traditional React key prop
  * @param style ViewStyle

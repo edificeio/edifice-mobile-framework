@@ -10,11 +10,11 @@ import theme from '~/app/theme';
 import { UI_SIZES, getScaleHeight, getScaleImageSize } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
+import { NamedSVG } from '~/framework/components/picture';
 import { SmallItalicText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
-import { NamedSVG } from '../../picture';
 import styles from './styles';
 import { IPlayerProps } from './types';
 

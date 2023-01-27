@@ -16,9 +16,9 @@ import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
+import { IUserAuthState } from '~/user/reducers/auth';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
 
-import { IUserAuthState } from '../reducers/auth';
 import {
   ActivationFormModel,
   InputEmail,

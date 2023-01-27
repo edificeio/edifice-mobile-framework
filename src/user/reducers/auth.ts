@@ -1,6 +1,7 @@
 import { IEntcoreWidget } from '~/framework/util/moduleTool';
 import { computeUserSession } from '~/framework/util/session';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
+import { actionTypeLegalDocuments } from '~/user/actions/actionTypes/legalDocuments';
 import {
   actionTypeLoggedIn,
   actionTypeLoggedInPartial,
@@ -18,8 +19,6 @@ import {
   actionTypeRequestVersion,
   actionTypeSkipVersion,
 } from '~/user/actions/version';
-
-import { actionTypeLegalDocuments } from '../actions/actionTypes/legalDocuments';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
