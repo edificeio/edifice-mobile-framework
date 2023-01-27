@@ -13,7 +13,6 @@
 //
 
 // As this is a cli tool, we disable some rules
-/* eslint-disable no-console */
 /* eslint-disable no-case-declarations */
 
 const execSync = require('child_process').execSync;
