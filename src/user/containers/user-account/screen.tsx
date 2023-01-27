@@ -1,8 +1,9 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, ImageURISource, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
+import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -10,43 +11,32 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { LineButton } from '~/framework/components/buttons/line';
 import { ButtonLineGroup } from '~/framework/components/buttons/line/component';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { formatSource } from '~/framework/util/media';
-import { IUserSession, getUserSession } from '~/framework/util/session';
+import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { logout } from '~/user/actions/login';
 import { isXmasDateLimitCrossed } from '~/user/actions/xmas';
-import { IUserInfoState } from '~/user/state/info';
+import { userService } from '~/user/service';
 
 import styles from './styles';
+import { ModificationType, UserAccountScreenProps, UserAccountScreenState } from './types';
 
-export class UserAccountScreen extends React.PureComponent<
-  {
-    onLogout: () => Promise<void>;
-    userinfo: IUserInfoState;
-    session: IUserSession;
-    navigation: any;
-  },
-  {
-    showVersionType: boolean;
-    updatingAvatar: boolean;
-    versionOverride: string;
-    versionType: string;
-    avatarPhoto?: '' | ImageURISource;
-  }
-> {
+export class UserAccountScreen extends React.PureComponent<UserAccountScreenProps, UserAccountScreenState> {
   public state = {
     showVersionType: false,
     updatingAvatar: false,
     versionOverride: RNConfigReader.BundleVersionOverride,
     versionType: RNConfigReader.BundleVersionType,
     avatarPhoto: undefined,
+    loadingMFARequirementForEmail: false,
+    loadingMFARequirementForPassword: false,
   };
 
   showWhoAreWe = this.props.session.platform.showWhoAreWe;
@@ -83,21 +73,44 @@ export class UserAccountScreen extends React.PureComponent<
     ]);
   };
 
+  public getIsMFANeeded = async (modificationType: ModificationType) => {
+    try {
+      if (modificationType === ModificationType.EMAIL) {
+        this.setState({ loadingMFARequirementForEmail: true });
+      } else if (modificationType === ModificationType.PASSWORD) {
+        this.setState({ loadingMFARequirementForPassword: true });
+      }
+      const requirements = await userService.getUserRequirements();
+      const needMFA = requirements?.needMFA;
+      if (needMFA) await userService.getMFAValidationInfos();
+      return needMFA;
+    } catch {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    } finally {
+      if (modificationType === ModificationType.EMAIL) {
+        this.setState({ loadingMFARequirementForEmail: false });
+      } else if (modificationType === ModificationType.PASSWORD) {
+        this.setState({ loadingMFARequirementForPassword: false });
+      }
+    }
+  };
+
   public render() {
-    const { userinfo, session } = this.props;
-    const { showVersionType, versionOverride, versionType } = this.state;
-    this.props.navigation.addListener('didFocus', () => {
+    const { navigation, userinfo, session } = this.props;
+    const { loadingMFARequirementForEmail, loadingMFARequirementForPassword, showVersionType, versionOverride, versionType } =
+      this.state;
+    const isLoadingMFARequirement = loadingMFARequirementForPassword || loadingMFARequirementForEmail;
+    navigation.addListener('didFocus', () => {
       this.setState({
         avatarPhoto:
           getUserSession().user.photo && formatSource(`${DEPRECATED_getCurrentPlatform()!.url}${getUserSession().user.photo}`),
       });
     });
-    const isMFANeeded = true;
 
     return (
       <PageView
         style={styles.page}
-        navigation={this.props.navigation}
+        navigation={navigation}
         showNetworkBar={false}
         navBar={{
           title: I18n.t('MyAccount'),
@@ -112,7 +125,7 @@ export class UserAccountScreen extends React.PureComponent<
               name="userpage-header"
             />
             {userinfo.photo === '' ? (
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('MyProfile')}>
+              <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
                 <Avatar sourceOrId={this.state.avatarPhoto} size={Size.verylarge} id="" />
               </TouchableOpacity>
             ) : (
@@ -124,7 +137,7 @@ export class UserAccountScreen extends React.PureComponent<
               text={I18n.t('user.page.userFileButton')}
               type="secondary"
               action={() => {
-                this.props.navigation.navigate('MyProfile');
+                navigation.navigate('MyProfile');
               }}
               style={styles.userInfo_button}
             />
@@ -132,34 +145,54 @@ export class UserAccountScreen extends React.PureComponent<
           <View style={styles.section}>
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.configuration')}</HeadingSText>
             <ButtonLineGroup>
-              <LineButton title="directory-notificationsTitle" onPress={() => this.props.navigation.navigate('NotifPrefs')} />
+              <LineButton title="directory-notificationsTitle" onPress={() => navigation.navigate('NotifPrefs')} />
               <LineButton
+                loading={loadingMFARequirementForPassword}
+                disabled={isLoadingMFARequirement}
                 title="user.page.editPassword"
-                onPress={() =>
-                  isMFANeeded
-                    ? this.props.navigation.navigate('MFA', { navBarTitle: I18n.t('user.page.editPassword') })
-                    : this.props.navigation.navigate('ChangePassword')
-                }
+                onPress={async () => {
+                  const isMFANeeded = await this.getIsMFANeeded(ModificationType.PASSWORD);
+                  navigation.navigate(isMFANeeded ? 'MFA' : 'ChangePassword', {
+                    navBarTitle: I18n.t('user.page.editPassword'),
+                    modificationType: ModificationType.PASSWORD,
+                  });
+                }}
               />
               {session.user.type !== 'Student' ? (
                 <LineButton
+                  loading={loadingMFARequirementForEmail}
+                  disabled={isLoadingMFARequirement}
                   title="user.page.editEmail"
-                  onPress={() =>
-                    this.props.navigation.navigate(isMFANeeded ? 'MFA' : 'UserEmail', {
-                      navBarTitle: I18n.t('user.page.editEmail'),
-                      isModifyingEmail: true,
-                    })
-                  }
+                  onPress={async () => {
+                    const isMFANeeded = await this.getIsMFANeeded(ModificationType.EMAIL);
+                    const navigationInfos = isMFANeeded
+                      ? {
+                          routeName: 'MFA',
+                          routeParams: {
+                            navBarTitle: I18n.t('user.page.editEmail'),
+                            modificationType: ModificationType.EMAIL,
+                          },
+                        }
+                      : {
+                          routeName: 'UserEmail',
+                          routeParams: {
+                            navBarTitle: I18n.t('user.page.editEmail'),
+                            isModifyingEmail: true,
+                          },
+                        };
+
+                    navigation.navigate(navigationInfos.routeName, navigationInfos.routeParams);
+                  }}
                 />
               ) : null}
-              <LineButton title="directory-structuresTitle" onPress={() => this.props.navigation.navigate('Structures')} />
+              <LineButton title="directory-structuresTitle" onPress={() => navigation.navigate('Structures')} />
               {session.user.type === 'Student' ? (
-                <LineButton title="directory-relativesTitle" onPress={() => this.props.navigation.navigate('Relatives')} />
+                <LineButton title="directory-relativesTitle" onPress={() => navigation.navigate('Relatives')} />
               ) : session.user.type === 'Relative' ? (
-                <LineButton title="directory-childrenTitle" onPress={() => this.props.navigation.navigate('Children')} />
+                <LineButton title="directory-childrenTitle" onPress={() => navigation.navigate('Children')} />
               ) : null}
               {!isXmasDateLimitCrossed ? (
-                <LineButton title="directory-xmasTitle" onPress={() => this.props.navigation.navigate('Xmas')} />
+                <LineButton title="directory-xmasTitle" onPress={() => navigation.navigate('Xmas')} />
               ) : null}
             </ButtonLineGroup>
           </View>
@@ -167,9 +200,9 @@ export class UserAccountScreen extends React.PureComponent<
             <HeadingSText style={styles.titleSection}>{I18n.t('user.page.others')}</HeadingSText>
             <ButtonLineGroup>
               {this.showWhoAreWe ? (
-                <LineButton title="directory-whoAreWeTitle" onPress={() => this.props.navigation.navigate('WhoAreWe')} />
+                <LineButton title="directory-whoAreWeTitle" onPress={() => navigation.navigate('WhoAreWe')} />
               ) : null}
-              <LineButton title="directory-legalNoticeTitle" onPress={() => this.props.navigation.navigate('LegalNotice')} />
+              <LineButton title="directory-legalNoticeTitle" onPress={() => navigation.navigate('LegalNotice')} />
             </ButtonLineGroup>
           </View>
           <View style={styles.boxBottomPage}>

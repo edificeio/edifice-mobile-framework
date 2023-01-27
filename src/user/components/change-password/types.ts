@@ -31,4 +31,5 @@ export type IChangePasswordPageProps = IChangePasswordPageDataProps &
     redirectCallback: (dispatch) => void;
     forceChange?: boolean;
     isLoginNavigator?: boolean;
+    navBarTitle: string;
   }>;

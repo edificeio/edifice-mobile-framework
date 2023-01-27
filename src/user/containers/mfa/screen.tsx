@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import Toast from 'react-native-tiny-toast';
+import { StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -19,6 +20,7 @@ import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/pro
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { userService } from '~/user/service';
 
+import { ModificationType } from '../user-account/types';
 import styles from './styles';
 import { CodeState, MFAScreenProps, ResendResponse } from './types';
 
@@ -30,6 +32,7 @@ const MFAScreen = (props: MFAScreenProps) => {
   const credentials = navigation.getParam('credentials');
   const email = navigation.getParam('email');
   const isEmailMFA = navigation.getParam('isEmailMFA');
+  const modificationType = navigation.getParam('modificationType');
   const isModifyingEmail = navigation.getParam('isModifyingEmail');
 
   const [isVerifyingEnabled, setIsVerifyingEnabled] = useState(false);
@@ -91,10 +94,10 @@ const MFAScreen = (props: MFAScreenProps) => {
 
   const startAnimation = (state: CodeState) => {
     const animationSources = {
-      codeCorrect: require('ASSETS/animations/mfa/code-correct.json'),
-      codeExpired: require('ASSETS/animations/mfa/code-wrong-locked.json'),
-      codeWrong: require('ASSETS/animations/mfa/code-wrong.json'),
-      codeResent: require('ASSETS/animations/mfa/code-wrong-unlocked.json'),
+      [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
+      [CodeState.CODE_EXPIRED]: require('ASSETS/animations/mfa/code-wrong-locked.json'),
+      [CodeState.CODE_WRONG]: require('ASSETS/animations/mfa/code-wrong.json'),
+      [CodeState.CODE_RESENT]: require('ASSETS/animations/mfa/code-wrong-unlocked.json'),
     };
     setAnimationSource(animationSources[state]);
     animationRef.current?.play();
@@ -103,16 +106,25 @@ const MFAScreen = (props: MFAScreenProps) => {
   const verifyCode = async (toVerify: string) => {
     try {
       setIsVerifyingCode(true);
-      await userService.verifyEmailCode(toVerify);
-      const emailValidationInfos = await userService.getEmailValidationInfos();
-      const state =
-        emailValidationInfos?.emailState?.state === 'valid'
+      let validationInfos;
+      let state;
+      if (isEmailMFA) {
+        await userService.verifyEmailCode(toVerify);
+        validationInfos = await userService.getEmailValidationInfos();
+        state = validationInfos?.emailState;
+      } else {
+        await userService.verifyMFACode(toVerify);
+        validationInfos = await userService.getMFAValidationInfos();
+        state = validationInfos?.state;
+      }
+      const codestate =
+        state?.state === 'valid'
           ? CodeState.CODE_CORRECT
-          : emailValidationInfos?.emailState?.ttl === 0 || emailValidationInfos?.emailState?.tries === 0
+          : state?.ttl === 0 || state?.tries === 0
           ? CodeState.CODE_EXPIRED
           : CodeState.CODE_WRONG;
-      setCodeState(state);
-      startAnimation(state);
+      setCodeState(codestate);
+      startAnimation(codestate);
     } catch {
       setCodeState(CodeState.CODE_STATE_UNKNOWN);
     } finally {
@@ -161,7 +173,14 @@ const MFAScreen = (props: MFAScreenProps) => {
   };
 
   const redirectMFA = () => {
-    if (isCodeCorrect) navigation.navigate('UserEmail', { navBarTitle, isModifyingEmail });
+    if (isCodeCorrect) {
+      const routeNames = {
+        [ModificationType.EMAIL]: 'UserEmail',
+        [ModificationType.PASSWORD]: 'ChangePassword',
+      };
+      const params = modificationType === ModificationType.EMAIL ? { navBarTitle, isModifyingEmail: true } : { navBarTitle };
+      navigation.dispatch(StackActions.replace({ routeName: routeNames[modificationType], params }));
+    }
   };
 
   const redirectEmailMFA = useCallback(() => {

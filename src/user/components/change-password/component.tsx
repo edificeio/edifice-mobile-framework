@@ -112,8 +112,9 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
   }
 
   public render() {
-    const { externalError, contextState, submitState } = this.props;
+    const { contextState, externalError, navigation, submitState } = this.props;
     const { oldPassword, newPassword, confirm, typing, showExternalError } = this.state;
+    const navBarTitle = navigation.getParam('navBarTitle');
 
     if (contextState === ContextState.Loading) {
       return <Loading />;
@@ -121,13 +122,7 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
 
     if (contextState === ContextState.Failed) {
       return (
-        <KeyboardPageView
-          isFocused={false}
-          navigation={this.props.navigation}
-          scrollable
-          navBarWithBack={{
-            title: I18n.t('PasswordChange'),
-          }}>
+        <KeyboardPageView isFocused={false} navigation={navigation} scrollable navBarWithBack={{ title: navBarTitle }}>
           <EmptyContentScreen />
         </KeyboardPageView>
       );
@@ -146,17 +141,11 @@ export class ChangePasswordPage extends React.PureComponent<IChangePasswordPageP
     const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
 
     return (
-      <KeyboardPageView
-        isFocused={false}
-        navigation={this.props.navigation}
-        scrollable
-        navBarWithBack={{
-          title: I18n.t('PasswordChange'),
-        }}>
+      <KeyboardPageView isFocused={false} navigation={navigation} scrollable navBarWithBack={{ title: navBarTitle }}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
           <FormContainer>
             <View style={styles.viewInfoForm}>
-              {this.props.navigation.getParam('isLoginNavigator') ? (
+              {navigation.getParam('isLoginNavigator') ? (
                 <View style={styles.viewWarning}>
                   <BodyText style={styles.textWarning}>{I18n.t('PasswordChangeWarning')}</BodyText>
                   <MiniSpacer />

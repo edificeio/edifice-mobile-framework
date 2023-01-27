@@ -30,11 +30,22 @@ export interface IEntcoreEmailValidationInfos {
 }
 
 export interface IEntcoreEmailValidationState {
-  state: 'unchecked' | 'outdated' | 'pending' | 'valid'; // Validation state
-  valid: string; // Last known valid email address (or empty string)
   pending?: string; // (optional) Current pending (or outdated) email address being checked
-  ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
+  state: 'unchecked' | 'outdated' | 'pending' | 'valid'; // Validation state
   tries?: number; // (optional) Remaining number of times a validation code can be typed in
+  ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
+  valid: string; // Last known valid email address (or empty string)
+}
+export interface IEntcoreMFAValidationInfos {
+  state: IEntcoreMFAValidationState; // State of the current MFA code
+  type: 'sms' | 'email'; // MFA validation type
+  waitInSeconds: number; // Estimated number of seconds before code reaches cellphone or mailbox
+}
+
+export interface IEntcoreMFAValidationState {
+  state: 'outdated | pending | valid'; // Validation state
+  tries: number; // Number of remaining retries before code becomes outdated
+  ttl: number; // Number of seconds remaining before expiration of the code
 }
 
 export type Languages = 'fr' | 'en' | 'es';
@@ -84,6 +95,8 @@ export interface IUserRequirements {
   forceChangePassword?: boolean;
   needRevalidateEmail?: boolean;
   needRevalidateTerms?: boolean;
+  needRevalidateMobile?: boolean;
+  needMFA?: boolean;
 }
 
 class UserService {
@@ -278,6 +291,17 @@ class UserService {
     }
   }
 
+  async verifyEmailCode(key: string) {
+    try {
+      await fetchJSONWithCache('/directory/user/mailstate', {
+        method: 'POST',
+        body: JSON.stringify({ key }),
+      });
+    } catch (e) {
+      // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
+    }
+  }
+
   async sendEmailVerificationCode(email: string) {
     await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mailstate', {
       method: 'PUT',
@@ -285,9 +309,18 @@ class UserService {
     });
   }
 
-  async verifyEmailCode(key: string) {
+  async getMFAValidationInfos() {
     try {
-      await fetchJSONWithCache('/directory/user/mailstate', {
+      const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
+      return MFAValidationInfos;
+    } catch (e) {
+      // console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
+    }
+  }
+
+  async verifyMFACode(key: string) {
+    try {
+      await fetchJSONWithCache('/auth/user/mfa/code', {
         method: 'POST',
         body: JSON.stringify({ key }),
       });
