@@ -1,6 +1,6 @@
 {
-  "last": "2023-01-20 18:59:09",
-  "notes": "feat(media-player): better preview audio/video\nfeat(media-player): MB-1189, hide volume bar\nfeat(media-player): MB-1196, sound in video when silent mode is set\nfeat(media-player): MB-1191, add overlay under video controls to show it better\nfeat(media-player): MB-1195, on end show controls infinity & patches package react-native-media-console (add props showOnEnd)\nfeat(media-player): MB-1188, show controls when start play video & audio, hide controls after 3s on video and show controls infinity when its audio\nchore(theme): MB-1197, update theme.ts with good degin system\nfix(media-audio): add good color on wavering (primary.light)\nfeat(revalidate-cgu): MB-769, add loader when accept CGU\nfeat(attachment): MB-1181, read attachment in file viewer native\nfeat(media-player): better preview audio/video\nrelease: 1.9.2-alpha.5(1090205)",
-  "version": "1.9.2-alpha.6(1090206)",
+  "last": "2023-01-27 08:35:04",
+  "notes": "chore(refactor): Relative imports removal\nfix(video): MB-1137, Fix webview options for better Android rendering\nfix(pronote): MB-1223 section icons were missized\nchore(user): refactored email/mfa screens\nchore: add lottie animations\nchore: add lottie-react-native module\nchore(upgrade): Upgrade packages && patches.\nchore: cleanup Info.plist (1.9.2)\nrelease: 1.9.2-alpha.6(1090206)",
+  "version": "1.9.2-alpha.7(1090207)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
