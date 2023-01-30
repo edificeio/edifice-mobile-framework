@@ -139,12 +139,13 @@ export const UI_SIZES = {
 };
 
 export const UI_STYLES = StyleSheet.create({
-  row: { flexDirection: 'row' },
-  rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
+  clickZone: { minHeight: 48, minWidth: 48 },
   flex1: { flex: 1 },
   flexGrow1: { flexGrow: 1 },
   flexShrink1: { flexShrink: 1 },
   justifyEnd: { justifyContent: 'flex-end' },
+  row: { flexDirection: 'row' },
+  rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
 });
 
 export const UI_VALUES = {
