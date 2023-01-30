@@ -16,7 +16,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
   const type = props.navigation.getParam('type');
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? undefined : 3000);
+  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? 999999 : 3000);
 
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
@@ -35,7 +35,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
   };
 
   const onVPEnd = () => {
-    setVPControlTimeoutDelay(undefined);
+    setVPControlTimeoutDelay(999999);
   };
 
   const getPlayer = () => {
