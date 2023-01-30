@@ -1,13 +1,13 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, TouchableOpacity, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { LANDSCAPE, PORTRAIT, useOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
 
-import ActionButton from '~/framework/components/buttons/action';
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 
+import { NamedSVG } from '../../picture';
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
@@ -56,6 +56,11 @@ export default function MediaPlayer(props: MediaPlayerProps) {
 
     return (
       <>
+        <View style={styles.back}>
+          <TouchableOpacity onPress={onBack}>
+            <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
+          </TouchableOpacity>
+        </View>
         <WebView
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
@@ -64,7 +69,6 @@ export default function MediaPlayer(props: MediaPlayerProps) {
           startInLoadingState
           style={orientation === LANDSCAPE ? styles.playerLandscape : styles.playerPortrait}
         />
-        <ActionButton style={styles.backButton} text={I18n.t('back')} action={onBack} />
       </>
     );
   };
