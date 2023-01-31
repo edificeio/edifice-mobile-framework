@@ -1,5 +1,5 @@
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-index e07c32e..652bf6d 100644
+index 18e598e..9de2c37 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
 @@ -235,7 +235,7 @@ public class CameraRollModule extends ReactContextBaseJavaModule {
