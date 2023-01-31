@@ -451,7 +451,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     const url = request.url;
     if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
       if (!this.samlResponse)
-        this.props.navigation.navigate(AuthRouteNames.loginHome, { platform: this.props.route.params.platform });
+        this.props.navigation.replace(AuthRouteNames.loginHome, { platform: this.props.route.params.platform });
       return false;
     }
     return true;
