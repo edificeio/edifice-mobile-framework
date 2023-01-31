@@ -38,6 +38,10 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     setVPControlTimeoutDelay(999999);
   };
 
+  const styleOverlay = {
+    height: orientation === PORTRAIT ? 80 : 60,
+  };
+
   const getPlayer = () => {
     if (type !== MediaType.WEB)
       return (
@@ -56,7 +60,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
 
     return (
       <>
-        <View style={styles.back}>
+        <View style={[styles.back, styleOverlay]}>
           <TouchableOpacity onPress={onBack}>
             <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
           </TouchableOpacity>
