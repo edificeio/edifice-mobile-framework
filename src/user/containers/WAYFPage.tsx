@@ -25,6 +25,8 @@ import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 
+import { actionTypeLoginCancel } from '../actions/actionTypes/login';
+
 enum WAYFPageMode {
   EMPTY = 0,
   ERROR = 1,
@@ -120,10 +122,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   private backActions = [
     // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
     () => {
+      this.props.dispatch({ type: actionTypeLoginCancel });
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.ERROR: Go to top of wayf navigation stack
     () => {
+      this.props.dispatch({ type: actionTypeLoginCancel });
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.LOADING: Nothing to do
@@ -455,7 +459,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     //   - WAYF redirects to web standard login page
     const url = request.url;
     if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
-      if (!this.samlResponse) this.props.navigation.navigate('LoginHome');
+      if (!this.samlResponse) this.props.navigation.replace('LoginHome');
       return false;
     }
     return true;
