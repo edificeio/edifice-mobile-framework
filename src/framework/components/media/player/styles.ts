@@ -6,11 +6,20 @@ import { UI_SIZES } from '~/framework/components/constants';
 export default StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.darkness,
+    position: 'relative',
   },
-  backButton: {
+  back: {
     position: 'absolute',
-    bottom: 30,
-    left: 30,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    backgroundColor: 'rgba(0,0,0,.6)',
+    zIndex: 9999999,
+    paddingBottom: UI_SIZES.spacing.medium,
+    paddingLeft: UI_SIZES.spacing.medium,
+    alignContent: 'flex-end',
+    justifyContent: 'flex-end',
   },
   playerLandscape: {
     backgroundColor: theme.palette.grey.darkness,

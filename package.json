@@ -7,6 +7,7 @@
     "add-dep": "yarn add --save --exact",
     "android": "react-native run-android",
     "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js reset-cache",
+    "depcheck": "npx depcheck",
     "deploy-alpha": "fastlane deploy alpha",
     "deploy-rc": "fastlane deploy rc",
     "i18n-diff": "node cli/i18n.js diff",
@@ -15,7 +16,10 @@
     "i18n-merge-es": "node cli/i18n.js merge es",
     "install-and-pod": "yarn install && cd ios && pod install && cd ..",
     "ios": "react-native run-ios",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
+    "lint-all": "eslint --ext .js,.jsx,.ts,.tsx ./src",
+    "lint-fix-all": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src",
+    "lint-fix-folder": "eslint --fix --ext .js,.jsx,.ts,.tsx",
+    "lint-folder": "eslint --ext .js,.jsx,.ts,.tsx",
     "override": "node cli/override.js -l",
     "override-local": "node cli/override.js --local -l",
     "override-silent": "node cli/override.js -v --no-i $CONFIG_TO --uri=$CONFIG_URI --username=$CONFIG_USER --password=$CONFIG_PWD",
@@ -71,14 +75,17 @@
     "fast-xml-parser": "4.0.14",
     "filesize": "10.0.2",
     "flat": "5.0.2",
+    "global": "4.4.0",
     "hoist-non-react-statics": "3.3.2",
     "html-entities": "2.3.3",
     "i18n-js": "3.9.2",
     "lottie-ios": "3.4.1",
     "lottie-react-native": "5.1.4",
+    "metro-config": "0.74.1",
     "mime": "3.0.0",
     "moment": "2.29.4",
     "pager-rn": "0.0.2",
+    "prompts": "2.4.2",
     "query-string": "8.1.0",
     "querystring": "0.2.1",
     "react": "18.2.0",
@@ -151,7 +158,8 @@
     "stream": "0.0.2",
     "ts-polyfill": "3.8.2",
     "unorm": "1.6.0",
-    "whatwg-fetch": "3.6.2"
+    "whatwg-fetch": "3.6.2",
+    "yargs": "17.6.2"
   },
   "devDependencies": {
     "@babel/core": "7.20.12",
@@ -190,6 +198,7 @@
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jest": "27.2.1",
     "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react": "7.32.1",
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-react-native": "4.0.0",
@@ -229,7 +238,7 @@
   },
   "todo-husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn run tsc && yarn run lint"
+      "pre-commit": "pretty-quick --staged && yarn run tsc && yarn run lint-all"
     }
   },
   "ode": {

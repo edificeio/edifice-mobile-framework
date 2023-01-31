@@ -1,13 +1,13 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, TouchableOpacity, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
-import Orientation, { LANDSCAPE, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
+import Orientation, { LANDSCAPE, PORTRAIT, useOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
 
-import ActionButton from '~/framework/components/buttons/action';
+import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
 
+import { NamedSVG } from '../../picture';
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
@@ -16,15 +16,16 @@ export default function MediaPlayer(props: MediaPlayerProps) {
   const type = props.navigation.getParam('type');
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? undefined : 3000);
+  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? 999999 : 3000);
 
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
     StatusBar.setHidden(true);
   });
 
-  useDeviceOrientationChange(current => {
-    setOrientation(current.indexOf(LANDSCAPE) > -1 ? LANDSCAPE : PORTRAIT);
+  useOrientationChange(current => {
+    if (current.indexOf(LANDSCAPE) > -1) setOrientation(LANDSCAPE);
+    else if (current.indexOf(PORTRAIT) > -1) setOrientation(PORTRAIT);
   });
 
   const onBack = () => {
@@ -34,7 +35,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
   };
 
   const onVPEnd = () => {
-    setVPControlTimeoutDelay(undefined);
+    setVPControlTimeoutDelay(999999);
   };
 
   const getPlayer = () => {
@@ -55,6 +56,11 @@ export default function MediaPlayer(props: MediaPlayerProps) {
 
     return (
       <>
+        <View style={styles.back}>
+          <TouchableOpacity onPress={onBack}>
+            <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
+          </TouchableOpacity>
+        </View>
         <WebView
           allowsInlineMediaPlayback
           mediaPlaybackRequiresUserAction={false}
@@ -63,7 +69,6 @@ export default function MediaPlayer(props: MediaPlayerProps) {
           startInLoadingState
           style={orientation === LANDSCAPE ? styles.playerLandscape : styles.playerPortrait}
         />
-        <ActionButton style={styles.backButton} text={I18n.t('back')} action={onBack} />
       </>
     );
   };

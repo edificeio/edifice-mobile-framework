@@ -10,15 +10,14 @@ import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-c
 import { Provider, connect } from 'react-redux';
 import 'ts-polyfill/lib/es2019-object';
 
-import AppConf from '~/framework/util/appConf';
-import { Trackers } from '~/framework/util/tracker';
-
 import AppScreen from './AppScreen';
 import { createMainStore } from './AppStore';
 import { initI18n } from './app/i18n';
 import AppModules from './app/modules';
 import theme from './app/theme';
 import { UI_STYLES } from './framework/components/constants';
+import AppConf from './framework/util/appConf';
+import { Trackers } from './framework/util/tracker';
 import { AllModulesBackup, OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
 import { getLoginStackToDisplay } from './navigation/helpers/loginRouteName';
 import { reset } from './navigation/helpers/navHelper';

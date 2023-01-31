@@ -101,7 +101,12 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
       <ActionButton
         text=""
         action={() => {
-          imageViewerRef.current?.saveToLocal?.();
+          Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+            {
+              text: I18n.t('carousel.privacy.button'),
+              onPress: () => imageViewerRef.current?.saveToLocal?.(),
+            },
+          ]);
         }}
         iconName="ui-download"
         style={styles.closeButton}
