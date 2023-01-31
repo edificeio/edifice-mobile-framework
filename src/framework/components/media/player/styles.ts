@@ -13,7 +13,7 @@ export default StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 130,
+    height: 80,
     backgroundColor: 'rgba(0,0,0,.6)',
     zIndex: 9999999,
     paddingBottom: UI_SIZES.spacing.medium,

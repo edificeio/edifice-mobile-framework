@@ -219,33 +219,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           borderWidth: 1,
           borderRadius: 5,
         }}>
-        {/* POC in progress
-        <PopupMenu
-          actions={[
-            cameraAction({
-              callback: this.imageCallback,
-            }),
-            galleryAction({
-              callback: this.imageCallback,
-              multiple: true,
-            }),
-          ]}>
-          <View
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: imagesAdded ? 'row' : 'column',
-              marginTop: UI_SIZES.spacing.big,
-              marginBottom: imagesAdded ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
-            }}
-            // onPress={() => this.attachmentPickerRef.onPickAttachment()}
-          >
-            <SmallActionText style={{ width: 300, marginRight: imagesAdded ? UI_SIZES.spacing.minor : 0, textAlign: 'center' }}>
-              {I18n.t('createPost-create-mediaField')}
-            </SmallActionText>
-            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
-          </View>
-        </PopupMenu> */}
         <BottomMenu
           title={I18n.t('bottom-menu-add-media')}
           actions={[

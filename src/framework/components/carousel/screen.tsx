@@ -17,10 +17,9 @@ import { ActionButton } from '~/framework/components/buttons/action';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { FakeHeader } from '~/framework/components/header';
+import { FakeHeader, HeaderIcon } from '~/framework/components/header';
+import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
-import PopupMenu from '~/framework/components/popupMenu';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
@@ -90,13 +89,7 @@ async function assertPermissions(permissions: Permission[]) {
   }
 }
 
-export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: boolean; imageViewerRef; popupMenuRef }) => {
-  const dotsButtons = React.useCallback(
-    (onPress: () => void) => (
-      <ActionButton text="" disabled={disabled} iconName="ui-options" style={styles.closeButton} action={onPress} />
-    ),
-    [disabled],
-  );
+export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   return (
     <>
       <ActionButton
@@ -109,27 +102,18 @@ export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: 
         disabled={disabled}
       />
       <PopupMenu
-        button={dotsButtons}
-        options={[
+        actions={[
           {
-            i18n: 'share',
-            icon: (
-              <NamedSVG
-                name="ui-share"
-                fill={theme.palette.grey.black}
-                width={UI_SIZES.dimensions.width.large}
-                height={UI_SIZES.dimensions.width.large}
-                style={{ marginHorizontal: UI_SIZES.spacing.small }}
-              />
-            ),
-            onClick: () => imageViewerRef.current?.share?.(),
+            title: I18n.t('share'),
+            action: () => imageViewerRef.current?.share?.(),
+            icon: {
+              ios: 'square.and.arrow.up',
+              android: 'ic_share',
+            },
           },
-        ]}
-        ref={popupMenuRef as React.LegacyRef<PopupMenu>} // Some type hack here...
-        style={{
-          top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
-        }}
-      />
+        ]}>
+        <HeaderIcon name="more_vert" iconSize={26} />
+      </PopupMenu>
     </>
   );
 };
@@ -144,15 +128,14 @@ export function Carousel(props: ICarouselProps) {
   const [isNavBarVisible, setNavBarVisible] = React.useState(true);
 
   const closeButton = React.useMemo(
-    () => <ActionButton action={navigation.goBack} iconName="ui-rafterLeft" style={styles.closeButton} />,
+    () => <ActionButton text="" action={navigation.goBack} iconName="ui-rafterLeft" style={styles.closeButton} />,
     [navigation],
   );
 
   const imageViewerRef = React.useRef<ImageViewer>();
-  const popupMenuRef = React.useRef<PopupMenu>();
   const getButtons = React.useCallback(
-    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} popupMenuRef={popupMenuRef} />,
-    [popupMenuRef, imageViewerRef],
+    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} />,
+    [imageViewerRef],
   );
 
   const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
