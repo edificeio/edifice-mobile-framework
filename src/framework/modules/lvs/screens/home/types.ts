@@ -1,9 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ISession } from '~/framework/modules/auth/model';
+import type { LvsNavigationParams } from '~/framework/modules/lvs/navigation';
 import { IEntcoreApp } from '~/framework/util/moduleTool';
-
-import type { LvsNavigationParams } from '../../navigation';
 
 export interface LvsHomeScreenProps {
   session?: ISession;

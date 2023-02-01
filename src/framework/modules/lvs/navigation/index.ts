@@ -1,7 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '../module-config';
-import type { LvsHomeScreenNavParams } from '../screens/home';
+import moduleConfig from '~/framework/modules/lvs/module-config';
+import type { LvsHomeScreenNavParams } from '~/framework/modules/lvs/screens/home';
 
 export const lvsRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',
