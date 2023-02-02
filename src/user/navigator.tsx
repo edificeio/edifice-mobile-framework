@@ -10,6 +10,7 @@ import WhoAreWeScreen from './containers/WhoAreWeScreen';
 import XmasScreen from './containers/XmasScreen';
 import UserEmailScreen from './containers/email';
 import MFAScreen from './containers/mfa';
+import UserMobileScreen from './containers/mobile';
 import UserAccountScreen from './containers/user-account';
 import UserProfileScreen from './containers/user-profile';
 
@@ -41,6 +42,10 @@ export default createStackNavigator(
 
     ChangePassword: {
       screen: ChangePasswordPage,
+    },
+
+    UserMobile: {
+      screen: UserMobileScreen,
     },
 
     UserEmail: {

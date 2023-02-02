@@ -15,6 +15,7 @@ import WAYFPage from '~/user/containers/WAYFPage';
 import UserEmailScreen from '~/user/containers/email';
 import LoginPage from '~/user/containers/login';
 import MFAScreen from '~/user/containers/mfa';
+import UserMobileScreen from '~/user/containers/mobile';
 import OnboardingScreen from '~/user/containers/onboarding';
 
 import { loginRouteNames } from './helpers/loginRouteName';
@@ -48,6 +49,12 @@ export default createStackNavigator(
     },
     RevalidateTerms: {
       screen: RevalidateTermsScreen,
+      navigationOptions: {
+        gestureEnabled: false,
+      },
+    },
+    UserMobile: {
+      screen: UserMobileScreen,
       navigationOptions: {
         gestureEnabled: false,
       },

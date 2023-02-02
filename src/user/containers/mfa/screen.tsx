@@ -248,7 +248,7 @@ const MFAScreen = (props: MFAScreenProps) => {
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
             {isEmailMFA ? (
-              <NamedSVG name="empty-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+              <NamedSVG name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
             ) : (
               <Lottie
                 ref={animationRef}
