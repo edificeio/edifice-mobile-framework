@@ -1,10 +1,10 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { INews_State } from './reducer';
+import { INewsState } from './reducer';
 
-export default new NavigableModuleConfig<'news', INews_State>({
+export default new NavigableModuleConfig<'news', INewsState>({
   name: 'news',
   entcoreScope: ['actualites'],
   matchEntcoreApp: '/actualites',
-  displayI18n: 'newsDetailsScreen.title',
+  displayI18n: 'newsDetailsScreen.tabName',
 });

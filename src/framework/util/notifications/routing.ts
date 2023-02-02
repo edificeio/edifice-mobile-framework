@@ -26,24 +26,26 @@ export interface INotifHandlerReturnType {
 }
 
 export type NotifHandlerThunk = ThunkAction<Promise<INotifHandlerReturnType>, any, void, AnyAction>;
-export type NotifHandlerThunkAction = (
-  notification: IAbstractNotification,
+export type NotifHandlerThunkAction<NotifType extends IAbstractNotification = IAbstractNotification> = (
+  notification: NotifType,
   trackCategory: false | string,
   navState?: NavigationState | string,
 ) => NotifHandlerThunk;
 
-export interface INotifHandlerDefinition {
+export interface INotifHandlerDefinition<NotifType extends IAbstractNotification = IAbstractNotification> {
   type: string;
   'event-type'?: string | string[];
-  notifHandlerAction: NotifHandlerThunkAction;
+  notifHandlerAction: NotifHandlerThunkAction<NotifType>;
 }
 
+export type IAnyNotification = IAbstractNotification & any;
+
 const registeredNotifHandlers: INotifHandlerDefinition[] = [];
-export const registerNotifHandler = (def: INotifHandlerDefinition) => {
+export const registerNotifHandler = (def: INotifHandlerDefinition<IAnyNotification>) => {
   registeredNotifHandlers.push(def);
   return def;
 };
-export const registerNotifHandlers = (def: INotifHandlerDefinition[]) => {
+export const registerNotifHandlers = (def: INotifHandlerDefinition<IAnyNotification>[]) => {
   return def.map(d => registerNotifHandler(d));
 };
 export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
@@ -173,7 +175,7 @@ export const legacyHandleNotificationAction =
         if (managed) {
           manageCount++;
         }
-      } catch (e) {
+      } catch {
         //TODO: Manage error
       }
     };

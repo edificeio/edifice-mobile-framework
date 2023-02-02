@@ -1,13 +1,12 @@
 /**
  * News services
  */
-
 import moment from 'moment';
 
+import { ISession } from '~/framework/modules/auth/model';
+import { INews, RightOwner } from '~/framework/modules/news/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
-import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { INews, RightOwner } from '~/modules/news/reducer';
 
 export interface IEntcoreNews {
   comments: string;
@@ -61,7 +60,7 @@ export const newsUriCaptureFunction: IResourceUriCaptureFunction<{ threadId: str
 };
 
 export const newsService = {
-  get: async (session: IUserSession, newsId: { threadId: string; infoId: string }) => {
+  get: async (session: ISession, newsId: { threadId: string; infoId: string }) => {
     const { threadId, infoId } = newsId;
     const api = `/actualites/thread/${threadId}/info/${infoId}`;
     const entcoreNews = (await fetchJSONWithCache(api)) as IEntcoreNews;

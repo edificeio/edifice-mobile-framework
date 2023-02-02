@@ -3,9 +3,8 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
-import { getUserSession } from '~/framework/util/session';
-import moduleConfig from '~/modules/news/moduleConfig';
-import { newsService } from '~/modules/news/service';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { newsService } from '~/framework/modules/news/service';
 
 /**
  * Fetch the details of a given news item.
@@ -13,12 +12,12 @@ import { newsService } from '~/modules/news/service';
 export const getNewsDetailsAction =
   (newsId: { threadId: string; infoId: string }) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = getUserSession();
+      const session = assertSession();
 
       // Get news details
       const newsDetails = await newsService.get(session, newsId);
       return newsDetails;
-    } catch (e) {
+    } catch {
       // ToDo: Error handling
     }
   };

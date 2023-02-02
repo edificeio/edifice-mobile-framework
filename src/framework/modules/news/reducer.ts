@@ -1,10 +1,12 @@
 /**
  * News Reducer
  */
-
 import { Moment } from 'moment';
 
+import { Reducers } from '~/app/store';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
+
+import moduleConfig from './module-config';
 
 // Types
 
@@ -40,14 +42,14 @@ export interface INews {
 
 // State
 
-export interface INews_State {}
+export interface INewsState {}
 
 // Reducer
 
-const initialState: INews_State = {};
+const initialState: INewsState = {};
 
-export default createSessionReducer(initialState, {
+const reducer = createSessionReducer(initialState, {
   // Add reducer functions here or use reducer tools
 });
-
-// Getters
+Reducers.register(moduleConfig.reducerName, reducer);
+export default reducer;
