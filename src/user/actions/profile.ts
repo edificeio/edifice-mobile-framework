@@ -34,7 +34,7 @@ export const profileUpdateSuccessAction = profileUpdateActionBuilder(actionTypeP
 
 export const profileUpdateErrorAction = profileUpdateActionBuilder(actionTypeProfileUpdateError);
 
-export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar?: boolean) {
+export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar?: boolean, notify: boolean = true) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
     const notifierId = `profile${updateAvatar ? 'One' : 'Two'}`;
     const notifierSuccessText = I18n.t(`ProfileChange${updateAvatar ? 'Avatar' : ''}Success`);
@@ -70,14 +70,15 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
         throw new Error((reponse as any)['error']);
       }
       dispatch(profileUpdateSuccessAction(updateAvatar ? { photo: updatedProfileValues.picture } : updatedProfileValues));
-      dispatch(
-        notifierShowAction({
-          id: notifierId,
-          text: notifierSuccessText,
-          icon: 'checked',
-          type: 'success',
-        }),
-      );
+      if (notify)
+        dispatch(
+          notifierShowAction({
+            id: notifierId,
+            text: notifierSuccessText,
+            icon: 'checked',
+            type: 'success',
+          }),
+        );
       if (updateAvatar) {
         refreshSelfAvatarUniqueKey();
       }

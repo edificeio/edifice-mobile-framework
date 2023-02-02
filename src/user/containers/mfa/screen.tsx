@@ -346,7 +346,7 @@ export default connect(
       dispatch(checkVersionThenLogin(false, credentials));
     },
     onUpdateProfile(updatedProfileValues: IUpdatableProfileValues) {
-      dispatch(profileUpdateAction(updatedProfileValues));
+      dispatch(profileUpdateAction(updatedProfileValues, false, false));
     },
     dispatch,
   }),
