@@ -36,6 +36,7 @@ export enum LoginFlowErrorType {
   MUST_CHANGE_PASSWORD = 'must-change-password',
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
   MUST_VERIFY_EMAIL = 'must-verify-email',
+  MUST_VERIFY_MOBILE = 'must-verify-mobile',
 }
 
 export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
@@ -184,6 +185,10 @@ export function loginAction(
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
         throw err;
+      } else if (requirements?.needRevalidateMobile) {
+        const err = new Error('[loginAction]: User must verify mobile.');
+        (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
+        throw err;
       } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
         try {
@@ -311,6 +316,9 @@ export function loginAction(
         routeToGo = 'ChangePassword';
       } else if ((err as any).type === LoginFlowErrorType.MUST_REVALIDATE_TERMS) {
         routeToGo = 'RevalidateTerms';
+        routeParams = { credentials };
+      } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_MOBILE) {
+        routeToGo = 'UserMobile';
         routeParams = { credentials };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
         routeToGo = 'UserEmail';
