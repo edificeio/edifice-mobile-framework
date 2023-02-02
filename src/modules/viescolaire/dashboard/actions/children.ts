@@ -1,6 +1,9 @@
 import { Dispatch } from 'redux';
 
-import { competencesDevoirsActionsCreators, competencesMoyennesActionsCreators } from '~/modules/viescolaire/competences/actions';
+import {
+  competencesDevoirsActionsCreators,
+  competencesMoyennesActionsCreators,
+} from '~/framework/modules/viescolaire/competences/actions';
 import { dataActions as CoursesActions } from '~/modules/viescolaire/dashboard/actions/courses';
 import {
   periodsDataActions as periodActions,

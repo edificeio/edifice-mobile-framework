@@ -4,12 +4,12 @@ import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
+import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
+import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/modules/viescolaire/competences/actions';
-import competencesConfig from '~/modules/viescolaire/competences/moduleConfig';
-import { IDevoirsMatieres, ILevel } from '~/modules/viescolaire/competences/reducer';
 import { fetchChildrenGroupsAction } from '~/modules/viescolaire/dashboard/actions/childrenGroups';
 import { fetchPersonnelListAction } from '~/modules/viescolaire/dashboard/actions/personnel';
 import { fetchSubjectListAction } from '~/modules/viescolaire/dashboard/actions/subjects';
