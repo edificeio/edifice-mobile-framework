@@ -12,12 +12,12 @@ import { Platform } from 'react-native';
 
 import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Picture, PictureProps } from '~/framework/components/picture';
+import { TextSizeStyle } from '~/framework/components/text';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import { UI_SIZES } from '../components/constants';
-import { Picture, PictureProps } from '../components/picture';
-import { TextSizeStyle } from '../components/text';
-import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '../util/moduleTool';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { tabModules } from './tabModules';

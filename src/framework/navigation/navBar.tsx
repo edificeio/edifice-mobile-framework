@@ -8,11 +8,10 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
+import { NamedSVG } from '~/framework/components/picture';
+import { SmallInverseText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
-
-import { UI_SIZES, genericHitSlop } from '../components/constants';
-import { NamedSVG } from '../components/picture';
-import { SmallInverseText, TextFontStyle } from '../components/text';
 
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;

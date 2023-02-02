@@ -22,13 +22,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
+import { forgotAction } from '~/framework/modules/auth/actions';
+import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { ValidatorBuilder } from '~/utils/form';
-
-import { forgotAction } from '../actions';
-import { AuthRouteNames, IAuthNavigationParams } from '../navigation';
 
 // TYPES ---------------------------------------------------------------------------
 

@@ -8,13 +8,12 @@ import type { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import { PageView } from '~/framework/components/page';
 import type { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import DropdownSelector from '~/framework/modules/pronote/components/dropdown-selector';
+import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
+import redirect from '~/framework/modules/pronote/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import type { IEntcoreApp } from '~/framework/util/moduleTool';
-
-import { getSession } from '../../auth/reducer';
-import DropdownSelector from '../components/dropdown-selector';
-import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
-import redirect from '../service/redirect';
 
 export interface IConnectorSelectorScreenDataProps {
   session?: ISession;

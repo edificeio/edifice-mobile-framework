@@ -4,19 +4,19 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
+import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
+import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
+import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
+import PlatformSelectScreen from '~/framework/modules/auth/screens/PlatformSelectScreen';
+import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
+import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
+import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
+import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
+import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { AuthRouteNames, IAuthNavigationParams } from '.';
-import ActivationScreen from '../screens/ActivationScreen';
-import ForgotScreen from '../screens/ForgotScreen';
-import LoginWayfScreen from '../screens/LoginWayfScreen';
-import PlatformSelectScreen from '../screens/PlatformSelectScreen';
-import RevalidateTermsScreen from '../screens/RevalidateTermsScreen';
-import WayfScreen from '../screens/WayfScreen';
-import ChangePasswordScreen from '../screens/change-password';
-import LoginHomeScreen from '../screens/login-home';
-import OnboardingScreen from '../screens/onboarding';
 
 const Stack = getTypedRootStack<IAuthNavigationParams>();
 

@@ -1,4 +1,4 @@
-import { ISession } from '../auth/model';
+import { ISession } from '~/framework/modules/auth/model';
 
 export const timelineNotificationReport = 'org.entcore.timeline.controllers.TimelineController|reportNotification';
 

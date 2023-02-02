@@ -16,20 +16,19 @@ import ScrollView from '~/framework/components/scrollView';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import type { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { navBarOptions } from '~/framework/navigation/navBar';
-import { displayDate } from '~/framework/util/date';
-import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
-import { splitWords } from '~/framework/util/string';
-
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
   formatCarnetDeBordCompetencesValue,
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
-} from '../model/carnet-de-bord';
-import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
-import redirect from '../service/redirect';
+} from '~/framework/modules/pronote/model/carnet-de-bord';
+import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
+import redirect from '~/framework/modules/pronote/service/redirect';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { displayDate } from '~/framework/util/date';
+import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
+import { splitWords } from '~/framework/util/string';
 
 export interface CarnetDeBordDetailsScreenDataProps {
   session?: ISession;

@@ -17,6 +17,8 @@ import { PageView, pageGutterSize } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
+import { ISession } from '~/framework/modules/auth/model';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
@@ -25,6 +27,7 @@ import {
 import { TimelineFlashMessage } from '~/framework/modules/timelinev2/components/TimelineFlashMessage';
 import { TimelineNotification } from '~/framework/modules/timelinev2/components/TimelineNotification';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { ITimelineNavigationParams } from '~/framework/modules/timelinev2/navigation';
 import { IEntcoreFlashMessage, IFlashMessages_State } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { INotifications_State } from '~/framework/modules/timelinev2/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
@@ -42,10 +45,6 @@ import {
   defaultNotificationActionStack,
   handleNotificationAction,
 } from '~/framework/util/notifications/routing';
-
-import { ISession } from '../../auth/model';
-import { getState as getAuthState } from '../../auth/reducer';
-import { ITimelineNavigationParams } from '../navigation';
 
 // TYPES ==========================================================================================
 

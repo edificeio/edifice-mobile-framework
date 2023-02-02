@@ -24,11 +24,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
-import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
-import { Platform } from '~/framework/util/appConf';
-import { tryAction } from '~/framework/util/redux/actions';
-
-import { ILoginResult, activateAccountAction } from '../actions';
+import { ILoginResult, activateAccountAction } from '~/framework/modules/auth/actions';
 import {
   ActivationFormModel,
   InputEmail,
@@ -36,10 +32,13 @@ import {
   InputPasswordConfirm,
   InputPhone,
   ValueChangeArgs,
-} from '../components/ActivationForm';
-import { IActivationError, IActivationPayload, LegalUrls } from '../model';
-import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigation';
-import { getState as getAuthState } from '../reducer';
+} from '~/framework/modules/auth/components/ActivationForm';
+import { IActivationError, IActivationPayload, LegalUrls } from '~/framework/modules/auth/model';
+import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
+import { Platform } from '~/framework/util/appConf';
+import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ---------------------------------------------------------------------------
 

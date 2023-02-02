@@ -13,14 +13,14 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { CaptionText, SmallText } from '~/framework/components/text';
+import { loginAction, markLoginErrorTimestampAction } from '~/framework/modules/auth/actions';
+import { AuthRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
 import { tryAction } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 
-import { loginAction, markLoginErrorTimestampAction } from '../../actions';
-import { AuthRouteNames, redirectLoginNavAction } from '../../navigation';
-import { getState as getAuthState } from '../../reducer';
 import styles from './styles';
 import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginHomeScreenState } from './types';
 

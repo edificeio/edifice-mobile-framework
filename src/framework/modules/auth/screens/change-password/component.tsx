@@ -10,20 +10,17 @@ import { IGlobalState } from '~/app/store';
 import AlertCard from '~/framework/components/alert';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { KeyboardPageView } from '~/framework/components/page';
 import { BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { changePasswordAction, loginAction, logoutAction } from '~/framework/modules/auth/actions';
+import { IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
+import { getAuthNavigationState, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
-import { Loading } from '~/ui/Loading';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import ChangePasswordFormModel from '~/user/components/change-password/form-model';
-import { ContextState, SubmitState } from '~/utils/SubmitState';
 import { ValueChange, ValueChangeArgs } from '~/utils/form';
 
-import { changePasswordAction, loginAction, logoutAction } from '../../actions';
-import { IChangePasswordError, createChangePasswordError } from '../../model';
-import { getAuthNavigationState, redirectLoginNavAction } from '../../navigation';
-import { getState as getAuthState } from '../../reducer';
 import styles from './styles';
 import {
   ChangePasswordScreenDispatchProps,

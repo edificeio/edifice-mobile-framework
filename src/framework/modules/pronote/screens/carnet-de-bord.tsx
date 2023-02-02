@@ -18,13 +18,8 @@ import type { PictureProps } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import type { ISession } from '~/framework/modules/auth/model';
-import { navBarOptions } from '~/framework/navigation/navBar';
-import { displayDate } from '~/framework/util/date';
-import { tryAction } from '~/framework/util/redux/actions';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
-
-import { getSession } from '../../auth/reducer';
-import { loadCarnetDeBordAction } from '../actions/carnet-de-bord';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { loadCarnetDeBordAction } from '~/framework/modules/pronote/actions/carnet-de-bord';
 import {
   CarnetDeBordSection,
   ICarnetDeBord,
@@ -33,11 +28,15 @@ import {
   formatCarnetDeBordReleveDeNotesDevoirNoteBareme,
   formatCarnetDeBordVieScolaireType,
   getSummaryItem,
-} from '../model/carnet-de-bord';
-import moduleConfig from '../module-config';
-import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
-import { ICarnetDeBordStateData } from '../reducer/carnet-de-bord';
-import redirect from '../service/redirect';
+} from '~/framework/modules/pronote/model/carnet-de-bord';
+import moduleConfig from '~/framework/modules/pronote/module-config';
+import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
+import { ICarnetDeBordStateData } from '~/framework/modules/pronote/reducer/carnet-de-bord';
+import redirect from '~/framework/modules/pronote/service/redirect';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { displayDate } from '~/framework/util/date';
+import { tryAction } from '~/framework/util/redux/actions';
+import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 export interface CarnetDeBordScreenDataProps {
   session?: ISession;

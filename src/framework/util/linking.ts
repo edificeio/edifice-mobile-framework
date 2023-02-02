@@ -5,10 +5,9 @@
 import I18n from 'i18n-js';
 import { Alert, Linking } from 'react-native';
 
+import { ISession } from '~/framework/modules/auth/model';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { urlSigner } from '~/infra/oauth';
-
-import { ISession } from '../modules/auth/model';
-import { assertSession } from '../modules/auth/reducer';
 
 export interface OpenUrlCustomLabels {
   title?: string;

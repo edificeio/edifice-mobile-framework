@@ -1,11 +1,10 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { ILoginResult, loginAction, logoutAction } from '~/framework/modules/auth/actions';
+import type { IAuthContext, IAuthCredentials, IChangePasswordPayload, ISession } from '~/framework/modules/auth/model';
+import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import type { Platform } from '~/framework/util/appConf';
 import type { IChangePasswordModel } from '~/user/actions/changePassword';
-
-import { ILoginResult, loginAction, logoutAction } from '../../actions';
-import type { IAuthContext, IAuthCredentials, IChangePasswordPayload, ISession } from '../../model';
-import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
 
 export type IFields = 'oldPassword' | 'newPassword' | 'confirm';
 

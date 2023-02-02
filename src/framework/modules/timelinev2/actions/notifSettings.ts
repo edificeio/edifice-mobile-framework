@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { assertSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import * as notifDefinitionsStateHandler from '~/framework/modules/timelinev2/reducer/notifDefinitions';
@@ -15,7 +16,6 @@ import {
 import { pushNotifsService } from '~/framework/modules/timelinev2/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
-import { assertSession } from '../../auth/reducer';
 
 import { loadNotificationsDefinitionsAction } from './notifDefinitions';
 

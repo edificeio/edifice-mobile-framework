@@ -5,13 +5,12 @@ import { CommonActions, NavigationProp, ParamListBase, StackRouter } from '@reac
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 
+import { ILoginResult } from '~/framework/modules/auth/actions';
+import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '~/framework/modules/auth/model';
+import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import type { LoginHomeScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
-
-import { ILoginResult } from '../actions';
-import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '../model';
-import type { ChangePasswordScreenNavParams } from '../screens/change-password/types';
-import type { LoginHomeScreenNavParams } from '../screens/login-home/types';
 
 export enum AuthRouteNames {
   loginHome = 'LoginHome',

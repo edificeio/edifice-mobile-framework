@@ -1,8 +1,8 @@
 import { CombinedState, combineReducers } from 'redux';
 
 import { IGlobalState, Reducers } from '~/app/store';
+import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 
-import moduleConfig from '../moduleConfig';
 import flashMessages, { IFlashMessages_State } from './flashMessages';
 import notifDefinitions, { INotifDefinitions_State } from './notifDefinitions';
 import { INotificationFilter } from './notifDefinitions/notifFilters';

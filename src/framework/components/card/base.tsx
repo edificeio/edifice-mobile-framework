@@ -2,8 +2,7 @@ import styled from '@emotion/native';
 import { ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-
-import { UI_SIZES } from '../constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export const cardPaddingV = UI_SIZES.spacing.medium;
 export const cardPaddingH = UI_SIZES.spacing.medium;

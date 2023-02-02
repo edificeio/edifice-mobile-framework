@@ -14,13 +14,12 @@ import { PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { ITimelineNavigationParams } from '~/framework/modules/timelinev2/navigation';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
 import { NavBarAction } from '~/framework/navigation/navBar';
 import { shallowEqual } from '~/framework/util/object';
-
-import { ITimelineNavigationParams } from '../navigation';
 
 // TYPES ==========================================================================================
 

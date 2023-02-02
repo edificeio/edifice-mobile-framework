@@ -3,7 +3,7 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
-import { IMedia } from '../../util/media';
+import { IMedia } from '~/framework/util/media';
 
 export enum ModalsRouteNames {
   Pdf = '$pdf',

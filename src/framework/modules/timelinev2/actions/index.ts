@@ -3,6 +3,7 @@
  */
 import { ThunkDispatch } from 'redux-thunk';
 
+import { assertSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { actions as flashMessagesActions } from '~/framework/modules/timelinev2/reducer/flashMessages';
@@ -13,7 +14,6 @@ import { flashMessagesService, notificationsService } from '~/framework/modules/
 
 import { loadNotificationsDefinitionsAction } from './notifDefinitions';
 import { loadNotificationFiltersSettingsAction } from './notifSettings';
-import { assertSession } from '../../auth/reducer';
 
 const $prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   let state = moduleConfig.getState(getState()) as ITimeline_State;

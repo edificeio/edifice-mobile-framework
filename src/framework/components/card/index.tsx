@@ -14,15 +14,15 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
+import { Badge } from '~/framework/components/badge';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { Icon, NamedSVG, Picture, PictureProps } from '~/framework/components/picture';
+import { BodyText, CaptionItalicText, CaptionText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
-import { Badge } from '../badge';
-import { UI_SIZES, UI_STYLES } from '../constants';
-import { Icon, NamedSVG, Picture, PictureProps } from '../picture';
-import { BodyText, CaptionItalicText, CaptionText, TextFontStyle, TextSizeStyle } from '../text';
 import {
   CardWithoutPadding,
   TouchCardWithoutPadding,

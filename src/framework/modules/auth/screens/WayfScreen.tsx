@@ -17,13 +17,12 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
+import { loginAction } from '~/framework/modules/auth/actions';
+import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Trackers } from '~/framework/util/tracker';
 import { IOAuthToken, OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, initOAuth2 } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
-
-import { loginAction } from '../actions';
-import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '../navigation';
-import { IAuthState, getState as getAuthState } from '../reducer';
 
 enum WAYFPageMode {
   EMPTY = 0,

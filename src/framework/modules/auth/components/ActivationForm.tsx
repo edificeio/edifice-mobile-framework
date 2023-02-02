@@ -3,10 +3,9 @@ import * as React from 'react';
 import { TextInput } from 'react-native';
 
 import theme from '~/app/theme';
+import { IActivationPayload } from '~/framework/modules/auth/model';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
-
-import { IActivationPayload } from '../model';
 
 export { ValueChangeArgs };
 //

@@ -1,7 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '../module-config';
-import type { NewsDetailsScreenNavParams } from '../screens/news-details';
+import moduleConfig from '~/framework/modules/news/module-config';
+import type { NewsDetailsScreenNavParams } from '~/framework/modules/news/screens/news-details';
 
 export const newsRouteNames = {
   newsDetails: `${moduleConfig.routeName}/news-details` as 'newsDetails',

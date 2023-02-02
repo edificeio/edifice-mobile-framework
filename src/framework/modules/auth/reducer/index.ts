@@ -1,10 +1,9 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
-import createReducer from '~/framework/util/redux/reducerFactory';
-
 // import { cacheActiveSession } from '~/framework/util/session';
-import { ILoginResult } from '../actions';
-import type { AuthErrorCode, ISession, LegalUrls } from '../model';
-import moduleConfig from '../moduleConfig';
+import { ILoginResult } from '~/framework/modules/auth/actions';
+import type { AuthErrorCode, ISession, LegalUrls } from '~/framework/modules/auth/model';
+import moduleConfig from '~/framework/modules/auth/moduleConfig';
+import createReducer from '~/framework/util/redux/reducerFactory';
 
 // State type
 export interface IAuthState {

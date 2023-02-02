@@ -4,7 +4,7 @@
 import { CommonActions } from '@react-navigation/native';
 import I18n from 'i18n-js';
 
-import { ISession } from '../auth/model';
+import { ISession } from '~/framework/modules/auth/model';
 
 // Timeline workflow ==============================================================================
 

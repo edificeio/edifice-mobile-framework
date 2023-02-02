@@ -9,12 +9,11 @@ import type { ThunkDispatch } from 'redux-thunk';
 import type { IGlobalState } from '~/AppStore';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import type { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
+import redirect from '~/framework/modules/pronote/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import type { IEntcoreApp } from '~/framework/util/moduleTool';
-
-import { getSession } from '../../auth/reducer';
-import { PronoteNavigationParams, pronoteRouteNames } from '../navigation';
-import redirect from '../service/redirect';
 
 export interface IConnectorRedirectScreenDataProps {
   session?: ISession;

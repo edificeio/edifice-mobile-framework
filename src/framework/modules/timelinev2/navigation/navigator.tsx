@@ -1,15 +1,15 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
+import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import TimelineFiltersScreen, { computeNavBar } from '~/framework/modules/timelinev2/screens/TimelineFiltersScreen';
+import TimelineScreen from '~/framework/modules/timelinev2/screens/TimelineScreen';
 import { navigate } from '~/framework/navigation/helper';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { NavBarAction } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { ITimelineNavigationParams, timelineRouteNames } from '.';
-import moduleConfig from '../moduleConfig';
-import TimelineFiltersScreen, { computeNavBar } from '../screens/TimelineFiltersScreen';
-import TimelineScreen from '../screens/TimelineScreen';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ITimelineNavigationParams>(moduleConfig.name, Stack => (

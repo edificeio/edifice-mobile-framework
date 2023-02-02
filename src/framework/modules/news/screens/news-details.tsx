@@ -17,18 +17,17 @@ import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
+import { getNewsDetailsAction } from '~/framework/modules/news/actions';
+import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
+import type { INewsNotification } from '~/framework/modules/news/notif-handler';
+import type { INews, INewsComment } from '~/framework/modules/news/reducer';
+import { newsUriCaptureFunction } from '~/framework/modules/news/service';
 import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
-import { getNewsDetailsAction } from '~/modules/news/actions';
-import type { INews, INewsComment } from '~/modules/news/reducer';
-import { newsUriCaptureFunction } from '~/modules/news/service';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-
-import { NewsNavigationParams, newsRouteNames } from '../navigation';
-import type { INewsNotification } from '../notif-handler';
 
 export interface INewsDetailsScreenDataProps {
   // Add data props here

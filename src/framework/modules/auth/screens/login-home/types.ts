@@ -1,11 +1,10 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import type { ILoginResult, loginAction, markLoginErrorTimestampAction } from '~/framework/modules/auth/actions';
+import type { AuthErrorCode } from '~/framework/modules/auth/model';
+import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import type { IAuthState } from '~/framework/modules/auth/reducer';
 import type { Platform } from '~/framework/util/appConf';
-
-import type { ILoginResult, loginAction, markLoginErrorTimestampAction } from '../../actions';
-import type { AuthErrorCode } from '../../model';
-import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
-import type { IAuthState } from '../../reducer';
 
 export interface LoginHomeScreenProps {
   // No public props

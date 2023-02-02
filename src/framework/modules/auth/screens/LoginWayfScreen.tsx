@@ -10,9 +10,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
+import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { Trackers } from '~/framework/util/tracker';
-
-import { AuthRouteNames, IAuthNavigationParams } from '../navigation';
 
 interface ILoginWayfScreenProps extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf> {}
 

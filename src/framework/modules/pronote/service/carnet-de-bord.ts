@@ -5,11 +5,8 @@
 import { XMLParser } from 'fast-xml-parser';
 import moment from 'moment';
 
-import { IEntcoreApp } from '~/framework/util/moduleTool';
-import { fetchWithCache } from '~/infra/fetchWithCache';
-
-import { ISession, UserChildrenFlattened } from '../../auth/model';
-import { assertSession } from '../../auth/reducer';
+import { ISession, UserChildrenFlattened } from '~/framework/modules/auth/model';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import {
   ICarnetDeBord,
   ICarnetDeBordCahierDeTextesTravailAFaire,
@@ -26,7 +23,10 @@ import {
   IPronoteConnectorInfo,
   PronoteCdbInitError,
   sortCarnetDeBordItems,
-} from '../model/carnet-de-bord';
+} from '~/framework/modules/pronote/model/carnet-de-bord';
+import { IEntcoreApp } from '~/framework/util/moduleTool';
+import { fetchWithCache } from '~/infra/fetchWithCache';
+
 import redirect from './redirect';
 
 export type ICarnetDeBordBackend = (IPronoteConnectorInfo & {

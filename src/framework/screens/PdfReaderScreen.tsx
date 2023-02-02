@@ -4,11 +4,9 @@ import { StyleSheet } from 'react-native';
 import Pdf from 'react-native-pdf';
 
 import theme from '~/app/theme';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-
-import { EmptyConnectionScreen } from '../components/emptyConnectionScreen';
 
 export interface IBackdropPdfReaderState {
   error: boolean;

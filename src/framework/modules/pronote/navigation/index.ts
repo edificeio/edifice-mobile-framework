@@ -1,10 +1,10 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '../module-config';
-import type { CarnetDeBordScreenNavParams as PronoteCarnetDeBordScreenNavParams } from '../screens/carnet-de-bord';
-import type { CarnetDeBordDetailsScreenNavigationParams as PronoteCarnetDeBordDetailsScreenNavParams } from '../screens/carnet-de-bord-details';
-import type { IConnectorRedirectScreenNavigationParams as PronoteConnectorRedirectScreenNavParams } from '../screens/connector-redirect';
-import type { IConnectorSelectorScreenNavParams as PronoteConnectorSelectorScreenNavParams } from '../screens/connector-selector';
+import moduleConfig from '~/framework/modules/pronote/module-config';
+import type { CarnetDeBordScreenNavParams as PronoteCarnetDeBordScreenNavParams } from '~/framework/modules/pronote/screens/carnet-de-bord';
+import type { CarnetDeBordDetailsScreenNavigationParams as PronoteCarnetDeBordDetailsScreenNavParams } from '~/framework/modules/pronote/screens/carnet-de-bord-details';
+import type { IConnectorRedirectScreenNavigationParams as PronoteConnectorRedirectScreenNavParams } from '~/framework/modules/pronote/screens/connector-redirect';
+import type { IConnectorSelectorScreenNavParams as PronoteConnectorSelectorScreenNavParams } from '~/framework/modules/pronote/screens/connector-selector';
 
 export const pronoteRouteNames = {
   carnetDeBord: `${moduleConfig.routeName}/carnet-de-bord` as 'carnetDeBord',

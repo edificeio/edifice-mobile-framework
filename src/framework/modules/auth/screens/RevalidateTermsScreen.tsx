@@ -16,14 +16,18 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView, PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { ILoginResult, loginAction, logoutAction } from '~/framework/modules/auth/actions';
+import { ISession, LegalUrls } from '~/framework/modules/auth/model';
+import {
+  AuthRouteNames,
+  IAuthNavigationParams,
+  getAuthNavigationState,
+  redirectLoginNavAction,
+} from '~/framework/modules/auth/navigation';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { revalidateTerms } from '~/framework/modules/auth/service';
 import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
 import { tryAction } from '~/framework/util/redux/actions';
-
-import { ILoginResult, loginAction, logoutAction } from '../actions';
-import { ISession, LegalUrls } from '../model';
-import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState, redirectLoginNavAction } from '../navigation';
-import { getState as getAuthState } from '../reducer';
-import { revalidateTerms } from '../service';
 
 // TYPES ==========================================================================================
 

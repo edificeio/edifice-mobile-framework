@@ -1,13 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
+import moduleConfig from '~/framework/modules/myAppMenu/moduleConfig';
+import { myAppsModules } from '~/framework/modules/myAppMenu/myAppsModules';
+import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
 
 import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
-import moduleConfig from '../moduleConfig';
-import { myAppsModules } from '../myAppsModules';
-import MyAppsHomeScreen from '../screens/MyAppsHomeScreen';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
   const modules = new NavigableModuleArray(...myAppsModules.get().filterAvailables(apps, widgets));

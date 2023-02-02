@@ -1,9 +1,10 @@
 import React from 'react';
 import { TextStyle, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
 
-import { UI_SIZES, getScaleHeight } from '../constants';
-import { Picture, PictureProps } from '../picture';
-import { SmallText } from '../text';
+import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
+import { Picture, PictureProps } from '~/framework/components/picture';
+import { SmallText } from '~/framework/components/text';
+
 import { Card, CardWithoutPadding, TouchCard } from './base';
 
 export type PictureCardProps = {

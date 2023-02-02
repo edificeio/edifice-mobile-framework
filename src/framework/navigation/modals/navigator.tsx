@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import CarouselScreen from '~/framework/components/carousel';
 import { computeNavBar } from '~/framework/components/carousel/screen';
+import { getTypedRootStack } from '~/framework/navigation/navigators';
 import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
-import { getTypedRootStack } from '../navigators';
 
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (

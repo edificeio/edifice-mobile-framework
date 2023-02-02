@@ -6,8 +6,8 @@ import WebView from 'react-native-webview';
 
 import theme from '~/app/theme';
 import { PageView } from '~/framework/components/page';
+import { NamedSVG } from '~/framework/components/picture';
 
-import { NamedSVG } from '../../picture';
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
