@@ -12,13 +12,13 @@ import { BodyBoldText, SmallInverseText, SmallText } from '~/framework/component
 import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
+import edtConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { AsyncState } from '~/framework/util/redux/async';
 import { IHomeworkByDateList } from '~/modules/viescolaire/dashboard/components/DashboardRelative';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { HomeworkItem } from '~/modules/viescolaire/diary/components/Items';
 import diaryConfig from '~/modules/viescolaire/diary/moduleConfig';
 import { IHomeworkMap } from '~/modules/viescolaire/diary/reducer';
-import edtConfig from '~/modules/viescolaire/edt/moduleConfig';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/diary';
 

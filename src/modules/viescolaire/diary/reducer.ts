@@ -3,9 +3,9 @@
  */
 import { combineReducers } from 'redux';
 
+import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/viescolaire/diary/moduleConfig';
-import { ISlot } from '~/modules/viescolaire/edt/reducer';
 
 // Types
 

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
+import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/dashboard/actions/courses';
@@ -17,7 +18,6 @@ import { fetchDiaryHomeworksAction, fetchDiarySessionsAction, fetchDiarySlotsAct
 import DiaryTeacherTimetable from '~/modules/viescolaire/diary/components/DiaryTimetableTeachers';
 import moduleConfig from '~/modules/viescolaire/diary/moduleConfig';
 import { IHomeworkMap, ISession } from '~/modules/viescolaire/diary/reducer';
-import { ISlot } from '~/modules/viescolaire/edt/reducer';
 
 export type TimetableProps = {
   courses: ICourseListState;

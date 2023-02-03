@@ -3,12 +3,12 @@
  */
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
+import { ISlot } from '~/framework/modules/viescolaire/edt/model';
+import { edtService } from '~/framework/modules/viescolaire/edt/service';
 import { getUserSession } from '~/framework/util/session';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
 import { IHomeworkMap, ISession, actionTypes } from '~/modules/viescolaire/diary/reducer';
 import { diaryService } from '~/modules/viescolaire/diary/service';
-import { ISlot } from '~/modules/viescolaire/edt/reducer';
-import { edtService } from '~/modules/viescolaire/edt/service';
 
 /**
  * Fetch the homeworks from a structure.
