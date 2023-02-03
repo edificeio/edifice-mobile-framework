@@ -17,6 +17,7 @@ export interface ILoginPageEventProps {
   onSkipVersion(versionContext: IVersionContext): void;
   onUpdateVersion(versionContext: IVersionContext): void;
   onLogin(userlogin: string, password: string, rememberMe: boolean): void;
+  onCancel(): void;
 }
 
 export interface ILoginPageOtherProps {

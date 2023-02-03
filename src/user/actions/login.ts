@@ -12,7 +12,7 @@ import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { LegalUrls } from '~/user/reducers/auth';
-import { IEntcoreEmailValidationInfos, IUserRequirements, languages, userService } from '~/user/service';
+import { IEntcoreEmailValidationInfos, IUserRequirements, Languages, userService } from '~/user/service';
 
 import { actionTypeLegalDocuments } from './actionTypes/legalDocuments';
 import {
@@ -35,6 +35,7 @@ export enum LoginFlowErrorType {
   MUST_CHANGE_PASSWORD = 'must-change-password',
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
   MUST_VERIFY_EMAIL = 'must-verify-email',
+  MUST_VERIFY_MOBILE = 'must-verify-mobile',
 }
 export type LoginErrorType = OAuth2ErrorCode | LoginFlowErrorType;
 
@@ -111,7 +112,7 @@ export function loginAction(
         cookies: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cookies')),
       };
       try {
-        const authTranslationKeys = await userService.getAuthTranslationKeys(I18n.locale as languages);
+        const authTranslationKeys = await userService.getAuthTranslationKeys(I18n.locale as Languages);
         if (authTranslationKeys) {
           legalUrls.userCharter = urlSigner.getAbsoluteUrl(
             authTranslationKeys['auth.charter'] || I18n.t('user.legalUrl.userCharter'),
@@ -181,6 +182,10 @@ export function loginAction(
         const err = new Error('[loginAction]: User must change password.');
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
+        throw err;
+      } else if (requirements?.needRevalidateMobile) {
+        const err = new Error('[loginAction]: User must verify mobile.');
+        (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
         throw err;
       } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
@@ -309,6 +314,9 @@ export function loginAction(
         routeToGo = 'ChangePassword';
       } else if ((err as any).type === LoginFlowErrorType.MUST_REVALIDATE_TERMS) {
         routeToGo = 'RevalidateTerms';
+        routeParams = { credentials };
+      } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_MOBILE) {
+        routeToGo = 'UserMobile';
         routeParams = { credentials };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
         routeToGo = 'UserEmail';

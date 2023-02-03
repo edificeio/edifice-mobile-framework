@@ -98,6 +98,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     return (
       <PageContainer>
         <Notifier id="profileOne" />
+        <Notifier id="profileTwo" />
         <KeyboardAvoidingView
           style={styles.profilePage}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}

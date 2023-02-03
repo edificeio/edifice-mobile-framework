@@ -317,7 +317,16 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
       // Upload post images (if added)
       let uploadedPostImages: undefined | SyncedFile[];
       if (images.length > 0) {
-        uploadedPostImages = await handleUploadPostImages(images);
+        try {
+          uploadedPostImages = await handleUploadPostImages(images);
+        } catch (e) {
+          if (e.response?.body === '{"error":"file.too.large"}') {
+            Alert.alert('', I18n.t('fullStorage'));
+          } else {
+            Alert.alert('', I18n.t('blog-post-upload-attachments-error-text'));
+          }
+          throw new Error('handled');
+        }
       }
 
       // Translate entered content to httml
@@ -354,12 +363,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         }),
       );
     } catch (e) {
-      if (e.response.body === '{"error":"file.too.large"}') {
-        Toast.show(I18n.t('fullStorage'), {
-          position: Toast.position.BOTTOM,
-          ...UI_ANIMATIONS.toast,
-        });
-      }
       const { dispatch } = this.props;
       dispatch(
         notifierShowAction({
@@ -369,6 +372,9 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           type: 'error',
         }),
       );
+      if ((e as Error).message && (e as Error).message !== 'handled') {
+        Alert.alert('', I18n.t('blog-post-publish-error-text'));
+      }
     }
   }
 }

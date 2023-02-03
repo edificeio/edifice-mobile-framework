@@ -2,6 +2,7 @@ import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import * as ReactIs from 'react-is';
+import { ActivityIndicator } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -39,19 +40,28 @@ export const LineButton = ({
   first = false,
   last = false,
   alone = false,
+  disabled = false,
+  loading = false,
 }: {
   onPress: () => any;
   title: string;
   first?: boolean;
   last?: boolean;
   alone?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
 }) => {
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={[styles.container, first ? styles.containerFirst : last ? styles.containerLast : alone ? styles.containerAlone : null]}
       onPress={() => onPress()}>
       <SmallText style={styles.lineButtonText}>{I18n.t(title)}</SmallText>
-      <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.lineButtonIcon} />
+      {loading ? (
+        <ActivityIndicator color={theme.palette.primary.regular} />
+      ) : (
+        <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.lineButtonIcon} />
+      )}
     </TouchableOpacity>
   );
 };

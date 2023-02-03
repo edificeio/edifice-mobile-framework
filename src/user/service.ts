@@ -30,14 +30,25 @@ export interface IEntcoreEmailValidationInfos {
 }
 
 export interface IEntcoreEmailValidationState {
-  state: 'unchecked' | 'outdated' | 'pending' | 'valid'; // Validation state
-  valid: string; // Last known valid email address (or empty string)
   pending?: string; // (optional) Current pending (or outdated) email address being checked
-  ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
+  state: 'unchecked' | 'outdated' | 'pending' | 'valid'; // Validation state
   tries?: number; // (optional) Remaining number of times a validation code can be typed in
+  ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
+  valid: string; // Last known valid email address (or empty string)
+}
+export interface IEntcoreMFAValidationInfos {
+  state: IEntcoreMFAValidationState; // State of the current MFA code
+  type: 'sms' | 'email'; // MFA validation type
+  waitInSeconds: number; // Estimated number of seconds before code reaches cellphone or mailbox
 }
 
-export type languages = 'fr' | 'en' | 'es';
+export interface IEntcoreMFAValidationState {
+  state: 'outdated | pending | valid'; // Validation state
+  tries: number; // Number of remaining retries before code becomes outdated
+  ttl: number; // Number of seconds remaining before expiration of the code
+}
+
+export type Languages = 'fr' | 'en' | 'es';
 
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
@@ -84,6 +95,8 @@ export interface IUserRequirements {
   forceChangePassword?: boolean;
   needRevalidateEmail?: boolean;
   needRevalidateTerms?: boolean;
+  needRevalidateMobile?: boolean;
+  needMFA?: boolean;
 }
 
 class UserService {
@@ -278,13 +291,6 @@ class UserService {
     }
   }
 
-  async sendEmailVerificationCode(email: string) {
-    await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mailstate', {
-      method: 'PUT',
-      body: JSON.stringify({ email }),
-    });
-  }
-
   async verifyEmailCode(key: string) {
     try {
       await fetchJSONWithCache('/directory/user/mailstate', {
@@ -296,7 +302,34 @@ class UserService {
     }
   }
 
-  async getAuthTranslationKeys(language: languages) {
+  async sendEmailVerificationCode(email: string) {
+    await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mailstate', {
+      method: 'PUT',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async getMFAValidationInfos() {
+    try {
+      const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
+      return MFAValidationInfos;
+    } catch (e) {
+      // console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
+    }
+  }
+
+  async verifyMFACode(key: string) {
+    try {
+      await fetchJSONWithCache('/auth/user/mfa/code', {
+        method: 'POST',
+        body: JSON.stringify({ key }),
+      });
+    } catch (e) {
+      // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
+    }
+  }
+
+  async getAuthTranslationKeys(language: Languages) {
     try {
       // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
       const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/i18n`, { headers: { 'Accept-Language': language } });

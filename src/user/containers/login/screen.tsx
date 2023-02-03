@@ -17,6 +17,7 @@ import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { navigate } from '~/navigation/helpers/navHelper';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
+import { actionTypeLoginCancel } from '~/user/actions/actionTypes/login';
 import { IVersionContext, checkVersionThenLogin, updateVersionIfWanted } from '~/user/actions/version';
 import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
@@ -66,6 +67,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
 
   public componentWillUnmount(): void {
     this.blurListener?.remove();
+    this.props.onCancel();
   }
 
   changeLogin(login: string) {
@@ -266,6 +268,9 @@ const ConnectedLoginPage = connect(
     },
     onLogin: (userlogin, password, rememberMe) => {
       dispatch<any>(checkVersionThenLogin(false, { username: userlogin, password, rememberMe }));
+    },
+    onCancel: () => {
+      dispatch<any>({ type: actionTypeLoginCancel });
     },
   }),
 )(LoginPage);

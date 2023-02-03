@@ -47,7 +47,10 @@ export const UI_ANIMATIONS = {
     useNativeDriver: false,
   },
   toast: {
-    duration: 3000,
+    duration: {
+      short: 3000,
+      long: 5000,
+    },
   },
 };
 

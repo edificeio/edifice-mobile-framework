@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -27,15 +27,17 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
   const credentials = navigation.getParam('credentials');
   const defaultEmail = navigation.getParam('defaultEmail');
   const isModifyingEmail = navigation.getParam('isModifyingEmail');
+  const navBarTitle = navigation.getParam('navBarTitle');
 
-  const [isSendingCode, setIsSendingCode] = React.useState(false);
-  const [email, setEmail] = React.useState(defaultEmail || '');
-  const [emailState, setEmailState] = React.useState<EmailState>(EmailState.PRISTINE);
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [email, setEmail] = useState(defaultEmail || '');
+  const [emailState, setEmailState] = useState<EmailState>(EmailState.PRISTINE);
 
   const isEmailEmpty = isEmpty(email);
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
 
-  const navBarInfo = { title: isModifyingEmail ? I18n.t('user-email-edit') : I18n.t('user-email-verify') };
+  const title = isModifyingEmail ? navBarTitle : I18n.t('user-email-verify');
+  const navBarInfo = { title };
 
   const texts: Record<string, any> = isModifyingEmail
     ? {
@@ -62,9 +64,11 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
         return EmailState.EMAIL_ALREADY_VERIFIED;
       }
       await userService.sendEmailVerificationCode(toVerify);
-      navigation.navigate('MFA', { credentials, isModifyingEmail, email: toVerify });
+      navigation.navigate('MFA', { navBarTitle: title, credentials, isModifyingEmail, isEmailMFA: true, email: toVerify });
     } catch {
-      navigation.navigate('MFA', { credentials, isModifyingEmail, email: toVerify, connection: false });
+      Toast.show(I18n.t('common.error.text'), {
+        ...UI_ANIMATIONS.toast,
+      });
     } finally {
       setIsSendingCode(false);
     }
