@@ -123,6 +123,8 @@
   "blog.blogsEmptyScreen.title": "Aucun blog à l'horizon",
   "blog.post.needValidation": "Billet à valider",
   "blog.post.publishAction": "Publier le billet",
+  "blog-post-upload-attachments-error-text": "Erreur d'envoi des pièces jointes : verifiez votre accès à internet et que votre espace documentaire dispose d'assez d'espace libre",
+  "blog-post-publish-error-text": "Erreur lors de la publication",
   "blog.post.waitingValidation": "Billet en attente de validation",
   "blog.resourceName": "Billet de blog",
   "blog.tabName": "Blog",
