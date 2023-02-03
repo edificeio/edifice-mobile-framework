@@ -1,3 +1,4 @@
+import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IForm_State } from './reducer';
@@ -9,5 +10,5 @@ export default new NavigableModuleConfig<'form', IForm_State>({
 
   displayI18n: 'form.tabName',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'Image', source: require('ASSETS/images/logo-form.png') },
+  displayPicture: { type: 'NamedSvg', name: 'form', fill: theme.palette.complementary.purple.regular },
 });
