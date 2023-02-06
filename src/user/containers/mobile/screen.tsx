@@ -25,12 +25,11 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const { onLogout, navigation } = props;
 
   const credentials = navigation.getParam('credentials');
-  const defaultMobile = navigation.getParam('defaultMobile');
   const isModifyingMobile = navigation.getParam('isModifyingMobile');
   const navBarTitle = navigation.getParam('navBarTitle');
 
   const [isSendingCode, setIsSendingCode] = useState(false);
-  const [mobile, setMobile] = useState(defaultMobile || '');
+  const [mobile, setMobile] = useState('');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
 
   const isMobileEmpty = isEmpty(mobile);
