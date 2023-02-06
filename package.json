@@ -70,6 +70,7 @@
     "filesize": "10.0.2",
     "flat": "5.0.2",
     "global": "4.4.0",
+    "google-libphonenumber": "3.2.32",
     "hoist-non-react-statics": "3.3.2",
     "html-entities": "2.3.3",
     "i18n-js": "3.9.2",
