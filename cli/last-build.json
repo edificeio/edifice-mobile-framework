@@ -1,6 +1,6 @@
 {
   "last": "2023-02-02 18:52:20",
   "notes": "TEMP(MFA): mfa always required + true 123456\nfix(framework): MB-1142 better images placeholders when not reachable\nfix(user): MB-1079 don't notify on mail change on profile page.\nfix(user): MB-1154 show error when loginAlias already exists\nfeat(mfa): MB-1226, verify-mobile login condition\nfeat(mfa): MB-850, activate mfa\nfeat(mfa): MB-1157/MB-1158, mfa screen with animations\nchore(user): updated Languages type\nfix(auth): MB-1186, MB-1222 clear error message on back\nfeat(media-player): reduce overlay when landscape\nchore(stack): Upgrade some packages\nchore(stack): Upgrade some packages\nfeat(carousel): MB-1232, add alert privacy when try to save or share picture\nfeat(carousel): MB-965, change current menu by PopupMenu\nchore(accessibility): Accessibility clickZone style addition\nfeat(media-player): MB-1203, when its audio no hide controls after x time\nfeat(media-player): MB-1137, add overlay with icon to back\nchore(lint): Fix lint stuff\nchore(lint): Improve lint management && fix lint errors for \"cli\" folder\nfix(video): MB-1137, Fix webview orientation weird behaviors\nrelease: 1.9.2-alpha.7(1090207)",
-  "version": "1.9.2-alpha.8(1090208)",
+  "version": "1.9.3-alpha.8(1090308)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
