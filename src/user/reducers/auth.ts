@@ -144,6 +144,8 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
     case actionTypeLoginCancel:
       return {
         ...state,
+        error: '',
+        errtype: '',
         loggingIn: false,
       };
     case actionTypeLoggedOut: {

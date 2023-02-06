@@ -25,6 +25,8 @@ import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 
+import { actionTypeLoginCancel } from '../actions/actionTypes/login';
+
 enum WAYFPageMode {
   EMPTY = 0,
   ERROR = 1,
@@ -37,6 +39,7 @@ export interface IWAYFPageProps {
   auth: IUserAuthState;
   dispatch?: any;
   navigation?: any;
+  onDisplayWayf: () => void;
 }
 
 interface IWAYFPageState {
@@ -120,10 +123,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   private backActions = [
     // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
     () => {
+      this.props.dispatch({ type: actionTypeLoginCancel });
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.ERROR: Go to top of wayf navigation stack
     () => {
+      this.props.dispatch({ type: actionTypeLoginCancel });
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.LOADING: Nothing to do
@@ -309,6 +314,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   // Display WebView
   displayWebview() {
     // Clear cookies and then go to WebView mode
+    this.props.onDisplayWayf(); // will remove login error from reducer
     this.clearDatas(() => this.setState({ dropdownOpened: false, mode: WAYFPageMode.WEBVIEW }));
   }
 
@@ -455,7 +461,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     //   - WAYF redirects to web standard login page
     const url = request.url;
     if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
-      if (!this.samlResponse) this.props.navigation.navigate('LoginHome');
+      if (!this.samlResponse) this.props.navigation.replace('LoginHome');
       return false;
     }
     return true;
@@ -483,10 +489,17 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   }
 }
 
-const ConnectedWAYFPage = connect((state: any, props: any): IWAYFPageProps => {
-  return {
-    auth: getAuthState(state),
-  };
-})(WAYFPage);
+const ConnectedWAYFPage = connect(
+  (state: any, props: any): Omit<IWAYFPageProps, 'onDisplayWayf'> => {
+    return {
+      auth: getAuthState(state),
+    };
+  },
+  (dispatch): Omit<IWAYFPageProps, 'auth'> => ({
+    onDisplayWayf: () => {
+      dispatch<any>({ type: actionTypeLoginCancel });
+    },
+  }),
+)(WAYFPage);
 
 export default withViewTracking('auth/WAYF')(ConnectedWAYFPage);
