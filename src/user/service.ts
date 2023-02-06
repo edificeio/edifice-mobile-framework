@@ -36,6 +36,24 @@ export interface IEntcoreEmailValidationState {
   ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
   valid: string; // Last known valid email address (or empty string)
 }
+
+export interface IEntcoreMobileValidationInfos {
+  displayName: string; // User display name
+  firstName: string; // User first name
+  lastName: string; // User last name
+  mobile: string; // Current mobile of the user (possibly not verified)
+  mobileState?: IEntcoreMobileValidationState | null; // State of the current mobile
+  waitInSeconds: number; // Estimated number of seconds before code reaches cellphone
+}
+
+export interface IEntcoreMobileValidationState {
+  pending?: string; // (optional) Current pending (or outdated) mobile being checked
+  state: 'outdated' | 'pending' | 'valid'; // Validation state
+  tries?: number; // (optional) Number of remaining retries before code becomes outdated
+  ttl?: number; // (optional) Number of seconds remaining before expiration of the code
+  valid: string; // (optional) Last known valid mobile (or empty string)
+}
+
 export interface IEntcoreMFAValidationInfos {
   state: IEntcoreMFAValidationState; // State of the current MFA code
   type: 'sms' | 'email'; // MFA validation type
@@ -306,6 +324,33 @@ class UserService {
     await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mailstate', {
       method: 'PUT',
       body: JSON.stringify({ email }),
+    });
+  }
+
+  async getMobileValidationInfos() {
+    try {
+      const mobileValidationInfos = (await fetchJSONWithCache('/directory/user/mobilestate')) as IEntcoreMobileValidationInfos;
+      return mobileValidationInfos;
+    } catch (e) {
+      // console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
+    }
+  }
+
+  async verifyMobileCode(key: string) {
+    try {
+      (await fetchJSONWithCache('/directory/user/mobilestate', {
+        method: 'POST',
+        body: JSON.stringify({ key }),
+      })) as IEntcoreMobileValidationState;
+    } catch (e) {
+      // console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
+    }
+  }
+
+  async sendMobileVerificationCode(mobile: string) {
+    await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mobilestate', {
+      method: 'PUT',
+      body: JSON.stringify({ mobile }),
     });
   }
 

@@ -6,13 +6,14 @@ import { IUserInfoState } from '~/user/state/info';
 
 export enum ModificationType {
   EMAIL = 'email',
+  MOBILE = 'mobile',
   PASSWORD = 'password',
-  PHONE = 'phone',
 }
 
 export interface UserAccountScreenState {
   avatarPhoto?: '' | ImageURISource;
   loadingMFARequirementForEmail: boolean;
+  loadingMFARequirementForMobile: boolean;
   loadingMFARequirementForPassword: boolean;
   showVersionType: boolean;
   updatingAvatar: boolean;

@@ -19,52 +19,52 @@ import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
-import { EmailState, UserEmailScreenProps } from './types';
+import { MobileState, UserMobileScreenProps } from './types';
 
-const UserEmailScreen = (props: UserEmailScreenProps) => {
+const UserMobileScreen = (props: UserMobileScreenProps) => {
   const { onLogout, navigation } = props;
 
   const credentials = navigation.getParam('credentials');
-  const defaultEmail = navigation.getParam('defaultEmail');
-  const isModifyingEmail = navigation.getParam('isModifyingEmail');
+  const defaultMobile = navigation.getParam('defaultMobile');
+  const isModifyingMobile = navigation.getParam('isModifyingMobile');
   const navBarTitle = navigation.getParam('navBarTitle');
 
   const [isSendingCode, setIsSendingCode] = useState(false);
-  const [email, setEmail] = useState(defaultEmail || '');
-  const [emailState, setEmailState] = useState<EmailState>(EmailState.PRISTINE);
+  const [mobile, setMobile] = useState(defaultMobile || '');
+  const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
 
-  const isEmailEmpty = isEmpty(email);
-  const isEmailStatePristine = emailState === EmailState.PRISTINE;
+  const isMobileEmpty = isEmpty(mobile);
+  const isMobileStatePristine = mobileState === MobileState.PRISTINE;
 
-  const title = isModifyingEmail ? navBarTitle : I18n.t('user-email-verify');
+  const title = isModifyingMobile ? navBarTitle : I18n.t('user-mobile-verify');
   const navBarInfo = { title };
 
-  const texts: Record<string, any> = isModifyingEmail
+  const texts: Record<string, any> = isModifyingMobile
     ? {
-        title: I18n.t('user-email-edit-title'),
-        message: I18n.t('user-email-edit-message'),
-        label: I18n.t('user-email-edit-label'),
+        title: I18n.t('user-mobile-edit-title'),
+        message: I18n.t('user-mobile-edit-message'),
+        label: I18n.t('user-mobile-edit-label'),
       }
     : {
-        title: I18n.t('user-email-verify-title'),
-        message: I18n.t('user-email-verify-message'),
-        label: I18n.t('user-email-verify-label'),
+        title: I18n.t('user-mobile-verify-title'),
+        message: I18n.t('user-mobile-verify-message'),
+        label: I18n.t('user-mobile-verify-label'),
       };
-  texts.button = I18n.t('user-email-verify-button');
+  texts.button = I18n.t('user-mobile-verify-button');
 
-  const sendEmailVerificationCode = async (toVerify: string) => {
-    // Exit if email is not valid
-    if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
+  const sendMobileVerificationCode = async (toVerify: string) => {
+    // Exit if mobile is not valid
+    if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return MobileState.MOBILE_FORMAT_INVALID;
     try {
       setIsSendingCode(true);
-      const emailValidationInfos = await userService.getEmailValidationInfos();
-      // Exit if email has already been verified
-      if (toVerify === emailValidationInfos?.emailState?.valid) {
+      const mobileValidationInfos = await userService.getMobileValidationInfos();
+      // Exit if mobile has already been verified
+      if (toVerify === mobileValidationInfos?.mobileState?.valid) {
         setIsSendingCode(false);
-        return EmailState.EMAIL_ALREADY_VERIFIED;
+        return MobileState.MOBILE_ALREADY_VERIFIED;
       }
-      await userService.sendEmailVerificationCode(toVerify);
-      navigation.navigate('MFA', { navBarTitle: title, credentials, isModifyingEmail, isEmailMFA: true, email: toVerify });
+      await userService.sendMobileVerificationCode(toVerify);
+      navigation.navigate('MFA', { navBarTitle: title, credentials, isModifyingMobile, isMobileMFA: true, mobile: toVerify });
     } catch {
       Toast.show(I18n.t('common.error.text'), {
         ...UI_ANIMATIONS.toast,
@@ -74,17 +74,17 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
     }
   };
 
-  const sendEmail = async () => {
-    const sendResponse = await sendEmailVerificationCode(email);
-    if (sendResponse) setEmailState(sendResponse);
+  const sendSMS = async () => {
+    const sendResponse = await sendMobileVerificationCode(mobile);
+    if (sendResponse) setMobileState(sendResponse);
   };
 
-  const changeEmail = (text: string) => {
-    if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
-    setEmail(text);
+  const changeMobile = (number: string) => {
+    if (!isMobileStatePristine) setMobileState(MobileState.PRISTINE);
+    setMobile(number);
   };
 
-  const refuseEmailVerification = () => {
+  const refuseMobileVerification = () => {
     try {
       onLogout();
     } catch {
@@ -93,10 +93,10 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
   };
 
   const displayConfirmationAlert = () => {
-    if (isEmailEmpty) {
+    if (isMobileEmpty) {
       navigation.goBack();
     } else {
-      Alert.alert(I18n.t('user-email-edit-alert-title'), I18n.t('user-email-edit-alert-message'), [
+      Alert.alert(I18n.t('user-mobile-edit-alert-title'), I18n.t('user-mobile-edit-alert-message'), [
         {
           text: I18n.t('common.discard'),
           onPress: () => navigation.goBack(),
@@ -116,7 +116,7 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
       style={styles.page}
       scrollable
       navigation={navigation}
-      {...(isModifyingEmail
+      {...(isModifyingMobile
         ? {
             navBarWithBack: navBarInfo,
           }
@@ -126,14 +126,14 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
       onBack={() => displayConfirmationAlert()}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <NamedSVG name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+          <NamedSVG name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
         </View>
         <HeadingSText style={styles.title}>{texts.title}</HeadingSText>
         <SmallText style={styles.content}>{texts.message}</SmallText>
         <View style={styles.inputTitleContainer}>
           <Picture
             type="NamedSvg"
-            name="pictos-mail"
+            name="pictos-smartphone"
             fill={theme.palette.grey.black}
             width={UI_SIZES.dimensions.width.mediumPlus}
             height={UI_SIZES.dimensions.height.mediumPlus}
@@ -141,35 +141,33 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
           <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
         </View>
         <TextInput
-          autoCorrect={false}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          placeholder={I18n.t('user-email-placeholder')}
+          keyboardType="phone-pad"
+          placeholder={I18n.t('user-mobile-placeholder')}
           placeholderTextColor={theme.palette.grey.black}
           style={[
             styles.input,
-            { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
+            { borderColor: isMobileStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
           ]}
-          value={email}
-          onChangeText={text => changeEmail(text)}
+          value={mobile}
+          onChangeText={text => changeMobile(text)}
         />
         <CaptionItalicText style={styles.errorText}>
-          {isEmailStatePristine
+          {isMobileStatePristine
             ? I18n.t('common.space')
-            : emailState === EmailState.EMAIL_ALREADY_VERIFIED
-            ? I18n.t('user-email-error-same')
-            : I18n.t('user-email-error-invalid')}
+            : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
+            ? I18n.t('user-mobile-error-same')
+            : I18n.t('user-mobile-error-invalid')}
         </CaptionItalicText>
         <ActionButton
           style={styles.sendButton}
           text={texts.button}
-          disabled={isEmailEmpty}
+          disabled={isMobileEmpty}
           loading={isSendingCode}
-          action={() => sendEmail()}
+          action={() => sendSMS()}
         />
-        {isModifyingEmail ? null : (
-          <TouchableOpacity style={styles.logoutButton} onPress={() => refuseEmailVerification()}>
-            <SmallBoldText style={styles.logoutText}>{I18n.t('user-email-verify-disconnect')}</SmallBoldText>
+        {isModifyingMobile ? null : (
+          <TouchableOpacity style={styles.logoutButton} onPress={() => refuseMobileVerification()}>
+            <SmallBoldText style={styles.logoutText}>{I18n.t('user-mobile-verify-disconnect')}</SmallBoldText>
           </TouchableOpacity>
         )}
       </View>
@@ -183,4 +181,4 @@ export default connect(
     onLogout: () => dispatch(logout()),
     dispatch,
   }),
-)(UserEmailScreen);
+)(UserMobileScreen);
