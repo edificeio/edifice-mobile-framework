@@ -21,7 +21,7 @@ import { getAuthState } from '../selectors';
 export interface ILoginWAYFPageProps {
   navigation?: any;
   auth: IUserAuthState;
-  onGoToWayf: () => void;
+  onCancel: () => void;
 }
 
 export interface ILoginWAYFPageState {}
@@ -32,6 +32,10 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
   constructor(props: ILoginWAYFPageProps) {
     super(props);
     this.state = {};
+  }
+
+  public componentWillUnmount(): void {
+    this.props.onCancel();
   }
 
   public render() {
@@ -74,7 +78,7 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
               text={I18n.t('login-wayf-main-button')}
               action={() => {
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
-                this.props.onGoToWayf();
+                this.props.onCancel();
                 navigation.navigate('WAYF');
               }}
             />
@@ -86,14 +90,14 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
 }
 
 const ConnectedLoginWAYFPage = connect(
-  (state: any, props: any): Omit<ILoginWAYFPageProps, 'navigation' | 'onGoToWayf'> => {
+  (state: any, props: any): Omit<ILoginWAYFPageProps, 'navigation' | 'onCancel'> => {
     const auth: IUserAuthState = getAuthState(state);
     return {
       auth,
     };
   },
   (dispatch): Omit<ILoginWAYFPageProps, 'navigation' | 'auth'> => ({
-    onGoToWayf: () => {
+    onCancel: () => {
       dispatch<any>({ type: actionTypeLoginCancel });
     },
   }),
