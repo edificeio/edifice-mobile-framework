@@ -9,6 +9,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { BodyBoldText, SmallInverseText, SmallText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
@@ -18,7 +19,6 @@ import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
 import edtConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { AsyncState } from '~/framework/util/redux/async';
 import { IHomeworkByDateList } from '~/modules/viescolaire/dashboard/components/DashboardRelative';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/diary';
 
@@ -108,7 +108,7 @@ export default class Dashboard extends React.PureComponent<any> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate(edtConfig.routeName)}
             text={I18n.t('viesco-timetable')}
-            color={viescoTheme.palette.timetable}
+            color={viescoTheme.palette.edt}
             icon="calendar_today"
             nbModules={nbModules}
           />

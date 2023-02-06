@@ -8,11 +8,11 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
+import Calendar from '~/framework/modules/viescolaire/common/components/Calendar';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { EdtHomeScreenProps } from '~/framework/modules/viescolaire/edt/screens/home';
 import { EdtHomeScreenState } from '~/framework/modules/viescolaire/edt/screens/home/screen';
 import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
-import Calendar from '~/ui/Calendar';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
@@ -161,7 +161,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
         {userType === 'Relative' ? <ChildPicker /> : null}
         <View style={styles.weekPickerView}>
           <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
-          <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.timetable} />
+          <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />
         </View>
         {courses !== undefined &&
           (courses.isFetching || courses.isPristine ? (
@@ -175,7 +175,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
                 renderHalf={this.renderHalf}
                 numberOfDays={6}
                 slotHeight={70}
-                mainColor={viescoTheme.palette.timetable}
+                mainColor={viescoTheme.palette.edt}
                 slots={slots.data}
                 initialSelectedDate={selectedDate}
                 hideSlots

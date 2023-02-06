@@ -1,7 +1,8 @@
-export const viescoTheme = {
+export default {
   palette: {
     competences: '#F95303',
     diary: '#2BAB6F',
+    edt: '#162EAE',
     presences: '#FCB602',
     presencesEvents: {
       departure: '#eD9FFD',
@@ -12,6 +13,5 @@ export const viescoTheme = {
       regularized: '#72bb53',
       unregularized: '#FA8A85',
     },
-    timetable: '#162EAE',
   },
 };

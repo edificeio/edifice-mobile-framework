@@ -3,11 +3,11 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 
 import { PageView } from '~/framework/components/page';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import DisplayHomework from '~/framework/modules/viescolaire/diary/components/DisplayHomework';
 import DisplayListHomework from '~/framework/modules/viescolaire/diary/components/DisplayListHomework';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 
 export const computeNavBar = ({
   navigation,

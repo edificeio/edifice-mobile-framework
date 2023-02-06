@@ -10,8 +10,8 @@ import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryActio
 import BottomMenu from '~/framework/components/menus/bottom';
 import { Picture } from '~/framework/components/picture';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
 import DateTimePicker from '~/ui/DateTimePicker';
 

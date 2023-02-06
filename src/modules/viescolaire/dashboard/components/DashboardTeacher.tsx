@@ -5,12 +5,12 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
 import edtConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { Image, formatSource } from '~/framework/util/media';
 import { BottomColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
 import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import CallList from '~/modules/viescolaire/presences/containers/TeacherCallListOld';
 import { PageContainer } from '~/ui/ContainerContent';
 
@@ -113,7 +113,7 @@ export default props => {
               <ImageButtonModule
                 onPress={() => props.navigation.navigate(edtConfig.routeName)}
                 text={I18n.t('viesco-timetable')}
-                color={viescoTheme.palette.timetable}
+                color={viescoTheme.palette.edt}
                 imageSrc={require('ASSETS/viesco/edt.png')}
               />
             )}

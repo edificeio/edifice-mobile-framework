@@ -3,8 +3,8 @@ import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { SquareCheckbox } from '~/ui/forms/Checkbox';
 
 const styles = StyleSheet.create({

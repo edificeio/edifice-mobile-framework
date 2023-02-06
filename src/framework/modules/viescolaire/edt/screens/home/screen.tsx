@@ -9,6 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   fetchEdtCoursesAction,
   fetchEdtSlotsAction,
@@ -29,7 +30,6 @@ import { getGroupsListState } from '~/modules/viescolaire/dashboard/state/group'
 import { getPersonnelListState } from '~/modules/viescolaire/dashboard/state/personnel';
 import { getSelectedStructure } from '~/modules/viescolaire/dashboard/state/structure';
 import { getSubjectsListState } from '~/modules/viescolaire/dashboard/state/subjects';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 
 import { EdtHomeScreenPrivateProps } from './types';
 
@@ -48,7 +48,7 @@ export const computeNavBar = ({
   }),
   title: I18n.t('viesco-timetable'),
   headerStyle: {
-    backgroundColor: viescoTheme.palette.timetable,
+    backgroundColor: viescoTheme.palette.edt,
   },
 });
 

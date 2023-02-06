@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   fetchDiaryHomeworksAction,
   fetchDiaryHomeworksFromChildAction,
@@ -23,7 +24,6 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { fetchPersonnelListAction } from '~/modules/viescolaire/dashboard/actions/personnel';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
 import { getPersonnelListState } from '~/modules/viescolaire/dashboard/state/personnel';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 
 import type { DiaryHomeworkListScreenPrivateProps } from './types';
 

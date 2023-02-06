@@ -10,11 +10,11 @@ import { bindActionCreators } from 'redux';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DocumentPicked, ImagePicked } from '~/framework/components/menus/actions';
 import { PageView } from '~/framework/components/page';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LocalFile } from '~/framework/util/fileHandler';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import pickFile, { pickFileError } from '~/infra/actions/pickFile';
 import { getSelectedChild } from '~/modules/viescolaire/dashboard/state/children';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { declareAbsenceAction, declareAbsenceWithFileAction } from '~/modules/viescolaire/presences/actions/declaration';
 import DeclarationComponent from '~/modules/viescolaire/presences/components/Declaration';
 

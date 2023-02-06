@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { fetchMementoAction } from '~/modules/viescolaire/presences/actions/memento';
 import { RelativesInfos, StudentInfos } from '~/modules/viescolaire/presences/components/Memento';
 import { IMementoState, getMementoState } from '~/modules/viescolaire/presences/state/memento';

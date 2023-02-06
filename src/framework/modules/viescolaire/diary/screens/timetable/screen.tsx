@@ -9,6 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   fetchDiaryHomeworksAction,
   fetchDiarySessionsAction,
@@ -23,7 +24,6 @@ import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/dashboar
 import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
 import { getCoursesListState } from '~/modules/viescolaire/dashboard/state/courses';
 import { getSelectedStructure } from '~/modules/viescolaire/dashboard/state/structure';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 
 import type { DiaryTimetableScreenPrivateProps } from './types';
 

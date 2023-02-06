@@ -9,12 +9,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { getUserSession } from '~/framework/util/session';
 import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
 import { IPersonnelList } from '~/modules/viescolaire/dashboard/state/personnel';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import {
   getTeacherName,
   hasEmptyDescription,

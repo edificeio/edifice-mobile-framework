@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   fetchCompetencesDevoirsAction,
   fetchCompetencesLevelsAction,
@@ -24,7 +25,6 @@ import { fetchPeriodsListAction } from '~/modules/viescolaire/dashboard/actions/
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
 import { getGroupsListState } from '~/modules/viescolaire/dashboard/state/group';
 import { getPeriodsListState } from '~/modules/viescolaire/dashboard/state/periods';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 
 import type { CompetencesHomeScreenPrivateProps } from './types';
 
