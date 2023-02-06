@@ -400,16 +400,26 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Called each time a navigation error occurs in WebView
   // See WebView onError property
-  onError(/*event*/) {
-    // alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+  // Called each time a navigation error occurs in WebView
+  // See WebView onError property
+  /*onError(event) {
+    alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+    // Display empty screen
+    this.displayEmpty();
+  }*/
+  onError() {
     // Display empty screen
     this.displayEmpty();
   }
 
   // Called each time an http error occurs in WebView
   // See WebView onError property
-  onHttpError(/*event*/) {
-    // alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+  /*onHttpError(event) {
+    alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+    // Display empty screen
+    this.displayEmpty();
+  }*/
+  onHttpError() {
     // Display empty screen
     this.displayEmpty();
   }
