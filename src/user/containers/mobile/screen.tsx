@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -9,12 +9,14 @@ import { ThunkDispatch } from 'redux-thunk';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { isEmpty } from '~/framework/util/object';
+import { containsKey, isEmpty } from '~/framework/util/object';
 import { logout } from '~/user/actions/login';
+import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
@@ -32,6 +34,24 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const [mobile, setMobile] = useState('');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
 
+  // Web 4.8+ compliance:
+  //   Mobile verification APIs are available if /auth/user/requirements contains at least needRevalidateMobile field
+  //   Use requirementsChecked to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
+  const [requirementsChecked, setRequirementsChecked] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isCheckMobile, setIsCheckMobile] = React.useState(false);
+
+  useEffect(() => {
+    async function checkRequirements() {
+      setRequirementsChecked(true);
+      const requirements = await userService.getUserRequirements();
+      setIsCheckMobile(containsKey(requirements as object, 'needRevalidateMobile'));
+      setIsLoading(false);
+    }
+    // Avoid reentrance by using isLoading to know if /auth/context as been called or not
+    if (!requirementsChecked) checkRequirements();
+  }, [requirementsChecked]);
+
   const isMobileEmpty = isEmpty(mobile);
   const isMobileStatePristine = mobileState === MobileState.PRISTINE;
 
@@ -41,29 +61,47 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const texts: Record<string, any> = isModifyingMobile
     ? {
         title: I18n.t('user-mobile-edit-title'),
-        message: I18n.t('user-mobile-edit-message'),
         label: I18n.t('user-mobile-edit-label'),
       }
     : {
         title: I18n.t('user-mobile-verify-title'),
-        message: I18n.t('user-mobile-verify-message'),
         label: I18n.t('user-mobile-verify-label'),
       };
-  texts.button = I18n.t('user-mobile-verify-button');
+  texts.button = isCheckMobile ? I18n.t('user-mobile-verify-button') : I18n.t('user-mobile-edit-button');
+  texts.message = isModifyingMobile
+    ? isCheckMobile
+      ? I18n.t('user-mobile-edit-message')
+      : I18n.t('user-mobile-edit-message-unverified')
+    : I18n.t('user-mobile-verify-message');
 
   const sendMobileVerificationCode = async (toVerify: string) => {
     // Exit if mobile is not valid
     if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return MobileState.MOBILE_FORMAT_INVALID;
     try {
-      setIsSendingCode(true);
-      const mobileValidationInfos = await userService.getMobileValidationInfos();
-      // Exit if mobile has already been verified
-      if (toVerify === mobileValidationInfos?.mobileState?.valid) {
+      if (isCheckMobile) {
+        setIsSendingCode(true);
+        const mobileValidationInfos = await userService.getMobileValidationInfos();
+        // Exit if mobile has already been verified
+        if (toVerify === mobileValidationInfos?.mobileState?.valid) {
+          setIsSendingCode(false);
+          return MobileState.MOBILE_ALREADY_VERIFIED;
+        }
+        await userService.sendMobileVerificationCode(toVerify);
+        navigation.navigate('MFA', { navBarTitle: title, credentials, isModifyingMobile, isMobileMFA: true, mobile: toVerify });
+      } else {
         setIsSendingCode(false);
-        return MobileState.MOBILE_ALREADY_VERIFIED;
+        props.onSaveNewMobile({ mobile: toVerify });
+        props.navigation.goBack();
+        setTimeout(
+          () =>
+            Toast.showSuccess(I18n.t('user-mobile-edit-toast'), {
+              position: Toast.position.BOTTOM,
+              mask: false,
+              ...UI_ANIMATIONS.toast,
+            }),
+          100,
+        );
       }
-      await userService.sendMobileVerificationCode(toVerify);
-      navigation.navigate('MFA', { navBarTitle: title, credentials, isModifyingMobile, isMobileMFA: true, mobile: toVerify });
     } catch {
       Toast.show(I18n.t('common.error.text'), {
         ...UI_ANIMATIONS.toast,
@@ -109,7 +147,9 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
     }
   };
 
-  return (
+  return isLoading ? (
+    <LoadingIndicator />
+  ) : (
     <KeyboardPageView
       isFocused={false}
       style={styles.page}
@@ -178,6 +218,9 @@ export default connect(
   () => ({}),
   (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
     onLogout: () => dispatch(logout()),
+    onSaveNewMobile(updatedProfileValues: IUpdatableProfileValues) {
+      dispatch(profileUpdateAction(updatedProfileValues));
+    },
     dispatch,
   }),
 )(UserMobileScreen);

@@ -15,6 +15,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
+import { getUserSession } from '~/framework/util/session';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { userService } from '~/user/service';
@@ -28,11 +29,11 @@ const MFAScreen = (props: MFAScreenProps) => {
 
   const navBarTitle = navigation.getParam('navBarTitle');
   const credentials = navigation.getParam('credentials');
-  const email = navigation.getParam('email');
-  const mobile = navigation.getParam('mobile');
   const isEmailMFA = navigation.getParam('isEmailMFA');
-  const isMobileMFA = navigation.getParam('isMobileMFA');
   const isModifyingEmail = navigation.getParam('isModifyingEmail');
+  const email = navigation.getParam('email');
+  const isMobileMFA = navigation.getParam('isMobileMFA');
+  const mobile = isMobileMFA ? navigation.getParam('mobile') : props.session?.user?.mobile;
   const modificationType = navigation.getParam('modificationType');
   const isEmailOrMobileMFA = isEmailMFA || isMobileMFA;
 
@@ -193,9 +194,15 @@ const MFAScreen = (props: MFAScreenProps) => {
     if (isCodeCorrect) {
       const routeNames = {
         [ModificationType.EMAIL]: 'UserEmail',
+        [ModificationType.MOBILE]: 'UserMobile',
         [ModificationType.PASSWORD]: 'ChangePassword',
       };
-      const params = modificationType === ModificationType.EMAIL ? { navBarTitle, isModifyingEmail: true } : { navBarTitle };
+      const params =
+        modificationType === ModificationType.EMAIL
+          ? { navBarTitle, isModifyingEmail: true }
+          : modificationType === ModificationType.MOBILE
+          ? { navBarTitle, isModifyingMobile: true }
+          : { navBarTitle };
       navigation.dispatch(StackActions.replace({ routeName: routeNames[modificationType], params }));
     }
   };
@@ -360,12 +367,15 @@ const MFAScreen = (props: MFAScreenProps) => {
   );
 };
 
-export default connect((dispatch: ThunkDispatch<any, void, AnyAction>) => ({
-  onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
-    dispatch(checkVersionThenLogin(false, credentials));
-  },
-  onUpdateProfile(updatedProfileValues: IUpdatableProfileValues) {
-    dispatch(profileUpdateAction(updatedProfileValues, false, false));
-  },
-  dispatch,
-}))(MFAScreen);
+export default connect(
+  () => ({ session: getUserSession() }),
+  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
+    onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
+      dispatch(checkVersionThenLogin(false, credentials));
+    },
+    onUpdateProfile(updatedProfileValues: IUpdatableProfileValues) {
+      dispatch(profileUpdateAction(updatedProfileValues, false, false));
+    },
+    dispatch,
+  }),
+)(MFAScreen);

@@ -108,8 +108,10 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
       versionOverride,
       versionType,
     } = this.state;
+    const isNotStudent = session.user.type !== 'Student';
     const isLoadingMFARequirement =
       loadingMFARequirementForPassword || loadingMFARequirementForEmail || loadingMFARequirementForMobile;
+
     navigation.addListener('didFocus', () => {
       this.setState({
         avatarPhoto:
@@ -168,7 +170,7 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
                   });
                 }}
               />
-              {session.user.type !== 'Student' ? (
+              {isNotStudent ? (
                 <LineButton
                   loading={loadingMFARequirementForEmail}
                   disabled={isLoadingMFARequirement}
@@ -194,7 +196,7 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
                   }}
                 />
               ) : null}
-              {session.user.type !== 'Student' ? (
+              {isNotStudent ? (
                 <LineButton
                   loading={loadingMFARequirementForMobile}
                   disabled={isLoadingMFARequirement}
