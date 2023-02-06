@@ -1,6 +1,6 @@
 {
-  "last": "2023-01-11 20:13:02",
-  "notes": "release: 1.9.1-alpha.12(1090112)",
-  "version": "1.9.1-rc.1(1090113)",
+  "last": "2023-02-06 19:15:25",
+  "notes": "chore(wayf): Fix Colibri Wayf error\nfix: MB-1186, MB-1222 fix error display when refresh token fails\nfix(user): MB-608, sign call for changing password\nfix(auth): MB-1186, MB-1222 clear error message on back\nrelease: 1.9.2(1090200)\nrelease: 1.9.1-rc.1(1090113)",
+  "version": "1.9.2-rc.1(1090201)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
