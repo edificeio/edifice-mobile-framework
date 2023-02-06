@@ -7,6 +7,9 @@ import { bindActionCreators } from 'redux';
 import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
+import { fetchDiaryHomeworksAction, updateDiaryHomeworkProgressAction } from '~/framework/modules/viescolaire/diary/actions';
+import { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { AsyncState } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -14,9 +17,6 @@ import { fetchPersonnelListAction } from '~/modules/viescolaire/dashboard/action
 import { fetchSubjectListAction } from '~/modules/viescolaire/dashboard/actions/subjects';
 import DashboardComponent from '~/modules/viescolaire/dashboard/components/DashboardStudent';
 import { getSubjectsListState } from '~/modules/viescolaire/dashboard/state/subjects';
-import { fetchDiaryHomeworksAction, updateDiaryHomeworkProgressAction } from '~/modules/viescolaire/diary/actions';
-import diaryConfig from '~/modules/viescolaire/diary/moduleConfig';
-import { IHomeworkMap } from '~/modules/viescolaire/diary/reducer';
 
 import { IAuthorizedViescoApps } from './Dashboard';
 

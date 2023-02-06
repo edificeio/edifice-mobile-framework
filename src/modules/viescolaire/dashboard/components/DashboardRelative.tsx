@@ -13,14 +13,14 @@ import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/t
 import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
+import { HomeworkItem } from '~/framework/modules/viescolaire/diary/components/Items';
+import { IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
 import edtConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { AsyncState } from '~/framework/util/redux/async';
 import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
 import { IAuthorizedViescoApps } from '~/modules/viescolaire/dashboard/containers/Dashboard';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
-import { HomeworkItem } from '~/modules/viescolaire/diary/components/Items';
-import diaryConfig from '~/modules/viescolaire/diary/moduleConfig';
-import { IHomework, IHomeworkMap } from '~/modules/viescolaire/diary/reducer';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/diary';
 

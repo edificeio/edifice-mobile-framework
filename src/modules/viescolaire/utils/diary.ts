@@ -1,7 +1,7 @@
 import moment from 'moment';
 
+import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { IPersonnelList } from '~/modules/viescolaire/dashboard/state/personnel';
-import { IHomework, IHomeworkMap, ISession } from '~/modules/viescolaire/diary/reducer';
 
 export type Homework = {
   id: string;
@@ -91,7 +91,7 @@ export const homeworkListDetailsTeacherAdapter = (homeworkList: IHomeworkMap | I
 
 // -- SESSIONS DETAILS ------------------
 
-export const sessionDetailsAdapter = (session: ISession, teachersList?: IPersonnelList) => {
+export const sessionDetailsAdapter = (session: IDiarySession, teachersList?: IPersonnelList) => {
   return {
     id: session?.id ? session.id : 0,
     subject: session?.subject_id !== 'exceptional' ? session?.subject?.name : session?.exceptional_label,
@@ -102,7 +102,7 @@ export const sessionDetailsAdapter = (session: ISession, teachersList?: IPersonn
   } as Session;
 };
 
-export const hasEmptyDescription = (session: ISession) => {
+export const hasEmptyDescription = (session: IDiarySession) => {
   // retrieve html description tag and search "body" tag
   const regexp = /<(\w+)>[^<]+<\/\1>|[^<>]+/g;
   const htmlTags = session.description.match(regexp) as string[];
@@ -113,7 +113,7 @@ export const hasEmptyDescription = (session: ISession) => {
   return false;
 };
 
-export const sessionListDetailsAdapter = (session: ISession, teachersList: IPersonnelList, sessionList?: ISession[]) => {
+export const sessionListDetailsAdapter = (session: IDiarySession, teachersList: IPersonnelList, sessionList?: IDiarySession[]) => {
   const reformatedSessionArray = [] as Session[];
   sessionList?.forEach(
     item => !hasEmptyDescription(item) && reformatedSessionArray.push(sessionDetailsAdapter(item, teachersList)),
@@ -127,7 +127,7 @@ export const sessionListDetailsAdapter = (session: ISession, teachersList: IPers
 
 // -- SESSIONS DETAILS FOR TEACHERS ------------------
 
-export const sessionListDetailsTeacherAdapter = (session: ISession) => {
+export const sessionListDetailsTeacherAdapter = (session: IDiarySession) => {
   const reformatedSessionArray = [sessionDetailsAdapter(session)] as Session[];
 
   return {

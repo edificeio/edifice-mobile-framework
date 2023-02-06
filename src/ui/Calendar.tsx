@@ -6,7 +6,7 @@ import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handl
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
-import { IHomework } from '~/modules/viescolaire/diary/reducer';
+import { IHomework } from '~/framework/modules/viescolaire/diary/model';
 
 /* STYLE */
 
