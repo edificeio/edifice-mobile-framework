@@ -51,14 +51,11 @@
 			</dict>
 		</dict>
 		<key>NSCameraUsageDescription</key>
-		<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif
-			et pour choisir votre photo de profil.</string>
+		<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
-		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et
-			pour choisir votre photo de profil.</string>
+		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et
-			pour choisir votre photo de profil.</string>
+		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 		<key>UIAppFonts</key>
 		<array>
 			<string>icomoon.ttf</string>
