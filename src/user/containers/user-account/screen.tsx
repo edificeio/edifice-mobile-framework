@@ -36,6 +36,7 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
     versionType: RNConfigReader.BundleVersionType,
     avatarPhoto: undefined,
     loadingMFARequirementForEmail: false,
+    loadingMFARequirementForMobile: false,
     loadingMFARequirementForPassword: false,
   };
 
@@ -73,13 +74,19 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
     ]);
   };
 
+  public setLoadingMFARequirement = (modificationType: ModificationType, isLoading: boolean) => {
+    if (modificationType === ModificationType.EMAIL) {
+      this.setState({ loadingMFARequirementForEmail: isLoading });
+    } else if (modificationType === ModificationType.PASSWORD) {
+      this.setState({ loadingMFARequirementForPassword: isLoading });
+    } else if (modificationType === ModificationType.MOBILE) {
+      this.setState({ loadingMFARequirementForMobile: isLoading });
+    }
+  };
+
   public getIsMFANeeded = async (modificationType: ModificationType) => {
     try {
-      if (modificationType === ModificationType.EMAIL) {
-        this.setState({ loadingMFARequirementForEmail: true });
-      } else if (modificationType === ModificationType.PASSWORD) {
-        this.setState({ loadingMFARequirementForPassword: true });
-      }
+      this.setLoadingMFARequirement(modificationType, true);
       const requirements = await userService.getUserRequirements();
       const needMFA = requirements?.needMFA;
       if (needMFA) await userService.getMFAValidationInfos();
@@ -87,19 +94,22 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     } finally {
-      if (modificationType === ModificationType.EMAIL) {
-        this.setState({ loadingMFARequirementForEmail: false });
-      } else if (modificationType === ModificationType.PASSWORD) {
-        this.setState({ loadingMFARequirementForPassword: false });
-      }
+      this.setLoadingMFARequirement(modificationType, false);
     }
   };
 
   public render() {
     const { navigation, userinfo, session } = this.props;
-    const { loadingMFARequirementForEmail, loadingMFARequirementForPassword, showVersionType, versionOverride, versionType } =
-      this.state;
-    const isLoadingMFARequirement = loadingMFARequirementForPassword || loadingMFARequirementForEmail;
+    const {
+      loadingMFARequirementForEmail,
+      loadingMFARequirementForMobile,
+      loadingMFARequirementForPassword,
+      showVersionType,
+      versionOverride,
+      versionType,
+    } = this.state;
+    const isLoadingMFARequirement =
+      loadingMFARequirementForPassword || loadingMFARequirementForEmail || loadingMFARequirementForMobile;
     navigation.addListener('didFocus', () => {
       this.setState({
         avatarPhoto:
@@ -180,7 +190,32 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
                             isModifyingEmail: true,
                           },
                         };
-
+                    navigation.navigate(navigationInfos.routeName, navigationInfos.routeParams);
+                  }}
+                />
+              ) : null}
+              {session.user.type !== 'Student' ? (
+                <LineButton
+                  loading={loadingMFARequirementForMobile}
+                  disabled={isLoadingMFARequirement}
+                  title="user.page.editMobile"
+                  onPress={async () => {
+                    const isMFANeeded = await this.getIsMFANeeded(ModificationType.MOBILE);
+                    const navigationInfos = isMFANeeded
+                      ? {
+                          routeName: 'MFA',
+                          routeParams: {
+                            navBarTitle: I18n.t('user.page.editMobile'),
+                            modificationType: ModificationType.MOBILE,
+                          },
+                        }
+                      : {
+                          routeName: 'UserMobile',
+                          routeParams: {
+                            navBarTitle: I18n.t('user.page.editMobile'),
+                            isModifyingMobile: true,
+                          },
+                        };
                     navigation.navigate(navigationInfos.routeName, navigationInfos.routeParams);
                   }}
                 />

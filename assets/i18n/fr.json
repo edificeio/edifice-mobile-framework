@@ -830,6 +830,7 @@
   "user.page.others": "Autres",
   "user.page.userFileButton": "Voir ma fiche utilisateur",
   "user.page.editEmail": "Modifier mon adresse mail",
+  "user.page.editMobile": "Modifier mon numéro de téléphone",
   "user.page.editPassword": "Modifier mon mot de passe",
   "user.legalUrl.cgu": "/assets/cgu/ODE_CGU.pdf",
   "user.legalUrl.cookies": "/assets/cgu/notice_cookies.pdf",
