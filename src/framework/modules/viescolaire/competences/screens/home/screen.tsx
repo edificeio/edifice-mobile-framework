@@ -42,7 +42,7 @@ export const computeNavBar = ({
   },
 });
 
-export class CompetencesHomeScreen extends React.PureComponent<CompetencesHomeScreenPrivateProps, any> {
+class CompetencesHomeScreen extends React.PureComponent<CompetencesHomeScreenPrivateProps, any> {
   componentDidMount = async () => {
     const { structureId, userId, userType, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
