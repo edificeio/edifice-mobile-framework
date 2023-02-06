@@ -15,7 +15,6 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
-import { getUserSession } from '~/framework/util/session';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { userService } from '~/user/service';
@@ -26,14 +25,16 @@ import { CodeState, MFAScreenProps, ResendResponse } from './types';
 
 const MFAScreen = (props: MFAScreenProps) => {
   const { onLogin, onUpdateProfile, navigation } = props;
-  const mobile = props.session?.user?.mobile;
 
   const navBarTitle = navigation.getParam('navBarTitle');
   const credentials = navigation.getParam('credentials');
   const email = navigation.getParam('email');
+  const mobile = navigation.getParam('mobile');
   const isEmailMFA = navigation.getParam('isEmailMFA');
-  const modificationType = navigation.getParam('modificationType');
+  const isMobileMFA = navigation.getParam('isMobileMFA');
   const isModifyingEmail = navigation.getParam('isModifyingEmail');
+  const modificationType = navigation.getParam('modificationType');
+  const isEmailOrMobileMFA = isEmailMFA || isMobileMFA;
 
   const [isVerifyingEnabled, setIsVerifyingEnabled] = useState(false);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
@@ -69,6 +70,14 @@ const MFAScreen = (props: MFAScreenProps) => {
         message: I18n.t('user-mfa-email-message'),
         feedback: I18n.t(`user-mfa-email-feedback-${codeState.toLowerCase()}`),
         resendToast: I18n.t('user-mfa-email-toast'),
+      }
+    : isMobileMFA
+    ? {
+        title: I18n.t('user-mfa-mobile-title'),
+        messageSent: `${I18n.t('user-mfa-mobile-message-sent')} ${mobile}.`,
+        message: I18n.t('user-mfa-mobile-message'),
+        feedback: I18n.t(`user-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+        resendToast: I18n.t('user-mfa-mobile-toast'),
       }
     : {
         title: I18n.t('user-mfa-title'),
@@ -112,6 +121,10 @@ const MFAScreen = (props: MFAScreenProps) => {
         await userService.verifyEmailCode(toVerify);
         validationInfos = await userService.getEmailValidationInfos();
         state = validationInfos?.emailState;
+      } else if (isMobileMFA) {
+        await userService.verifyMobileCode(toVerify);
+        validationInfos = await userService.getMobileValidationInfos();
+        state = validationInfos?.mobileState;
       } else {
         await userService.verifyMFACode(toVerify);
         validationInfos = await userService.getMFAValidationInfos();
@@ -149,7 +162,11 @@ const MFAScreen = (props: MFAScreenProps) => {
   const resendVerificationCode = async () => {
     try {
       setIsResendingVerificationCode(true);
-      await userService.sendEmailVerificationCode(email);
+      if (isEmailMFA) {
+        await userService.sendEmailVerificationCode(email);
+      } else if (isMobileMFA) {
+        await userService.sendMobileVerificationCode(mobile);
+      } else await userService.getMFAValidationInfos();
       return ResendResponse.SUCCESS;
     } catch {
       return ResendResponse.FAIL;
@@ -183,7 +200,7 @@ const MFAScreen = (props: MFAScreenProps) => {
     }
   };
 
-  const redirectEmailMFA = useCallback(() => {
+  const redirectEmailOrMobileMFA = useCallback(() => {
     if (isModifyingEmail) {
       navigation.navigate('Profile');
       onUpdateProfile({ email });
@@ -217,8 +234,8 @@ const MFAScreen = (props: MFAScreenProps) => {
           onHidden: () => setCode(''),
           ...UI_ANIMATIONS.toast,
         });
-      } else if (isCodeCorrect && isEmailMFA) {
-        setTimeout(() => redirectEmailMFA(), 500);
+      } else if (isCodeCorrect && isEmailOrMobileMFA) {
+        setTimeout(() => redirectEmailOrMobileMFA(), 500);
       }
     }
   }, [
@@ -232,9 +249,9 @@ const MFAScreen = (props: MFAScreenProps) => {
     onLogin,
     credentials,
     resetCode,
-    isEmailMFA,
     navBarTitle,
-    redirectEmailMFA,
+    redirectEmailOrMobileMFA,
+    isEmailOrMobileMFA,
   ]);
 
   return (
@@ -247,8 +264,12 @@ const MFAScreen = (props: MFAScreenProps) => {
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
-            {isEmailMFA ? (
-              <NamedSVG name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+            {isEmailOrMobileMFA ? (
+              <NamedSVG
+                name={`user-${isEmailMFA ? 'email' : 'smartphone'}`}
+                width={UI_SIZES.elements.thumbnail}
+                height={UI_SIZES.elements.thumbnail}
+              />
             ) : (
               <Lottie
                 ref={animationRef}
@@ -339,15 +360,12 @@ const MFAScreen = (props: MFAScreenProps) => {
   );
 };
 
-export default connect(
-  () => ({ session: getUserSession() }),
-  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
-    onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
-      dispatch(checkVersionThenLogin(false, credentials));
-    },
-    onUpdateProfile(updatedProfileValues: IUpdatableProfileValues) {
-      dispatch(profileUpdateAction(updatedProfileValues, false, false));
-    },
-    dispatch,
-  }),
-)(MFAScreen);
+export default connect((dispatch: ThunkDispatch<any, void, AnyAction>) => ({
+  onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
+    dispatch(checkVersionThenLogin(false, credentials));
+  },
+  onUpdateProfile(updatedProfileValues: IUpdatableProfileValues) {
+    dispatch(profileUpdateAction(updatedProfileValues, false, false));
+  },
+  dispatch,
+}))(MFAScreen);
