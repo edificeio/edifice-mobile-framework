@@ -122,12 +122,10 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   private backActions = [
     // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
     () => {
-      this.props.dispatch({ type: actionTypeLoginCancel });
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.ERROR: Go to top of wayf navigation stack
     () => {
-      this.props.dispatch({ type: actionTypeLoginCancel });
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.LOADING: Nothing to do
@@ -259,10 +257,23 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     });
   }
 
+  componentDidMount() {
+    this.cancelLoginError();
+  }
+
   componentDidUpdate(prevProps: IWAYFPageProps) {
     const { auth } = this.props;
     // Detect && display potential login error sent after checkVersionThenLogin(false) call
-    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) this.displayError(auth.error);
+    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) {
+      this.displayError(auth.error);
+      this.cancelLoginError();
+    }
+  }
+
+  // Cancel login error
+  // Fix https://opendigitaleducation.atlassian.net/browse/MB-1222
+  cancelLoginError() {
+    this.props.dispatch({ type: actionTypeLoginCancel });
   }
 
   // Clear datas (WebView cookies, etc.) and execute given callback when done
