@@ -18,7 +18,6 @@ import { containsKey, isEmpty } from '~/framework/util/object';
 import { logout } from '~/user/actions/login';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { userService } from '~/user/service';
-import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
 import { MobileState, UserMobileScreenProps } from './types';
@@ -32,6 +31,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
 
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [mobile, setMobile] = useState('');
+  const [region, setRegion] = useState('');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
 
   // Web 4.8+ compliance:
@@ -74,9 +74,24 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
       : I18n.t('user-mobile-edit-message-unverified')
     : I18n.t('user-mobile-verify-message');
 
+  const getIsValidMobileNumberForRegion = (toVerify: string) => {
+    try {
+      const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+      const PhoneNumberType = require('google-libphonenumber').PhoneNumberType;
+      const isValidNumberForRegion = phoneUtil.isValidNumberForRegion(phoneUtil.parse(toVerify, region), region);
+      const isMobileNumber = phoneUtil.getNumberType(phoneUtil.parse(toVerify)) === PhoneNumberType.MOBILE;
+      // Returns whether number is valid for selected region and an actual mobile number
+      return isValidNumberForRegion && isMobileNumber;
+    } catch {
+      // Returns false in case of other format errors (when the string is too short, isn't recognized as a phone number, etc.)
+      return false;
+    }
+  };
+
   const sendMobileVerificationCode = async (toVerify: string) => {
     // Exit if mobile is not valid
-    if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return MobileState.MOBILE_FORMAT_INVALID;
+    const isValidMobileNumberForRegion = await getIsValidMobileNumberForRegion(toVerify);
+    if (!isValidMobileNumberForRegion) return MobileState.MOBILE_FORMAT_INVALID;
     try {
       if (isCheckMobile) {
         setIsSendingCode(true);
@@ -188,7 +203,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
             { borderColor: isMobileStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
           ]}
           value={mobile}
-          onChangeText={text => changeMobile(text)}
+          onChangeText={number => changeMobile(number)}
         />
         <CaptionItalicText style={styles.errorText}>
           {isMobileStatePristine
