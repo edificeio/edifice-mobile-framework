@@ -1,6 +1,6 @@
 {
-  "last": "2023-02-06 23:14:04",
-  "notes": "fix(wayf): MB-1259, manage cancel login error properly\nrelease: 1.9.2-rc.1(1090201)",
-  "version": "1.9.2-rc.2(1090202)",
+  "last": "2023-02-07 12:10:33",
+  "notes": "release: 1.9.2-rc.2(1090202)",
+  "version": "1.9.2-rc.3(1090203)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
