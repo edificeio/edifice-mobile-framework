@@ -33,6 +33,7 @@ const MFAScreen = (props: MFAScreenProps) => {
   const isModifyingEmail = navigation.getParam('isModifyingEmail');
   const email = navigation.getParam('email');
   const isMobileMFA = navigation.getParam('isMobileMFA');
+  const isModifyingMobile = navigation.getParam('isModifyingMobile');
   const mobile = isMobileMFA ? navigation.getParam('mobile') : props.session?.user?.mobile;
   const modificationType = navigation.getParam('modificationType');
   const isEmailOrMobileMFA = isEmailMFA || isMobileMFA;
@@ -208,12 +209,12 @@ const MFAScreen = (props: MFAScreenProps) => {
   };
 
   const redirectEmailOrMobileMFA = useCallback(() => {
-    if (isModifyingEmail) {
+    if (isModifyingEmail || isModifyingMobile) {
       navigation.navigate('Profile');
-      onUpdateProfile({ email });
+      onUpdateProfile(isModifyingEmail ? { email } : { mobile });
       setTimeout(
         () =>
-          Toast.showSuccess(I18n.t('user-email-edit-toast'), {
+          Toast.showSuccess(I18n.t(isModifyingEmail ? 'user-email-edit-toast' : 'user-mobile-edit-toast'), {
             position: Toast.position.BOTTOM,
             mask: false,
             ...UI_ANIMATIONS.toast,
@@ -230,7 +231,7 @@ const MFAScreen = (props: MFAScreenProps) => {
         });
       }
     }
-  }, [credentials, email, isModifyingEmail, navigation, onLogin, onUpdateProfile, resetCode]);
+  }, [credentials, email, isModifyingEmail, isModifyingMobile, mobile, navigation, onLogin, onUpdateProfile, resetCode]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -245,21 +246,7 @@ const MFAScreen = (props: MFAScreenProps) => {
         setTimeout(() => redirectEmailOrMobileMFA(), 500);
       }
     }
-  }, [
-    isVerifyingActive,
-    isCodeStateUnknown,
-    isCodeCorrect,
-    isModifyingEmail,
-    navigation,
-    onUpdateProfile,
-    email,
-    onLogin,
-    credentials,
-    resetCode,
-    navBarTitle,
-    redirectEmailOrMobileMFA,
-    isEmailOrMobileMFA,
-  ]);
+  }, [isCodeCorrect, isCodeStateUnknown, isEmailOrMobileMFA, isVerifyingActive, redirectEmailOrMobileMFA]);
 
   return (
     <KeyboardPageView

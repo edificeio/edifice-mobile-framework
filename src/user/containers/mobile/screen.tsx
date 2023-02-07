@@ -31,7 +31,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
 
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [mobile, setMobile] = useState('');
-  const [region, setRegion] = useState('');
+  const [region, setRegion] = useState('fr');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
 
   // Web 4.8+ compliance:
