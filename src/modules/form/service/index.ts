@@ -75,8 +75,8 @@ interface IBackendQuestion {
   cursor_min_val?: number;
   cursor_max_val?: number;
   cursor_step?: number;
-  cursor_label_min_val?: string;
-  cursor_label_max_val?: string;
+  cursor_min_label?: string;
+  cursor_max_label?: string;
 }
 
 interface IBackendQuestionChoice {
@@ -169,8 +169,8 @@ const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
     cursorMinVal: data.cursor_min_val,
     cursorMaxVal: data.cursor_max_val,
     cursorStep: data.cursor_step,
-    cursorLabelMinVal: data.cursor_label_min_val,
-    cursorLabelMaxVal: data.cursor_label_max_val,
+    cursorMinLabel: data.cursor_min_label,
+    cursorMaxLabel: data.cursor_max_label,
   } as IQuestion;
 };
 
