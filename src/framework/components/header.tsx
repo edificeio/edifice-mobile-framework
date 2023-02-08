@@ -114,8 +114,6 @@ export const HeaderIcon = (props: {
         ...props.style,
       })
     : styled.View({
-        height: UI_SIZES.elements.navbarHeight,
-        width: 60,
         flex: 0,
         alignItems: 'center',
         justifyContent: 'center',
