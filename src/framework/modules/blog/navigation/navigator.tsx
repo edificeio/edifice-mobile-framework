@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import BlogCreatePostScreen, { computeNavBar as blogCreatePostNavBar } from '~/framework/modules/blog/screens/BlogCreatePostScreen';
 import BlogExplorerScreen, { computeNavBar as blogExplorerNavBar } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import BlogPostListScreen, { computeNavBar as blogPostListNavBar } from '~/framework/modules/blog/screens/BlogPostListScreen';
 import BlogSelectScreen, { computeNavBar as blogSelectNavBar } from '~/framework/modules/blog/screens/BlogSelectScreen';
@@ -30,6 +31,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         name={blogRouteNames.blogPostDetails}
         component={BlogPostDetailsScreen}
         options={blogPostDetailsNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={blogRouteNames.blogCreatePost}
+        component={BlogCreatePostScreen}
+        options={blogCreatePostNavBar}
         initialParams={{}}
       />
     </>
