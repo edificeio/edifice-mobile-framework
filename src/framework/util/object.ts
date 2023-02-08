@@ -11,7 +11,7 @@ export const containsKey = (something: object, key: string): boolean => !isEmpty
  * @param something
  * @param key
  */
-export const containsValue = (something: object, value: string): boolean =>
+export const containsValue = (something: object, value: any): boolean =>
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   !isEmpty(something) && Object.values(something).includes(value);
 

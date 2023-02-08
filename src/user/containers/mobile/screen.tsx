@@ -9,6 +9,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
@@ -19,6 +20,7 @@ import { logout } from '~/user/actions/login';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { userService } from '~/user/service';
 
+import { ModificationType } from '../user-account/types';
 import styles from './styles';
 import { MobileState, UserMobileScreenProps } from './types';
 
@@ -26,8 +28,9 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const { onLogout, navigation } = props;
 
   const credentials = navigation.getParam('credentials');
-  const isModifyingMobile = navigation.getParam('isModifyingMobile');
   const navBarTitle = navigation.getParam('navBarTitle');
+  const modificationType = navigation.getParam('modificationType');
+  const isModifyingMobile = modificationType === ModificationType.MOBILE;
 
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [mobile, setMobile] = useState('');
@@ -38,17 +41,24 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   //   Mobile verification APIs are available if /auth/user/requirements contains at least needRevalidateMobile field
   //   Use requirementsChecked to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
   const [requirementsChecked, setRequirementsChecked] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
   const [isCheckMobile, setIsCheckMobile] = React.useState(false);
 
   useEffect(() => {
     async function checkRequirements() {
-      setRequirementsChecked(true);
-      const requirements = await userService.getUserRequirements();
-      setIsCheckMobile(containsKey(requirements as object, 'needRevalidateMobile'));
-      setIsLoading(false);
+      try {
+        setRequirementsChecked(true);
+        setIsLoading(true);
+        const requirements = await userService.getUserRequirements();
+        setIsCheckMobile(containsKey(requirements as object, 'needRevalidateMobile'));
+      } catch (e) {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    // Avoid reentrance by using isLoading to know if /auth/context as been called or not
+    // Avoid reentrance by using requirementsChecked to know whether /auth/user/requirements has already been called
     if (!requirementsChecked) checkRequirements();
   }, [requirementsChecked]);
 
@@ -102,7 +112,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
           return MobileState.MOBILE_ALREADY_VERIFIED;
         }
         await userService.sendMobileVerificationCode(toVerify);
-        navigation.navigate('MFA', { navBarTitle: title, credentials, isModifyingMobile, isMobileMFA: true, mobile: toVerify });
+        navigation.navigate('MFA', { credentials, modificationType, isMobileMFA: true, mobile: toVerify, navBarTitle: title });
       } else {
         setIsSendingCode(false);
         props.onSaveNewMobile({ mobile: toVerify });
@@ -162,9 +172,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
     }
   };
 
-  return isLoading ? (
-    <LoadingIndicator />
-  ) : (
+  return (
     <KeyboardPageView
       isFocused={false}
       style={styles.page}
@@ -178,53 +186,59 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
             navBar: navBarInfo,
           })}
       onBack={() => displayConfirmationAlert()}>
-      <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <NamedSVG name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
-        </View>
-        <HeadingSText style={styles.title}>{texts.title}</HeadingSText>
-        <SmallText style={styles.content}>{texts.message}</SmallText>
-        <View style={styles.inputTitleContainer}>
-          <Picture
-            type="NamedSvg"
-            name="pictos-smartphone"
-            fill={theme.palette.grey.black}
-            width={UI_SIZES.dimensions.width.mediumPlus}
-            height={UI_SIZES.dimensions.height.mediumPlus}
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : isError ? (
+        <EmptyConnectionScreen />
+      ) : (
+        <View style={styles.container}>
+          <View style={styles.imageContainer}>
+            <NamedSVG name="user-smartphone" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
+          </View>
+          <HeadingSText style={styles.title}>{texts.title}</HeadingSText>
+          <SmallText style={styles.content}>{texts.message}</SmallText>
+          <View style={styles.inputTitleContainer}>
+            <Picture
+              type="NamedSvg"
+              name="pictos-smartphone"
+              fill={theme.palette.grey.black}
+              width={UI_SIZES.dimensions.width.mediumPlus}
+              height={UI_SIZES.dimensions.height.mediumPlus}
+            />
+            <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+          </View>
+          <TextInput
+            keyboardType="phone-pad"
+            placeholder={I18n.t('user-mobile-placeholder')}
+            placeholderTextColor={theme.palette.grey.graphite}
+            style={[
+              styles.input,
+              { borderColor: isMobileStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
+            ]}
+            value={mobile}
+            onChangeText={number => changeMobile(number)}
           />
-          <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
+          <CaptionItalicText style={styles.errorText}>
+            {isMobileStatePristine
+              ? I18n.t('common.space')
+              : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
+              ? I18n.t('user-mobile-error-same')
+              : I18n.t('user-mobile-error-invalid')}
+          </CaptionItalicText>
+          <ActionButton
+            style={styles.sendButton}
+            text={texts.button}
+            disabled={isMobileEmpty}
+            loading={isSendingCode}
+            action={() => sendSMS()}
+          />
+          {isModifyingMobile ? null : (
+            <TouchableOpacity style={styles.logoutButton} onPress={() => refuseMobileVerification()}>
+              <SmallBoldText style={styles.logoutText}>{I18n.t('user-mobile-verify-disconnect')}</SmallBoldText>
+            </TouchableOpacity>
+          )}
         </View>
-        <TextInput
-          keyboardType="phone-pad"
-          placeholder={I18n.t('user-mobile-placeholder')}
-          placeholderTextColor={theme.palette.grey.black}
-          style={[
-            styles.input,
-            { borderColor: isMobileStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
-          ]}
-          value={mobile}
-          onChangeText={number => changeMobile(number)}
-        />
-        <CaptionItalicText style={styles.errorText}>
-          {isMobileStatePristine
-            ? I18n.t('common.space')
-            : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
-            ? I18n.t('user-mobile-error-same')
-            : I18n.t('user-mobile-error-invalid')}
-        </CaptionItalicText>
-        <ActionButton
-          style={styles.sendButton}
-          text={texts.button}
-          disabled={isMobileEmpty}
-          loading={isSendingCode}
-          action={() => sendSMS()}
-        />
-        {isModifyingMobile ? null : (
-          <TouchableOpacity style={styles.logoutButton} onPress={() => refuseMobileVerification()}>
-            <SmallBoldText style={styles.logoutText}>{I18n.t('user-mobile-verify-disconnect')}</SmallBoldText>
-          </TouchableOpacity>
-        )}
-      </View>
+      )}
     </KeyboardPageView>
   );
 };

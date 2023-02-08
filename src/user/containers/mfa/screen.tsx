@@ -29,13 +29,13 @@ const MFAScreen = (props: MFAScreenProps) => {
 
   const navBarTitle = navigation.getParam('navBarTitle');
   const credentials = navigation.getParam('credentials');
-  const isEmailMFA = navigation.getParam('isEmailMFA');
-  const isModifyingEmail = navigation.getParam('isModifyingEmail');
-  const email = navigation.getParam('email');
-  const isMobileMFA = navigation.getParam('isMobileMFA');
-  const isModifyingMobile = navigation.getParam('isModifyingMobile');
-  const mobile = isMobileMFA ? navigation.getParam('mobile') : props.session?.user?.mobile;
   const modificationType = navigation.getParam('modificationType');
+  const isEmailMFA = navigation.getParam('isEmailMFA');
+  const isMobileMFA = navigation.getParam('isMobileMFA');
+  const email = navigation.getParam('email');
+  const mobile = isMobileMFA ? navigation.getParam('mobile') : props.session?.user?.mobile;
+  const isModifyingEmail = modificationType === ModificationType.EMAIL;
+  const isModifyingMobile = modificationType === ModificationType.MOBILE;
   const isEmailOrMobileMFA = isEmailMFA || isMobileMFA;
 
   const [isVerifyingEnabled, setIsVerifyingEnabled] = useState(false);
@@ -198,13 +198,9 @@ const MFAScreen = (props: MFAScreenProps) => {
         [ModificationType.MOBILE]: 'UserMobile',
         [ModificationType.PASSWORD]: 'ChangePassword',
       };
-      const params =
-        modificationType === ModificationType.EMAIL
-          ? { navBarTitle, isModifyingEmail: true }
-          : modificationType === ModificationType.MOBILE
-          ? { navBarTitle, isModifyingMobile: true }
-          : { navBarTitle };
-      navigation.dispatch(StackActions.replace({ routeName: routeNames[modificationType], params }));
+      const routeName = routeNames[modificationType];
+      const params = { navBarTitle, modificationType };
+      navigation.dispatch(StackActions.replace({ routeName, params }));
     }
   };
 

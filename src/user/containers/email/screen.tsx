@@ -18,6 +18,7 @@ import { logout } from '~/user/actions/login';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
+import { ModificationType } from '../user-account/types';
 import styles from './styles';
 import { EmailState, UserEmailScreenProps } from './types';
 
@@ -26,8 +27,9 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
 
   const credentials = navigation.getParam('credentials');
   const defaultEmail = navigation.getParam('defaultEmail');
-  const isModifyingEmail = navigation.getParam('isModifyingEmail');
   const navBarTitle = navigation.getParam('navBarTitle');
+  const modificationType = navigation.getParam('modificationType');
+  const isModifyingEmail = modificationType === ModificationType.EMAIL;
 
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [email, setEmail] = useState(defaultEmail || '');
@@ -64,7 +66,7 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
         return EmailState.EMAIL_ALREADY_VERIFIED;
       }
       await userService.sendEmailVerificationCode(toVerify);
-      navigation.navigate('MFA', { navBarTitle: title, credentials, isModifyingEmail, isEmailMFA: true, email: toVerify });
+      navigation.navigate('MFA', { credentials, modificationType, isEmailMFA: true, email: toVerify, navBarTitle: title });
     } catch {
       Toast.show(I18n.t('common.error.text'), {
         ...UI_ANIMATIONS.toast,
@@ -145,7 +147,7 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder={I18n.t('user-email-placeholder')}
-          placeholderTextColor={theme.palette.grey.black}
+          placeholderTextColor={theme.palette.grey.graphite}
           style={[
             styles.input,
             { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
