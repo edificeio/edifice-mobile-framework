@@ -338,7 +338,7 @@ const uploadAvatarError = () => {
 };
 
 const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch) => {
-  return workspaceService.uploadFile(getUserSession(), avatar, {});
+  return workspaceService.file.uploadFile(getUserSession(), avatar, {});
 };
 
 const UserProfileScreenConnected = connect(

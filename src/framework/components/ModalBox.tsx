@@ -11,7 +11,12 @@ export interface ModalBoxProps {
   content: JSX.Element;
 }
 
-export const ModalBox = ({ content }: ModalBoxProps, ref) => {
+export interface ModalBoxHandle {
+  doShowModal: () => void;
+  doDismissModal: () => void;
+}
+
+export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ content }, ref) => {
   const [showModal, setShowModal] = React.useState(false);
   const doDismissModal = () => setShowModal(false);
   const doShowModal = () => setShowModal(true);
@@ -40,7 +45,7 @@ export const ModalBox = ({ content }: ModalBoxProps, ref) => {
       </View>
     </NativeModal>
   );
-};
+});
 ModalBox.styles = StyleSheet.create({
   nativeModal: {
     width: '100%',
@@ -66,4 +71,4 @@ ModalBox.styles = StyleSheet.create({
   },
 });
 
-export default React.forwardRef(ModalBox);
+export default ModalBox;
