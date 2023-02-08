@@ -73,6 +73,7 @@ export interface IQuestionResponse {
   choiceId?: number;
   customAnswer?: string;
   files?: IResponseFile[];
+  toDelete?: boolean;
 }
 
 export interface IQuestion {
@@ -222,7 +223,7 @@ export const getIsMandatoryAnswerMissing = (elements: IFormElement[], responses:
   for (const question of questions) {
     const questionIds = question.type === QuestionType.MATRIX ? question.children!.map(q => q.id) : [question.id];
     for (const id of questionIds) {
-      const questionResponses = responses.filter(r => r.questionId === id);
+      const questionResponses = responses.filter(r => r.questionId === id && !r.toDelete);
       if (!questionResponses.length || questionResponses.some(r => !r.answer)) return true;
     }
   }
