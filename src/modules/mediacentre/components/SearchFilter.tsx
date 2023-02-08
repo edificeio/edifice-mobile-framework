@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
     marginRight: UI_SIZES.spacing.minor,
   },
   sectionsContainer: {
-    margin: UI_SIZES.spacing.tiny,
+    marginHorizontal: UI_SIZES.spacing.tiny,
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -43,6 +44,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: UI_SIZES.spacing.minor,
     marginBottom: UI_SIZES.spacing.tiny,
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.pearl,
