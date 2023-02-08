@@ -25,6 +25,8 @@ import { checkVersionThenLogin } from '~/user/actions/version';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 
+import { actionTypeLoginCancel } from '../actions/actionTypes/login';
+
 enum WAYFPageMode {
   EMPTY = 0,
   ERROR = 1,
@@ -120,10 +122,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   private backActions = [
     // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
     () => {
+      this.cancelLoginError();
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.ERROR: Go to top of wayf navigation stack
     () => {
+      this.cancelLoginError();
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.LOADING: Nothing to do
@@ -255,10 +259,20 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     });
   }
 
+  componentDidMount() {
+    this.cancelLoginError();
+  }
+
   componentDidUpdate(prevProps: IWAYFPageProps) {
     const { auth } = this.props;
     // Detect && display potential login error sent after checkVersionThenLogin(false) call
     if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) this.displayError(auth.error);
+  }
+
+  // Cancel login error
+  // Fix https://opendigitaleducation.atlassian.net/browse/MB-1222
+  cancelLoginError() {
+    this.props.dispatch({ type: actionTypeLoginCancel });
   }
 
   // Clear datas (WebView cookies, etc.) and execute given callback when done
@@ -455,7 +469,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
     //   - WAYF redirects to web standard login page
     const url = request.url;
     if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
-      if (!this.samlResponse) this.props.navigation.navigate('LoginHome');
+      if (!this.samlResponse) this.props.navigation.replace('LoginHome');
       return false;
     }
     return true;
@@ -483,7 +497,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   }
 }
 
-const ConnectedWAYFPage = connect((state: any, props: any): IWAYFPageProps => {
+const ConnectedWAYFPage = connect((state: any, props: any): Omit<IWAYFPageProps, 'onDisplayWayf'> => {
   return {
     auth: getAuthState(state),
   };

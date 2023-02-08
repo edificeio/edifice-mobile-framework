@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
+import { getUserSession } from '~/framework/util/session';
+import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { resetNavigation } from '~/navigation/helpers/navHelper';
 
 import { Connection } from './Connection';
@@ -19,8 +20,13 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
-        const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
-        resetNavigation(stack, stack.length - 1);
+        if (getUserSession()) {
+          // Only reset if we are logged in. Reset when logout will cause the error to dissappear.
+          const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
+          resetNavigation(stack, stack.length - 1);
+        } else {
+          navigate(getLoginRouteName());
+        }
         throw err;
       }
     }

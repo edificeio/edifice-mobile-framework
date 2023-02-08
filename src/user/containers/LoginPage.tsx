@@ -22,6 +22,8 @@ import VersionModal from '~/user/components/VersionModal';
 import { IUserAuthState } from '~/user/reducers/auth';
 import { getAuthState } from '~/user/selectors';
 
+import { actionTypeLoginCancel } from '../actions/actionTypes/login';
+
 export interface ILoginPageDataProps {
   auth: IUserAuthState;
   headerHeight: number;
@@ -38,6 +40,7 @@ export interface ILoginPageEventProps {
   onSkipVersion(versionContext: IVersionContext): void;
   onUpdateVersion(versionContext: IVersionContext): void;
   onLogin(userlogin: string, password: string, rememberMe: boolean): void;
+  onCancel(): void;
 }
 
 export interface ILoginPageOtherProps {
@@ -298,6 +301,7 @@ export class LoginPage extends React.Component<ILoginPageProps, ILoginPageState>
 
   public componentWillUnmount(): void {
     this.blurListener?.remove();
+    this.props.onCancel();
   }
 }
 
@@ -333,6 +337,9 @@ const ConnectedLoginPage = connect(
     },
     onLogin: (userlogin, password, rememberMe) => {
       dispatch<any>(checkVersionThenLogin(false, { username: userlogin, password, rememberMe }));
+    },
+    onCancel: () => {
+      dispatch<any>({ type: actionTypeLoginCancel });
     },
   }),
 )(LoginPage);
