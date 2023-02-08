@@ -45,15 +45,15 @@ export const hasPermissionManager = (blog: Blog, session: ISession) => {
 
 export const getBlogWorkflowInformation = (session: ISession) => ({
   blog: {
-    list: session.user.authorizedActions.some(a => a.name === listBlogsResourceRight),
-    print: session.user.authorizedActions.some(a => a.name === printBlogResourceRight),
-    view: session.user.authorizedActions.some(a => a.name === viewBlogResourceRight),
-    create: session.user.authorizedActions.some(a => a.name === createBlogResourceRight),
-    createPublic: session.user.authorizedActions.some(a => a.name === createPublicBlogResourceRight),
-    publish: session.user.authorizedActions.some(a => a.name === publishBlogResourceRight),
+    list: session.authorizedActions.some(a => a.name === listBlogsResourceRight),
+    print: session.authorizedActions.some(a => a.name === printBlogResourceRight),
+    view: session.authorizedActions.some(a => a.name === viewBlogResourceRight),
+    create: session.authorizedActions.some(a => a.name === createBlogResourceRight),
+    createPublic: session.authorizedActions.some(a => a.name === createPublicBlogResourceRight),
+    publish: session.authorizedActions.some(a => a.name === publishBlogResourceRight),
   },
   folder: {
-    add: session.user.authorizedActions.some(a => a.name === addBlogFolderResourceRight),
+    add: session.authorizedActions.some(a => a.name === addBlogFolderResourceRight),
   },
 });
 

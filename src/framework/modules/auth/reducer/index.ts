@@ -1,5 +1,4 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
-// import { cacheActiveSession } from '~/framework/util/session';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import type { AuthErrorCode, ISession, LegalUrls } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/moduleConfig';

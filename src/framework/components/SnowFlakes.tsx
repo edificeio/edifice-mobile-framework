@@ -9,14 +9,15 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
-import { IUserSession, getUserSession } from '~/framework/util/session';
+import { ISession } from '~/framework/modules/auth/model';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { importXmasThemeAction, letItSnowAction, setXmasThemeAction, stopItSnowAction } from '~/user/actions/xmas';
 
 export interface SnowFlakesProps extends NavigationInjectedProps, NavigationFocusInjectedProps {}
 
 interface SnowFlakesReduxProps extends SnowFlakesProps {
   isXmasActivated?: boolean;
-  session: IUserSession;
+  session: ISession;
   isFlakesFalling: boolean;
   handleImportXmasThemeAction: () => Promise<boolean>;
   letItSnow: () => Promise<void>;
@@ -101,7 +102,7 @@ const SnowFlakesConnected = connect(
   (state: IGlobalState) => ({
     isXmasActivated: state.user.xmas.xmasTheme,
     isFlakesFalling: state.user.xmas.flakesFaling,
-    session: getUserSession(),
+    session: assertSession(),
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
     handleImportXmasThemeAction: () => dispatch(importXmasThemeAction()),
@@ -113,14 +114,14 @@ const SnowFlakesConnected = connect(
 
 export default connect((state: IGlobalState) => ({
   isXmasActivated: state.user.xmas.xmasTheme,
-  session: getUserSession(),
+  session: assertSession(),
 }))(
   ({
     isXmasActivated,
     navigation,
     isFocused,
     session,
-  }: { isXmasActivated?: boolean; session: IUserSession } & NavigationInjectedProps & NavigationFocusInjectedProps) => {
+  }: { isXmasActivated?: boolean; session: ISession } & NavigationInjectedProps & NavigationFocusInjectedProps) => {
     return session?.user?.id ? (
       <SnowFlakesConnected
         navigation={navigation}

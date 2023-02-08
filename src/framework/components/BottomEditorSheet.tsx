@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux';
 
 import { BottomSheet, BottomSheetProps } from '~/framework/components/BottomSheet';
 import CommentField, { CommentFieldProps } from '~/framework/components/commentField';
-import { getUserSession } from '~/framework/util/session';
+import { assertSession } from '~/framework/modules/auth/reducer';
 
 const BottomEditorSheet = (
   { isResponse, isPublishingComment, onPublishComment, displayShadow }: CommentFieldProps & Omit<BottomSheetProps, 'content'>,
   ref,
 ) => {
-  const session = useSelector(() => getUserSession());
+  const session = useSelector(() => assertSession());
   const commentFieldRef: { current: any } = React.createRef();
   const clearCommentField = () => commentFieldRef?.current?.clearCommentField();
   const confirmDiscard = (quitCallback?: Function, continueCallback?: Function) => {

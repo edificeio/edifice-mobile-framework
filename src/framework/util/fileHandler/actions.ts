@@ -1,13 +1,12 @@
 /**
  * Actions for file handler
  */
-
 import { ThunkDispatch } from 'redux-thunk';
+
+import { assertSession } from '~/framework/modules/auth/reducer';
 
 import type { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 import fileTransferService, { IDownloadCallbaks, IDownloadParams, IUploadCallbaks, IUploadParams } from './service';
-
-import { getUserSession } from '~/framework/util/session';
 
 export const startUploadFileAction =
   <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
@@ -18,7 +17,7 @@ export const startUploadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -31,7 +30,7 @@ export const startUploadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -44,7 +43,7 @@ export const uploadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.uploadFile(session, file, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -57,7 +56,7 @@ export const uploadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.uploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -69,7 +68,7 @@ export const startDownloadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
   };
 
@@ -81,7 +80,7 @@ export const startDownloadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass);
   };
 
@@ -93,7 +92,7 @@ export const downloadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.downloadFile(session, file, params, callbacks, syncedFileClass);
   };
 
@@ -105,6 +104,6 @@ export const downloadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.downloadFiles(session, files, params, callbacks, syncedFileClass);
   };
