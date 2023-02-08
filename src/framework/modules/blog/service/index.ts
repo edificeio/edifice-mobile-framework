@@ -3,11 +3,10 @@
  */
 import moment from 'moment';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { ISession } from '~/framework/modules/auth/model';
+import { Blog, BlogFolder, BlogList, BlogPost, BlogPostComments, BlogPostList } from '~/framework/modules/blog/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
-import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetch, signedFetchJson } from '~/infra/fetchWithCache';
-import { IBlog, IBlogFolder, IBlogList, IBlogPost, IBlogPostComments, IBlogPostList } from '~/modules/blog/reducer';
 
 export interface IEntcoreBlog {
   _id: string;
@@ -30,7 +29,7 @@ export interface IEntcoreBlog {
 }
 export type IEntcoreBlogList = IEntcoreBlog[];
 
-interface _IEntcoreBlogPostBase {
+interface IEntcoreBlogPostBase {
   author: {
     login: string;
     userId: string;
@@ -46,13 +45,13 @@ interface _IEntcoreBlogPostBase {
   _id: string;
 }
 
-export interface IEntcoreBlogPost extends _IEntcoreBlogPostBase {
+export interface IEntcoreBlogPost extends IEntcoreBlogPostBase {
   firstPublishDate?: { $date: number };
 }
 
 export type IEntcoreBlogPostList = IEntcoreBlogPost[];
 
-export interface IEntcoreCreatedBlogPost extends _IEntcoreBlogPostBase {
+export interface IEntcoreCreatedBlogPost extends IEntcoreBlogPostBase {
   comments: any[];
   blog: {
     $ref: string;
@@ -93,6 +92,24 @@ export interface IEntcoreBlogFolder {
   trashed?: boolean;
 }
 
+export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>) => {
+  const ret = {
+    _id: blogPost._id,
+    author: {
+      login: blogPost.author.login,
+      userId: blogPost.author.userId,
+      username: blogPost.author.username,
+    },
+    created: moment(blogPost.created.$date),
+    modified: moment(blogPost.modified.$date),
+    firstPublishDate: blogPost.firstPublishDate?.$date && moment(blogPost.firstPublishDate.$date),
+    state: blogPost.state,
+    title: blogPost.title,
+    views: blogPost.views,
+  };
+  return ret as Omit<BlogPost, 'content'>;
+};
+
 export const blogAdapter = (blog: IEntcoreBlog) => {
   const ret = {
     id: blog._id,
@@ -113,25 +130,16 @@ export const blogAdapter = (blog: IEntcoreBlog) => {
     shared: blog.shared,
     fetchPosts: blog.fetchPosts?.map(bp => blogFetchPostAdapter(bp)),
   };
-  return ret as IBlog;
+  return ret as Blog;
 };
 
-export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>) => {
-  const ret = {
-    _id: blogPost._id,
-    author: {
-      login: blogPost.author.login,
-      userId: blogPost.author.userId,
-      username: blogPost.author.username,
-    },
-    created: moment(blogPost.created.$date),
-    modified: moment(blogPost.modified.$date),
-    firstPublishDate: blogPost.firstPublishDate?.$date && moment(blogPost.firstPublishDate.$date),
-    state: blogPost.state,
-    title: blogPost.title,
-    views: blogPost.views,
-  };
-  return ret as Omit<IBlogPost, 'content'>;
+export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
+  const ret = blogPostComments.map(blogPostComment => {
+    const adaptedBlogPostComment = { ...blogPostComment, created: moment(blogPostComment.created.$date) };
+    if (blogPostComment.modified) adaptedBlogPostComment.modified = moment(blogPostComment.modified.$date);
+    return adaptedBlogPostComment;
+  });
+  return ret as BlogPostComments;
 };
 
 export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
@@ -151,7 +159,7 @@ export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
     views: blogPost.views,
     _id: blogPost._id,
   };
-  return ret as IBlogPost;
+  return ret as BlogPost;
 };
 
 export const blogFolderAdapter = (blogFolder: IEntcoreBlogFolder) => {
@@ -161,16 +169,7 @@ export const blogFolderAdapter = (blogFolder: IEntcoreBlogFolder) => {
     created: moment(blogFolder.created.$date),
     modified: moment(blogFolder.created.$date),
     resourceIds: blogFolder.ressourceIds,
-  } as IBlogFolder;
-};
-
-export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
-  const ret = blogPostComments.map(blogPostComment => {
-    let adaptedBlogPostComment = { ...blogPostComment, created: moment(blogPostComment.created.$date) };
-    if (blogPostComment.modified) adaptedBlogPostComment.modified = moment(blogPostComment.modified.$date);
-    return adaptedBlogPostComment;
-  });
-  return ret as IBlogPostComments;
+  } as BlogFolder;
 };
 
 export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: string; postId: string }> = url => {
@@ -192,40 +191,40 @@ export const blogPostGenerateResourceUriFunction = ({ blogId, postId }: { blogId
 
 export const blogService = {
   // This service automatically filters only non-trashed content.
-  list: async (session: IUserSession) => {
+  list: async (session: ISession) => {
     const api = `/blog/list/all`;
     const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
-    const blogList = [] as IBlogList;
+    const blogList = [] as BlogList;
     for (const entcoreBlog of entcoreBlogList) {
       if (!entcoreBlog.trashed) blogList.push(blogAdapter(entcoreBlog));
     }
     return blogList;
   },
-  get: async (session: IUserSession, blogId: string) => {
+  get: async (session: ISession, blogId: string) => {
     const api = `/blog/${blogId}`;
     const entcoreBlog = (await fetchJSONWithCache(api)) as IEntcoreBlog;
     return blogAdapter(entcoreBlog);
   },
   // This service automatically filters only non-trashed content.
   folders: {
-    list: async (session: IUserSession) => {
+    list: async (session: ISession) => {
       const api = `/blog/folder/list/all`;
       const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
-      return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as IBlogFolder[]).filter(f => !f.trashed);
+      return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as BlogFolder[]).filter(f => !f.trashed);
     },
   },
   posts: {
-    get: async (session: IUserSession, blogId: string, state?: string | string[]) => {
+    get: async (session: ISession, blogId: string, state?: string | string[]) => {
       let stateAsArray: string[] | undefined;
       if (typeof state === 'string') stateAsArray = [state];
       else stateAsArray = state;
       let api = `/blog/post/list/all/${blogId}?content=true`;
       if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
-      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList;
+      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPostList;
       return blogPosts;
     },
-    page: async (session: IUserSession, blogId: string, page: number, state?: string | string[]) => {
+    page: async (session: ISession, blogId: string, page: number, state?: string | string[]) => {
       // Compute state parameter
       let stateAsArray: string[] | undefined;
       if (typeof state === 'string') stateAsArray = [state];
@@ -234,17 +233,17 @@ export const blogService = {
       let api = `/blog/post/list/all/${blogId}?content=true&page=${page}`;
       if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
-      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList;
+      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPostList;
       return blogPosts;
     },
   },
   post: {
-    get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, state?: string) => {
+    get: async (session: ISession, blogPostId: { blogId: string; postId: string }, state?: string) => {
       const { blogId, postId } = blogPostId;
       if (!state) {
-        let api_metadata = `/blog/post/list/all/${blogId}?postId=${postId}`;
-        const entcoreBlogPost_metadata = (await fetchJSONWithCache(api_metadata)) as IEntcoreBlogPost;
-        state = entcoreBlogPost_metadata[0]['state'];
+        const apiMetadata = `/blog/post/list/all/${blogId}?postId=${postId}`;
+        const entcoreBlogPostMetadata = (await fetchJSONWithCache(apiMetadata)) as IEntcoreBlogPost;
+        state = entcoreBlogPostMetadata[0].state;
       }
       let api = `/blog/post/${blogId}/${postId}`;
       if (state) {
@@ -252,66 +251,66 @@ export const blogService = {
       }
       const entcoreBlogPost = (await fetchJSONWithCache(api)) as IEntcoreBlogPost;
       // Run the adapter for the received blog post
-      return blogPostAdapter(entcoreBlogPost) as IBlogPost;
+      return blogPostAdapter(entcoreBlogPost) as BlogPost;
     },
-    create: async (session: IUserSession, blogId: string, postTitle: string, postContentHtml: string) => {
+    create: async (session: ISession, blogId: string, postTitle: string, postContentHtml: string) => {
       const api = `/blog/post/${blogId}`;
       const body = JSON.stringify({ title: postTitle, content: postContentHtml });
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      return signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',
         body,
       }) as Promise<IEntcoreCreatedBlogPost>;
     },
-    submit: async (session: IUserSession, blogId: string, postId: string) => {
+    submit: async (session: ISession, blogId: string, postId: string) => {
       const api = `/blog/post/submit/${blogId}/${postId}`;
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
+      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
     },
-    publish: async (session: IUserSession, blogId: string, postId: string) => {
+    publish: async (session: ISession, blogId: string, postId: string) => {
       const api = `/blog/post/publish/${blogId}/${postId}`;
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
+      return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
     },
-    delete: async (session: IUserSession, blogPostId: { blogId: string; postId: string }) => {
+    delete: async (session: ISession, blogPostId: { blogId: string; postId: string }) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/post/${blogId}/${postId}`;
-      return signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      return signedFetch(`${session.platform.url}${api}`, {
         method: 'DELETE',
       }) as Promise<Response>;
     },
   },
   comments: {
-    get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }) => {
+    get: async (session: ISession, blogPostId: { blogId: string; postId: string }) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/comments/${blogId}/${postId}`;
       const entcoreBlogPostComments = (await fetchJSONWithCache(api)) as IEntcoreBlogPostComments;
       // Run the adapter for the received blog post comments
-      return blogPostCommentsAdapter(entcoreBlogPostComments) as IBlogPostComments;
+      return blogPostCommentsAdapter(entcoreBlogPostComments) as BlogPostComments;
     },
-    publish: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, comment: string) => {
+    publish: async (session: ISession, blogPostId: { blogId: string; postId: string }, comment: string) => {
       const { blogId, postId } = blogPostId;
       const api = `/blog/comment/${blogId}/${postId}`;
       const body = JSON.stringify({ comment });
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      return signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',
         body,
       }) as Promise<{ number: number }>;
     },
     update: async (
-      session: IUserSession,
+      session: ISession,
       blogPostCommentId: { blogId: string; postId: string; commentId: string },
       comment: string,
     ) => {
       const { blogId, postId, commentId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
       const body = JSON.stringify({ comment });
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      return signedFetchJson(`${session.platform.url}${api}`, {
         method: 'PUT',
         body,
       }) as Promise<{ number: number }>;
     },
-    delete: async (session: IUserSession, blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
+    delete: async (session: ISession, blogPostCommentId: { blogId: string; postId: string; commentId: string }) => {
       const { blogId, postId, commentId } = blogPostCommentId;
       const api = `/blog/comment/${blogId}/${postId}/${commentId}`;
-      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      return signedFetchJson(`${session.platform.url}${api}`, {
         method: 'DELETE',
       }) as Promise<{ number: number }>;
     },

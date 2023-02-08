@@ -1,16 +1,15 @@
 /**
  * Blog explorer
  */
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
-import { StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -20,60 +19,60 @@ import Explorer, {
   IExplorerResourceItemWithIcon,
   IExplorerResourceItemWithImage,
 } from '~/framework/components/explorer';
-import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { NamedSVGProps, PictureProps } from '~/framework/components/picture';
+import { NamedSVGProps } from '~/framework/components/picture';
+import { ISession } from '~/framework/modules/auth/model';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { fetchBlogsAndFoldersAction } from '~/framework/modules/blog/actions';
+import moduleConfig from '~/framework/modules/blog/module-config';
+import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
+import { Blog, BlogFlatTree, BlogFolder, BlogFolderWithChildren, BlogFolderWithResources } from '~/framework/modules/blog/reducer';
+import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
-import { IUserSession, getUserSession } from '~/framework/util/session';
-import { fetchBlogsAndFoldersAction } from '~/modules/blog/actions';
-import moduleConfig from '~/modules/blog/moduleConfig';
-import { IBlog, IBlogFlatTree, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources } from '~/modules/blog/reducer';
-import { getBlogWorkflowInformation } from '~/modules/blog/rights';
 
-// TYPES ==========================================================================================
-
-export interface IBlogExplorerScreen_DataProps {
-  tree?: IBlogFlatTree;
+export interface BlogExplorerScreenDataProps {
+  tree?: BlogFlatTree;
   initialLoadingState: AsyncLoadingState;
   error?: Error;
-  session: IUserSession;
+  session: ISession;
 }
-export interface IBlogExplorerScreen_EventProps {
-  doFetch: () => Promise<[IBlog[], IBlogFolder[]] | undefined>;
+
+export interface BlogExplorerScreenEventProps {
+  doFetch: () => Promise<[Blog[], BlogFolder[]] | undefined>;
 }
-export interface IBlogExplorerScreen_NavigationParams {
+
+export interface BlogExplorerScreenNavigationParams {
   folderId?: string;
   filter?: 'trash' | 'public' | 'sharedWithMe';
 }
-export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps &
-  IBlogExplorerScreen_EventProps &
-  NavigationInjectedProps<IBlogExplorerScreen_NavigationParams>;
 
-export type IDisplayedBlog = Omit<IBlog, 'thumbnail'>;
+export type BlogExplorerScreenProps = BlogExplorerScreenDataProps &
+  BlogExplorerScreenEventProps &
+  NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogExplorer>;
 
-// COMPONENT ======================================================================================
+export type DisplayedBlog = Omit<Blog, 'thumbnail'>;
 
-const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogExplorer>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('blog.appName'),
+});
+
+const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
   const hasBlogCreationRights = getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
 
-  // LOADER =====================================================================================
-
-  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
+  // ToDo : Make this in a useLoadingState.
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState);
-
-  React.useEffect(() => {
-    if (loadingState === AsyncLoadingState.PRISTINE) {
-      setLoadingState(AsyncLoadingState.INIT);
-      props
-        .doFetch()
-        .then(() => setLoadingState(AsyncLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
-    }
-  }, []);
 
   const reload = () => {
     setLoadingState(AsyncLoadingState.RETRY);
@@ -91,13 +90,23 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
   };
 
-  // EVENTS =====================================================================================
+  const onOpenBlog = (item: DisplayedBlog) => {
+    props.navigation.navigate(`${moduleConfig.routeName}/posts`, { selectedBlog: item });
+  };
+
+  const onOpenFolder = (item: BlogFolder | 'root') => {
+    if (props.navigation.push) {
+      props.navigation.push(`${moduleConfig.routeName}`, {
+        folderId: item === 'root' ? undefined : item.id,
+      });
+    }
+  };
 
   const onOpenItem = (
     item:
-      | (IExplorerFolderItem & IBlogFolder)
-      | (IExplorerResourceItemWithImage & IDisplayedBlog)
-      | (IExplorerResourceItemWithIcon & IDisplayedBlog),
+      | (IExplorerFolderItem & BlogFolder)
+      | (IExplorerResourceItemWithImage & DisplayedBlog)
+      | (IExplorerResourceItemWithIcon & DisplayedBlog),
   ) => {
     if (item.type === 'folder') {
       onOpenFolder(item);
@@ -107,37 +116,25 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       // No-op
     }
   };
-  const onOpenFolder = (item: IBlogFolder | 'root') => {
-    (props.navigation as StackNavigationProp).push &&
-      (props.navigation as StackNavigationProp).push(`${moduleConfig.routeName}`, {
-        folderId: item === 'root' ? undefined : item.id,
-      });
-  };
-  const onOpenBlog = (item: IDisplayedBlog) => {
-    props.navigation.navigate(`${moduleConfig.routeName}/posts`, { selectedBlog: item });
-  };
 
-  // HEADER =====================================================================================
+  useEffect(() => {
+    if (loadingState === AsyncLoadingState.PRISTINE) {
+      setLoadingState(AsyncLoadingState.INIT);
+      props
+        .doFetch()
+        .then(() => setLoadingState(AsyncLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const navBarInfo = ({
-    resources,
-    folders,
-  }: {
-    resources: IBlog[];
-    folders: (IBlogFolderWithChildren & IBlogFolderWithResources & { depth: number })[];
-  }) => {
-    const currentFolderId = props.navigation.getParam('folderId');
-    const currentFolder = folders.find(f => f.id === currentFolderId);
-    return {
-      title: currentFolder ? (
-        <HeaderTitleAndSubtitle title={currentFolder.name} subtitle={I18n.t('blog.appName')} />
-      ) : (
-        I18n.t('blog.appName')
-      ),
-    };
-  };
-
-  // EMPTY SCREEN =================================================================================
+  useEffect(() => {
+    const currentFolderId = props.route.params.folderId;
+    const currentFolder = props.tree ? props.tree.folders.find(f => f.id === currentFolderId) : null;
+    props.navigation.setOptions({
+      title: currentFolder ? currentFolder.name : I18n.t('blog.appName'),
+    });
+  }, [props.navigation, props.route.params.folderId, props.tree]);
 
   const renderEmpty = () => {
     return (
@@ -151,8 +148,6 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     );
   };
 
-  // ERROR ========================================================================================
-
   const renderError = () => {
     return (
       <ScrollView
@@ -162,17 +157,15 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     );
   };
 
-  // EXPLORER ====================================================================================
-
   const renderExplorer = ({
     resources,
     folders,
   }: {
-    resources: IBlog[];
-    folders: (IBlogFolderWithChildren & IBlogFolderWithResources & { depth: number })[];
+    resources: Blog[];
+    folders: (BlogFolderWithChildren & BlogFolderWithResources & { depth: number })[];
   }) => {
-    const currentFolderId = props.navigation.getParam('folderId');
-    const currentFolder = folders.find(f => f.id === currentFolderId);
+    const currentFolderId = props.route.params.folderId;
+    const currentFolder = props.tree ? props.tree.folders.find(f => f.id === currentFolderId) : null;
     if (currentFolderId && !currentFolder) {
       return <EmptyContentScreen />;
     }
@@ -223,8 +216,6 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     );
   };
 
-  // RENDER =======================================================================================
-
   const renderPage = () => {
     switch (loadingState) {
       case AsyncLoadingState.DONE:
@@ -242,22 +233,14 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     }
   };
 
-  return (
-    <>
-      <PageView navigation={props.navigation} navBarWithBack={navBarInfo(props.tree || { resources: [], folders: [] })}>
-        {renderPage()}
-      </PageView>
-    </>
-  );
+  return <PageView>{renderPage()}</PageView>;
 };
-
-// MAPPING ========================================================================================
 
 export default connect(
   (gs: IGlobalState) => {
     const bs = moduleConfig.getState(gs);
     return {
-      session: getUserSession(),
+      session: assertSession(),
       tree: bs.tree,
       initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
       error: bs.blogs.error ?? bs.folders.error,

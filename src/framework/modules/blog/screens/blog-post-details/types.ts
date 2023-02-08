@@ -1,16 +1,17 @@
-import { NavigationInjectedProps } from 'react-navigation';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { ISession } from '~/framework/modules/auth/model';
+import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
+import { Blog, BlogPost } from '~/framework/modules/blog/reducer';
+import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
-import { IUserSession } from '~/framework/util/session';
-import { IBlog, IBlogPost } from '~/modules/blog/reducer';
-import { IDisplayedBlog } from '~/modules/blog/screens/BlogExplorerScreen';
 
-export interface IBlogPostDetailsScreenDataProps {
-  session: IUserSession;
+export interface BlogPostDetailsScreenDataProps {
+  session: ISession;
 }
-export interface IBlogPostDetailsScreenEventProps {
-  handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<IBlogPost | undefined>;
+export interface BlogPostDetailsScreenEventProps {
+  handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<BlogPost | undefined>;
   handlePublishBlogPostComment(blogPostId: { blogId: string; postId: string }, comment: string): Promise<number | undefined>;
   handleUpdateBlogPostComment(
     blogPostCommentId: { blogId: string; postId: string; commentId: string },
@@ -25,16 +26,16 @@ export interface IBlogPostDetailsScreenEventProps {
   handlePublishBlogPost(blogPostId: { blogId: string; postId: string }): Promise<{ number: number } | undefined>;
   dispatch: ThunkDispatch<any, any, any>;
 }
-export interface IBlogPostDetailsScreenNavParams {
+export interface BlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
-  blogPost?: IBlogPost;
+  blogPost?: BlogPost;
   blogId?: string;
-  blog: IDisplayedBlog;
+  blog: DisplayedBlog;
   useNotification?: boolean;
 }
-export type IBlogPostDetailsScreenProps = IBlogPostDetailsScreenDataProps &
-  IBlogPostDetailsScreenEventProps &
-  NavigationInjectedProps<Partial<IBlogPostDetailsScreenNavParams>>;
+export type BlogPostDetailsScreenProps = BlogPostDetailsScreenDataProps &
+  BlogPostDetailsScreenEventProps &
+  NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogPostDetails>;
 
 export enum BlogPostDetailsLoadingState {
   PRISTINE,
@@ -47,12 +48,12 @@ export enum BlogPostCommentLoadingState {
   PUBLISH,
   DONE,
 }
-export interface IBlogPostDetailsScreenState {
+export interface BlogPostDetailsScreenState {
   loadingState: BlogPostDetailsLoadingState;
   publishCommentLoadingState: BlogPostCommentLoadingState;
   updateCommentLoadingState: BlogPostCommentLoadingState;
-  blogInfos: IDisplayedBlog | IBlog | undefined;
-  blogPostData: IBlogPost | undefined;
+  blogInfos: DisplayedBlog | Blog | undefined;
+  blogPostData: BlogPost | undefined;
   errorState: boolean;
   showHeaderTitle: boolean;
   isCommentFieldFocused: boolean;

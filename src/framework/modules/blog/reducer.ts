@@ -4,17 +4,18 @@
 import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
+import { Reducers } from '~/app/store';
+import { ISession } from '~/framework/modules/auth/model';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';
-import { IUserSession } from '~/framework/util/session';
 
-import moduleConfig from './moduleConfig';
+import moduleConfig from './module-config';
 import { createBlogPostResourceRight } from './rights';
 
 // Types
 
-export interface IBlog {
+export interface Blog {
   id: string;
   visibility: string;
   title: string;
@@ -31,11 +32,11 @@ export interface IBlog {
   } & {
     [key in 'userId' | 'groupId']: string;
   })[];
-  fetchPosts: Omit<IBlogPost, 'content'>[];
+  fetchPosts: Omit<BlogPost, 'content'>[];
 }
-export type IBlogList = IBlog[];
+export type BlogList = Blog[];
 
-export interface IBlogPostComment {
+export interface BlogPostComment {
   author: {
     login: string;
     userId: string;
@@ -53,15 +54,15 @@ export interface IBlogPostComment {
   state: string;
 }
 
-export type IBlogPostComments = IBlogPostComment[];
+export type BlogPostComments = BlogPostComment[];
 
-export interface IBlogPost {
+export interface BlogPost {
   author: {
     login: string;
     userId: string;
     username: string;
   };
-  comments?: IBlogPostComments;
+  comments?: BlogPostComments;
   content: string;
   created: Moment;
   firstPublishDate?: Moment;
@@ -72,9 +73,9 @@ export interface IBlogPost {
   _id: string;
 }
 
-export type IBlogPostList = IBlogPost[];
+export type BlogPostList = BlogPost[];
 
-export interface IBlogFolder {
+export interface BlogFolder {
   id: string;
   name: string;
   owner: { userId: string; displayName: string };
@@ -87,28 +88,28 @@ export interface IBlogFolder {
 
 // State
 
-export type IBlogFlatTree = {
-  resources: IBlog[];
+export type BlogFlatTree = {
+  resources: Blog[];
   folders: ({
     depth: number;
-  } & IBlogFolderWithResources &
-    IBlogFolderWithChildren)[];
+  } & BlogFolderWithResources &
+    BlogFolderWithChildren)[];
 };
 
-interface IBlog_StateData {
-  blogs: IBlog[];
-  folders: IBlogFolder[];
-  tree: IBlogFlatTree;
+interface BlogStateData {
+  blogs: Blog[];
+  folders: BlogFolder[];
+  tree: BlogFlatTree;
 }
-export interface IBlog_State {
-  blogs: AsyncState<IBlog[]>;
-  folders: AsyncState<IBlogFolder[]>;
-  tree: IBlog_StateData['tree'];
+export interface BlogState {
+  blogs: AsyncState<Blog[]>;
+  folders: AsyncState<BlogFolder[]>;
+  tree: BlogStateData['tree'];
 }
 
 // Reducer
 
-const initialState: IBlog_StateData = {
+const initialState: BlogStateData = {
   blogs: [],
   folders: [],
   tree: {
@@ -126,38 +127,6 @@ export const actionTypes = {
   },
 };
 
-export default combineReducers({
-  blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),
-  folders: createSessionAsyncReducer(initialState.folders, actionTypes.folders),
-  tree: createSessionReducer(initialState.tree, {
-    [actionTypes.tree.compute]: (state = initialState.tree, action) => {
-      const a = action as unknown as { blogs: IBlog[]; folders: IBlogFolder[] };
-      return computeAllBlogsFlatHierarchy(a.folders, a.blogs);
-    },
-  }),
-});
-
-// Getters
-
-export const getPublishableBlogs = (session: IUserSession, blogs: IBlogList) => {
-  const publishableBlogs = (resourceRightFilter(blogs, createBlogPostResourceRight, session) as IBlogList).filter(
-    (blog: IBlog) => !blog.trashed,
-  );
-  return publishableBlogs;
-};
-
-// Other functions
-
-export const filterTrashed = <T extends { trashed?: boolean }>(items: Array<T>, trashed: boolean) =>
-  items.filter(i => (i.trashed || false) === trashed);
-
-export interface IBlogFolderWithResources extends IBlogFolder {
-  resources: IBlog[];
-}
-export interface IBlogFolderWithChildren extends IBlogFolder {
-  children?: IBlogFolderWithChildren[];
-}
-
 /**
  * Computes folders hierarchy and calls a callback for every folder.
  * Note : be careful with deleted resources and folders, you must filter these list before call this function.
@@ -165,26 +134,25 @@ export interface IBlogFolderWithChildren extends IBlogFolder {
  * @param callback
  * @returns
  */
-export const computeFoldersHierarchy = <FolderType extends IBlogFolder = IBlogFolder>(
-  folders: IBlogFolder[],
-  callback?: (f: IBlogFolder) => FolderType,
+export const computeFoldersHierarchy = <FolderType extends BlogFolder = BlogFolder>(
+  folders: BlogFolder[],
+  callback?: (f: BlogFolder) => FolderType,
 ) => {
-  const ret = [] as (IBlogFolderWithChildren & FolderType)[];
+  const ret = [] as (BlogFolderWithChildren & FolderType)[];
   const cleanFolders = folders.map(f => {
-    const { children, ...ff } = f as IBlogFolderWithChildren;
+    const { children, ...ff } = f as BlogFolderWithChildren;
     return ff;
   });
   for (const f of cleanFolders) {
     // If parent is defined but not found, consider it has no parent.
-    const parentFolder = f.parentId ? (cleanFolders.find(ff => ff.id === f.parentId) as IBlogFolderWithChildren) : undefined;
+    const parentFolder = f.parentId ? (cleanFolders.find(ff => ff.id === f.parentId) as BlogFolderWithChildren) : undefined;
     const ff = callback ? callback(f) : (f as FolderType);
     if (parentFolder) {
-      parentFolder.children = [...(parentFolder.children ?? []), ff] as (IBlogFolderWithChildren & FolderType)[];
+      parentFolder.children = [...(parentFolder.children ?? []), ff] as (BlogFolderWithChildren & FolderType)[];
     } else {
       ret.push(ff);
     }
   }
-  // return ret.filter(f => (f as IBlogFolderWithChildren).parentId === undefined);
   return ret;
 };
 
@@ -195,18 +163,18 @@ export const computeFoldersHierarchy = <FolderType extends IBlogFolder = IBlogFo
  * @param blogs global list of all resources
  * @returns
  */
-export const computeAllBlogsHierarchy = <FolderType extends IBlogFolder = IBlogFolder>(folders: FolderType[], blogs: IBlog[]) => {
+export const computeAllBlogsHierarchy = <FolderType extends BlogFolder = BlogFolder>(folders: FolderType[], blogs: Blog[]) => {
   const idsOfAllBlogsThatAreInAFolder: string[] = [];
 
   const folderHierarchy = computeFoldersHierarchy(folders, f => {
-    const blogsOfFolder = [] as IBlog[];
+    const blogsOfFolder = [] as Blog[];
     for (const resourceId of f.resourceIds) {
-      const blog = blogs.find(blog => blog.id === resourceId);
+      const blog = blogs.find(bb => bb.id === resourceId);
       if (blog !== undefined) blogsOfFolder.push(blog);
     }
-    (f as IBlogFolderWithResources).resources = blogsOfFolder;
+    (f as BlogFolderWithResources).resources = blogsOfFolder;
     idsOfAllBlogsThatAreInAFolder.push(...blogsOfFolder.map(b => b.id));
-    return f as IBlogFolderWithResources & FolderType;
+    return f as BlogFolderWithResources & FolderType;
   });
 
   const rootBlogs = blogs.filter(blog => !idsOfAllBlogsThatAreInAFolder.includes(blog.id));
@@ -223,19 +191,16 @@ export const computeAllBlogsHierarchy = <FolderType extends IBlogFolder = IBlogF
  * @param blogs
  * @returns
  */
-export const computeAllBlogsFlatHierarchy = <FolderType extends IBlogFolder = IBlogFolder>(
-  folders: FolderType[],
-  blogs: IBlog[],
-) => {
+export const computeAllBlogsFlatHierarchy = <FolderType extends BlogFolder = BlogFolder>(folders: FolderType[], blogs: Blog[]) => {
   // Cleanup. Depth must be reset if there is already present.
   const cleanFolders = folders.map(f => {
-    const { depth, ...ff } = f as { depth?: number } & IBlogFolderWithChildren;
+    const { depth, ...ff } = f as { depth?: number } & BlogFolderWithChildren;
     return ff;
-  }) as unknown as Array<{ depth?: number } & IBlogFolderWithChildren & FolderType>;
-  let allHierarchy = computeAllBlogsHierarchy(cleanFolders, blogs);
+  }) as unknown as ({ depth?: number } & BlogFolderWithChildren & FolderType)[];
+  const allHierarchy = computeAllBlogsHierarchy(cleanFolders, blogs);
   // Iterate over and flatten tree level after level.
-  let depth = 0,
-    done = false;
+  let depth = 0;
+  const done = false;
   do {
     for (const f of allHierarchy.folders) {
       if (f.depth === undefined) {
@@ -248,9 +213,8 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends IBlogFolder = IB
         [
           ...acc,
           f,
-          ...((f.children as Array<{ depth?: number } & IBlogFolderWithChildren & FolderType>)?.filter(
-            f => f.depth === undefined,
-          ) || []),
+          ...((f.children as ({ depth?: number } & BlogFolderWithChildren & FolderType)[])?.filter(ff => ff.depth === undefined) ||
+            []),
         ] as typeof allHierarchy.folders,
       [] as typeof allHierarchy.folders,
     );
@@ -258,6 +222,41 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends IBlogFolder = IB
   } while (!done);
   return {
     resources: allHierarchy.resources,
-    folders: allHierarchy.folders as Array<{ depth: number } & IBlogFolderWithResources & IBlogFolderWithChildren & FolderType>,
+    folders: allHierarchy.folders as ({ depth: number } & BlogFolderWithResources & BlogFolderWithChildren & FolderType)[],
   };
 };
+
+// Getters
+
+export const getPublishableBlogs = (session: ISession, blogs: BlogList) => {
+  const publishableBlogs = (resourceRightFilter(blogs, createBlogPostResourceRight, session) as BlogList).filter(
+    (blog: Blog) => !blog.trashed,
+  );
+  return publishableBlogs;
+};
+
+// Other functions
+
+export const filterTrashed = <T extends { trashed?: boolean }>(items: T[], trashed: boolean) =>
+  items.filter(i => (i.trashed || false) === trashed);
+
+export interface BlogFolderWithResources extends BlogFolder {
+  resources: Blog[];
+}
+export interface BlogFolderWithChildren extends BlogFolder {
+  children?: BlogFolderWithChildren[];
+}
+
+const reducer = combineReducers({
+  blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),
+  folders: createSessionAsyncReducer(initialState.folders, actionTypes.folders),
+  tree: createSessionReducer(initialState.tree, {
+    // eslint-disable-next-line @typescript-eslint/default-param-last
+    [actionTypes.tree.compute]: (state = initialState.tree, action) => {
+      const a = action as unknown as { blogs: Blog[]; folders: BlogFolder[] };
+      return computeAllBlogsFlatHierarchy(a.folders, a.blogs);
+    },
+  }),
+});
+Reducers.register(moduleConfig.reducerName, reducer);
+export default reducer;

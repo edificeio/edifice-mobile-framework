@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
@@ -12,14 +12,11 @@ import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~
 import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
-export const commentsString = (comments: number) =>
-  comments
-    ? comments === 1
-      ? `1 ${I18n.t('common.comment.comment').toLowerCase()}`
-      : `${comments} ${I18n.t('common.comment.comments').toLowerCase()}`
-    : I18n.t('common.comment.noComments');
+const styles = StyleSheet.create({
+  footer: { flexDirection: 'row', alignItems: 'center' },
+});
 
-export interface IBlogPostResourceCardProps {
+export interface BlogPostResourceCardProps {
   action: () => void;
   authorId: string;
   authorName: string;
@@ -30,6 +27,13 @@ export interface IBlogPostResourceCardProps {
   state: 'PUBLISHED' | 'SUBMITTED';
 }
 
+export const commentsString = (comments: number) =>
+  comments
+    ? comments === 1
+      ? `1 ${I18n.t('common.comment.comment').toLowerCase()}`
+      : `${comments} ${I18n.t('common.comment.comments').toLowerCase()}`
+    : I18n.t('common.comment.noComments');
+
 export const BlogPostResourceCard = ({
   action,
   authorId,
@@ -39,7 +43,7 @@ export const BlogPostResourceCard = ({
   date,
   title,
   state,
-}: IBlogPostResourceCardProps) => {
+}: BlogPostResourceCardProps) => {
   const authorTextMaxLines = 1;
   const contentTextMaxLines = 5;
   const blogPostText = extractTextFromHtml(contentHtml);
@@ -74,11 +78,7 @@ export const BlogPostResourceCard = ({
         }
         footer={
           state !== 'SUBMITTED' ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
+            <View style={styles.footer}>
               <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
               <CaptionBoldText style={{ color: theme.ui.text.light }}>{commentsString(comments)}</CaptionBoldText>
             </View>
