@@ -7,6 +7,7 @@ export default StyleSheet.create({
   lineButtonText: {
     flex: 1,
     color: theme.ui.text.regular,
+    paddingRight: UI_SIZES.spacing.minor,
   },
   lineButtonIcon: {
     transform: [{ rotate: '270deg' }],

@@ -18,9 +18,9 @@ import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~
 import { getUserSession } from '~/framework/util/session';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
 import { checkVersionThenLogin } from '~/user/actions/version';
+import { ModificationType } from '~/user/containers/user-account/types';
 import { userService } from '~/user/service';
 
-import { ModificationType } from '../user-account/types';
 import styles from './styles';
 import { CodeState, MFAScreenProps, ResendResponse } from './types';
 

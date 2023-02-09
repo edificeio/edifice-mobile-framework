@@ -15,10 +15,10 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { isEmpty } from '~/framework/util/object';
 import { logout } from '~/user/actions/login';
+import { ModificationType } from '~/user/containers/user-account/types';
 import { userService } from '~/user/service';
 import { ValidatorBuilder } from '~/utils/form';
 
-import { ModificationType } from '../user-account/types';
 import styles from './styles';
 import { EmailState, UserEmailScreenProps } from './types';
 

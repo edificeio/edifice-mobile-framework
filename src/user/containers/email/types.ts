@@ -1,9 +1,9 @@
 import { NavigationInjectedProps } from 'react-navigation';
 
 export enum EmailState {
-  PRISTINE = 'pristine',
-  EMAIL_FORMAT_INVALID = 'emailFormatInvalid',
   EMAIL_ALREADY_VERIFIED = 'emailAlreadyVerified',
+  EMAIL_FORMAT_INVALID = 'emailFormatInvalid',
+  PRISTINE = 'pristine',
 }
 
 export interface UserEmailScreenEventProps {
