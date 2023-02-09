@@ -2,8 +2,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { IDevoirsMatieres, ILevel, IMoyenne } from '~/framework/modules/viescolaire/competences/model';
 import type { CompetencesNavigationParams } from '~/framework/modules/viescolaire/competences/navigation';
+import { IPeriodsList } from '~/framework/modules/viescolaire/dashboard/state/periods';
 import { AsyncState } from '~/framework/util/redux/async';
-import { IPeriodsList } from '~/modules/viescolaire/dashboard/state/periods';
 
 export interface CompetencesHomeScreenProps {
   devoirsList: AsyncState<IDevoirsMatieres>;

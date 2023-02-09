@@ -1,10 +1,10 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { ICourseListState } from '~/framework/modules/viescolaire/dashboard/state/courses';
 import { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import type { DiaryNavigationParams } from '~/framework/modules/viescolaire/diary/navigation';
 import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 import { AsyncState } from '~/framework/util/redux/async';
-import { ICourseListState } from '~/modules/viescolaire/dashboard/state/courses';
 
 export interface DiaryTimetableScreenProps {
   courses: ICourseListState;

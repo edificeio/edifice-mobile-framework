@@ -12,10 +12,10 @@ import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
 import {
   deleteEvent,
   postLateEvent,

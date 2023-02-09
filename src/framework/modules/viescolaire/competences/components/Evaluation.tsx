@@ -9,10 +9,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { IDevoirsMatieres, ILevel, IMoyenne } from '~/framework/modules/viescolaire/competences/model';
+import { IPeriodsList } from '~/framework/modules/viescolaire/dashboard/state/periods';
 import { AsyncState } from '~/framework/util/redux/async';
-import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
-import { IPeriodsList } from '~/modules/viescolaire/dashboard/state/periods';
 import { PageContainer } from '~/ui/ContainerContent';
 import Dropdown from '~/ui/Dropdown';
 

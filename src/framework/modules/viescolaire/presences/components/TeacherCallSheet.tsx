@@ -8,7 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import StudentRow from '~/modules/viescolaire/presences/components/StudentRow';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallListOld';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';

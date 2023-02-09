@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { IChildArray } from '~/modules/viescolaire/dashboard/state/children';
+import { IChildArray } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { ModalBox } from '~/ui/Modal';
 
 const styles = StyleSheet.create({

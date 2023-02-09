@@ -9,7 +9,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { fetchCourseListFromTeacherAction } from '~/framework/modules/viescolaire/dashboard/actions/courses';
+import { getCoursesListState } from '~/framework/modules/viescolaire/dashboard/state/courses';
+import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import {
   fetchDiaryHomeworksAction,
   fetchDiarySessionsAction,
@@ -20,10 +24,6 @@ import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { fetchCourseListFromTeacherAction } from '~/modules/viescolaire/dashboard/actions/courses';
-import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
-import { getCoursesListState } from '~/modules/viescolaire/dashboard/state/courses';
-import { getSelectedStructure } from '~/modules/viescolaire/dashboard/state/structure';
 
 import type { DiaryTimetableScreenPrivateProps } from './types';
 

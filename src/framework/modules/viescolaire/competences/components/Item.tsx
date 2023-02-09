@@ -10,7 +10,7 @@ import FlatList from '~/framework/components/flatList';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IDevoir, ILevel, IMoyenne } from '~/framework/modules/viescolaire/competences/model';
-import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 

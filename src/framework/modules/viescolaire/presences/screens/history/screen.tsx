@@ -13,14 +13,14 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { fetchPeriodsListAction, fetchYearAction } from '~/framework/modules/viescolaire/dashboard/actions/periods';
+import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getPeriodsListState, getYearState } from '~/framework/modules/viescolaire/dashboard/state/periods';
 import HistoryComponent from '~/framework/modules/viescolaire/presences/components/History';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { fetchPeriodsListAction, fetchYearAction } from '~/modules/viescolaire/dashboard/actions/periods';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
-import { getPeriodsListState, getYearState } from '~/modules/viescolaire/dashboard/state/periods';
 import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events';
 import { fetchUserChildrenAction } from '~/modules/viescolaire/presences/actions/userChildren';
 import { getHistoryEvents } from '~/modules/viescolaire/presences/state/events';
@@ -235,10 +235,6 @@ export default connect(
     const year = getYearState(state);
     const childId = userType === 'Student' ? userId : getSelectedChild(state).id;
 
-    const authorizedActions = state.user.info.authorizedActions;
-    const hasRightToCreateAbsence =
-      authorizedActions && authorizedActions.some(action => action.displayName === 'presences.absence.statements.create');
-
     return {
       events,
       structureId:
@@ -257,7 +253,9 @@ export default connect(
       childrenInfos: getUserChildrenState(state),
       isFetchingData: events.isFetching || periods.isFetching || year.isFetching,
       isPristineData: events.isPristine || periods.isPristine || year.isPristine,
-      hasRightToCreateAbsence,
+      hasRightToCreateAbsence: session?.authorizedActions.some(
+        action => action.displayName === 'presences.absence.statements.create',
+      ),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>

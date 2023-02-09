@@ -18,13 +18,13 @@ import {
 import Competences from '~/framework/modules/viescolaire/competences/components/Evaluation';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
+import { fetchGroupListAction } from '~/framework/modules/viescolaire/dashboard/actions/group';
+import { fetchPeriodsListAction } from '~/framework/modules/viescolaire/dashboard/actions/periods';
+import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getGroupsListState } from '~/framework/modules/viescolaire/dashboard/state/group';
+import { getPeriodsListState } from '~/framework/modules/viescolaire/dashboard/state/periods';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { fetchGroupListAction } from '~/modules/viescolaire/dashboard/actions/group';
-import { fetchPeriodsListAction } from '~/modules/viescolaire/dashboard/actions/periods';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
-import { getGroupsListState } from '~/modules/viescolaire/dashboard/state/group';
-import { getPeriodsListState } from '~/modules/viescolaire/dashboard/state/periods';
 
 import type { CompetencesHomeScreenPrivateProps } from './types';
 

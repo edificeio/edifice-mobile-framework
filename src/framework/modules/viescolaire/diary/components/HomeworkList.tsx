@@ -9,12 +9,12 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { UserType } from '~/framework/modules/auth/service';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
-import { getUserSession } from '~/framework/util/session';
-import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
-import { IPersonnelList } from '~/modules/viescolaire/dashboard/state/personnel';
 import {
   getTeacherName,
   hasEmptyDescription,
@@ -74,11 +74,12 @@ type HomeworkListProps = {
   onRefreshHomeworks: any;
   onRefreshSessions: any;
   childId: string;
+  userType?: UserType;
 } & NavigationInjectedProps;
 
 const EmptyComponent = ({ title }) => <EmptyScreen svgImage="empty-homework" title={title} />;
 
-const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomeworkTap, onHomeworkStatusUpdate }) => {
+const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomeworkTap, onHomeworkStatusUpdate, userType }) => {
   React.useEffect(() => {
     if (Object.keys(homeworkList).length === 0) onRefreshHomeworks();
   }, []);
@@ -102,7 +103,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
           ) : null}
           <HomeworkItem
             onPress={() => onHomeworkTap(item)}
-            disabled={getUserSession().user.type !== 'Student'}
+            disabled={userType !== UserType.Student}
             checked={isHomeworkDone(item)}
             title={item.subject_id !== 'exceptional' ? item.subject.name : item.exceptional_label}
             subtitle={item.type}
@@ -233,11 +234,11 @@ export default (props: HomeworkListProps) => {
     );
   });
 
-  const { isFetchingSession, isFetchingHomework } = props;
+  const { isFetchingSession, isFetchingHomework, userType } = props;
 
   return (
     <PageContainer>
-      {getUserSession().user.type === 'Relative' && <ChildPicker />}
+      {userType === UserType.Relative ? <ChildPicker /> : null}
       <View style={styles.homeworkPart}>
         <DatePickers startDate={startDate} endDate={endDate} />
         <PlatformSpecificSwitch value={switchValue} />
@@ -250,6 +251,7 @@ export default (props: HomeworkListProps) => {
             onHomeworkTap={homework =>
               props.navigation.navigate(`${diaryConfig.routeName}/homework`, homeworkListDetailsAdapter(homework, props.homeworks))
             }
+            userType={userType}
           />
         ) : (
           <SessionList

@@ -5,8 +5,8 @@ import { NavigationFocusInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getUserSession } from '~/framework/util/session';
-import { getSelectedStructure } from '~/modules/viescolaire/dashboard/state/structure';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import { fetchMultipleSlotsAction } from '~/modules/viescolaire/presences/actions/multipleSlots';
 import { fetchRegiterPreferencesAction } from '~/modules/viescolaire/presences/actions/registerPreferences';
 import { fetchCoursesRegisterAction } from '~/modules/viescolaire/presences/actions/teacherCourseRegister';
@@ -164,6 +164,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICall
 }
 
 const mapStateToProps: (state: any) => any = state => {
+  const session = getSession(state);
   const courses = getCoursesListState(state);
   const coursesData = (courses.data.length > 0 ? [] : courses.data) as ICourses[];
   courses.data.forEach(course => {
@@ -173,7 +174,7 @@ const mapStateToProps: (state: any) => any = state => {
 
   return {
     courses: coursesData,
-    teacherId: getUserSession().user.id,
+    teacherId: session?.user.id,
     structureId: getSelectedStructure(state),
     isFetching: courses.isFetching || registerData.isFetching,
     multipleSlots: getMultipleSlotsState(state),

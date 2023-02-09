@@ -9,6 +9,9 @@ import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
+import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getPersonnelListState } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import {
   fetchDiaryHomeworksAction,
   fetchDiaryHomeworksFromChildAction,
@@ -21,9 +24,6 @@ import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { fetchPersonnelListAction } from '~/modules/viescolaire/dashboard/actions/personnel';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
-import { getPersonnelListState } from '~/modules/viescolaire/dashboard/state/personnel';
 
 import type { DiaryHomeworkListScreenPrivateProps } from './types';
 
@@ -70,6 +70,7 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
           onRefreshHomeworks={this.fetchHomeworks}
           onRefreshSessions={this.fetchSessions}
           childId={this.props.childId}
+          userType={this.props.userType}
         />
       </PageView>
     );

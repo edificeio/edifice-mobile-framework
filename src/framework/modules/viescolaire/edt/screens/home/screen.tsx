@@ -9,7 +9,16 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { fetchGroupListAction } from '~/framework/modules/viescolaire/dashboard/actions/group';
+import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
+import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getChildrenGroupsState } from '~/framework/modules/viescolaire/dashboard/state/childrenGroups';
+import { getGroupsListState } from '~/framework/modules/viescolaire/dashboard/state/group';
+import { getPersonnelListState } from '~/framework/modules/viescolaire/dashboard/state/personnel';
+import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import { getSubjectsListState } from '~/framework/modules/viescolaire/dashboard/state/subjects';
 import {
   fetchEdtCoursesAction,
   fetchEdtSlotsAction,
@@ -21,15 +30,6 @@ import moduleConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { fetchGroupListAction } from '~/modules/viescolaire/dashboard/actions/group';
-import { fetchPersonnelListAction } from '~/modules/viescolaire/dashboard/actions/personnel';
-import StructurePicker from '~/modules/viescolaire/dashboard/containers/StructurePicker';
-import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/dashboard/state/children';
-import { getChildrenGroupsState } from '~/modules/viescolaire/dashboard/state/childrenGroups';
-import { getGroupsListState } from '~/modules/viescolaire/dashboard/state/group';
-import { getPersonnelListState } from '~/modules/viescolaire/dashboard/state/personnel';
-import { getSelectedStructure } from '~/modules/viescolaire/dashboard/state/structure';
-import { getSubjectsListState } from '~/modules/viescolaire/dashboard/state/subjects';
 
 import { EdtHomeScreenPrivateProps } from './types';
 

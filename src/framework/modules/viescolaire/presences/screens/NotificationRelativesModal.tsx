@@ -8,7 +8,7 @@ import {
   getChildrenList,
   getSelectedChild,
   getSelectedChildStructure,
-} from '~/modules/viescolaire/dashboard/state/children';
+} from '~/framework/modules/viescolaire/dashboard/state/children';
 import { fetchChildrenEventsAction } from '~/modules/viescolaire/presences/actions/relativesNotificationModal';
 import { NotificationRelativesModal } from '~/modules/viescolaire/presences/components/NotificationRelativesModal';
 import {

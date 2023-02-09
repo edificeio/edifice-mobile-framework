@@ -9,10 +9,10 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
 import Calendar from '~/framework/modules/viescolaire/common/components/Calendar';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { EdtHomeScreenProps } from '~/framework/modules/viescolaire/edt/screens/home';
 import { EdtHomeScreenState } from '~/framework/modules/viescolaire/edt/screens/home/screen';
-import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({

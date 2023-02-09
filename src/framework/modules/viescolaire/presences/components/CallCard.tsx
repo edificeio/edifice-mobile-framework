@@ -9,7 +9,7 @@ import { Picture } from '~/framework/components/picture';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
+import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 
 const styles = StyleSheet.create({
