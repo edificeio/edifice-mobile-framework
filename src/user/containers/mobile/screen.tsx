@@ -25,6 +25,13 @@ import { userService } from '~/user/service';
 import styles from './styles';
 import { MobileState, UserMobileScreenProps } from './types';
 
+const countryListLanguages = {
+  fr: 'fra',
+  en: 'common', // this is english
+  es: 'spa',
+  DEFAULT: 'common',
+} as const;
+
 const UserMobileScreen = (props: UserMobileScreenProps) => {
   const { onLogout, navigation } = props;
 
@@ -251,6 +258,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
                 placeholder: I18n.t('user-mobile-country-placeholder'),
                 autoFocus: true,
               },
+              language: countryListLanguages[I18n.currentLocale()] ?? countryListLanguages.DEFAULT,
             }}
           />
           <CaptionItalicText style={styles.errorText}>
