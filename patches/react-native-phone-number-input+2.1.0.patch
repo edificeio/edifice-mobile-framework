@@ -36,7 +36,7 @@ index cd625e5..4a79f80 100644
 +export function getFormattedNumber(number: string, countryCode: CountryCode ): string | undefined;
 \ No newline at end of file
 diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
-index b89c388..6cee395 100644
+index b89c388..797fa42 100644
 --- a/node_modules/react-native-phone-number-input/lib/index.js
 +++ b/node_modules/react-native-phone-number-input/lib/index.js
 @@ -7,7 +7,7 @@ import CountryPicker, {
@@ -134,8 +134,7 @@ index b89c388..6cee395 100644
 +  } catch (err) {
 +    return undefined;
 +  }
-+}
-\ No newline at end of file
++};
 diff --git a/node_modules/react-native-phone-number-input/lib/styles.d.ts b/node_modules/react-native-phone-number-input/lib/styles.d.ts
 index c6bd19e..4fc1080 100644
 --- a/node_modules/react-native-phone-number-input/lib/styles.d.ts
