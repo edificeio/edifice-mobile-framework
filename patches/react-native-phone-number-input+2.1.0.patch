@@ -1,0 +1,226 @@
+diff --git a/node_modules/react-native-phone-number-input/lib/index.d.ts b/node_modules/react-native-phone-number-input/lib/index.d.ts
+index cd625e5..4a79f80 100644
+--- a/node_modules/react-native-phone-number-input/lib/index.d.ts
++++ b/node_modules/react-native-phone-number-input/lib/index.d.ts
+@@ -1,10 +1,11 @@
+-import { Component } from "react";
++import { Component, ReactElement } from "react";
+ import { TextInputProps, StyleProp, TextStyle, ViewStyle } from "react-native";
+ import {
+   CountryCode,
+   CallingCode,
+   Country,
+ } from "react-native-country-picker-modal";
++export { Country, CountryCode } from "react-native-country-picker-modal";
+ import { CountryFilterProps } from "react-native-country-picker-modal/lib/CountryFilter";
+ export interface PhoneInputProps {
+   withDarkTheme?: boolean;
+@@ -27,9 +28,11 @@ export interface PhoneInputProps {
+   codeTextStyle?: StyleProp<TextStyle>;
+   flagButtonStyle?: StyleProp<ViewStyle>;
+   countryPickerButtonStyle?: StyleProp<ViewStyle>;
+-  layout?: "first" | "second";
++  layout?: "first" | "second" | "third";
+   filterProps?: CountryFilterProps;
+   countryPickerProps?: any;
++  flagSize?: number;
++  drowDownImage?: ReactElement;
+ }
+ export interface PhoneInputState {
+   code: CallingCode | undefined;
+@@ -305,3 +308,5 @@ export default class PhoneInput extends Component<
+ }
+ 
+ export function isValidNumber(number: string, countryCode: CountryCode ): boolean;
++export function isMobileNumber(number: string, countryCode: CountryCode ): boolean;
++export function getFormattedNumber(number: string, countryCode: CountryCode ): string | undefined;
+\ No newline at end of file
+diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
+index b89c388..6cee395 100644
+--- a/node_modules/react-native-phone-number-input/lib/index.js
++++ b/node_modules/react-native-phone-number-input/lib/index.js
+@@ -7,7 +7,7 @@ import CountryPicker, {
+   CountryModalProvider,
+   Flag,
+ } from "react-native-country-picker-modal";
+-import { PhoneNumberUtil } from "google-libphonenumber";
++import { PhoneNumberUtil, PhoneNumberType, PhoneNumberFormat } from "google-libphonenumber";
+ import styles from "./styles";
+ 
+ const dropDown =
+@@ -119,7 +119,7 @@ export default class PhoneInput extends PureComponent {
+ 
+   renderDropdownImage = () => {
+     return (
+-      <Image
++      this.props.drowDownImage ?? <Image
+         source={{ uri: dropDown }}
+         resizeMode="contain"
+         style={styles.dropDownImage}
+@@ -130,12 +130,12 @@ export default class PhoneInput extends PureComponent {
+   renderFlagButton = (props) => {
+     const { layout = "first", flagSize } = this.props;
+     const { countryCode } = this.state;
+-    if (layout === "first") {
++    if (layout === "first" || layout === "third") {
+       return (
+-        <Flag
++        <View style={styles.flag}><Flag
+           countryCode={countryCode}
+           flagSize={flagSize ? flagSize : DEFAULT_THEME.flagSize}
+-        />
++        /></View>
+       );
+     }
+     return <View />;
+@@ -173,7 +173,7 @@ export default class PhoneInput extends PureComponent {
+           <TouchableOpacity
+             style={[
+               styles.flagButtonView,
+-              layout === "second" ? styles.flagButtonExtraWidth : {},
++              layout === "second" || layout === "third" ? styles.flagButtonExtraWidth : {},
+               flagButtonStyle ? flagButtonStyle : {},
+               countryPickerButtonStyle ? countryPickerButtonStyle : {},
+             ]}
+@@ -192,10 +192,12 @@ export default class PhoneInput extends PureComponent {
+               visible={modalVisible}
+               theme={withDarkTheme ? DARK_THEME : DEFAULT_THEME}
+               renderFlagButton={this.renderFlagButton}
+-              onClose={() => this.setState({ modalVisible: false })}
++              onClose={() => {
++                this.setState({ modalVisible: false })
++              }}
+               {...countryPickerProps}
+             />
+-            {code && layout === "second" && (
++            {code && (layout === "second" || layout === "third") && (
+               <Text
+                 style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
+               >{`+${code}`}</Text>
+@@ -230,6 +232,9 @@ export default class PhoneInput extends PureComponent {
+               keyboardType="number-pad"
+               autoFocus={autoFocus}
+               {...textInputProps}
++              textAlignVertical="center"
++              multiline={true}
++              blurOnSubmit={true}
+             />
+           </View>
+         </View>
+@@ -241,8 +246,26 @@ export default class PhoneInput extends PureComponent {
+ export const isValidNumber = (number, countryCode) => {
+   try {
+     const parsedNumber = phoneUtil.parse(number, countryCode);
+-    return phoneUtil.isValidNumber(parsedNumber);
++    return phoneUtil.isValidNumberForRegion(parsedNumber, countryCode);
+   } catch (err) {
+     return false;
+   }
+ };
++
++export const isMobileNumber = (number, countryCode) => {
++  try {
++    const parsedNumber = phoneUtil.parse(number, countryCode);
++    return phoneUtil.getNumberType(parsedNumber) === PhoneNumberType.MOBILE;
++  } catch (err) {
++    return false;
++  }
++};
++
++export const getFormattedNumber = (number, countryCode) => {
++  try {
++    const parsedNumber = phoneUtil.parse(number, countryCode);
++    return phoneUtil.format(parsedNumber, PhoneNumberFormat.INTERNATIONAL);
++  } catch (err) {
++    return undefined;
++  }
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-phone-number-input/lib/styles.d.ts b/node_modules/react-native-phone-number-input/lib/styles.d.ts
+index c6bd19e..4fc1080 100644
+--- a/node_modules/react-native-phone-number-input/lib/styles.d.ts
++++ b/node_modules/react-native-phone-number-input/lib/styles.d.ts
+@@ -46,5 +46,8 @@ declare const styles: {
+         color: string;
+         flex: number;
+     };
++    flag: {
++        marginRight: number;
++    }
+ };
+ export default styles;
+diff --git a/node_modules/react-native-phone-number-input/lib/styles.js b/node_modules/react-native-phone-number-input/lib/styles.js
+index 1789ce7..8fe81a5 100644
+--- a/node_modules/react-native-phone-number-input/lib/styles.js
++++ b/node_modules/react-native-phone-number-input/lib/styles.js
+@@ -10,12 +10,12 @@ function hp(percentage) {
+ }
+ const styles = StyleSheet.create({
+   container: {
+-    width: wp(80),
++    // width: wp(80),
+     backgroundColor: 'white',
+     flexDirection: 'row',
+   },
+   flagButtonView: {
+-    width: wp(20),
++    // width: wp(20),
+     height: '100%',
+     minWidth: 32,
+     justifyContent: 'center',
+@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
+     alignItems: 'center',
+   },
+   flagButtonExtraWidth: {
+-    width: wp(23),
++    // width: wp(23),
+   },
+   shadow: {
+     shadowColor: 'rgba(0,0,0,0.4)',
+@@ -42,23 +42,26 @@ const styles = StyleSheet.create({
+   textContainer: {
+     flex: 1,
+     backgroundColor: '#F8F9F9',
+-    paddingHorizontal: wp(4),
+-    paddingVertical: hp(2),
++    // paddingHorizontal: wp(4),
++    // paddingVertical: hp(2),
+     textAlign: 'left',
+     flexDirection: 'row',
+     alignItems: 'center',
+   },
+   codeText: {
+-    fontSize: 16,
++    // fontSize: 16,
+     marginRight: 10,
+-    fontWeight: '500',
+-    color: '#000000',
++    // fontWeight: '500',
++    // color: '#000000',
+   },
+   numberText: {
+-    fontSize: 16,
+-    color: '#000000',
++    // fontSize: 16,
++    // color: '#000000',
+     flex: 1,
+   },
++  flag: { 
++    marginRight: -8
++  }
+ });
+ 
+ export default styles;
+diff --git a/node_modules/react-native-phone-number-input/package.json b/node_modules/react-native-phone-number-input/package.json
+index f4df944..1e123a8 100644
+--- a/node_modules/react-native-phone-number-input/package.json
++++ b/node_modules/react-native-phone-number-input/package.json
+@@ -31,7 +31,7 @@
+     "android"
+   ],
+   "dependencies": {
+-    "google-libphonenumber": "^3.2.10",
++    "google-libphonenumber": "3.2.32",
+     "react-native-country-picker-modal": "^2.0.0"
+   },
+   "devDependencies": {

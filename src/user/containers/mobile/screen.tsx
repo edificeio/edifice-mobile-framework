@@ -1,6 +1,7 @@
 import I18n from 'i18n-js';
-import React, { useEffect, useState } from 'react';
-import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Platform, TouchableOpacity, View } from 'react-native';
+import PhoneInput, { CountryCode, getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -18,9 +19,9 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { logout } from '~/user/actions/login';
 import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
+import { ModificationType } from '~/user/containers/user-account/types';
 import { userService } from '~/user/service';
 
-import { ModificationType } from '../user-account/types';
 import styles from './styles';
 import { MobileState, UserMobileScreenProps } from './types';
 
@@ -32,9 +33,11 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const modificationType = navigation.getParam('modificationType');
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
 
+  const phoneInputRef = useRef<PhoneInput>(null);
+
   const [isSendingCode, setIsSendingCode] = useState(false);
-  const [mobile, setMobile] = useState('');
-  const [region, setRegion] = useState('fr');
+  const [mobile, setMobile] = useState<string>('');
+  const [region, setRegion] = useState<CountryCode>('FR');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
 
   // Web 4.8+ compliance:
@@ -52,7 +55,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
         setIsLoading(true);
         const requirements = await userService.getUserRequirements();
         setIsCheckMobile(containsKey(requirements as object, 'needRevalidateMobile'));
-      } catch (e) {
+      } catch {
         setIsError(true);
       } finally {
         setIsLoading(false);
@@ -86,12 +89,10 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
 
   const getIsValidMobileNumberForRegion = (toVerify: string) => {
     try {
-      const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
-      const PhoneNumberType = require('google-libphonenumber').PhoneNumberType;
-      const isValidNumberForRegion = phoneUtil.isValidNumberForRegion(phoneUtil.parse(toVerify, region), region);
-      const isMobileNumber = phoneUtil.getNumberType(phoneUtil.parse(toVerify)) === PhoneNumberType.MOBILE;
+      const isValidNumberForRegion = isValidNumber(toVerify, region);
+      const isValidMobileNumber = isMobileNumber(toVerify, region);
+      return isValidNumberForRegion && isValidMobileNumber;
       // Returns whether number is valid for selected region and an actual mobile number
-      return isValidNumberForRegion && isMobileNumber;
     } catch {
       // Returns false in case of other format errors (when the string is too short, isn't recognized as a phone number, etc.)
       return false;
@@ -100,22 +101,31 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
 
   const sendMobileVerificationCode = async (toVerify: string) => {
     // Exit if mobile is not valid
-    const isValidMobileNumberForRegion = await getIsValidMobileNumberForRegion(toVerify);
-    if (!isValidMobileNumberForRegion) return MobileState.MOBILE_FORMAT_INVALID;
     try {
+      // First, we clean the number by trimming - and . generally used as separators.
+      const phoneNumberCleaned = toVerify.replaceAll(/[-.]+/g, '');
+      const isValidMobileNumberForRegion = getIsValidMobileNumberForRegion(phoneNumberCleaned);
+      const mobileNumberFormatted = getFormattedNumber(phoneNumberCleaned, region);
+      if (!isValidMobileNumberForRegion || !mobileNumberFormatted) return MobileState.MOBILE_FORMAT_INVALID;
       if (isCheckMobile) {
         setIsSendingCode(true);
         const mobileValidationInfos = await userService.getMobileValidationInfos();
         // Exit if mobile has already been verified
-        if (toVerify === mobileValidationInfos?.mobileState?.valid) {
+        if (phoneNumberCleaned === mobileValidationInfos?.mobileState?.valid) {
           setIsSendingCode(false);
           return MobileState.MOBILE_ALREADY_VERIFIED;
         }
-        await userService.sendMobileVerificationCode(toVerify);
-        navigation.navigate('MFA', { credentials, modificationType, isMobileMFA: true, mobile: toVerify, navBarTitle: title });
+        await userService.sendMobileVerificationCode(phoneNumberCleaned);
+        navigation.navigate('MFA', {
+          credentials,
+          modificationType,
+          isMobileMFA: true,
+          mobile: mobileNumberFormatted,
+          navBarTitle: title,
+        });
       } else {
         setIsSendingCode(false);
-        props.onSaveNewMobile({ mobile: toVerify });
+        props.onSaveNewMobile({ mobile: phoneNumberCleaned });
         props.navigation.goBack();
         setTimeout(
           () =>
@@ -207,16 +217,41 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
             />
             <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
           </View>
-          <TextInput
-            keyboardType="phone-pad"
+          <PhoneInput
             placeholder={I18n.t('user-mobile-placeholder')}
-            placeholderTextColor={theme.palette.grey.graphite}
-            style={[
-              styles.input,
-              { borderColor: isMobileStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
-            ]}
+            ref={phoneInputRef}
             value={mobile}
-            onChangeText={number => changeMobile(number)}
+            defaultCode="FR"
+            layout="third"
+            onChangeFormattedText={text => {
+              changeMobile(text);
+            }}
+            onChangeCountry={code => {
+              setRegion(code.cca2);
+            }}
+            containerStyle={[
+              { borderColor: isMobileStatePristine ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
+              styles.input,
+            ]}
+            flagButtonStyle={styles.flagButton}
+            codeTextStyle={styles.flagCode}
+            textContainerStyle={[
+              styles.inputTextContainer,
+              {
+                borderColor: isMobileStatePristine ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
+              },
+            ]}
+            textInputStyle={styles.inputTextInput}
+            flagSize={Platform.select({ ios: UI_SIZES.dimensions.width.larger, android: UI_SIZES.dimensions.width.medium })}
+            drowDownImage={
+              <NamedSVG style={styles.dropDownArrow} name="ui-rafterDown" fill={theme.ui.text.regular} width={12} height={12} />
+            }
+            countryPickerProps={{
+              filterProps: {
+                placeholder: I18n.t('user-mobile-country-placeholder'),
+                autoFocus: true,
+              },
+            }}
           />
           <CaptionItalicText style={styles.errorText}>
             {isMobileStatePristine

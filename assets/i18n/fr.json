@@ -882,6 +882,7 @@
   "user-mfa-mobile-message-sent": "Un code à 6 chiffres vous a été envoyé par SMS au numéro :",
   "user-mfa-mobile-title": "Indiquez le code reçu",
   "user-mfa-mobile-toast": "Un nouveau code vous a été envoyé sur le numéro de téléphone mobile que vous avez renseigné.",
+  "user-mobile-country-placeholder": "Rechercher un pays",
   "user-mobile-edit-alert-message": "Votre numéro de téléphone ne sera pas modifié. Êtes-vous sûr d'abandonner ?",
   "user-mobile-edit-alert-title": "Modifications non enregistrées",
   "user-mobile-edit-button": "Modifier mon numéro",
