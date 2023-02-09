@@ -46,10 +46,9 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const [mobile, setMobile] = useState<string>('');
   const [region, setRegion] = useState<CountryCode>('FR');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
-
   // Web 4.8+ compliance:
-  //   Mobile verification APIs are available if /auth/user/requirements contains at least needRevalidateMobile field
-  //   Use requirementsChecked to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
+  //  -mobile verification APIs are available if /auth/user/requirements contains the needRevalidateMobile field
+  //  -requirementsChecked is used to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
   const [requirementsChecked, setRequirementsChecked] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
@@ -68,7 +67,6 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
         setIsLoading(false);
       }
     }
-    // Avoid reentrance by using requirementsChecked to know whether /auth/user/requirements has already been called
     if (!requirementsChecked) checkRequirements();
   }, [requirementsChecked]);
 
@@ -96,23 +94,23 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
 
   const getIsValidMobileNumberForRegion = (toVerify: string) => {
     try {
+      // Returns whether number is valid for selected region and an actual mobile number
       const isValidNumberForRegion = isValidNumber(toVerify, region);
       const isValidMobileNumber = isMobileNumber(toVerify, region);
       return isValidNumberForRegion && isValidMobileNumber;
-      // Returns whether number is valid for selected region and an actual mobile number
     } catch {
-      // Returns false in case of other format errors (when the string is too short, isn't recognized as a phone number, etc.)
+      // Returns false in case of format error (string is too short, isn't recognized as a phone number, etc.)
       return false;
     }
   };
 
   const sendMobileVerificationCode = async (toVerify: string) => {
-    // Exit if mobile is not valid
     try {
-      // First, we clean the number by trimming - and . generally used as separators.
+      // First, we clean the number by trimming - and . characters (generally used as separators)
       const phoneNumberCleaned = toVerify.replaceAll(/[-.]+/g, '');
       const isValidMobileNumberForRegion = getIsValidMobileNumberForRegion(phoneNumberCleaned);
       const mobileNumberFormatted = getFormattedNumber(phoneNumberCleaned, region);
+      // Exit if mobile is not valid
       if (!isValidMobileNumberForRegion || !mobileNumberFormatted) return MobileState.MOBILE_FORMAT_INVALID;
       if (isCheckMobile) {
         setIsSendingCode(true);
@@ -230,12 +228,8 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
             value={mobile}
             defaultCode="FR"
             layout="third"
-            onChangeFormattedText={text => {
-              changeMobile(text);
-            }}
-            onChangeCountry={code => {
-              setRegion(code.cca2);
-            }}
+            onChangeFormattedText={text => changeMobile(text)}
+            onChangeCountry={code => setRegion(code.cca2)}
             containerStyle={[
               { borderColor: isMobileStatePristine ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
               styles.input,
