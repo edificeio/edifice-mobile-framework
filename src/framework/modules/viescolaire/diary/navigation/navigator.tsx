@@ -17,7 +17,7 @@ import { DiaryNavigationParams, diaryRouteNames } from '.';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<DiaryNavigationParams>(moduleConfig.name, Stack => {
     /**
-     * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of apps & widgets.
+     * This module has no fixed home screen. We dynamically update `moduleConfig.routeName` to point to the "home" depending of user type.
      * Teachers will have timetable as home, while others will have homework list.
      */
 
