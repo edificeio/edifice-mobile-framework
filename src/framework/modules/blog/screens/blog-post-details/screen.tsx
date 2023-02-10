@@ -263,7 +263,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   }
 
   componentDidMount() {
-    const { route, navigation, session } = this.props;
+    const { route, navigation } = this.props;
+    const session = assertSession();
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
     const { blogPostData, blogInfos, errorState, loadingState } = this.state;
