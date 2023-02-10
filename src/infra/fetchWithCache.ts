@@ -1,8 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { getStore } from '~/App';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
-import { resetNavigation } from '~/navigation/helpers/navHelper';
+import { getRootNavState, resetNavigation } from '~/navigation/helpers/navHelper';
+import { actionTypeLoginError } from '~/user/actions/actionTypes/login';
 
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
@@ -13,22 +15,28 @@ import { OAuth2RessourceOwnerPasswordClient } from './oauth';
  * @param init request options
  */
 export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit): Promise<Response> {
-  try {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
-    if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
-      try {
-        await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
-      } catch (err) {
-        const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
-        resetNavigation(stack, stack.length - 1);
-        throw err;
-      }
+  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
+  if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
+    try {
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
+    } catch (err) {
+      setTimeout(() => {
+        const currentNavState = getRootNavState().nav;
+        const currentRoute = currentNavState.routes[currentNavState.index];
+        if (currentRoute.routeName === 'Main') {
+          const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
+          resetNavigation(stack, stack.length - 1);
+        }
+      });
+      getStore().dispatch({
+        type: actionTypeLoginError,
+        errmsg: (err as any).type,
+      });
+      throw err;
     }
-    const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
-    return await fetch(req);
-  } catch (err) {
-    throw err;
   }
+  const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
+  return fetch(req);
 }
 
 /**

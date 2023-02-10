@@ -170,7 +170,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       } else {
         err.type = OAuthErrorType.UNKNOWN_RESPONSE;
       }
-    } else if (bodyOrType && typeof bodyOrType === 'object' && error) {
+    } else if (bodyOrType && typeof bodyOrType !== 'object' && error) {
       // create from type
       err.type = bodyOrType as unknown as OAuthErrorType;
       err.error = error;
