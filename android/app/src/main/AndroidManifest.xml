@@ -16,6 +16,9 @@
             android:allowBackup="false"
             android:theme="@style/AppTheme"
             android:networkSecurityConfig="@xml/network_security_config">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/icon_white" />
         <activity
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
             android:exported="true"
