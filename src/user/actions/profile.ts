@@ -11,12 +11,8 @@ import userConfig from '~/user/config';
 
 export interface IUpdatableProfileValues {
   displayName?: string;
-  email?: string;
   homePhone?: string;
-  mobile?: string;
   loginAlias?: string;
-  picture?: string;
-  photo?: string;
 }
 
 export const actionTypeProfileUpdateRequested = userConfig.createActionType('PROFILE_UPDATE_REQUESTED');
