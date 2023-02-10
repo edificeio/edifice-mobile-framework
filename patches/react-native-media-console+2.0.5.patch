@@ -1,0 +1,56 @@
+diff --git a/node_modules/react-native-media-console/lib/typescript/types.d.ts b/node_modules/react-native-media-console/lib/typescript/types.d.ts
+index 4e95969..0e08e8a 100644
+--- a/node_modules/react-native-media-console/lib/typescript/types.d.ts
++++ b/node_modules/react-native-media-console/lib/typescript/types.d.ts
+@@ -58,6 +58,12 @@ export interface VideoPlayerProps extends VideoProperties {
+      * @default false
+      */
+     showOnEnd?: boolean;
++    /**
++     * Show controls always even when you touch the screen
++     *
++     * @default false
++     */
++    alwaysShowControls?: boolean;
+     /**
+      * Title of the video
+      */
+diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
+index 5ea0ab2..020a208 100644
+--- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
++++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
+@@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     isFullscreen = false,
+     showOnStart = false,
+     showOnEnd = false,
++    alwaysShowControls = false,
+     paused = false,
+     muted = false,
+     volume = 1,
+@@ -189,7 +190,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+           togglePlayPause();
+           resetControlTimeout();
+         } else {
+-          toggleControls();
++          if(!alwaysShowControls) {toggleControls()};
+         }
+         tapActionTimeout.current = null;
+       }, doubleTapTime);
+diff --git a/node_modules/react-native-media-console/src/types.ts b/node_modules/react-native-media-console/src/types.ts
+index ab51aed..36ca814 100644
+--- a/node_modules/react-native-media-console/src/types.ts
++++ b/node_modules/react-native-media-console/src/types.ts
+@@ -62,6 +62,13 @@ export interface VideoPlayerProps extends VideoProperties {
+    */
+   showOnEnd?: boolean;
+ 
++  /**
++     * Show controls always even when you touch the screen
++     *
++     * @default false
++     */
++  alwaysShowControls?: boolean;
++
+   /**
+    * Title of the video
+    */
