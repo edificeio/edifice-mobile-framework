@@ -116,11 +116,11 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
         setIsSendingCode(true);
         const mobileValidationInfos = await userService.getMobileValidationInfos();
         // Exit if mobile has already been verified
-        if (phoneNumberCleaned === mobileValidationInfos?.mobileState?.valid) {
+        if (mobileNumberFormatted === mobileValidationInfos?.mobileState?.valid) {
           setIsSendingCode(false);
           return MobileState.MOBILE_ALREADY_VERIFIED;
         }
-        await userService.sendMobileVerificationCode(phoneNumberCleaned);
+        await userService.sendMobileVerificationCode(mobileNumberFormatted);
         navigation.navigate('MFA', {
           credentials,
           modificationType,
@@ -130,7 +130,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
         });
       } else {
         setIsSendingCode(false);
-        props.onSaveNewMobile({ mobile: phoneNumberCleaned });
+        props.onSaveNewMobile({ mobile: mobileNumberFormatted });
         props.navigation.goBack();
         setTimeout(
           () =>
