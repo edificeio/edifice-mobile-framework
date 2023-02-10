@@ -1,6 +1,6 @@
 {
-  "last": "2023-02-07 12:10:33",
-  "notes": "release: 1.9.2-rc.2(1090202)",
-  "version": "1.9.2-rc.3(1090203)",
+  "last": "2023-02-10 12:59:39",
+  "notes": "fix(ipad): specific ipad bottom inset addition\nrelease: 1.9.2-rc.3(1090203)",
+  "version": "1.9.2-rc.4(1090204)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
