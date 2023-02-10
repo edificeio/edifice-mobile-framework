@@ -1,5 +1,5 @@
 import { Dimensions, Insets, Platform, StatusBar, StyleSheet } from 'react-native';
-import { hasNotch } from 'react-native-device-info';
+import DeviceInfo, { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const screenDimensions = Dimensions.get('window');
@@ -105,7 +105,7 @@ export const UI_SIZES = {
   },
   screen: {
     bottomInset: Platform.select({
-      ios: initialWindowMetrics?.insets?.bottom || 0,
+      ios: DeviceInfo.isTablet() ? 32 : initialWindowMetrics?.insets?.bottom || 0,
       default: 0,
     }),
     height: screenDimensions.height,
