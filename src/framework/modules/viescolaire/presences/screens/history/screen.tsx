@@ -238,10 +238,7 @@ export default connect(
 
     return {
       events,
-      structureId:
-        userType === UserType.Student
-          ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
-          : getSelectedChildStructure(state)?.id,
+      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
       userType,
       userId,
       childId,

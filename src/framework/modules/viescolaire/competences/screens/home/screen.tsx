@@ -79,10 +79,7 @@ export default connect(
     const userId = session?.user.id;
     const userType = session?.user.type;
     const childId = userType === UserType.Student ? userId : getSelectedChild(state)?.id;
-    const structureId =
-      userType === UserType.Student
-        ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
-        : getSelectedChildStructure(state)?.id;
+    const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id;
 
     // get groups and childClasses
     let childClasses: string = '';
@@ -91,7 +88,7 @@ export default connect(
     if (userType === UserType.Student) {
       childClasses = state.user.info.classes[0];
     } else {
-      childClasses = competencesState.userChildren.data!.find(child => childId === child.id)?.idClasse!;
+      childClasses = competencesState.userChildren.data.find(child => childId === child.id)?.idClasse!;
     }
     if (childGroups !== undefined && childGroups[0] !== undefined) {
       if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);

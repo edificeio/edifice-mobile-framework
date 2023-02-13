@@ -4,10 +4,29 @@
 import { ThunkAction } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
+import { IClass, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import { actionTypes } from '~/framework/modules/viescolaire/edt/reducer';
 import { edtService } from '~/framework/modules/viescolaire/edt/service';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
+
+/**
+ * Fetch the classes.
+ */
+export const edtClassesActionsCreators = createAsyncActionCreators(actionTypes.classes);
+export const fetchEdtClassesAction =
+  (structureId: string): ThunkAction<Promise<IClass[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(edtClassesActionsCreators.request());
+      const classes = await edtService.classes.get(session, structureId);
+      dispatch(edtClassesActionsCreators.receipt(classes));
+      return classes;
+    } catch (e) {
+      dispatch(edtClassesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Fetch the courses of the specified groups.

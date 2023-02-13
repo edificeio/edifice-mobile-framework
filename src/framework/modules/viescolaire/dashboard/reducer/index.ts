@@ -2,7 +2,6 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
-import { IChildrenGroupsState } from '~/framework/modules/viescolaire/dashboard/state/childrenGroups';
 import { ICourseListState } from '~/framework/modules/viescolaire/dashboard/state/courses';
 import { IGroupListState } from '~/framework/modules/viescolaire/dashboard/state/group';
 import { IPeriodsListState, IYearState } from '~/framework/modules/viescolaire/dashboard/state/periods';
@@ -10,7 +9,6 @@ import { IPersonnelListState } from '~/framework/modules/viescolaire/dashboard/s
 import { ISubjectListState } from '~/framework/modules/viescolaire/dashboard/state/subjects';
 
 import children from './children';
-import childrenGroups from './childrenGroups';
 import coursesList from './courses';
 import group from './group';
 import { periods, year } from './periods';
@@ -26,7 +24,6 @@ export interface IDashboardReduxState {
   periods: IPeriodsListState;
   year: IYearState;
   group: IGroupListState;
-  childrenGroups: IChildrenGroupsState;
   coursesList: ICourseListState;
 }
 
@@ -38,7 +35,6 @@ const reducer = combineReducers({
   periods,
   year,
   group,
-  childrenGroups,
   coursesList,
 });
 

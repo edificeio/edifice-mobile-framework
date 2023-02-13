@@ -65,12 +65,11 @@ const mapStateToProps = (state: IGlobalState): any => {
   const competencesState = competencesConfig.getState(state);
   const diaryState = diaryConfig.getState(state);
   const subjects = getSubjectsListState(state);
-  const structureId = state.user.info.administrativeStructures[0].id || state.user.info.structures[0];
 
   return {
     homeworks: diaryState.homeworks,
     subjects,
-    structureId,
+    structureId: session?.user.structures?.[0]?.id,
     childId: session?.user.id,
     evaluations: competencesState.devoirsMatieres,
     levels: competencesState.levels.data,

@@ -1,8 +1,17 @@
 import moment from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { ICourseTag, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
+import { IClass, ICourseTag, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+
+type IBackendClass = {
+  color: string;
+  externalId: string;
+  id: string;
+  name: string;
+  notEmptyClass: boolean;
+  type_groupe: number;
+};
 
 type IBackendCourse = {
   _id: string;
@@ -41,9 +50,21 @@ type IBackendUserChild = {
   idClasses: string;
 };
 
+type IBackendClassList = IBackendClass[];
 type IBackendCourseList = IBackendCourse[];
 type IBackendSlotList = IBackendSlot[];
 type IBackendUserChildren = IBackendUserChild[];
+
+const classAdapter = (data: IBackendClass): IClass => {
+  return {
+    color: data.color,
+    externalId: data.externalId,
+    id: data.id,
+    name: data.name,
+    notEmptyClass: data.notEmptyClass,
+    groupType: data.type_groupe,
+  } as IClass;
+};
 
 const courseAdapter = (data: IBackendCourse): IEdtCourse => {
   return {
@@ -83,6 +104,13 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
 };
 
 export const edtService = {
+  classes: {
+    get: async (session: ISession, structureId: string) => {
+      const api = `/viescolaire/classes?idEtablissement=${structureId}&isEdt=true`;
+      const classes = (await fetchJSONWithCache(api)) as IBackendClassList;
+      return classes.map(c => classAdapter(c)) as IClass[];
+    },
+  },
   courses: {
     get: async (
       session: ISession,
@@ -90,7 +118,7 @@ export const edtService = {
       startDate: moment.Moment,
       endDate: moment.Moment,
       groups: string[],
-      groupsIds: string[],
+      groupIds: string[],
     ) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');
@@ -99,7 +127,7 @@ export const edtService = {
         teacherIds: [],
         union: true,
         groupExternalIds: [],
-        groupIds: groupsIds,
+        groupIds,
         groupNames: groups,
       });
       const courses = (await fetchJSONWithCache(api, {

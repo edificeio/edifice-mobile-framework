@@ -9,7 +9,6 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
-import { fetchChildrenGroupsAction } from '~/framework/modules/viescolaire/dashboard/actions/childrenGroups';
 import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
 import { fetchSubjectListAction } from '~/framework/modules/viescolaire/dashboard/actions/subjects';
 import DashboardComponent from '~/framework/modules/viescolaire/dashboard/components/DashboardRelative';
@@ -36,7 +35,6 @@ type IDashboardContainerProps = {
   getDevoirs: (structureId: string, childId: string) => void;
   getTeachers: (structureId: string) => void;
   getLevels: (structureId: string) => void;
-  getChildrenGroups: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;
   isFocused: boolean;
 };
@@ -67,7 +65,6 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps, IDashboard
     );
     this.props.getDevoirs(structureId, childId);
     this.props.getLevels(structureId);
-    this.props.getChildrenGroups(structureId);
   }
 
   public componentDidUpdate(prevProps) {
@@ -77,7 +74,6 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps, IDashboard
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
       this.props.getLevels(structureId);
-      this.props.getChildrenGroups(structureId);
     }
     if (isFocused && (prevProps.isFocused !== isFocused || prevProps.childId !== childId)) {
       this.props.getHomeworks(
@@ -136,7 +132,6 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getHomeworks: fetchDiaryHomeworksFromChildAction,
       getDevoirs: fetchCompetencesDevoirsAction,
       getLevels: fetchCompetencesLevelsAction,
-      getChildrenGroups: fetchChildrenGroupsAction,
     },
     dispatch,
   );

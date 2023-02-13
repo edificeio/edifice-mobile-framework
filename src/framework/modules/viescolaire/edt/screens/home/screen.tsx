@@ -15,12 +15,12 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { fetchGroupListAction } from '~/framework/modules/viescolaire/dashboard/actions/group';
 import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { getChildrenGroupsState } from '~/framework/modules/viescolaire/dashboard/state/childrenGroups';
 import { getGroupsListState } from '~/framework/modules/viescolaire/dashboard/state/group';
 import { getPersonnelListState } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import { getSubjectsListState } from '~/framework/modules/viescolaire/dashboard/state/subjects';
 import {
+  fetchEdtClassesAction,
   fetchEdtCoursesAction,
   fetchEdtSlotsAction,
   fetchEdtTeacherCoursesAction,
@@ -71,7 +71,10 @@ class EdtHomeScreen extends React.PureComponent<EdtHomeScreenPrivateProps, EdtHo
 
   initComponent = async () => {
     const { structureId, childId, childClasses, group, userType } = this.props;
-    if (userType === UserType.Relative) await this.props.fetchChildInfos();
+    if (userType === UserType.Relative) {
+      await this.props.fetchClasses(structureId);
+      await this.props.fetchChildInfos();
+    }
     await this.props.fetchPersonnel(structureId);
     await this.props.fetchChildGroups(childClasses, childId);
     if (userType === UserType.Teacher || (group && group.length > 0)) this.fetchCourses();
@@ -184,9 +187,9 @@ export default connect(
           groupsStructures?.nameGroups?.forEach(item => group.push(item));
         });
       } else {
-        const initialGroups = getChildrenGroupsState(state).data;
-        groupsIds.push(filterGroups(childClasses, initialGroups).name);
-        group.push(filterGroups(childClasses, initialGroups).id);
+        const classes = edtState.classes.data;
+        groupsIds.push(filterGroups(childClasses, classes).name);
+        group.push(filterGroups(childClasses, classes).id);
       }
     }
 
@@ -197,7 +200,7 @@ export default connect(
       slots: edtState.slots,
       structureId:
         userType === UserType.Student
-          ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
+          ? session?.user.structures?.[0]?.id
           : userType === UserType.Relative
           ? getSelectedChildStructure(state)?.id
           : getSelectedStructure(state),
@@ -214,6 +217,7 @@ export default connect(
         fetchChildInfos: tryAction(fetchEdtUserChildrenAction, undefined, true),
         fetchChildGroups: tryAction(fetchGroupListAction, undefined, true),
         fetchChildCourses: tryAction(fetchEdtCoursesAction, undefined, true),
+        fetchClasses: tryAction(fetchEdtClassesAction, undefined, true),
         fetchPersonnel: tryAction(fetchPersonnelListAction, undefined, true),
         fetchTeacherCourses: tryAction(fetchEdtTeacherCoursesAction, undefined, true),
         fetchSlots: tryAction(fetchEdtSlotsAction, undefined, true),

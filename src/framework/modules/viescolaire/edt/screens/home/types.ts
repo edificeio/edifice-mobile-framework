@@ -23,6 +23,7 @@ export interface EdtHomeScreenProps {
     groups: string[],
     groupsIds: string[],
   ) => void;
+  fetchClasses: (structureId: string) => void;
   fetchPersonnel: (structureId: string) => void;
   fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
   fetchSlots: (structureId: string) => void;

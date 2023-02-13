@@ -92,10 +92,7 @@ export default connect(
       isFetchingHomework: diaryState.homeworks.isFetching || personnelState.isFetching,
       isFetchingSession: diaryState.sessions.isFetching || personnelState.isFetching,
       childId: getSelectedChild(state)?.id,
-      structureId:
-        userType === UserType.Student
-          ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
-          : getSelectedChildStructure(state)?.id,
+      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
       userType,
     };
   },
