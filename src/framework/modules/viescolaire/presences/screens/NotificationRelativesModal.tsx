@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import {
   IChildArray,
   getChildrenList,
@@ -78,8 +79,8 @@ class NotificationRelativesModalContainer extends React.PureComponent<
 
 // ------------------------------------------------------------------------------------------------
 
-const mapStateToProps = (state: any) => {
-  const childId = getSelectedChild(state).id;
+const mapStateToProps = (state: IGlobalState) => {
+  const childId = getSelectedChild(state)?.id;
   const childrenArray = getChildrenList(state);
   const childrenEvents = getRelativesNotification(state);
   const structureId = getSelectedChildStructure(state)?.id;

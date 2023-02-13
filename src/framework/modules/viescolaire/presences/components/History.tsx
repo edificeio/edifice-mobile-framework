@@ -7,6 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { SmallBoldText } from '~/framework/components/text';
+import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
@@ -86,7 +87,7 @@ class History extends React.PureComponent<HistoryProps> {
 
     return (
       <View style={styles.mainView}>
-        {this.props.userType === 'Relative' ? this.renderChildPicker() : null}
+        {this.props.userType === UserType.Relative ? this.renderChildPicker() : null}
         <ScrollView contentContainerStyle={styles.container}>
           {periods !== undefined && periods.length > 1 && periods[0].code !== 'YEAR' && (
             <Dropdown

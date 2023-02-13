@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { UserType } from '~/framework/modules/auth/service';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   fetchCompetencesDevoirsAction,
@@ -47,7 +48,7 @@ class CompetencesHomeScreen extends React.PureComponent<CompetencesHomeScreenPri
     const { structureId, userId, userType, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
     this.props.getLevels(structureId);
-    if (userType === 'Relative' && userId !== undefined) await this.props.fetchChildInfos(userId);
+    if (userType === UserType.Relative && userId !== undefined) await this.props.fetchChildInfos(userId);
     this.props.getPeriods(structureId, childClasses);
     this.props.fetchChildGroups(childClasses, childId);
   };
@@ -55,7 +56,7 @@ class CompetencesHomeScreen extends React.PureComponent<CompetencesHomeScreenPri
   componentDidUpdate = async prevProps => {
     const { structureId, userId, userType, childId, childClasses } = this.props;
     if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) {
-      if (userType === 'Relative') await this.props.fetchChildInfos(userId);
+      if (userType === UserType.Relative) await this.props.fetchChildInfos(userId);
       this.props.getDevoirs(structureId, childId);
       this.props.getPeriods(structureId, childClasses);
       this.props.fetchChildGroups(childClasses, childId);
@@ -77,9 +78,9 @@ export default connect(
     const session = getSession(state);
     const userId = session?.user.id;
     const userType = session?.user.type;
-    const childId = userType === 'Student' ? userId : getSelectedChild(state)?.id;
+    const childId = userType === UserType.Student ? userId : getSelectedChild(state)?.id;
     const structureId =
-      userType === 'Student'
+      userType === UserType.Student
         ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
         : getSelectedChildStructure(state)?.id;
 
@@ -87,7 +88,7 @@ export default connect(
     let childClasses: string = '';
     const groups = [] as string[];
     const childGroups = getGroupsListState(state).data;
-    if (userType === 'Student') {
+    if (userType === UserType.Student) {
       childClasses = state.user.info.classes[0];
     } else {
       childClasses = competencesState.userChildren.data!.find(child => childId === child.id)?.idClasse!;
@@ -95,7 +96,7 @@ export default connect(
     if (childGroups !== undefined && childGroups[0] !== undefined) {
       if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);
       childGroups[0]?.nameGroups?.forEach(item => groups.push(item));
-    } else if (userType === 'Student') {
+    } else if (userType === UserType.Student) {
       groups.push(state.user.info.realClassesNames[0]);
     }
 

@@ -12,6 +12,7 @@ import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { UserType } from '~/framework/modules/auth/service';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { fetchPeriodsListAction, fetchYearAction } from '~/framework/modules/viescolaire/dashboard/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
@@ -80,7 +81,7 @@ class PresencesHistoryScreen extends React.PureComponent<PresencesHistoryScreenP
 
   public componentDidMount() {
     const { userType, userId, childId, structureId, groupId, year, periods } = this.props;
-    if (userType === 'Relative') {
+    if (userType === UserType.Relative) {
       if (userId !== undefined) {
         this.props.getChildInfos(userId);
       } else if (this.props.route.params.userId !== undefined) {
@@ -97,7 +98,7 @@ class PresencesHistoryScreen extends React.PureComponent<PresencesHistoryScreenP
     const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
 
     // if user is a relative, get child informations
-    if (userType === 'Relative') {
+    if (userType === UserType.Relative) {
       if (!groupId && groupId === undefined && !this.props.childrenInfos.isFetching) {
         if (userId !== undefined) {
           this.props.getChildInfos(userId);
@@ -233,12 +234,12 @@ export default connect(
     const events = getHistoryEvents(state);
     const periods = getPeriodsListState(state);
     const year = getYearState(state);
-    const childId = userType === 'Student' ? userId : getSelectedChild(state).id;
+    const childId = userType === UserType.Student ? userId : getSelectedChild(state)?.id;
 
     return {
       events,
       structureId:
-        userType === 'Student'
+        userType === UserType.Student
           ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
           : getSelectedChildStructure(state)?.id,
       userType,
@@ -247,7 +248,7 @@ export default connect(
       periods,
       year,
       groupId:
-        userType === 'Student'
+        userType === UserType.Student
           ? state.user.info.classes[0]
           : getUserChildrenState(state).data.find(child => child.id === childId)?.structures[0].classes[0].id,
       childrenInfos: getUserChildrenState(state),

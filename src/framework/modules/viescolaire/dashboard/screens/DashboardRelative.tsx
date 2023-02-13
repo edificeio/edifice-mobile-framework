@@ -4,6 +4,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
@@ -105,17 +106,16 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps, IDashboard
 
 // ------------------------------------------------------------------------------------------------
 
-const mapStateToProps = (gs: any): any => {
-  const session = getSession(gs);
-  const competencesState = competencesConfig.getState(gs);
-  const diaryState = diaryConfig.getState(gs);
-  const userId = getSession(gs)?.user.id;
-  const childId = getSelectedChild(gs)?.id;
-  const subjects = getSubjectsListState(gs);
-  const structureId = getSelectedChildStructure(gs)?.id;
+const mapStateToProps = (state: IGlobalState): any => {
+  const session = getSession(state);
+  const competencesState = competencesConfig.getState(state);
+  const diaryState = diaryConfig.getState(state);
+  const childId = getSelectedChild(state)?.id;
+  const subjects = getSubjectsListState(state);
+  const structureId = getSelectedChildStructure(state)?.id;
 
   return {
-    userId,
+    userId: session?.user.id,
     homeworks: diaryState.homeworks,
     evaluations: competencesState.devoirsMatieres,
     hasRightToCreateAbsence: session?.authorizedActions.some(

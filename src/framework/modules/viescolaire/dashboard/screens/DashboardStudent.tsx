@@ -4,6 +4,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
@@ -59,18 +60,18 @@ class Dashboard extends React.PureComponent<{
 
 // ------------------------------------------------------------------------------------------------
 
-const mapStateToProps = (gs: any): any => {
-  const competencesState = competencesConfig.getState(gs);
-  const diaryState = diaryConfig.getState(gs);
-  const subjects = getSubjectsListState(gs);
-  const structureId = gs.user.info.administrativeStructures[0].id || gs.user.info.structures[0];
-  const childId = getSession(gs)?.user.id;
+const mapStateToProps = (state: IGlobalState): any => {
+  const session = getSession(state);
+  const competencesState = competencesConfig.getState(state);
+  const diaryState = diaryConfig.getState(state);
+  const subjects = getSubjectsListState(state);
+  const structureId = state.user.info.administrativeStructures[0].id || state.user.info.structures[0];
 
   return {
     homeworks: diaryState.homeworks,
     subjects,
     structureId,
-    childId,
+    childId: session?.user.id,
     evaluations: competencesState.devoirsMatieres,
     levels: competencesState.levels.data,
   };

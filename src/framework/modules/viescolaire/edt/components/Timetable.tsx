@@ -8,6 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
+import { UserType } from '~/framework/modules/auth/service';
 import Calendar from '~/framework/modules/viescolaire/common/components/Calendar';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
@@ -90,7 +91,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
       course.tags.length > 0 &&
       course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
     );
-    const isTeacher = this.props.userType === 'Teacher';
+    const isTeacher = this.props.userType === UserType.Teacher;
     const firstText = isTeacher ? className : course.subject?.name || course.exceptionnal;
     const secondText = isTeacher ? course.subject?.name || course.exceptionnal : course.teacher;
 
@@ -147,7 +148,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   };
 
   renderHalf = course => {
-    if (this.props.userType === 'Teacher') {
+    if (this.props.userType === UserType.Teacher) {
       const mainText = course.classes.length > 0 ? course.classes[0] : course.groups[0];
       return this.renderHalfCourse(course, mainText, course.subject?.name || course.exceptionnal);
     }
@@ -158,7 +159,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const { startDate, selectedDate, courses, teachers, slots, userType, updateSelectedDate } = this.props;
     return (
       <View style={styles.refreshContainer}>
-        {userType === 'Relative' ? <ChildPicker /> : null}
+        {userType === UserType.Relative ? <ChildPicker /> : null}
         <View style={styles.weekPickerView}>
           <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />

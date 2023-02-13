@@ -9,6 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { IDevoirsMatieres, ILevel, IMoyenne } from '~/framework/modules/viescolaire/competences/model';
 import { IPeriodsList } from '~/framework/modules/viescolaire/dashboard/state/periods';
@@ -379,7 +380,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   public render() {
     return (
       <PageContainer>
-        {this.props.userType === 'Relative' && <ChildPicker />}
+        {this.props.userType === UserType.Relative && <ChildPicker />}
         <View style={styles.dashboardPart}>
           <SmallText style={styles.subtitle}>{I18n.t('viesco-report-card')}</SmallText>
           <View style={styles.containerDropdowns}>

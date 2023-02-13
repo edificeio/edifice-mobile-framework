@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { UserType } from '~/framework/modules/auth/service';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
@@ -47,12 +48,12 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
   }
 
   private fetchHomeworks = (startDate, endDate) =>
-    this.props.userType === 'Student'
+    this.props.userType === UserType.Student
       ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)
       : this.props.fetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
 
   private fetchSessions = (startDate, endDate) =>
-    this.props.userType === 'Student'
+    this.props.userType === UserType.Student
       ? this.props.fetchSessions(this.props.structureId, startDate, endDate)
       : this.props.fetchChildSessions(this.props.childId, startDate, endDate);
 
@@ -90,9 +91,9 @@ export default connect(
       personnel: personnelState.data,
       isFetchingHomework: diaryState.homeworks.isFetching || personnelState.isFetching,
       isFetchingSession: diaryState.sessions.isFetching || personnelState.isFetching,
-      childId: getSelectedChild(state).id,
+      childId: getSelectedChild(state)?.id,
       structureId:
-        userType === 'Student'
+        userType === UserType.Student
           ? state.user.info.administrativeStructures[0].id || state.user.info.structures[0]
           : getSelectedChildStructure(state)?.id,
       userType,

@@ -5,6 +5,7 @@ import { NavigationFocusInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import { fetchMultipleSlotsAction } from '~/modules/viescolaire/presences/actions/multipleSlots';
@@ -163,7 +164,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICall
   }
 }
 
-const mapStateToProps: (state: any) => any = state => {
+const mapStateToProps: (state: IGlobalState) => any = state => {
   const session = getSession(state);
   const courses = getCoursesListState(state);
   const coursesData = (courses.data.length > 0 ? [] : courses.data) as ICourses[];
