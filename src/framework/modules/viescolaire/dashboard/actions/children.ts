@@ -10,7 +10,6 @@ import {
   yearDataActions as yearActions,
 } from '~/framework/modules/viescolaire/dashboard/actions/periods';
 import { dataActions as teacherActions } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
-import { dataActions as subjectActions } from '~/framework/modules/viescolaire/dashboard/actions/subjects';
 import { selectChildActionType } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { diaryHomeworksActionsCreators, diarySessionsActionsCreators } from '~/framework/modules/viescolaire/diary/actions';
 import { edtSlotsActionsCreators } from '~/framework/modules/viescolaire/edt/actions';
@@ -27,7 +26,6 @@ export function selectChildAction(child: string) {
     dispatch(diaryHomeworksActionsCreators.clear());
     dispatch(diarySessionsActionsCreators.clear());
     dispatch(teacherActions.clear());
-    dispatch(subjectActions.clear());
     dispatch(historyActions.clear());
     dispatch(periodActions.clear());
     dispatch(yearActions.clear());

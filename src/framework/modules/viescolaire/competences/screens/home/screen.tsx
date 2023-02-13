@@ -74,12 +74,11 @@ class CompetencesHomeScreen extends React.PureComponent<CompetencesHomeScreenPri
 
 export default connect(
   (state: IGlobalState) => () => {
-    const competencesState = moduleConfig.getState(state);
     const session = getSession(state);
+    const competencesState = moduleConfig.getState(state);
     const userId = session?.user.id;
     const userType = session?.user.type;
     const childId = userType === UserType.Student ? userId : getSelectedChild(state)?.id;
-    const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id;
 
     // get groups and childClasses
     let childClasses: string = '';
@@ -105,7 +104,7 @@ export default connect(
       userId,
       periods: getPeriodsListState(state).data,
       groups: getGroupsListState(state).data,
-      structureId,
+      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
       childId,
       childClasses,
     };

@@ -18,7 +18,6 @@ import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules
 import { getGroupsListState } from '~/framework/modules/viescolaire/dashboard/state/group';
 import { getPersonnelListState } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
-import { getSubjectsListState } from '~/framework/modules/viescolaire/dashboard/state/subjects';
 import {
   fetchEdtClassesAction,
   fetchEdtCoursesAction,
@@ -195,7 +194,6 @@ export default connect(
 
     return {
       courses: edtState.courses,
-      subjects: getSubjectsListState(state),
       teachers: getPersonnelListState(state),
       slots: edtState.slots,
       structureId:

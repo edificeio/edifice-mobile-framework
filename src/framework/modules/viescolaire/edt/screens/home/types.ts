@@ -4,7 +4,6 @@ import type { EdtNavigationParams } from '~/framework/modules/viescolaire/edt/na
 
 export interface EdtHomeScreenProps {
   courses: any;
-  subjects: any;
   teachers: any;
   slots: any;
   structureId: string;

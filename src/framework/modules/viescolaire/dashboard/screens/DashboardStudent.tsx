@@ -10,9 +10,7 @@ import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/f
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
-import { fetchSubjectListAction } from '~/framework/modules/viescolaire/dashboard/actions/subjects';
 import DashboardComponent from '~/framework/modules/viescolaire/dashboard/components/DashboardStudent';
-import { getSubjectsListState } from '~/framework/modules/viescolaire/dashboard/state/subjects';
 import { fetchDiaryHomeworksAction, updateDiaryHomeworkProgressAction } from '~/framework/modules/viescolaire/diary/actions';
 import { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
@@ -27,7 +25,6 @@ class Dashboard extends React.PureComponent<{
   childId: string;
   evaluations: AsyncState<IDevoirsMatieres>;
   levels: ILevel[];
-  getSubjects: (structureId: string) => void;
   getTeachers: (structureId: string) => void;
   getHomeworks: (structureId: string, startDate: string, endDate: string) => void;
   getDevoirs: (structureId: string, childId: string) => void;
@@ -48,7 +45,6 @@ class Dashboard extends React.PureComponent<{
 
   public componentDidMount() {
     const { structureId } = this.props;
-    this.props.getSubjects(structureId);
     this.props.getTeachers(structureId);
     this.props.getLevels(structureId);
   }
@@ -64,11 +60,9 @@ const mapStateToProps = (state: IGlobalState): any => {
   const session = getSession(state);
   const competencesState = competencesConfig.getState(state);
   const diaryState = diaryConfig.getState(state);
-  const subjects = getSubjectsListState(state);
 
   return {
     homeworks: diaryState.homeworks,
-    subjects,
     structureId: session?.user.structures?.[0]?.id,
     childId: session?.user.id,
     evaluations: competencesState.devoirsMatieres,
@@ -79,7 +73,6 @@ const mapStateToProps = (state: IGlobalState): any => {
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
     {
-      getSubjects: fetchSubjectListAction,
       getTeachers: fetchPersonnelListAction,
       getHomeworks: fetchDiaryHomeworksAction,
       updateHomeworkProgress: updateDiaryHomeworkProgressAction,

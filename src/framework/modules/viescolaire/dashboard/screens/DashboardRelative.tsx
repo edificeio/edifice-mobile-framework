@@ -10,10 +10,8 @@ import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/f
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
-import { fetchSubjectListAction } from '~/framework/modules/viescolaire/dashboard/actions/subjects';
 import DashboardComponent from '~/framework/modules/viescolaire/dashboard/components/DashboardRelative';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { getSubjectsListState } from '~/framework/modules/viescolaire/dashboard/state/subjects';
 import { fetchDiaryHomeworksFromChildAction } from '~/framework/modules/viescolaire/diary/actions';
 import { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
@@ -30,7 +28,6 @@ type IDashboardContainerProps = {
   structureId: string;
   childId: string;
   levels: ILevel[];
-  getSubjects: (structureId: string) => void;
   getHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => void;
   getDevoirs: (structureId: string, childId: string) => void;
   getTeachers: (structureId: string) => void;
@@ -55,7 +52,6 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps, IDashboard
   public componentDidMount() {
     const { childId, structureId } = this.props;
 
-    this.props.getSubjects(this.props.structureId);
     this.props.getTeachers(this.props.structureId);
     this.props.getHomeworks(
       childId,
@@ -71,7 +67,6 @@ class Dashboard extends React.PureComponent<IDashboardContainerProps, IDashboard
     const { childId, structureId, isFocused } = this.props;
 
     if (prevProps.childId !== childId) {
-      this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
       this.props.getLevels(structureId);
     }
@@ -107,7 +102,6 @@ const mapStateToProps = (state: IGlobalState): any => {
   const competencesState = competencesConfig.getState(state);
   const diaryState = diaryConfig.getState(state);
   const childId = getSelectedChild(state)?.id;
-  const subjects = getSubjectsListState(state);
   const structureId = getSelectedChildStructure(state)?.id;
 
   return {
@@ -119,7 +113,6 @@ const mapStateToProps = (state: IGlobalState): any => {
     ),
     structureId,
     childId,
-    subjects,
     levels: competencesState.levels.data,
   };
 };
@@ -127,7 +120,6 @@ const mapStateToProps = (state: IGlobalState): any => {
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
     {
-      getSubjects: fetchSubjectListAction,
       getTeachers: fetchPersonnelListAction,
       getHomeworks: fetchDiaryHomeworksFromChildAction,
       getDevoirs: fetchCompetencesDevoirsAction,
