@@ -122,10 +122,12 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   private backActions = [
     // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
     () => {
+      this.cancelLoginError();
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.ERROR: Go to top of wayf navigation stack
     () => {
+      this.cancelLoginError();
       this.props.navigation.navigate('LoginWAYF');
     },
     // WAYFPageMode.LOADING: Nothing to do
@@ -508,7 +510,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   }
 }
 
-const ConnectedWAYFPage = connect((state: any, props: any): IWAYFPageProps => {
+const ConnectedWAYFPage = connect((state: any, props: any): Omit<IWAYFPageProps, 'onDisplayWayf'> => {
   return {
     auth: getAuthState(state),
   };
