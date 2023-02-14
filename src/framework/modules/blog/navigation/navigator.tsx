@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import moduleConfig from '~/framework/modules/blog/module-config';
 import BlogCreatePostScreen, { computeNavBar as blogCreatePostNavBar } from '~/framework/modules/blog/screens/BlogCreatePostScreen';
 import BlogExplorerScreen, { computeNavBar as blogExplorerNavBar } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import BlogPostListScreen, { computeNavBar as blogPostListNavBar } from '~/framework/modules/blog/screens/BlogPostListScreen';
@@ -9,7 +10,6 @@ import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { BlogNavigationParams, blogRouteNames } from '.';
-import moduleConfig from '../module-config';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<BlogNavigationParams>(moduleConfig.name, Stack => (

@@ -5,11 +5,10 @@ import FastImage from 'react-native-fast-image';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { Image, formatSource } from '~/framework/util/media';
 import ImageOptional from '~/ui/ImageOptional';
-
-import { assertSession } from '../../auth/reducer';
 
 const styles = StyleSheet.create({
   iconContainer: {
