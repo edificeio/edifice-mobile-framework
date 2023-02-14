@@ -58,6 +58,7 @@ export const initI18n = () => {
     languageTag: string;
     isRTL: boolean;
   };
+  console.log('res', res, typeof res);
   if (res) {
     I18nManager.forceRTL(res.isRTL);
     I18n.locale = res.languageTag;
@@ -67,7 +68,7 @@ export const initI18n = () => {
     I18n.locale = I18n.defaultLocale;
     moment.locale(undefined);
   }
-  return res.languageTag;
+  return res?.languageTag ?? I18n.defaultLocale;
 };
 
 let initDone = false;
