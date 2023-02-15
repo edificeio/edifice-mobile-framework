@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import I18n from 'i18n-js';
 import SplashScreen from 'react-native-splash-screen';
@@ -308,9 +309,10 @@ export function loginAction(
               }
             }
           }
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (activationErr) {
+        } catch {
           // TODO: Manage error
+        } finally {
+          CookieManager.clearAll();
         }
       } else if ((err as any).type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
         routeToGo = 'ChangePassword';

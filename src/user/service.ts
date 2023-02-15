@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
 import AppLink from 'react-native-app-link';
@@ -249,8 +250,10 @@ class UserService {
       } else {
         //console.debug("[UserService] checkVersion: there isnt a new version (not found) ", res.status, url, res)
       }
-    } catch (e) {
+    } catch {
       // TODO: Manage error
+    } finally {
+      CookieManager.clearAll();
     }
     return { canContinue: true, hasNewVersion: false, newVersion: '' };
   }
@@ -274,8 +277,10 @@ class UserService {
     }
     try {
       await AppLink.openInStore({ appName, appStoreId, appStoreLocale, playStoreId });
-    } catch (e) {
+    } catch {
       // TODO: Manage error
+    } finally {
+      CookieManager.clearAll();
     }
   }
 
@@ -384,6 +389,8 @@ class UserService {
       } else throw new Error('error in res.json()');
     } catch (e) {
       throw '[UserService] getAuthTranslationKeys: ' + e;
+    } finally {
+      CookieManager.clearAll();
     }
   }
 

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 
 import { getStore } from '~/App';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -36,7 +37,9 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
     }
   }
   const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
-  return fetch(req);
+  const ret = fetch(req);
+  CookieManager.clearAll();
+  return ret;
 }
 
 /**

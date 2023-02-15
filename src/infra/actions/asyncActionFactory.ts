@@ -1,3 +1,4 @@
+import CookieManager from '@react-native-cookies/cookies';
 import querystring from 'querystring';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -64,6 +65,8 @@ export function asyncActionRawFactory(asyncActionTypes: IAsyncActionTypes, paylo
       dispatch({ type: asyncActionTypes.received, data, payload, receivedAt: Date.now() }); // will be better to pass payload than id of payload
     } catch (errmsg) {
       dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
+    } finally {
+      CookieManager.clearAll();
     }
   };
 }
