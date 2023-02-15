@@ -50,6 +50,8 @@ export default function MediaPlayer(props: MediaPlayerProps) {
           disableFullscreen
           disableVolume
           ignoreSilentSwitch="ignore"
+          rewindTime={10}
+          showDuration
           showOnStart
           showOnEnd
           source={source}
