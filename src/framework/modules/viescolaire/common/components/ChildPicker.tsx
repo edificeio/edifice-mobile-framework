@@ -1,66 +1,72 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { UserChild, UserChildrenFlattened, getFlattenedChildren } from '~/framework/modules/auth/model';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { selectChildAction } from '~/framework/modules/viescolaire/dashboard/actions/children';
 import viescoConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { tryAction } from '~/framework/util/redux/actions';
-import Dropdown from '~/ui/Dropdown';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-    paddingHorizontal: UI_SIZES.spacing.small,
-    paddingTop: UI_SIZES.spacing.small,
-    paddingBottom: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.small,
+    backgroundColor: theme.ui.background.card,
     borderBottomRightRadius: UI_SIZES.radius.large,
     borderBottomLeftRadius: UI_SIZES.radius.large,
-    backgroundColor: theme.ui.background.card,
     zIndex: 100,
-  },
-  shadow: {
     shadowColor: theme.ui.shadowColor,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.3,
     shadowRadius: 1,
     elevation: 1,
   },
+  dropdown: {
+    borderColor: theme.palette.primary.regular,
+    borderWidth: 1,
+  },
+  dropdownText: {
+    color: theme.ui.text.regular,
+  },
 });
 
 interface IChildPickerProps {
   children?: React.ReactNode;
   selectedChildId?: string;
-  userChildren?: UserChildrenFlattened;
+  userChildren?: { label: string; value: string; icon: () => void }[];
   selectChild: (childId: string) => void;
 }
 
-const ChildPicker = ({ children, selectedChildId, userChildren, selectChild }: IChildPickerProps) => {
+const ChildPicker = ({ children, selectedChildId, userChildren = [], selectChild }: IChildPickerProps) => {
+  const [isOpen, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(selectedChildId);
 
-  return userChildren ? (
-    <View style={[styles.container, styles.shadow]}>
-      <Dropdown
-        data={userChildren}
+  React.useEffect(() => {
+    if (value && value !== selectedChildId) selectChild(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  return value ? (
+    <View style={styles.container}>
+      <DropDownPicker
+        open={isOpen}
         value={value}
-        onSelect={(id: string) => {
-          setValue(id);
-          if (id !== selectedChildId) {
-            selectChild(id);
-          }
-        }}
-        title={I18n.t('viesco-pickChild')}
-        keyExtractor={(item: UserChild) => item.id}
-        renderItem={(item: UserChild) => `${item.firstName} ${item.lastName}`}
+        items={userChildren}
+        setOpen={setOpen}
+        setValue={setValue}
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdown}
+        textStyle={styles.dropdownText}
+        containerStyle={UI_STYLES.flex1}
       />
       {children}
     </View>
@@ -74,7 +80,11 @@ export default connect(
 
     return {
       selectedChildId: viescoState.children.selectedChild,
-      userChildren: getFlattenedChildren(session?.user.children),
+      userChildren: getFlattenedChildren(session?.user.children)?.map(child => ({
+        label: `${child.firstName} ${child.lastName}`,
+        value: child.id,
+        icon: () => <SingleAvatar userId={child.id} size={24} />,
+      })),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>

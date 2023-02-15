@@ -62,7 +62,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     try {
       const { childId, classes, structureId, userId, userType } = props;
       const endDate = startDate.clone().endOf('week');
-      console.log(date, startDate);
+
       if (!structureId || !userId || !userType) throw new Error();
       if (userType === UserType.Teacher) {
         await props.fetchTeacherCourses(structureId, startDate, endDate, userId);

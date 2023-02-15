@@ -1,49 +1,66 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { StructureNode } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { selectStructureAction } from '~/framework/modules/viescolaire/dashboard/actions/structure';
 import viescoConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { tryAction } from '~/framework/util/redux/actions';
-import Dropdown from '~/ui/Dropdown';
 
 const styles = StyleSheet.create({
   container: {
-    zIndex: 20,
-    marginTop: UI_SIZES.spacing.small,
-    marginHorizontal: UI_SIZES.spacing.medium,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    padding: UI_SIZES.spacing.small,
+    backgroundColor: theme.ui.background.card,
+    borderBottomRightRadius: UI_SIZES.radius.large,
+    borderBottomLeftRadius: UI_SIZES.radius.large,
+    zIndex: 100,
+    shadowColor: theme.ui.shadowColor,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 1,
+    elevation: 1,
+  },
+  dropdown: {
+    borderColor: theme.palette.primary.regular,
+    borderWidth: 1,
+  },
+  dropdownText: {
+    color: theme.ui.text.regular,
   },
 });
 
 interface IStructurePickerProps {
-  selectedStructureId: string;
-  structures?: StructureNode[];
+  selectedStructureId?: string;
+  structures?: { label: string; value: string }[];
   selectStructure: (id: string) => void;
 }
 
-const StructurePicker = ({ selectedStructureId, structures, selectStructure }: IStructurePickerProps) => {
+const StructurePicker = ({ selectedStructureId, structures = [], selectStructure }: IStructurePickerProps) => {
+  const [isOpen, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(selectedStructureId);
 
-  return structures && structures.length > 1 ? (
+  React.useEffect(() => {
+    if (value && value !== selectedStructureId) selectStructure(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  return value && structures.length > 1 ? (
     <View style={styles.container}>
-      <Dropdown
-        data={structures}
+      <DropDownPicker
+        open={isOpen}
         value={value}
-        onSelect={(id: string) => {
-          setValue(id);
-          selectStructure(id);
-        }}
-        keyExtractor={(item: StructureNode) => item.id}
-        renderItem={(item: StructureNode) => item.name}
+        items={structures}
+        setOpen={setOpen}
+        setValue={setValue}
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdown}
+        textStyle={styles.dropdownText}
       />
     </View>
   ) : null;
@@ -56,7 +73,10 @@ export default connect(
 
     return {
       selectedStructureId: viescoState.structure.selectedStructure,
-      structures: session?.user.structures,
+      structures: session?.user.structures?.map(structure => ({
+        label: structure.name,
+        value: structure.id,
+      })),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
