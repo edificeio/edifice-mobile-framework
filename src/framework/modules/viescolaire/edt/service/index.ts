@@ -117,8 +117,8 @@ export const edtService = {
       structureId: string,
       startDate: moment.Moment,
       endDate: moment.Moment,
-      groups: string[],
       groupIds: string[],
+      groupNames: string[],
     ) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');
@@ -128,7 +128,7 @@ export const edtService = {
         union: true,
         groupExternalIds: [],
         groupIds,
-        groupNames: groups,
+        groupNames,
       });
       const courses = (await fetchJSONWithCache(api, {
         method: 'POST',

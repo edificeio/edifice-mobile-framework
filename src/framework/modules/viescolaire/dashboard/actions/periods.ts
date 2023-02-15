@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { periodsListService } from '~/framework/modules/viescolaire/dashboard/services/periods';
 import { IPeriodsList, IYear, periodsActionTypes, yearActionTypes } from '~/framework/modules/viescolaire/dashboard/state/periods';
-import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

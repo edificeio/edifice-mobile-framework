@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 
 import { coursesService } from '~/framework/modules/viescolaire/dashboard/services/courses';
 import { ICourseList, actionTypes } from '~/framework/modules/viescolaire/dashboard/state/courses';
-import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

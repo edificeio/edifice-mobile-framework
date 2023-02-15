@@ -73,7 +73,7 @@ class CompetencesHomeScreen extends React.PureComponent<CompetencesHomeScreenPri
 }
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const session = getSession(state);
     const competencesState = moduleConfig.getState(state);
     const userId = session?.user.id;

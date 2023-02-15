@@ -1,28 +1,30 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
+import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import ScrollView from '~/framework/components/scrollView';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { fetchGroupListAction } from '~/framework/modules/viescolaire/dashboard/actions/group';
-import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { getGroupsListState } from '~/framework/modules/viescolaire/dashboard/state/group';
-import { getPersonnelListState } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import {
-  fetchEdtClassesAction,
+  fetchEdtClassGroupsAction,
   fetchEdtCoursesAction,
   fetchEdtSlotsAction,
   fetchEdtTeacherCoursesAction,
+  fetchEdtTeachersAction,
   fetchEdtUserChildrenAction,
 } from '~/framework/modules/viescolaire/edt/actions';
 import Timetable from '~/framework/modules/viescolaire/edt/components/Timetable';
@@ -30,13 +32,9 @@ import moduleConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import { EdtHomeScreenPrivateProps } from './types';
-
-export type EdtHomeScreenState = {
-  startDate: moment.Moment;
-  selectedDate: moment.Moment;
-};
 
 export const computeNavBar = ({
   navigation,
@@ -52,173 +50,188 @@ export const computeNavBar = ({
   },
 });
 
-class EdtHomeScreen extends React.PureComponent<EdtHomeScreenPrivateProps, EdtHomeScreenState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      startDate: moment().startOf('week'),
-      selectedDate: moment(),
-    };
-  }
+const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
+  const [date, setDate] = React.useState<Moment>(moment());
+  const [startDate, setStartDate] = React.useState<Moment>(moment().startOf('week'));
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  fetchCourses = () => {
-    const { startDate } = this.state;
-    const { fetchTeacherCourses, fetchChildCourses, structureId, group, groupsIds, teacherId, userType } = this.props;
-    if (userType === UserType.Teacher) fetchTeacherCourses(structureId, startDate, startDate.clone().endOf('week'), teacherId);
-    else fetchChildCourses(structureId, startDate, startDate.clone().endOf('week'), group, groupsIds);
-  };
-
-  initComponent = async () => {
-    const { structureId, childId, childClasses, group, userType } = this.props;
-    if (userType === UserType.Relative) {
-      await this.props.fetchClasses(structureId);
-      await this.props.fetchChildInfos();
+  const fetchTimetable = async () => {
+    try {
+      const { childId, classes, structureId, userId, userType } = props;
+      const endDate = startDate.clone().endOf('week');
+      console.log(date, startDate);
+      if (!structureId || !userId || !userType) throw new Error();
+      if (userType === UserType.Teacher) {
+        await props.fetchTeacherCourses(structureId, startDate, endDate, userId);
+      } else {
+        let childClasses = classes?.[0];
+        if (userType === UserType.Relative) {
+          const children = await props.fetchUserChildren();
+          childClasses = children.find(c => c.id === childId)?.idClasses;
+        }
+        const classGroups = await props.fetchClassGroups(childClasses ?? '', childId);
+        await props.fetchChildCourses(structureId, startDate, endDate, classGroups);
+      }
+      await props.fetchTeachers(structureId);
+      await props.fetchSlots(structureId);
+    } catch {
+      throw new Error();
     }
-    await this.props.fetchPersonnel(structureId);
-    await this.props.fetchChildGroups(childClasses, childId);
-    if (userType === UserType.Teacher || (group && group.length > 0)) this.fetchCourses();
-    this.props.fetchSlots(structureId);
   };
 
-  componentDidMount() {
-    this.initComponent();
-  }
+  const init = () => {
+    setLoadingState(AsyncPagedLoadingState.INIT);
+    fetchTimetable()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { startDate, selectedDate } = this.state;
-    const { structureId, childId, group, fetchSlots } = this.props;
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    fetchTimetable()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
 
-    // on selectedChild change
-    if (prevProps.childId !== childId) this.initComponent();
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    fetchTimetable()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
 
-    // on selected date change
-    if (!prevState.selectedDate.isSame(selectedDate, 'day')) this.setState({ startDate: selectedDate.clone().startOf('week') });
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchTimetable()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
 
-    // on week, structure, group change
-    if (
-      !prevState.startDate.isSame(startDate, 'day') ||
-      structureId !== prevProps.structureId ||
-      group.length !== prevProps.group.length
-    )
-      this.fetchCourses();
+  const fetchOnNavigation = () => {
+    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    else refreshSilent();
+  };
 
-    // on structure change
-    if (structureId !== prevProps.structureId) fetchSlots(structureId);
-  }
-
-  updateSelectedDate = (newDate: moment.Moment) => {
-    this.setState({
-      selectedDate: newDate,
-      startDate: newDate.clone().startOf('week'),
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      fetchOnNavigation();
     });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation]);
+
+  React.useEffect(() => {
+    if (loadingRef.current === AsyncPagedLoadingState.DONE) init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.childId, props.structureId]);
+
+  React.useEffect(() => {
+    if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate]);
+
+  const updateSelectedDate = (newDate: Moment) => {
+    const newStartDate = newDate.clone().startOf('week');
+    setDate(newDate);
+    if (!newStartDate.isSame(startDate, 'day')) setStartDate(newStartDate);
   };
 
-  public render() {
+  const renderError = () => {
+    return (
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+        <EmptyContentScreen />
+      </ScrollView>
+    );
+  };
+
+  const renderTimetable = () => {
     return (
       <PageView>
-        <StructurePicker />
+        {props.userType === UserType.Teacher ? <StructurePicker /> : null}
+        {props.userType === UserType.Relative ? <ChildPicker /> : null}
         <Timetable
-          {...this.props}
-          startDate={this.state.startDate}
-          selectedDate={this.state.selectedDate}
-          updateSelectedDate={this.updateSelectedDate}
+          {...props}
+          startDate={startDate}
+          date={date}
+          isRefreshing={loadingRef.current === AsyncPagedLoadingState.REFRESH}
+          updateSelectedDate={updateSelectedDate}
         />
       </PageView>
     );
-  }
-}
-
-// if no groups are found, then take classInfos
-const filterGroups = (childClasses, initialGroups) => {
-  let group = {
-    id: '',
-    name: '',
   };
-  if (initialGroups.find(item => item.id === childClasses) !== undefined) {
-    group = initialGroups.find(item => item.id === childClasses);
-  }
-  return group;
+
+  const renderPage = () => {
+    switch (loadingState) {
+      case AsyncPagedLoadingState.DONE:
+      case AsyncPagedLoadingState.REFRESH:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
+      case AsyncPagedLoadingState.REFRESH_SILENT:
+        return renderTimetable();
+      case AsyncPagedLoadingState.PRISTINE:
+      case AsyncPagedLoadingState.INIT:
+        return <LoadingIndicator />;
+      case AsyncPagedLoadingState.INIT_FAILED:
+      case AsyncPagedLoadingState.RETRY:
+        return renderError();
+    }
+  };
+
+  return <PageView>{renderPage()}</PageView>;
 };
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const edtState = moduleConfig.getState(state);
     const session = getSession(state);
     const userId = session?.user.id;
     const userType = session?.user.type;
-    let childId: string | undefined = '';
-    let childClasses: string = '';
-    const group = [] as string[];
-    const groupsIds = [] as string[];
-    // get groups and childClasses
-    if (userType === UserType.Student) {
-      childId = userId;
-      childClasses = state.user.info.classes[0];
-      const childGroups = getGroupsListState(state).data;
-      if (childGroups !== undefined && childGroups[0] !== undefined) {
-        childGroups.forEach(groupsStructures => {
-          if (groupsStructures.idClass !== null && groupsStructures.idClass !== undefined) {
-            groupsIds.push(groupsStructures.idClass);
-          }
-          if (groupsStructures.nameClass !== null && groupsStructures.nameClass !== undefined) {
-            group.push(groupsStructures.nameClass);
-          }
-          groupsStructures?.idGroups?.forEach(item => groupsIds.push(item));
-          groupsStructures?.nameGroups?.forEach(item => group.push(item));
-        });
-      } else {
-        groupsIds.push(session?.user.groupsIds);
-        group.push(state.user.info.realClassesNames[0]);
-      }
-    } else if (userType === UserType.Relative) {
-      childId = getSelectedChild(state)?.id;
-      childClasses = edtState.userChildren.data.find(child => childId === child.id)?.idClasses!;
-      const childGroups = getGroupsListState(state);
-      if (childGroups !== undefined && childGroups.data[0] !== undefined) {
-        childGroups.data.forEach(groupsStructures => {
-          if (groupsStructures.idClass !== null && groupsStructures.idClass !== undefined) {
-            groupsIds.push(groupsStructures.idClass);
-          }
-          if (groupsStructures.nameClass !== null && groupsStructures.nameClass !== undefined) {
-            group.push(groupsStructures.nameClass);
-          }
-          groupsStructures?.idGroups?.forEach(item => groupsIds.push(item));
-          groupsStructures?.nameGroups?.forEach(item => group.push(item));
-        });
-      } else {
-        const classes = edtState.classes.data;
-        groupsIds.push(filterGroups(childClasses, classes).name);
-        group.push(filterGroups(childClasses, classes).id);
-      }
-    }
 
     return {
-      courses: edtState.courses,
-      teachers: getPersonnelListState(state),
-      slots: edtState.slots,
+      childId: userType === UserType.Relative ? getSelectedChild(state)?.id : userId,
+      classes: session?.user.classes,
+      courses: edtState.courses.data,
+      initialLoadingState: edtState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
+      slots: edtState.slots.data,
       structureId:
         userType === UserType.Student
           ? session?.user.structures?.[0]?.id
           : userType === UserType.Relative
           ? getSelectedChildStructure(state)?.id
           : getSelectedStructure(state),
-      childId,
-      childClasses,
-      group,
-      groupsIds,
-      teacherId: userId,
+      teachers: edtState.teachers.data,
+      userId,
+      userType,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchChildInfos: tryAction(fetchEdtUserChildrenAction, undefined, true),
-        fetchChildGroups: tryAction(fetchGroupListAction, undefined, true),
-        fetchChildCourses: tryAction(fetchEdtCoursesAction, undefined, true),
-        fetchClasses: tryAction(fetchEdtClassesAction, undefined, true),
-        fetchPersonnel: tryAction(fetchPersonnelListAction, undefined, true),
-        fetchTeacherCourses: tryAction(fetchEdtTeacherCoursesAction, undefined, true),
-        fetchSlots: tryAction(fetchEdtSlotsAction, undefined, true),
+        fetchChildCourses: tryAction(
+          fetchEdtCoursesAction,
+          undefined,
+          true,
+        ) as unknown as EdtHomeScreenPrivateProps['fetchChildCourses'],
+        fetchClassGroups: tryAction(
+          fetchEdtClassGroupsAction,
+          undefined,
+          true,
+        ) as unknown as EdtHomeScreenPrivateProps['fetchClassGroups'],
+        fetchSlots: tryAction(fetchEdtSlotsAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchSlots'],
+        fetchTeacherCourses: tryAction(
+          fetchEdtTeacherCoursesAction,
+          undefined,
+          true,
+        ) as unknown as EdtHomeScreenPrivateProps['fetchTeacherCourses'],
+        fetchTeachers: tryAction(fetchEdtTeachersAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchTeachers'],
+        fetchUserChildren: tryAction(
+          fetchEdtUserChildrenAction,
+          undefined,
+          true,
+        ) as unknown as EdtHomeScreenPrivateProps['fetchUserChildren'],
       },
       dispatch,
     ),

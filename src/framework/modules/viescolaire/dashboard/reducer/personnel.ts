@@ -1,5 +1,5 @@
 import { actionTypes, initialState } from '~/framework/modules/viescolaire/dashboard/state/personnel';
-import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import { createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

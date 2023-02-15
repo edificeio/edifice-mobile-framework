@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { AsyncState } from '~/infra/redux/async2';
+import { AsyncState } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 export type ICallEvent = {

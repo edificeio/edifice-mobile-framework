@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { groupListService } from '~/framework/modules/viescolaire/dashboard/services/group';
 import { IGroupList, actionTypes } from '~/framework/modules/viescolaire/dashboard/state/group';
-import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

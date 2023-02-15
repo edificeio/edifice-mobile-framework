@@ -67,7 +67,7 @@ export class DashboardHomeScreen extends React.PureComponent<DashboardHomeScreen
   }
 }
 
-export default connect((state: IGlobalState) => () => {
+export default connect((state: IGlobalState) => {
   const session = getSession(state);
 
   return {

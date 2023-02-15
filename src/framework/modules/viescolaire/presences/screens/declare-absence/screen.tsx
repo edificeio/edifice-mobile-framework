@@ -129,7 +129,7 @@ class PresencesDeclareAbsenceScreen extends React.PureComponent<
 }
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const child = getSelectedChild(state);
 
     return {

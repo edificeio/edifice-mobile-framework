@@ -7,7 +7,7 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { ICourse, IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
-import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 /**
  * Fetch multiple slots setting.

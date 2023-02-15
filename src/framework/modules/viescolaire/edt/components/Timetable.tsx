@@ -1,5 +1,5 @@
 import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -10,16 +10,13 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
 import { UserType } from '~/framework/modules/auth/service';
 import Calendar from '~/framework/modules/viescolaire/common/components/Calendar';
-import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { EdtHomeScreenProps } from '~/framework/modules/viescolaire/edt/screens/home';
-import { EdtHomeScreenState } from '~/framework/modules/viescolaire/edt/screens/home/screen';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
-  refreshContainer: {
+  container: {
     height: '100%',
-    zIndex: 0,
   },
   calendarContainer: {
     height: 1,
@@ -80,7 +77,12 @@ const adaptCourses = (courses, teachers) => {
   }));
 };
 
-type TimetableComponentProps = EdtHomeScreenProps & EdtHomeScreenState & { updateSelectedDate: (newDate: moment.Moment) => void };
+type TimetableComponentProps = EdtHomeScreenProps & {
+  date: Moment;
+  isRefreshing: boolean;
+  startDate: Moment;
+  updateSelectedDate: (newDate: moment.Moment) => void;
+};
 
 export default class Timetable extends React.PureComponent<TimetableComponentProps> {
   renderCourse = course => {
@@ -156,33 +158,32 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   };
 
   public render() {
-    const { startDate, selectedDate, courses, teachers, slots, userType, updateSelectedDate } = this.props;
+    const { startDate, date, isRefreshing, courses, teachers, slots, updateSelectedDate } = this.props;
+
     return (
-      <View style={styles.refreshContainer}>
-        {userType === UserType.Relative ? <ChildPicker /> : null}
+      <View style={styles.container}>
         <View style={styles.weekPickerView}>
           <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />
         </View>
-        {courses !== undefined &&
-          (courses.isFetching || courses.isPristine ? (
-            <LoadingIndicator />
-          ) : (
-            <View style={styles.calendarContainer}>
-              <Calendar
-                startDate={startDate}
-                data={adaptCourses(courses.data, teachers.data)}
-                renderElement={this.renderCourse}
-                renderHalf={this.renderHalf}
-                numberOfDays={6}
-                slotHeight={70}
-                mainColor={viescoTheme.palette.edt}
-                slots={slots.data}
-                initialSelectedDate={selectedDate}
-                hideSlots
-              />
-            </View>
-          ))}
+        {isRefreshing ? (
+          <LoadingIndicator />
+        ) : (
+          <View style={styles.calendarContainer}>
+            <Calendar
+              startDate={startDate}
+              data={adaptCourses(courses, teachers)}
+              renderElement={this.renderCourse}
+              renderHalf={this.renderHalf}
+              numberOfDays={6}
+              slotHeight={70}
+              mainColor={viescoTheme.palette.edt}
+              slots={slots}
+              initialSelectedDate={date}
+              hideSlots
+            />
+          </View>
+        )}
       </View>
     );
   }

@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import viescoConfig from '~/framework/modules/viescolaire/dashboard/module-config';
-import { AsyncActionTypes, AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
+import { AsyncActionTypes, AsyncState, createAsyncActionTypes } from '~/framework/util/redux/async';
 
 // THE MODEL --------------------------------------------------------------------------------------
 

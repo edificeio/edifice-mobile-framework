@@ -1,4 +1,4 @@
 import { actionTypes, initialState } from '~/framework/modules/viescolaire/dashboard/state/courses';
-import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import { createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 export default createSessionAsyncReducer(initialState, actionTypes);

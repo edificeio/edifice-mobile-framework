@@ -451,8 +451,14 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     return (
       <View style={styles.container}>
         <View style={styles.daysHeader}>
-          {week.map(day => (
-            <TopDay onPress={() => this.onDayChange(day)} day={day} color={mainColor} selected={day.isSame(selectedDate, 'd')} />
+          {week.map((day, index) => (
+            <TopDay
+              key={index}
+              onPress={() => this.onDayChange(day)}
+              day={day}
+              color={mainColor}
+              selected={day.isSame(selectedDate, 'd')}
+            />
           ))}
         </View>
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>

@@ -23,20 +23,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingTop: UI_SIZES.spacing.small,
     paddingBottom: UI_SIZES.spacing.medium,
-    borderBottomRightRadius: 30,
-    borderBottomLeftRadius: 30,
-    backgroundColor: theme.palette.grey.white,
+    borderBottomRightRadius: UI_SIZES.radius.large,
+    borderBottomLeftRadius: UI_SIZES.radius.large,
+    backgroundColor: theme.ui.background.card,
     zIndex: 100,
   },
   shadow: {
-    elevation: 20,
     shadowColor: theme.ui.shadowColor,
-    shadowOffset: {
-      height: 2,
-      width: 0,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 1,
+    elevation: 1,
   },
 });
 
@@ -71,7 +68,7 @@ const ChildPicker = ({ children, selectedChildId, userChildren, selectChild }: I
 };
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const session = getSession(state);
     const viescoState = viescoConfig.getState(state);
 

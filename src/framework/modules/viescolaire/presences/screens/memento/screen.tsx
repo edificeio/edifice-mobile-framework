@@ -178,7 +178,7 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
   return <PageView>{renderPage()}</PageView>;
 };
 
-export default connect((state: IGlobalState) => () => {
+export default connect((state: IGlobalState) => {
   const session = getSession(state);
 
   return {

@@ -1,31 +1,38 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { IUser } from '~/framework/modules/auth/model';
+import { UserType } from '~/framework/modules/auth/service';
+import { IClassGroups } from '~/framework/modules/viescolaire/common/model/class-groups';
+import { IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import type { EdtNavigationParams } from '~/framework/modules/viescolaire/edt/navigation';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface EdtHomeScreenProps {
-  courses: any;
-  teachers: any;
-  slots: any;
-  structureId: string;
-  childId: string;
-  childClasses: string;
-  group: string[];
-  groupsIds: string[];
-  teacherId: string;
-  userType: string;
-  fetchChildInfos: () => void;
-  fetchChildGroups: (classes: string, student: string) => void;
+  courses: IEdtCourse[];
+  initialLoadingState: AsyncPagedLoadingState;
+  slots: ISlot[];
+  teachers: IUser[];
+  childId?: string;
+  classes?: string[];
+  structureId?: string;
+  userId?: string;
+  userType?: UserType;
   fetchChildCourses: (
     structureId: string,
     startDate: moment.Moment,
     endDate: moment.Moment,
-    groups: string[],
-    groupsIds: string[],
-  ) => void;
-  fetchClasses: (structureId: string) => void;
-  fetchPersonnel: (structureId: string) => void;
-  fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
-  fetchSlots: (structureId: string) => void;
+    classGroups: IClassGroups[],
+  ) => Promise<IEdtCourse[]>;
+  fetchClassGroups: (classes: string, studentId?: string) => Promise<IClassGroups[]>;
+  fetchSlots: (structureId: string) => Promise<ISlot[]>;
+  fetchTeacherCourses: (
+    structureId: string,
+    startDate: moment.Moment,
+    endDate: moment.Moment,
+    teacherId: string,
+  ) => Promise<IEdtCourse[]>;
+  fetchTeachers: (structureId: string) => Promise<IUser[]>;
+  fetchUserChildren: () => Promise<IUserChild[]>;
 }
 
 export interface EdtHomeScreenNavParams {}

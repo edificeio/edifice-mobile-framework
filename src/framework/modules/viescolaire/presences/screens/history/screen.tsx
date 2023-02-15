@@ -226,7 +226,7 @@ class PresencesHistoryScreen extends React.PureComponent<PresencesHistoryScreenP
 }
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
     const session = getSession(state);
     const userId = session?.user.id;

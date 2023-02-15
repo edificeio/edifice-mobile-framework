@@ -9,7 +9,7 @@ import { actionTypes } from '~/framework/modules/viescolaire/diary/reducer';
 import { diaryService } from '~/framework/modules/viescolaire/diary/service';
 import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 import { edtService } from '~/framework/modules/viescolaire/edt/service';
-import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 /**
  * Fetch the homeworks from a structure.

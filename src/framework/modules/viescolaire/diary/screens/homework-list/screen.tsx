@@ -79,7 +79,7 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
 }
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
     const personnelState = getPersonnelListState(state);
     const session = getSession(state);

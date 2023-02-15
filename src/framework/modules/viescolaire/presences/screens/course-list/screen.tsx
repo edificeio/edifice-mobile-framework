@@ -193,7 +193,7 @@ class PresencesCourseListScreen extends React.PureComponent<PresencesCourseListS
 }
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
     const session = getSession(state);
     const courses = getCoursesListState(state);

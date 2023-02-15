@@ -17,14 +17,14 @@ export type IStructureArray = {
 // THE STATE --------------------------------------------------------------------------------------
 
 export type IStructureState = {
-  selectedStructure: string | null;
+  selectedStructure: string | undefined;
 };
 
 export const initialState: IStructureState = {
-  selectedStructure: null,
+  selectedStructure: undefined,
 };
 
-export const getSelectedStructure = (globalState: IGlobalState): StructureNode =>
+export const getSelectedStructure = (globalState: IGlobalState): string | undefined =>
   viescoConfig.getState(globalState).structure.selectedStructure;
 
 export const getStructuresList = (globalState: IGlobalState): StructureNode[] => getSession(globalState)?.user.structures ?? [];

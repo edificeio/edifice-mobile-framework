@@ -2,7 +2,7 @@ import { Dispatch } from 'redux';
 
 import { personnelListService } from '~/framework/modules/viescolaire/dashboard/services/personnel';
 import { IPersonnelList, actionTypes } from '~/framework/modules/viescolaire/dashboard/state/personnel';
-import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

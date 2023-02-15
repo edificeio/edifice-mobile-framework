@@ -4,7 +4,7 @@ import {
   yearActionTypes,
   yearInitialState,
 } from '~/framework/modules/viescolaire/dashboard/state/periods';
-import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import { createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

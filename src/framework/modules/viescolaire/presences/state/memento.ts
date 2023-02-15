@@ -1,4 +1,4 @@
-import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
+import { AsyncState, createAsyncActionTypes } from '~/framework/util/redux/async';
 import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------

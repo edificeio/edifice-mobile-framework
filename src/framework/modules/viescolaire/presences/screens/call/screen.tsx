@@ -56,7 +56,7 @@ class PresencesCallScreen extends React.PureComponent<PresencesCallScreenPrivate
 }
 
 export default connect(
-  (state: IGlobalState) => () => {
+  (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
 
     return {

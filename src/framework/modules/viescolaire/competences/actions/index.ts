@@ -7,7 +7,7 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { IDevoirsMatieres, ILevel, IMoyenne, IUserChild } from '~/framework/modules/viescolaire/competences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/competences/reducer';
 import { competencesService } from '~/framework/modules/viescolaire/competences/service';
-import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 /**
  * Fetch the homeworks.
