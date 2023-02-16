@@ -25,31 +25,12 @@ type IBackendTerm = {
 };
 
 type IBackendUser = {
-  aafFunctions: string[];
-  allClasses: {
-    name: string;
-    id: string | number;
-  }[];
-  attachmentId?: any;
-  birthDate: string;
-  children: any[];
-  code?: any;
-  displayName: string;
+  id: string;
+  type: string;
   externalId: string;
   firstName: string;
-  functions: any;
-  id: string;
   lastName: string;
-  login: string;
-  parent1ExternalId: any;
-  parent2ExternalId: any;
-  parents: any[];
-  source: string;
-  structures: {
-    id: string;
-    name: string;
-  }[];
-  type: string;
+  displayName: string;
 };
 
 type IBackendClassGroupsList = IBackendClassGroups[];

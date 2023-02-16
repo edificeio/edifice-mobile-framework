@@ -6,7 +6,7 @@ import { createSessionReducer } from '~/infra/redux/reducerFactory';
 
 export default createSessionReducer(initialState, {
   [actionTypes.sessionCreate]: (state, action) => ({
-    selectedChild: action.session.user.children[0]?.children[0]?.id,
+    selectedChild: action.session.user.children?.[0]?.children?.[0]?.id,
   }),
   [selectChildActionType]: (state, action) => ({
     selectedChild: action.selectedChild,

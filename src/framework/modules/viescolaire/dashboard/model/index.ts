@@ -1,8 +1,6 @@
-/**
- * Data model for the module dashboard
- */
-
-// @scaffolder : empty this interface, replace it by your own values
-// export interface DashboardData {
-//   fruit: string;
-// }
+export interface IAuthorizedViescoApps {
+  competences?: boolean;
+  diary?: boolean;
+  edt?: boolean;
+  presences?: boolean;
+}

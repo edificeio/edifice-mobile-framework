@@ -1,100 +1,85 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { Icon } from '~/framework/components/picture/Icon';
-import { BodyBoldText, SmallInverseText, SmallText } from '~/framework/components/text';
+import { PageView } from '~/framework/components/page';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
+import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
 import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
-import { IHomeworkByDateList } from '~/framework/modules/viescolaire/dashboard/components/DashboardRelative';
+import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
+import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
+import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
+import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
+import { fetchDiaryHomeworksAction, updateDiaryHomeworkProgressAction } from '~/framework/modules/viescolaire/diary/actions';
 import { HomeworkItem } from '~/framework/modules/viescolaire/diary/components/Items';
-import { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import { IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
-import edtConfig from '~/framework/modules/viescolaire/edt/module-config';
-import presencesConfig from '~/framework/modules/viescolaire/presences/module-config';
+import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
+import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
+import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncState } from '~/framework/util/redux/async';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/diary';
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
-  dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium },
-  gridAllModules: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  gridModulesLine: {
-    width: '100%',
-  },
-  gridButtonContainer: {
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.minor,
-  },
-  gridButton: {
-    borderRadius: 5,
-  },
-  gridButtonTextWidthFull: {
-    width: '100%',
-  },
-  gridButtonTextWidthHalf: {
-    width: '50%',
-  },
-  gridButtonAllModules: {
-    justifyContent: 'flex-start',
-  },
-  gridButtonLineModules: {
-    justifyContent: 'center',
-  },
-  viewButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: UI_SIZES.spacing.minor,
-  },
-  gridButtonText: {
-    marginLeft: UI_SIZES.spacing.minor,
-    textAlign: 'center',
-  },
-  subtitle: { color: theme.palette.grey.stone },
+import styles from './styles';
+import type { DashboardStudentScreenPrivateProps } from './types';
+
+type IHomeworkByDateList = {
+  [key: string]: IHomework[];
+};
+
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<DashboardNavigationParams, typeof dashboardRouteNames.student>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('viesco'),
 });
 
-interface IIconButtonProps {
-  disabled?: boolean;
-  icon: string;
-  color: string;
-  text: string;
-  onPress: () => void;
-  nbModules: number;
-}
+class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenPrivateProps> {
+  constructor(props) {
+    super(props);
+    const { structureId, getHomeworks, userId } = props;
+    this.state = {
+      // fetching next month homeworks only, when screen is focused
+      focusListener: this.props.navigation.addListener('willFocus', () => {
+        getHomeworks(structureId, moment().add(1, 'days').format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD'));
+        this.props.fetchDevoirs(structureId, userId);
+      }),
+    };
+  }
 
-const IconButtonModule = ({ icon, color, text, onPress, nbModules }: IIconButtonProps) => (
-  <View style={[styles.gridButtonContainer, nbModules === 4 ? styles.gridButtonTextWidthHalf : styles.gridButtonTextWidthFull]}>
-    <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>
-      <View style={[styles.viewButton, nbModules === 4 ? styles.gridButtonAllModules : styles.gridButtonLineModules]}>
-        <Icon size={20} color={theme.ui.text.inverse} name={icon} />
-        <SmallInverseText style={styles.gridButtonText}>{text}</SmallInverseText>
-      </View>
-    </TouchableOpacity>
-  </View>
-);
+  public componentDidMount() {
+    const { structureId } = this.props;
+    this.props.fetchTeachers(structureId);
+    this.props.fetchLevels(structureId);
+  }
 
-export default class Dashboard extends React.PureComponent<any> {
   private renderNavigationGrid() {
     const nbModules = Object.values(this.props.authorizedViescoApps).filter(x => x).length;
 
     return (
       <View style={[styles.dashboardPart, nbModules === 4 ? styles.gridAllModules : styles.gridModulesLine]}>
         {this.props.authorizedViescoApps.presences && (
-          <IconButtonModule
+          <ModuleIconButton
             onPress={() =>
-              this.props.navigation.navigate(`${presencesConfig.routeName}/history`, {
+              this.props.navigation.navigate(presencesRouteNames.history, {
                 user_type: 'Student',
               })
             }
@@ -105,8 +90,8 @@ export default class Dashboard extends React.PureComponent<any> {
           />
         )}
         {this.props.authorizedViescoApps.edt && (
-          <IconButtonModule
-            onPress={() => this.props.navigation.navigate(edtConfig.routeName)}
+          <ModuleIconButton
+            onPress={() => this.props.navigation.navigate(edtRouteNames.home)}
             text={I18n.t('viesco-timetable')}
             color={viescoTheme.palette.edt}
             icon="calendar_today"
@@ -114,8 +99,8 @@ export default class Dashboard extends React.PureComponent<any> {
           />
         )}
         {this.props.authorizedViescoApps.diary && (
-          <IconButtonModule
-            onPress={() => this.props.navigation.navigate(`${diaryConfig.routeName}/homeworkList`)}
+          <ModuleIconButton
+            onPress={() => this.props.navigation.navigate(diaryRouteNames.homeworkList)}
             text={I18n.t('Homework')}
             color={viescoTheme.palette.diary}
             icon="checkbox-multiple-marked"
@@ -123,8 +108,8 @@ export default class Dashboard extends React.PureComponent<any> {
           />
         )}
         {this.props.authorizedViescoApps.competences && (
-          <IconButtonModule
-            onPress={() => this.props.navigation.navigate(competencesConfig.routeName)}
+          <ModuleIconButton
+            onPress={() => this.props.navigation.navigate(competencesRouteNames.home)}
             text={I18n.t('viesco-tests')}
             color={viescoTheme.palette.competences}
             icon="equalizer"
@@ -178,10 +163,7 @@ export default class Dashboard extends React.PureComponent<any> {
                       this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
                     }}
                     onPress={() =>
-                      this.props.navigation.navigate(
-                        `${diaryConfig.routeName}/homework`,
-                        homeworkListDetailsAdapter(homework, homeworks),
-                      )
+                      this.props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsAdapter(homework, homeworks))
                     }
                   />
                 ))}
@@ -224,14 +206,47 @@ export default class Dashboard extends React.PureComponent<any> {
     const { authorizedViescoApps, homeworks, evaluations, levels } = this.props;
 
     return (
-      <View style={styles.mainContainer}>
+      <PageView>
         {this.renderNavigationGrid()}
         <ScrollView>
           {authorizedViescoApps.diary && this.renderHomework(homeworks.data)}
           {authorizedViescoApps.competences &&
             (evaluations.isFetching ? <LoadingIndicator /> : this.renderEvaluations(evaluations, levels))}
         </ScrollView>
-      </View>
+      </PageView>
     );
   }
 }
+
+export default connect(
+  (state: IGlobalState) => {
+    const session = getSession(state);
+    const competencesState = competencesConfig.getState(state);
+    const diaryState = diaryConfig.getState(state);
+
+    return {
+      authorizedViescoApps: {
+        competences: session?.apps.some(app => app.address === '/competences'),
+        diary: session?.apps.some(app => app.address === '/diary'),
+        edt: session?.apps.some(app => app.address === '/edt'),
+        presences: session?.apps.some(app => app.address === '/presences'),
+      },
+      evaluations: competencesState.devoirsMatieres,
+      homeworks: diaryState.homeworks,
+      levels: competencesState.levels.data,
+      structureId: session?.user.structures?.[0]?.id,
+      userId: session?.user.id,
+    };
+  },
+  (dispatch: ThunkDispatch<any, any, any>) =>
+    bindActionCreators(
+      {
+        fetchDevoirs: tryAction(fetchCompetencesDevoirsAction, undefined, true),
+        fetchHomeworks: tryAction(fetchDiaryHomeworksAction, undefined, true),
+        fetchLevels: tryAction(fetchCompetencesLevelsAction, undefined, true),
+        fetchTeachers: tryAction(fetchPersonnelListAction, undefined, true),
+        updateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction, undefined, true),
+      },
+      dispatch,
+    ),
+)(DashboardStudentScreen);
