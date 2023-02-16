@@ -8,6 +8,7 @@
  * - make standard thunks for upload/download + thunk builder
  */
 import mime from 'mime';
+import path from 'path';
 import RNFS, {
   DownloadBeginCallbackResult,
   DownloadProgressCallbackResult,
@@ -21,6 +22,7 @@ import { IUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
+import { getSafeFileName } from '../string';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };
@@ -44,6 +46,12 @@ export interface IDownloadCallbaks {
   onBegin?: (response: DownloadBeginCallbackResult) => void;
   onProgress?: (Response: DownloadProgressCallbackResult) => void;
 }
+
+// All these non-standard mime types (left) needs to be replaced by the standard values (right).
+const mimeAliases = {
+  'image/jpg': 'image/jpeg',
+  'image/tif': 'image/tiff',
+};
 
 const fileTransferService = {
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
@@ -143,7 +151,7 @@ const fileTransferService = {
       ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
     ) => SyncedFileType;
     const fileUrl = urlSigner.getRelativeUrl(file.url)!;
-    file.filename = file.filename || fileUrl.split('/').pop();
+    file.filename = getSafeFileName(file.filename || fileUrl.split('/').pop());
     const folderDest = `${RNFS.DocumentDirectoryPath}${fileUrl}`;
     const downloadDest = `${folderDest}/${file.filename}`;
     const downloadUrl = urlSigner.getAbsoluteUrl(file.url);
@@ -158,21 +166,27 @@ const fileTransferService = {
         _needIOSReleaseSecureAccess: false,
       },
     );
-    // If destination folder exists, return first (and only!) file
+    // If destination folder exists, there may be a file already downloaded.
     const exists = await RNFS.exists(folderDest);
     if (exists) {
       const files = await RNFS.readDir(folderDest);
-      if (files.length !== 1) throw new Error('Malformed documents folder ');
-      localFile.setPath(files[0].path);
-      return new Promise<{
-        jobId: number;
-        promise: Promise<SyncedFileType>;
-      }>(resolve =>
-        resolve({
-          jobId: 0,
-          promise: new Promise(resolve => resolve(new sfclass(localFile, file))),
-        }),
-      );
+      const found = files.find(f => {
+        return path.parse(f.name).name.normalize() === file.filename?.normalize();
+      });
+      if (found) {
+        localFile.setPath(found.path);
+        const foundMime = mime.getType(found.path);
+        if (foundMime) localFile.filetype = foundMime;
+        return new Promise<{
+          jobId: number;
+          promise: Promise<SyncedFileType>;
+        }>(resolve =>
+          resolve({
+            jobId: 0,
+            promise: new Promise(resolve => resolve(new sfclass(localFile, file))),
+          }),
+        );
+      }
     }
     // Assert Permission
     await assertPermissions('documents.write');
@@ -185,9 +199,14 @@ const fileTransferService = {
       toFile: downloadDest,
       headers,
       begin: res => {
-        const type = res?.headers['Content-Type'];
-        if (res.contentLength) file.filesize = res.contentLength;
-        if (!file.filetype && type?.length) localFile.filetype = type === 'image/jpg' ? 'image/jpeg' : type;
+        if (res.contentLength) {
+          file.filesize = res.contentLength;
+        }
+        if (res?.headers['Content-Type']) {
+          const foundType = mimeAliases[res?.headers['Content-Type']] ?? res?.headers['Content-Type'];
+          file.filetype = foundType;
+          localFile.filetype = foundType;
+        }
         callbacks?.onBegin?.(res);
       },
       progress: callbacks?.onProgress,

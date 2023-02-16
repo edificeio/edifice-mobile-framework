@@ -78,6 +78,7 @@
     "mime": "3.0.0",
     "moment": "2.29.4",
     "pager-rn": "0.0.2",
+    "path": "0.12.7",
     "prompts": "2.4.2",
     "query-string": "8.1.0",
     "querystring": "0.2.1",
