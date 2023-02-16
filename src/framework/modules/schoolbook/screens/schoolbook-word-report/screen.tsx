@@ -197,7 +197,11 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
                   renderItem={({ item, index }) => {
                     const isLastAcknowledgedStudent = index === acknowledgedStudents?.length - 1;
                     return (
-                      <View style={[styles.acknowledgedStudentContainer, { borderBottomWidth: isLastAcknowledgedStudent ? 0 : 1 }]}>
+                      <View
+                        style={[
+                          styles.acknowledgedStudentContainer,
+                          isLastAcknowledgedStudent ? styles.borderBottomWidthZero : styles.borderBottomWidthOne,
+                        ]}>
                         <View style={styles.acknowledgedStudentSubContainer}>
                           <SingleAvatar status={undefined} size={24} userId={item.owner} />
                           <View style={styles.acknowledgedStudentInfos}>
@@ -209,7 +213,10 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
                               const isLastResponse = item.responses && item.responses.length - 1 === responseIndex;
                               return (
                                 <View
-                                  style={[styles.responseContainer, { marginBottom: isLastResponse ? 0 : UI_SIZES.spacing.tiny }]}>
+                                  style={[
+                                    styles.responseContainer,
+                                    isLastResponse ? styles.marginBottomZero : styles.marginBottomTiny,
+                                  ]}>
                                   <View style={styles.responseSubContainer}>
                                     <SingleAvatar status={undefined} size={24} userId={response.owner} />
                                     <View style={styles.responseInfosContainer}>

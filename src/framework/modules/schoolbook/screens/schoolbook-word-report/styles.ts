@@ -15,6 +15,8 @@ export default StyleSheet.create({
   acknowledgedStudentsContentContainer: { backgroundColor: theme.ui.background.card, borderRadius: UI_SIZES.radius.medium },
   acknowledgementsText: { marginTop: UI_SIZES.spacing.minor },
   acknowledgementsTitle: { marginTop: UI_SIZES.spacing.tiny },
+  borderBottomWidthOne: { borderBottomWidth: 1 },
+  borderBottomWidthZero: { borderBottomWidth: 0 },
   list: {
     marginTop: UI_SIZES.spacing.small,
     shadowColor: theme.ui.shadowColor,
@@ -26,6 +28,8 @@ export default StyleSheet.create({
     backgroundColor: theme.ui.background.page,
     borderRadius: UI_SIZES.radius.medium,
   },
+  marginBottomZero: { marginBottom: 0 },
+  marginBottomTiny: { marginBottom: UI_SIZES.spacing.tiny },
   modalBoxButtons: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: UI_SIZES.spacing.large },
   modalBoxCancel: { marginRight: UI_SIZES.spacing.big, color: theme.palette.grey.graphite },
   modalBoxText: { marginTop: UI_SIZES.spacing.small },
