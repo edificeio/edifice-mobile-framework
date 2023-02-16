@@ -9,7 +9,7 @@ export interface IWorkspaceFilePreviewScreenDataProps {
 }
 
 export interface IWorkspaceFilePreviewScreenEventProps {
-  downloadFile: (file: IFile) => void;
+  downloadFile: (file: IFile[]) => void;
   previewFile: (file: IFile, navigation: NavigationInjectedProps['navigation']) => void;
   shareFile: (file: IFile) => void;
   dispatch: ThunkDispatch<any, any, any>;
