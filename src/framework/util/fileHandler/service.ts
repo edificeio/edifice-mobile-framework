@@ -142,10 +142,11 @@ const fileTransferService = {
     const sfclass = (syncedFileClass ?? SyncedFile) as new (
       ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
     ) => SyncedFileType;
-    file.filename = file.filename || file.url.split('/').pop();
-    const folderDest = `${RNFS.DocumentDirectoryPath}${file.url}`;
+    const fileUrl = urlSigner.getRelativeUrl(file.url)!;
+    file.filename = file.filename || fileUrl.split('/').pop();
+    const folderDest = `${RNFS.DocumentDirectoryPath}${fileUrl}`;
     const downloadDest = `${folderDest}/${file.filename}`;
-    const downloadUrl = `${DEPRECATED_getCurrentPlatform()?.url}${file.url}`;
+    const downloadUrl = urlSigner.getAbsoluteUrl(file.url);
     const headers = { ...urlSigner.getAuthHeader() };
     const localFile = new LocalFile(
       {

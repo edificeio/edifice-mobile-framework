@@ -7,6 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { openCarousel } from '~/framework/components/carousel';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getUserSession } from '~/framework/util/session';
+import { urlSigner } from '~/infra/oauth';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 import { IMedia } from '../media';
@@ -131,6 +132,7 @@ export const openDocument = async (
   navigation: NavigationInjectedProps['navigation'], // ToDo: Remove this proptery when RN6
 ) => {
   let mediaType: IMedia['type'] | undefined;
+  let syncedFile: SyncedFile | undefined;
   let localFile: LocalFile | undefined;
   let onlineMedia: IMedia | undefined;
 
@@ -138,7 +140,8 @@ export const openDocument = async (
     mediaType = getMediaTypeFromMime(document.filetype);
     if (!mediaType) {
       const session = getUserSession();
-      localFile = (await fileTransferService.downloadFile(session, document, {})).lf;
+      syncedFile = await fileTransferService.downloadFile(session, document, {});
+      localFile = syncedFile.lf;
     } else {
       onlineMedia = {
         type: mediaType,
@@ -168,12 +171,22 @@ export const openDocument = async (
       );
       break;
     case 'audio':
-      openMediaPlayer({ type: MediaType.AUDIO, source: onlineMedia?.src ?? localFile?.filepath }, navigation);
+      openMediaPlayer(
+        { type: MediaType.AUDIO, source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath) },
+        navigation,
+      );
       break;
     case 'video':
-      openMediaPlayer({ type: MediaType.VIDEO, source: onlineMedia?.src ?? localFile?.filepath }, navigation);
+      openMediaPlayer(
+        { type: MediaType.VIDEO, source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath) },
+        navigation,
+      );
       break;
     default:
       localFile?.open();
   }
+
+  if (syncedFile) return syncedFile;
+  if (localFile) return localFile;
+  return onlineMedia;
 };

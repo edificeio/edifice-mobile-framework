@@ -15,6 +15,7 @@ import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
+import { urlSigner } from '~/infra/oauth';
 import { Filter, IFile, IFolder, actionTypes } from '~/modules/workspace/reducer';
 import { factoryRootFolder, workspaceService } from '~/modules/workspace/service';
 
@@ -222,7 +223,7 @@ export const renameWorkspaceFileAction = (file: IFile, name: string) => async (d
 
 export const convertIFileToIDistantFile = (file: IFile) => {
   return {
-    url: file.url,
+    url: urlSigner.getAbsoluteUrl(file.url),
     filename: file.name,
     filesize: file.size,
     filetype: file.contentType,
@@ -237,11 +238,9 @@ export const downloadThenOpenWorkspaceFileAction =
   (file: IFile, navigation: NavigationInjectedProps['navigation']) => async (dispatch, getState) => {
     try {
       dispatch(workspacePreviewActionsCreators.request());
-      const session = getUserSession();
       const distanteFile = convertIFileToIDistantFile(file);
-      const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
-      openDocument(syncedFile.lf, navigation);
-      dispatch(workspacePreviewActionsCreators.receipt(syncedFile));
+      const resultingFile = await openDocument(distanteFile, navigation);
+      dispatch(workspacePreviewActionsCreators.receipt(resultingFile));
     } catch (e) {
       dispatch(workspacePreviewActionsCreators.error(e as Error));
       throw e;
