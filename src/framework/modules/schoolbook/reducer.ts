@@ -10,6 +10,14 @@ import moduleConfig from './module-config';
 
 // Types
 
+export interface IChildWithUnacknowledgedWordsCount {
+  id: string;
+  name: string;
+  unacknowledgedWordsCount: number;
+}
+
+export type IChildrenWithUnacknowledgedWordsCount = IChildWithUnacknowledgedWordsCount[];
+
 export interface ITeacherWord {
   ackNumber: number;
   category: string;
