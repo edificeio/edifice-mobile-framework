@@ -1,15 +1,15 @@
 import { ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '../module-config';
-
-// import type { SchoolbookHomeScreenNavParams } from '../screens/home';
-// import type { SchoolbookOtherScreenNavParams } from '../screens/other';
+import type { SchoolbookWordDetailsScreenNavigationParams } from '../screens/SchoolbookWordDetailsScreen';
+import { SchoolbookWordReportScreenNavigationParams } from '../screens/schoolbook-word-report/types';
 
 export const schoolbookRouteNames = {
-  // home: `${moduleConfig.routeName}` as 'home', // keep 'Home' as Typescript type for the main screen
-  // other: `${moduleConfig.routeName}/other` as 'other', // @scaffolder Typescript must have static types for code-completion. Use PascalCase for the type
+  home: `${moduleConfig.routeName}` as 'home',
+  details: `${moduleConfig.routeName}/details` as 'details',
+  report: `${moduleConfig.routeName}/report` as 'report',
 };
 export interface SchoolbookNavigationParams extends ParamListBase {
-  // home: SchoolbookHomeScreenNavParams;
-  // other: SchoolbookOtherScreenNavParams;
+  details: SchoolbookWordDetailsScreenNavigationParams;
+  report: SchoolbookWordReportScreenNavigationParams;
 }
