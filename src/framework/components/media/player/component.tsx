@@ -20,11 +20,12 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     if (!source.includes('://')) {
       source = 'file://' + source;
     }
-    source = { uri: source };
+    source = { uri: new URL(source).href };
   } else if (typeof source === 'object') {
     if (!source.uri.includes('://')) {
       source.uri = 'file://' + source;
     }
+    source.uri = new URL(source.uri).href;
   }
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
