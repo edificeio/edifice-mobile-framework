@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
+import { NavigationInjectedProps } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
@@ -163,10 +164,12 @@ export const RenderPJs = ({
   attachments,
   mailId,
   dispatch,
+  navigation,
 }: {
   attachments: any[];
   mailId: string;
   dispatch: ThunkDispatch<any, any, any>;
+  navigation: NavigationInjectedProps['navigation'];
 }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
@@ -187,7 +190,7 @@ export const RenderPJs = ({
             onPress={async () => {
               const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
               try {
-                await sf.open();
+                await sf.open(navigation);
               } catch (e) {
                 Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
               }

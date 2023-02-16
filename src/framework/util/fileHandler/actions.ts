@@ -1,6 +1,7 @@
 /**
  * Actions for file handler
  */
+import FileViewer from 'react-native-file-viewer';
 import { NavigationInjectedProps } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -183,7 +184,12 @@ export const openDocument = async (
       );
       break;
     default:
-      localFile?.open();
+      if (localFile) {
+        await FileViewer.open(localFile.filepath, {
+          showOpenWithDialog: true,
+          showAppsSuggestions: true,
+        });
+      }
   }
 
   if (syncedFile) return syncedFile;

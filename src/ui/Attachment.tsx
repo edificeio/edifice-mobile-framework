@@ -17,6 +17,7 @@ import { Icon } from '~/framework/components/icon';
 import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
@@ -90,11 +91,11 @@ const getAttachmentTypeByExt = (filename: string) => {
   return icon;
 };
 
-const openFile = (notifierId: string, file?: SyncedFile) => {
+const openFile = (notifierId: string, file: SyncedFile | undefined, navigation: NavigationInjectedProps['navigation']) => {
   return dispatch => {
     if (file) {
       try {
-        file.open();
+        file.open(navigation);
       } catch {
         Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
@@ -124,7 +125,7 @@ class Attachment extends React.PureComponent<
     style: ViewStyle;
     editMode?: boolean;
     onRemove?: () => void;
-    onOpenFile: (notifierId: string, file?: LocalFile) => void;
+    onOpenFile: (notifierId: string, file: LocalFile | undefined, navigation: NavigationInjectedProps['navigation']) => void;
     onDownloadFile: (notifierId: string, file?: LocalFile, toastMessage?: string) => void;
     onDownload?: () => void;
     onError?: () => void;
@@ -185,7 +186,9 @@ class Attachment extends React.PureComponent<
             alignItems: 'center',
             height: 30,
           }}>
-          <Pressable style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.onPressAttachment(notifierId)}>
+          <Pressable
+            style={{ flexDirection: 'row', flex: 1 }}
+            onPress={() => this.onPressAttachment(notifierId, this.props.navigation)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
                 <ActivityIndicator
@@ -279,7 +282,7 @@ class Attachment extends React.PureComponent<
     );
   }
 
-  public async onPressAttachment(notifierId: string) {
+  public async onPressAttachment(notifierId: string, navigation: NavigationInjectedProps['navigation']) {
     const { onOpenFile, onOpen, attachment, editMode } = this.props;
     const { downloadState, newDownloadedFile } = this.state;
     const fileType = editMode
@@ -304,15 +307,12 @@ class Attachment extends React.PureComponent<
       if (onOpen) onOpen();
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
         try {
-          await FileViewer.open(file!._filepathNative, {
-            showOpenWithDialog: true,
-            showAppsSuggestions: true,
-          });
+          if (file) await openDocument(file, navigation);
         } catch (error) {
           console.log(error);
         }
       } else {
-        onOpenFile(notifierId, file);
+        onOpenFile(notifierId, file, navigation);
       }
     } else {
       this.startDownload(attachment as IRemoteAttachment).catch(() => {
@@ -372,7 +372,8 @@ class Attachment extends React.PureComponent<
 
 export default withNavigation(
   connect(null, dispatch => ({
-    onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
+    onOpenFile: (notifierId: string, file: LocalFile, navigation: NavigationInjectedProps['navigation']) =>
+      dispatch(openFile(notifierId, file, navigation)),
     onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
       dispatch(downloadFile(notifierId, file, toastMessage)),
     dispatch,
