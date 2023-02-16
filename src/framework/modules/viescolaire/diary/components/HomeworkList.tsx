@@ -14,7 +14,7 @@ import ChildPicker from '~/framework/modules/viescolaire/common/components/Child
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
+import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import {
   getTeacherName,
   hasEmptyDescription,
@@ -249,7 +249,7 @@ export default (props: HomeworkListProps) => {
             homeworkList={props.homeworks}
             onHomeworkStatusUpdate={homework => props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework))}
             onHomeworkTap={homework =>
-              props.navigation.navigate(`${diaryConfig.routeName}/homework`, homeworkListDetailsAdapter(homework, props.homeworks))
+              props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsAdapter(homework, props.homeworks))
             }
             userType={userType}
           />
@@ -260,7 +260,7 @@ export default (props: HomeworkListProps) => {
             sessionList={props.sessions.filter(session => !hasEmptyDescription(session))}
             onSessionTap={session =>
               props.navigation.navigate(
-                `${diaryConfig.routeName}/session`,
+                diaryRouteNames.session,
                 sessionListDetailsAdapter(session, props.personnel, props.sessions),
               )
             }

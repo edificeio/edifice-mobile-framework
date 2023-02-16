@@ -26,7 +26,7 @@ export interface DiaryHomeworkListScreenNavParams {
 }
 
 export interface DiaryHomeworkListScreenPrivateProps
-  extends NativeStackScreenProps<DiaryNavigationParams, 'homework-list'>,
+  extends NativeStackScreenProps<DiaryNavigationParams, 'homeworkList'>,
     DiaryHomeworkListScreenProps {
   // @scaffolder add HOC props here
 }

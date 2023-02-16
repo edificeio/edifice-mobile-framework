@@ -3,7 +3,6 @@ import moment from 'moment';
 import * as React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
 type IDisplayHomeworkProps = {
   homework: Homework;
   homeworkList: Homework[];
-} & NavigationInjectedProps;
+};
 
 type IDisplayHomeworkState = {
   indexSelectedHomework: number;

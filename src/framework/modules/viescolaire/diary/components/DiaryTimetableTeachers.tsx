@@ -12,7 +12,7 @@ import Calendar from '~/framework/modules/viescolaire/common/components/Calendar
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { ICourse } from '~/framework/modules/viescolaire/dashboard/state/courses';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
+import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { DiaryTimetableScreenProps } from '~/framework/modules/viescolaire/diary/screens/timetable';
 import { TimetableState } from '~/framework/modules/viescolaire/diary/screens/timetable/screen';
 import { homeworkListDetailsTeacherAdapter, sessionListDetailsTeacherAdapter } from '~/modules/viescolaire/utils/diary';
@@ -134,9 +134,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
           {homeworks.length > 1 && ' (' + homeworks.length + ')'}
         </BodyBoldText>
         <TouchableOpacity
-          onPress={() =>
-            this.props.navigation.navigate(`${diaryConfig.routeName}/homework`, homeworkListDetailsTeacherAdapter(homeworks))
-          }
+          onPress={() => this.props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsTeacherAdapter(homeworks))}
           disabled={isEmpty}>
           <Picture
             type="NamedSvg"
@@ -167,7 +165,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
       : isHomeworksInCourse && this.checkHomeworksPublishedState(course.homeworks);
     const navigateToHomeworks = () => {
       this.props.navigation.navigate(
-        `${diaryConfig.routeName}/homework`,
+        diaryRouteNames.homework,
         homeworkListDetailsTeacherAdapter(isHomeworksInSession ? course.session.homeworks : course.homeworks, course.subject.name),
       );
     };
@@ -194,9 +192,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     return (
       <TouchableOpacity
         style={isHalfCourse ? styles.halfSessionMargin : styles.sessionMargin}
-        onPress={() =>
-          navigation.navigate(`${diaryConfig.routeName}/session`, sessionListDetailsTeacherAdapter(course.session || course))
-        }
+        onPress={() => navigation.navigate(diaryRouteNames.session, sessionListDetailsTeacherAdapter(course.session || course))}
         disabled={!isSessionPublished}>
         <Picture
           type="NamedSvg"
