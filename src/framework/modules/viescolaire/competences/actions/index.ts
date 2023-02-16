@@ -4,10 +4,31 @@
 import { ThunkAction } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
+import { IClassGroups, ITerm } from '~/framework/modules/viescolaire/common/model';
+import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import { IDevoirsMatieres, ILevel, IMoyenne, IUserChild } from '~/framework/modules/viescolaire/competences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/competences/reducer';
 import { competencesService } from '~/framework/modules/viescolaire/competences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+
+/**
+ * Fetch the class groups.
+ */
+export const competencesClassGroupsActionsCreators = createAsyncActionCreators(actionTypes.classGroups);
+export const fetchCompetencesClassGroupsAction =
+  (classes: string, studentId?: string): ThunkAction<Promise<IClassGroups[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(competencesClassGroupsActionsCreators.request());
+      const classGroups = await viescoService.classGroups.get(session, classes, studentId);
+      dispatch(competencesClassGroupsActionsCreators.receipt(classGroups));
+      return classGroups;
+    } catch (e) {
+      dispatch(competencesClassGroupsActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Fetch the homeworks.
@@ -65,6 +86,25 @@ export const fetchCompetencesMoyennesAction =
       return moyennes;
     } catch (e) {
       dispatch(competencesMoyennesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch the school terms.
+ */
+export const competencesTermsActionsCreators = createAsyncActionCreators(actionTypes.terms);
+export const fetchCompetencesTermsAction =
+  (structureId: string, groupId: string): ThunkAction<Promise<ITerm[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(competencesTermsActionsCreators.request());
+      const terms = await viescoService.terms.get(session, structureId, groupId);
+      dispatch(competencesTermsActionsCreators.receipt(terms));
+      return terms;
+    } catch (e) {
+      dispatch(competencesTermsActionsCreators.error(e as Error));
       throw e;
     }
   };

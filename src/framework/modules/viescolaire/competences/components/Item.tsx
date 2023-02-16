@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/flatList';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -12,6 +13,7 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IDevoir, ILevel, IMoyenne } from '~/framework/modules/viescolaire/competences/model';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
+import { ArticleContainer } from '~/ui/ContainerContent';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
 // STYLE
@@ -22,9 +24,6 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between',
     flexDirection: 'row',
-    borderRadius: 5,
-    backgroundColor: theme.palette.grey.white,
-    marginBottom: UI_SIZES.spacing.small,
   },
   competencesList: {
     flexDirection: 'row',
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
   },
   coloredSquare: {
     backgroundColor: theme.palette.complementary.blue.regular,
-    borderRadius: 5,
+    borderRadius: UI_SIZES.radius.card,
     padding: UI_SIZES.spacing.minor,
     minWidth: '29%',
   },
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
     marginVertical: UI_SIZES.spacing.minor,
   },
   coloredSquareNoteText: {
-    color: theme.palette.grey.white,
+    color: theme.ui.text.inverse,
   },
   gradeDevoirsNoteContainer: {
     justifyContent: 'center',
@@ -307,37 +306,39 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenne[] }) => (
     contentContainerStyle={styles.gradesDevoirsMoyennesView}
     data={devoirs}
     renderItem={({ item, index }) => (
-      <LeftColoredItem color={theme.palette.complementary.blue.regular} key={index}>
-        <View style={styles.devoirsList}>
-          <View style={styles.gradesDevoirsMoyennesItemView}>
-            <SmallBoldText numberOfLines={1}>{item.matiere.toUpperCase()}</SmallBoldText>
-            <SmallText numberOfLines={1}>{item.teacher.toUpperCase()}</SmallText>
+      <ArticleContainer>
+        <LeftColoredItem color={theme.palette.complementary.blue.regular} key={index}>
+          <View style={styles.devoirsList}>
+            <View style={styles.gradesDevoirsMoyennesItemView}>
+              <SmallBoldText numberOfLines={1}>{item.matiere.toUpperCase()}</SmallBoldText>
+              <SmallText numberOfLines={1}>{item.teacher.toUpperCase()}</SmallText>
+            </View>
+            <ColoredSquare hideScore note={item.moyenne} />
           </View>
-          <ColoredSquare hideScore note={item.moyenne} />
-        </View>
-        {item.devoirs !== undefined
-          ? item.devoirs.length > 0 &&
-            item.devoirs.map(
-              (course, i) =>
-                course.is_evaluated && (
-                  <View style={styles.subMatieres} key={i}>
-                    <SmallText style={styles.gradesDevoirsMoyennesCourseNameText} numberOfLines={1}>
-                      {course.name.toUpperCase()}
-                    </SmallText>
-                    {course.note ? (
-                      <SmallText style={{ color: theme.palette.complementary.blue.regular }}>
-                        {course.note}/{course.diviseur}
+          {item.devoirs !== undefined
+            ? item.devoirs.length > 0 &&
+              item.devoirs.map(
+                (course, i) =>
+                  course.is_evaluated && (
+                    <View style={styles.subMatieres} key={i}>
+                      <SmallText style={styles.gradesDevoirsMoyennesCourseNameText} numberOfLines={1}>
+                        {course.name.toUpperCase()}
                       </SmallText>
-                    ) : (
-                      course.libelle_court && (
-                        <SmallText style={{ color: theme.palette.complementary.blue.regular }}>{course.libelle_court}</SmallText>
-                      )
-                    )}
-                  </View>
-                ),
-            )
-          : null}
-      </LeftColoredItem>
+                      {course.note ? (
+                        <SmallText style={{ color: theme.palette.complementary.blue.regular }}>
+                          {course.note}/{course.diviseur}
+                        </SmallText>
+                      ) : (
+                        course.libelle_court && (
+                          <SmallText style={{ color: theme.palette.complementary.blue.regular }}>{course.libelle_court}</SmallText>
+                        )
+                      )}
+                    </View>
+                  ),
+              )
+            : null}
+        </LeftColoredItem>
+      </ArticleContainer>
     )}
     ListEmptyComponent={null}
   />
@@ -345,42 +346,43 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenne[] }) => (
 
 export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoir[]; levels: ILevel[]; color?: boolean }) => (
   <FlatList
-    showsVerticalScrollIndicator={false}
     data={devoirs}
     renderItem={({ item, index }) => (
-      <View style={styles.devoirsList} key={index}>
-        <GradesDevoirsResume devoir={item} />
-        <View style={styles.competencesList}>
-          {item.note !== undefined && !isNaN(Number(item.note)) ? (
-            <>
-              {item.competences !== undefined && (
-                <CompetenceRound stateFullRound="center" competences={item.competences} size={60} levels={levels} />
-              )}
-              <ColoredSquare
-                note={item.note}
-                coeff={item.coefficient}
-                moy={item.moyenne}
-                diviseur={item.diviseur}
-                backgroundColor={
-                  color
-                    ? getColorFromNote(
-                        parseFloat(item.note.replace(/\./g, ',').replace(',', '.')),
-                        parseFloat(item.moyenne.replace(/\./g, ',').replace(',', '.')),
-                        item.diviseur,
-                      )
-                    : theme.palette.complementary.blue.regular
-                }
-              />
-            </>
-          ) : item.competences !== undefined && item.competences.length ? (
-            <CompetenceRound stateFullRound="flex-end" competences={item.competences} size={60} levels={levels} />
-          ) : (
-            <View style={[styles.coloredSquare, styles.gradeDevoirsNoteContainer]}>
-              <HeadingSText style={styles.gradeDevoirsNoteText}>{item.note}</HeadingSText>
-            </View>
-          )}
-        </View>
-      </View>
+      <ArticleContainer>
+        <CardWithoutPadding style={styles.devoirsList} key={index}>
+          <GradesDevoirsResume devoir={item} />
+          <View style={styles.competencesList}>
+            {item.note !== undefined && !isNaN(Number(item.note)) ? (
+              <>
+                {item.competences !== undefined && (
+                  <CompetenceRound stateFullRound="center" competences={item.competences} size={60} levels={levels} />
+                )}
+                <ColoredSquare
+                  note={item.note}
+                  coeff={item.coefficient}
+                  moy={item.moyenne}
+                  diviseur={item.diviseur}
+                  backgroundColor={
+                    color
+                      ? getColorFromNote(
+                          parseFloat(item.note.replace(/\./g, ',').replace(',', '.')),
+                          parseFloat(item.moyenne.replace(/\./g, ',').replace(',', '.')),
+                          item.diviseur,
+                        )
+                      : theme.palette.complementary.blue.regular
+                  }
+                />
+              </>
+            ) : item.competences !== undefined && item.competences.length ? (
+              <CompetenceRound stateFullRound="flex-end" competences={item.competences} size={60} levels={levels} />
+            ) : (
+              <View style={[styles.coloredSquare, styles.gradeDevoirsNoteContainer]}>
+                <HeadingSText style={styles.gradeDevoirsNoteText}>{item.note}</HeadingSText>
+              </View>
+            )}
+          </View>
+        </CardWithoutPadding>
+      </ArticleContainer>
     )}
   />
 );

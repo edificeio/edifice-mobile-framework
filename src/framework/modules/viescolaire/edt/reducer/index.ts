@@ -5,7 +5,7 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { IUser } from '~/framework/modules/auth/model';
-import { IClassGroups } from '~/framework/modules/viescolaire/common/model/class-groups';
+import { IClassGroups } from '~/framework/modules/viescolaire/common/model';
 import { IClass, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import moduleConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';

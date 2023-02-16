@@ -5,7 +5,7 @@ import { ThunkAction } from 'redux-thunk';
 
 import { IUser } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { IClassGroups } from '~/framework/modules/viescolaire/common/model/class-groups';
+import { IClassGroups } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import { IClass, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import { actionTypes } from '~/framework/modules/viescolaire/edt/reducer';

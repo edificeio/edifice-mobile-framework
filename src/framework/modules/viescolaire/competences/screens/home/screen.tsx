@@ -1,31 +1,34 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import ScrollView from '~/framework/components/scrollView';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   fetchCompetencesDevoirsAction,
   fetchCompetencesLevelsAction,
   fetchCompetencesMoyennesAction,
+  fetchCompetencesTermsAction,
   fetchCompetencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/competences/actions';
 import Competences from '~/framework/modules/viescolaire/competences/components/Evaluation';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
-import { fetchGroupListAction } from '~/framework/modules/viescolaire/dashboard/actions/group';
-import { fetchPeriodsListAction } from '~/framework/modules/viescolaire/dashboard/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { getGroupsListState } from '~/framework/modules/viescolaire/dashboard/state/group';
-import { getPeriodsListState } from '~/framework/modules/viescolaire/dashboard/state/periods';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import type { CompetencesHomeScreenPrivateProps } from './types';
 
@@ -43,81 +46,157 @@ export const computeNavBar = ({
   },
 });
 
-class CompetencesHomeScreen extends React.PureComponent<CompetencesHomeScreenPrivateProps, any> {
-  componentDidMount = async () => {
-    const { structureId, userId, userType, childId, childClasses } = this.props;
-    this.props.getDevoirs(structureId, childId);
-    this.props.getLevels(structureId);
-    if (userType === UserType.Relative && userId !== undefined) await this.props.fetchChildInfos(userId);
-    this.props.getPeriods(structureId, childClasses);
-    this.props.fetchChildGroups(childClasses, childId);
-  };
+const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  componentDidUpdate = async prevProps => {
-    const { structureId, userId, userType, childId, childClasses } = this.props;
-    if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) {
-      if (userType === UserType.Relative) await this.props.fetchChildInfos(userId);
-      this.props.getDevoirs(structureId, childId);
-      this.props.getPeriods(structureId, childClasses);
-      this.props.fetchChildGroups(childClasses, childId);
+  const fetchAssessments = async () => {
+    try {
+      const { childId, classes, structureId, userId, userType } = props;
+
+      if (!childId || !structureId || !userId || !userType) throw new Error();
+      await props.fetchDevoirs(structureId, childId);
+      await props.fetchLevels(structureId);
+      let childClasses = classes?.[0];
+      if (userType === UserType.Relative) {
+        const children = await props.fetchUserChildren(userId);
+        childClasses = children.find(c => c.id === childId)?.idClasse;
+      }
+      await props.fetchTerms(structureId, childClasses ?? '');
+    } catch {
+      throw new Error();
     }
   };
 
-  public render() {
+  const init = () => {
+    setLoadingState(AsyncPagedLoadingState.INIT);
+    fetchAssessments()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    fetchAssessments()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchAssessments()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
+  const fetchOnNavigation = () => {
+    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    else refreshSilent();
+  };
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      fetchOnNavigation();
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation]);
+
+  React.useEffect(() => {
+    if (loadingRef.current === AsyncPagedLoadingState.DONE) init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.childId]);
+
+  const renderError = () => {
     return (
-      <PageView>
-        <Competences {...this.props} />
-      </PageView>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+        <EmptyContentScreen />
+      </ScrollView>
     );
-  }
-}
+  };
+
+  const renderAssessments = () => {
+    return <Competences {...props} />;
+  };
+
+  const renderPage = () => {
+    switch (loadingState) {
+      case AsyncPagedLoadingState.DONE:
+      case AsyncPagedLoadingState.REFRESH:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
+      case AsyncPagedLoadingState.REFRESH_SILENT:
+        return renderAssessments();
+      case AsyncPagedLoadingState.PRISTINE:
+      case AsyncPagedLoadingState.INIT:
+        return <LoadingIndicator />;
+      case AsyncPagedLoadingState.INIT_FAILED:
+      case AsyncPagedLoadingState.RETRY:
+        return renderError();
+    }
+  };
+
+  return (
+    <PageView>
+      {props.userType === UserType.Relative && <ChildPicker />}
+      {renderPage()}
+    </PageView>
+  );
+};
 
 export default connect(
   (state: IGlobalState) => {
-    const session = getSession(state);
     const competencesState = moduleConfig.getState(state);
+    const session = getSession(state);
     const userId = session?.user.id;
     const userType = session?.user.type;
-    const childId = userType === UserType.Student ? userId : getSelectedChild(state)?.id;
-
-    // get groups and childClasses
-    let childClasses: string = '';
-    const groups = [] as string[];
-    const childGroups = getGroupsListState(state).data;
-    if (userType === UserType.Student) {
-      childClasses = state.user.info.classes[0];
-    } else {
-      childClasses = competencesState.userChildren.data.find(child => childId === child.id)?.idClasse!;
-    }
-    if (childGroups !== undefined && childGroups[0] !== undefined) {
-      if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);
-      childGroups[0]?.nameGroups?.forEach(item => groups.push(item));
-    } else if (userType === UserType.Student) {
-      groups.push(state.user.info.realClassesNames[0]);
-    }
 
     return {
-      devoirsList: competencesState.devoirsMatieres,
-      devoirsMoyennesList: competencesState.moyennes,
+      classes: session?.user.classes,
+      childId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
+      devoirsMatieres: competencesState.devoirsMatieres,
+      initialLoadingState:
+        competencesState.devoirsMatieres.isPristine || competencesState.moyennes.isPristine
+          ? AsyncPagedLoadingState.PRISTINE
+          : AsyncPagedLoadingState.DONE,
       levels: competencesState.levels.data,
-      userType,
-      userId,
-      periods: getPeriodsListState(state).data,
-      groups: getGroupsListState(state).data,
+      moyennes: competencesState.moyennes,
       structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
-      childId,
-      childClasses,
+      terms: competencesState.terms.data,
+      userId,
+      userType,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchChildInfos: tryAction(fetchCompetencesUserChildrenAction, undefined, true),
-        fetchChildGroups: tryAction(fetchGroupListAction, undefined, true),
-        getDevoirs: tryAction(fetchCompetencesDevoirsAction, undefined, true),
-        getDevoirsMoyennes: tryAction(fetchCompetencesMoyennesAction, undefined, true),
-        getPeriods: tryAction(fetchPeriodsListAction, undefined, true),
-        getLevels: tryAction(fetchCompetencesLevelsAction, undefined, true),
+        fetchDevoirs: tryAction(
+          fetchCompetencesDevoirsAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchDevoirs'],
+        fetchLevels: tryAction(
+          fetchCompetencesLevelsAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchLevels'],
+        fetchMoyennes: tryAction(
+          fetchCompetencesMoyennesAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchMoyennes'],
+        fetchTerms: tryAction(
+          fetchCompetencesTermsAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchTerms'],
+        fetchUserChildren: tryAction(
+          fetchCompetencesUserChildrenAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchUserChildren'],
       },
       dispatch,
     ),

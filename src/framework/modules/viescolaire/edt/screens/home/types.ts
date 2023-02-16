@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { IUser } from '~/framework/modules/auth/model';
 import { UserType } from '~/framework/modules/auth/service';
-import { IClassGroups } from '~/framework/modules/viescolaire/common/model/class-groups';
+import { IClassGroups } from '~/framework/modules/viescolaire/common/model';
 import { IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import type { EdtNavigationParams } from '~/framework/modules/viescolaire/edt/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';

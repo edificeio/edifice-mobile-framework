@@ -1,27 +1,27 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IDevoirsMatieres, ILevel, IMoyenne } from '~/framework/modules/viescolaire/competences/model';
+import { ITerm } from '~/framework/modules/viescolaire/common/model';
+import { IDevoirsMatieres, ILevel, IMoyenne, IUserChild } from '~/framework/modules/viescolaire/competences/model';
 import type { CompetencesNavigationParams } from '~/framework/modules/viescolaire/competences/navigation';
-import { IPeriodsList } from '~/framework/modules/viescolaire/dashboard/state/periods';
 import { AsyncState } from '~/framework/util/redux/async';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface CompetencesHomeScreenProps {
-  devoirsList: AsyncState<IDevoirsMatieres>;
-  devoirsMoyennesList: AsyncState<IMoyenne[]>;
+  devoirsMatieres: AsyncState<IDevoirsMatieres>;
+  initialLoadingState: AsyncPagedLoadingState;
   levels: ILevel[];
-  userType: string;
-  userId: string;
-  periods: IPeriodsList;
-  groups: string[];
-  childClasses: string;
-  structureId: string;
-  childId: string;
-  fetchChildInfos: (userId: string) => void;
-  fetchChildGroups: (classes: string, student: string) => any;
-  getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
-  getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
-  getPeriods: (structureId: string, groupId: string) => void;
-  getLevels: (structureIs: string) => void;
+  moyennes: AsyncState<IMoyenne[]>;
+  terms: ITerm[];
+  childId?: string;
+  classes?: string[];
+  structureId?: string;
+  userType?: string;
+  userId?: string;
+  fetchDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => Promise<IDevoirsMatieres>;
+  fetchLevels: (structureId: string) => Promise<ILevel[]>;
+  fetchMoyennes: (structureId: string, studentId: string, period?: string) => Promise<IMoyenne[]>;
+  fetchTerms: (structureId: string, groupId: string) => Promise<ITerm[]>;
+  fetchUserChildren: (userId: string) => Promise<IUserChild[]>;
 }
 
 export interface CompetencesHomeScreenNavParams {}

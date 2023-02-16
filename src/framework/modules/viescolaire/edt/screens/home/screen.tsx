@@ -150,17 +150,13 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
   const renderTimetable = () => {
     return (
-      <PageView>
-        {props.userType === UserType.Teacher ? <StructurePicker /> : null}
-        {props.userType === UserType.Relative ? <ChildPicker /> : null}
-        <Timetable
-          {...props}
-          startDate={startDate}
-          date={date}
-          isRefreshing={loadingRef.current === AsyncPagedLoadingState.REFRESH}
-          updateSelectedDate={updateSelectedDate}
-        />
-      </PageView>
+      <Timetable
+        {...props}
+        startDate={startDate}
+        date={date}
+        isRefreshing={loadingRef.current === AsyncPagedLoadingState.REFRESH}
+        updateSelectedDate={updateSelectedDate}
+      />
     );
   };
 
@@ -180,7 +176,13 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     }
   };
 
-  return <PageView>{renderPage()}</PageView>;
+  return (
+    <PageView>
+      {props.userType === UserType.Teacher ? <StructurePicker /> : null}
+      {props.userType === UserType.Relative ? <ChildPicker /> : null}
+      {renderPage()}
+    </PageView>
+  );
 };
 
 export default connect(
@@ -191,7 +193,7 @@ export default connect(
     const userType = session?.user.type;
 
     return {
-      childId: userType === UserType.Relative ? getSelectedChild(state)?.id : userId,
+      childId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
       classes: session?.user.classes,
       courses: edtState.courses.data,
       initialLoadingState: edtState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
