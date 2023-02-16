@@ -1,13 +1,16 @@
 /**
  * Actions for file handler
  */
-
+import { NavigationInjectedProps } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
-import type { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-import fileTransferService, { IDownloadCallbaks, IDownloadParams, IUploadCallbaks, IUploadParams } from './service';
-
+import { openCarousel } from '~/framework/components/carousel';
+import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getUserSession } from '~/framework/util/session';
+
+import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
+import { IMedia } from '../media';
+import fileTransferService, { IDownloadCallbaks, IDownloadParams, IUploadCallbaks, IUploadParams } from './service';
 
 export const startUploadFileAction =
   <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
@@ -108,3 +111,69 @@ export const downloadFilesAction =
     const session = getUserSession();
     return fileTransferService.downloadFiles(session, files, params, callbacks, syncedFileClass);
   };
+
+const isDocumentDistantFile = (document: IDistantFile | LocalFile | IMedia): document is IDistantFile =>
+  !!(document as IDistantFile).url;
+
+const getMediaTypeFromMime = (mime: string | null | undefined): IMedia['type'] | undefined => {
+  if (!mime) return undefined;
+  if (mime.startsWith('image')) {
+    return 'image';
+  } else if (mime.startsWith('audio')) {
+    return 'audio';
+  } else if (mime.startsWith('video')) {
+    return 'video';
+  }
+};
+
+export const openDocument = async (
+  document: IDistantFile | LocalFile | IMedia,
+  navigation: NavigationInjectedProps['navigation'], // ToDo: Remove this proptery when RN6
+) => {
+  let mediaType: IMedia['type'] | undefined;
+  let localFile: LocalFile | undefined;
+  let onlineMedia: IMedia | undefined;
+
+  if (isDocumentDistantFile(document)) {
+    mediaType = getMediaTypeFromMime(document.filetype);
+    if (!mediaType) {
+      const session = getUserSession();
+      localFile = (await fileTransferService.downloadFile(session, document, {})).lf;
+    } else {
+      onlineMedia = {
+        type: mediaType,
+        src: document.url,
+      };
+    }
+  } else if (document instanceof LocalFile) {
+    localFile = document;
+    mediaType = getMediaTypeFromMime(localFile.filetype);
+  } /* IMedia */ else {
+    onlineMedia = document as IMedia;
+    mediaType = (document as IMedia).type;
+  }
+
+  switch (mediaType) {
+    case 'image':
+      openCarousel(
+        {
+          data: [
+            onlineMedia ?? {
+              type: 'image',
+              src: localFile?.filepath!,
+            },
+          ],
+        },
+        navigation,
+      );
+      break;
+    case 'audio':
+      openMediaPlayer({ type: MediaType.AUDIO, source: onlineMedia?.src ?? localFile?.filepath }, navigation);
+      break;
+    case 'video':
+      openMediaPlayer({ type: MediaType.VIDEO, source: onlineMedia?.src ?? localFile?.filepath }, navigation);
+      break;
+    default:
+      localFile?.open();
+  }
+};

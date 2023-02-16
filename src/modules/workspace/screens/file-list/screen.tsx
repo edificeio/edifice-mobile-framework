@@ -9,7 +9,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderBackAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
@@ -27,12 +26,13 @@ import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { IMedia } from '~/framework/util/media';
+import { openDocument } from '~/framework/util/fileHandler/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { getUserSession } from '~/framework/util/session';
 import {
+  convertIFileToIDistantFile,
   copyWorkspaceFilesAction,
   createWorkspaceFolderAction,
   deleteWorkspaceFilesAction,
@@ -143,16 +143,17 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   };
 
   const openMedia = (file: IFile) => {
-    const { files, navigation } = props;
-    const data = files
-      .filter(f => f.contentType?.startsWith('image'))
-      .map(f => ({
-        type: 'image',
-        src: { uri: f.url },
-        link: f.url,
-      })) as IMedia[];
-    const startIndex = data.findIndex(f => f.link === file.url);
-    openCarousel({ data, startIndex }, navigation);
+    const { /*files, */ navigation } = props;
+    // const data = files
+    //   .filter(f => f.contentType?.startsWith('image'))
+    //   .map(f => ({
+    //     type: 'image',
+    //     src: { uri: f.url },
+    //     link: f.url,
+    //   })) as IMedia[];
+    // const startIndex = data.findIndex(f => f.link === file.url);
+    // openCarousel({ data, startIndex }, navigation)
+    openDocument(convertIFileToIDistantFile(file), navigation);
   };
 
   const onPressFile = (file: IFile) => {
@@ -163,7 +164,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       return openMedia(file);
     }
     if (Platform.OS === 'ios' && !file.isFolder) {
-      return props.previewFile(file);
+      return props.previewFile(file, props.navigation);
     }
     const { navigation } = props;
     const { id, name: title, isFolder } = file;

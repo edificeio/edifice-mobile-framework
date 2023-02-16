@@ -22,7 +22,7 @@ import { IWorkspaceFilePreviewScreenProps } from './types';
 
 const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => {
   const preview = () => {
-    props.previewFile(props.file);
+    props.previewFile(props.file, props.navigation);
   };
 
   const download = () => {

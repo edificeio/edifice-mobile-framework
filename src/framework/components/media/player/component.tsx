@@ -12,8 +12,20 @@ import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
 export default function MediaPlayer(props: MediaPlayerProps) {
-  const source = props.navigation.getParam('source');
+  let source = props.navigation.getParam('source');
   const type = props.navigation.getParam('type');
+
+  // Add "file://" if absolute url is provided
+  if (typeof source === 'string') {
+    if (!source.includes('://')) {
+      source = 'file://' + source;
+    }
+    source = { uri: source };
+  } else if (typeof source === 'object') {
+    if (!source.uri.includes('://')) {
+      source.uri = 'file://' + source;
+    }
+  }
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
   const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? 999999 : 3000);

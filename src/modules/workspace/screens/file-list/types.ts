@@ -19,7 +19,7 @@ export interface IWorkspaceFileListScreenEventProps {
   fetchFiles: (filter: Filter, parentId: string) => Promise<IFile[]>;
   listFolders: () => Promise<IFolder[]>;
   moveFiles: (parentId: string, ids: string[], destinationId: string) => Promise<void>;
-  previewFile: (file: IFile) => Promise<void>;
+  previewFile: (file: IFile, navigation: NavigationInjectedProps['navigation']) => Promise<void>;
   renameFile: (file: IFile, name: string) => Promise<void>;
   restoreFiles: (parentId: string, ids: string[]) => Promise<void>;
   trashFiles: (parentId: string, ids: string[]) => Promise<void>;
