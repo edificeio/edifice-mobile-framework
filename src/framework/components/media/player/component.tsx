@@ -28,11 +28,13 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     source.uri = new URL(source.uri).href;
   }
 
+  const isAudio = type === MediaType.AUDIO;
+
   const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? 999999 : 3000);
+  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
 
   React.useEffect(() => {
-    Orientation.unlockAllOrientations();
+    if (!isAudio) Orientation.unlockAllOrientations();
     StatusBar.setHidden(true);
   });
 
@@ -70,7 +72,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
           source={source}
           onBack={onBack}
           onEnd={onVPEnd}
-          alwaysShowControls={type === MediaType.AUDIO}
+          alwaysShowControls={isAudio}
         />
       );
 
