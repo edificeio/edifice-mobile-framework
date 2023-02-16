@@ -1,7 +1,6 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 import mailConfig from '~/modules/conversation/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------

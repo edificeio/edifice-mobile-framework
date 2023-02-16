@@ -1,4 +1,3 @@
-/* eslint-disable flowtype/no-types-missing-file-annotation */
 import moment from 'moment';
 
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';

@@ -306,8 +306,7 @@ export function loginAction(
               }
             }
           }
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (activationErr) {
+        } catch {
           // TODO: Manage error
         }
       } else if ((err as any).type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
@@ -376,6 +375,7 @@ export function loginAction(
         }
       }
     } finally {
+      // TODO: Manage Error
     }
   };
 }
@@ -396,8 +396,7 @@ export function logout() {
 
       // === 3: Tracking
       Trackers.trackEvent('Auth', 'LOGOUT');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
       reset(getLoginStackToDisplay(platformId));
     }
@@ -412,8 +411,7 @@ export function refreshToken(newToken: string) {
       if (!authState.loggingIn) return false;
       await userService.unregisterFCMToken();
       await userService.registerFCMToken(newToken as any);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       // TODO: Manage error
     }
   };

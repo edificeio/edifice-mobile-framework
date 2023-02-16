@@ -123,8 +123,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
           if (this.mounted) this.setState({ typing: false, submitState: 'IDLE', error: undefined });
         }, 500);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
+      } catch {
         // If error during the login phase, redirect to login screen
         this.props.handleLogout();
         this.props.navigation.reset(getAuthNavigationState(this.props.route.params.platform));
@@ -139,8 +138,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     try {
       this.props.handleLogout();
       this.props.navigation.reset(getAuthNavigationState(this.props.route.params.platform));
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
+    } catch {
       // console.warn('refuseTerms: could not refuse terms', e);
     }
   };

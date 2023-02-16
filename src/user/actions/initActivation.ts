@@ -37,8 +37,7 @@ export function initActivationAccount(args: IActivationUserInfo, redirect: boole
       }
       const activationContext: IUserAuthContext = await res.json();
       dispatch(activationContextReceived(activationContext));
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       dispatch(activationContextError());
     }
   };

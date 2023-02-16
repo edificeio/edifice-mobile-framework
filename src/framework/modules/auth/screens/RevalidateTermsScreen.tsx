@@ -53,8 +53,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
     try {
       props.handleLogout();
       props.navigation.reset(getAuthNavigationState(props.route.params.platform));
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
+    } catch {
       // console.warn('refuseTerms: could not refuse terms', e);
     }
     // Manually specified deps here
@@ -72,8 +71,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
       const rememberMe = props.route.params.rememberMe;
       const redirect = await props.handleLogin(platform, credentials, rememberMe);
       redirectLoginNavAction(redirect, platform, props.navigation);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
+    } catch {
       // console.warn('revalidateTerms: could not revalidate terms', e);
     }
     // Manually specified deps here

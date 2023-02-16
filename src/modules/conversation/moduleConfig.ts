@@ -1,8 +1,8 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { IConversation_State } from './reducer';
+import { IConversationState } from './reducer';
 
-export default new NavigableModuleConfig<'conversation', IConversation_State>({
+export default new NavigableModuleConfig<'conversation', IConversationState>({
   name: 'conversation',
   entcoreScope: ['conversation', 'userbook'],
   matchEntcoreApp: '/conversation/conversation',

@@ -90,8 +90,7 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
       const activationContext: IUserAuthContext = await res.json();
       dispatch(changePasswordContextReceivedAction(activationContext));
       return initChangePasswordAction;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       dispatch(changePasswordContextErrorAction());
     }
   };
