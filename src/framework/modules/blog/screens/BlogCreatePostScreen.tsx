@@ -72,10 +72,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
   },
-  addMedia_view: {
+  addMediaButtonAdded: {
+    width: 300,
+    marginRight: UI_SIZES.spacing.minor,
+    textAlign: 'center',
+  },
+  addMediaButtonEmpty: {
+    width: 300,
+    marginRight: 0,
+    textAlign: 'center',
+  },
+  addMediaView: {
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: UI_SIZES.spacing.big,
+  },
+  addMediaViewAdded: {
+    flexDirection: 'row',
+    marginBottom: UI_SIZES.spacing.small,
+  },
+  addMediaViewEmpty: {
+    flexDirection: 'column',
+    marginBottom: UI_SIZES.spacing.big,
   },
   input: {
     marginBottom: UI_SIZES.spacing.big,
@@ -189,7 +207,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         try {
           uploadedPostImages = await handleUploadPostImages(images);
         } catch (e) {
-          if (e.response?.body === '{"error":"file.too.large"}') {
+          if ((e as any).response?.body === '{"error":"file.too.large"}') {
             Alert.alert('', I18n.t('fullStorage'));
           } else {
             Alert.alert('', I18n.t('blog-post-upload-attachments-error-text'));
@@ -351,16 +369,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
             }),
           ]}>
           <View
-            style={[
-              {
-                flexDirection: imagesAdded ? 'row' : 'column',
-                marginBottom: imagesAdded ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
-              },
-              styles.addMedia_view,
-            ]}
+            style={[styles.addMediaView, imagesAdded ? styles.addMediaViewAdded : styles.addMediaViewEmpty]}
             // onPress={() => this.attachmentPickerRef.onPickAttachment()}
           >
-            <SmallActionText style={{ width: 300, marginRight: imagesAdded ? UI_SIZES.spacing.minor : 0, textAlign: 'center' }}>
+            <SmallActionText style={imagesAdded ? styles.addMediaButtonAdded : styles.addMediaButtonEmpty}>
               {I18n.t('createPost-create-mediaField')}
             </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />

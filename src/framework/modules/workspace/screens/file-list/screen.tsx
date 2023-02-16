@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ModalBox, ModalBoxHandle } from '~/framework/components/ModalBox';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { openCarousel } from '~/framework/components/carousel';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';

@@ -1,5 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationInjectedProps } from 'react-navigation';
 
@@ -14,6 +15,12 @@ import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/modul
 export interface MyAppsHomeScreenProps extends NavigationInjectedProps {
   modules: NavigableModuleArray;
 }
+
+const styles = StyleSheet.create({
+  container: { flexGrow: 1 },
+  footer: { flexGrow: 1, justifyContent: 'flex-end', marginVertical: UI_SIZES.spacing.big },
+  image: { height: 64, width: '100%' },
+});
 
 class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
   private renderGrid(modules?: NavigableModuleArray) {
@@ -36,12 +43,14 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
               : {
                   // Fallback on legacy moduleConfig properties
                   type: 'Icon',
+                  // eslint-disable-next-line @typescript-eslint/dot-notation
                   color: item.config['iconColor'],
+                  // eslint-disable-next-line @typescript-eslint/dot-notation
                   name: item.config['iconName'],
                   size: 64,
                 }
           }
-          pictureStyle={item.config.displayPicture?.type === 'Image' ? { height: 64, width: '100%' } : {}}
+          pictureStyle={item.config.displayPicture?.type === 'Image' ? styles.image : {}}
         />
       );
     };
@@ -54,10 +63,10 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
         gap={UI_SIZES.spacing.big}
         gapOutside={UI_SIZES.spacing.big}
         ListFooterComponent={this.renderFooter()}
-        ListFooterComponentStyle={{ flexGrow: 1, justifyContent: 'flex-end', marginVertical: UI_SIZES.spacing.big }}
+        ListFooterComponentStyle={styles.footer}
         alwaysBounceVertical={false}
         overScrollMode="never"
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.container}
       />
     );
   }

@@ -11,7 +11,7 @@ import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import Explorer, {
@@ -175,7 +175,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     // Format data
 
     const { displayedblogs, displayedFolders } = (() => {
-      const displayedblogs = finalBlogs
+      const db = finalBlogs
         .map(bb => {
           const { thumbnail, ...b } = bb;
           return {
@@ -195,11 +195,11 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
         })
         .sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
-      const displayedFolders = finalFolders.map(f => ({
+      const df = finalFolders.map(f => ({
         ...f,
         color: (moduleConfig.displayPicture as NamedSVGProps).fill ?? theme.palette.complementary.indigo.regular,
       }));
-      return { displayedblogs, displayedFolders };
+      return { displayedblogs: db, displayedFolders: df };
     })();
 
     return (
@@ -210,7 +210,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
         ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
         ListEmptyComponent={renderEmpty()}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={UI_STYLES.flexGrow1}
         keyExtractor={item => item.id}
       />
     );
