@@ -114,11 +114,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       setLoadingState(AsyncPagedLoadingState.INIT);
       getSchoolbookWordId()
         .then(wordId => fetchSchoolbookWord(wordId))
-        .then(() =>
-          props.navigation.setOptions({
-            title: schoolbookWord?.word?.title || I18n.t('schoolbook.appName'),
-          }),
-        )
+        .then(() => props.navigation.setOptions({ title: schoolbookWord?.word?.title || I18n.t('schoolbook.appName') }))
         .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
         .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
     };
