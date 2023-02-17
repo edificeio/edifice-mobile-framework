@@ -256,8 +256,8 @@ export const presencesService = {
     },
   },
   classCall: {
-    get: async (session: ISession, callId: string) => {
-      const api = `/presences/registers/${callId}`;
+    get: async (session: ISession, id: string) => {
+      const api = `/presences/registers/${id}`;
       const classCall = (await fetchJSONWithCache(api)) as IBackendClassCall;
       return classCallAdapter(classCall);
     },

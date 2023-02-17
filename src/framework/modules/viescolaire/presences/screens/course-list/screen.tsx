@@ -132,12 +132,9 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     }
 
     props.navigation.navigate(presencesRouteNames.call, {
-      courseInfos: {
-        id: course.id,
-        classroom: course.roomLabels[0],
-        grade: course.classes[0] ?? course.groups[0],
-        registerId,
-      },
+      classroom: course.roomLabels[0],
+      id: registerId,
+      name: course.classes[0] ?? course.groups[0],
     });
   };
 

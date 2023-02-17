@@ -4,7 +4,7 @@
 import { ThunkAction } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { ICourse, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import { IClassCall, ICourse, IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
@@ -24,6 +24,25 @@ export const fetchPresencesMultipleSlotSettingAction =
       return allowMultipleSlots;
     } catch (e) {
       dispatch(presencesMultipleSlotActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch class call at the specified identifier.
+ */
+export const presencesClassCallActionsCreators = createAsyncActionCreators(actionTypes.classCall);
+export const fetchPresencesClassCallAction =
+  (id: string): ThunkAction<Promise<IClassCall>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesClassCallActionsCreators.request());
+      const classCall = await presencesService.classCall.get(session, id);
+      dispatch(presencesClassCallActionsCreators.receipt(classCall));
+      return classCall;
+    } catch (e) {
+      dispatch(presencesClassCallActionsCreators.error(e as Error));
       throw e;
     }
   };

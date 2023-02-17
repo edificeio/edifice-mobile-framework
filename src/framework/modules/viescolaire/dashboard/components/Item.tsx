@@ -21,11 +21,12 @@ const styles = StyleSheet.create({
 });
 
 type ItemProps = {
-  style?: StyleProp<ViewStyle>;
+  children?: React.ReactNode;
   color?: ColorValue;
-  selected?: boolean;
-  onPress?: () => any;
   disabled?: boolean;
+  selected?: boolean;
+  style?: StyleProp<ViewStyle>;
+  onPress?: () => any;
 };
 
 enum SidedComponentDirection {
@@ -35,18 +36,9 @@ enum SidedComponentDirection {
   Bottom,
 }
 
-type SidedItemProps = ItemProps & { shadow?: boolean; color: ColorValue; side: SidedComponentDirection };
+type SidedItemProps = ItemProps & { shadow?: boolean; side: SidedComponentDirection };
 
-/**
- * Item for VieSco.
- * Selected and color props must be provided together, otherwise they are ignored
- * @param style
- * @param selected  the status of selection
- * @param color     the color of the border, if the component is selected
- * @param onPress
- * @param children
- */
-export const Item: React.FunctionComponent<ItemProps> = ({ style, selected, color, onPress, children, disabled }) => {
+export const Item: React.FunctionComponent<ItemProps> = ({ children, color, disabled, selected, style, onPress }) => {
   const selectedStyle = color && selected ? { borderWidth: 2, borderColor: color } : {};
 
   return (
@@ -56,24 +48,15 @@ export const Item: React.FunctionComponent<ItemProps> = ({ style, selected, colo
   );
 };
 
-/**
- * Item with shadow
- * @param props
- */
 const ShadowedItem: React.FunctionComponent<ItemProps> = ({ style, ...rest }) => (
   <Item style={[styles.containerShadow, style]} {...rest} />
 );
 
-/**
- * Item with a border colored
- * @param props
- */
 const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
   const { shadow, style, ...rest } = props;
-
   const ItemComponent = shadow ? ShadowedItem : Item;
 
-  const getStyleFromSide: (side: SidedComponentDirection, color: string) => ViewStyle = (side, color) => {
+  const getStyleFromSide: (side: SidedComponentDirection, color?: ColorValue) => ViewStyle = (side, color) => {
     switch (side) {
       case SidedComponentDirection.Left:
         return { borderLeftColor: color, borderLeftWidth: 6 };
@@ -89,18 +72,10 @@ const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
   return <ItemComponent style={[getStyleFromSide(props.side, props.color), style]} {...rest} />;
 };
 
-/**
- * Offer a shortcut for item with left colored
- * @param props
- */
 export const LeftColoredItem: React.FunctionComponent<Omit<SidedItemProps, 'side'>> = props => (
   <SidedItem side={SidedComponentDirection.Left} {...props} />
 );
 
-/**
- * Offer a shortcut for item with bottom colored
- * @param props
- */
 export const BottomColoredItem: React.FunctionComponent<Omit<SidedItemProps, 'side'>> = props => (
   <SidedItem side={SidedComponentDirection.Bottom} {...props} />
 );
