@@ -19,6 +19,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { UserType } from '~/framework/modules/auth/service';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
@@ -27,7 +28,6 @@ import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/mod
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { UserType } from '~/framework/util/session';
 import { ISchoolbookNotification } from '~/modules/schoolbook/notifHandler';
 
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '../navigation';
@@ -181,17 +181,6 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   }, [fetchSchoolbookWord, getSchoolbookWordIds]);
 
   React.useEffect(() => {
-    const init = () => {
-      setLoadingState(AsyncPagedLoadingState.INIT);
-      getSchoolbookWordIds()
-        .then(wordId => fetchSchoolbookWord(wordId))
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-    };
-    const fetchOnNavigation = () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
-    };
     const deleteSchoolbookWord = async () => {
       try {
         if (!session) throw new Error('missing session');
@@ -223,6 +212,8 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     const hasSchoolbookWordDeleteRights = session && hasDeleteRight(schoolbookWordResource, session);
     const canDeleteSchoolbookWord = isUserSchoolbookWordOwner || hasSchoolbookWordDeleteRights;
     props.navigation.setOptions({
+      // React Navigation 6 uses this syntax to setup nav options
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
           <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
@@ -230,22 +221,33 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
           </PopupMenu>
         ) : undefined,
     });
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
-    });
-    return unsubscribe;
   }, [
-    fetchSchoolbookWord,
-    getSchoolbookWordIds,
     isSchoolbookWordRendered,
     props.navigation,
-    refreshSilent,
     schoolbookWord?.word?.ownerId,
     schoolbookWord?.word?.shared,
     schoolbookWordId,
     session,
     userId,
   ]);
+
+  React.useEffect(() => {
+    const init = () => {
+      setLoadingState(AsyncPagedLoadingState.INIT);
+      getSchoolbookWordIds()
+        .then(wordId => fetchSchoolbookWord(wordId))
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+    };
+    const fetchOnNavigation = () => {
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
+    };
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      fetchOnNavigation();
+    });
+    return unsubscribe;
+  }, [fetchSchoolbookWord, getSchoolbookWordIds, props.navigation, refreshSilent]);
 
   // ERROR ========================================================================================
 

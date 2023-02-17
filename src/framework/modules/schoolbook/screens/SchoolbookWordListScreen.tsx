@@ -22,6 +22,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { UserType } from '~/framework/modules/auth/service';
 import { SchoolbookWordSummaryCard } from '~/framework/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import {
@@ -37,7 +38,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { UserType } from '~/framework/util/session';
 import { removeFirstWord } from '~/framework/util/string';
 import { userService } from '~/user/service';
 
@@ -241,23 +241,9 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   };
 
   React.useEffect(() => {
-    const init = () => {
-      setLoadingState(AsyncPagedLoadingState.INIT);
-      fetchFromStart(true)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-    };
-    const refreshSilent = () => {
-      setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-      fetchFromStart()
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-    };
-    const fetchOnNavigation = () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
-    };
     props.navigation.setOptions({
+      // React Navigation 6 uses this syntax to setup nav options
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasSchoolbookWordCreationRights &&
         (loadingState === AsyncPagedLoadingState.DONE || loadingState === AsyncPagedLoadingState.REFRESH) ? (
@@ -279,6 +265,25 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
           </PopupMenu>
         ) : undefined,
     });
+  }, [hasSchoolbookWordCreationRights, loadingState, props.navigation, session?.platform]);
+
+  React.useEffect(() => {
+    const init = () => {
+      setLoadingState(AsyncPagedLoadingState.INIT);
+      fetchFromStart(true)
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+    };
+    const refreshSilent = () => {
+      setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+      fetchFromStart()
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+    };
+    const fetchOnNavigation = () => {
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
+    };
     const unsubscribe = props.navigation.addListener('focus', () => {
       fetchOnNavigation();
     });
