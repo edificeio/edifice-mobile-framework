@@ -10,7 +10,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
+import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import Dropdown from '~/ui/Dropdown';
 
 import {
@@ -67,7 +67,7 @@ class History extends React.PureComponent<HistoryProps> {
     return this.props.hasRightToCreateAbsence ? (
       <ChildPicker>
         <TouchableOpacity
-          onPress={() => this.props.navigation.navigate(`${presencesConfig.routeName}/declaration/relative`)}
+          onPress={() => this.props.navigation.navigate(presencesRouteNames.declareAbsence)}
           style={styles.declareAbsenceButton}>
           <SmallBoldText style={styles.declareAbscenceText}>{I18n.t('viesco-declareAbsence')}</SmallBoldText>
         </TouchableOpacity>

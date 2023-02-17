@@ -34,8 +34,8 @@ export const fetchPresencesMultipleSlotSettingAction =
 export const presencesCoursesActionsCreators = createAsyncActionCreators(actionTypes.courses);
 export const fetchPresencesCoursesAction =
   (
-    structureId: string,
     teacherId: string,
+    structureId: string,
     startDate: string,
     endDate: string,
     allowMultipleSlots?: boolean,
@@ -44,7 +44,7 @@ export const fetchPresencesCoursesAction =
     try {
       const session = assertSession();
       dispatch(presencesCoursesActionsCreators.request());
-      const courses = await presencesService.courses.get(session, structureId, teacherId, startDate, endDate, allowMultipleSlots);
+      const courses = await presencesService.courses.get(session, teacherId, structureId, startDate, endDate, allowMultipleSlots);
       dispatch(presencesCoursesActionsCreators.receipt(courses));
       return courses;
     } catch (e) {

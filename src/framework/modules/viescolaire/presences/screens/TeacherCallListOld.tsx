@@ -1,23 +1,22 @@
 import moment from 'moment';
 import * as React from 'react';
 import { AppState, AppStateStatus } from 'react-native';
-import { NavigationFocusInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import TeacherCallListComponent from '~/framework/modules/viescolaire/presences/components/TeacherCallListOld';
+import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
+import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { tryAction } from '~/framework/util/redux/actions';
 import { fetchMultipleSlotsAction } from '~/modules/viescolaire/presences/actions/multipleSlots';
 import { fetchRegiterPreferencesAction } from '~/modules/viescolaire/presences/actions/registerPreferences';
 import { fetchCoursesRegisterAction } from '~/modules/viescolaire/presences/actions/teacherCourseRegister';
 import { fetchCoursesAction } from '~/modules/viescolaire/presences/actions/teacherCourses';
-import TeacherCallListComponent from '~/modules/viescolaire/presences/components/TeacherCallListOld';
-import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
-import { IMultipleSlotsState, getMultipleSlotsState } from '~/modules/viescolaire/presences/state/multipleSlots';
-import { IRegisterPreferencesState, getRegisterPreferencesState } from '~/modules/viescolaire/presences/state/registerPreferences';
-import { getCoursesRegisterState } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
-import { ICourses, getCoursesListState } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 
 export enum SwitchState {
   DEFAULT,
@@ -49,13 +48,13 @@ type ICallListContainerProps = {
   teacherId: string;
   structureId: string;
   isFetching: boolean;
-  multipleSlots: IMultipleSlotsState; // multipleSlot preference set on web
-  registerPreferences: IRegisterPreferencesState; // CPE multipleSlot preference
+  multipleSlots: boolean; // multipleSlot preference set on web
+  registerPreferences: string; // CPE multipleSlot preference
   getMultipleSlots: (structureId: string) => void; // get multipleSlot preference set on web
   getRegisterPreferences: () => void; // get CPE multipleSlot preference
   fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string, multipleSlot?: boolean) => void;
   fetchRegisterId: (any: any) => void;
-} & NavigationFocusInjectedProps;
+};
 
 type ICallListContainerState = {
   isFetchData: boolean;
@@ -78,19 +77,14 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICall
   }
 
   componentDidUpdate(prevProps) {
-    const { isFocused, structureId, multipleSlots, registerPreferences } = this.props;
+    const { isFocused, structureId } = this.props;
 
     if (this.state.isFetchData) {
       this.props.getRegisterPreferences();
       this.props.getMultipleSlots(this.props.structureId);
       this.fetchTodayCourses();
       this.setState({ isFetchData: false });
-    } else if (
-      (isFocused && prevProps.isFocused !== isFocused) ||
-      prevProps.structureId !== structureId ||
-      prevProps.multipleSlots.data !== multipleSlots.data ||
-      prevProps.registerPreferences.data !== registerPreferences.data
-    ) {
+    } else if ((isFocused && prevProps.isFocused !== isFocused) || prevProps.structureId !== structureId) {
       this.fetchTodayCourses();
     }
   }
@@ -106,18 +100,8 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICall
   }
 
   fetchTodayCourses = () => {
-    let multipleSlot = true as boolean;
-    if (
-      this.props.multipleSlots &&
-      this.props.multipleSlots.data.allow_multiple_slots &&
-      this.props.registerPreferences &&
-      this.props.registerPreferences.data.preference
-    ) {
-      multipleSlot = JSON.parse(this.props.registerPreferences.data.preference).multipleSlot;
-    }
-
     const today = moment().format('YYYY-MM-DD');
-    this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today, multipleSlot);
+    this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today, this.props.multipleSlots);
   };
 
   setCoursesRegisterId = (course: ICourses) => {
@@ -130,7 +114,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICall
       groups: course.groups,
       classes: course.classes !== undefined ? course.classes : course.groups,
       teacherIds: [this.props.teacherId],
-      split_slot: this.props.multipleSlots.data.allow_multiple_slots,
+      split_slot: this.props.multipleSlots,
     } as ICourseData;
     const courseData = JSON.stringify(rawCourseData) as string;
 
@@ -149,7 +133,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICall
       registerId: course.registerId,
     } as ICourse;
 
-    this.props.navigation.navigate(`${presencesConfig.routeName}/call`, { courseInfos: courseRegisterInfos });
+    this.props.navigation.navigate(presencesRouteNames.call, { courseInfos: courseRegisterInfos });
   };
 
   render() {
@@ -164,35 +148,28 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps, ICall
   }
 }
 
-const mapStateToProps: (state: IGlobalState) => any = state => {
-  const session = getSession(state);
-  const courses = getCoursesListState(state);
-  const coursesData = (courses.data.length > 0 ? [] : courses.data) as ICourses[];
-  courses.data.forEach(course => {
-    if (course.allowRegister === true) coursesData.push(course);
-  });
-  const registerData = getCoursesRegisterState(state);
+export default connect(
+  (state: IGlobalState) => {
+    const presencesState = moduleConfig.getState(state);
+    const session = getSession(state);
 
-  return {
-    courses: coursesData,
-    teacherId: session?.user.id,
-    structureId: getSelectedStructure(state),
-    isFetching: courses.isFetching || registerData.isFetching,
-    multipleSlots: getMultipleSlotsState(state),
-    registerPreferences: getRegisterPreferencesState(state),
-  };
-};
-
-const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators(
-    {
-      fetchCourses: fetchCoursesAction,
-      fetchRegisterId: fetchCoursesRegisterAction,
-      getMultipleSlots: fetchMultipleSlotsAction,
-      getRegisterPreferences: fetchRegiterPreferencesAction,
-    },
-    dispatch,
-  );
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TeacherCallList);
+    return {
+      courses: presencesState.courses.data.filter(course => course.allowRegister === true),
+      teacherId: session?.user.id,
+      structureId: getSelectedStructure(state),
+      isFetching: presencesState.courses.isFetching,
+      multipleSlots: presencesState.allowMultipleSlots.data,
+      registerPreferences: presencesState.registerPreference.data,
+    };
+  },
+  (dispatch: ThunkDispatch<any, any, any>) =>
+    bindActionCreators(
+      {
+        fetchCourses: tryAction(fetchCoursesAction, undefined, true),
+        fetchRegisterId: tryAction(fetchCoursesRegisterAction, undefined, true),
+        getMultipleSlots: tryAction(fetchMultipleSlotsAction, undefined, true),
+        getRegisterPreferences: tryAction(fetchRegiterPreferencesAction, undefined, true),
+      },
+      dispatch,
+    ),
+)(TeacherCallList);

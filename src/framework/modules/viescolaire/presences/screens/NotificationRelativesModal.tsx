@@ -10,8 +10,8 @@ import {
   getSelectedChild,
   getSelectedChildStructure,
 } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { NotificationRelativesModal } from '~/framework/modules/viescolaire/presences/components/NotificationRelativesModal';
 import { fetchChildrenEventsAction } from '~/modules/viescolaire/presences/actions/relativesNotificationModal';
-import { NotificationRelativesModal } from '~/modules/viescolaire/presences/components/NotificationRelativesModal';
 import {
   IChildEventsNotificationState,
   getRelativesNotification,

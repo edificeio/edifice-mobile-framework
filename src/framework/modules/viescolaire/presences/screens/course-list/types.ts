@@ -2,24 +2,28 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface PresencesCourseListScreenProps {
+  allowMultipleSlots: boolean;
   courses: ICourse[];
+  initialLoadingState: AsyncPagedLoadingState;
   registerId: string;
-  teacherId: string;
-  structureId: string;
-  isFetching: boolean;
-  multipleSlots: boolean;
-  registerPreferences: string;
-  getMultipleSlots: (structureId: string) => void; // get multipleSlot preference set on web
-  getRegisterPreferences: () => void; // get CPE multipleSlot preference
-  fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string, multipleSlot?: boolean) => void;
-  fetchRegisterId: (any: any) => void;
+  registerPreference: string;
+  structureId?: string;
+  teacherId?: string;
+  fetchCourses: (
+    teacherId: string,
+    structureId: string,
+    startDate: string,
+    endDate: string,
+    multipleSlot?: boolean,
+  ) => Promise<ICourse[]>;
+  fetchMultipleSlotsSetting: (structureId: string) => Promise<boolean>;
+  fetchRegisterPreference: () => Promise<string>;
 }
 
-export interface PresencesCourseListScreenNavParams {
-  userId?: string;
-}
+export interface PresencesCourseListScreenNavParams {}
 
 export interface PresencesCourseListScreenPrivateProps
   extends NativeStackScreenProps<PresencesNavigationParams, 'courseList'>,

@@ -14,13 +14,13 @@ import { DocumentPicked, ImagePicked } from '~/framework/components/menus/action
 import { PageView } from '~/framework/components/page';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getSelectedChild } from '~/framework/modules/viescolaire/dashboard/state/children';
+import DeclarationComponent from '~/framework/modules/viescolaire/presences/components/Declaration';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { tryAction } from '~/framework/util/redux/actions';
 import pickFile from '~/infra/actions/pickFile';
 import { declareAbsenceAction, declareAbsenceWithFileAction } from '~/modules/viescolaire/presences/actions/declaration';
-import DeclarationComponent from '~/modules/viescolaire/presences/components/Declaration';
 
 import { PresencesDeclareAbsenceScreenPrivateProps } from './types';
 

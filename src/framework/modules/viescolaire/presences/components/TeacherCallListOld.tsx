@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import CourseComponent from '~/modules/viescolaire/presences/components/CourseComponent';
+import CourseComponent from '~/framework/modules/viescolaire/presences/components/CourseComponent';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 
 const styles = StyleSheet.create({

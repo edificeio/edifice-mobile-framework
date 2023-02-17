@@ -265,8 +265,8 @@ export const presencesService = {
   courses: {
     get: async (
       session: ISession,
-      structureId: string,
       teacherId: string,
+      structureId: string,
       startDate: string,
       endDate: string,
       allowMultipleSlots?: boolean,
@@ -284,18 +284,18 @@ export const presencesService = {
     },
   },
   courseRegister: {
-    create: async (session: ISession, course: ICourse, teacherId: string, allowMultipleSlot?: boolean) => {
+    create: async (session: ISession, course: ICourse, teacherId: string, allowMultipleSlots?: boolean) => {
       const api = '/presences/registers';
       const body = JSON.stringify({
         course_id: course.id,
         structure_id: course.structureId,
-        start_date: moment(course.startDate).format('YYYY-MM-DD HH:mm:ss'),
-        end_date: moment(course.endDate).format('YYYY-MM-DD HH:mm:ss'),
+        start_date: course.startDate.format('YYYY-MM-DD HH:mm:ss'),
+        end_date: course.endDate.format('YYYY-MM-DD HH:mm:ss'),
         subject_id: course.subjectId,
         groups: course.groups,
-        classes: course.classes !== undefined ? course.classes : course.groups,
+        classes: course.classes ?? course.groups,
         teacherIds: [teacherId],
-        split_slot: allowMultipleSlot,
+        split_slot: allowMultipleSlots,
       });
       const courseRegister = (await fetchJSONWithCache(api, {
         method: 'POST',

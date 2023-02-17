@@ -9,9 +9,9 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import StudentRow from '~/modules/viescolaire/presences/components/StudentRow';
+import StudentRow from '~/framework/modules/viescolaire/presences/components/StudentRow';
+import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { ICourse } from '~/modules/viescolaire/presences/containers/TeacherCallListOld';
-import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
 import { PageContainer } from '~/ui/ContainerContent';
 
@@ -107,11 +107,9 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
               renderItem={({ item }) => (
                 <StudentRow
                   student={item}
-                  mementoNavigation={() =>
-                    this.props.navigation.navigate(`${presencesConfig.routeName}/memento`, { studentId: item.id })
-                  }
+                  mementoNavigation={() => this.props.navigation.navigate(presencesRouteNames.memento, { studentId: item.id })}
                   lateCallback={event =>
-                    this.props.navigation.navigate(`${presencesConfig.routeName}/declaration/teacher`, {
+                    this.props.navigation.navigate(presencesRouteNames.declareEvent, {
                       type: 'late',
                       registerId,
                       student: item,
@@ -121,7 +119,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
                     })
                   }
                   leavingCallback={event =>
-                    this.props.navigation.navigate(`${presencesConfig.routeName}/declaration/teacher`, {
+                    this.props.navigation.navigate(presencesRouteNames.declareEvent, {
                       type: 'leaving',
                       registerId,
                       student: item,
