@@ -15,7 +15,7 @@ import FlatList from '~/framework/components/flatList';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
-import { UserType } from '~/framework/util/session';
+import { UserType } from '~/framework/modules/auth/service';
 import {
   IConcernedStudent,
   IWordReport,
@@ -26,7 +26,7 @@ import {
   getIsWordRepliedToForParent,
   getReportByStudentForParent,
   getStudentsForTeacher,
-} from '~/modules/schoolbook/reducer';
+} from '~/framework/modules/schoolbook/reducer';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 

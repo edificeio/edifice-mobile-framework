@@ -30,14 +30,13 @@ import {
 } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '~/framework/modules/schoolbook/reducer';
+import { hasResendRight } from '~/framework/modules/schoolbook/rights';
 import styles from '~/framework/modules/schoolbook/screens/word-report/styles';
 import { SchoolbookWordReportScreenProps } from '~/framework/modules/schoolbook/screens/word-report/types';
 import { schoolbookService } from '~/framework/modules/schoolbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import '~/modules/schoolbook/reducer';
-import { hasResendRight } from '~/modules/schoolbook/rights';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '../../navigation';

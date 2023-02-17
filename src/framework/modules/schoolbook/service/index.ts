@@ -4,9 +4,9 @@
 import moment from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
+import { IStudentAndParentWordList, ITeacherWordList, IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
-import { IStudentAndParentWordList, ITeacherWordList, IWordReport } from '~/modules/schoolbook/reducer';
 
 export type IEntcoreTeacherWordList = IEntcoreReportedWord[];
 

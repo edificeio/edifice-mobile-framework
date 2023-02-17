@@ -10,9 +10,7 @@ import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import Label from '~/framework/components/label';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
-import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
-import { UserType } from '~/framework/util/session';
-import { isStringEmpty } from '~/framework/util/string';
+import { UserType } from '~/framework/modules/auth/service';
 import {
   IAcknowledgment,
   IRecipient,
@@ -22,7 +20,9 @@ import {
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
   getResponseNumberForStudentAndParent,
-} from '~/modules/schoolbook/reducer';
+} from '~/framework/modules/schoolbook/reducer';
+import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
+import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 

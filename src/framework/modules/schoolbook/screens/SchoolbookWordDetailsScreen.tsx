@@ -22,13 +22,13 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
+import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-handler';
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { ISchoolbookNotification } from '~/modules/schoolbook/notifHandler';
 
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '../navigation';
 

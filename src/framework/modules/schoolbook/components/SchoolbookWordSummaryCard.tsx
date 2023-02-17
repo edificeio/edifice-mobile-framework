@@ -9,15 +9,15 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionItalicText, CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { displayPastDate } from '~/framework/util/date';
-import { UserType } from '~/framework/util/session';
+import { UserType } from '~/framework/modules/auth/service';
 import {
   IAcknowledgment,
   IResponse,
   getIsWordAcknowledgedForParent,
   getIsWordAcknowledgedForStudent,
   getIsWordAcknowledgedForTeacher,
-} from '~/modules/schoolbook/reducer';
+} from '~/framework/modules/schoolbook/reducer';
+import { displayPastDate } from '~/framework/util/date';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
