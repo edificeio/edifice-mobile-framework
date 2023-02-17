@@ -24,6 +24,7 @@ export interface IEntcoreFlashMessage {
   id: number; // Flash message unique ID
   signature: string; // Message signature
   signatureColor: string; // Signature color
+  dismiss?: boolean; // Has the user asked for dismiss
 }
 
 export type IFlashMessages_State_Data = IEntcoreFlashMessage[];
@@ -47,9 +48,18 @@ export const actions = {
 };
 
 const dismissFlashMessageActionsHandlerMap = {
-  [actionTypes.dismissRequest]: state => state,
-  [actionTypes.dismissReceipt]: (state, action) => state.filter(flashMessage => flashMessage.id != action.flashMessageId),
-  [actionTypes.dismissError]: state => state,
+  [actionTypes.dismissRequest]: (state: IFlashMessages_State_Data, action) => {
+    return state.map(flashMessage =>
+      flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: true } : flashMessage,
+    );
+  },
+  [actionTypes.dismissReceipt]: (state: IFlashMessages_State_Data, action) =>
+    state.filter(flashMessage => flashMessage.id !== action.flashMessageId),
+  [actionTypes.dismissError]: (state: IFlashMessages_State_Data, action) => {
+    return state.map(flashMessage =>
+      flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: false } : flashMessage,
+    );
+  },
 };
 
 export default createSessionAsyncReducer(initialState, actionTypes, dismissFlashMessageActionsHandlerMap);

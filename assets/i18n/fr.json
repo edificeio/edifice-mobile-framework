@@ -669,6 +669,7 @@
   "timeline-comment-error": "Impossible d'afficher les commentaires",
   "timeline-endOfFeed": "Vous avez lu vos {{nb}} dernières notifications",
   "timeline-filterBy": "Filtrer par",
+  "timeline-flash-message-dismiss-error-text": "Impossible de fermer le message flash.",
   "timeline-newsFilter": "Actualités",
   "timeline-schoolbookFilter": "Carnet de liaison",
   "timeline-viewInBrowser": "Consulter à partir du navigateur",

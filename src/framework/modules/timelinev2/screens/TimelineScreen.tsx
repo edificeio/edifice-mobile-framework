@@ -27,7 +27,7 @@ import { TimelineFlashMessage } from '~/framework/modules/timelinev2/components/
 import { TimelineNotification } from '~/framework/modules/timelinev2/components/TimelineNotification';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import type { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
-import { IEntcoreFlashMessage, IFlashMessages_State } from '~/framework/modules/timelinev2/reducer/flashMessages';
+import { IEntcoreFlashMessage, IFlashMessages_State_Data } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { INotifications_State } from '~/framework/modules/timelinev2/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
 import { notificationsService } from '~/framework/modules/timelinev2/service';
@@ -49,7 +49,7 @@ import { IUserSession, getUserSession } from '~/framework/util/session';
 // TYPES ==========================================================================================
 
 export interface ITimelineScreenDataProps {
-  flashMessages: IFlashMessages_State;
+  flashMessages: IFlashMessages_State_Data;
   notifications: INotifications_State;
   session: IUserSession;
 }
@@ -87,12 +87,14 @@ export interface ITimelineItem {
 
 // UTILS ==========================================================================================
 
-const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: INotifications_State) => {
-  const msgs = flashMessages && flashMessages.data ? flashMessages.data : [];
+const getTimelineItems = (flashMessages: IFlashMessages_State_Data, notifications: INotifications_State) => {
+  const msgs = flashMessages ?? [];
   const notifs = notifications && notifications.data ? notifications.data : [];
   const ret = [] as (ITimelineItem & { key: string })[];
   for (const fm of msgs) {
-    ret.push({ type: ITimelineItemType.FLASHMSG, data: fm, key: fm.id.toString() });
+    if (!fm.dismiss) {
+      ret.push({ type: ITimelineItemType.FLASHMSG, data: fm, key: fm.id.toString() });
+    }
   }
   for (const n of notifs) {
     ret.push({ type: ITimelineItemType.NOTIFICATION, data: n, key: n.id });
@@ -345,7 +347,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   async doDismissFlashMessage(flashMessageId: number) {
     await this.props.handleDismissFlashMessage(flashMessageId);
-    await this.doRefreshSilent();
   }
 
   goToFilters() {
@@ -388,7 +389,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   const ts = moduleConfig.getState(s) as ITimeline_State;
   return {
-    flashMessages: ts.flashMessages,
+    flashMessages: ts.flashMessages.data,
     notifications: ts.notifications,
     session: getUserSession(),
   };
@@ -406,7 +407,11 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     return await (dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>);
   }, // TS BUG: await is needed here and type is correct
   handleDismissFlashMessage: async (flashMessageId: number) => {
-    await dispatch(dismissFlashMessageAction(flashMessageId));
+    try {
+      await dispatch(dismissFlashMessageAction(flashMessageId));
+    } catch {
+      Toast.show(I18n.t('timeline-flash-message-dismiss-error-text'));
+    }
   },
   handleOpenNotification: async (n: IAbstractNotification, fallback: NotifHandlerThunkAction, navState: NavigationState) => {
     dispatch(handleNotificationAction(n, defaultNotificationActionStack, 'Timeline Notification', navState));
