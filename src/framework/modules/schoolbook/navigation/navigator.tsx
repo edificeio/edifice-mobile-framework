@@ -7,7 +7,7 @@ import { SchoolbookNavigationParams, schoolbookRouteNames } from '.';
 import moduleConfig from '../module-config';
 import SchoolbookWordDetailsScreen, { computeNavBar as SchoolbookWordDetailsNavBar } from '../screens/SchoolbookWordDetailsScreen';
 import SchoolbookWordListScreen, { computeNavBar as SchoolbookWordListNavBar } from '../screens/SchoolbookWordListScreen';
-import SchoolbookWordReportScreen, { computeNavBar as SchoolbookWordReportNavBar } from '../screens/schoolbook-word-report/screen';
+import SchoolbookWordReportScreen, { computeNavBar as SchoolbookWordReportNavBar } from '../screens/word-report/screen';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<SchoolbookNavigationParams>(moduleConfig.name, Stack => (
