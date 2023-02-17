@@ -7,10 +7,9 @@ import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, Platform, RefreshControl, ScrollView } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon } from '~/framework/components/header';
@@ -19,7 +18,7 @@ import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
@@ -37,7 +36,7 @@ import { SchoolbookNavigationParams, schoolbookRouteNames } from '../navigation'
 
 export interface SchoolbookWordDetailsScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session: ISession;
+  session: ISession | undefined;
 }
 export interface SchoolbookWordDetailsScreenNavigationParams {
   notification: ISchoolbookNotification;
@@ -64,17 +63,7 @@ export const computeNavBar = ({
 // COMPONENT ======================================================================================
 
 const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) => {
-  const detailsCardRef: { current: any } = React.useRef();
   const session = props.session;
-  const userId = session?.user?.id;
-  const userType = session?.user?.type;
-  const isTeacher = userType === UserType.Teacher;
-  const isParent = userType === UserType.Relative;
-
-  // LOADER =====================================================================================
-
-  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
-
   const [schoolbookWordId, setSchoolbookWordId] = React.useState('');
   const [schoolbookWord, setSchoolbookWord] = React.useState({} as IWordReport);
   const [studentId, setStudentId] = React.useState('');
@@ -85,74 +74,15 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     loadingState === AsyncPagedLoadingState.DONE ||
     loadingState === AsyncPagedLoadingState.REFRESH_SILENT ||
     loadingState === AsyncPagedLoadingState.REFRESH_FAILED;
-  const loadingRef = React.useRef<AsyncPagedLoadingState>();
-  loadingRef.current = loadingState;
-  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
-
-  const init = () => {
-    setLoadingState(AsyncPagedLoadingState.INIT);
-    getSchoolbookWordIds()
-      .then(schoolbookWordId => fetchSchoolbookWord(schoolbookWordId))
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const reload = () => {
-    setLoadingState(AsyncPagedLoadingState.RETRY);
-    getSchoolbookWordIds()
-      .then(schoolbookWordId => fetchSchoolbookWord(schoolbookWordId))
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const refreshSilent = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    return getSchoolbookWordIds()
-      .then(schoolbookWordId => fetchSchoolbookWord(schoolbookWordId))
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
-  const focusEventListener = React.useRef<NavigationEventSubscription>();
-  React.useEffect(() => {
-    const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
-    const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
-    const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };
-    const hasSchoolbookWordDeleteRights = hasDeleteRight(schoolbookWordResource, session);
-    const canDeleteSchoolbookWord = isUserSchoolbookWordOwner || hasSchoolbookWordDeleteRights;
-    props.navigation.setOptions({
-      headerRight: () =>
-        isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
-          <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
-            <HeaderIcon name="more_vert" iconSize={24} />
-          </PopupMenu>
-        ) : undefined,
-    });
-    focusEventListener.current = props.navigation.addListener('didFocus', () => {
-      fetchOnNavigation();
-    });
-    return () => {
-      focusEventListener.current?.remove();
-    };
-  }, [
-    fetchOnNavigation,
-    isSchoolbookWordRendered,
-    props.navigation,
-    schoolbookWord?.word?.ownerId,
-    schoolbookWord?.word?.shared,
-    session,
-    showDeleteSchoolbookWordAlert,
-    userId,
-  ]);
+  const detailsCardRef: { current: any } = React.useRef();
+  const userId = session?.user?.id;
+  const userType = session?.user?.type;
+  const isTeacher = userType === UserType.Teacher;
+  const isParent = userType === UserType.Relative;
 
   // EVENTS =====================================================================================
 
-  const getSchoolbookWordIds = async () => {
+  const getSchoolbookWordIds = React.useCallback(async () => {
     const notification = props.route.params.notification;
     let ids;
     if (notification) {
@@ -173,22 +103,23 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       ids = { schoolbookWordId, studentId };
     }
     setSchoolbookWordId(ids.schoolbookWordId);
-    isParent && setStudentId(ids.studentId);
+    if (isParent) setStudentId(ids.studentId);
     return ids.schoolbookWordId;
-  };
+  }, [isParent, props.route.params.notification, props.route.params.schoolbookWordId, props.route.params.studentId]);
 
-  const fetchSchoolbookWord = async schoolbookWordId => {
-    try {
-      const schoolbookWord = await schoolbookService.word.get(session, schoolbookWordId);
-      setSchoolbookWord(schoolbookWord);
-    } catch (e) {
-      throw e;
-    }
-  };
+  const fetchSchoolbookWord = React.useCallback(
+    async wordId => {
+      if (!session) throw new Error('missing session');
+      const word = await schoolbookService.word.get(session, wordId);
+      setSchoolbookWord(word);
+    },
+    [session],
+  );
 
   const acknowledgeSchoolbookWord = async () => {
     try {
       setIsAcknowledgingWord(true);
+      if (!session) throw new Error('missing session');
       await schoolbookService.word.acknowledge(session, schoolbookWordId, studentId);
       refreshSilent();
     } catch (e) {
@@ -200,6 +131,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   const replyToSchoolbookWord = async (comment: string, commentId?: string) => {
     try {
       setIsPublishingReply(true);
+      if (!session) throw new Error('missing session');
       if (commentId) {
         await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment);
         detailsCardRef?.current?.cardSelectedCommentFieldRef()?.setIsEditingFalse();
@@ -212,43 +144,108 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         // Note #2: scrollToEnd seems to become less precise once there is lots of data.
         setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
       }
-    } catch (e) {
+    } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     } finally {
       setIsPublishingReply(false);
     }
   };
 
-  const deleteSchoolbookWord = async () => {
-    try {
-      await schoolbookService.word.delete(session, schoolbookWordId);
-      props.navigation.goBack();
-    } catch (e) {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
-    }
-  };
-
-  const showDeleteSchoolbookWordAlert = () =>
-    Alert.alert(
-      I18n.t('schoolbook.schoolbookWordDetailsScreen.deleteAlert.title'),
-      I18n.t('schoolbook.schoolbookWordDetailsScreen.deleteAlert.text'),
-      [
-        {
-          text: I18n.t('common.cancel'),
-          style: 'default',
-        },
-        {
-          text: I18n.t('common.delete'),
-          style: 'destructive',
-          onPress: () => deleteSchoolbookWord(),
-        },
-      ],
-    );
-
   const openSchoolbookWordReport = () =>
     props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/report`, props.navigation.state), {
       schoolbookWordId,
     });
+
+  // LOADER =====================================================================================
+
+  // ToDo : Make this in a useLoadingState or <ContentLoader/>.
+
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
+
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    getSchoolbookWordIds()
+      .then(wordId => fetchSchoolbookWord(wordId))
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refreshSilent = React.useCallback(() => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    return getSchoolbookWordIds()
+      .then(wordId => fetchSchoolbookWord(wordId))
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  }, [fetchSchoolbookWord, getSchoolbookWordIds]);
+
+  React.useEffect(() => {
+    const init = () => {
+      setLoadingState(AsyncPagedLoadingState.INIT);
+      getSchoolbookWordIds()
+        .then(wordId => fetchSchoolbookWord(wordId))
+        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+    };
+    const fetchOnNavigation = () => {
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
+    };
+    const deleteSchoolbookWord = async () => {
+      try {
+        if (!session) throw new Error('missing session');
+        await schoolbookService.word.delete(session, schoolbookWordId);
+        props.navigation.goBack();
+      } catch {
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      }
+    };
+    const showDeleteSchoolbookWordAlert = () =>
+      Alert.alert(
+        I18n.t('schoolbook.schoolbookWordDetailsScreen.deleteAlert.title'),
+        I18n.t('schoolbook.schoolbookWordDetailsScreen.deleteAlert.text'),
+        [
+          {
+            text: I18n.t('common.cancel'),
+            style: 'default',
+          },
+          {
+            text: I18n.t('common.delete'),
+            style: 'destructive',
+            onPress: () => deleteSchoolbookWord(),
+          },
+        ],
+      );
+    const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
+    const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
+    const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };
+    const hasSchoolbookWordDeleteRights = session && hasDeleteRight(schoolbookWordResource, session);
+    const canDeleteSchoolbookWord = isUserSchoolbookWordOwner || hasSchoolbookWordDeleteRights;
+    props.navigation.setOptions({
+      headerRight: () =>
+        isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
+          <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
+            <HeaderIcon name="more_vert" iconSize={24} />
+          </PopupMenu>
+        ) : undefined,
+    });
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      fetchOnNavigation();
+    });
+    return unsubscribe;
+  }, [
+    fetchSchoolbookWord,
+    getSchoolbookWordIds,
+    isSchoolbookWordRendered,
+    props.navigation,
+    refreshSilent,
+    schoolbookWord?.word?.ownerId,
+    schoolbookWord?.word?.shared,
+    schoolbookWordId,
+    session,
+    userId,
+  ]);
 
   // ERROR ========================================================================================
 
@@ -302,8 +299,6 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     <>
       <PageComponent
         safeArea={false}
-        navigation={props.navigation}
-        navBarWithBack={computeNavBar}
         onBack={() => {
           detailsCardRef?.current?.cardBottomEditorSheetRef()?.doesCommentExist()
             ? detailsCardRef?.current
@@ -324,10 +319,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 
 // MAPPING ========================================================================================
 
-export default connect(
-  () => ({
-    session: assertSession(),
-    initialLoadingState: AsyncPagedLoadingState.PRISTINE,
-  }),
-  dispatch => bindActionCreators({}, dispatch),
-)(SchoolbookWordDetailsScreen);
+export default connect((state: IGlobalState) => ({
+  session: getSession(state),
+  initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+}))(SchoolbookWordDetailsScreen);
