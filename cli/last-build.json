@@ -1,6 +1,6 @@
 {
-  "last": "2023-02-13 18:24:58",
-  "notes": "Merge remote-tracking branch 'origin/release/1.9.2' into dev/1.9.3\nfix(user): updatable profile values interface\nfeat(push): MB-946, Android white push icon addition\nfix(auth): MB-1263 after fail refresh-token, error is displayed properly\nfix(auth): MB-1263 after fail refresh-token, error is displayed properly\nfix(timeline): Remove FastImage web cache policy\nfix(user): reset profile values on cancel\nfeat(video-player): MB-1203, no hide controls when touch on screen when its an audio\nfix(ipad): Specific bottom inset for iPad\nrelease: 1.9.2-rc.4(1090204)\nfix(ipad): specific ipad bottom inset addition\nfix(user): improved number formatting\nchore(user): minor formatting/comment changes\nrelease: 1.9.3-alpha.9(1090309)",
-  "version": "1.9.3-rc.1(1090310)",
+  "last": "2023-02-17 14:55:58",
+  "notes": "fix: update patch-package for react-native-phone-number-input\nfix: missing new line in patch react-native-phone-number-input\nfix(timeline): MB-746 dismissing flash msgs is more responsive\nfix(media): Disable landscape orientation for audio playback\nfix(workspace): MB-1276, MB-1274, MB-1275, MB-1278 openDocument with Attachments\nfix(workspace): MB-1276, MB-1274, MB-1275, MB-1278 openDocument with Attachments\nfix(workspace): MB-1276, MB-1274, MB-1275, MB-1278 download not working on android\nfix(workspace): MB-1276, MB-1274, MB-1275, MB-1278 do not download audio & video before navigate\nfix(workspace): MB-1276, MB-1274, MB-1275, MB-1278 centralized openDocument function\nfeat(workspace): MB-1276, MB-1274, MB-1275, MB-1278 centralized openDocument function\nfix(fetch): MB-1202, Clear cookies after all fetch\nfix(MediaPlayer): Duration and Rewind/Forward time  addition\nupgrade(stack): Last stack upgrade\nrelease: 1.9.3-rc.1(1090310)",
+  "version": "1.9.3-rc.2(1090311)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
