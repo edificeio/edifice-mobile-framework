@@ -1,34 +1,41 @@
 /**
  * Schoolbook notif handler
- * @scaffolder Remove this file if your module handles no notification.
  *
  * The notifHandler registers some behaviours for given notif types and event-types.
  * It applicates to both timelineNotififation and pushNotifications.
  */
+import { UserType } from '~/framework/modules/auth/service';
+import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import { navigate } from '~/framework/navigation/helper';
+import { computeRelativePath } from '~/framework/util/navigation';
+import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-import { SchoolbookNavigationParams, schoolbookRouteNames } from './navigation';
+import { getSession } from '../auth/reducer';
 
-const handleSomeNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  // @scaffolder extract info from notification here
+export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
-  // @scaffolder navigate somewhere here
+const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
+  (notification, trackCategory, navState) => async (dispatch, getState) => {
+    const userType = getSession(getState())?.user?.type;
+    if (!userType) return { managed: 0 };
 
-  // @scaffolder put `return {managed: 0}` if notification is skipped
-  return { managed: 0 };
-
-  // return {
-  //   managed: 1,
-  //   trackInfo: { action: 'Schoolbook', name: `${notification.type}.${notification['event-type']}` },
-  // };
-};
+    const isParent = userType === UserType.Relative;
+    const route = computeRelativePath(`${moduleConfig.routeName}${isParent ? '' : '/details'}`, navState);
+    navigate(route, {
+      notification,
+    });
+    return {
+      managed: 1,
+      trackInfo: { action: 'Schoolbook', name: `${notification.type}.${notification['event-type']}` },
+    };
+  };
 
 export default () =>
   registerNotifHandlers([
     {
-      type: 'SOME-TYPE', // Replace this with the backend notification type
-      'event-type': 'SOME-EVENT-TYPE', // Replace this with the backend notification event-type
-      notifHandlerAction: handleSomeNotificationAction,
+      type: 'SCHOOLBOOK',
+      'event-type': ['PUBLISH', 'WORD-SHARED', 'WORD-RESEND', 'ACKNOWLEDGE', 'RESPONSE', 'MODIFYRESPONSE'],
+      notifHandlerAction: handleSchoolbookNotificationAction,
     },
   ]);
