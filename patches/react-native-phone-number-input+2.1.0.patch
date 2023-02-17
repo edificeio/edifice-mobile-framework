@@ -35,7 +35,7 @@ index cd625e5..fe04bbc 100644
 +export function isMobileNumber(number: string, countryCode: CountryCode ): boolean;
 +export function getFormattedNumber(number: string, countryCode: CountryCode ): string | undefined;
 diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
-index b89c388..797fa42 100644
+index b89c388..a006439 100644
 --- a/node_modules/react-native-phone-number-input/lib/index.js
 +++ b/node_modules/react-native-phone-number-input/lib/index.js
 @@ -7,7 +7,7 @@ import CountryPicker, {
@@ -96,17 +96,16 @@ index b89c388..797fa42 100644
                <Text
                  style={[styles.codeText, codeTextStyle ? codeTextStyle : {}]}
                >{`+${code}`}</Text>
-@@ -230,6 +232,9 @@ export default class PhoneInput extends PureComponent {
+@@ -230,6 +232,8 @@ export default class PhoneInput extends PureComponent {
                keyboardType="number-pad"
                autoFocus={autoFocus}
                {...textInputProps}
 +              textAlignVertical="center"
-+              multiline={true}
 +              blurOnSubmit={true}
              />
            </View>
          </View>
-@@ -241,8 +246,26 @@ export default class PhoneInput extends PureComponent {
+@@ -241,8 +245,26 @@ export default class PhoneInput extends PureComponent {
  export const isValidNumber = (number, countryCode) => {
    try {
      const parsedNumber = phoneUtil.parse(number, countryCode);
@@ -148,9 +147,15 @@ index c6bd19e..4fc1080 100644
  };
  export default styles;
 diff --git a/node_modules/react-native-phone-number-input/lib/styles.js b/node_modules/react-native-phone-number-input/lib/styles.js
-index 1789ce7..8fe81a5 100644
+index 1789ce7..ffa6d2c 100644
 --- a/node_modules/react-native-phone-number-input/lib/styles.js
 +++ b/node_modules/react-native-phone-number-input/lib/styles.js
+@@ -1,4 +1,4 @@
+-import {StyleSheet, Dimensions} from 'react-native';
++import {StyleSheet, Dimensions, Platform} from 'react-native';
+ const {width: viewportWidth, height: viewportHeight} = Dimensions.get('window');
+ function wp(percentage) {
+   const value = (percentage * viewportWidth) / 100;
 @@ -10,12 +10,12 @@ function hp(percentage) {
  }
  const styles = StyleSheet.create({
@@ -175,7 +180,7 @@ index 1789ce7..8fe81a5 100644
    },
    shadow: {
      shadowColor: 'rgba(0,0,0,0.4)',
-@@ -42,23 +42,26 @@ const styles = StyleSheet.create({
+@@ -42,23 +42,27 @@ const styles = StyleSheet.create({
    textContainer: {
      flex: 1,
      backgroundColor: '#F8F9F9',
@@ -202,6 +207,7 @@ index 1789ce7..8fe81a5 100644
 +    // fontSize: 16,
 +    // color: '#000000',
      flex: 1,
++    top: Platform.select({ios: 1, android: undefined}),
    },
 +  flag: { 
 +    marginRight: -8
