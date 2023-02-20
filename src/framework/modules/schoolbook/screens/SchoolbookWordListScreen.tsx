@@ -99,28 +99,32 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         ? await schoolbookService.list.teacher(session, pageToFetch)
         : await schoolbookService.list.studentAndParent(session, pageToFetch, studentId);
 
-      if (!pagingSize) setPagingSize(newSchoolbookWords.length);
-      if (pagingSize) {
+      let computedPagingSize = pagingSize;
+      if (!computedPagingSize) {
+        setPagingSize(newSchoolbookWords.length);
+        computedPagingSize = newSchoolbookWords.length;
+      }
+      if (computedPagingSize) {
         if (newSchoolbookWords.length) {
           setSchoolbookWords(prevState => {
             return isParent
               ? {
                   ...prevState,
                   [studentId]: [
-                    ...(prevState[studentId]?.slice(0, pagingSize * pageToFetch) || []),
+                    ...(prevState[studentId]?.slice(0, computedPagingSize * pageToFetch) || []),
                     ...newSchoolbookWords,
-                    ...(flushAfter ? [] : prevState[studentId].slice(pagingSize * (pageToFetch + 1))),
+                    ...(flushAfter ? [] : prevState[studentId].slice(computedPagingSize * (pageToFetch + 1))),
                   ],
                 }
               : [
-                  ...schoolbookWords?.slice(0, pagingSize * pageToFetch),
+                  ...schoolbookWords?.slice(0, computedPagingSize * pageToFetch),
                   ...newSchoolbookWords,
-                  ...(flushAfter ? [] : schoolbookWords?.slice(pagingSize * (pageToFetch + 1))),
+                  ...(flushAfter ? [] : schoolbookWords?.slice(computedPagingSize * (pageToFetch + 1))),
                 ];
           });
         }
         const nextPageToFetch = !fromStart
-          ? newSchoolbookWords.length === 0 || newSchoolbookWords.length < pagingSize
+          ? newSchoolbookWords.length === 0 || newSchoolbookWords.length < computedPagingSize
             ? -1
             : pageToFetch + 1
           : flushAfter
