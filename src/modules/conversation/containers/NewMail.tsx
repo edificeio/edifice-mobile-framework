@@ -71,7 +71,7 @@ type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & Nav
 
 interface ICreateMailState {
   id?: string;
-  mail: newMail;
+  mail: NewMail;
   tempAttachment?: any;
   isPrefilling?: boolean;
   prevBody?: string;
@@ -79,7 +79,7 @@ interface ICreateMailState {
   webDraftWarning: boolean;
 }
 
-type newMail = {
+type NewMail = {
   to: ISearchUsers;
   cc: ISearchUsers;
   cci: ISearchUsers;
