@@ -32,8 +32,8 @@ const responsesString = (responses: number) =>
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
-  userType: UserType;
-  userId: string;
+  userType: UserType | undefined;
+  userId: string | undefined;
   acknowledgments: IAcknowledgment[];
   owner: string;
   ownerName: string;
@@ -65,7 +65,7 @@ export const SchoolbookWordSummaryCard = ({
   const isParent = userType === UserType.Relative;
   const isTeacher = userType === UserType.Teacher;
   const isStudent = userType === UserType.Student;
-  const isWordAcknowledgedForParent = getIsWordAcknowledgedForParent(userId, acknowledgments);
+  const isWordAcknowledgedForParent = userId && getIsWordAcknowledgedForParent(userId, acknowledgments);
   const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(ackNumber, total);
   const isWordAcknowledgedForStudent = getIsWordAcknowledgedForStudent(acknowledgments);
   const isWordAcknowledged =
@@ -74,21 +74,28 @@ export const SchoolbookWordSummaryCard = ({
     (isParent && isWordAcknowledgedForParent);
   const responsesNumber = isTeacher ? respNumber : responses?.length;
 
+  //FIXME: create/move to styles.ts
+  const styles = {
+    headerStyle: {
+      paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.minor,
+      borderTopLeftRadius: UI_SIZES.radius.medium,
+      borderTopRightRadius: UI_SIZES.radius.medium,
+      backgroundColor: theme.palette.grey.fog,
+    },
+    responsesContainer: { flexDirection: 'row', alignItems: 'center' },
+    topContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: UI_SIZES.spacing.minor },
+  };
+
   return (
     <ArticleContainer>
       <TouchableResourceCard
         onPress={action}
-        customHeaderStyle={{
-          paddingVertical: isTeacher ? 0 : UI_SIZES.spacing.minor,
-          borderTopLeftRadius: UI_SIZES.radius.medium,
-          borderTopRightRadius: UI_SIZES.radius.medium,
-          backgroundColor: theme.palette.grey.fog,
-        }}
+        customHeaderStyle={styles.headerStyle}
         headerIndicator={<View />}
         header={
           isTeacher ? undefined : (
             <ContentCardHeader
-              icon={<SingleAvatar size={36} userId={owner} />}
+              icon={<SingleAvatar status={undefined} size={36} userId={owner} />}
               text={
                 <CaptionText numberOfLines={usersTextMaxLines}>
                   {`${I18n.t('common.from')} `}
@@ -100,7 +107,7 @@ export const SchoolbookWordSummaryCard = ({
         }
         footer={
           responsesNumber ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.responsesContainer}>
               <Picture
                 cached
                 type="NamedSvg"
@@ -114,7 +121,7 @@ export const SchoolbookWordSummaryCard = ({
             </View>
           ) : undefined
         }>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: UI_SIZES.spacing.minor }}>
+        <View style={styles.topContainer}>
           {category ? (
             <ImageLabel
               cachedSVG

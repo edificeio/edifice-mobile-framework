@@ -45,8 +45,8 @@ export interface ISchoolBookWordDetailsCardProps {
   onPublishReply: (comment: string, commentId?: string) => any;
   isPublishingReply: boolean;
   isAcknowledgingWord: boolean;
-  userType: UserType;
-  userId: string;
+  userType: UserType | undefined;
+  userId: string | undefined;
   studentId: string;
   schoolbookWord: IWordReport;
 }
@@ -87,9 +87,9 @@ const SchoolbookWordDetailsCard = (
   const studentsForTeacher = getStudentsForTeacher(report)?.map(student => ({ id: student.owner, name: student.ownerName }));
   const reportByStudentForParent = getReportByStudentForParent(studentId, report);
   const isWordAcknowledgedForParent =
-    reportByStudentForParent && getIsWordAcknowledgedForParent(userId, reportByStudentForParent?.acknowledgments);
+    userId && reportByStudentForParent && getIsWordAcknowledgedForParent(userId, reportByStudentForParent?.acknowledgments);
   const isWordRepliedToForParent =
-    reportByStudentForParent && getIsWordRepliedToForParent(userId, reportByStudentForParent?.responses);
+    userId && reportByStudentForParent && getIsWordRepliedToForParent(userId, reportByStudentForParent?.responses);
   const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(word?.ackNumber, word?.total);
   const isWordAcknowledgedForStudent = getIsWordAcknowledgedForStudent(report[0]?.acknowledgments);
   const isWordAcknowledged =
@@ -149,6 +149,29 @@ const SchoolbookWordDetailsCard = (
     };
   });
 
+  //FIXME: create/move to styles.ts
+  const styles = {
+    acknowledgementsContainer: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+    from: { flex: 1, marginLeft: UI_SIZES.spacing.minor },
+    fromContainer: { marginTop: UI_SIZES.spacing.medium, flexDirection: 'row', alignItems: 'center' },
+    headerIndicatorStyle: { justifyContent: 'center' },
+    headerStyle: {
+      backgroundColor: theme.palette.grey.fog,
+      paddingVertical: UI_SIZES.spacing.minor,
+      borderBottomColor: theme.palette.grey.pearl,
+      borderBottomWidth: UI_SIZES.dimensions.width.tiny,
+    },
+    modalBoxContainer: { flexGrow: 1, flexShrink: 1 },
+    responsesContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: UI_SIZES.spacing.minor,
+      marginVertical: -UI_SIZES.spacing.minor,
+    },
+    unacknowledged: { marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning.regular },
+    userListContentContainer: { flexGrow: 1 },
+  };
+
   const resourceView = React.useMemo(
     () => (
       <ResourceView
@@ -159,16 +182,11 @@ const SchoolbookWordDetailsCard = (
           paddingBottom:
             UI_SIZES.spacing.tiny + (doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus * 2 : 0),
         }}
-        customHeaderStyle={{
-          backgroundColor: theme.palette.grey.fog,
-          paddingVertical: UI_SIZES.spacing.minor,
-          borderBottomColor: theme.palette.grey.pearl,
-          borderBottomWidth: UI_SIZES.dimensions.width.tiny,
-        }}
-        customHeaderIndicatorStyle={{ justifyContent: 'center' }}
+        customHeaderStyle={styles.headerStyle}
+        customHeaderIndicatorStyle={styles.headerIndicatorStyle}
         headerIndicator={
           isTeacher ? (
-            <TouchableOpacity style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }} onPress={action}>
+            <TouchableOpacity style={styles.acknowledgementsContainer} onPress={action}>
               <SmallBoldText style={{ color: theme.palette.primary.regular }}>
                 {acknowledgementsString(word?.ackNumber, word?.total)}
               </SmallBoldText>
@@ -196,6 +214,7 @@ const SchoolbookWordDetailsCard = (
             <ContentCardHeader
               icon={
                 <SingleAvatar
+                  status={undefined}
                   size={36}
                   userId={
                     isTeacher
@@ -223,14 +242,7 @@ const SchoolbookWordDetailsCard = (
         }
         footer={
           isTeacher && schoolbookWordResponsesNumber ? (
-            <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: UI_SIZES.spacing.minor,
-                marginVertical: -UI_SIZES.spacing.minor,
-              }}
-              onPress={action}>
+            <TouchableOpacity style={styles.responsesContainer} onPress={action}>
               <Picture
                 cached
                 type="NamedSvg"
@@ -247,18 +259,15 @@ const SchoolbookWordDetailsCard = (
           ) : undefined
         }>
         {isAuthorOtherTeacher ? (
-          <View style={{ marginTop: UI_SIZES.spacing.medium, flexDirection: 'row', alignItems: 'center' }}>
-            <SingleAvatar size={36} userId={word?.ownerId} />
-            <SmallText style={{ flex: 1, marginLeft: UI_SIZES.spacing.minor }} numberOfLines={usersTextMaxLines}>
+          <View style={styles.fromContainer}>
+            <SingleAvatar status={undefined} size={36} userId={word?.ownerId} />
+            <SmallText style={styles.from} numberOfLines={usersTextMaxLines}>
               {`${I18n.t('common.from')} `}
               <SmallBoldText>{word?.ownerName}</SmallBoldText>
             </SmallText>
           </View>
-        ) : !isTeacher && !isWordAcknowledged ? (
-          <SmallBoldText
-            style={{ marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning.regular }}>
-            {unacknowledgedString(userType)}
-          </SmallBoldText>
+        ) : !isTeacher && !isWordAcknowledged && userType ? (
+          <SmallBoldText style={styles.unacknowledged}>{unacknowledgedString(userType)}</SmallBoldText>
         ) : null}
         {word?.category ? (
           <View
@@ -287,17 +296,26 @@ const SchoolbookWordDetailsCard = (
       doesContentExceedView,
       hasSingleRecipientForTeacher,
       isAuthorOtherTeacher,
+      isBottomSheetVisible,
       isTeacher,
       isWordAcknowledged,
       modalBoxRef,
       report,
       schoolbookWordResponsesNumber,
+      styles.acknowledgementsContainer,
+      styles.from,
+      styles.fromContainer,
+      styles.headerIndicatorStyle,
+      styles.headerStyle,
+      styles.responsesContainer,
+      styles.unacknowledged,
       userType,
       word?.ackNumber,
       word?.category,
       word?.ownerId,
       word?.ownerName,
       word?.sendingDate,
+      word?.text,
       word?.title,
       word?.total,
     ],
@@ -311,8 +329,8 @@ const SchoolbookWordDetailsCard = (
   return (
     <>
       <ListComponent
-        ref={ref => {
-          flatListRef.current = ref;
+        ref={listComponentRef => {
+          flatListRef.current = listComponentRef;
         }}
         onContentSizeChange={(width, height) => {
           setContentHeight(height);
@@ -380,7 +398,7 @@ const SchoolbookWordDetailsCard = (
       <ModalBox
         ref={modalBoxRef}
         content={
-          <View style={{ flexGrow: 1, flexShrink: 1 }}>
+          <View style={styles.modalBoxContainer}>
             <HeadingSText style={{ marginBottom: UI_SIZES.spacing.tiny }}>
               {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
             </HeadingSText>
@@ -391,7 +409,7 @@ const SchoolbookWordDetailsCard = (
               ref={flatListModalRef}
               data={studentsForTeacher}
               avatarSize={24}
-              contentContainerStyle={{ flexGrow: 1 }}
+              contentContainerStyle={styles.userListContentContainer}
               initialNumToRender={15}
               viewabilityConfig={{
                 waitForInteraction: false,

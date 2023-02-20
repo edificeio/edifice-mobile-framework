@@ -91,20 +91,20 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         throw new Error('failed to call api (resourceUri is undefined)');
       }
       ids = schoolbookUriCaptureFunction(resourceUri) as Required<ReturnType<typeof schoolbookUriCaptureFunction>>;
-      if (!ids.schoolbookWordId) {
+      if (!ids.paramsSchoolbookWordId) {
         throw new Error(`failed to capture resourceUri "${resourceUri}": ${ids}`);
       }
     } else {
-      const schoolbookWordId = props.route.params.schoolbookWordId;
-      const studentId = props.route.params.studentId;
-      if (!schoolbookWordId || (isParent && !studentId)) {
-        throw new Error(`missing schoolbookWordId or studentId : ${{ schoolbookWordId, studentId }}`);
+      const paramsSchoolbookWordId = props.route.params.schoolbookWordId;
+      const paramsStudentId = props.route.params.studentId;
+      if (!paramsSchoolbookWordId || (isParent && !paramsStudentId)) {
+        throw new Error(`missing paramsSchoolbookWordId or paramsStudentId : ${{ paramsSchoolbookWordId, paramsStudentId }}`);
       }
-      ids = { schoolbookWordId, studentId };
+      ids = { paramsSchoolbookWordId, paramsStudentId };
     }
-    setSchoolbookWordId(ids.schoolbookWordId);
-    if (isParent) setStudentId(ids.studentId);
-    return ids.schoolbookWordId;
+    setSchoolbookWordId(ids.paramsSchoolbookWordId);
+    if (isParent) setStudentId(ids.paramsStudentId);
+    return ids.paramsSchoolbookWordId;
   }, [isParent, props.route.params.notification, props.route.params.schoolbookWordId, props.route.params.studentId]);
 
   const fetchSchoolbookWord = React.useCallback(
@@ -116,13 +116,21 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     [session],
   );
 
+  const refreshSilent = React.useCallback(() => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    return getSchoolbookWordIds()
+      .then(wordId => fetchSchoolbookWord(wordId))
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  }, [fetchSchoolbookWord, getSchoolbookWordIds]);
+
   const acknowledgeSchoolbookWord = async () => {
     try {
       setIsAcknowledgingWord(true);
       if (!session) throw new Error('missing session');
       await schoolbookService.word.acknowledge(session, schoolbookWordId, studentId);
       refreshSilent();
-    } catch (e) {
+    } catch {
       setIsAcknowledgingWord(false);
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
@@ -171,14 +179,6 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
-
-  const refreshSilent = React.useCallback(() => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    return getSchoolbookWordIds()
-      .then(wordId => fetchSchoolbookWord(wordId))
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  }, [fetchSchoolbookWord, getSchoolbookWordIds]);
 
   React.useEffect(() => {
     const deleteSchoolbookWord = async () => {

@@ -43,6 +43,11 @@ import { userService } from '~/user/service';
 
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '../navigation';
 
+//FIXME: create/move to styles.ts
+const styles = {
+  schoolbookWordListContentContainer: { flexGrow: 1 },
+};
+
 // TYPES ==========================================================================================
 
 export interface ISchoolbookWordListScreenDataProps {
@@ -111,33 +116,33 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
               ? {
                   ...prevState,
                   [studentId]: [
-                    ...(prevState[studentId]?.slice(0, computedPagingSize * pageToFetch) || []),
+                    ...(prevState[studentId]?.slice(0, (computedPagingSize as number) * pageToFetch) || []),
                     ...newSchoolbookWords,
-                    ...(flushAfter ? [] : prevState[studentId].slice(computedPagingSize * (pageToFetch + 1))),
+                    ...(flushAfter ? [] : prevState[studentId].slice((computedPagingSize as number) * (pageToFetch + 1))),
                   ],
                 }
               : [
-                  ...schoolbookWords?.slice(0, computedPagingSize * pageToFetch),
+                  ...schoolbookWords?.slice(0, (computedPagingSize as number) * pageToFetch),
                   ...newSchoolbookWords,
-                  ...(flushAfter ? [] : schoolbookWords?.slice(computedPagingSize * (pageToFetch + 1))),
+                  ...(flushAfter ? [] : schoolbookWords?.slice((computedPagingSize as number) * (pageToFetch + 1))),
                 ];
           });
         }
-        const nextPageToFetch = !fromStart
+        const newNextPageToFetch = !fromStart
           ? newSchoolbookWords.length === 0 || newSchoolbookWords.length < computedPagingSize
             ? -1
             : pageToFetch + 1
           : flushAfter
           ? 1
           : undefined;
-        if (nextPageToFetch) {
+        if (newNextPageToFetch) {
           setNextPageToFetch(prevState => {
             return isParent
               ? {
                   ...prevState,
-                  [studentId]: nextPageToFetch,
+                  [studentId]: newNextPageToFetch,
                 }
-              : nextPageToFetch;
+              : newNextPageToFetch;
           });
         }
         // Only increment pagecount when fromStart is not specified
@@ -364,7 +369,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         ListHeaderComponent={hasSeveralChildren ? renderChildrenList() : <View style={{ height: UI_SIZES.spacing.medium }} />}
         ListFooterComponent={loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withVerticalMargins /> : null}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.schoolbookWordListContentContainer}
         onEndReached={() => (isAllDataLoaded ? null : fetchNextPage())}
         onEndReachedThreshold={0.5}
       />
