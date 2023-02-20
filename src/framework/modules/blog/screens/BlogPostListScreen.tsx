@@ -23,7 +23,7 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -180,8 +180,21 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   }, [props.navigation]);
 
   React.useEffect(() => {
+    const hasError =
+      !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
+
     props.navigation.setOptions({
       title: selectedBlogTitle ?? I18n.t('blog.appName'),
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () =>
+        hasBlogPostCreationRights && !hasError ? (
+          <NavBarAction
+            iconName="ui-plus"
+            onPress={() => {
+              onGoToPostCreationScreen();
+            }}
+          />
+        ) : null,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBlogTitle]);
@@ -281,7 +294,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   );
 };
 
-export default connect(
+const BlogPostListScreenConnected = connect(
   (gs: IGlobalState) => {
     return {
       session: assertSession(),
@@ -290,3 +303,4 @@ export default connect(
   },
   dispatch => bindActionCreators({}, dispatch),
 )(BlogPostListScreen);
+export default BlogPostListScreenConnected;

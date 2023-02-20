@@ -10,7 +10,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
-import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
@@ -29,7 +28,7 @@ import {
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
@@ -174,7 +173,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
           },
         ],
       );
-    } else return true;
+    } else {
+      navigation.dispatch(CommonActions.goBack());
+    }
   }
 
   async doSend() {
@@ -271,7 +272,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     }
   }
 
-  componentDidMount() {
+  setActionNavbar = () => {
     const blog = this.props.route.params.blog;
     const blogPostRight = blog && this.props.session && getBlogPostRight(blog, this.props.session);
     const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
@@ -283,16 +284,28 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishAction'),
       }[blogPostDisplayRight];
     this.props.navigation.setOptions({
-      headerRight: this.state.sendLoadingState ? (
-        <LoadingIndicator small customColor={theme.ui.text.inverse} customStyle={styles.loaderPublish} />
-      ) : (
-        <HeaderAction
-          text={actionText}
-          disabled={this.state.title.length === 0 || this.state.content.length === 0}
-          onPress={() => this.doSend()}
-        />
-      ),
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerLeft: () => <NavBarAction iconName="ui-rafterLeft" onPress={() => this.doHandleGoBack()} />,
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () =>
+        this.state.sendLoadingState ? (
+          <LoadingIndicator small customColor={theme.ui.text.inverse} customStyle={styles.loaderPublish} />
+        ) : (
+          <NavBarAction
+            title={actionText}
+            disabled={this.state.title.length === 0 || this.state.content.length === 0}
+            onPress={() => this.doSend()}
+          />
+        ),
     });
+  };
+
+  componentDidMount() {
+    this.setActionNavbar();
+  }
+
+  componentDidUpdate() {
+    this.setActionNavbar();
   }
 
   renderError() {

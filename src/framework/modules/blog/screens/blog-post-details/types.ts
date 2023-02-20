@@ -5,7 +5,7 @@ import { ISession } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogPost } from '~/framework/modules/blog/reducer';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
-import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
+import { IResourceUriNotification } from '~/framework/util/notifications';
 
 export interface BlogPostDetailsScreenDataProps {
   session: ISession;
@@ -27,10 +27,10 @@ export interface BlogPostDetailsScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 export interface BlogPostDetailsScreenNavParams {
-  notification: ITimelineNotification & IResourceUriNotification;
+  notification: IResourceUriNotification;
   blogPost?: BlogPost;
   blogId?: string;
-  blog: DisplayedBlog;
+  blog?: DisplayedBlog;
   useNotification?: boolean;
 }
 export type BlogPostDetailsScreenProps = BlogPostDetailsScreenDataProps &

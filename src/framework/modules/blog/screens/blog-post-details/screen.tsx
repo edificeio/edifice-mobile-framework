@@ -262,14 +262,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     else if (!showHeaderTitle && !isVisible) this.setState({ showHeaderTitle: true });
   }
 
-  componentDidMount() {
-    const { route, navigation } = this.props;
-    const session = assertSession();
-    const blogPost = route.params.blogPost;
-    const blog = route.params.blog;
+  setActionNavbar = () => {
+    const { route, navigation, session } = this.props;
     const { blogPostData, blogInfos, errorState, loadingState } = this.state;
+    const notification = (route.params.useNotification ?? true) && route.params.notification;
     const blogId = route.params.blog?.id;
-    const notification = route.params.notification;
     let resourceUri = notification && notification?.resource.uri;
     if (!resourceUri && blogPostData && blogId) {
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
@@ -278,7 +275,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const menuItemOpenBrowser = linkAction({
       title: I18n.t('common.openInBrowser'),
       action: () => {
-        if (session?.platform) return null;
         const url = `${session.platform!.url}${resourceUri}`;
         openUrl(url);
         Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
@@ -310,6 +306,26 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             }),
           ]
         : [menuItemOpenBrowser];
+
+    this.props.navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () =>
+        resourceUri &&
+        (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
+        !errorState ? (
+          <PopupMenu actions={menuData}>
+            <HeaderIcon name="more_vert" iconSize={24} />
+          </PopupMenu>
+        ) : undefined,
+    });
+  };
+
+  componentDidMount() {
+    const { route } = this.props;
+    const blogPost = route.params.blogPost;
+    const blog = route.params.blog;
+    const { blogPostData } = this.state;
+    const notification = (route.params.useNotification ?? true) && route.params.notification;
 
     if (blog && blogPost) {
       this.setState({
@@ -362,16 +378,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         blogPostData?.title && this.state.showHeaderTitle
           ? I18n.t('timeline.blogPostDetailsScreen.title')
           : I18n.t('timeline.blogPostDetailsScreen.title'),
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () =>
-        resourceUri &&
-        (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
-        !errorState ? (
-          <PopupMenu actions={menuData}>
-            <HeaderIcon name="more_vert" iconSize={24} />
-          </PopupMenu>
-        ) : undefined,
     });
+  }
+
+  componentDidUpdate() {
+    this.setActionNavbar();
   }
 
   componentWillUnmount() {
