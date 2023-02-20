@@ -428,7 +428,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                 }
                 onEndReachedThreshold={0.5}
                 onEndReached={() => {
-                  if (nextPageCallable) {
+                  if (nextPageCallable && !isRefreshing) {
                     this.setState({ nextPageCallable: false, isChangingPage: true });
                     this.onChangePage();
                   }
