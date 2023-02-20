@@ -29,7 +29,8 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
       const formId = Number(formUri);
       const session = getUserSession();
       const form = await formService.form.get(session, formId);
-      if (!form || form.archived) {
+      const hasResponderRight = await formService.form.hasResponderRight(session, formId);
+      if (!form || form.archived || !hasResponderRight) {
         Alert.alert(I18n.t('form.missingFormAlert'));
         return { managed: 0 };
       }
