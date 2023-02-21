@@ -1,3 +1,4 @@
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { StatusBar, TouchableOpacity, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
@@ -5,6 +6,7 @@ import Orientation, { LANDSCAPE, PORTRAIT, useOrientationChange } from 'react-na
 import WebView from 'react-native-webview';
 
 import theme from '~/app/theme';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 
@@ -14,6 +16,7 @@ import { MediaPlayerProps, MediaType } from './types';
 export default function MediaPlayer(props: MediaPlayerProps) {
   let source = props.navigation.getParam('source');
   const type = props.navigation.getParam('type');
+  const [error, setError] = React.useState(false);
 
   // Add "file://" if absolute url is provided
   if (typeof source === 'string') {
@@ -72,6 +75,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
           source={source}
           onBack={onBack}
           onEnd={onVPEnd}
+          onError={() => setError(true)}
           alwaysShowControls={isAudio}
         />
       );
@@ -96,8 +100,16 @@ export default function MediaPlayer(props: MediaPlayerProps) {
   };
 
   return (
-    <PageView style={styles.page} showNetworkBar={false}>
-      {getPlayer()}
-    </PageView>
+    <>
+      {!error ? (
+        <PageView style={styles.page} showNetworkBar={false}>
+          {getPlayer()}
+        </PageView>
+      ) : (
+        <PageView navBarWithBack={{ title: I18n.t('media-player-title') }}>
+          <EmptyContentScreen />
+        </PageView>
+      )}
+    </>
   );
 }
