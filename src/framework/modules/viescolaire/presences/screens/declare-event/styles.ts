@@ -4,8 +4,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  safeAreaContainer: {
-    flex: 1,
+  container: {
+    padding: UI_SIZES.spacing.medium,
+    flexGrow: 1,
+    justifyContent: 'space-between',
   },
   recapHeader: {
     paddingVertical: UI_SIZES.spacing.small,
@@ -24,30 +26,30 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: UI_SIZES.spacing.small,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   timePickerText: {
     marginRight: UI_SIZES.spacing.minor,
   },
-  inputContainer: {
-    marginHorizontal: UI_SIZES.spacing.large,
+  commentText: {
+    marginBottom: UI_SIZES.spacing.minor,
   },
-  labelText: {
-    marginTop: UI_SIZES.spacing.big,
-    marginBottom: UI_SIZES.spacing.tiny,
+  commentInput: {
+    marginBottom: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.small,
+    backgroundColor: theme.ui.background.card,
+    borderColor: theme.ui.border.input,
+    borderWidth: 1,
+    borderRadius: 5,
+    height: 100,
+    color: theme.ui.text.regular,
   },
-  reasonTextInput: {
-    borderBottomWidth: 1,
-    borderBottomColor: theme.palette.grey.cloudy,
-    paddingVertical: UI_SIZES.spacing.tiny,
-  },
-  buttonOkContainer: {
+  actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    flexWrap: 'nowrap',
-    marginVertical: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.medium,
   },
-  deleteButton: {
+  deleteAction: {
     marginRight: UI_SIZES.spacing.medium,
   },
 });

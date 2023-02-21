@@ -1,6 +1,7 @@
 import { IClassCall, IDayHistory, IStudent } from './class-call';
 import { ICourse } from './course';
 import { ICourseRegister } from './course-register';
+import { EventType } from './event-type';
 import { ICallEvent, IForgottenNotebook, IHistoryEvent, IIncident, IPunishment } from './events';
 import { IMemento, IRelative } from './memento';
 import { IStudentsEvents } from './students-events';
@@ -12,6 +13,7 @@ export {
   IStudent,
   ICourse,
   ICourseRegister,
+  EventType,
   ICallEvent,
   IForgottenNotebook,
   IHistoryEvent,

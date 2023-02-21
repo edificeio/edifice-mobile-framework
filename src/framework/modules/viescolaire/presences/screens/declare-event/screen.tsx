@@ -1,37 +1,28 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, TextInput, View } from 'react-native';
+import { Platform, ScrollView, TextInput, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { PageView } from '~/framework/components/page';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
+import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
+import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
-import {
-  deleteEvent,
-  postLateEvent,
-  postLeavingEvent,
-  updateLateEvent,
-  updateLeavingEvent,
-} from '~/modules/viescolaire/presences/actions/events';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
 import { PresencesDeclareEventScreenPrivateProps } from './types';
-
-type PresencesDeclareEventScreenState = {
-  date: Date;
-  reason: string;
-};
 
 export const computeNavBar = ({
   navigation,
@@ -41,175 +32,129 @@ export const computeNavBar = ({
     navigation,
     route,
   }),
-  title: route.params.title,
+  title: I18n.t(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
   headerStyle: {
-    backgroundColor: route.params.color,
+    backgroundColor: viescoTheme.palette.presences,
   },
 });
 
-export class PresencesDeclareEventScreen extends React.PureComponent<
-  PresencesDeclareEventScreenPrivateProps,
-  PresencesDeclareEventScreenState
-> {
-  constructor(props) {
-    super(props);
-    const { event } = props.navigation.state.params;
-    if (event === undefined) {
-      this.state = {
-        date: new Date(),
-        reason: '',
-      };
-    } else {
-      if (event.type_id === 2) this.state = { date: moment(event.end_date).toDate(), reason: event.comment };
-      else if (event.type_id === 3) this.state = { date: moment(event.start_date).toDate(), reason: event.comment };
+const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
+  const [date, setDate] = React.useState<Moment>(moment());
+  const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
+  const [isCreating, setCreating] = React.useState<boolean>(false);
+  const [isDeleting, setDeleting] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const { event, type } = props.route.params;
+
+    if (event) {
+      setDate(moment(type === EventType.LATENESS ? event.end_date : event.start_date));
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  componentDidMount() {
-    const properties = this.getSpecificProperties(this.props.route.params.type);
-    this.props.navigation.setParams({
-      title: properties.title,
-      color: properties.mainColor,
-    });
-  }
+  const createEvent = async () => {
+    try {
+      const { navigation, session } = props;
+      const { callId, endDate, event, startDate, student, type } = props.route.params;
+      const start = type === EventType.LATENESS ? startDate : date;
+      const end = type === EventType.LATENESS ? date : endDate;
 
-  onTimeChange = selectedDate => {
-    const { date } = this.state;
-    const currentDate = selectedDate || date;
-    this.setState({
-      date: currentDate,
-    });
-  };
-
-  onReasonChange = value => {
-    this.setState({
-      reason: value,
-    });
-  };
-
-  onSubmit = () => {
-    const { date, reason } = this.state;
-    const { declareLateness, declareLeaving, updateLateness, updateLeaving } = this.props;
-    const { type, student, event, registerId, startDate, endDate } = this.props.route.params;
-    const momentDate = moment(date).second(0);
-    const startDateMoment = moment(startDate).second(0);
-    const endDateMoment = moment(endDate).second(0);
-    if (type === 'late') {
-      if (event === undefined) {
-        // deleting absence when lateness is declared
-        const absence = student.events.find(i => i.type_id === 1);
-        if (absence !== undefined) this.props.deleteEvent(absence);
-        declareLateness(student.id, momentDate, reason, registerId, startDateMoment);
-      } else {
-        updateLateness(student.id, momentDate, reason, event.id, registerId, startDateMoment);
+      setCreating(true);
+      if (!session) throw new Error();
+      const absence = student.events.find(i => i.type_id === 1);
+      if (type === EventType.LATENESS && absence) {
+        await presencesService.event.delete(session, absence.id);
       }
-    } else if (type === 'leaving') {
       if (event === undefined) {
-        declareLeaving(student.id, momentDate, reason, registerId, endDateMoment);
+        await presencesService.event.create(session, student.id, callId, type, start, end, comment);
       } else {
-        updateLeaving(student.id, momentDate, reason, event.id, registerId, endDateMoment);
+        await presencesService.event.update(session, event.id!, student.id, callId, type, start, end, comment);
       }
+      await presencesService.classCall.updateStatus(session, callId, 2);
+      navigation.goBack();
+    } catch {
+      setCreating(false);
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
-    this.props.navigation.goBack();
   };
 
-  onCancel = () => {
-    const { event, student } = this.props.route.params;
-    this.props.deleteEvent({ ...event, student_id: student.id });
-    this.props.navigation.goBack();
+  const deleteEvent = async () => {
+    try {
+      const { navigation, session } = props;
+      const { callId, event } = props.route.params;
+
+      setDeleting(true);
+      if (!session || !event) throw new Error();
+      await presencesService.event.delete(session, event.id!);
+      await presencesService.classCall.updateStatus(session, callId, 2);
+      navigation.goBack();
+    } catch {
+      setDeleting(false);
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    }
   };
 
-  getSpecificProperties(type) {
-    const result = {
-      mainColor: '',
-      lightColor: '',
-      mainText: '',
-      inputLabel: '',
-      title: '',
-    };
-    switch (type) {
-      case 'late':
-        result.mainColor = viescoTheme.palette.presencesEvents.lateness;
-        result.lightColor = viescoTheme.palette.presencesEvents.lateness;
-        result.title = I18n.t('viesco-lateness');
-        result.mainText = I18n.t('viesco-arrived');
-        result.inputLabel = I18n.t('viesco-arrived-motive');
-        break;
-      case 'leaving':
-        result.mainColor = viescoTheme.palette.presencesEvents.departure;
-        result.lightColor = viescoTheme.palette.presencesEvents.departure;
-        result.title = I18n.t('viesco-leaving');
-        result.mainText = I18n.t('viesco-left');
-        result.inputLabel = I18n.t('viesco-left-motive');
-        break;
-    }
-    return result;
-  }
-
-  public render() {
-    const { date } = this.state;
-    const { type, event, student, startDate, endDate } = this.props.route.params;
-    const { mainColor, mainText, inputLabel } = this.getSpecificProperties(type);
-    const startDateString = moment(startDate).format('HH:mm');
-    const endDateString = moment(endDate).format('HH:mm');
+  const renderPage = () => {
+    const { endDate, event, startDate, student, type } = props.route.params;
+    const mainColor =
+      type === EventType.LATENESS ? viescoTheme.palette.presencesEvents.lateness : viescoTheme.palette.presencesEvents.departure;
+    const mainText = I18n.t(type === EventType.LATENESS ? 'viesco-arrived' : 'viesco-left');
+    const inputLabel = I18n.t(type === EventType.LATENESS ? 'viesco-arrived-motive' : 'viesco-left-motive');
 
     return (
-      <PageView>
-        <KeyboardAvoidingView
-          enabled={Platform.OS === 'ios'}
-          behavior="padding"
-          keyboardVerticalOffset={60}
-          style={styles.safeAreaContainer}>
-          <ScrollView>
-            <LeftColoredItem color={mainColor} style={styles.recapHeader}>
-              <View style={styles.recapHeaderView}>
-                <Picture type="NamedSvg" name="ui-clock" width={20} height={20} fill={mainColor} />
-                <SmallText style={styles.recapHeaderText}>
-                  {startDateString} - {endDateString}
-                </SmallText>
-                <SmallBoldText>{student.name}</SmallBoldText>
-              </View>
-            </LeftColoredItem>
-            <View style={styles.timePickerRowContainer}>
-              <SmallText style={[styles.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
-              <DateTimePicker mode="time" value={moment(date)} onChange={this.onTimeChange} color={mainColor} />
+      <ScrollView contentContainerStyle={styles.container}>
+        <View>
+          <LeftColoredItem color={mainColor} style={styles.recapHeader}>
+            <View style={styles.recapHeaderView}>
+              <Picture type="NamedSvg" name="ui-clock" width={20} height={20} fill={mainColor} />
+              <SmallText style={styles.recapHeaderText}>{`${startDate.format('HH:mm')} - ${endDate.format('HH:mm')}`}</SmallText>
+              <SmallBoldText>{student.name}</SmallBoldText>
             </View>
-            <View style={styles.inputContainer}>
-              <CaptionText style={styles.labelText}>{inputLabel}</CaptionText>
-              <TextInput
-                defaultValue={event === undefined ? '' : event.comment}
-                placeholder={I18n.t('viesco-enter-text')}
-                style={styles.reasonTextInput}
-                multiline
-                onChangeText={this.onReasonChange}
-              />
-            </View>
-            <View style={styles.buttonOkContainer}>
-              {event !== undefined ? (
-                <ActionButton text={I18n.t('delete')} type="secondary" action={this.onCancel} style={styles.deleteButton} />
-              ) : null}
-              <ActionButton
-                text={I18n.t('viesco-confirm')}
-                action={this.onSubmit}
-                disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
-              />
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </PageView>
+          </LeftColoredItem>
+          <View style={styles.timePickerRowContainer}>
+            <SmallText style={[styles.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
+            <DateTimePicker mode="time" value={date} onChange={value => setDate(value)} color={mainColor} />
+          </View>
+          <SmallText style={styles.commentText}>{inputLabel}</SmallText>
+          <TextInput
+            value={comment}
+            onChangeText={text => setComment(text)}
+            multiline
+            textAlignVertical="top"
+            style={styles.commentInput}
+          />
+        </View>
+        <View style={styles.actionsContainer}>
+          {event !== undefined ? (
+            <ActionButton
+              text={I18n.t('delete')}
+              type="secondary"
+              action={deleteEvent}
+              loading={isDeleting}
+              style={styles.deleteAction}
+            />
+          ) : null}
+          <ActionButton
+            text={I18n.t('viesco-confirm')}
+            action={createEvent}
+            disabled={!date.isBetween(startDate, endDate)}
+            loading={isCreating}
+          />
+        </View>
+      </ScrollView>
     );
-  }
-}
+  };
 
-export default connect((dispatch: ThunkDispatch<any, any, any>) =>
-  bindActionCreators(
-    {
-      declareLateness: tryAction(postLateEvent, undefined, true),
-      updateLateness: tryAction(updateLateEvent, undefined, true),
-      declareLeaving: tryAction(postLeavingEvent, undefined, true),
-      updateLeaving: tryAction(updateLeavingEvent, undefined, true),
-      deleteEvent: tryAction(deleteEvent, undefined, true),
-    },
-    dispatch,
-  ),
-)(PresencesDeclareEventScreen);
+  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+
+  return <PageComponent>{renderPage()}</PageComponent>;
+};
+
+export default connect((state: IGlobalState) => {
+  const session = getSession(state);
+
+  return {
+    session,
+  };
+})(PresencesDeclareEventScreen);

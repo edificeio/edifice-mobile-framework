@@ -3,6 +3,8 @@ import querystring from 'querystring';
 
 import { ISession } from '~/framework/modules/auth/model';
 import {
+  EventType,
+  ICallEvent,
   IClassCall,
   ICourse,
   ICourseRegister,
@@ -13,7 +15,7 @@ import {
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
 
 type IBackendClassCall = {
   personnel_id: string;
@@ -78,6 +80,18 @@ type IBackendCourseRegister = {
   start_date: string;
   end_date: string;
   councellor_input: boolean;
+};
+
+type IBackendEvent = {
+  id: number;
+  start_date: string;
+  end_date: string;
+  comment: string;
+  counsellor_input: string;
+  student_id: string;
+  register_id: number;
+  type_id: number;
+  reason_id: number;
 };
 
 type IBackendMemento = {
@@ -165,6 +179,20 @@ const courseRegisterAdapter = (data: IBackendCourseRegister): ICourseRegister =>
     end_date: moment(data.end_date),
     councellor_input: data.councellor_input,
   } as ICourseRegister;
+};
+
+const eventAdapter = (data: IBackendEvent): ICallEvent => {
+  return {
+    id: data.id,
+    start_date: data.start_date,
+    end_date: data.end_date,
+    comment: data.comment,
+    counsellor_input: data.counsellor_input,
+    student_id: data.student_id,
+    register_id: data.register_id,
+    type_id: data.type_id,
+    reason_id: data.reason_id,
+  } as ICallEvent;
 };
 
 const mementoAdapter = (data: IBackendMemento): IMemento => {
@@ -261,6 +289,16 @@ export const presencesService = {
       const classCall = (await fetchJSONWithCache(api)) as IBackendClassCall;
       return classCallAdapter(classCall);
     },
+    updateStatus: async (session: ISession, id: string, status: number) => {
+      const api = `/presences/registers/${id}/status`;
+      const body = JSON.stringify({
+        state_id: status,
+      });
+      await fetchWithCache(api, {
+        method: 'PUT',
+        body,
+      });
+    },
   },
   courses: {
     get: async (
@@ -302,6 +340,63 @@ export const presencesService = {
         body,
       })) as IBackendCourseRegister;
       return courseRegisterAdapter(courseRegister);
+    },
+  },
+  event: {
+    create: async (
+      session: ISession,
+      studentId: string,
+      callId: string,
+      type: EventType,
+      startDate: moment.Moment,
+      endDate: moment.Moment,
+      comment: string,
+    ) => {
+      const api = '/presences/events';
+      const body = JSON.stringify({
+        student_id: studentId,
+        register_id: callId,
+        type_id: type as number,
+        start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
+        end_date: endDate.format('YYYY-MM-DD HH:mm:ss'),
+        comment,
+      });
+      const event = (await fetchJSONWithCache(api, {
+        method: 'POST',
+        body,
+      })) as IBackendEvent;
+      return eventAdapter(event);
+    },
+    delete: async (session: ISession, id: number) => {
+      const api = `/presences/events/${id}`;
+      await fetchJSONWithCache(api, {
+        method: 'DELETE',
+      });
+    },
+    update: async (
+      session: ISession,
+      id: number,
+      studentId: string,
+      callId: string,
+      type: EventType,
+      startDate: moment.Moment,
+      endDate: moment.Moment,
+      comment: string,
+    ) => {
+      const api = `/presences/events/${id}`;
+      const body = JSON.stringify({
+        student_id: studentId,
+        register_id: callId,
+        type_id: type as number,
+        start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
+        end_date: endDate.format('YYYY-MM-DD HH:mm:ss'),
+        comment,
+      });
+      const event = (await fetchJSONWithCache(api, {
+        method: 'PUT',
+        body,
+      })) as IBackendEvent;
+      return eventAdapter(event);
     },
   },
   memento: {

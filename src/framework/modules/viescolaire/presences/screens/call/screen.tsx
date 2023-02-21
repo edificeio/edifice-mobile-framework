@@ -19,6 +19,7 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
 import StudentRow from '~/framework/modules/viescolaire/presences/components/StudentRow';
+import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -81,8 +82,16 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchCall()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
   const fetchOnNavigation = () => {
     if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    else refreshSilent();
   };
 
   React.useEffect(() => {
@@ -117,8 +126,8 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
               mementoNavigation={() => props.navigation.navigate(presencesRouteNames.memento, { studentId: item.id })}
               lateCallback={event =>
                 navigation.navigate(presencesRouteNames.declareEvent, {
-                  type: 'late',
-                  registerId: id,
+                  type: EventType.LATENESS,
+                  callId: id,
                   student: item,
                   startDate: classCall.start_date,
                   endDate: classCall.end_date,
@@ -127,8 +136,8 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
               }
               leavingCallback={event =>
                 navigation.navigate(presencesRouteNames.declareEvent, {
-                  type: 'leaving',
-                  registerId: id,
+                  type: EventType.DEPARTURE,
+                  callId: id,
                   student: item,
                   startDate: classCall.start_date,
                   endDate: classCall.end_date,
