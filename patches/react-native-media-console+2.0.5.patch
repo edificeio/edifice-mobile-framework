@@ -16,7 +16,7 @@ index 4e95969..0e08e8a 100644
       * Title of the video
       */
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 5ea0ab2..020a208 100644
+index 5ea0ab2..07cf499 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
@@ -27,7 +27,16 @@ index 5ea0ab2..020a208 100644
      paused = false,
      muted = false,
      volume = 1,
-@@ -189,7 +190,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -116,6 +117,8 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+   const _onSeek = (obj: OnSeekData) => {
+     if (!seeking) {
+       setControlTimeout();
++    } else {
++      resetControlTimeout();
+     }
+     setCurrentTime(obj.seekTime);
+ 
+@@ -189,7 +192,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
            togglePlayPause();
            resetControlTimeout();
          } else {
