@@ -7,6 +7,7 @@ import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
@@ -17,7 +18,10 @@ import { MediaPlayerProps, MediaType } from './types';
 function MediaPlayer(props: MediaPlayerProps) {
   let source = props.navigation.getParam('source');
   const type = props.navigation.getParam('type');
-  const [error, setError] = React.useState(false);
+  const [error, setError] = React.useState({
+    active: false,
+    type: '',
+  });
 
   // Add "file://" if absolute url is provided
   if (typeof source === 'string') {
@@ -55,9 +59,15 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   React.useEffect(() => {
     if (!props.connected) {
-      setError(true);
+      setError({
+        active: true,
+        type: 'connection',
+      });
     } else {
-      setError(false);
+      setError({
+        active: false,
+        type: '',
+      });
     }
   }, [props.connected]);
 
@@ -84,7 +94,12 @@ function MediaPlayer(props: MediaPlayerProps) {
           source={source}
           onBack={onBack}
           onEnd={onVPEnd}
-          onError={() => setError(true)}
+          onError={() =>
+            setError({
+              active: true,
+              type: 'no content',
+            })
+          }
           alwaysShowControls={isAudio}
         />
       );
@@ -110,13 +125,13 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   return (
     <>
-      {!error ? (
+      {!error.active ? (
         <PageView style={styles.page} showNetworkBar={false}>
           {getPlayer()}
         </PageView>
       ) : (
         <PageView navBarWithBack={{ title: I18n.t('media-player-title') }}>
-          <EmptyContentScreen />
+          {error.type === 'connection' ? <EmptyConnectionScreen /> : <EmptyContentScreen />}
         </PageView>
       )}
     </>
