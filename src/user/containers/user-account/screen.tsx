@@ -81,14 +81,14 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
     try {
       this.setState({ loadingMFARequirement: { ...this.state.loadingMFARequirement, [modificationType]: true } });
       const requirements = await userService.getUserRequirements();
-      const needMFA = requirements?.needMFA;
-      if (needMFA) await userService.getMFAValidationInfos();
+      const needMfa = requirements?.needMfa;
+      if (needMfa) await userService.getMFAValidationInfos();
       const routeNames = {
         [ModificationType.EMAIL]: 'UserEmail',
         [ModificationType.MOBILE]: 'UserMobile',
         [ModificationType.PASSWORD]: 'ChangePassword',
       };
-      const routeName = needMFA ? 'MFA' : routeNames[modificationType];
+      const routeName = needMfa ? 'MFA' : routeNames[modificationType];
       const params = {
         [ModificationType.EMAIL]: {
           navBarTitle: I18n.t('user.page.editEmail'),
