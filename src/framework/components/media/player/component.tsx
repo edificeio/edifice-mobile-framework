@@ -1,8 +1,8 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StatusBar, TouchableOpacity, View } from 'react-native';
+import { BackHandler, StatusBar, TouchableOpacity, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
-import Orientation, { LANDSCAPE, PORTRAIT, useOrientationChange } from 'react-native-orientation-locker';
+import Orientation, { PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 
@@ -16,44 +16,21 @@ import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
 function MediaPlayer(props: MediaPlayerProps) {
-  let source = props.navigation.getParam('source');
+  const source = props.navigation.getParam('source');
   const type = props.navigation.getParam('type');
+
+  const isAudio = type === MediaType.AUDIO;
+  let isChangingOrientation = false;
+
   const [error, setError] = React.useState({
     active: false,
     type: '',
   });
 
-  // Add "file://" if absolute url is provided
-  if (typeof source === 'string') {
-    if (!source.includes('://')) {
-      source = 'file://' + source;
-    }
-    source = { uri: new URL(source).href };
-  } else if (typeof source === 'object') {
-    if (!source.uri.includes('://')) {
-      source.uri = 'file://' + source;
-    }
-    source.uri = new URL(source.uri).href;
-  }
-
-  const isAudio = type === MediaType.AUDIO;
-
   const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
+  const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
 
-  React.useEffect(() => {
-    if (!isAudio) Orientation.unlockAllOrientations();
-    StatusBar.setHidden(true);
-  });
-
-  useOrientationChange(current => {
-    if (current.indexOf(LANDSCAPE) > -1) setOrientation(LANDSCAPE);
-    else if (current.indexOf(PORTRAIT) > -1) setOrientation(PORTRAIT);
-  });
-
-  const onBack = () => {
-    Orientation.lockToPortrait();
-    StatusBar.setHidden(false);
+  const handleBack = () => {
     props.navigation.goBack();
   };
 
@@ -71,66 +48,109 @@ function MediaPlayer(props: MediaPlayerProps) {
     }
   }, [props.connected]);
 
-  const onVPEnd = () => {
-    setVPControlTimeoutDelay(999999);
+  const handleHardwareBack = () => {
+    handleBack();
+    return true;
   };
 
-  const styleOverlay = {
-    height: orientation === PORTRAIT ? 80 : 60,
+  const handleVideoPlayerEnd = () => {
+    setVideoPlayerControlTimeoutDelay(999999);
+  };
+
+  const getSource = () => {
+    // Add "file://" if absolute url is provided
+    let src = Object.assign({}, source);
+    if (typeof source === 'string') {
+      if (!source.includes('://')) {
+        src = `file://${source}`;
+      }
+      src = { uri: new URL(src).href };
+    } else if (typeof source === 'object') {
+      if (!source.uri.includes('://')) {
+        src.uri = `file://${source}`;
+      }
+      src.uri = new URL(source.uri).href;
+    }
+    return src;
   };
 
   const getPlayer = () => {
-    if (type !== MediaType.WEB)
+    const isPortrait = orientation === PORTRAIT;
+    if (type === MediaType.WEB)
       return (
+        <>
+          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]}>
+            <TouchableOpacity onPress={handleBack}>
+              <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
+            </TouchableOpacity>
+          </View>
+          <WebView
+            allowsInlineMediaPlayback
+            mediaPlaybackRequiresUserAction={false}
+            scrollEnabled={false}
+            source={getSource()}
+            startInLoadingState
+            style={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+          />
+        </>
+      );
+    return (
+      <>
         <VideoPlayer
-          controlTimeoutDelay={vpControlTimeoutDelay}
+          alwaysShowControls={isAudio}
+          controlTimeoutDelay={videoPlayerControlTimeoutDelay}
           disableFullscreen
           disableVolume
           ignoreSilentSwitch="ignore"
-          rewindTime={10}
-          showDuration
-          showOnStart
-          showOnEnd
-          source={source}
-          onBack={onBack}
-          onEnd={onVPEnd}
+          onBack={handleBack}
+          onEnd={handleVideoPlayerEnd}
           onError={() =>
             setError({
               active: true,
               type: 'no content',
             })
           }
-          alwaysShowControls={isAudio}
-        />
-      );
-
-    return (
-      <>
-        <View style={[styles.back, styleOverlay]}>
-          <TouchableOpacity onPress={onBack}>
-            <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
-          </TouchableOpacity>
-        </View>
-        <WebView
-          allowsInlineMediaPlayback
-          mediaPlaybackRequiresUserAction={false}
-          scrollEnabled={false}
-          source={source}
-          startInLoadingState
-          style={orientation === LANDSCAPE ? styles.playerLandscape : styles.playerPortrait}
+          rewindTime={10}
+          showDuration
+          showOnStart
+          showOnEnd
+          source={getSource()}
         />
       </>
     );
   };
 
+  useDeviceOrientationChange(newOrientation => {
+    if (newOrientation !== orientation) {
+      isChangingOrientation = true;
+      setOrientation(newOrientation);
+    }
+  });
+
+  React.useEffect(() => {
+    if (!isAudio) Orientation.unlockAllOrientations();
+    StatusBar.setHidden(true);
+    // Manage Android back button
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
+    return () => {
+      backHandler.remove();
+      if (!isChangingOrientation) {
+        Orientation.lockToPortrait();
+        StatusBar.setHidden(false);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      isChangingOrientation = false;
+    };
+  });
+
   return (
     <>
       {!error.active ? (
-        <PageView style={styles.page} showNetworkBar={false}>
+        <PageView style={styles.page} showNetworkBar={false} onBack={handleBack}>
           {getPlayer()}
         </PageView>
       ) : (
-        <PageView navBarWithBack={{ title: I18n.t('media-player-title') }}>
+        <PageView navBarWithBack={{ title: I18n.t('media-player-title') }} onBack={handleBack}>
           {error.type === 'connection' ? <EmptyConnectionScreen /> : <EmptyContentScreen />}
         </PageView>
       )}
