@@ -10,17 +10,17 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
+import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
+import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
+import { HomeworkItem } from '~/framework/modules/viescolaire/diary/components/Items';
+import { IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
+import edtConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { AsyncState } from '~/framework/util/redux/async';
-import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
-import competencesConfig from '~/modules/viescolaire/competences/moduleConfig';
-import { IDevoirsMatieres, ILevel } from '~/modules/viescolaire/competences/reducer';
 import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
 import { IAuthorizedViescoApps } from '~/modules/viescolaire/dashboard/containers/Dashboard';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
-import { HomeworkItem } from '~/modules/viescolaire/diary/components/Items';
-import diaryConfig from '~/modules/viescolaire/diary/moduleConfig';
-import { IHomework, IHomeworkMap } from '~/modules/viescolaire/diary/reducer';
-import edtConfig from '~/modules/viescolaire/edt/moduleConfig';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/diary';
 
@@ -138,7 +138,7 @@ export default class Dashboard extends React.PureComponent<IDashboardProps> {
           <IconButtonModule
             onPress={() => this.props.navigation.navigate(edtConfig.routeName)}
             text={I18n.t('viesco-timetable')}
-            color={viescoTheme.palette.timetable}
+            color={viescoTheme.palette.edt}
             icon="calendar_today"
             nbModules={nbModules}
           />

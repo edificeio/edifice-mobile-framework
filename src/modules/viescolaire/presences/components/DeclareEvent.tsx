@@ -12,8 +12,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import {
   deleteEvent,
   postLateEvent,

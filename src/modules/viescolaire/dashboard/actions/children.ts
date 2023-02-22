@@ -1,6 +1,11 @@
 import { Dispatch } from 'redux';
 
-import { competencesDevoirsActionsCreators, competencesMoyennesActionsCreators } from '~/modules/viescolaire/competences/actions';
+import {
+  competencesDevoirsActionsCreators,
+  competencesMoyennesActionsCreators,
+} from '~/framework/modules/viescolaire/competences/actions';
+import { diaryHomeworksActionsCreators, diarySessionsActionsCreators } from '~/framework/modules/viescolaire/diary/actions';
+import { edtSlotsActionsCreators } from '~/framework/modules/viescolaire/edt/actions';
 import { dataActions as CoursesActions } from '~/modules/viescolaire/dashboard/actions/courses';
 import {
   periodsDataActions as periodActions,
@@ -9,8 +14,6 @@ import {
 import { dataActions as teacherActions } from '~/modules/viescolaire/dashboard/actions/personnel';
 import { dataActions as subjectActions } from '~/modules/viescolaire/dashboard/actions/subjects';
 import { selectChildActionType } from '~/modules/viescolaire/dashboard/state/children';
-import { diaryHomeworksActionsCreators, diarySessionsActionsCreators } from '~/modules/viescolaire/diary/actions';
-import { edtSlotsActionsCreators } from '~/modules/viescolaire/edt/actions';
 import { studentEventsActions as historyActions } from '~/modules/viescolaire/presences/actions/events';
 
 // ACTION LIST ------------------------------------------------------------------------------------

@@ -59,6 +59,7 @@ export interface IUserInfoBackend {
   firstName?: string;
   lastName?: string;
   groupsIds?: string[];
+  classes?: string[];
   children?: { [userId: string]: { lastName: string; firstName: string } };
 }
 
@@ -241,6 +242,7 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend, us
     firstName: userinfo.firstName,
     lastName: userinfo.lastName,
     groups: userinfo.groupsIds,
+    classes: userinfo.classes,
     structures: userPrivateData?.structureNodes,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };

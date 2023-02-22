@@ -8,7 +8,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import CourseComponent from '~/modules/viescolaire/presences/components/CourseComponent';
 import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
 

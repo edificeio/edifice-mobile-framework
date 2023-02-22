@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { PageView } from '~/framework/components/page';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { deleteEvent, postAbsentEvent, validateRegisterAction } from '~/modules/viescolaire/presences/actions/events';
 import { fetchClassesCallAction } from '~/modules/viescolaire/presences/actions/teacherClassesCall';
 import TeacherCallSheet from '~/modules/viescolaire/presences/components/TeacherCallSheet';

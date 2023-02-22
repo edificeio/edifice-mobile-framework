@@ -7,8 +7,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { SmallBoldText } from '~/framework/components/text';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import ChildPicker from '~/modules/viescolaire/dashboard/containers/ChildPicker';
-import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
 import Dropdown from '~/ui/Dropdown';
 
