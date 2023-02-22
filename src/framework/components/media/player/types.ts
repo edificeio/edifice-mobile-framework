@@ -11,4 +11,6 @@ export interface MediaPlayerParams {
   source: any;
 }
 
-export interface MediaPlayerProps extends NavigationInjectedProps<MediaPlayerParams> {}
+export interface MediaPlayerProps extends NavigationInjectedProps<MediaPlayerParams> {
+  connected: boolean;
+}

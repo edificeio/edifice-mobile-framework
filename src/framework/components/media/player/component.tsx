@@ -4,6 +4,7 @@ import { StatusBar, TouchableOpacity, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { LANDSCAPE, PORTRAIT, useOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
+import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -13,7 +14,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
-export default function MediaPlayer(props: MediaPlayerProps) {
+function MediaPlayer(props: MediaPlayerProps) {
   let source = props.navigation.getParam('source');
   const type = props.navigation.getParam('type');
   const [error, setError] = React.useState(false);
@@ -51,6 +52,14 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     StatusBar.setHidden(false);
     props.navigation.goBack();
   };
+
+  React.useEffect(() => {
+    if (!props.connected) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+  }, [props.connected]);
 
   const onVPEnd = () => {
     setVPControlTimeoutDelay(999999);
@@ -113,3 +122,7 @@ export default function MediaPlayer(props: MediaPlayerProps) {
     </>
   );
 }
+
+export default connect((state: any) => ({
+  connected: !!state.connectionTracker.connected,
+}))(MediaPlayer);
