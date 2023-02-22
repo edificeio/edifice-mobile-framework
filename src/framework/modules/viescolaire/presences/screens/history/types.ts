@@ -1,7 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
-import { IPresencesUserChildrenState } from '~/modules/viescolaire/presences/state/userChildren';
+import { AsyncState } from '~/framework/util/redux/async';
 
 export interface PresencesHistoryScreenProps {
   data: any;
@@ -13,7 +14,7 @@ export interface PresencesHistoryScreenProps {
   childId: string;
   structureId: string;
   groupId: string;
-  childrenInfos: IPresencesUserChildrenState;
+  childrenInfos: AsyncState<IUserChild>;
   hasRightToCreateAbsence: boolean;
   getEvents: (childId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => void;
   getPeriods: (structureId: string, groupId: string) => void;

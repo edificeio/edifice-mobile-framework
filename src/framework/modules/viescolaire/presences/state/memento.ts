@@ -1,5 +1,5 @@
+import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { AsyncState, createAsyncActionTypes } from '~/framework/util/redux/async';
-import moduleConfig from '~/modules/viescolaire/presences/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 

@@ -240,16 +240,15 @@ export const presencesService = {
       description: string,
     ) => {
       const api = '/presences/statements/absences';
-      const body = JSON.stringify({
-        structure_id: structureId,
-        student_id: studentId,
-        start_at: startDate.format('YYYY-MM-DD HH:mm:ss'),
-        end_at: endDate.format('YYYY-MM-DD HH:mm:ss'),
-        description,
-      });
+      const formData = new FormData();
+      formData.append('structure_id', structureId);
+      formData.append('student_id', studentId);
+      formData.append('start_at', startDate.format('YYYY-MM-DD HH:mm:ss'));
+      formData.append('end_at', endDate.format('YYYY-MM-DD HH:mm:ss'));
+      formData.append('description', description);
       await fetchJSONWithCache(api, {
         method: 'POST',
-        body,
+        body: formData,
       });
     },
     createWithFile: async (
@@ -277,8 +276,7 @@ export const presencesService = {
           fields,
         },
         res => {
-          console.log(res);
-          return undefined!; // TODO return file id
+          return res.id;
         },
       );
     },

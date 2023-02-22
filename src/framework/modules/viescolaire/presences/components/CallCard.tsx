@@ -10,7 +10,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
 const styles = StyleSheet.create({
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 });
 
 interface ICallCardProps {
-  course: ICourses;
+  course: ICourse;
   onPress: () => any;
 }
 

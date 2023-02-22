@@ -10,7 +10,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { BottomColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
   itemContainer: { flex: 1, padding: 0 },
@@ -37,7 +37,7 @@ export default ({
   isCourseEditable,
   style,
 }: {
-  item: ICourses;
+  item: ICourse;
   onPress: () => any;
   isCourseNow: boolean;
   isCourseEditable: boolean;

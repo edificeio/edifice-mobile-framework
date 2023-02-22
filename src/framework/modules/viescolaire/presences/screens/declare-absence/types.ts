@@ -1,16 +1,16 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { ISession } from '~/framework/modules/auth/model';
 import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
 
 export interface PresencesDeclareAbsenceScreenProps {
-  childName: string;
-  declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
-  declareAbsenceWithFileAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string, file: LocalFile) => void;
+  childId?: string;
+  childName?: string;
+  session?: ISession;
+  structureId?: string;
 }
 
-export interface PresencesDeclareAbsenceScreenNavParams {
-  childName?: string;
-}
+export interface PresencesDeclareAbsenceScreenNavParams {}
 
 export interface PresencesDeclareAbsenceScreenPrivateProps
   extends NativeStackScreenProps<PresencesNavigationParams, 'declareAbsence'>,

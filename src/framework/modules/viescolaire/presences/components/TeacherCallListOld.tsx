@@ -10,7 +10,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import CourseComponent from '~/framework/modules/viescolaire/presences/components/CourseComponent';
-import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
   container: {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 });
 
 interface ICallListProps {
-  courseList: ICourses[];
+  courseList: ICourse[];
   isFetching: boolean;
   onCoursePress: (course: any) => void;
   navigation: any;
