@@ -1,12 +1,11 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { tryAction } from '~/framework/util/redux/actions';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { fetchCountAction } from '~/modules/conversation/actions/count';
-import { fetchInitAction } from '~/modules/conversation/actions/initMails';
+import { fetchCountAction } from '~/framework/modules/conversation/actions/count';
+import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import {
   deleteDraftsAction,
   deleteMailsAction,
@@ -16,15 +15,22 @@ import {
   restoreMailsToInboxAction,
   toggleReadAction,
   trashMailsAction,
-} from '~/modules/conversation/actions/mail';
-import { fetchMailListAction, fetchMailListFromFolderAction } from '~/modules/conversation/actions/mailList';
-import MailList from '~/modules/conversation/components/MailList';
-import moduleConfig from '~/modules/conversation/moduleConfig';
-import { ICountMailboxes, getCountListState } from '~/modules/conversation/state/count';
-import { IFolder, IInitMail, getInitMailListState } from '~/modules/conversation/state/initMails';
-import { getMailListState } from '~/modules/conversation/state/mailList';
+} from '~/framework/modules/conversation/actions/mail';
+import { fetchMailListAction, fetchMailListFromFolderAction } from '~/framework/modules/conversation/actions/mailList';
+import MailList from '~/framework/modules/conversation/components/MailList';
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation/index';
+import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
+import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
+import { getMailListState } from '~/framework/modules/conversation/state/mailList';
+import { tryAction } from '~/framework/util/redux/actions';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
 
-// ------------------------------------------------------------------------------------------------
+export interface ConversationMailListScreenNavigationParams {
+  folderId: any;
+  folderName: string;
+  key: any;
+}
 
 export type IInit = {
   data: IInitMail;
@@ -32,16 +38,13 @@ export type IInit = {
   isFetching: boolean;
   error: any;
 };
-
 export type ICount = {
   data: ICountMailboxes;
   isPristine: boolean;
   isFetching: boolean;
   error: any;
 };
-
-type MailListContainerProps = {
-  navigation: NavigationScreenProp<any>;
+export interface ConversationMailListScreenEventProps {
   fetchInit: () => IInit;
   fetchMailList: (page: number, key: string) => any;
   fetchMailFromFolder: (folderId: string, page: number) => any;
@@ -53,19 +56,25 @@ type MailListContainerProps = {
   moveToInbox: (mailIds: string[]) => void;
   restoreToFolder: (mailIds: string[], folderId: string) => void;
   restoreToInbox: (mailIds: string[]) => void;
+  fetchCount: () => ICount;
+}
+export interface ConversationMailListScreenDataProps {
+  navigation: NavigationScreenProp<any>;
   isPristine: boolean;
   isFetching: boolean;
   notifications: any;
   folders: IFolder[];
   isFocused: boolean;
-  fetchCount: () => ICount;
   init: IInit;
   count: ICount;
   items: any[];
   descriptors: any[];
-};
+}
+export type ConversationMailListScreenProps = ConversationMailListScreenEventProps &
+  ConversationMailListScreenDataProps &
+  NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.home>;
 
-type MailListContainerState = {
+type ConversationMailListScreenState = {
   unsubscribe: any;
   fetchRequested: boolean;
   firstFetch: boolean;
@@ -74,7 +83,7 @@ type MailListContainerState = {
   folders: IFolder[];
 };
 
-class MailListContainer extends React.PureComponent<MailListContainerProps, MailListContainerState> {
+class ConversationMailListScreen extends React.PureComponent<ConversationMailListScreenProps, ConversationMailListScreenState> {
   constructor(props) {
     super(props);
 
@@ -225,8 +234,11 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
-const MailListContainerConnectedWithTracking = withViewTracking(props => {
+const ConversationMailListScreenConnected = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withNavigationFocus(ConversationMailListScreen));
+const ConversationMailListScreenConnectedWithTracking = withViewTracking(props => {
   const key = props.navigation?.getParam('key');
   const getValue = () => {
     switch (key) {
@@ -244,6 +256,6 @@ const MailListContainerConnectedWithTracking = withViewTracking(props => {
     }
   };
   return [moduleConfig.trackingName.toLowerCase(), getValue()];
-})(MailListContainerConnected);
+})(ConversationMailListScreenConnected);
 
-export default MailListContainerConnectedWithTracking;
+export default ConversationMailListScreenConnectedWithTracking;
