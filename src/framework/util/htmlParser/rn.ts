@@ -24,8 +24,9 @@
  */
 import { TextStyle } from 'react-native';
 
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Platform } from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
 
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
@@ -113,7 +114,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
   /**
    * Current deepest Text Nugget. New text encountered is appended in this nugget.
    */
-  protected currentTextNugget?: ITextNugget = null;
+  protected currentTextNugget?: ITextNugget = undefined;
 
   /**
    * Array of encountered <span> tags. The array stores a number for each of them to store how many TextNuggets they have generated.
@@ -123,7 +124,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
   /**
    * Current ImageNugget (aka image group). Successives <img> tags are grouped in ImageNuggets.
    */
-  protected currentImageNugget?: IImagesNugget = null;
+  protected currentImageNugget?: IImagesNugget = undefined;
 
   /**
    * Is the next word the first one of his top-level text nugget ?
@@ -133,7 +134,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
   /**
    * Current link to url
    */
-  protected currentLink?: string = null;
+  protected currentLink?: string = undefined;
 
   /**
    * Current div empty -> line break
@@ -145,10 +146,17 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
    */
   protected veryFirstText: boolean = true;
 
+  /**
+   *
+   * Current Platform
+   */
+  protected platform?: Platform = undefined;
+
   // ----------------------------------------------------------------------------------------------
 
   public constructor(opts?: IHtmlParserRNOptions) {
     super({ ...HtmlParserRN.defaultOpts, ...opts });
+    this.platform = assertSession()?.platform;
   }
 
   protected beforeParse = (html: string) => {
@@ -452,8 +460,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     let cleanUrl = tag.attrs.href;
     if (cleanUrl && cleanUrl.startsWith('/')) {
       // Absolute url. We must add the platform domain name manually.
-      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
-      cleanUrl = DEPRECATED_getCurrentPlatform()!.url + cleanUrl;
+      if (!this.platform) throw new Error('must specify a platform');
+      cleanUrl = this.platform!.url + cleanUrl;
     }
 
     const nugget: ILinkTextNugget = {
@@ -526,7 +534,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       // A - 1 - Build image object representation
       const emoji: IInlineImageNugget = {
         alt: tag.attrs.alt,
-        src: DEPRECATED_getCurrentPlatform()! + tag.attrs.src,
+        src: this.platform! + tag.attrs.src,
         type: HtmlParserNuggetTypes.InlineImage,
       };
       this.insertInlineImageNugget(emoji);
@@ -536,9 +544,9 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       if (src && src.indexOf('file://') === -1) {
         // TODO : Better parse image url and detect cases
         if (src.indexOf('://') === -1) {
-          if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+          if (!this.platform) throw new Error('must specify a platform');
           if (!src.startsWith('/')) src = '/' + src;
-          src = DEPRECATED_getCurrentPlatform()!.url + src;
+          src = this.platform!.url + src;
         }
         const split = src.split('?');
         src = split[0];
@@ -594,8 +602,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     if (src && src.indexOf('file://') === -1) {
       // TODO : Better parse audio url and detect cases
       if (src.indexOf('://') === -1) {
-        if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
-        src = DEPRECATED_getCurrentPlatform()!.url + src;
+        if (!this.platform) throw new Error('must specify a platform');
+        src = this.platform!.url + src;
       }
     }
     const audioNugget: IAudioNugget = {
@@ -619,8 +627,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     if (src && src.indexOf('file://') === -1) {
       // TODO : Better parse video url and detect cases
       if (src.indexOf('://') === -1) {
-        if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
-        src = DEPRECATED_getCurrentPlatform()!.url + src;
+        if (!this.platform) throw new Error('must specify a platform');
+        src = this.platform!.url + src;
       }
     }
     // Parse additional video metadata

@@ -28,9 +28,9 @@ export interface IHtmlContentViewProps extends ViewProps {
   loadingComp?: JSX.Element;
   onHtmlError?: () => void;
   getContentFromResource?: (responseJson: any) => string;
-  onDownload?: (att: IRemoteAttachment) => void;
-  onError?: (att: IRemoteAttachment) => void;
-  onOpen?: (att: IRemoteAttachment) => void;
+  onDownload?: () => void;
+  onError?: () => void;
+  onOpen?: () => void;
   onDownloadAll?: () => void;
 }
 
@@ -44,7 +44,7 @@ interface IHtmlContentViewState {
 }
 
 export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlContentViewState> {
-  public constructor(props) {
+  public constructor(props: IHtmlContentViewProps | Readonly<IHtmlContentViewProps>) {
     super(props);
     this.state = {
       loading: false,
@@ -68,7 +68,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
       await this.compute();
     } catch (e) {
       this.setState({ error: true });
-      onHtmlError && onHtmlError();
+      if (onHtmlError) onHtmlError();
       throw e;
     }
   }
@@ -89,7 +89,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
       });
     html = html.replace(attachmentGroupRegex, '');
     this.setState({ html });
-    attachments && this.setState({ attachments });
+    if (attachments) this.setState({ attachments });
   }
 
   public async compute() {
@@ -112,7 +112,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
 
       if (!responseHtml) {
         this.setState({ error: true });
-        onHtmlError && onHtmlError();
+        if (onHtmlError) onHtmlError();
       } else this.setState({ html: responseHtml });
     } else if (!jsx) {
       // Else, if there is not JSX, try to compute it
@@ -131,7 +131,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
   public render() {
     const { error, jsx, attachments, loading } = this.state;
     const { loadingComp, emptyMessage, onDownload, onError, onDownloadAll, onOpen } = this.props;
-    const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null);
+    const hasContent = jsx && jsx.props.children.some((child: any) => child !== undefined && child != null);
     const loadingComponent = loadingComp || <Loading />;
     const hasAttachments = attachments && attachments.length;
 
