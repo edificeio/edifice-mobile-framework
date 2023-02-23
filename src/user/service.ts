@@ -115,7 +115,7 @@ export interface IUserRequirements {
   needRevalidateEmail?: boolean;
   needRevalidateTerms?: boolean;
   needRevalidateMobile?: boolean;
-  needMfa?: boolean;
+  needMFA?: boolean;
 }
 
 class UserService {
