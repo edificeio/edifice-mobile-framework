@@ -16,7 +16,7 @@ index 4e95969..0e08e8a 100644
       * Title of the video
       */
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 5ea0ab2..1e79fb6 100644
+index 5ea0ab2..b3b3a5a 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
@@ -27,16 +27,18 @@ index 5ea0ab2..1e79fb6 100644
      paused = false,
      muted = false,
      volume = 1,
-@@ -116,6 +117,8 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -116,8 +117,9 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    const _onSeek = (obj: OnSeekData) => {
      if (!seeking) {
        setControlTimeout();
 +    } else {
 +      resetControlTimeout();
      }
-     setCurrentTime(obj.seekTime);
+-    setCurrentTime(obj.seekTime);
  
-@@ -189,7 +192,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     if (typeof onSeek === 'function') {
+       onSeek(obj);
+@@ -189,7 +191,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
            togglePlayPause();
            resetControlTimeout();
          } else {
@@ -45,7 +47,7 @@ index 5ea0ab2..1e79fb6 100644
          }
          tapActionTimeout.current = null;
        }, doubleTapTime);
-@@ -429,8 +432,13 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -429,8 +431,13 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
                onPressRewind={() =>
                  videoRef?.current?.seek(currentTime - rewindTime)
                }
