@@ -1,10 +1,10 @@
 import { Dispatch } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { newMailService } from '~/framework/modules/conversation/service/newMail';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { getUserSession } from '~/framework/util/session';
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
@@ -37,7 +37,7 @@ export function updateDraftMailAction(mailId: string, mailDatas) {
 export function addAttachmentAction(mailId: string, attachment: LocalFile, callbacks?: IUploadCallbaks) {
   return async (dispatch: Dispatch, getState: () => IGlobalState) => {
     try {
-      const session = getUserSession();
+      const session = assertSession();
       const newAttachment = await newMailService.addAttachment(session, mailId, attachment, callbacks);
       return newAttachment;
     } catch (errmsg) {

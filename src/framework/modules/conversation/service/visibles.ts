@@ -1,11 +1,10 @@
+import { ISession } from '~/framework/modules/auth/model';
 import { IVisibles } from '~/framework/modules/conversation/state/visibles';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IUserSession } from '~/framework/util/session';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 
 export const visiblesService = {
-  get: async (session: IUserSession) => {
+  get: async (session: ISession) => {
     const api = '/conversation/visible';
-    return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`) as Promise<IVisibles>;
+    return signedFetchJson(`${session?.platform!.url}${api}`) as Promise<IVisibles>;
   },
 };

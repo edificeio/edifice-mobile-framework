@@ -1,6 +1,6 @@
+import { ISession } from '~/framework/modules/auth/model';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService, { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 export type IUser = {
@@ -80,7 +80,7 @@ export const newMailService = {
   updateDraftMail: async (mailId, mailDatas) => {
     await fetchJSONWithCache(`/conversation/draft/${mailId}`, { method: 'PUT', body: JSON.stringify(formatMailDatas(mailDatas)) });
   },
-  addAttachment: async (session: IUserSession, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
+  addAttachment: async (session: ISession, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
     const url = `/conversation/message/${draftId}/attachment`;
     return await fileHandlerService.uploadFile<SyncedFileWithId>(
       session,
