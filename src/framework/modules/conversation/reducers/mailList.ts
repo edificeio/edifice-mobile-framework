@@ -1,5 +1,5 @@
+import { actionTypes, initialState } from '~/framework/modules/conversation/state/mailList';
 import { createSessionAsyncReducer } from '~/infra/redux/async2';
-import { initialState, actionTypes } from '~/modules/conversation/state/mailList';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

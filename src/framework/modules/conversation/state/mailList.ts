@@ -1,7 +1,7 @@
 import moment from 'moment';
 
+import mailConfig from '~/framework/modules/conversation/module-config';
 import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
-import mailConfig from '~/modules/conversation/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 

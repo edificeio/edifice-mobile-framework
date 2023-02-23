@@ -1,5 +1,5 @@
+import { ICountMailboxes } from '~/framework/modules/conversation/state/count';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { ICountMailboxes } from '~/modules/conversation/state/count';
 
 // Data type of what is given by the backend.
 export type FoldersBackend = {

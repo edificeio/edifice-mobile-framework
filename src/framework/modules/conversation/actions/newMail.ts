@@ -1,10 +1,10 @@
 import { Dispatch } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
+import { newMailService } from '~/framework/modules/conversation/service/newMail';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
-import { newMailService } from '~/modules/conversation/service/newMail';
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {

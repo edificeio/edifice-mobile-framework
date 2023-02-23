@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
-import signatureConfig from '~/modules/conversation/moduleConfig';
+import signatureConfig from '~/framework/modules/conversation/module-config';
+import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 
 // THE MODEL --------------------------------------------------------------------------------------
 

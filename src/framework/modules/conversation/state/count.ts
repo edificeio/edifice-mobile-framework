@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
-import folderConfig from '~/modules/conversation/moduleConfig';
+import folderConfig from '~/framework/modules/conversation/module-config';
+import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
 
 // THE MODEL --------------------------------------------------------------------------------------
 

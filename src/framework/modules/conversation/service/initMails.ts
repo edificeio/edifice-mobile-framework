@@ -1,5 +1,5 @@
+import { IInitMail } from '~/framework/modules/conversation/state/initMails';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { IInitMail } from '~/modules/conversation/state/initMails';
 
 // Data type of what is given by the backend.
 export type IInitMailListBackend = {

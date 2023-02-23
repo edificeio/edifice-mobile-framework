@@ -1,6 +1,6 @@
+import conversationConfig from '~/framework/modules/conversation/module-config';
 import { AsyncState, createAsyncActionTypes } from '~/framework/util/redux/async';
 import { computeSearchQuery, computeSearchValue } from '~/framework/util/string';
-import conversationConfig from '~/modules/conversation/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 

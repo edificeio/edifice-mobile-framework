@@ -1,8 +1,8 @@
 import { Dispatch } from 'redux';
 
+import { foldersService } from '~/framework/modules/conversation/service/folders';
+import { ICountMailboxes, actionTypes } from '~/framework/modules/conversation/state/count';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import { foldersService } from '~/modules/conversation/service/folders';
-import { ICountMailboxes, actionTypes } from '~/modules/conversation/state/count';
 
 export const dataActions = createAsyncActionCreators<ICountMailboxes>(actionTypes);
 

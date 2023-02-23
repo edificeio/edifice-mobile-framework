@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 
-import { mailService } from '~/modules/conversation/service/mail';
+import { mailService } from '~/framework/modules/conversation/service/mail';
 
 export function toggleReadAction(mailIds: string[], read: boolean) {
   return async (dispatch: Dispatch) => {

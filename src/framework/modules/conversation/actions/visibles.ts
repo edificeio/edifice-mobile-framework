@@ -1,10 +1,10 @@
 import type { Dispatch } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
+import { visiblesService } from '~/framework/modules/conversation/service/visibles';
+import { IVisibles, actionTypes } from '~/framework/modules/conversation/state/visibles';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
-import { visiblesService } from '~/modules/conversation/service/visibles';
-import { IVisibles, actionTypes } from '~/modules/conversation/state/visibles';
 
 export const dataActions = createAsyncActionCreators<IVisibles>(actionTypes);
 

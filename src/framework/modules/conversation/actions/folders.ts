@@ -1,10 +1,10 @@
 import { Dispatch } from 'redux';
 
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import { foldersService } from '~/framework/modules/conversation/service/folders';
+import { IFolderList, actionTypes } from '~/framework/modules/conversation/state/folders';
 import { Trackers } from '~/framework/util/tracker';
 import { createAsyncActionCreators } from '~/infra/redux/async2';
-import moduleConfig from '~/modules/conversation/moduleConfig';
-import { foldersService } from '~/modules/conversation/service/folders';
-import { IFolderList, actionTypes } from '~/modules/conversation/state/folders';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

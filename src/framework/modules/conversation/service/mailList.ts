@@ -1,7 +1,7 @@
 import moment from 'moment';
 
+import { IMailList } from '~/framework/modules/conversation/state/mailList';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { IMailList } from '~/modules/conversation/state/mailList';
 
 // Data type of what is given by the backend.
 export type IMailListBackend = {
