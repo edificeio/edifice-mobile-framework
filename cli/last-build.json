@@ -1,6 +1,6 @@
 {
-  "last": "2023-02-23 18:22:00",
-  "notes": "upgrade(mediaplayer): Upgrade react-native-media-console\nRevert \"Merge branch 'dev/1.9.3' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.9.3\"\nMerge branch 'dev/1.9.3' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.9.3\nfix(video-player): MB-1332, fix current time on video ending\nfix(2fa): MB-1325, requirements.needMfa typo\nfix(mediaplayer): MB-1310, Force portrait orientation when leaving MediaPlayer\nfix(conversation): MB-1296, no duplicate drafts\nfix(video-player) show empty connection screen when error is connection type\nfix(media-player): MB-1327, show empty screen when airplane is activated\nfix(video-player): MB-1314, show empty state when video not available\nfix(video-player): MB-1302, when click on forward button when under 10sec end of video, it brings the video to the end\nfix(video-player) MB-1315, reset timeout when move current time\nfix(conversation): MB-1301, handle upload multiple attachments at once\nfix(notifier): MB-1294 bug notif when long text\nfix(conversation): MB-1299, Avoid loading next page when refreshing mail list\nfix(form): AMV2-491 edit new form notif handler, show error toast if user lacks responder right\nfix(diary): MO-208 fix diary homework/session screen android scroll\nfix(pdf): MB-1292, Handle onPressLink\nfix(conversation): MB-1300, Missing i18n strings addition\nrelease: 1.9.3-rc.2(1090311)",
-  "version": "1.9.3-alpha.10(1090312)",
+  "last": "2023-02-23 19:52:37",
+  "notes": "release: 1.9.3-alpha.10(1090312)",
+  "version": "1.9.3-rc.3(1090313)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
