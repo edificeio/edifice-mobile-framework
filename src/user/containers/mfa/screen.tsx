@@ -121,14 +121,14 @@ const MFAScreen = (props: MFAScreenProps) => {
       if (isEmailMFA) validationState = await userService.verifyEmailCode(toVerify);
       else if (isMobileMFA) validationState = await userService.verifyMobileCode(toVerify);
       else validationState = await userService.verifyMFACode(toVerify);
-      const codestate =
+      const state =
         validationState?.state === 'valid'
           ? CodeState.CODE_CORRECT
           : validationState?.ttl === 0 || validationState?.tries === 0
           ? CodeState.CODE_EXPIRED
           : CodeState.CODE_WRONG;
-      setCodeState(codestate);
-      startAnimation(codestate);
+      setCodeState(state);
+      startAnimation(state);
     } catch {
       setCodeState(CodeState.CODE_STATE_UNKNOWN);
     } finally {
