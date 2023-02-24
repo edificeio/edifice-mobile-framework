@@ -117,25 +117,14 @@ const MFAScreen = (props: MFAScreenProps) => {
   const verifyCode = async (toVerify: string) => {
     try {
       setIsVerifyingCode(true);
-      let validationInfos;
-      let state;
-      if (isEmailMFA) {
-        await userService.verifyEmailCode(toVerify);
-        validationInfos = await userService.getEmailValidationInfos();
-        state = validationInfos?.emailState;
-      } else if (isMobileMFA) {
-        await userService.verifyMobileCode(toVerify);
-        validationInfos = await userService.getMobileValidationInfos();
-        state = validationInfos?.mobileState;
-      } else {
-        await userService.verifyMFACode(toVerify);
-        validationInfos = await userService.getMFAValidationInfos();
-        state = validationInfos?.state;
-      }
+      let validationState;
+      if (isEmailMFA) validationState = await userService.verifyEmailCode(toVerify);
+      else if (isMobileMFA) validationState = await userService.verifyMobileCode(toVerify);
+      else validationState = await userService.verifyMFACode(toVerify);
       const codestate =
-        state?.state === 'valid'
+        validationState?.state === 'valid'
           ? CodeState.CODE_CORRECT
-          : state?.ttl === 0 || state?.tries === 0
+          : validationState?.ttl === 0 || validationState?.tries === 0
           ? CodeState.CODE_EXPIRED
           : CodeState.CODE_WRONG;
       setCodeState(codestate);

@@ -5,12 +5,9 @@ import { Platform } from 'react-native';
 import AppLink from 'react-native-app-link';
 import DeviceInfo from 'react-native-device-info';
 
-
-
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-
 
 export interface IEntcoreParentChildrenByStructure {
   children: {
@@ -319,10 +316,11 @@ class UserService {
 
   async verifyEmailCode(key: string) {
     try {
-      await fetchJSONWithCache('/directory/user/mailstate', {
+      const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
         method: 'POST',
         body: JSON.stringify({ key }),
-      });
+      })) as IEntcoreEmailValidationState;
+      return emailValidationState;
     } catch (e) {
       // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
     }
@@ -346,10 +344,11 @@ class UserService {
 
   async verifyMobileCode(key: string) {
     try {
-      (await fetchJSONWithCache('/directory/user/mobilestate', {
+      const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
         method: 'POST',
         body: JSON.stringify({ key }),
       })) as IEntcoreMobileValidationState;
+      return mobileValidationState;
     } catch (e) {
       // console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
     }
@@ -373,10 +372,11 @@ class UserService {
 
   async verifyMFACode(key: string) {
     try {
-      await fetchJSONWithCache('/auth/user/mfa/code', {
+      const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
         method: 'POST',
         body: JSON.stringify({ key }),
-      });
+      })) as IEntcoreMFAValidationState;
+      return mfaValidationState;
     } catch (e) {
       // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
     }
