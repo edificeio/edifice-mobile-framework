@@ -7,7 +7,7 @@ import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import appConf, { Platform } from '~/framework/util/appConf';
+import appConf from '~/framework/util/appConf';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { urlSigner } from '~/infra/oauth';
 
@@ -204,8 +204,6 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
 
   lastModulename: string | undefined = undefined;
 
-  platform?: Platform = undefined;
-
   reportQueue: Request[] = [];
 
   sending: boolean = false;
@@ -231,7 +229,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 
   async _init() {
-    this.platform = assertSession()?.platform;
+    // Nothing to do here
   }
 
   async _setUserId(id: string) {
@@ -247,6 +245,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 
   async _trackView(path: string[]) {
+    const platform = assertSession()?.platform;
     const moduleName = (
       path[0] === 'timeline' ? (['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase()) ? path[2] : 'timeline') : path[0]
     ).toLowerCase();
@@ -262,9 +261,9 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       viesco: 'Presences',
     };
     let willLog = false;
-    if (this.platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
+    if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
       this.reportQueue.push(
-        new Request(`${this.platform!.url}/infra/event/mobile/store`, {
+        new Request(`${platform!.url}/infra/event/mobile/store`, {
           method: 'POST',
           body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
         }),
