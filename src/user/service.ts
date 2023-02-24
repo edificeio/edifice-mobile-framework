@@ -5,9 +5,12 @@ import { Platform } from 'react-native';
 import AppLink from 'react-native-app-link';
 import DeviceInfo from 'react-native-device-info';
 
+
+
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
+
 
 export interface IEntcoreParentChildrenByStructure {
   children: {
@@ -115,7 +118,7 @@ export interface IUserRequirements {
   needRevalidateEmail?: boolean;
   needRevalidateTerms?: boolean;
   needRevalidateMobile?: boolean;
-  needMFA?: boolean;
+  needMfa?: boolean;
 }
 
 class UserService {
