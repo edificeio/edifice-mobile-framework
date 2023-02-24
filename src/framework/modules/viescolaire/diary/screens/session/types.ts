@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { Session } from '~/framework/modules/viescolaire/common/utils/diary';
 import type { DiaryNavigationParams } from '~/framework/modules/viescolaire/diary/navigation';
-import { Session } from '~/modules/viescolaire/utils/diary';
 
 export interface DiarySessionScreenProps {}
 

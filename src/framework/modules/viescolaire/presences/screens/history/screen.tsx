@@ -14,18 +14,18 @@ import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { fetchPeriodsListAction, fetchYearAction } from '~/framework/modules/viescolaire/dashboard/actions/periods';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { getPeriodsListState, getYearState } from '~/framework/modules/viescolaire/dashboard/state/periods';
+import {
+  fetchPresencesHistoryAction,
+  fetchPresencesSchoolYearAction,
+  fetchPresencesTermsAction,
+  fetchPresencesUserChildrenAction,
+} from '~/framework/modules/viescolaire/presences/actions';
 import HistoryComponent from '~/framework/modules/viescolaire/presences/components/History';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { getStudentEvents } from '~/modules/viescolaire/presences/actions/events';
-import { fetchUserChildrenAction } from '~/modules/viescolaire/presences/actions/userChildren';
-import { getHistoryEvents } from '~/modules/viescolaire/presences/state/events';
-import { getUserChildrenState } from '~/modules/viescolaire/presences/state/userChildren';
 
 import { PresencesHistoryScreenPrivateProps } from './types';
 
@@ -81,16 +81,10 @@ class PresencesHistoryScreen extends React.PureComponent<PresencesHistoryScreenP
 
   public componentDidMount() {
     const { userType, userId, childId, structureId, groupId, year, periods } = this.props;
-    if (userType === UserType.Relative) {
-      if (userId !== undefined) {
-        this.props.getChildInfos(userId);
-      } else if (this.props.route.params.userId !== undefined) {
-        this.props.getChildInfos(this.props.route.params.userId);
-      }
-    }
-    if (periods.isPristine && groupId && groupId !== undefined) this.props.getPeriods(structureId, groupId);
-    if (year.isPristine) this.props.getYear(structureId);
-    else this.props.getEvents(childId, structureId, year.data.start_date, year.data.end_date);
+    if (userType === UserType.Relative && userId) this.props.fetchUserChildren(userId);
+    if (periods.isPristine && groupId && groupId !== undefined) this.props.fetchTerms(structureId, groupId);
+    if (year.isPristine) this.props.fetchSchoolYear(structureId);
+    else this.props.fetchHistory(childId, structureId, year.data.start_date, year.data.end_date);
   }
 
   public componentDidUpdate(prevProps, prevState) {
@@ -99,23 +93,19 @@ class PresencesHistoryScreen extends React.PureComponent<PresencesHistoryScreenP
 
     // if user is a relative, get child informations
     if (userType === UserType.Relative) {
-      if (!groupId && groupId === undefined && !this.props.childrenInfos.isFetching) {
-        if (userId !== undefined) {
-          this.props.getChildInfos(userId);
-        } else {
-          this.props.getChildInfos(this.props.route.params.userId);
-        }
+      if (!groupId && groupId === undefined && !this.props.childrenInfos.isFetching && userId) {
+        this.props.fetchUserChildren(userId);
       } else if (this.state.groupId !== this.props.groupId && this.props.groupId !== undefined && this.state.groupId === '') {
         this.setState({ groupId: this.props.groupId });
-        this.props.getPeriods(structureId, groupId);
-        this.props.getYear(structureId);
+        this.props.fetchTerms(structureId, groupId);
+        this.props.fetchSchoolYear(structureId);
       }
     }
 
     // on child change
     if (prevProps.childId !== childId && periods.data.length === 0) {
-      this.props.getPeriods(structureId, groupId);
-      this.props.getYear(structureId);
+      this.props.fetchTerms(structureId, groupId);
+      this.props.fetchSchoolYear(structureId);
     }
 
     // on periods init
@@ -207,7 +197,7 @@ class PresencesHistoryScreen extends React.PureComponent<PresencesHistoryScreenP
       selected: newPeriod,
       period,
     });
-    this.props.getEvents(childId, structureId, period.start_date, period.end_date);
+    this.props.fetchHistory(childId, structureId, period.start_date, period.end_date);
   };
 
   public render() {
@@ -231,26 +221,23 @@ export default connect(
     const session = getSession(state);
     const userId = session?.user.id;
     const userType = session?.user.type;
-    const events = getHistoryEvents(state);
-    const periods = getPeriodsListState(state);
-    const year = getYearState(state);
     const childId = userType === UserType.Student ? userId : getSelectedChild(state)?.id;
 
     return {
-      events,
+      events: presencesState.history.data,
       structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
       userType,
       userId,
       childId,
-      periods,
-      year,
+      periods: presencesState.terms,
+      year: presencesState.schoolYear,
       groupId:
         userType === UserType.Student
-          ? state.user.info.classes[0]
-          : getUserChildrenState(state).data.find(child => child.id === childId)?.structures[0].classes[0].id,
-      childrenInfos: getUserChildrenState(state),
-      isFetchingData: events.isFetching || periods.isFetching || year.isFetching,
-      isPristineData: events.isPristine || periods.isPristine || year.isPristine,
+          ? session?.user.classes?.[0]
+          : presencesState.userChildren.data.find(child => child.id === childId)?.structures[0].classes[0].id,
+      childrenInfos: presencesState.userChildren,
+      isFetchingData: presencesState.history.isFetching,
+      isPristineData: presencesState.history.isPristine,
       hasRightToCreateAbsence: session?.authorizedActions.some(
         action => action.displayName === 'presences.absence.statements.create',
       ),
@@ -259,10 +246,10 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        getEvents: tryAction(getStudentEvents, undefined, true),
-        getPeriods: tryAction(fetchPeriodsListAction, undefined, true),
-        getYear: tryAction(fetchYearAction, undefined, true),
-        getChildInfos: tryAction(fetchUserChildrenAction, undefined, true),
+        fetchHistory: tryAction(fetchPresencesHistoryAction, undefined, true),
+        fetchSchoolYear: tryAction(fetchPresencesSchoolYearAction, undefined, true),
+        fetchTerms: tryAction(fetchPresencesTermsAction, undefined, true),
+        fetchUserChildren: tryAction(fetchPresencesUserChildrenAction, undefined, true),
       },
       dispatch,
     ),

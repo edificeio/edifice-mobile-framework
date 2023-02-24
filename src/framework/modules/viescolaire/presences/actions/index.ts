@@ -4,7 +4,9 @@
 import { ThunkAction } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { IClassCall, ICourse, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
+import { viescoService } from '~/framework/modules/viescolaire/common/service';
+import { IClassCall, ICourse, IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
@@ -73,6 +75,45 @@ export const fetchPresencesCoursesAction =
   };
 
 /**
+ * Fetch events history.
+ */
+export const presencesHistoryActionsCreators = createAsyncActionCreators(actionTypes.history);
+export const fetchPresencesHistoryAction =
+  (studentId: string, structureId: string, startDate: string, endDate: string): ThunkAction<Promise<IHistory>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesHistoryActionsCreators.request());
+      const events = await presencesService.history.getEvents(session, studentId, structureId, startDate, endDate);
+      const forgottenNotebooks = await presencesService.history.getForgottenNotebookEvents(
+        session,
+        studentId,
+        structureId,
+        startDate,
+        endDate,
+      );
+      const { incidents, punishments } = await presencesService.history.getIncidents(
+        session,
+        studentId,
+        structureId,
+        startDate,
+        endDate,
+      );
+      const history: IHistory = {
+        ...events,
+        forgottenNotebooks,
+        incidents,
+        punishments,
+      };
+      dispatch(presencesHistoryActionsCreators.receipt(history));
+      return history;
+    } catch (e) {
+      dispatch(presencesHistoryActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
  * Fetch register preference.
  */
 export const presencesRegisterPreferenceActionsCreators = createAsyncActionCreators(actionTypes.registerPreference);
@@ -86,6 +127,44 @@ export const fetchPresencesRegisterPreferenceAction =
       return registerPreference;
     } catch (e) {
       dispatch(presencesRegisterPreferenceActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch the school year.
+ */
+export const presencesSchoolYearActionsCreators = createAsyncActionCreators(actionTypes.schoolYear);
+export const fetchPresencesSchoolYearAction =
+  (structureId: string): ThunkAction<Promise<ISchoolYear>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesSchoolYearActionsCreators.request());
+      const schoolYear = await viescoService.schoolYear.get(session, structureId);
+      dispatch(presencesSchoolYearActionsCreators.receipt(schoolYear));
+      return schoolYear;
+    } catch (e) {
+      dispatch(presencesSchoolYearActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch the school terms.
+ */
+export const presencesTermsActionsCreators = createAsyncActionCreators(actionTypes.terms);
+export const fetchPresencesTermsAction =
+  (structureId: string, groupId: string): ThunkAction<Promise<ITerm[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesTermsActionsCreators.request());
+      const terms = await viescoService.terms.get(session, structureId, groupId);
+      dispatch(presencesTermsActionsCreators.receipt(terms));
+      return terms;
+    } catch (e) {
+      dispatch(presencesTermsActionsCreators.error(e as Error));
       throw e;
     }
   };

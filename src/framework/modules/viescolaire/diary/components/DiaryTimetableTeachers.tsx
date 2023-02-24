@@ -10,12 +10,15 @@ import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
 import Calendar from '~/framework/modules/viescolaire/common/components/Calendar';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import {
+  homeworkListDetailsTeacherAdapter,
+  sessionListDetailsTeacherAdapter,
+} from '~/framework/modules/viescolaire/common/utils/diary';
 import { ICourse } from '~/framework/modules/viescolaire/dashboard/state/courses';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { DiaryTimetableScreenProps } from '~/framework/modules/viescolaire/diary/screens/timetable';
 import { TimetableState } from '~/framework/modules/viescolaire/diary/screens/timetable/screen';
-import { homeworkListDetailsTeacherAdapter, sessionListDetailsTeacherAdapter } from '~/modules/viescolaire/utils/diary';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 

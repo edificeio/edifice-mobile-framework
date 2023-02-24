@@ -5,10 +5,6 @@ import {
   competencesMoyennesActionsCreators,
 } from '~/framework/modules/viescolaire/competences/actions';
 import { dataActions as CoursesActions } from '~/framework/modules/viescolaire/dashboard/actions/courses';
-import {
-  periodsDataActions as periodActions,
-  yearDataActions as yearActions,
-} from '~/framework/modules/viescolaire/dashboard/actions/periods';
 import { dataActions as teacherActions } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
 import { selectChildActionType } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { diaryHomeworksActionsCreators, diarySessionsActionsCreators } from '~/framework/modules/viescolaire/diary/actions';
@@ -27,8 +23,6 @@ export function selectChildAction(child: string) {
     dispatch(diarySessionsActionsCreators.clear());
     dispatch(teacherActions.clear());
     dispatch(historyActions.clear());
-    dispatch(periodActions.clear());
-    dispatch(yearActions.clear());
     dispatch(CoursesActions.clear());
     // EDT
     dispatch(edtSlotsActionsCreators.clear());

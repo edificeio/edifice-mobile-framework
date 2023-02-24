@@ -8,7 +8,11 @@ import {
   IClassCall,
   ICourse,
   ICourseRegister,
+  IForgottenNotebook,
+  IHistoryEvent,
+  IIncident,
   IMemento,
+  IPunishment,
   IRelative,
   IStudentsEvents,
   IUserChild,
@@ -94,6 +98,56 @@ type IBackendEvent = {
   reason_id: number;
 };
 
+type IBackendHistoryEvent = {
+  start_date: string;
+  end_date: string;
+  type_id: number;
+  recovery_method: string;
+  period: string;
+};
+
+type IBackendHistoryEvents = {
+  all: {
+    DEPARTURE: IBackendHistoryEventList;
+    NO_REASON: IBackendHistoryEventList;
+    REGULARIZED: IBackendHistoryEventList;
+    LATENESS: IBackendHistoryEventList;
+    UNREGULARIZED: IBackendHistoryEventList;
+  };
+};
+
+type IBackendHistoryForgottenNotebooks = {
+  all: {
+    date: string;
+  }[];
+};
+
+type IBackendHistoryIncidents = {
+  all: {
+    INCIDENT: {
+      date: string;
+      protagonist: {
+        label: string;
+      };
+      type: {
+        label: string;
+      };
+    }[];
+    PUNISHMENT: {
+      created_at: string;
+      fields: {
+        start_at: string;
+        end_at: string;
+        delay_at: string;
+      };
+      type: {
+        label: string;
+        punishment_category_id: number;
+      };
+    }[];
+  };
+};
+
 type IBackendMemento = {
   id: string;
   name: string;
@@ -136,6 +190,7 @@ type IBackendUserChild = {
 };
 
 type IBackendCourseList = IBackendCourse[];
+type IBackendHistoryEventList = IBackendHistoryEvent[];
 type IBackendUserChildren = IBackendUserChild[];
 
 const classCallAdapter = (data: IBackendClassCall): IClassCall => {
@@ -193,6 +248,50 @@ const eventAdapter = (data: IBackendEvent): ICallEvent => {
     type_id: data.type_id,
     reason_id: data.reason_id,
   } as ICallEvent;
+};
+
+const historyEventAdapter = (data: IBackendHistoryEvent): IHistoryEvent => {
+  return {
+    start_date: moment(data.start_date),
+    end_date: moment(data.end_date),
+    type_id: data.type_id,
+    recovery_method: data.recovery_method,
+    period: data.period,
+  } as IHistoryEvent;
+};
+
+const historyEventsAdapter = (data: IBackendHistoryEvents) => {
+  return {
+    latenesses: data.all.LATENESS.map(e => historyEventAdapter(e)),
+    departures: data.all.DEPARTURE.map(e => historyEventAdapter(e)),
+    regularized: data.all.REGULARIZED.map(e => historyEventAdapter(e)),
+    unregularized: data.all.UNREGULARIZED.map(e => historyEventAdapter(e)),
+    noReason: data.all.NO_REASON.map(e => historyEventAdapter(e)),
+  };
+};
+
+const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks): IForgottenNotebook[] => {
+  return data.all.map(event => ({
+    date: moment(event.date),
+  })) as IForgottenNotebook[];
+};
+
+const historyIncidentsAdapter = (data: IBackendHistoryIncidents): { incidents: IIncident[]; punishments: IPunishment[] } => {
+  return {
+    incidents: data.all.INCIDENT.map(i => ({
+      date: moment(i.date),
+      protagonist: i.protagonist,
+      label: i.type.label,
+    })) as IIncident[],
+    punishments: data.all.PUNISHMENT.map(p => ({
+      created_at: moment(p.created_at),
+      start_date: moment(p.fields.start_at),
+      end_date: moment(p.fields.end_at),
+      delay_at: moment(p.fields.delay_at),
+      label: p.type.label,
+      punishment_category_id: p.type.punishment_category_id,
+    })) as IPunishment[],
+  };
 };
 
 const mementoAdapter = (data: IBackendMemento): IMemento => {
@@ -395,6 +494,29 @@ export const presencesService = {
         body,
       })) as IBackendEvent;
       return eventAdapter(event);
+    },
+  },
+  history: {
+    getEvents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
+      const events = (await fetchJSONWithCache(api)) as IBackendHistoryEvents;
+      return historyEventsAdapter(events);
+    },
+    getForgottenNotebookEvents: async (
+      session: ISession,
+      studentId: string,
+      structureId: string,
+      startDate: string,
+      endDate: string,
+    ) => {
+      const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
+      const forgottenNotebooks = (await fetchJSONWithCache(api)) as IBackendHistoryForgottenNotebooks;
+      return historyForgottenNotebooksAdapter(forgottenNotebooks) as IForgottenNotebook[];
+    },
+    getIncidents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
+      const incidents = (await fetchJSONWithCache(api)) as IBackendHistoryIncidents;
+      return historyIncidentsAdapter(incidents) as { incidents: IIncident[]; punishments: IPunishment[] };
     },
   },
   memento: {

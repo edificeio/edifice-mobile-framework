@@ -10,6 +10,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { BodyBoldText, SmallInverseText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
 import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
@@ -20,7 +21,6 @@ import edtConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { AsyncState } from '~/framework/util/redux/async';
 import { IHomeworkByDateList } from '~/modules/viescolaire/dashboard/components/DashboardRelative';
 import presencesConfig from '~/modules/viescolaire/presences/moduleConfig';
-import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/diary';
 
 const styles = StyleSheet.create({
   mainContainer: {

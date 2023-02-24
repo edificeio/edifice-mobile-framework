@@ -14,6 +14,7 @@ import { PageView } from '~/framework/components/page';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
 import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
 import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
@@ -32,7 +33,6 @@ import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncState } from '~/framework/util/redux/async';
-import { homeworkListDetailsAdapter, isHomeworkDone } from '~/modules/viescolaire/utils/diary';
 
 import styles from './styles';
 import type { DashboardStudentScreenPrivateProps } from './types';
@@ -78,11 +78,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
       <View style={[styles.dashboardPart, nbModules === 4 ? styles.gridAllModules : styles.gridModulesLine]}>
         {this.props.authorizedViescoApps.presences && (
           <ModuleIconButton
-            onPress={() =>
-              this.props.navigation.navigate(presencesRouteNames.history, {
-                user_type: 'Student',
-              })
-            }
+            onPress={() => this.props.navigation.navigate(presencesRouteNames.history)}
             text={I18n.t('viesco-history')}
             color={viescoTheme.palette.presences}
             icon="access_time"

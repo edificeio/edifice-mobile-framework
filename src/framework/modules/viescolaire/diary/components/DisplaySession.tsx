@@ -9,8 +9,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { Session } from '~/framework/modules/viescolaire/common/utils/diary';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { Session } from '~/modules/viescolaire/utils/diary';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 

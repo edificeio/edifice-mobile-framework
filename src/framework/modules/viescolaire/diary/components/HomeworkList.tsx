@@ -12,16 +12,16 @@ import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
-import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import {
   getTeacherName,
   hasEmptyDescription,
   homeworkListDetailsAdapter,
   isHomeworkDone,
   sessionListDetailsAdapter,
-} from '~/modules/viescolaire/utils/diary';
+} from '~/framework/modules/viescolaire/common/utils/diary';
+import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
+import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 

@@ -24,7 +24,9 @@ export interface IForgottenNotebook {
 
 export interface IIncident {
   date: moment.Moment;
-  protagonist: { label: string };
+  protagonist: {
+    label: string;
+  };
   label: string;
 }
 
