@@ -1,6 +1,6 @@
 {
-  "last": "2023-02-23 19:52:37",
-  "notes": "release: 1.9.3-alpha.10(1090312)",
-  "version": "1.9.3-rc.3(1090313)",
+  "last": "2023-02-24 08:22:54",
+  "notes": "fix(mfa): MB-1325, requirements.needMfa typo\nrelease: 1.9.3-rc.3(1090313)",
+  "version": "1.9.3-alpha.11(1090314)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
