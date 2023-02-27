@@ -28,8 +28,8 @@ class DiarySessionScreen extends React.PureComponent<any> {
       <PageView>
         <DisplaySession
           {...this.props}
-          session={this.props.navigation.state.params.session}
-          sessionList={this.props.navigation.state.params.sessionList}
+          session={this.props.route.params.session}
+          sessionList={this.props.route.params.sessionList}
         />
       </PageView>
     );
