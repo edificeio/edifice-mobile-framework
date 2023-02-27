@@ -1,29 +1,26 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { FlatList, RefreshControl, Text, View } from 'react-native';
-// import { Swipeable } from 'react-native-gesture-handler';
+import { RefreshControl, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps, NavigationState } from 'react-navigation';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
-import { Trackers } from '~/framework/util/tracker';
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ICountMailboxes } from '~/framework/modules/conversation/state/count';
+import { IFolder } from '~/framework/modules/conversation/state/initMails';
+import { IMail } from '~/framework/modules/conversation/state/mailContent';
 import MailListItem from '~/modules/conversation/components/MailListItem';
 import CreateFolderModal from '~/modules/conversation/containers/CreateFolderModal';
 import { IInit } from '~/modules/conversation/containers/MailList';
 import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
 import { DraftType } from '~/modules/conversation/containers/NewMail';
-import moduleConfig from '~/modules/conversation/moduleConfig';
-import { ICountMailboxes } from '~/modules/conversation/state/count';
-import { IFolder } from '~/modules/conversation/state/initMails';
-import { IMail } from '~/modules/conversation/state/mailContent';
 import { Loading } from '~/ui/Loading';
 
 interface IMailListDataProps {
@@ -140,8 +137,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   renderEmpty() {
-    const { isTrashed, navigation } = this.props;
-    const navigationKey = navigation.getParam('key');
+    const { isTrashed, route } = this.props;
+    const navigationKey = route.param.key;
     const isFolderDrafts = navigationKey === 'drafts';
     const isFolderOutbox = navigationKey === 'sendMessages';
     const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox';
@@ -151,7 +148,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   }
 
   renderMailContent = mailInfos => {
-    const navigationKey = this.props.navigation.getParam('key');
+    const navigationKey = this.props.route.param.key;
     const isFolderDrafts = navigationKey === 'drafts';
     const isStateDraft = mailInfos.state === 'DRAFT';
 
@@ -200,14 +197,14 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       await toggleRead([mailId], unread);
       this.refreshMailList();
       fetchInit();
-    } catch (error) {
+    } catch {
       // TODO: Manage error
     }
   };
 
   delete = async (mailId: string) => {
-    const { navigation, isTrashed, deleteMails, deleteDrafts, trashMails, fetchInit } = this.props;
-    const navigationKey = navigation.getParam('key');
+    const { route, isTrashed, deleteMails, deleteDrafts, trashMails, fetchInit } = this.props;
+    const navigationKey = route.param.key;
     const isFolderDrafts = navigationKey === 'drafts';
     const isTrashedOrDraft = isTrashed || isFolderDrafts;
     try {
@@ -224,7 +221,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         ...UI_ANIMATIONS.toast,
       });
-    } catch (error) {
+    } catch {
       // TODO: Manage error
     }
   };
@@ -252,19 +249,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     toggleListIds = toggleListIds.slice(0, -1);
   };
 
-  getActiveRouteState = (route: NavigationState) => {
-    if (!route.routes || route.routes.length === 0 || route.index >= route.routes.length) {
-      return route;
-    }
-
-    const childActiveRoute = route.routes[route.index] as NavigationState;
-    return this.getActiveRouteState(childActiveRoute);
-  };
-
   public render() {
-    const { isFetching, firstFetch, navigation, folders, mailboxesCount } = this.props;
+    const { isFetching, route, navigation, folders, mailboxesCount } = this.props;
     const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage, showFolderCreationModal } = this.state;
-    const navigationKey = navigation.getParam('key');
+    const navigationKey = route.param.key;
     const uniqueId = [] as string[];
     const uniqueMails: (IMail & { key: string })[] = [];
     if (this.state.mails)
@@ -327,7 +315,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       },
       closeAfterSelecting: false,
     };
-    let drawerFolders =
+    const drawerFolders =
       folders &&
       folders.map(folder => ({
         name: folder.folderName,
@@ -340,22 +328,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           ...TextSizeStyle.Normal,
         },
       }));
-    drawerFolders && drawerFolders.push(createFolderItem);
+    if (drawerFolders) drawerFolders.push(createFolderItem);
     const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
-
-    const headerButton = (
-      <DEPRECATED_HeaderPrimaryAction
-        iconName="new_message"
-        onPress={() => {
-          Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
-          this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
-            type: DraftType.NEW,
-            mailId: undefined,
-            currentFolder: this.getActiveRouteState(navigation.state).key,
-          });
-        }}
-      />
-    );
 
     const isFolderOutbox = navigationKey === 'sendMessages';
     const isFolderDrafts = navigationKey === 'drafts';
@@ -363,12 +337,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
     return (
       <>
-        <PageView
-          navigation={navigation}
-          navBar={{
-            title: I18n.t('conversation.appName'),
-          }}
-          navBarNode={headerButton}>
+        <PageView>
           <View style={{ flex: 1 }}>
             {isFetching && !isRefreshing && !isChangingPage ? (
               <Loading />

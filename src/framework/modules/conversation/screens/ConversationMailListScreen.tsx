@@ -1,9 +1,12 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import I18n from 'i18n-js';
 import * as React from 'react';
-import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
+import { NavigationScreenProp, NavigationState, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
+import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { fetchCountAction } from '~/framework/modules/conversation/actions/count';
 import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import {
@@ -23,8 +26,10 @@ import { ConversationNavigationParams, conversationRouteNames } from '~/framewor
 import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
 import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
 import { getMailListState } from '~/framework/modules/conversation/state/mailList';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { Trackers } from '~/framework/util/tracker';
+import { DraftType } from '~/modules/conversation/containers/NewMail';
 
 export interface ConversationMailListScreenNavigationParams {
   folderId: any;
@@ -83,6 +88,39 @@ type ConversationMailListScreenState = {
   folders: IFolder[];
 };
 
+const getActiveRouteState = (route: NavigationState) => {
+  if (!route.routes || route.routes.length === 0 || route.index >= route.routes.length) {
+    return route;
+  }
+
+  const childActiveRoute = route.routes[route.index] as NavigationState;
+  return getActiveRouteState(childActiveRoute);
+};
+
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.home>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('conversation.appName'),
+  headerRight: () => (
+    <DEPRECATED_HeaderPrimaryAction
+      iconName="new_message"
+      onPress={() => {
+        Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
+        navigation.navigate(`${moduleConfig.routeName}/new`, {
+          type: DraftType.NEW,
+          mailId: undefined,
+          currentFolder: getActiveRouteState(navigation.state).key,
+        });
+      }}
+    />
+  ),
+});
+
 class ConversationMailListScreen extends React.PureComponent<ConversationMailListScreenProps, ConversationMailListScreenState> {
   constructor(props) {
     super(props);
@@ -112,13 +150,14 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   }
 
   private fetchMails = (page = 0) => {
-    const { navigation, fetchMailList, fetchMailFromFolder } = this.props;
-    const key = navigation.getParam('key');
-    const folderName = navigation.getParam('folderName');
-    const folderId = navigation.getParam('folderId');
+    const { route, fetchMailList, fetchMailFromFolder } = this.props;
+    const key = route.param.key;
+    const folderName = route.param.folderName;
+    const folderId = route.param.folderId;
 
     this.setState({ fetchRequested: true });
-    folderName ? fetchMailFromFolder(folderId, page) : fetchMailList(page, key);
+    if (folderName) fetchMailFromFolder(folderId, page);
+    else fetchMailList(page, key);
   };
 
   fetchCompleted = () => {
@@ -126,11 +165,11 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   };
 
   public componentDidMount() {
-    const { fetchInit, fetchCount, navigation } = this.props;
+    const { route, fetchInit, fetchCount, navigation } = this.props;
 
     fetchInit();
     fetchCount();
-    if (navigation.getParam('key') === undefined) {
+    if (!route.param.key) {
       this.setState({ firstFetch: true });
       navigation.setParams({ key: 'inbox', folderName: undefined, folderId: undefined });
     }
@@ -138,9 +177,9 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   }
 
   componentDidUpdate(prevProps) {
-    const { navigation, init, count, isFetching, isFocused } = this.props;
+    const { route, init, count, isFetching, isFocused } = this.props;
     const { firstFetch, fetchRequested, isChangingFolder } = this.state;
-    const key = navigation.getParam('key');
+    const key = route.param.key;
 
     if (prevProps.init.isFetching && !init.isFetching) {
       this.setState({ folders: init.data.folders });
@@ -149,9 +188,9 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
       this.setState({ mailboxesCount: count.data });
     }
     if (!isFetching && firstFetch) this.setState({ firstFetch: false });
-    if (key !== prevProps.navigation.getParam('key')) this.setState({ isChangingFolder: true });
+    if (key !== prevProps.route.param.key) this.setState({ isChangingFolder: true });
     if (isChangingFolder && !isFetching && prevProps.isFetching) this.setState({ isChangingFolder: false });
-    if (!fetchRequested && (key !== prevProps.navigation.getParam('key') || (isFocused && prevProps.isFocused !== isFocused))) {
+    if (!fetchRequested && (key !== prevProps.route.param.key || (isFocused && prevProps.isFocused !== isFocused))) {
       this.fetchMails();
     }
   }
@@ -167,7 +206,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
         {...this.props}
         {...this.state}
         fetchMails={this.fetchMails}
-        isTrashed={this.props.navigation.getParam('key') === 'trash'}
+        isTrashed={this.props.route.param.key === 'trash'}
         firstFetch={this.state.firstFetch}
         fetchRequested={this.state.fetchRequested}
         fetchCompleted={this.fetchCompleted}
@@ -178,12 +217,12 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
 
 // ------------------------------------------------------------------------------------------------
 
-const mapStateToProps: (state: any) => any = state => {
+const mapStateToProps = (state: IGlobalState) => {
   const { isPristine, isFetching, data } = getMailListState(state);
 
   if (data !== undefined && data.length > 0) {
     for (let i = 0; i <= data.length - 1; i++) {
-      data[i]['isChecked'] = false;
+      data[i].isChecked = false;
     }
   }
 
@@ -204,7 +243,7 @@ const mapStateToProps: (state: any) => any = state => {
 
 // ------------------------------------------------------------------------------------------------
 
-const mapDispatchToProps: (dispatch: any) => any = dispatch => {
+const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       fetchMailList: fetchMailListAction,
@@ -234,28 +273,23 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-const ConversationMailListScreenConnected = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withNavigationFocus(ConversationMailListScreen));
-const ConversationMailListScreenConnectedWithTracking = withViewTracking(props => {
-  const key = props.navigation?.getParam('key');
-  const getValue = () => {
-    switch (key) {
-      case 'inbox':
-      case undefined:
-        return 'inbox';
-      case 'sendMessages':
-        return 'outbox';
-      case 'drafts':
-        return 'drafts';
-      case 'trash':
-        return 'trash';
-      default:
-        return 'folder';
-    }
-  };
-  return [moduleConfig.trackingName.toLowerCase(), getValue()];
-})(ConversationMailListScreenConnected);
-
-export default ConversationMailListScreenConnectedWithTracking;
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(ConversationMailListScreen));
+// const ConversationMailListScreenConnectedWithTracking = withViewTracking(props => {
+//   const key = props.navigation?.getParam('key');
+//   const getValue = () => {
+//     switch (key) {
+//       case 'inbox':
+//       case undefined:
+//         return 'inbox';
+//       case 'sendMessages':
+//         return 'outbox';
+//       case 'drafts':
+//         return 'drafts';
+//       case 'trash':
+//         return 'trash';
+//       default:
+//         return 'folder';
+//     }
+//   };
+//   return [moduleConfig.trackingName.toLowerCase(), getValue()];
+// })(ConversationMailListScreenConnected);

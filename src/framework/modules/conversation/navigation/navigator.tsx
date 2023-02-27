@@ -5,18 +5,18 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { ConversationNavigationParams, conversationRouteNames } from '.';
 import moduleConfig from '../module-config';
-// import ConversationHomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
 // import ConversationOtherScreen, { computeNavBar as otherNavBar } from '../screens/other';
+import ConversationMailListScreen, { computeNavBar as conversationMailListNavBar } from '../screens/ConversationMailListScreen';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ConversationNavigationParams>(moduleConfig.name, Stack => (
     <>
-      {/* <Stack.Screen
+      <Stack.Screen
         name={conversationRouteNames.home}
-        component={ConversationHomeScreen}
-        options={homeNavBar}
+        component={ConversationMailListScreen}
+        options={conversationMailListNavBar}
         initialParams={{}}
-      /> */}
+      />
       {/* <Stack.Screen
         name={conversationRouteNames.other}
         component={ConversationOtherScreen}
