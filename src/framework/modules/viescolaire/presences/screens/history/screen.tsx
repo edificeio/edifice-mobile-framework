@@ -1,18 +1,22 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
-import Toast from 'react-native-tiny-toast';
+import { RefreshControl, TouchableOpacity } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import ScrollView from '~/framework/components/scrollView';
+import { SmallBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
 import {
@@ -21,34 +25,24 @@ import {
   fetchPresencesTermsAction,
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import HistoryComponent from '~/framework/modules/viescolaire/presences/components/History';
+import {
+  DepartureCard,
+  ForgotNotebookCard,
+  IncidentCard,
+  LatenessCard,
+  NoReasonCard,
+  PunishmentCard,
+  RegularizedCard,
+  UnregularizedCard,
+} from '~/framework/modules/viescolaire/presences/components/PresenceCard';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
+import styles from './styles';
 import { PresencesHistoryScreenPrivateProps } from './types';
-
-interface PresencesHistoryScreenState {
-  groupId: string;
-  selected: number;
-  period: {
-    order: number;
-    start_date: moment.Moment;
-    end_date: moment.Moment;
-  };
-  periods: any[];
-  events: {
-    regularized: any[];
-    no_reason: any[];
-    unregularized: any[];
-    lateness: any[];
-    departure: any[];
-    incidents: any[];
-    punishments: any[];
-    notebooks: any[];
-  };
-}
 
 export const computeNavBar = ({
   navigation,
@@ -64,156 +58,173 @@ export const computeNavBar = ({
   },
 });
 
-class PresencesHistoryScreen extends React.PureComponent<PresencesHistoryScreenPrivateProps, PresencesHistoryScreenState> {
-  constructor(props) {
-    super(props);
-    const { periods, events, year } = this.props;
-    const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
-    const period = fullPeriods.find(o => o.order === -1);
-    this.state = {
-      groupId: '',
-      selected: -1,
-      period,
-      events,
-      periods: fullPeriods,
-    };
-  }
+const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
+  const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
+  const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
+  const [startDate, setStartDate] = React.useState<Moment>(moment());
+  const [endDate, setEndDate] = React.useState<Moment>(moment());
 
-  public componentDidMount() {
-    const { userType, userId, childId, structureId, groupId, year, periods } = this.props;
-    if (userType === UserType.Relative && userId) this.props.fetchUserChildren(userId);
-    if (periods.isPristine && groupId && groupId !== undefined) this.props.fetchTerms(structureId, groupId);
-    if (year.isPristine) this.props.fetchSchoolYear(structureId);
-    else this.props.fetchHistory(childId, structureId, year.data.start_date, year.data.end_date);
-  }
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  public componentDidUpdate(prevProps, prevState) {
-    const { periods, year, userType, userId, childId, structureId, groupId, events } = this.props;
-    const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
+  const fetchEvents = async () => {
+    try {
+      const { classes, structureId, studentId, userId, userType } = props;
 
-    // if user is a relative, get child informations
-    if (userType === UserType.Relative) {
-      if (!groupId && groupId === undefined && !this.props.childrenInfos.isFetching && userId) {
-        this.props.fetchUserChildren(userId);
-      } else if (this.state.groupId !== this.props.groupId && this.props.groupId !== undefined && this.state.groupId === '') {
-        this.setState({ groupId: this.props.groupId });
-        this.props.fetchTerms(structureId, groupId);
-        this.props.fetchSchoolYear(structureId);
+      if (!structureId || !studentId || !userId || !userType) throw new Error();
+      let groupId = classes?.[0];
+      if (userType === UserType.Relative) {
+        const children = await props.fetchUserChildren(userId);
+        groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
+      if (selectedTerm !== 'year') setSelectedTerm('year');
+      await props.fetchTerms(structureId, groupId ?? '');
+      const schoolYear = await props.fetchSchoolYear(structureId);
+      setStartDate(schoolYear.startDate);
+      setEndDate(schoolYear.endDate);
+      const start = schoolYear.startDate.format('YYYY-MM-DD');
+      const end = schoolYear.endDate.format('YYYY-MM-DD');
+      await props.fetchHistory(studentId, structureId, start, end);
+    } catch {
+      throw new Error();
     }
-
-    // on child change
-    if (prevProps.childId !== childId && periods.data.length === 0) {
-      this.props.fetchTerms(structureId, groupId);
-      this.props.fetchSchoolYear(structureId);
-    }
-
-    // on periods init
-    if (prevProps.periods.isFetching && !periods.isFetching) {
-      this.setState({
-        selected: -1,
-        period: fullPeriods.find(o => o.order === -1),
-        periods: fullPeriods,
-      });
-    }
-
-    // on year init
-    if (prevProps.year.isFetching && !year.isFetching) {
-      this.setState({
-        selected: -1,
-        period: fullPeriods.find(o => o.order === -1),
-        periods: fullPeriods,
-      });
-      this.props.getEvents(childId, structureId, year.data.start_date, year.data.end_date);
-    }
-
-    // on error
-    if (prevProps.events.error !== events.error) {
-      Toast.show(I18n.t('viesco-history-load-error'), {
-        position: Toast.position.CENTER,
-        containerStyle: { padding: UI_SIZES.spacing.big, backgroundColor: theme.palette.status.failure.regular },
-        textStyle: {},
-        ...UI_ANIMATIONS.toast,
-      });
-    }
-
-    if (this.state.period !== undefined) {
-      const { start_date, end_date } = this.state.period;
-      const start_period = start_date.clone().subtract(1, 'd');
-      const end_period = end_date.clone().add(1, 'd');
-      if (
-        (!this.props.events.isFetching && prevProps.events.isFetching) ||
-        !start_date.isSame(prevState.period.start_date, 'd') ||
-        !end_date.isSame(prevState.period.end_date, 'd') ||
-        prevProps.events !== this.props.events
-      ) {
-        this.setEvents(start_period, end_period);
-      }
-    }
-  }
-
-  setEvents = (start_period: moment.Moment, end_period: moment.Moment) => {
-    const { events } = this.props;
-    const displayEvents = {
-      regularized: [],
-      unregularized: [],
-      no_reason: [],
-      lateness: [],
-      departure: [],
-      incidents: [],
-      punishments: [],
-      notebooks: [],
-    };
-
-    displayEvents.regularized = events?.regularized?.filter(
-      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-    );
-    displayEvents.unregularized = events?.unregularized?.filter(
-      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-    );
-    displayEvents.no_reason = events?.no_reason?.filter(
-      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-    );
-    displayEvents.departure = events?.departure?.filter(
-      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-    );
-    displayEvents.lateness = events?.lateness?.filter(e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period));
-    displayEvents.notebooks = events?.notebooks?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
-    displayEvents.incidents = events?.incidents?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
-    displayEvents.punishments = events?.punishments?.filter(
-      e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
-    );
-
-    this.setState({
-      events: displayEvents,
-    });
   };
 
-  onPeriodChange = newPeriod => {
-    const { childId, structureId } = this.props;
-    const { periods } = this.state;
-    const period = periods.find(o => o.order === newPeriod);
-    this.setState({
-      selected: newPeriod,
-      period,
-    });
-    this.props.fetchHistory(childId, structureId, period.start_date, period.end_date);
+  const init = () => {
+    setLoadingState(AsyncPagedLoadingState.INIT);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  public render() {
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
+  const fetchOnNavigation = () => {
+    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    else refreshSilent();
+  };
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      fetchOnNavigation();
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation]);
+
+  React.useEffect(() => {
+    if (loadingRef.current === AsyncPagedLoadingState.DONE) init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.studentId]);
+
+  React.useEffect(() => {
+    const { schoolYear } = props;
+
+    if (selectedTerm === 'year' && schoolYear) {
+      setStartDate(schoolYear.startDate);
+      setEndDate(schoolYear.endDate);
+    } else {
+      const term = props.terms.find(t => t.order.toString() === selectedTerm);
+      if (term) {
+        setStartDate(term.startDate);
+        setEndDate(term.endDate);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTerm]);
+
+  const renderError = () => {
     return (
-      <PageView>
-        <HistoryComponent
-          {...this.props}
-          events={this.state.events}
-          onPeriodChange={this.onPeriodChange}
-          periods={this.state.periods}
-          selected={this.state.selected}
-        />
-      </PageView>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+        <EmptyContentScreen />
+      </ScrollView>
     );
-  }
-}
+  };
+
+  const renderHistory = () => {
+    const { history, terms } = props;
+    const dropdownTerms = [
+      { label: I18n.t('viesco-fullyear'), value: 'year' },
+      ...terms.map(term => ({
+        label: `${I18n.t('viesco-trimester')} ${term.order}`,
+        value: term.order.toString(),
+      })),
+    ];
+
+    return (
+      <ScrollView contentContainerStyle={styles.container}>
+        {dropdownTerms.length > 1 ? (
+          <DropDownPicker
+            open={isDropdownOpen}
+            value={selectedTerm}
+            items={dropdownTerms}
+            setOpen={setDropdownOpen}
+            setValue={setSelectedTerm}
+            style={[styles.dropdown, styles.dropdownMargin]}
+            dropDownContainerStyle={styles.dropdown}
+            textStyle={styles.dropdownText}
+          />
+        ) : null}
+        <NoReasonCard elements={history.noReason.filter(e => e.start_date.isBetween(startDate, endDate))} />
+        <UnregularizedCard elements={history.unregularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
+        <RegularizedCard elements={history.regularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
+        <LatenessCard elements={history.latenesses.filter(e => e.start_date.isBetween(startDate, endDate))} />
+        <IncidentCard elements={history.incidents.filter(e => e.date.isBetween(startDate, endDate))} />
+        <PunishmentCard elements={history.punishments.filter(e => e.start_date.isBetween(startDate, endDate))} />
+        <ForgotNotebookCard elements={history.forgottenNotebooks.filter(e => e.date.isBetween(startDate, endDate))} />
+        <DepartureCard elements={history.departures.filter(e => e.start_date.isBetween(startDate, endDate))} />
+      </ScrollView>
+    );
+  };
+
+  const renderPage = () => {
+    switch (loadingState) {
+      case AsyncPagedLoadingState.DONE:
+      case AsyncPagedLoadingState.REFRESH:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
+      case AsyncPagedLoadingState.REFRESH_SILENT:
+        return renderHistory();
+      case AsyncPagedLoadingState.PRISTINE:
+      case AsyncPagedLoadingState.INIT:
+        return <LoadingIndicator />;
+      case AsyncPagedLoadingState.INIT_FAILED:
+      case AsyncPagedLoadingState.RETRY:
+        return renderError();
+    }
+  };
+
+  return (
+    <PageView>
+      {props.userType === UserType.Relative ? (
+        <ChildPicker>
+          {props.hasRightToCreateAbsence ? (
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
+              style={styles.declareAbsenceButton}>
+              <SmallBoldText style={styles.declareAbscenceText}>{I18n.t('viesco-declareAbsence')}</SmallBoldText>
+            </TouchableOpacity>
+          ) : null}
+        </ChildPicker>
+      ) : null}
+      {renderPage()}
+    </PageView>
+  );
+};
 
 export default connect(
   (state: IGlobalState) => {
@@ -221,35 +232,45 @@ export default connect(
     const session = getSession(state);
     const userId = session?.user.id;
     const userType = session?.user.type;
-    const childId = userType === UserType.Student ? userId : getSelectedChild(state)?.id;
 
     return {
-      events: presencesState.history.data,
-      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
-      userType,
-      userId,
-      childId,
-      periods: presencesState.terms,
-      year: presencesState.schoolYear,
-      groupId:
-        userType === UserType.Student
-          ? session?.user.classes?.[0]
-          : presencesState.userChildren.data.find(child => child.id === childId)?.structures[0].classes[0].id,
-      childrenInfos: presencesState.userChildren,
-      isFetchingData: presencesState.history.isFetching,
-      isPristineData: presencesState.history.isPristine,
+      classes: session?.user.classes,
       hasRightToCreateAbsence: session?.authorizedActions.some(
         action => action.displayName === 'presences.absence.statements.create',
       ),
+      history: presencesState.history.data,
+      initialLoadingState: presencesState.history.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
+      schoolYear: presencesState.schoolYear.data,
+      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
+      studentId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
+      terms: presencesState.terms.data,
+      userId,
+      userType,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchHistory: tryAction(fetchPresencesHistoryAction, undefined, true),
-        fetchSchoolYear: tryAction(fetchPresencesSchoolYearAction, undefined, true),
-        fetchTerms: tryAction(fetchPresencesTermsAction, undefined, true),
-        fetchUserChildren: tryAction(fetchPresencesUserChildrenAction, undefined, true),
+        fetchHistory: tryAction(
+          fetchPresencesHistoryAction,
+          undefined,
+          true,
+        ) as unknown as PresencesHistoryScreenPrivateProps['fetchHistory'],
+        fetchSchoolYear: tryAction(
+          fetchPresencesSchoolYearAction,
+          undefined,
+          true,
+        ) as unknown as PresencesHistoryScreenPrivateProps['fetchSchoolYear'],
+        fetchTerms: tryAction(
+          fetchPresencesTermsAction,
+          undefined,
+          true,
+        ) as unknown as PresencesHistoryScreenPrivateProps['fetchTerms'],
+        fetchUserChildren: tryAction(
+          fetchPresencesUserChildrenAction,
+          undefined,
+          true,
+        ) as unknown as PresencesHistoryScreenPrivateProps['fetchUserChildren'],
       },
       dispatch,
     ),
