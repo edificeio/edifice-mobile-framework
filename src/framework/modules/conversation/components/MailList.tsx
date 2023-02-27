@@ -2,7 +2,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { RefreshControl, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
@@ -12,15 +11,15 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import MailListItem from '~/framework/modules/conversation/components/MailListItem';
 import moduleConfig from '~/framework/modules/conversation/module-config';
+import { IInit } from '~/framework/modules/conversation/screens/ConversationMailListScreen';
+import CreateFolderModal from '~/framework/modules/conversation/screens/CreateFolderModal';
+import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
+import { DraftType } from '~/framework/modules/conversation/screens/NewMail';
 import { ICountMailboxes } from '~/framework/modules/conversation/state/count';
 import { IFolder } from '~/framework/modules/conversation/state/initMails';
 import { IMail } from '~/framework/modules/conversation/state/mailContent';
-import MailListItem from '~/modules/conversation/components/MailListItem';
-import CreateFolderModal from '~/modules/conversation/containers/CreateFolderModal';
-import { IInit } from '~/modules/conversation/containers/MailList';
-import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
-import { DraftType } from '~/modules/conversation/containers/NewMail';
 import { Loading } from '~/ui/Loading';
 
 interface IMailListDataProps {
@@ -47,7 +46,7 @@ interface IMailListEventProps {
   restoreToInbox: (mailIds: string[]) => void;
 }
 
-type MailListProps = IMailListDataProps & IMailListEventProps & NavigationInjectedProps;
+type MailListProps = IMailListDataProps & IMailListEventProps;
 
 type MailListState = {
   indexPage: number;
@@ -186,7 +185,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         ...UI_ANIMATIONS.toast,
       });
-    } catch (e) {
+    } catch {
       // TODO: Manage error
     }
   };

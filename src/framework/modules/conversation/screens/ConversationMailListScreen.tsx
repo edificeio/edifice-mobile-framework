@@ -23,13 +23,13 @@ import { fetchMailListAction, fetchMailListFromFolderAction } from '~/framework/
 import MailList from '~/framework/modules/conversation/components/MailList';
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation/index';
+import { DraftType } from '~/framework/modules/conversation/screens/NewMail';
 import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
 import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
 import { getMailListState } from '~/framework/modules/conversation/state/mailList';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
-import { DraftType } from '~/modules/conversation/containers/NewMail';
 
 export interface ConversationMailListScreenNavigationParams {
   folderId: any;
@@ -275,7 +275,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(ConversationMailListScreen));
 // const ConversationMailListScreenConnectedWithTracking = withViewTracking(props => {
-//   const key = props.navigation?.getParam('key');
+//   const key = props.route.param.key;;
 //   const getValue = () => {
 //     switch (key) {
 //       case 'inbox':
