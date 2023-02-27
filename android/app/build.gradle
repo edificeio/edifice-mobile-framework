@@ -176,7 +176,7 @@ dependencies {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
-    implementation "com.google.android.gms:play-services-base:18.1.0"
+    implementation "com.google.android.gms:play-services-base:18.2.0"
     implementation "com.fasterxml.jackson.core:jackson-core:2.11.1"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     implementation project(':react-native-action-sheet')

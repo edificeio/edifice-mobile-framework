@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { FlatList, RefreshControl, Text, View } from 'react-native';
+import { RefreshControl, View } from 'react-native';
 // import { Swipeable } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps, NavigationState } from 'react-navigation';
@@ -69,7 +69,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   flatListRef: typeof SwipeableList | null = null;
   // activeSwipeableRefs: { [key: string]: React.Ref<Swipeable> } = {};
 
-  constructor(props) {
+  constructor(props: MailListProps | Readonly<MailListProps>) {
     super(props);
 
     const { notifications } = this.props;
@@ -428,7 +428,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                 }
                 onEndReachedThreshold={0.5}
                 onEndReached={() => {
-                  if (nextPageCallable) {
+                  if (nextPageCallable && !isRefreshing) {
                     this.setState({ nextPageCallable: false, isChangingPage: true });
                     this.onChangePage();
                   }
