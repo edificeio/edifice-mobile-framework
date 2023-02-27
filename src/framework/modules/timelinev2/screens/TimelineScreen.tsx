@@ -1,20 +1,21 @@
 import { NavigationState } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-
 import type { IGlobalState } from '~/app/store';
+
 import theme from '~/app/theme';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_ANIMATIONS, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
+import PopupMenu from '~/framework/components/menus/popup';
 import { PageView, pageGutterSize } from '~/framework/components/page';
-import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
@@ -27,12 +28,14 @@ import {
 import { TimelineFlashMessage } from '~/framework/modules/timelinev2/components/TimelineFlashMessage';
 import { TimelineNotification } from '~/framework/modules/timelinev2/components/TimelineNotification';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
-import { ITimelineNavigationParams } from '~/framework/modules/timelinev2/navigation';
+import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
 import { IEntcoreFlashMessage, IFlashMessages_State } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { INotifications_State } from '~/framework/modules/timelinev2/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
 import { notificationsService } from '~/framework/modules/timelinev2/service';
 import { getTimelineWorkflows } from '~/framework/modules/timelinev2/timelineModules';
+import { navigate } from '~/framework/navigation/helper';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import {
   IAbstractNotification,
@@ -99,6 +102,25 @@ const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: IN
   return ret;
 };
 
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<ITimelineNavigationParams, typeof timelineRouteNames.Home>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('timeline.appName'),
+  headerLeft: () => (
+    <NavBarAction
+      iconName="ui-filter"
+      onPress={() => {
+        navigate(timelineRouteNames.Filters);
+      }}
+    />
+  ),
+});
+
 // COMPONENT ======================================================================================
 
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
@@ -107,8 +129,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   state: ITimelineScreenState = {
     loadingState: TimelineLoadingState.PRISTINE,
   };
-
-  popupMenuRef = React.createRef<PopupMenu>();
 
   rights = getTimelineWorkflowInformation(this.props.session);
 
@@ -130,19 +150,19 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     );
   }
 
-  renderHeaderButton() {
-    const workflows = getTimelineWorkflows(this.props.session);
+  renderNavBarAction(session: ISession) {
+    const workflows = getTimelineWorkflows(session);
     if (!workflows || !workflows.length) return null;
     return (
       <PopupMenu
-        navigation={this.props.navigation}
-        iconName="new_post"
-        options={workflows}
-        ref={this.popupMenuRef}
-        // onPress={() => {
-        // this.listRef.current?.recenter();
-        // }}
-      />
+        actions={[
+          {
+            title: 'Billet de blog',
+            action: () => {},
+          },
+        ]}>
+        <HeaderIcon name="more_vert" iconSize={24} />
+      </PopupMenu>
     );
   }
 
@@ -274,9 +294,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       this.doInit();
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
-    if (navigation.isFocused !== prevProps.isFocused) {
-      this.popupMenuRef.current?.doReset();
-    }
+
+    this.props.navigation.setOptions({
+      headerRight: () => this.renderNavBarAction(this.props.session),
+    });
   }
 
   // METHODS ======================================================================================
