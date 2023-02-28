@@ -151,17 +151,13 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   }
 
   renderNavBarAction(session: ISession) {
-    const workflows = getTimelineWorkflows(session);
-    if (!workflows || !workflows.length) return null;
+    let workflows;
+    if (getTimelineWorkflows(session)) {
+      workflows = getTimelineWorkflows(session);
+    }
     return (
-      <PopupMenu
-        actions={[
-          {
-            title: 'Billet de blog',
-            action: () => {},
-          },
-        ]}>
-        <HeaderIcon name="more_vert" iconSize={24} />
+      <PopupMenu actions={workflows}>
+        <NavBarAction iconName="ui-plus" />
       </PopupMenu>
     );
   }
@@ -219,7 +215,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                         try {
                           await this.doReportConfirm(item.data as ITimelineNotification);
                           row[item.data.id]?.closeRow();
-                        } catch (e) {
+                        } catch {
                           /* empty */
                         } // Do nothing, just to prevent error
                       },
@@ -235,7 +231,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                         try {
                           await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
                           row[item.data.id]?.closeRow();
-                        } catch (e) {
+                        } catch {
                           /* empty */
                         } // Do nothing, just to prevent error
                       },

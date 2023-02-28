@@ -153,30 +153,30 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     this.setState(prevState => ({ images: [...prevState.images, image] }));
   };
 
-  doHandleGoBack() {
-    const { navigation } = this.props;
-    const { content, title, images } = this.state;
-    const isCreatingPost = content || title || images.length;
-    if (isCreatingPost) {
-      Alert.alert(
-        I18n.t('common.confirmationUnsavedPublication'),
-        I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
-        [
-          {
-            text: I18n.t('common.quit'),
-            onPress: () => navigation.dispatch(CommonActions.goBack()),
-            style: 'destructive',
-          },
-          {
-            text: I18n.t('common.continue'),
-            style: 'default',
-          },
-        ],
-      );
-    } else {
-      navigation.dispatch(CommonActions.goBack());
-    }
-  }
+  // doHandleGoBack() {
+  //   const { navigation } = this.props;
+  //   const { content, title, images } = this.state;
+  //   const isCreatingPost = content || title || images.length;
+  //   if (isCreatingPost) {
+  //     Alert.alert(
+  //       I18n.t('common.confirmationUnsavedPublication'),
+  //       I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
+  //       [
+  //         {
+  //           text: I18n.t('common.quit'),
+  //           onPress: () => navigation.dispatch(CommonActions.goBack()),
+  //           style: 'destructive',
+  //         },
+  //         {
+  //           text: I18n.t('common.continue'),
+  //           style: 'default',
+  //         },
+  //       ],
+  //     );
+  //   } else {
+  //     navigation.dispatch(CommonActions.goBack());
+  //   }
+  // }
 
   async doSend() {
     Keyboard.dismiss();
@@ -284,8 +284,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishAction'),
       }[blogPostDisplayRight];
     this.props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerLeft: () => <NavBarAction iconName="ui-rafterLeft" onPress={() => this.doHandleGoBack()} />,
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         this.state.sendLoadingState ? (

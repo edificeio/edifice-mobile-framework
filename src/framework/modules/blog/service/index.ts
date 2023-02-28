@@ -4,7 +4,15 @@
 import moment from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { Blog, BlogFolder, BlogList, BlogPost, BlogPostComments, BlogPostList } from '~/framework/modules/blog/reducer';
+import {
+  Blog,
+  BlogFolder,
+  BlogList,
+  BlogPost,
+  BlogPostComment,
+  BlogPostComments,
+  BlogPostList,
+} from '~/framework/modules/blog/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetch, signedFetchJson } from '~/infra/fetchWithCache';
 
@@ -135,8 +143,11 @@ export const blogAdapter = (blog: IEntcoreBlog) => {
 
 export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
   const ret = blogPostComments.map(blogPostComment => {
-    const adaptedBlogPostComment = { ...blogPostComment, created: moment(blogPostComment.created.$date) };
-    if (blogPostComment.modified) adaptedBlogPostComment.modified = moment(blogPostComment.modified.$date);
+    const adaptedBlogPostComment: BlogPostComment = {
+      ...blogPostComment,
+      created: moment(blogPostComment.created.$date),
+      modified: blogPostComment.modified ? moment(blogPostComment.modified.$date) : undefined,
+    };
     return adaptedBlogPostComment;
   });
   return ret as BlogPostComments;

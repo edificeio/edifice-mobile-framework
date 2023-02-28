@@ -1,7 +1,11 @@
+import I18n from 'i18n-js';
+
 import { ISession } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timelinev2/timelineModules';
+import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
+import { blogRouteNames } from './navigation';
 import { Blog } from './reducer';
 
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
@@ -62,9 +66,10 @@ export default () =>
     const wk = getBlogWorkflowInformation(session);
     return (
       wk.blog.create && {
-        icon: 'bullhorn',
-        i18n: 'blog.resourceName',
-        goTo: { routeName: 'timeline/blog/select' },
+        title: I18n.t('blog.resourceName'),
+        action: () => {
+          navigate(blogRouteNames.home);
+        },
       }
     );
   });

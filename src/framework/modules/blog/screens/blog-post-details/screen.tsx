@@ -76,7 +76,9 @@ export const computeNavBar = ({
 export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsScreenProps, BlogPostDetailsScreenState> {
   _titleRef?: React.Ref<any> = undefined;
 
-  flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList>();
+  flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList | null>() as React.MutableRefObject<
+    FlatList | typeof KeyboardAvoidingFlatList | null
+  >;
 
   commentFieldRefs = [];
 
@@ -90,7 +92,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   hideSubscription: EmitterSubscription | undefined;
 
-  editorOffsetRef = React.createRef<number>();
+  editorOffsetRef = React.createRef<number | null>() as React.MutableRefObject<number | null>;
 
   state: BlogPostDetailsScreenState = {
     loadingState: BlogPostDetailsLoadingState.PRISTINE,
@@ -138,7 +140,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       if (!commentId) {
         this.bottomEditorSheetRef?.current?.clearCommentField();
         setTimeout(() => {
-          this.flatListRef.current?.scrollToOffset({
+          (this.flatListRef.current as FlatList)?.scrollToOffset({
             offset: this.listHeight,
           });
         }, 50);
@@ -345,12 +347,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
           if (commentIndex !== undefined && commentIndex > -1) {
             if (Platform.OS === 'ios') {
-              this.flatListRef.current?.scrollToIndex({
+              (this.flatListRef.current as FlatList)?.scrollToIndex({
                 index: commentIndex,
                 viewPosition: 1,
               });
             } else {
-              this.flatListRef.current?.scrollToIndex({
+              (this.flatListRef.current as FlatList)?.scrollToIndex({
                 index: commentIndex,
                 viewPosition: 0,
                 viewOffset:
@@ -401,7 +403,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const hasPublishBlogPostRight = blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
-    const ListComponent = Platform.select<typeof FlatList | typeof KeyboardAvoidingFlatList>({
+    const ListComponent = Platform.select<React.ComponentType<any>>({
       ios: FlatList,
       android: KeyboardAvoidingFlatList,
     })!;
@@ -437,7 +439,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               // Scroll to last comment if coming from blog spot comment notification
               if (this.flatListRef.current && this.event === 'PUBLISH-COMMENT')
                 setTimeout(() => {
-                  this.flatListRef.current?.scrollToEnd();
+                  (this.flatListRef.current as FlatList)?.scrollToEnd();
                   this.event = null;
                 }, 50);
             }}
@@ -615,7 +617,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
 
-    const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+    const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
     return (
       <>
