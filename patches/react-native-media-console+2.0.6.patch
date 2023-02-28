@@ -16,7 +16,7 @@ index 4e95969..0e08e8a 100644
       * Title of the video
       */
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 5ea0ab2..9c668c3 100644
+index 5ea0ab2..6901091 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
@@ -48,7 +48,7 @@ index 5ea0ab2..9c668c3 100644
          }
          tapActionTimeout.current = null;
        }, doubleTapTime);
-@@ -426,11 +424,20 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -426,11 +424,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
                togglePlayPause={togglePlayPause}
                resetControlTimeout={resetControlTimeout}
                showControls={showControls}
@@ -56,13 +56,18 @@ index 5ea0ab2..9c668c3 100644
 -                videoRef?.current?.seek(currentTime - rewindTime)
 +              onPressRewind={() =>{
 +                if(currentTime !== 0){
-+                  videoRef?.current?.seek(currentTime - rewindTime)
++                  if(currentTime - rewindTime > 0){
++                    videoRef?.current?.seek(currentTime - rewindTime)
++                  } else {
++                    setSeekerPosition(0)
++                    videoRef?.current?.seek(0)
++                  }
 +                }
 +              }}
 +              onPressForward={() =>{
-+                if(currentTime < duration){
++                if(Math.floor(currentTime) < Math.floor(duration)){
 +                  if(currentTime + rewindTime > duration){
-+                    videoRef?.current?.seek(duration - 0.1)
++                    videoRef?.current?.seek(duration - 0.01)
 +                  } else {
 +                    videoRef?.current?.seek(currentTime + rewindTime)
 +                  }
