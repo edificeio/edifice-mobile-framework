@@ -15,7 +15,7 @@ import {
 } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { BottomColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { IPunishment } from '~/modules/viescolaire/presences/state/events';
+import { IPunishment } from '~/framework/modules/viescolaire/presences/model';
 
 interface PresenceCardProps {
   color: string;

@@ -3,18 +3,21 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
@@ -22,10 +25,10 @@ import StudentRow from '~/framework/modules/viescolaire/presences/components/Stu
 import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { deleteEvent, postAbsentEvent, validateRegisterAction } from '~/modules/viescolaire/presences/actions/events';
 
 import styles from './styles';
 import { PresencesCallScreenPrivateProps } from './types';
@@ -45,6 +48,7 @@ export const computeNavBar = ({
 });
 
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
+  const [isValidating, setValidating] = React.useState<boolean>(false);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -102,6 +106,50 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
+  const createAbsence = async (studentId: string) => {
+    try {
+      const { classCall, session } = props;
+      const { id } = props.route.params;
+
+      if (!classCall || !session) throw new Error();
+      await presencesService.event.create(session, studentId, id, EventType.ABSENCE, classCall.start_date, classCall.end_date, '');
+      await presencesService.classCall.updateStatus(session, id, 2);
+      refreshSilent();
+    } catch {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    }
+  };
+
+  const deleteAbsence = async (event: any) => {
+    try {
+      const { session } = props;
+      const { id } = props.route.params;
+
+      if (!session) throw new Error();
+      await presencesService.event.delete(session, event.id);
+      await presencesService.classCall.updateStatus(session, id, 2);
+      refreshSilent();
+    } catch {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    }
+  };
+
+  const validateCall = async () => {
+    try {
+      const { navigation, session } = props;
+      const { id } = props.route.params;
+
+      setValidating(true);
+      if (!session) throw new Error();
+      await presencesService.classCall.updateStatus(session, id, 3);
+      Toast.showSuccess(I18n.t('viesco-register-validated'), { ...UI_ANIMATIONS.toast });
+      navigation.goBack();
+    } catch {
+      setValidating(false);
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    }
+  };
+
   const renderError = () => {
     return (
       <ScrollView
@@ -144,26 +192,15 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                   event,
                 })
               }
-              checkAbsent={() => {
-                props.postAbsentEvent(item.id, id, moment(state.callData.start_date), moment(state.callData.end_date));
-              }}
-              uncheckAbsent={event => {
-                props.deleteEvent(event);
-              }}
+              checkAbsent={() => createAbsence(item.id)}
+              uncheckAbsent={deleteAbsence}
             />
           )}
           refreshControl={
             <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />
           }
         />
-        <ActionButton
-          text={I18n.t('viesco-validate')}
-          action={() => {
-            props.validateRegister(id);
-            navigation.goBack();
-          }}
-          style={styles.validateButton}
-        />
+        <ActionButton text={I18n.t('viesco-validate')} action={validateCall} loading={isValidating} style={styles.validateButton} />
       </>
     ) : null;
   };
@@ -213,19 +250,22 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
+    const session = getSession(state);
 
     return {
       classCall: presencesState.classCall.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+      session,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchClassCall: tryAction(fetchPresencesClassCallAction, undefined, true),
-        postAbsentEvent: tryAction(postAbsentEvent, undefined, true),
-        deleteEvent: tryAction(deleteEvent, undefined, true),
-        validateRegister: tryAction(validateRegisterAction, undefined, true),
+        fetchClassCall: tryAction(
+          fetchPresencesClassCallAction,
+          undefined,
+          true,
+        ) as unknown as PresencesCallScreenPrivateProps['fetchClassCall'],
       },
       dispatch,
     ),

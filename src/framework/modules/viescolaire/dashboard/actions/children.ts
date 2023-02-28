@@ -9,7 +9,6 @@ import { dataActions as teacherActions } from '~/framework/modules/viescolaire/d
 import { selectChildActionType } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { diaryHomeworksActionsCreators, diarySessionsActionsCreators } from '~/framework/modules/viescolaire/diary/actions';
 import { edtSlotsActionsCreators } from '~/framework/modules/viescolaire/edt/actions';
-import { studentEventsActions as historyActions } from '~/modules/viescolaire/presences/actions/events';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -22,7 +21,6 @@ export function selectChildAction(child: string) {
     dispatch(diaryHomeworksActionsCreators.clear());
     dispatch(diarySessionsActionsCreators.clear());
     dispatch(teacherActions.clear());
-    dispatch(historyActions.clear());
     dispatch(CoursesActions.clear());
     // EDT
     dispatch(edtSlotsActionsCreators.clear());
