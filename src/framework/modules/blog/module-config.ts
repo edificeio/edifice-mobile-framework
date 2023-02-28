@@ -1,7 +1,7 @@
-import type reducer from './reducer';
-
 import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
+import type reducer from './reducer';
 
 export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   name: 'blog',
