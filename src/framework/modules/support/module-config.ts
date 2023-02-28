@@ -1,9 +1,9 @@
 import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { ISupport_State } from './reducer';
+import reducer from './reducer';
 
-export default new NavigableModuleConfig<'support', ISupport_State>({
+export default new NavigableModuleConfig<'support', ReturnType<typeof reducer>>({
   name: 'support',
   entcoreScope: ['support'],
   matchEntcoreApp: '/support',

@@ -1,11 +1,11 @@
 import { ThunkDispatch } from 'redux-thunk';
 
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { actionTypes } from '~/framework/modules/support/reducer';
+import { supportService } from '~/framework/modules/support/service';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
-import { getUserSession } from '~/framework/util/session';
-import { actionTypes } from '~/modules/support/reducer';
-import { supportService } from '~/modules/support/service';
 
 export const uploadSupportTicketAttachmentsAction =
   (attachments: LocalFile[]) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
@@ -22,7 +22,7 @@ export const postSupportTicketAction =
   async (dispatch: ThunkDispatch<number | null, any, any>, getState: () => any) => {
     try {
       dispatch(supportPostTicketActionsCreators.request());
-      const session = getUserSession();
+      const session = assertSession();
       const id = await supportService.ticket.post(session, category, structure, subject, description, attachments);
       if (!id) {
         const error = new Error('Ticket creation failed');
