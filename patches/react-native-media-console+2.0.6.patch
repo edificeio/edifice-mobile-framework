@@ -16,7 +16,7 @@ index 4e95969..0e08e8a 100644
       * Title of the video
       */
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 5ea0ab2..9184b0d 100644
+index 5ea0ab2..9c668c3 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
@@ -48,19 +48,28 @@ index 5ea0ab2..9184b0d 100644
          }
          tapActionTimeout.current = null;
        }, doubleTapTime);
-@@ -429,8 +427,13 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
-               onPressRewind={() =>
-                 videoRef?.current?.seek(currentTime - rewindTime)
+@@ -426,11 +424,20 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+               togglePlayPause={togglePlayPause}
+               resetControlTimeout={resetControlTimeout}
+               showControls={showControls}
+-              onPressRewind={() =>
+-                videoRef?.current?.seek(currentTime - rewindTime)
++              onPressRewind={() =>{
++                if(currentTime !== 0){
++                  videoRef?.current?.seek(currentTime - rewindTime)
++                }
++              }}
++              onPressForward={() =>{
++                if(currentTime < duration){
++                  if(currentTime + rewindTime > duration){
++                    videoRef?.current?.seek(duration - 0.1)
++                  } else {
++                    videoRef?.current?.seek(currentTime + rewindTime)
++                  }
++                }
                }
 -              onPressForward={() =>
 -                videoRef?.current?.seek(currentTime + rewindTime)
-+              onPressForward={() =>{
-+                if(currentTime + rewindTime > duration){
-+                  videoRef?.current?.seek(duration - .1)
-+                } else {
-+                  videoRef?.current?.seek(currentTime + rewindTime)
-+                }
-+              }
                }
              />
              <BottomControls
