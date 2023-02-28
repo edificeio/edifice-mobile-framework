@@ -16,7 +16,7 @@ index 4e95969..0e08e8a 100644
       * Title of the video
       */
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 5ea0ab2..6901091 100644
+index 5ea0ab2..47ea7f0 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
@@ -27,19 +27,39 @@ index 5ea0ab2..6901091 100644
      paused = false,
      muted = false,
      volume = 1,
-@@ -114,10 +115,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -82,6 +83,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+   const [_isFullscreen, setIsFullscreen] = useState<boolean>(
+     isFullscreen || resizeMode === 'cover' || false,
+   );
++  const [_isEnd, setIsEnd] = useState<boolean>(false);
+   const [_showTimeRemaining, setShowTimeRemaining] =
+     useState<boolean>(showTimeRemaining);
+   const [volumeTrackWidth, setVolumeTrackWidth] = useState<number>(0);
+@@ -114,10 +116,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    };
  
    const _onSeek = (obj: OnSeekData) => {
 -    if (!seeking) {
 -      setControlTimeout();
--    }
--    setCurrentTime(obj.seekTime);
 +    setControlTimeout();
++    setCurrentTime(obj.currentTime);
++    if(_isEnd){
++      setCurrentTime(duration);
++      setIsEnd(false)
+     }
+-    setCurrentTime(obj.seekTime);
  
      if (typeof onSeek === 'function') {
        onSeek(obj);
-@@ -189,7 +187,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -128,6 +132,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     if (currentTime < duration) {
+       setCurrentTime(duration);
+       setPaused(true);
++      setIsEnd(true);
+ 
+       if (showOnEnd) {
+         setShowControls(true);
+@@ -189,7 +194,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
            togglePlayPause();
            resetControlTimeout();
          } else {
@@ -48,7 +68,7 @@ index 5ea0ab2..6901091 100644
          }
          tapActionTimeout.current = null;
        }, doubleTapTime);
-@@ -426,11 +424,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -426,11 +431,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
                togglePlayPause={togglePlayPause}
                resetControlTimeout={resetControlTimeout}
                showControls={showControls}
