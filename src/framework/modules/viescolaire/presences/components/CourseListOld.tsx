@@ -67,51 +67,27 @@ const styles = StyleSheet.create({
   },
 });
 
-interface ICallListProps {
-  courseList: ICourse[];
+interface ICourseListProps {
+  courses: ICourse[];
   isFetching: boolean;
-  onCoursePress: (course: any) => void;
-  navigation: any;
-  isFocused: boolean;
+  onCoursePress: (course: ICourse) => void;
 }
 
-interface ICallListState {
+interface ICourseListState {
   currentIndex: number;
 }
 
-export default class CallList extends React.PureComponent<ICallListProps, ICallListState> {
-  public carouselRef: any;
-
+export default class CourseList extends React.PureComponent<ICourseListProps, ICourseListState> {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentIndex: this.getCurrentCourseIndex(props.courseList),
+      currentIndex: this.getCurrentCourseIndex(props.courses),
     };
   }
 
-  componentDidMount() {
-    // refresh every 3.5 minutes
-    this.interval = setInterval(() => {
-      if (this.props.isFocused) {
-        this.setState({ currentIndex: this.getCurrentCourseIndex(this.props.courseList) });
-      } else {
-        clearInterval(this.interval);
-      }
-    }, 210000);
-  }
-
-  componentWillUpdate(nextProps) {
-    if (this.props.courseList !== nextProps.courseList)
-      this.setState({ currentIndex: this.getCurrentCourseIndex(nextProps.courseList) });
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  private getCurrentCourseIndex(courseList) {
-    const courseIndexNow = courseList.findIndex(course =>
+  private getCurrentCourseIndex(courses) {
+    const courseIndexNow = courses.findIndex(course =>
       moment().isBetween(moment(course.startDate).subtract(1, 'minutes'), moment(course.endDate)),
     );
     return courseIndexNow !== -1 ? courseIndexNow : 0;
@@ -122,7 +98,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   };
 
   private Carousel = () => {
-    const { courseList, onCoursePress } = this.props;
+    const { courses, onCoursePress } = this.props;
     const getCourseCallItem = item => {
       const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
       const isCourseEditable = !moment(item.startDate).subtract(15, 'minutes').isAfter(moment());
@@ -147,7 +123,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
             paginationStyle={styles.carouselPagination}
             dot={this.setCarouselDotStyle()}
             activeDotStyle={styles.carouselActiveDot}>
-            {courseList.map(item => getCourseCallItem(item))}
+            {courses.map(item => getCourseCallItem(item))}
           </Swiper>
         </View>
         <View style={styles.carouselFooter} />
@@ -156,7 +132,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   };
 
   public render() {
-    const { isFetching, courseList } = this.props;
+    const { isFetching, courses } = this.props;
     return (
       <View style={styles.container}>
         <SmallBoldText style={styles.dateText}>
@@ -165,14 +141,14 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
         <View style={styles.renderContainer}>
           {isFetching ? (
             <LoadingIndicator />
-          ) : courseList.length === 0 ? (
+          ) : courses.length ? (
+            <this.Carousel />
+          ) : (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />
               <BodyBoldText style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</BodyBoldText>
               <View style={[styles.noCallChip, styles.presentColor]} />
             </>
-          ) : (
-            <this.Carousel />
           )}
         </View>
       </View>

@@ -1,3 +1,4 @@
+import type { DashboardTeacherScreenPrivateProps } from './types';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -15,11 +16,10 @@ import { ModuleButton } from '~/framework/modules/viescolaire/dashboard/componen
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
-import CallList from '~/framework/modules/viescolaire/presences/screens/TeacherCallListOld';
+import CourseList from '~/framework/modules/viescolaire/presences/screens/CourseListScreenOld';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
-import type { DashboardTeacherScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -40,7 +40,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
           <StructurePicker />
           {props.authorizedViescoApps.presences ? (
             <View style={styles.coursesContainer}>
-              <CallList {...props} />
+              <CourseList {...props} />
             </View>
           ) : null}
           <View style={styles.appsGrid}>
