@@ -1,7 +1,7 @@
 import moment from 'moment';
 
+import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import { IPersonnelList } from '~/modules/viescolaire/dashboard/state/personnel';
 
 export type Homework = {
   id: string;

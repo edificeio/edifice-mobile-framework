@@ -1,31 +1,29 @@
-import moment from 'moment';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
+import { UserChildrenFlattened } from '~/framework/modules/auth/model';
 import {
-  IChildArray,
   getChildrenList,
   getSelectedChild,
   getSelectedChildStructure,
 } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { fetchPresencesChildrenEventsAction } from '~/framework/modules/viescolaire/presences/actions';
 import { NotificationRelativesModal } from '~/framework/modules/viescolaire/presences/components/NotificationRelativesModal';
-import { fetchChildrenEventsAction } from '~/modules/viescolaire/presences/actions/relativesNotificationModal';
-import {
-  IChildEventsNotificationState,
-  getRelativesNotification,
-} from '~/modules/viescolaire/presences/state/relativesNotificationModal';
+import { IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
+import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
+import { AsyncState } from '~/framework/util/redux/async';
 
 type NotificationRelativesModalProps = {
   childId: string;
-  childrenArray: IChildArray;
-  childrenEvents: IChildEventsNotificationState;
+  children: UserChildrenFlattened;
+  childrenEvents: AsyncState<IChildrenEvents | undefined>;
   isCheckOpenModalDone: boolean;
   isClosingNoEvents: boolean;
   showModal: boolean;
   structureId: string;
-  getChildrenEvents: (childrenArray: IChildArray, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => void;
+  fetchChildrenEvents: (structureId: string, studentIds: string[]) => void;
   onClose: () => void;
 };
 
@@ -46,9 +44,12 @@ class NotificationRelativesModalContainer extends React.PureComponent<
   }
 
   componentDidMount() {
-    const { childrenArray, structureId } = this.props;
+    const { children, structureId } = this.props;
 
-    this.props.getChildrenEvents(childrenArray, structureId, moment(), moment());
+    this.props.fetchChildrenEvents(
+      structureId,
+      children.map(child => child.id),
+    );
   }
 
   componentDidUpdate() {
@@ -71,7 +72,7 @@ class NotificationRelativesModalContainer extends React.PureComponent<
         visible={this.state.visible}
         onClose={this.onClose}
         childrenEvents={this.props.childrenEvents}
-        childrenArray={this.props.childrenArray}
+        childrenArray={this.props.children}
       />
     ) : null;
   }
@@ -80,9 +81,10 @@ class NotificationRelativesModalContainer extends React.PureComponent<
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps = (state: IGlobalState) => {
+  const presencesState = moduleConfig.getState(state);
   const childId = getSelectedChild(state)?.id;
-  const childrenArray = getChildrenList(state);
-  const childrenEvents = getRelativesNotification(state);
+  const children = getChildrenList(state);
+  const childrenEvents = presencesState.childrenEvents;
   const structureId = getSelectedChildStructure(state)?.id;
   let isClosingNoEvents = false as boolean;
   let isCheckOpenModalDone = false as boolean;
@@ -101,7 +103,7 @@ const mapStateToProps = (state: IGlobalState) => {
   };
   let prevStateIsClosingNoEvents = undefined as undefined | boolean;
   // Close Modal if children don't have any events
-  childrenArray?.map(child => {
+  children.map(child => {
     if (childrenEvents && childrenEvents?.data?.studentsEvents && child.id && childrenEvents?.data?.studentsEvents[child.id]) {
       if (checkIsEmptyEvents(childrenEvents?.data?.studentsEvents[child.id].all)) {
         if (prevStateIsClosingNoEvents === undefined) {
@@ -117,7 +119,7 @@ const mapStateToProps = (state: IGlobalState) => {
   });
 
   return {
-    childrenArray,
+    children,
     childId,
     childrenEvents,
     isCheckOpenModalDone,
@@ -129,7 +131,7 @@ const mapStateToProps = (state: IGlobalState) => {
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
-      getChildrenEvents: fetchChildrenEventsAction,
+      fetchChildrenEvents: fetchPresencesChildrenEventsAction,
     },
     dispatch,
   );

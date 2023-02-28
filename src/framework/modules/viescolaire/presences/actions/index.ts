@@ -6,26 +6,26 @@ import { ThunkAction } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
-import { IClassCall, ICourse, IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import { IChildrenEvents, IClassCall, ICourse, IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 /**
- * Fetch multiple slots setting.
+ * Fetch children events.
  */
-export const presencesMultipleSlotActionsCreators = createAsyncActionCreators(actionTypes.multipleSlotsSetting);
-export const fetchPresencesMultipleSlotSettingAction =
-  (structureId: string): ThunkAction<Promise<boolean>, any, any, any> =>
+export const presencesChildrenEventsActionsCreators = createAsyncActionCreators(actionTypes.childrenEvents);
+export const fetchPresencesChildrenEventsAction =
+  (structureId: string, studentIds: string[]): ThunkAction<Promise<IChildrenEvents>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
-      dispatch(presencesMultipleSlotActionsCreators.request());
-      const allowMultipleSlots = await presencesService.settings.getAllowMultipleSlots(session, structureId);
-      dispatch(presencesMultipleSlotActionsCreators.receipt(allowMultipleSlots));
-      return allowMultipleSlots;
+      dispatch(presencesChildrenEventsActionsCreators.request());
+      const childrenEvents = await presencesService.childrenEvents.get(session, structureId, studentIds);
+      dispatch(presencesChildrenEventsActionsCreators.receipt(childrenEvents));
+      return childrenEvents;
     } catch (e) {
-      dispatch(presencesMultipleSlotActionsCreators.error(e as Error));
+      dispatch(presencesChildrenEventsActionsCreators.error(e as Error));
       throw e;
     }
   };
@@ -109,6 +109,25 @@ export const fetchPresencesHistoryAction =
       return history;
     } catch (e) {
       dispatch(presencesHistoryActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch multiple slots setting.
+ */
+export const presencesMultipleSlotActionsCreators = createAsyncActionCreators(actionTypes.multipleSlotsSetting);
+export const fetchPresencesMultipleSlotSettingAction =
+  (structureId: string): ThunkAction<Promise<boolean>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesMultipleSlotActionsCreators.request());
+      const allowMultipleSlots = await presencesService.settings.getAllowMultipleSlots(session, structureId);
+      dispatch(presencesMultipleSlotActionsCreators.receipt(allowMultipleSlots));
+      return allowMultipleSlots;
+    } catch (e) {
+      dispatch(presencesMultipleSlotActionsCreators.error(e as Error));
       throw e;
     }
   };

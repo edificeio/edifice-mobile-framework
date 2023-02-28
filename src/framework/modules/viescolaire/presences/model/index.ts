@@ -1,3 +1,4 @@
+import { IChildrenEvents } from './children-events';
 import { IClassCall, IDayHistory, IStudent } from './class-call';
 import { ICourse } from './course';
 import { ICourseRegister } from './course-register';
@@ -9,6 +10,7 @@ import { IStudentsEvents } from './students-events';
 import { IUserChild } from './user-child';
 
 export {
+  IChildrenEvents,
   IClassCall,
   IDayHistory,
   IStudent,

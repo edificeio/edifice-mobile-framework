@@ -5,6 +5,7 @@ import { ISession } from '~/framework/modules/auth/model';
 import {
   EventType,
   ICallEvent,
+  IChildrenEvents,
   IClassCall,
   ICourse,
   ICourseRegister,
@@ -20,6 +21,19 @@ import {
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
+
+type IBackendChildrenEvents = {
+  students_events: any;
+  limit?: number;
+  offset?: number;
+  recovery_methods: string; // {HALF_DAY / HOUR / DAY}
+  totals: {
+    JUSTIFIED: number;
+    UNJUSTIFIED: number;
+    LATENESS: number;
+    DEPARTURE: number;
+  };
+};
 
 type IBackendClassCall = {
   personnel_id: string;
@@ -192,6 +206,16 @@ type IBackendUserChild = {
 type IBackendCourseList = IBackendCourse[];
 type IBackendHistoryEventList = IBackendHistoryEvent[];
 type IBackendUserChildren = IBackendUserChild[];
+
+const childrenEventsAdapter = (data: IBackendChildrenEvents): IChildrenEvents => {
+  return {
+    studentsEvents: data.students_events,
+    limit: data.limit,
+    offset: data.offset,
+    recoveryMethods: data.recovery_methods,
+    totals: data.totals,
+  } as IChildrenEvents;
+};
 
 const classCallAdapter = (data: IBackendClassCall): IClassCall => {
   return {
@@ -378,6 +402,22 @@ export const presencesService = {
           return res.id;
         },
       );
+    },
+  },
+  childrenEvents: {
+    get: async (session: ISession, structureId: string, studentIds: string[]) => {
+      const api = `/presences/structures/${structureId}/students/events`;
+      const body = JSON.stringify({
+        student_ids: studentIds,
+        types: ['NO_REASON', 'UNREGULARIZED', 'REGULARIZED', 'LATENESS', 'DEPARTURE'],
+        start_at: moment().format('YYYY-MM-DD'),
+        end_at: moment().format('YYYY-MM-DD'),
+      });
+      const childrenEvents = (await fetchJSONWithCache(api, {
+        method: 'POST',
+        body,
+      })) as IBackendChildrenEvents;
+      return childrenEventsAdapter(childrenEvents) as IChildrenEvents;
     },
   },
   classCall: {

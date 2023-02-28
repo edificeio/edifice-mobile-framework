@@ -5,12 +5,13 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
-import { IClassCall, ICourse, IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import { IChildrenEvents, IClassCall, ICourse, IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 interface IPresencesReduxStateData {
   allowMultipleSlots: boolean;
+  childrenEvents?: IChildrenEvents;
   classCall?: IClassCall;
   courses: ICourse[];
   history: IHistory;
@@ -22,6 +23,7 @@ interface IPresencesReduxStateData {
 
 export interface IPresencesReduxState {
   allowMultipleSlots: AsyncState<boolean>;
+  childrenEvents: AsyncState<IChildrenEvents | undefined>;
   classCall: AsyncState<IClassCall | undefined>;
   courses: AsyncState<ICourse[]>;
   history: AsyncState<IHistory>;
@@ -50,6 +52,7 @@ const initialState: IPresencesReduxStateData = {
 };
 
 export const actionTypes = {
+  childrenEvents: createAsyncActionTypes(moduleConfig.namespaceActionType('CHILDREN_EVENTS')),
   classCall: createAsyncActionTypes(moduleConfig.namespaceActionType('CLASS_CALL')),
   courses: createAsyncActionTypes(moduleConfig.namespaceActionType('COURSES')),
   createAbsence: createAsyncActionTypes(moduleConfig.namespaceActionType('CREATE_ABSENCE')),
@@ -63,6 +66,7 @@ export const actionTypes = {
 
 const reducer = combineReducers({
   allowMultipleSlots: createSessionAsyncReducer(initialState.allowMultipleSlots, actionTypes.multipleSlotsSetting),
+  childrenEvents: createSessionAsyncReducer(initialState.childrenEvents, actionTypes.childrenEvents),
   classCall: createSessionAsyncReducer(initialState.classCall, actionTypes.classCall),
   courses: createSessionAsyncReducer(initialState.courses, actionTypes.courses),
   history: createSessionAsyncReducer(initialState.history, actionTypes.history),
