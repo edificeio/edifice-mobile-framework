@@ -1,7 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-
-import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
+
+import { ISession } from '~/framework/modules/auth/model';
+import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface PresencesCourseListScreenProps {
@@ -10,6 +11,7 @@ export interface PresencesCourseListScreenProps {
   initialLoadingState: AsyncPagedLoadingState;
   registerId: string;
   registerPreference: string;
+  session?: ISession;
   structureId?: string;
   teacherId?: string;
   fetchCourses: (

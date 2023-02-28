@@ -3,11 +3,13 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
@@ -15,7 +17,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText } from '~/framework/components/text';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
@@ -121,21 +123,23 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
   }, [props.structureId]);
 
   const openCall = async (course: ICourse) => {
-    let { registerId } = course;
+    try {
+      let { registerId } = course;
 
-    if (!registerId) {
-      const session = assertSession();
-      const { allowMultipleSlots, teacherId } = props;
-      if (!session || !teacherId) return;
-      const courseRegister = await presencesService.courseRegister.create(session, course, teacherId, allowMultipleSlots);
-      registerId = courseRegister.id;
+      if (!registerId) {
+        const { allowMultipleSlots, session, teacherId } = props;
+        if (!session || !teacherId) throw new Error();
+        const courseRegister = await presencesService.courseRegister.create(session, course, teacherId, allowMultipleSlots);
+        registerId = courseRegister.id;
+      }
+      props.navigation.navigate(presencesRouteNames.call, {
+        classroom: course.roomLabels[0],
+        id: registerId,
+        name: course.classes[0] ?? course.groups[0],
+      });
+    } catch {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
-
-    props.navigation.navigate(presencesRouteNames.call, {
-      classroom: course.roomLabels[0],
-      id: registerId,
-      name: course.classes[0] ?? course.groups[0],
-    });
   };
 
   const renderError = () => {
@@ -199,6 +203,7 @@ export default connect(
       courses: presencesState.courses.data.filter(course => course.allowRegister === true),
       initialLoadingState: presencesState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       registerPreference: presencesState.registerPreference.data,
+      session,
       structureId: getSelectedStructure(state),
       teacherId: session?.user.id,
     };
