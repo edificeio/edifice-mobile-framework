@@ -31,7 +31,10 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
 
   const handleBack = () => {
-    props.navigation.goBack();
+    StatusBar.setHidden(false);
+    setTimeout(() => {
+      props.navigation.goBack();
+    }, 10);
   };
 
   React.useEffect(() => {
@@ -129,14 +132,15 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   React.useEffect(() => {
     if (!isAudio) Orientation.unlockAllOrientations();
-    StatusBar.setHidden(true);
+    setTimeout(() => {
+      if (!error) StatusBar.setHidden(true);
+    }, 10);
     // Manage Android back button
     const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
     return () => {
       backHandler.remove();
       if (!isChangingOrientation) {
         Orientation.lockToPortrait();
-        StatusBar.setHidden(false);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
       isChangingOrientation = false;
