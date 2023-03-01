@@ -31,14 +31,15 @@ export default StyleSheet.create({
   inputTextContainer: {
     borderLeftWidth: 1,
     backgroundColor: 'transparent',
+    overflow: 'hidden',
   },
   inputTextInput: {
     color: theme.ui.text.regular,
     fontSize: TextSizeStyle.Medium.fontSize,
     paddingHorizontal: UI_SIZES.spacing.small,
     lineHeight: undefined,
-    paddingVertical: UI_SIZES.spacing.tiny,
-    marginVertical: 2, // Hack to compensate the position of TextInput baseline compared to regular text.
+    paddingVertical: UI_SIZES.spacing.tiny + UI_SIZES.spacing.tiny + 1 + UI_SIZES.spacing.big, // Hack to have padding + negative margin to have auto scroll with offset
+    marginVertical: 2 - UI_SIZES.spacing.tiny - 1 - UI_SIZES.spacing.big, // Hack to compensate the position of TextInput baseline compared to regular text.
   },
   inputTitle: { marginLeft: UI_SIZES.spacing.minor },
   inputTitleContainer: { alignItems: 'center', marginTop: UI_SIZES.spacing.big, flexDirection: 'row' },

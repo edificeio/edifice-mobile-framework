@@ -142,19 +142,22 @@ const UserEmailScreen = (props: UserEmailScreenProps) => {
           />
           <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
         </View>
-        <TextInput
-          autoCorrect={false}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          placeholder={I18n.t('user-email-placeholder')}
-          placeholderTextColor={theme.palette.grey.graphite}
+        <View
           style={[
-            styles.input,
+            styles.inputWrapper,
             { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
-          ]}
-          value={email}
-          onChangeText={text => changeEmail(text)}
-        />
+          ]}>
+          <TextInput
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            placeholder={I18n.t('user-email-placeholder')}
+            placeholderTextColor={theme.palette.grey.graphite}
+            style={styles.input}
+            value={email}
+            onChangeText={text => changeEmail(text)}
+          />
+        </View>
         <CaptionItalicText style={styles.errorText}>
           {isEmailStatePristine
             ? I18n.t('common.space')

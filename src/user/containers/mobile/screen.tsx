@@ -254,6 +254,14 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
               },
               language: countryListLanguages[I18n.currentLocale()] ?? countryListLanguages.DEFAULT,
             }}
+            textInputProps={{
+              hitSlop: {
+                top: -UI_SIZES.spacing.big,
+                bottom: -UI_SIZES.spacing.big,
+                left: 0,
+                right: 0,
+              },
+            }}
           />
           <CaptionItalicText style={styles.errorText}>
             {isMobileStatePristine
