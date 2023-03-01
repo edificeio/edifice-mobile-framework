@@ -117,7 +117,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
     this.props.clearContent();
     this.props.setup();
-    this.setState({ id: this.props.navigation.getParam('mailId') });
+    if (
+      this.props.navigation.getParam('mailId') !== undefined &&
+      this.state.id === undefined &&
+      this.props.navigation.getParam('type') === DraftType.DRAFT
+    ) {
+      this.setState({ id: this.props.navigation.getParam('mailId') });
+    }
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
