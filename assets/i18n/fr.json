@@ -202,6 +202,8 @@
   "common.error.connection.title": "Désolé...\nLa lumière s'est éteinte",
   "common.error.content.text": "Il semblerait que le contenu a été supprimé ou que vous n'y avez plus accès.",
   "common.error.content.title": "Oups...\nLe contenu s'est envolé",
+  "common.error.mediaNotSupported.title": "Impossible de lire le contenu",
+  "common.error.mediaNotSupported.text": "Le contenu ne peut pas être lue pour plusieurs raisons possibles (format non compatible, fichier corrompu, fichier supprimé).",
   "common.error.text": "Une erreur est survenue. Veuillez réessayer plus tard.",
   "common.error.title": "Oups...",
   "common.errorLoadingResource": "Cette ressource est inaccessible.",

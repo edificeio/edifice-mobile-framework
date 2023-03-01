@@ -202,6 +202,8 @@
   "common.error.connection.title": "Sorry...\nThe lights are out",
   "common.error.content.text": "It looks like the content has been deleted or you no longer have access.",
   "common.error.content.title": "Whoops...\nThis content has disappeared",
+  "common.error.mediaNotSupported.title": "Unable to read content",
+  "common.error.mediaNotSupported.text": "The content cannot be read for several possible reasons (non-compatible format, corrupted file, deleted file).",
   "common.error.text": "An error occurred. Please try again later.",
   "common.error.title": "Whoops...",
   "common.errorLoadingResource": "This content is inaccessible.",

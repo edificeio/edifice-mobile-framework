@@ -202,6 +202,8 @@
   "common.error.connection.title": "Lo sentimos...\nLa luz se ha apagado",
   "common.error.content.text": "Parece ser que el contenido se ha eliminado o ya no se puede acceder a él.",
   "common.error.content.title": "Ups...\nEl contenido ha desaparecido",
+  "common.error.mediaNotSupported.title": "No se puede leer el contenido",
+  "common.error.mediaNotSupported.text": "El contenido no se puede leer por varias razones posibles (formato incompatible, archivo dañado, archivo borrado)",
   "common.error.text": "Ha ocurrido un error. Vuelva a intentarlo más tarde.",
   "common.error.title": "Ups...",
   "common.errorLoadingResource": "Este contenido es inaccesible.",

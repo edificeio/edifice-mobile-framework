@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyMediaNotSupportedScreen } from '~/framework/components/emptyMediaNotSupported';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 
@@ -60,6 +61,17 @@ function MediaPlayer(props: MediaPlayerProps) {
     setVideoPlayerControlTimeoutDelay(999999);
   };
 
+  const renderError = () => {
+    switch (error.type) {
+      case 'connection':
+        return <EmptyConnectionScreen />;
+      case 'AVFoundationErrorDomain':
+        return <EmptyMediaNotSupportedScreen />;
+      default:
+        return <EmptyContentScreen />;
+    }
+  };
+
   const getSource = () => {
     // Add "file://" if absolute url is provided
     let src = Object.assign({}, source);
@@ -107,12 +119,12 @@ function MediaPlayer(props: MediaPlayerProps) {
           ignoreSilentSwitch="ignore"
           onBack={handleBack}
           onEnd={handleVideoPlayerEnd}
-          onError={() =>
+          onError={(e: any) => {
             setError({
               active: true,
-              type: 'no content',
-            })
-          }
+              type: e.error.domain,
+            });
+          }}
           rewindTime={10}
           showDuration
           showOnStart
@@ -155,7 +167,7 @@ function MediaPlayer(props: MediaPlayerProps) {
         </PageView>
       ) : (
         <PageView navBarWithBack={{ title: I18n.t('media-player-title') }} onBack={handleBack}>
-          {error.type === 'connection' ? <EmptyConnectionScreen /> : <EmptyContentScreen />}
+          {renderError()}
         </PageView>
       )}
     </>
