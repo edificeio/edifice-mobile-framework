@@ -1,6 +1,6 @@
 {
-  "last": "2023-03-01 21:18:58",
-  "notes": "feat(2fa): MB-1351, autocomplete mobile number at login\nfix(user): MB-1289 add auto-scroll offset on email/phone inputs\nfeat(media-player): MB-1367, new empty state when format media not supported\nfix(conversation): MB-1296, MB-1341 responses were not sent\nfix(video-player): MB-1343, fix vibration when show & dismiss player\nfix(conversation): MB-1350, no clear search when have results on search\nfix(media-player): MB-1347, timestamp matching when move on\nfix(media-player): MB-1348, when video is on pause & click on rewind timestamp matching\nchore(media-player): MB-1354, no forwards when video is at the end\nfix(media-player): MB-1315, fix show controls when slide on timestamp\nfeat(traductions): MB-639, add traductions en/es\nchore(2fa): state constant name\nfix(2fa): MB-1339, get validation state from code verification call\nrelease: 1.9.3-alpha.11(1090314)",
-  "version": "1.9.3-alpha.12(1090315)",
+  "last": "2023-03-01 21:49:10",
+  "notes": "release: 1.9.3-alpha.12(1090315)",
+  "version": "1.9.3-rc.4(1090316)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
