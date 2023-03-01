@@ -1,7 +1,13 @@
 import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Platform, TouchableOpacity, View } from 'react-native';
-import PhoneInput, { CountryCode, getFormattedNumber, isMobileNumber, isValidNumber } from 'react-native-phone-number-input';
+import PhoneInput, {
+  CountryCode,
+  getFormattedNumber,
+  getRegionCodeAndNationalNumber,
+  isMobileNumber,
+  isValidNumber,
+} from 'react-native-phone-number-input';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
@@ -36,6 +42,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const { onLogout, navigation } = props;
 
   const credentials = navigation.getParam('credentials');
+  const defaultMobile = navigation.getParam('defaultMobile');
   const navBarTitle = navigation.getParam('navBarTitle');
   const modificationType = navigation.getParam('modificationType');
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
@@ -54,6 +61,17 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
   const [isError, setIsError] = React.useState(false);
   const [isCheckMobile, setIsCheckMobile] = React.useState(false);
 
+  useEffect(() => {
+    if (defaultMobile) {
+      const regionCodeAndNationalNumber = getRegionCodeAndNationalNumber(defaultMobile);
+      if (regionCodeAndNationalNumber) {
+        const regionCode = regionCodeAndNationalNumber.regionCode;
+        const nationalNumber = regionCodeAndNationalNumber.nationalNumber;
+        if (regionCode) setRegion(regionCode);
+        if (nationalNumber) setMobile(nationalNumber);
+      } else setMobile(defaultMobile);
+    }
+  }, [defaultMobile]);
   useEffect(() => {
     async function checkRequirements() {
       try {
@@ -226,7 +244,7 @@ const UserMobileScreen = (props: UserMobileScreenProps) => {
             placeholder={I18n.t('user-mobile-placeholder')}
             ref={phoneInputRef}
             value={mobile}
-            defaultCode="FR"
+            defaultCode={region}
             layout="third"
             onChangeFormattedText={text => changeMobile(text)}
             onChangeCountry={code => setRegion(code.cca2)}

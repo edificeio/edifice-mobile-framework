@@ -1,5 +1,9 @@
+diff --git a/node_modules/react-native-phone-number-input/.DS_Store b/node_modules/react-native-phone-number-input/.DS_Store
+new file mode 100644
+index 0000000..c9f3eae
+Binary files /dev/null and b/node_modules/react-native-phone-number-input/.DS_Store differ
 diff --git a/node_modules/react-native-phone-number-input/lib/index.d.ts b/node_modules/react-native-phone-number-input/lib/index.d.ts
-index cd625e5..fe04bbc 100644
+index cd625e5..f4ffec8 100644
 --- a/node_modules/react-native-phone-number-input/lib/index.d.ts
 +++ b/node_modules/react-native-phone-number-input/lib/index.d.ts
 @@ -1,10 +1,11 @@
@@ -28,14 +32,19 @@ index cd625e5..fe04bbc 100644
  }
  export interface PhoneInputState {
    code: CallingCode | undefined;
-@@ -305,3 +308,5 @@ export default class PhoneInput extends Component<
+@@ -304,4 +307,8 @@ export default class PhoneInput extends Component<
+   render(): JSX.Element;
  }
  
- export function isValidNumber(number: string, countryCode: CountryCode ): boolean;
-+export function isMobileNumber(number: string, countryCode: CountryCode ): boolean;
-+export function getFormattedNumber(number: string, countryCode: CountryCode ): string | undefined;
+-export function isValidNumber(number: string, countryCode: CountryCode ): boolean;
+\ No newline at end of file
++export function isValidNumber(number: string, countryCode: CountryCode): boolean;
++export function isMobileNumber(number: string, countryCode: CountryCode): boolean;
++export function getFormattedNumber(number: string, countryCode: CountryCode): string | undefined;
++export function getRegionCodeAndNationalNumber(number: string): { regionCode: CountryCode, nationalNumber: string };
++
 diff --git a/node_modules/react-native-phone-number-input/lib/index.js b/node_modules/react-native-phone-number-input/lib/index.js
-index b89c388..a006439 100644
+index b89c388..286350d 100644
 --- a/node_modules/react-native-phone-number-input/lib/index.js
 +++ b/node_modules/react-native-phone-number-input/lib/index.js
 @@ -7,7 +7,7 @@ import CountryPicker, {
@@ -105,7 +114,7 @@ index b89c388..a006439 100644
              />
            </View>
          </View>
-@@ -241,8 +245,26 @@ export default class PhoneInput extends PureComponent {
+@@ -241,8 +245,38 @@ export default class PhoneInput extends PureComponent {
  export const isValidNumber = (number, countryCode) => {
    try {
      const parsedNumber = phoneUtil.parse(number, countryCode);
@@ -133,6 +142,18 @@ index b89c388..a006439 100644
 +    return undefined;
 +  }
 +};
++
++export const getRegionCodeAndNationalNumber = (number) => {
++  try {
++    const parsedNumber = phoneUtil.parse(number);
++    const regionCode = phoneUtil.getRegionCodeForNumber(parsedNumber);
++    const nationalNumber = parsedNumber.getNationalNumber()?.toString();
++    return { regionCode, nationalNumber };
++  } catch (err) {
++    return undefined;
++  }
++};
++
 diff --git a/node_modules/react-native-phone-number-input/lib/styles.d.ts b/node_modules/react-native-phone-number-input/lib/styles.d.ts
 index c6bd19e..4fc1080 100644
 --- a/node_modules/react-native-phone-number-input/lib/styles.d.ts

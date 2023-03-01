@@ -14,7 +14,13 @@ import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { LegalUrls } from '~/user/reducers/auth';
-import { IEntcoreEmailValidationInfos, IUserRequirements, Languages, userService } from '~/user/service';
+import {
+  IEntcoreEmailValidationInfos,
+  IEntcoreMobileValidationInfos,
+  IUserRequirements,
+  Languages,
+  userService,
+} from '~/user/service';
 
 import { actionTypeLegalDocuments } from './actionTypes/legalDocuments';
 import {
@@ -188,7 +194,15 @@ export function loginAction(
         throw err;
       } else if (requirements?.needRevalidateMobile) {
         const err = new Error('[loginAction]: User must verify mobile.');
-        (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
+        try {
+          const mobileValidationInfos = await userService.getMobileValidationInfos();
+          (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
+          (err as any).mobileValidationInfos = {
+            ...mobileValidationInfos,
+          } as IEntcoreMobileValidationInfos;
+        } catch (e) {
+          throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', e as Error);
+        }
         throw err;
       } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
@@ -321,7 +335,7 @@ export function loginAction(
         routeParams = { credentials };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_MOBILE) {
         routeToGo = 'UserMobile';
-        routeParams = { credentials };
+        routeParams = { credentials, defaultMobile: (err as any)?.mobileValidationInfos?.mobile };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
         routeToGo = 'UserEmail';
         routeParams = { credentials, defaultEmail: (err as any)?.emailValidationInfos?.email };
