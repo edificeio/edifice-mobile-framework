@@ -31,12 +31,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 
-export interface ConversationMailListScreenNavigationParams {
-  folderId: any;
-  folderName: string;
-  key: any;
-}
-
 export type IInit = {
   data: IInitMail;
   isPristine: boolean;
@@ -49,6 +43,12 @@ export type ICount = {
   isFetching: boolean;
   error: any;
 };
+
+export interface ConversationMailListScreenNavigationParams {
+  folderId: any;
+  folderName: string;
+  key: any;
+}
 export interface ConversationMailListScreenEventProps {
   fetchInit: () => IInit;
   fetchMailList: (page: number, key: string) => any;
