@@ -254,7 +254,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       news: 'Actualites',
       schoolbook: 'SchoolBook',
       homework: 'Homeworks',
-      workspace: 'Worksapce',
+      workspace: 'Workspace',
       conversation: 'Conversation',
       user: 'MyAccount',
       zimbra: 'Zimbra',
