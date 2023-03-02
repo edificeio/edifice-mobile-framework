@@ -326,7 +326,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                         await trashMessage([id]);
                         await deleteMessage([id]);
                       }
-                      onGoBack && onGoBack();
+                      if (onGoBack) onGoBack();
                       Trackers.trackEventOfModule(
                         moduleConfig,
                         'Ecrire un mail',
@@ -353,7 +353,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   await trashMessage([id]);
                   await deleteMessage([id]);
                 }
-                onGoBack && onGoBack();
+                if (onGoBack) onGoBack();
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -379,7 +379,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             onPress: async () => {
               try {
                 await this.saveDraft();
-                onGoBack && onGoBack();
+                if (onGoBack) onGoBack();
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -412,7 +412,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         } else if (isSavedDraft) {
           await this.saveDraft();
         }
-        onGoBack && onGoBack();
+        if (onGoBack) onGoBack();
         navigation.goBack();
       }
     },
@@ -557,7 +557,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         if (mail.body?.length > 0) {
           prevbody += '<hr class="ng-scope">' + mail.body.split('<hr class="ng-scope">').slice(1).join('<hr class="ng-scope">');
         }
-        const current_body = mail.body.split('<hr class="ng-scope">')[0];
+        const currentBody = mail.body.split('<hr class="ng-scope">')[0];
 
         return {
           prevBody: prevbody,
@@ -566,7 +566,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             cc: mail.cc.map(getUser),
             cci: mail.cci.map(getUser),
             subject: mail.subject,
-            body: current_body,
+            body: currentBody,
             attachments: mail.attachments,
           },
         };
