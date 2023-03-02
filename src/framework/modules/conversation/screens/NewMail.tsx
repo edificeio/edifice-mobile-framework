@@ -9,6 +9,7 @@ import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
@@ -16,7 +17,7 @@ import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/f
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { deleteMailsAction, trashMailsAction } from '~/framework/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/framework/modules/conversation/actions/mailContent';
 import {
@@ -510,7 +511,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           to.push(getUser(mail.from));
           let i = 0;
           for (const user of mail.to) {
-            if (user !== session.user.id && mail.to.indexOf(user) === i) {
+            if (user !== session?.user?.id && mail.to.indexOf(user) === i) {
               to.push(getUser(user));
             }
             ++i;
@@ -710,12 +711,12 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: IGlobalState) => {
   const { isFetching, data } = getMailContentState(state);
   return {
     mail: data,
     isFetching,
-    session: assertSession(),
+    session: getSession(state),
   };
 };
 
