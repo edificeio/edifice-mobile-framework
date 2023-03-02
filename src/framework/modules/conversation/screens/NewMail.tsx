@@ -32,6 +32,7 @@ import NewMailComponent from '~/framework/modules/conversation/components/NewMai
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -98,6 +99,17 @@ interface ConversationNewMailScreenState {
   webDraftWarning: boolean;
 }
 
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.newMail>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('conversation.newMessage'),
+});
+
 class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, ConversationNewMailScreenState> {
   constructor(props) {
     super(props);
@@ -110,12 +122,37 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   }
 
   componentDidMount = () => {
-    this.props.navigation.setParams(this.navigationHeaderFunction);
-    if (this.props.navigation.getParam('mailId') !== undefined) {
+    const { fetchMailContent, route, navigation, clearContent, setup } = this.props;
+    const addGivenAttachment = route.params.addGivenAttachment;
+    const sendDraft = route.params.getSendDraft;
+    const draftType = route.params.type;
+    const isSavedDraft = draftType === DraftType.DRAFT;
+
+    navigation.setOptions({
+      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
+      headerRight: () => (
+        <View style={{ flexDirection: 'row' }}>
+          {addGivenAttachment && (
+            <View style={{ width: 48, alignItems: 'center' }}>
+              <PopupMenu
+                actions={[
+                  cameraAction({ callback: addGivenAttachment }),
+                  galleryAction({ callback: addGivenAttachment, multiple: true }),
+                  documentAction({ callback: addGivenAttachment }),
+                ]}>
+                <HeaderIcon name="attachment" />
+              </PopupMenu>
+            </View>
+          )}
+          {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
+        </View>
+      ),
+    });
+    navigation.setParams(this.navigationHeaderFunction);
+    if (route.params.mailId) {
       this.setState({ isPrefilling: true });
-      this.props.fetchMailContent(this.props.navigation.getParam('mailId'));
+      fetchMailContent(route.params.mailId);
     }
-    const draftType = this.props.navigation.getParam('type');
     if (draftType === DraftType.REPLY) {
       /* empty */
     }
@@ -125,11 +162,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
     }
-    this.props.clearContent();
-    this.props.setup();
+    clearContent();
+    setup();
   };
 
-  componentDidUpdate = async (prevProps: NewMailScreenProps, prevState) => {
+  componentDidUpdate = async (prevProps: ConversationNewMailScreenProps, prevState) => {
     if (prevProps.mail !== this.props.mail) {
       const prefilledMailRet = this.getPrefilledMail();
       if (!prefilledMailRet) return;
@@ -644,37 +681,6 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     }
   };
 
-  navBarInfo = () => {
-    const { navigation } = this.props;
-    const addGivenAttachment = navigation.getParam('addGivenAttachment');
-    const sendDraft = navigation.getParam('getSendDraft');
-    const draftType = navigation.getParam('type');
-    const isSavedDraft = draftType === DraftType.DRAFT;
-    return {
-      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
-      right: (
-        <View style={{ flexDirection: 'row' }}>
-          {addGivenAttachment && (
-            <View style={{ width: 48, alignItems: 'center' }}>
-              <PopupMenu
-                actions={[
-                  cameraAction({ callback: addGivenAttachment }),
-                  galleryAction({ callback: addGivenAttachment, multiple: true }),
-                  documentAction({ callback: addGivenAttachment }),
-                ]}>
-                <HeaderIcon name="attachment" />
-              </PopupMenu>
-            </View>
-          )}
-          {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
-          {/* {deleteDraft && isSavedDraft && (
-            <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={deleteDraft} iconName="delete" />
-          )} */}
-        </View>
-      ),
-    };
-  };
-
   public render() {
     const { navigation } = this.props;
     const { isPrefilling, mail } = this.state;
@@ -684,8 +690,6 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
     return (
       <PageView
-        navigation={navigation}
-        navBarWithBack={this.navBarInfo()}
         onBack={() => {
           navigation.getParam('getGoBack', navigation.goBack)();
         }}
