@@ -182,7 +182,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     } else if (route.params.mailId && !id && route.params.type === DraftType.DRAFT) this.setState({ id: route.params.mailId });
 
     // Check if html tags are present in body
-    if (navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !webDraftWarning) {
+    if ((route.params.type ?? DraftType.NEW) === DraftType.DRAFT && !webDraftWarning) {
       const removeWrapper = (text: string) => {
         return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
       };
@@ -419,9 +419,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   getPrefilledMail = () => {
-    const { mail, navigation, route, session } = this.props;
+    const { mail, route, session } = this.props;
     if (!mail || (mail as unknown as []).length === 0) return undefined;
-    const draftType = navigation.getParam('type', DraftType.NEW);
+    const draftType = route.params.type ?? DraftType.NEW;
     const getDisplayName = id => mail.displayNames.find(([userId]) => userId === id)?.[1];
     const getUser = id => ({ id, displayName: getDisplayName(id) });
 
@@ -690,7 +690,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
     return (
       <PageView
-        onBack={() => navigation.getParam('getGoBack', navigation.goBack)()}
+        onBack={() => (route.params.getGoBack ?? navigation.goBack)()}
         style={{ backgroundColor: theme.ui.background.card }}>
         <NewMailComponent
           isFetching={isFetching || !!isPrefilling}
