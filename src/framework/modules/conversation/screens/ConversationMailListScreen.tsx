@@ -23,7 +23,7 @@ import { fetchMailListAction, fetchMailListFromFolderAction } from '~/framework/
 import MailList from '~/framework/modules/conversation/components/MailList';
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation/index';
-import { DraftType } from '~/framework/modules/conversation/screens/NewMail';
+import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
 import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
 import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
 import { getMailListState } from '~/framework/modules/conversation/state/mailList';

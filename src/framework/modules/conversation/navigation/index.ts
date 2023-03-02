@@ -2,7 +2,7 @@ import { ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '../module-config';
 import type { ConversationMailListScreenNavigationParams } from '../screens/ConversationMailListScreen';
-import type { ConversationNewMailScreenNavigationParams } from '../screens/NewMail';
+import type { ConversationNewMailScreenNavigationParams } from '../screens/ConversationNewMail';
 
 export const conversationRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',

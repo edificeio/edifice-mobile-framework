@@ -6,7 +6,7 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { ConversationNavigationParams, conversationRouteNames } from '.';
 import moduleConfig from '../module-config';
 import ConversationMailListScreen, { computeNavBar as conversationMailListNavBar } from '../screens/ConversationMailListScreen';
-import ConversationNewMailScreen, { computeNavBar as conversationNewMailNavBar } from '../screens/NewMail';
+import ConversationNewMailScreen, { computeNavBar as conversationNewMailNavBar } from '../screens/ConversationNewMail';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ConversationNavigationParams>(moduleConfig.name, Stack => (
