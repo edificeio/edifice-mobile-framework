@@ -19,6 +19,52 @@ import { downloadFileAction } from '~/framework/util/fileHandler/actions';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
+const styles = StyleSheet.create({
+  containerMail: {
+    backgroundColor: theme.ui.background.card,
+  },
+  gridButtonTextPJnb: {
+    color: theme.palette.primary.regular,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    textAlign: 'right',
+  },
+  gridButtonTextPJnames: {
+    color: theme.palette.primary.regular,
+    marginLeft: UI_SIZES.spacing.tiny,
+    flex: 1,
+  },
+  dotReceiverColor: {
+    width: 8,
+    height: 8,
+    borderRadius: 15,
+    marginTop: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.tiny,
+  },
+  greyColor: {
+    color: theme.palette.grey.graphite,
+  },
+  mailInfos: {
+    paddingLeft: UI_SIZES.spacing.small,
+    flex: 1,
+    alignSelf: 'flex-start',
+  },
+  mailDate: {
+    textAlign: 'right',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    color: theme.ui.text.light,
+  },
+  mailIndicator: {
+    flexDirection: 'row',
+    textAlign: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+    paddingHorizontal: UI_SIZES.spacing.small,
+    flex: 0,
+  },
+});
+
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor('Guest'));
 
@@ -229,51 +275,3 @@ export const RenderPJs = ({
     </View>
   );
 };
-
-// STYLE
-
-const styles = StyleSheet.create({
-  containerMail: {
-    backgroundColor: theme.ui.background.card,
-  },
-  gridButtonTextPJnb: {
-    color: theme.palette.primary.regular,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    textAlign: 'right',
-  },
-  gridButtonTextPJnames: {
-    color: theme.palette.primary.regular,
-    marginLeft: UI_SIZES.spacing.tiny,
-    flex: 1,
-  },
-  dotReceiverColor: {
-    width: 8,
-    height: 8,
-    borderRadius: 15,
-    marginTop: UI_SIZES.spacing.tiny,
-    marginRight: UI_SIZES.spacing.tiny,
-  },
-  greyColor: {
-    color: theme.palette.grey.graphite,
-  },
-  mailInfos: {
-    paddingLeft: UI_SIZES.spacing.small,
-    flex: 1,
-    alignSelf: 'flex-start',
-  },
-  mailDate: {
-    textAlign: 'right',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    color: theme.ui.text.light,
-  },
-  mailIndicator: {
-    flexDirection: 'row',
-    textAlign: 'center',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-end',
-    paddingHorizontal: UI_SIZES.spacing.small,
-    flex: 0,
-  },
-});
