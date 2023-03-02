@@ -4,8 +4,8 @@
  */
 import { AnyAction } from 'redux';
 
-import { actionTypes } from '~/homework/actions/diaryList';
-import { homeworkTasksReceived, actionTypes as taskListActionTypes } from '~/homework/actions/tasks';
+import { actionTypes } from '~/framework/modules/homework/actions/diaryList';
+import { homeworkTasksReceived, actionTypes as taskListActionTypes } from '~/framework/modules/homework/actions/tasks';
 import { IArrayById } from '~/infra/collections';
 import asyncReducer from '~/infra/redux/async';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
@@ -25,12 +25,12 @@ export type IHomeworkDiaryList = IArrayById<IHomeworkDiary>;
 
 const stateDefault: IHomeworkDiaryList = {};
 
-const homeworkDiaryListReducer = (state: IHomeworkDiaryList = stateDefault, action: AnyAction) => {
+const homeworkDiaryListReducer = (state: IHomeworkDiaryList = stateDefault, action = {} as AnyAction) => {
   switch (action.type) {
     case actionTypes.received:
       return action.data;
     // Session flush forward-compatibility.
-    case taskListActionTypes.received:
+    case taskListActionTypes.received: {
       const a = action as ReturnType<typeof homeworkTasksReceived>;
       if (a.data.diaryInfo) {
         return {
@@ -38,6 +38,7 @@ const homeworkDiaryListReducer = (state: IHomeworkDiaryList = stateDefault, acti
           [a.diaryId]: a.data.diaryInfo,
         } as IHomeworkDiaryList;
       } else return state;
+    }
     case createEndSessionActionType():
       return stateDefault;
     default:

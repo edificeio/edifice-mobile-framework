@@ -1,19 +1,24 @@
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { RefreshControl, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
+import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import Explorer from '~/framework/components/explorer';
 import { PageView } from '~/framework/components/page';
+import { ISession } from '~/framework/modules/auth/model';
+import config from '~/framework/modules/homework/module-config';
+import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
-import { computeRelativePath } from '~/framework/util/navigation';
-import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
-import config from '~/homework/config';
-import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { Loading } from '~/ui/Loading';
+
+import { HomeworkNavigationParams, homeworkRouteNames } from '../navigation';
 
 export interface IHomeworkExplorerScreenDataProps {
   diaryList?: {
@@ -25,21 +30,38 @@ export interface IHomeworkExplorerScreenDataProps {
   selectedDiaryId?: string;
   didInvalidate?: boolean;
   isFetching?: boolean;
+  session?: ISession;
 }
 
 export interface IHomeworkExplorerScreenEventProps {
   onRefresh: () => void;
   onSelect: (diaryId: string) => void;
+  dispatch: ThunkDispatch<any, any, any>;
 }
 
-export interface IHomeworkExplorerScreenOtherProps {
-  navigation?: any;
-  session: IUserSession;
-}
+export interface IHomeworkExplorerScreenOtherProps
+  extends NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkExplorer> {}
 
 export type IHomeworkExplorerScreenProps = IHomeworkExplorerScreenDataProps &
   IHomeworkExplorerScreenEventProps &
   IHomeworkExplorerScreenOtherProps;
+
+const styles = StyleSheet.create({
+  explorerContent: {
+    flexGrow: 1,
+  },
+});
+
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkExplorer>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
+});
 
 export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplorerScreenProps, object> {
   state = {
@@ -47,31 +69,23 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
   };
 
   render() {
-    const { isFetching, didInvalidate, navigation } = this.props;
+    const { isFetching, didInvalidate } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : this.renderList();
 
-    return (
-      <PageView
-        navigation={navigation}
-        navBarWithBack={{
-          title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
-        }}>
-        {pageContent}
-      </PageView>
-    );
+    return <PageView>{pageContent}</PageView>;
   }
 
   onOpenItem(diary) {
     const { navigation, onSelect } = this.props;
     const diaryId = diary?.id;
     onSelect(diaryId);
-    navigation.navigate(computeRelativePath(`${config.name}/tasks`, navigation.state), { diary });
+    navigation.navigate(`${config.name}/tasks`, { diary });
     Trackers.trackEvent('Homework', 'SELECT');
   }
 
   renderEmpty() {
     const { session } = this.props;
-    const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
+    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
     return (
       <EmptyScreen
@@ -92,7 +106,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
       const { thumbnail, ...b } = bb;
       return {
         ...b,
-        color: config?.picture?.fill ?? theme.palette.complementary.green.regular,
+        color: theme.palette.complementary[appConf.is1d ? 'blue' : 'green'].regular,
         icon: config.displayPicture,
         ...(thumbnail && { thumbnail: formatSource(thumbnail) }),
       };
@@ -114,7 +128,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
         }
         ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         ListEmptyComponent={this.renderEmpty()}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.explorerContent}
         keyExtractor={item => item.id}
       />
     );

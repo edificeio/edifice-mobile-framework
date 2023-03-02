@@ -1,17 +1,20 @@
 /*
   Reducers for Homework app.
 */
-
 import { combineReducers } from 'redux';
+
+import { Reducers } from '~/app/store';
+import moduleConfig from '~/framework/modules/homework/module-config';
 
 import diaryList from './diaryList';
 import selectedDiary from './selectedDiary';
 import tasks from './tasks';
 
-const rootReducer = combineReducers({
+const reducer = combineReducers({
   diaryList,
   selectedDiary,
   tasks,
 });
 
-export default rootReducer;
+Reducers.register(moduleConfig.reducerName, reducer);
+export default reducer;

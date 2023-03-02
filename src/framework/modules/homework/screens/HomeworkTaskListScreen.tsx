@@ -1,21 +1,18 @@
 import * as React from 'react';
-import { NavigationFocusInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { getUserSession } from '~/framework/util/session';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { fetchHomeworkTasks } from '~/homework/actions/tasks';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
 import {
   HomeworkTaskListScreen,
   IHomeworkTaskListScreenDataProps,
   IHomeworkTaskListScreenEventProps,
   IHomeworkTaskListScreenProps,
-} from '~/homework/components/HomeworkTaskListScreen';
-import config from '~/homework/config';
+} from '~/framework/modules/homework/components/HomeworkTaskListScreen';
 
 const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state => {
   // Extract data from state
-  const session = getUserSession();
+  const session = getSession(state);
   const localState = state.homework;
   const selectedDiaryId = localState.selectedDiary;
   const currentDiaryTasks = localState.tasks[selectedDiaryId];
@@ -77,15 +74,10 @@ const mapDispatchToProps: (dispatch: any) => IHomeworkTaskListScreenEventProps =
   };
 };
 
-class HomeworkTaskListScreenContainer extends React.PureComponent<
-  IHomeworkTaskListScreenProps & NavigationFocusInjectedProps & { dispatch: any },
-  object
-> {
+class HomeworkTaskListScreenContainer extends React.PureComponent<IHomeworkTaskListScreenProps, object> {
   render() {
     return <HomeworkTaskListScreen {...this.props} />;
   }
 }
 
-const HomeworkTaskListScreenContainerConnected = connect(mapStateToProps, mapDispatchToProps)(HomeworkTaskListScreenContainer);
-
-export default withViewTracking(`${config.name}/tasks`)(HomeworkTaskListScreenContainerConnected);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeworkTaskListScreenContainer);

@@ -2,15 +2,14 @@
  * Diary selected action(s)
  * Build actions to be dispatched to the diary selected reducer.
  */
-
 import { Action } from 'redux';
+
+import homeworkConfig from '~/framework/modules/homework/module-config';
+import { Trackers } from '~/framework/util/tracker';
 
 import { fetchHomeworkTasks } from './tasks';
 
-import { Trackers } from '~/framework/util/tracker';
-import homeworkConfig from '~/homework/config';
-
-export const actionTypeDiarySelected = homeworkConfig.createActionType('DIARY_SELECTED');
+export const actionTypeDiarySelected = homeworkConfig.namespaceActionType('DIARY_SELECTED');
 
 export interface IActionDiarySelected extends Action {
   diaryId: string;

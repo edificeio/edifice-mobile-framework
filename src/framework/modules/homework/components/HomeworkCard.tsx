@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -15,6 +15,29 @@ export interface IHomeworkCardProps {
   onPress: () => void;
 }
 
+const styles = StyleSheet.create({
+  item: {
+    flexDirection: 'row',
+    borderRadius: UI_SIZES.radius.card,
+    marginTop: UI_SIZES.spacing.small,
+    padding: UI_SIZES.spacing.medium,
+    marginLeft: UI_SIZES.spacing.big,
+    backgroundColor: theme.ui.background.card,
+    elevation: 7,
+    shadowColor: theme.ui.shadowColor,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+  },
+  viewArrow: {
+    justifyContent: 'center',
+    marginLeft: UI_SIZES.spacing.small,
+  },
+  viewTexts: {
+    flex: 1,
+  },
+});
+
 const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
@@ -23,22 +46,8 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
   const formattedContent = content && HtmlToText(content, false).render;
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        flexDirection: 'row',
-        borderRadius: UI_SIZES.radius.card,
-        marginTop: UI_SIZES.spacing.small,
-        padding: UI_SIZES.spacing.medium,
-        marginLeft: UI_SIZES.spacing.big,
-        backgroundColor: theme.ui.background.card,
-        elevation: 7,
-        shadowColor: theme.ui.shadowColor,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 5,
-      }}>
-      <View style={{ flex: 1 }}>
+    <TouchableOpacity onPress={onPress} style={styles.item}>
+      <View style={styles.viewTexts}>
         {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
         {formattedContent ? (
           <SmallText style={{ marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
@@ -46,7 +55,7 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
           </SmallText>
         ) : null}
       </View>
-      <View style={{ justifyContent: 'center', marginLeft: UI_SIZES.spacing.small }}>
+      <View style={styles.viewArrow}>
         <Icon name="arrow_right" color={arrowColor} size={TextSizeStyle.Medium.fontSize} style={{ left: UI_SIZES.spacing.tiny }} />
       </View>
     </TouchableOpacity>

@@ -2,15 +2,14 @@
  * Tasks by HomeworkId actions
  * Build actions to be dispatched to the homework tasks reducer.
  */
-
 import moment from 'moment';
 
-import homeworkConfig from '~/homework/config';
-import { IHomeworkTasks } from '~/homework/reducers/tasks';
-import { asyncActionTypes, asyncFetchIfNeeded, asyncGetJson } from '~/infra/redux/async';
+import homeworkConfig from '~/framework/modules/homework/module-config';
+import { IHomeworkDay, IHomeworkTasks } from '~/framework/modules/homework/reducers/tasks';
+import { IState, asyncActionTypes, asyncFetchIfNeeded, asyncGetJson } from '~/infra/redux/async';
 
 /** Retuns the local state (global state -> homework -> tasks). Give the global state as parameter. */
-const localState = globalState => homeworkConfig.getLocalState(globalState).tasks;
+const localState = globalState => homeworkConfig.getState(globalState).tasks;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -47,10 +46,10 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
   // Get all the backend homeworkDays.
   if (!data) return { byId: {}, ids: [] };
   const dataDays = data.data;
-  const ret = {
+  const ret: IHomeworkTasks = {
     byId: {},
     ids: [],
-    diaryInfo: {}
+    diaryInfo: {},
   };
   if (!data.data) return { byId: {}, ids: [] };
   // Now it's time to iterate over the days.
@@ -60,7 +59,7 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
     // each homeworkDay must have an id based on the date.
     const dateId = date.format('YYYY-MM-DD');
     // Now we generate the current homeworkDay (empty for the moment)
-    const homeworkDay = {
+    const homeworkDay: IHomeworkDay = {
       date,
       id: dateId,
       tasks: {
@@ -70,10 +69,10 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
     };
     // Now it's time to iterate over the tasks of that day
     itemday.entries.forEach((itemtask, indextask) => {
-      homeworkDay.tasks.ids.push(indextask);
+      homeworkDay.tasks.ids.push(indextask.toString());
       homeworkDay.tasks.byId[indextask] = {
         content: itemtask.value,
-        id: indextask,
+        id: indextask.toString(),
         title: itemtask.title,
       };
     });
@@ -87,14 +86,14 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
     title: data.title,
     name: data.title, // What is name ??? Baby don't hurt me ! title duplicate ?
     id: data._id,
-    thumbnail: data.thumbnail
-  }
+    thumbnail: data.thumbnail,
+  };
   return ret;
 };
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionTypes = asyncActionTypes(homeworkConfig.createActionType('TASKS'));
+export const actionTypes = asyncActionTypes(homeworkConfig.namespaceActionType('TASKS'));
 
 export function homeworkTasksInvalidated(diaryId: string) {
   return { type: actionTypes.invalidated, diaryId };
@@ -133,7 +132,7 @@ export function fetchHomeworkTasks(diaryId: string) {
 
       dispatch(homeworkTasksReceived(diaryId, data));
     } catch (errmsg) {
-      dispatch(homeworkTasksFetchError(diaryId, errmsg));
+      dispatch(homeworkTasksFetchError(diaryId, errmsg as string));
     }
   };
 }
@@ -142,5 +141,11 @@ export function fetchHomeworkTasks(diaryId: string) {
  * Calls a fetch operation to get the homework tasks from the backend for the given diaryId, only if needed data is not present or invalidated.
  */
 export function fetchHomeworkTasksIfNeeded(diaryId: string) {
-  return asyncFetchIfNeeded(gs => localState(gs)[diaryId], fetchHomeworkTasks, diaryId);
+  return asyncFetchIfNeeded<IHomeworkTasks, IState<IHomeworkTasks>>(
+    gs => {
+      return localState(gs)[diaryId];
+    },
+    fetchHomeworkTasks,
+    diaryId,
+  );
 }

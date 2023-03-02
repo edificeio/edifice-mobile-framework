@@ -2,14 +2,14 @@
  * Homework diary list actions
  * Build actions to be dispatched to the homework diary list reducer.
  */
-import { homeworkDiarySelected } from './selectedDiary';
-
-import homeworkConfig from '~/homework/config';
-import { IHomeworkDiaryList } from '~/homework/reducers/diaryList';
+import homeworkConfig from '~/framework/modules/homework/module-config';
+import { IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { asyncActionTypes, asyncFetchIfNeeded, asyncGetJson } from '~/infra/redux/async';
 
+import { homeworkDiarySelected } from './selectedDiary';
+
 /** Returns the local state (global state -> homework -> diaryList). Give the global state as parameter. */
-const localState = globalState => homeworkConfig.getLocalState(globalState).diaryList;
+const localState = globalState => homeworkConfig.getState(globalState).diaryList;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ const homeworkDiaryListAdapter: (data: IHomeworkDiaryListBackend) => IHomeworkDi
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionTypes = asyncActionTypes(homeworkConfig.createActionType('DIARY_LIST'));
+export const actionTypes = asyncActionTypes(homeworkConfig.namespaceActionType('DIARY_LIST'));
 
 export function homeworkDiaryListInvalidated() {
   return { type: actionTypes.invalidated };
@@ -90,7 +90,7 @@ export function fetchHomeworkDiaryList() {
         dispatch(homeworkDiarySelected(dataIds[0]));
       }
     } catch (errmsg) {
-      dispatch(homeworkDiaryListFetchError(errmsg));
+      dispatch(homeworkDiaryListFetchError(errmsg as string));
     }
   };
 }

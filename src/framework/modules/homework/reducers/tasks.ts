@@ -3,16 +3,14 @@
  * Holds a list of task by day, by diaryId in a double-array.
  */
 import moment from 'moment';
-import { Reducer } from 'redux';
+import { AnyAction, Reducer } from 'redux';
 
-
-
-import { actionTypes } from '~/homework/actions/tasks';
+import { actionTypes } from '~/framework/modules/homework/actions/tasks';
 import { IOrderedArrayById } from '~/infra/collections';
 import asyncReducer, { IAction, IState } from '~/infra/redux/async';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
-import { IHomeworkDiary } from './diaryList';
 
+import { IHomeworkDiary } from './diaryList';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -34,7 +32,7 @@ export interface IHomeworkDay {
 }
 
 // All days of a homework.
-export type IHomeworkTasks = IOrderedArrayById<IHomeworkDay> & { diaryInfo?: IHomeworkDiary };
+export type IHomeworkTasks = IOrderedArrayById<IHomeworkDay> & { diaryInfo?: Partial<IHomeworkDiary> };
 
 // All diaries
 export interface IAllHomeworkTasksByHomeworkIds {
@@ -53,7 +51,7 @@ const stateSingleTasksDefault: IHomeworkTasks = { byId: {}, ids: [] };
 
 const homeworkSingleTasksReducer: Reducer<IHomeworkTasks, IAction<any>> = (
   state: IHomeworkTasks = stateSingleTasksDefault,
-  action: IAction<any>,
+  action = {} as IAction<any>,
 ) => {
   switch (action.type) {
     case actionTypes.received: // params : data:IHomeworkTasks
@@ -72,7 +70,10 @@ const homeworkSingleTasksAsyncReducer = asyncReducer<IHomeworkTasks>(homeworkSin
  */
 const homeworkAllTasksReducerStateDefault: IAllHomeworkTasksByHomeworkIds = {};
 
-const homeworkAllTasksReducer = (state: IAllHomeworkTasksByHomeworkIds = homeworkAllTasksReducerStateDefault, action: any) => {
+const homeworkAllTasksReducer = (
+  state: IAllHomeworkTasksByHomeworkIds = homeworkAllTasksReducerStateDefault,
+  action = {} as AnyAction,
+) => {
   switch (action.type) {
     case actionTypes.invalidated: // params: homeworkId:string
     case actionTypes.requested:

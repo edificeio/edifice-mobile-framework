@@ -1,28 +1,30 @@
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
-import { NavigationInjectedProps } from 'react-navigation';
+import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { HeaderTitleAndSubtitle } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
+import { ISession } from '~/framework/modules/auth/model';
+import config from '~/framework/modules/homework/module-config';
+import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
+import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
+import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
+import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { computeRelativePath } from '~/framework/util/navigation';
-import { IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
-import config from '~/homework/config';
-import { IHomeworkDiary, IHomeworkDiaryList } from '~/homework/reducers/diaryList';
-import { IHomeworkTask } from '~/homework/reducers/tasks';
-import { getHomeworkWorkflowInformation } from '~/homework/rights';
 import { Loading } from '~/ui/Loading';
 
 import HomeworkCard from './HomeworkCard';
@@ -44,24 +46,28 @@ export interface IHomeworkTaskListScreenDataProps {
     date: moment.Moment;
     tasks: IHomeworkTask[];
   }[];
-  session: IUserSession;
+  lastUpdated: any;
+  session?: ISession;
 }
 
 export interface IHomeworkTaskListScreenEventProps {
   onFocus?: () => void;
   onRefresh?: (diaryId: string) => void;
   onScrollBeginDrag?: () => void;
+  dispatch: ThunkDispatch<any, any, any>;
 }
 
 interface IHomeworkTaskListScreenState {
-  fetching: boolean;
+  fetching?: boolean;
+  refreshing?: boolean;
   pastDateLimit: moment.Moment;
 }
 
+export interface HomeworkTaskListScreenNavigationParams {}
+
 export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
   IHomeworkTaskListScreenEventProps &
-  NavigationInjectedProps<{}> &
-  IHomeworkTaskListScreenState;
+  NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskList>;
 
 type DataType = {
   type: 'day';
@@ -70,9 +76,47 @@ type DataType = {
 };
 type DataTypeOrFooter = DataType | { type: 'footer'; data: [{ type: 'footer' }]; title?: never };
 
-// Main component ---------------------------------------------------------------------------------
+const styles = StyleSheet.create({
+  buttonPastHomework: {
+    alignSelf: 'center',
+  },
+  dayCheckpoint: {
+    zIndex: 1,
+  },
+  taskList: {
+    flex: 1,
+  },
+  footer: {
+    flexDirection: 'row',
+    borderWidth: UI_SIZES.dimensions.width.tiny,
+    borderRadius: UI_SIZES.radius.medium,
+    borderColor: theme.palette.grey.cloudy,
+    paddingVertical: UI_SIZES.spacing.medium,
+    paddingRight: UI_SIZES.spacing.big,
+    paddingLeft: UI_SIZES.spacing.medium,
+    marginLeft: UI_SIZES.spacing.big,
+  },
+  footerIcon: {
+    justifyContent: 'center',
+    marginRight: UI_SIZES.spacing.medium,
+  },
+  footerText: {
+    flex: 1,
+  },
+});
 
-export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, object> {
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskList>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('Homework'),
+});
+
+export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, IHomeworkTaskListScreenState> {
   state = {
     fetching: false,
     refreshing: false,
@@ -83,6 +127,12 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     if (nextProps.isFetching !== prevState.fetching) {
       return { fetching: nextProps.isFetching };
     } else return null;
+  }
+
+  componentDidMount() {
+    this.props.navigation.setOptions({
+      title: this.props.diaryInformation?.title,
+    });
   }
 
   componentDidUpdate(prevProps: any) {
@@ -99,19 +149,10 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   // Render
 
   render() {
-    const { isFetching, didInvalidate, diaryInformation, navigation, error } = this.props;
-    const diaryTitle = diaryInformation?.title;
+    const { isFetching, didInvalidate, error } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : error ? this.renderError() : this.renderList();
 
-    return (
-      <PageView
-        navigation={navigation}
-        navBarWithBack={{
-          title: diaryTitle ? <HeaderTitleAndSubtitle title={diaryTitle} subtitle={I18n.t('Homework')} /> : I18n.t('Homework'),
-        }}>
-        {pageContent}
-      </PageView>
-    );
+    return <PageView>{pageContent}</PageView>;
   }
 
   private renderError() {
@@ -121,7 +162,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   private renderList() {
     const { diaryId, tasksByDay, navigation, onRefresh, session } = this.props;
     const { refreshing, pastDateLimit } = this.state;
-    let data: DataType[] = tasksByDay
+    const dataInfo: DataType[] = tasksByDay
       ? tasksByDay.map(day => ({
           type: 'day',
           title: day.date,
@@ -132,36 +173,38 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           })),
         }))
       : [];
-    const hasHomework = data.length > 0;
-    const pastHomework = data.filter(item => item.title.isBefore(today(), 'day'));
+    const hasHomework = dataInfo.length > 0;
+    const pastHomework = dataInfo.filter(item => item.title.isBefore(today(), 'day'));
     const hasPastHomeWork = pastHomework.length > 0;
     const remainingPastHomework = pastHomework.filter(item => item.title.isBefore(pastDateLimit, 'day'));
     const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
-    const futureHomework = data.filter(item => item.title.isSameOrAfter(today(), 'day'));
+    const futureHomework = dataInfo.filter(item => item.title.isSameOrAfter(today(), 'day'));
     const displayedHomework = [...displayedPastHomework, ...futureHomework];
     const isHomeworkDisplayed = displayedHomework.length > 0;
     const noRemainingPastHomework = remainingPastHomework.length === 0;
     const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), 'day');
-    const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
+    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
+
+    const stylesContentSectionList = {
+      padding: hasHomework ? UI_SIZES.spacing.medium : undefined,
+      paddingTop: hasHomework ? undefined : 0,
+      flex: noFutureHomeworkHiddenPast ? 1 : undefined,
+    };
 
     // Add footer only if there is at least one element
     // We must keep the empty state displaying if the list is empty.
-    displayedHomework.length && (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
+    if (displayedHomework.length) (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.taskList}>
         {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.medium + UI_SIZES.spacing.minor} />}
         <SectionList
-          contentContainerStyle={{
-            padding: hasHomework ? UI_SIZES.spacing.medium : undefined,
-            paddingTop: hasHomework ? undefined : 0,
-            flex: noFutureHomeworkHiddenPast ? 1 : undefined,
-          }}
+          contentContainerStyle={stylesContentSectionList}
           sections={displayedHomework as DataType[]}
           CellRendererComponent={ViewOverflow}
           stickySectionHeadersEnabled={false}
-          renderSectionHeader={({ section: { title, type } }: { section: DataType }) => {
+          renderSectionHeader={({ section: { title, type, data } }: { section: DataType }) => {
             if (type !== 'day') {
               return (
                 <>
@@ -186,7 +229,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                     marginBottom: UI_SIZES.spacing.tiny,
                     marginTop: UI_SIZES.spacing.big,
                   }}>
-                  <View style={{ zIndex: 1 }}>
+                  <View style={styles.dayCheckpoint}>
                     <HomeworkDayCheckpoint date={title} />
                   </View>
                   <HomeworkTimeline
@@ -207,9 +250,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                 title={item.title}
                 content={item.content}
                 date={item.date}
-                onPress={() =>
-                  navigation!.navigate(computeRelativePath(`${config.name}/details`, navigation.state), { task: item })
-                }
+                onPress={() => navigation!.navigate(computeRelativePath(`${config.name}/details`), { task: item })}
               />
             )
           }
@@ -226,6 +267,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               }}
             />
           }
+          // eslint-disable-next-line react/no-unstable-nested-components
           ListHeaderComponent={() => {
             const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
             const labelText = I18n.t(
@@ -233,7 +275,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             );
             return hasPastHomeWork ? (
               <TouchableOpacity
-                style={{ alignSelf: 'center' }}
+                style={styles.buttonPastHomework}
                 disabled={noRemainingPastHomework}
                 onPress={() => {
                   const newestRemainingPastHW = remainingPastHomework[remainingPastHomework.length - 1];
@@ -286,21 +328,11 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   renderFooterItem = (isHomeworkDisplayed: boolean) =>
     isHomeworkDisplayed ? (
       <>
-        <View
-          style={{
-            flexDirection: 'row',
-            borderWidth: UI_SIZES.dimensions.width.tiny,
-            borderRadius: UI_SIZES.radius.medium,
-            borderColor: theme.palette.grey.cloudy,
-            paddingVertical: UI_SIZES.spacing.medium,
-            paddingRight: UI_SIZES.spacing.big,
-            paddingLeft: UI_SIZES.spacing.medium,
-            marginLeft: UI_SIZES.spacing.big,
-          }}>
-          <View style={{ justifyContent: 'center', marginRight: UI_SIZES.spacing.medium }}>
+        <View style={styles.footer}>
+          <View style={styles.footerIcon}>
             <Icon name="informations" color={theme.palette.grey.stone} size={TextSizeStyle.Huge.fontSize} />
           </View>
-          <View style={{ flex: 1 }}>
+          <View style={styles.footerText}>
             <SmallText style={{ color: theme.palette.grey.graphite }}>
               {I18n.t('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
             </SmallText>
