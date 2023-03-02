@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -35,7 +36,6 @@ import { getMailContentState } from '~/framework/modules/conversation/state/mail
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
@@ -103,9 +103,9 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 
   public componentDidMount() {
-    const { navigation, mail, error } = this.props;
+    const { mail, error, route } = this.props;
     const { htmlError } = this.state;
-    const currentFolder = navigation.getParam('currentFolder');
+    const currentFolder = route.params.currentFolder;
     const isCurrentFolderTrash = currentFolder === 'trash';
     const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
     const popupActionsMenu = [
@@ -189,11 +189,11 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   delete = async () => {
-    const { deleteMails, navigation, trashMails, mail } = this.props;
+    const { deleteMails, trashMails, mail, route } = this.props;
     const mailId = mail.id;
-    const currentFolder = navigation.getParam('currentFolder');
+    const currentFolder = route.params.currentFolder;
     const isFolderDrafts = currentFolder === 'drafts';
-    const isTrashed = navigation.getParam('isTrashed');
+    const isTrashed = route.params.isTrashed;
     const isTrashedOrDrafts = isTrashed || isFolderDrafts;
     try {
       if (isTrashed) {
@@ -221,14 +221,14 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   public render() {
-    const { navigation, mail, error } = this.props;
+    const { route, mail, error } = this.props;
     const { showModal, htmlError } = this.state;
-    const currentFolder = navigation.getParam('currentFolder');
+    const currentFolder = route.params.currentFolder;
     const ViewportAwareSubject = Viewport.Aware(View);
 
     return (
       <>
-        <PageView navigation={navigation} navBarWithBack={navBarInfo} onBack={this.goBack.bind(this)}>
+        <PageView onBack={this.goBack.bind(this)}>
           <PageContainer style={{ backgroundColor: theme.ui.background.page }}>
             {this.props.isFetching ? (
               <Loading />
@@ -270,6 +270,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 
   private mailFooter() {
+    const { route } = this.props;
     return (
       <SafeAreaView style={styles.footerAreaView}>
         <View style={styles.containerFooter}>
@@ -277,14 +278,14 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
             icon="reply"
             text={I18n.t('conversation.reply')}
             onPress={() => {
-              this.props.navigation.getParam('currentFolder') === 'sendMessages'
-                ? Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre')
-                : Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre');
+              if (route.params.currentFolder === 'sendMessages')
+                Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre');
+              else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre');
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY,
                 mailId: this.props.mail.id,
                 onGoBack: this.props.navigation.state.params?.onGoBack,
-                currentFolder: this.props.navigation.getParam('currentFolder'),
+                currentFolder: route.params.currentFolder,
               });
             }}
           />
@@ -292,14 +293,14 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
             icon="reply_all"
             text={I18n.t('conversation.replyAll')}
             onPress={() => {
-              this.props.navigation.getParam('currentFolder') === 'sendMessages'
-                ? Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre à tous')
-                : Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre à tous');
+              if (route.params.currentFolder === 'sendMessages')
+                Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre à tous');
+              else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre à tous');
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY_ALL,
                 mailId: this.props.mail.id,
                 onGoBack: this.props.navigation.state.params?.onGoBack,
-                currentFolder: this.props.navigation.getParam('currentFolder'),
+                currentFolder: route.params.currentFolder,
               });
             }}
           />
@@ -307,9 +308,9 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
             icon="forward"
             text={I18n.t('conversation.forward')}
             onPress={() => {
-              this.props.navigation.getParam('currentFolder') === 'sendMessages'
-                ? Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Transférer')
-                : Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Transférer');
+              if (route.params.currentFolder === 'sendMessages')
+                Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Transférer');
+              else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Transférer');
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.FORWARD,
                 mailId: this.props.mail.id,
@@ -346,7 +347,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 
   private mailHeader() {
-    const currentFolder = this.props.navigation.getParam('currentFolder');
+    const { route } = this.props;
+    const currentFolder = route.params.currentFolder;
     return <HeaderMail mailInfos={this.props.mail} currentFolder={currentFolder} />;
   }
 
@@ -355,7 +357,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 }
 
-const mapStateToProps: (state: any) => any = state => {
+const mapStateToProps: (state: IGlobalState) => any = state => {
   const { isPristine, isFetching, data, error } = getMailContentState(state);
 
   return {
@@ -394,9 +396,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   };
 };
 
-const MailContentScreenConnected = connect(mapStateToProps, mapDispatchToProps)(MailContentScreen);
-
-export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'mail'])(MailContentScreenConnected);
+export default connect(mapStateToProps, mapDispatchToProps)(MailContentScreen);
 
 const styles = StyleSheet.create({
   topBar: {
