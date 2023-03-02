@@ -6,15 +6,30 @@ import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
-import { postFolderAction } from '~/modules/conversation/actions/folders';
-import { fetchInitAction } from '~/modules/conversation/actions/initMails';
+import { postFolderAction } from '~/framework/modules/conversation/actions/folders';
+import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
-class CreateFolderModal extends React.PureComponent<any, any> {
+export type ConversationCreateFolderModalEventProps = {
+  createFolder: (name: string, parentId?: string) => void;
+  fetchInit: () => void;
+  onClose: () => void;
+};
+export type ConversationCreateFolderModalDataProps = {
+  show: boolean;
+};
+export type ConversationCreateFolderModalProps = ConversationCreateFolderModalEventProps & ConversationCreateFolderModalDataProps;
+
+interface ConversationCreateFolderModalState {
+  name: string;
+}
+
+class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModalProps, ConversationCreateFolderModalState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,9 +38,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
   }
 
   onNameChange = newName => {
-    this.setState({
-      name: newName,
-    });
+    this.setState({ name: newName });
   };
 
   onConfirm = async () => {
@@ -87,7 +100,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: IGlobalState) => {
   return {};
 };
 

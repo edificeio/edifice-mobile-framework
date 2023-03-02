@@ -24,7 +24,7 @@ export const dataActions = createAsyncActionCreators<IFolderList>(actionTypes);
 //   };
 // }
 
-export function postFolderAction(name: string, parentId: string) {
+export function postFolderAction(name: string, parentId?: string) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
