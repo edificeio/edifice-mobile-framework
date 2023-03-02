@@ -32,6 +32,7 @@ import moduleConfig from '~/framework/modules/conversation/module-config';
 import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -74,6 +75,20 @@ interface ConversationMailContentScreenState {
   htmlError: boolean;
 }
 
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<
+  ConversationNavigationParams,
+  typeof conversationRouteNames.mailContent
+>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: undefined,
+});
+
 class MailContentScreen extends React.PureComponent<ConversationMailContentScreenProps, ConversationMailContentScreenState> {
   _subjectRef?: React.Ref<any> = undefined;
 
@@ -88,6 +103,46 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 
   public componentDidMount() {
+    const { navigation, mail, error } = this.props;
+    const { htmlError } = this.state;
+    const currentFolder = navigation.getParam('currentFolder');
+    const isCurrentFolderTrash = currentFolder === 'trash';
+    const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
+    const popupActionsMenu = [
+      {
+        title: I18n.t('conversation.markUnread'),
+        action: () => this.markAsRead(),
+        icon: {
+          ios: 'eye.slash',
+          android: 'ic_visibility_off',
+        },
+      },
+      {
+        title: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
+        action: () => this.showModal(),
+        icon: {
+          ios: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
+          android: `${isCurrentFolderTrash ? 'ic_restore' : 'ic_move_to_inbox'}`,
+        },
+      },
+      deleteAction({ action: () => this.delete() }),
+    ];
+    this.props.navigation.setOptions({
+      title: this.state.showHeaderSubject ? mail.subject : undefined,
+      headerRight: () =>
+        this.props.isFetching || error || htmlError ? undefined : (
+          <PopupMenu
+            actions={
+              isCurrentFolderTrash
+                ? popupActionsMenu.splice(1, 2)
+                : isCurrentFolderSentOrDrafts
+                ? popupActionsMenu.splice(2, 1)
+                : popupActionsMenu
+            }>
+            <HeaderIcon name="more_vert" iconSize={24} />
+          </PopupMenu>
+        ),
+    });
     this.props.clearContent();
     this.props.fetchMailContentAction(this.props.navigation.state.params?.mailId);
   }
@@ -169,46 +224,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     const { navigation, mail, error } = this.props;
     const { showModal, htmlError } = this.state;
     const currentFolder = navigation.getParam('currentFolder');
-    const isCurrentFolderTrash = currentFolder === 'trash';
-    const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
-    const popupActionsMenu = [
-      {
-        title: I18n.t('conversation.markUnread'),
-        action: () => this.markAsRead(),
-        icon: {
-          ios: 'eye.slash',
-          android: 'ic_visibility_off',
-        },
-      },
-      {
-        title: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
-        action: () => this.showModal(),
-        icon: {
-          ios: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
-          android: `${isCurrentFolderTrash ? 'ic_restore' : 'ic_move_to_inbox'}`,
-        },
-      },
-      deleteAction({ action: () => this.delete() }),
-    ];
-
     const ViewportAwareSubject = Viewport.Aware(View);
-
-    const navBarInfo = {
-      title: this.state.showHeaderSubject ? mail.subject : undefined,
-      right:
-        this.props.isFetching || error || htmlError ? undefined : (
-          <PopupMenu
-            actions={
-              isCurrentFolderTrash
-                ? popupActionsMenu.splice(1, 2)
-                : isCurrentFolderSentOrDrafts
-                ? popupActionsMenu.splice(2, 1)
-                : popupActionsMenu
-            }>
-            <HeaderIcon name="more_vert" iconSize={24} />
-          </PopupMenu>
-        ),
-    };
 
     return (
       <>
