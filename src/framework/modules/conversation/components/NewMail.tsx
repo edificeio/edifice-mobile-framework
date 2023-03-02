@@ -2,19 +2,18 @@ import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
 import { Alert, Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ISearchUsers, IUser } from '~/framework/modules/conversation/service/newMail';
+import { IVisibleGroup, IVisibleUser, IVisiblesState, searchVisibles } from '~/framework/modules/conversation/state/visibles';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
-import moduleConfig from '~/modules/conversation/moduleConfig';
-import { ISearchUsers, IUser } from '~/modules/conversation/service/newMail';
-import { IVisibleGroup, IVisibleUser, IVisiblesState, searchVisibles } from '~/modules/conversation/state/visibles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
@@ -31,7 +30,7 @@ type IAttachment = {
   size?: number;
 };
 
-interface NewMailComponentProps extends NavigationInjectedProps {
+interface NewMailComponentProps {
   isFetching: boolean;
   headers: HeadersProps;
   onDraftSave: () => void;

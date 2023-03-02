@@ -1,3 +1,4 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -5,7 +6,6 @@ import React from 'react';
 import { Alert, AlertButton, Keyboard, Platform, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -15,15 +15,10 @@ import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
-import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
-import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { tryAction } from '~/framework/util/redux/actions';
-import { IUserSession, getUserSession } from '~/framework/util/session';
-import { Trackers } from '~/framework/util/tracker';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { pickFileError } from '~/infra/actions/pickFile';
-import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
-import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
+import { ISession } from '~/framework/modules/auth/model';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { deleteMailsAction, trashMailsAction } from '~/framework/modules/conversation/actions/mail';
+import { clearMailContentAction, fetchMailContentAction } from '~/framework/modules/conversation/actions/mailContent';
 import {
   addAttachmentAction,
   deleteAttachmentAction,
@@ -31,12 +26,20 @@ import {
   makeDraftMailAction,
   sendMailAction,
   updateDraftMailAction,
-} from '~/modules/conversation/actions/newMail';
-import { fetchVisiblesAction } from '~/modules/conversation/actions/visibles';
-import NewMailComponent from '~/modules/conversation/components/NewMail';
-import moduleConfig from '~/modules/conversation/moduleConfig';
-import { ISearchUsers } from '~/modules/conversation/service/newMail';
-import { IMail, getMailContentState } from '~/modules/conversation/state/mailContent';
+} from '~/framework/modules/conversation/actions/newMail';
+import { fetchVisiblesAction } from '~/framework/modules/conversation/actions/visibles';
+import NewMailComponent from '~/framework/modules/conversation/components/NewMail';
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
+import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
+import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { tryAction } from '~/framework/util/redux/actions';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { pickFileError } from '~/infra/actions/pickFile';
+
+import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
 
 export enum DraftType {
   NEW,
@@ -45,8 +48,24 @@ export enum DraftType {
   REPLY_ALL,
   FORWARD,
 }
+type NewMail = {
+  to: ISearchUsers;
+  cc: ISearchUsers;
+  cci: ISearchUsers;
+  subject: string;
+  body: string;
+  attachments: IDistantFile[];
+};
 
-interface ICreateMailEventProps {
+export interface ConversationNewMailScreenNavigationParams {
+  addGivenAttachment: (file: Asset | DocumentPicked, sourceType: string) => void;
+  currentFolder: string;
+  getGoBack: () => void;
+  getSendDraft: () => void;
+  mailId: string;
+  type: DraftType;
+}
+interface ConversationNewMailScreenEventProps {
   setup: () => void;
   sendMail: (mailDatas: object, draftId: string | undefined, inReplyTo: string) => void;
   forwardMail: (draftId: string, inReplyTo: string) => void;
@@ -60,18 +79,18 @@ interface ICreateMailEventProps {
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
 }
-
-interface ICreateMailOtherProps {
+interface ConversationNewMailScreenDataProps {
   isFetching: boolean;
   mail: IMail;
-  session: IUserSession;
+  session: ISession;
 }
+export type ConversationNewMailScreenProps = ConversationNewMailScreenEventProps &
+  ConversationNewMailScreenDataProps &
+  NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.newMail>;
 
-type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & NavigationInjectedProps;
-
-interface ICreateMailState {
+interface ConversationNewMailScreenState {
   id?: string;
-  mail: newMail;
+  mail: NewMail;
   tempAttachment?: any;
   isPrefilling?: boolean;
   prevBody?: string;
@@ -79,16 +98,7 @@ interface ICreateMailState {
   webDraftWarning: boolean;
 }
 
-type newMail = {
-  to: ISearchUsers;
-  cc: ISearchUsers;
-  cci: ISearchUsers;
-  subject: string;
-  body: string;
-  attachments: IDistantFile[];
-};
-
-class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
+class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, ConversationNewMailScreenState> {
   constructor(props) {
     super(props);
 
@@ -119,7 +129,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     this.props.setup();
   };
 
-  componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
+  componentDidUpdate = async (prevProps: NewMailScreenProps, prevState) => {
     if (prevProps.mail !== this.props.mail) {
       const prefilledMailRet = this.getPrefilledMail();
       if (!prefilledMailRet) return;
@@ -636,10 +646,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   navBarInfo = () => {
     const { navigation } = this.props;
-    // const askForAttachment = navigation.getParam('getAskForAttachment');
     const addGivenAttachment = navigation.getParam('addGivenAttachment');
     const sendDraft = navigation.getParam('getSendDraft');
-    // const deleteDraft = navigation.getParam('getDeleteDraft');
     const draftType = navigation.getParam('type');
     const isSavedDraft = draftType === DraftType.DRAFT;
     return {
@@ -707,7 +715,7 @@ const mapStateToProps = (state: any) => {
   return {
     mail: data,
     isFetching,
-    session: getUserSession(),
+    session: assertSession(),
   };
 };
 
@@ -731,6 +739,6 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-const NewMailContainerConnected = connect(mapStateToProps, mapDispatchToProps)(NewMailContainer);
+const NewMailScreenConnected = connect(mapStateToProps, mapDispatchToProps)(NewMailScreen);
 
-export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'editor'])(NewMailContainerConnected);
+export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'editor'])(NewMailScreenConnected);
