@@ -166,8 +166,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   componentDidUpdate = async (prevProps: ConversationNewMailScreenProps, prevState) => {
-    const { route } = this.props;
-    if (prevProps.mail !== this.props.mail) {
+    const { mail, navigation, route } = this.props;
+    const { id, webDraftWarning } = this.state;
+    if (prevProps.mail !== mail) {
       const prefilledMailRet = this.getPrefilledMail();
       if (!prefilledMailRet) return;
       const { mail, ...rest } = prefilledMailRet;
@@ -178,15 +179,14 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         mail: { ...prevState.mail, ...(mail as IMail) },
         isPrefilling: false,
       }));
-    } else if (route.params.mailId && !this.state.id && route.params.type === DraftType.DRAFT)
-      this.setState({ id: route.params.mailId });
+    } else if (route.params.mailId && !id && route.params.type === DraftType.DRAFT) this.setState({ id: route.params.mailId });
 
     // Check if html tags are present in body
-    if (this.props.navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !this.state.webDraftWarning) {
+    if (navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !webDraftWarning) {
       const removeWrapper = (text: string) => {
         return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
       };
-      let checkBody = removeWrapper(this.props.mail.body);
+      let checkBody = removeWrapper(mail.body);
       checkBody = checkBody.split('<hr class="ng-scope">')[0];
       checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
       if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
@@ -195,7 +195,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           {
             text: I18n.t('common.quit'),
             onPress: async () => {
-              this.props.navigation.goBack();
+              navigation.goBack();
             },
             style: 'cancel',
           },
@@ -211,6 +211,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   navigationHeaderFunction = {
     addGivenAttachment: async (file: Asset | DocumentPicked, sourceType: string) => {
+      const { onPickFileError } = this.props;
       const actionName =
         'Rédaction mail - Insérer - Pièce jointe - ' +
         ({
@@ -222,12 +223,13 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
       } catch {
-        this.props.onPickFileError('conversation');
+        onPickFileError('conversation');
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
       }
     },
     getSendDraft: async () => {
-      if (this.state.mail.to.length === 0) {
+      const { mail, tempAttachment } = this.state;
+      if (mail.to.length === 0) {
         Keyboard.dismiss();
         Toast.show(I18n.t('conversation.missingReceiver'), {
           position: Toast.position.BOTTOM,
@@ -236,7 +238,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           ...UI_ANIMATIONS.toast,
         });
         return;
-      } else if (this.state.tempAttachment && this.state.tempAttachment !== null) {
+      } else if (tempAttachment && tempAttachment !== null) {
         Keyboard.dismiss();
         Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
           position: Toast.position.BOTTOM,
@@ -245,11 +247,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           ...UI_ANIMATIONS.toast,
         });
         return;
-      } else if (!this.state.mail.body || !this.state.mail.subject) {
+      } else if (!mail.body || !mail.subject) {
         Keyboard.dismiss();
         Alert.alert(
-          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Title`),
-          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Message`),
+          I18n.t(`conversation.missing${!mail.body ? 'Body' : 'Subject'}Title`),
+          I18n.t(`conversation.missing${!mail.body ? 'Body' : 'Subject'}Message`),
           [
             {
               text: I18n.t('common.send'),
@@ -417,9 +419,10 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   getPrefilledMail = () => {
-    if (!this.props.mail || (this.props.mail as unknown as []).length === 0) return undefined;
-    const draftType = this.props.navigation.getParam('type', DraftType.NEW);
-    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)?.[1];
+    const { mail, navigation, route, session } = this.props;
+    if (!mail || (mail as unknown as []).length === 0) return undefined;
+    const draftType = navigation.getParam('type', DraftType.NEW);
+    const getDisplayName = id => mail.displayNames.find(([userId]) => userId === id)?.[1];
     const getUser = id => ({ id, displayName: getDisplayName(id) });
 
     const deleteHtmlContent = function (text) {
@@ -435,11 +438,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const getPrevBody = () => {
       const getUserArrayToString = users => users.map(getDisplayName).join(', ');
 
-      const from = getDisplayName(this.props.mail.from);
-      const date = moment(this.props.mail.date).format('DD/MM/YYYY HH:mm');
-      const subject = this.props.mail.subject;
+      const from = getDisplayName(mail.from);
+      const date = moment(mail.date).format('DD/MM/YYYY HH:mm');
+      const subject = mail.subject;
 
-      const to = getUserArrayToString(this.props.mail.to);
+      const to = getUserArrayToString(mail.to);
 
       let header =
         '<br>' +
@@ -468,8 +471,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         to +
         '</em>';
 
-      if (this.props.mail.cc?.length > 0) {
-        const cc = getUserArrayToString(this.props.mail.cc);
+      if (mail.cc?.length > 0) {
+        const cc = getUserArrayToString(mail.cc);
 
         header += `<br><span class="medium-importance" translate="" key="transfer.cc">
         <span class="no-style ng-scope">Copie à : </span>
@@ -479,7 +482,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       header +=
         '</p><blockquote class="ng-scope">' +
         '<p class="ng-scope" style="font-size: 24px; line-height: 24px;">' +
-        this.props.mail.body +
+        mail.body +
         '</p>';
 
       return header;
@@ -488,14 +491,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     switch (draftType) {
       case DraftType.REPLY: {
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            to:
-              this.props.route.params.currentFolder === 'sendMessages'
-                ? this.props.mail.to.map(getUser)
-                : [this.props.mail.from].map(getUser),
-            subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
+            to: route.params.currentFolder === 'sendMessages' ? mail.to.map(getUser) : [mail.from].map(getUser),
+            subject: I18n.t('conversation.replySubject') + mail.subject,
           },
         };
       }
@@ -504,13 +504,13 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           id: any;
           displayName: any;
         }[];
-        if (this.props.route.params.currentFolder === 'sendMessages') {
-          to.push(...this.props.mail.to.map(getUser));
+        if (route.params.currentFolder === 'sendMessages') {
+          to.push(...mail.to.map(getUser));
         } else {
-          to.push(getUser(this.props.mail.from));
+          to.push(getUser(mail.from));
           let i = 0;
-          for (const user of this.props.mail.to) {
-            if (user !== this.props.session.user.id && this.props.mail.to.indexOf(user) === i) {
+          for (const user of mail.to) {
+            if (user !== session.user.id && mail.to.indexOf(user) === i) {
               to.push(getUser(user));
             }
             ++i;
@@ -520,55 +520,54 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           id: any;
           displayName: any;
         }[];
-        for (const id of this.props.mail.cc) {
-          if (id !== this.props.mail.from) cc.push(getUser(id));
+        for (const id of mail.cc) {
+          if (id !== mail.from) cc.push(getUser(id));
         }
         const cci = [] as {
           id: any;
           displayName: any;
         }[];
-        for (const id of this.props.mail.cci) {
-          if (id !== this.props.mail.from) cci.push(getUser(id));
+        for (const id of mail.cci) {
+          if (id !== mail.from) cci.push(getUser(id));
         }
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
             to,
             cc,
             cci,
-            subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
+            subject: I18n.t('conversation.replySubject') + mail.subject,
           },
         };
       }
       case DraftType.FORWARD: {
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            subject: I18n.t('conversation.forwardSubject') + this.props.mail.subject,
+            subject: I18n.t('conversation.forwardSubject') + mail.subject,
             body: '',
-            attachments: this.props.mail.attachments,
+            attachments: mail.attachments,
           },
         };
       }
       case DraftType.DRAFT: {
         let prevbody = '';
-        if (this.props.mail.body?.length > 0) {
-          prevbody +=
-            '<hr class="ng-scope">' + this.props.mail.body.split('<hr class="ng-scope">').slice(1).join('<hr class="ng-scope">');
+        if (mail.body?.length > 0) {
+          prevbody += '<hr class="ng-scope">' + mail.body.split('<hr class="ng-scope">').slice(1).join('<hr class="ng-scope">');
         }
-        const current_body = this.props.mail.body.split('<hr class="ng-scope">')[0];
+        const current_body = mail.body.split('<hr class="ng-scope">')[0];
 
         return {
           prevBody: prevbody,
           mail: {
-            to: this.props.mail.to.map(getUser),
-            cc: this.props.mail.cc.map(getUser),
-            cci: this.props.mail.cci.map(getUser),
-            subject: this.props.mail.subject,
+            to: mail.to.map(getUser),
+            cc: mail.cc.map(getUser),
+            cci: mail.cci.map(getUser),
+            subject: mail.subject,
             body: current_body,
-            attachments: this.props.mail.attachments,
+            attachments: mail.attachments,
           },
         };
       }
@@ -607,11 +606,12 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   getAttachmentData = async (file: LocalFile) => {
+    const { addAttachment } = this.props;
+    const { id } = this.state;
     this.setState({ tempAttachment: file });
-
     try {
       await this.saveDraft();
-      const newAttachment = await this.props.addAttachment(this.state.id!, file);
+      const newAttachment = await addAttachment(id!, file);
       this.setState(prevState => ({
         mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
@@ -631,29 +631,31 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   forwardDraft = async () => {
+    const { forwardMail } = this.props;
+    const { id, replyTo } = this.state;
     try {
-      this.props.forwardMail(this.state.id, this.state.replyTo);
+      forwardMail(id, replyTo);
     } catch {
       // TODO: Manage error
     }
   };
 
   saveDraft = async () => {
-    const { route } = this.props;
+    const { mail, makeDraft, route, updateDraft } = this.props;
     const { id } = this.state;
     const draftType = route.params.type;
     const isSavedDraft = draftType === DraftType.DRAFT;
     const mailId = route.params.mailId;
 
     if (!id || (!isSavedDraft && id === mailId)) {
-      const inReplyTo = this.props.mail.id;
+      const inReplyTo = mail.id;
       const isForward = route.params.type === DraftType.FORWARD;
-      const idDraft = await this.props.makeDraft(this.getMailData(), inReplyTo, isForward);
+      const idDraft = await makeDraft(this.getMailData(), inReplyTo, isForward);
 
       this.setState({ id: idDraft });
       if (isForward) this.forwardDraft();
     } else {
-      this.props.updateDraft(id, this.getMailData());
+      updateDraft(id, this.getMailData());
     }
   };
 
@@ -680,31 +682,27 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   public render() {
-    const { navigation, route } = this.props;
-    const { isPrefilling, mail } = this.state;
+    const { deleteAttachment, isFetching, navigation, route } = this.props;
+    const { id, isPrefilling, mail, tempAttachment, prevBody } = this.state;
     const draftType = route.params.type;
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
 
     return (
       <PageView
-        onBack={() => {
-          navigation.getParam('getGoBack', navigation.goBack)();
-        }}
+        onBack={() => navigation.getParam('getGoBack', navigation.goBack)()}
         style={{ backgroundColor: theme.ui.background.card }}>
         <NewMailComponent
-          isFetching={this.props.isFetching || !!isPrefilling}
+          isFetching={isFetching || !!isPrefilling}
           headers={headers}
           onDraftSave={this.saveDraft}
           onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
-          body={this.state.mail.body.replace(/<br>/gs, '\n')}
+          body={mail.body.replace(/<br>/gs, '\n')}
           onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
-          attachments={
-            this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
-          }
+          attachments={tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments}
           onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
-          onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
-          prevBody={this.state.prevBody}
+          onAttachmentDelete={attachmentId => deleteAttachment(id, attachmentId)}
+          prevBody={prevBody}
           isReplyDraft={isReplyDraft}
         />
       </PageView>
