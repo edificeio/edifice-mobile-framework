@@ -37,7 +37,6 @@ import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/file
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
 
 import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
@@ -167,6 +166,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   componentDidUpdate = async (prevProps: ConversationNewMailScreenProps, prevState) => {
+    const { route } = this.props;
     if (prevProps.mail !== this.props.mail) {
       const prefilledMailRet = this.getPrefilledMail();
       if (!prefilledMailRet) return;
@@ -178,12 +178,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         mail: { ...prevState.mail, ...(mail as IMail) },
         isPrefilling: false,
       }));
-    } else if (
-      this.props.navigation.getParam('mailId') !== undefined &&
-      this.state.id === undefined &&
-      this.props.navigation.getParam('type') === DraftType.DRAFT
-    )
-      this.setState({ id: this.props.navigation.getParam('mailId') });
+    } else if (route.params.mailId && !this.state.id && route.params.type === DraftType.DRAFT)
+      this.setState({ id: route.params.mailId });
 
     // Check if html tags are present in body
     if (this.props.navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !this.state.webDraftWarning) {
@@ -291,11 +287,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       navigation.goBack();
     },
     getGoBack: async () => {
-      const { navigation, trashMessage, deleteMessage } = this.props;
+      const { navigation, trashMessage, deleteMessage, route } = this.props;
       const { tempAttachment, mail, id } = this.state;
       const { to, cc, cci, subject, body, attachments } = mail;
-      const mailId = navigation.getParam('mailId');
-      const draftType = navigation.getParam('type');
+      const mailId = route.params.mailId;
+      const draftType = route.params.type;
       const isNewDraft = draftType === DraftType.NEW;
       const isSavedDraft = draftType === DraftType.DRAFT;
       const navParams = navigation.state;
@@ -496,7 +492,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           prevBody: getPrevBody(),
           mail: {
             to:
-              this.props.navigation.getParam('currentFolder') === 'sendMessages'
+              this.props.route.params.currentFolder === 'sendMessages'
                 ? this.props.mail.to.map(getUser)
                 : [this.props.mail.from].map(getUser),
             subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
@@ -508,7 +504,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           id: any;
           displayName: any;
         }[];
-        if (this.props.navigation.getParam('currentFolder') === 'sendMessages') {
+        if (this.props.route.params.currentFolder === 'sendMessages') {
           to.push(...this.props.mail.to.map(getUser));
         } else {
           to.push(getUser(this.props.mail.from));
@@ -643,19 +639,21 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   saveDraft = async () => {
-    const draftType = this.props.navigation.getParam('type');
+    const { route } = this.props;
+    const { id } = this.state;
+    const draftType = route.params.type;
     const isSavedDraft = draftType === DraftType.DRAFT;
-    const mailId = this.props.navigation.getParam('mailId');
+    const mailId = route.params.mailId;
 
-    if (this.state.id === undefined || (!isSavedDraft && this.state.id === mailId)) {
+    if (!id || (!isSavedDraft && id === mailId)) {
       const inReplyTo = this.props.mail.id;
-      const isForward = this.props.navigation.getParam('type') === DraftType.FORWARD;
+      const isForward = route.params.type === DraftType.FORWARD;
       const idDraft = await this.props.makeDraft(this.getMailData(), inReplyTo, isForward);
 
       this.setState({ id: idDraft });
       if (isForward) this.forwardDraft();
     } else {
-      this.props.updateDraft(this.state.id, this.getMailData());
+      this.props.updateDraft(id, this.getMailData());
     }
   };
 
@@ -682,9 +680,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   public render() {
-    const { navigation } = this.props;
+    const { navigation, route } = this.props;
     const { isPrefilling, mail } = this.state;
-    const draftType = navigation.getParam('type');
+    const draftType = route.params.type;
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
 
@@ -743,6 +741,4 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-const NewMailScreenConnected = connect(mapStateToProps, mapDispatchToProps)(NewMailScreen);
-
-export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'editor'])(NewMailScreenConnected);
+export default connect(mapStateToProps, mapDispatchToProps)(NewMailScreen);
