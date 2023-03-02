@@ -1,9 +1,10 @@
+import { CommonActions } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationActions, NavigationInjectedProps, NavigationParams } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -16,9 +17,6 @@ import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText } from '~/framework/components/text';
-import { tryAction } from '~/framework/util/redux/actions';
-import { Trackers } from '~/framework/util/tracker';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import {
   deleteMailsAction,
   moveMailsToFolderAction,
@@ -27,41 +25,60 @@ import {
   restoreMailsToInboxAction,
   toggleReadAction,
   trashMailsAction,
-} from '~/modules/conversation/actions/mail';
-import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
-import { FooterButton, HeaderMail, RenderPJs } from '~/modules/conversation/components/MailContentItems';
-import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
-import { DraftType } from '~/modules/conversation/containers/NewMail';
-import moduleConfig from '~/modules/conversation/moduleConfig';
-import { getMailContentState } from '~/modules/conversation/state/mailContent';
+} from '~/framework/modules/conversation/actions/mail';
+import { clearMailContentAction, fetchMailContentAction } from '~/framework/modules/conversation/actions/mailContent';
+import { FooterButton, HeaderMail, RenderPJs } from '~/framework/modules/conversation/components/MailContentItems';
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
+import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
+import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
+import { tryAction } from '~/framework/util/redux/actions';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 
-class MailContentContainer extends React.PureComponent<
-  NavigationInjectedProps<NavigationParams> & {
-    fetchMailContentAction: (mailId: string) => void;
-    clearContent: () => void;
-    toggleRead: (mailIds: string[], read: boolean) => void;
-    trashMails: (mailIds: string[]) => void;
-    deleteMails: (mailIds: string[]) => void;
-    moveToFolder: (mailIds: string[], folderId: string) => void;
-    moveToInbox: (mailIds: string[]) => void;
-    restoreToFolder: (mailIds: string[], folderId: string) => void;
-    restoreToInbox: (mailIds: string[]) => void;
-    dispatch: ThunkDispatch<any, any, any>;
-    isPristine: boolean;
-    isFetching: boolean;
-    error?: Error;
-    mail: any;
-  },
-  any
-> {
+import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
+
+export interface ConversationMailContentScreenNavigationParams {
+  currentFolder: string;
+  isTrashed: boolean;
+}
+interface ConversationMailContentScreenEventProps {
+  fetchMailContentAction: (mailId: string) => void;
+  clearContent: () => void;
+  toggleRead: (mailIds: string[], read: boolean) => void;
+  trashMails: (mailIds: string[]) => void;
+  deleteMails: (mailIds: string[]) => void;
+  moveToFolder: (mailIds: string[], folderId: string) => void;
+  moveToInbox: (mailIds: string[]) => void;
+  restoreToFolder: (mailIds: string[], folderId: string) => void;
+  restoreToInbox: (mailIds: string[]) => void;
+}
+interface ConversationMailContentScreenDataProps {
+  dispatch: ThunkDispatch<any, any, any>;
+  isPristine: boolean;
+  isFetching: boolean;
+  error?: Error;
+  mail: any;
+}
+export type ConversationMailContentScreenProps = ConversationMailContentScreenEventProps &
+  ConversationMailContentScreenDataProps &
+  NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.mailContent>;
+
+interface ConversationMailContentScreenState {
+  mailId: string;
+  showModal: boolean;
+  showHeaderSubject: boolean;
+  htmlError: boolean;
+}
+
+class MailContentScreen extends React.PureComponent<ConversationMailContentScreenProps, ConversationMailContentScreenState> {
   _subjectRef?: React.Ref<any> = undefined;
 
   constructor(props) {
     super(props);
-
     this.state = {
       mailId: this.props.navigation.state.params?.mailId,
       showModal: false,
@@ -145,7 +162,7 @@ class MailContentContainer extends React.PureComponent<
   goBack = () => {
     const { navigation } = this.props;
     navigation.state.params?.onGoBack?.();
-    navigation.dispatch(NavigationActions.back());
+    navigation.dispatch(CommonActions.goBack());
   };
 
   public render() {
@@ -361,9 +378,9 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   };
 };
 
-const MailContentContainerConnected = connect(mapStateToProps, mapDispatchToProps)(MailContentContainer);
+const MailContentScreenConnected = connect(mapStateToProps, mapDispatchToProps)(MailContentScreen);
 
-export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'mail'])(MailContentContainerConnected);
+export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'mail'])(MailContentScreenConnected);
 
 const styles = StyleSheet.create({
   topBar: {

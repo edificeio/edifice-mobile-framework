@@ -10,12 +10,12 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, NestedText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { getFileIcon } from '~/framework/modules/conversation/utils/fileIcon';
+import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
+import { getProfileColor, getUserColor } from '~/framework/modules/conversation/utils/userColor';
 import { displayPastDate } from '~/framework/util/date';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
-import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
-import { getMailPeople } from '~/modules/conversation/utils/mailInfos';
-import { getProfileColor, getUserColor } from '~/modules/conversation/utils/userColor';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
