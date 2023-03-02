@@ -7,6 +7,7 @@ import { ConversationNavigationParams, conversationRouteNames } from '.';
 import moduleConfig from '../module-config';
 import ConversationMailListScreen, { computeNavBar as conversationMailListNavBar } from '../screens/ConversationMailListScreen';
 import ConversationNewMailScreen, { computeNavBar as conversationNewMailNavBar } from '../screens/ConversationNewMail';
+import ConversationMailContentScreen, { computeNavBar as conversationMailContentNavBar } from '../screens/MailContent';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ConversationNavigationParams>(moduleConfig.name, Stack => (
@@ -15,6 +16,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         name={conversationRouteNames.home}
         component={ConversationMailListScreen}
         options={conversationMailListNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={conversationRouteNames.mailContent}
+        component={ConversationMailContentScreen}
+        options={conversationMailContentNavBar}
         initialParams={{}}
       />
       <Stack.Screen
