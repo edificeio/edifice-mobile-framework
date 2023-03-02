@@ -232,7 +232,7 @@ const MailContactField = connect((state: IGlobalState) => ({
       if (s.length >= 3) {
         updateFoundUsersOrGroups([]);
         onOpenSearch?.(true);
-        searchTimeout.current && clearTimeout(searchTimeout.current);
+        if (searchTimeout.current) clearTimeout(searchTimeout.current);
         searchTimeout.current = setTimeout(() => {
           const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
           updateFoundUsersOrGroups(searchResults);
@@ -348,7 +348,7 @@ const HeaderSubject = ({
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue]);
+  }, [currentValue, onChange]);
 
   return (
     <View style={[headerStyle, style]}>
@@ -416,7 +416,7 @@ const Body = ({ style, value, onChange, autofocus }) => {
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue]);
+  }, [currentValue, onChange]);
 
   React.useEffect(() => {
     const showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {

@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
@@ -166,7 +165,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     setup();
   };
 
-  componentDidUpdate = async (prevProps: ConversationNewMailScreenProps, prevState) => {
+  componentDidUpdate = async (prevProps: ConversationNewMailScreenProps) => {
     const { mail, navigation, route } = this.props;
     const { id, webDraftWarning } = this.state;
     if (prevProps.mail !== mail) {
@@ -362,7 +361,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                     ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
                     : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
                 );
-              } catch (err) {
+              } catch {
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -423,18 +422,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const { mail, route, session } = this.props;
     if (!mail || (mail as unknown as []).length === 0) return undefined;
     const draftType = route.params.type ?? DraftType.NEW;
-    const getDisplayName = id => mail.displayNames.find(([userId]) => userId === id)?.[1];
-    const getUser = id => ({ id, displayName: getDisplayName(id) });
-
-    const deleteHtmlContent = function (text) {
-      const regexp = /<(\S+)[^>]*>(.*)<\/\1>/gs;
-
-      if (regexp.test(text)) {
-        return deleteHtmlContent(text.replace(regexp, '$2'));
-      } else {
-        return decode(text);
-      }
-    };
+    const getDisplayName = (id: string) => mail.displayNames.find(([userId]) => userId === id)?.[1];
+    const getUser = (id: string) => ({ id, displayName: getDisplayName(id) });
 
     const getPrevBody = () => {
       const getUserArrayToString = users => users.map(getDisplayName).join(', ');
