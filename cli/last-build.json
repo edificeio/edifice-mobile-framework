@@ -1,6 +1,6 @@
 {
-  "last": "2023-03-01 21:49:10",
-  "notes": "release: 1.9.3-alpha.12(1090315)",
-  "version": "1.9.3-rc.4(1090316)",
+  "last": "2023-03-03 19:10:36",
+  "notes": "fix(2fa): MB-1393, no animation if code already expired\nfeat(workspace): MB-1368, when file type il AVI on workspace -> empty screen\nfix(media-player): MB-1391, fix move video when orientation is face up\nfix(media-player): fix status bar when video playing\nfix(tracking): MB-1384 fix typo\nrelease: 1.9.3-rc.4(1090316)",
+  "version": "1.9.3-alpha.13(1090317)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
