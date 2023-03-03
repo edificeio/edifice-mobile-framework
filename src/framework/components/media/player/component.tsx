@@ -145,7 +145,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   React.useEffect(() => {
     if (!isAudio) Orientation.unlockAllOrientations();
     setTimeout(() => {
-      if (!error) StatusBar.setHidden(true);
+      if (!error.active) StatusBar.setHidden(true);
     }, 10);
     // Manage Android back button
     const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
