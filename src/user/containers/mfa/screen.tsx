@@ -127,8 +127,9 @@ const MFAScreen = (props: MFAScreenProps) => {
           : validationState?.ttl === 0 || validationState?.tries === 0
           ? CodeState.CODE_EXPIRED
           : CodeState.CODE_WRONG;
+      const isCodeAlreadyExpired = codeState === CodeState.CODE_EXPIRED && state === CodeState.CODE_EXPIRED;
+      if (!isCodeAlreadyExpired) startAnimation(state);
       setCodeState(state);
-      startAnimation(state);
     } catch {
       setCodeState(CodeState.CODE_STATE_UNKNOWN);
     } finally {
