@@ -136,7 +136,9 @@ function MediaPlayer(props: MediaPlayerProps) {
   };
 
   useDeviceOrientationChange(newOrientation => {
-    if (newOrientation !== orientation) {
+    const isPortraitOrLandscape =
+      newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
+    if (isPortraitOrLandscape && newOrientation !== orientation) {
       isChangingOrientation = true;
       setOrientation(newOrientation);
     }
