@@ -38,6 +38,16 @@ function MediaPlayer(props: MediaPlayerProps) {
     }, 10);
   };
 
+  const setErrorMediaType = () => {
+    const filetype = props.navigation.getParam('filetype');
+    if (filetype === 'video/avi' || filetype === 'video/x-msvideo') {
+      setError({
+        active: true,
+        type: 'AVFoundationErrorDomain',
+      });
+    }
+  };
+
   React.useEffect(() => {
     if (!props.connected) {
       setError({
@@ -49,8 +59,15 @@ function MediaPlayer(props: MediaPlayerProps) {
         active: false,
         type: '',
       });
+      setErrorMediaType();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.connected]);
+
+  React.useEffect(() => {
+    setErrorMediaType();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleHardwareBack = () => {
     handleBack();

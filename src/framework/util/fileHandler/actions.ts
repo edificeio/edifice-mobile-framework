@@ -173,13 +173,21 @@ export const openDocument = async (
       break;
     case 'audio':
       openMediaPlayer(
-        { type: MediaType.AUDIO, source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath) },
+        {
+          type: MediaType.AUDIO,
+          source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+          filetype: document.filetype,
+        },
         navigation,
       );
       break;
     case 'video':
       openMediaPlayer(
-        { type: MediaType.VIDEO, source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath) },
+        {
+          type: MediaType.VIDEO,
+          source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+          filetype: document.filetype,
+        },
         navigation,
       );
       break;
