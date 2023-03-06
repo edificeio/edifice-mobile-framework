@@ -302,16 +302,30 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       <PageComponent
         safeArea={false}
         onBack={() => {
-          detailsCardRef?.current?.cardBottomEditorSheetRef()?.doesCommentExist()
-            ? detailsCardRef?.current
-                ?.cardBottomEditorSheetRef()
-                ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()))
-            : detailsCardRef?.current?.cardSelectedCommentFieldRef()?.doesCommentExist() &&
-              !detailsCardRef?.current?.cardSelectedCommentFieldRef()?.isCommentUnchanged()
-            ? detailsCardRef?.current
-                ?.cardSelectedCommentFieldRef()
-                ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()))
-            : props.navigation.dispatch(CommonActions.goBack());
+          if (detailsCardRef?.current?.cardBottomEditorSheetRef()?.doesCommentExist()) {
+            detailsCardRef?.current
+              ?.cardBottomEditorSheetRef()
+              ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()));
+          } else if (
+            detailsCardRef?.current?.cardSelectedCommentFieldRef()?.doesCommentExist() &&
+            !detailsCardRef?.current?.cardSelectedCommentFieldRef()?.isCommentUnchanged()
+          ) {
+            detailsCardRef?.current
+              ?.cardSelectedCommentFieldRef()
+              ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()));
+          } else props.navigation.dispatch(CommonActions.goBack());
+          /* Replace
+            detailsCardRef?.current?.cardBottomEditorSheetRef()?.doesCommentExist()
+              ? detailsCardRef?.current
+                  ?.cardBottomEditorSheetRef()
+                  ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()))
+              : detailsCardRef?.current?.cardSelectedCommentFieldRef()?.doesCommentExist() &&
+                !detailsCardRef?.current?.cardSelectedCommentFieldRef()?.isCommentUnchanged()
+              ? detailsCardRef?.current
+                  ?.cardSelectedCommentFieldRef()
+                  ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()))
+              : props.navigation.dispatch(CommonActions.goBack());
+          */
         }}>
         {renderPage()}
       </PageComponent>

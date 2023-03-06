@@ -122,9 +122,13 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
                   ],
                 }
               : [
-                  ...schoolbookWords?.slice(0, (computedPagingSize as number) * pageToFetch),
+                  ...(schoolbookWords ? schoolbookWords.slice(0, (computedPagingSize as number) * pageToFetch) : []),
                   ...newSchoolbookWords,
-                  ...(flushAfter ? [] : schoolbookWords?.slice((computedPagingSize as number) * (pageToFetch + 1))),
+                  ...(flushAfter
+                    ? []
+                    : schoolbookWords
+                    ? schoolbookWords.slice((computedPagingSize as number) * (pageToFetch + 1))
+                    : []),
                 ];
           });
         }
