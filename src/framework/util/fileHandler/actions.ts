@@ -147,6 +147,7 @@ export const openDocument = async (
       onlineMedia = {
         type: mediaType,
         src: document.url,
+        mime: document.filetype,
       };
     }
   } else if (document instanceof LocalFile) {
@@ -165,6 +166,7 @@ export const openDocument = async (
             onlineMedia ?? {
               type: 'image',
               src: localFile?.filepath!,
+              mime: localFile?.filetype,
             },
           ],
         },

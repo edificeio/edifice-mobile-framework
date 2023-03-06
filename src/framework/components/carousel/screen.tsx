@@ -1,6 +1,7 @@
 /**
  * New implementation of Carousel built with our custom react-native-image-viewer !
  */
+import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -20,7 +21,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { FakeHeader, HeaderIcon } from '~/framework/components/header';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
-import { SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { getUserSession } from '~/framework/util/session';
@@ -150,24 +151,42 @@ export function Carousel(props: ICarouselProps) {
     [imageViewerRef],
   );
 
-  const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
-    const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
-    if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
-    const permissions = Platform.select<Permission[]>({
-      ios: [],
-      android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
-    })!;
-    await assertPermissions(permissions);
-    const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl }, {});
-    return sf;
-  }, []);
+  const downloadFile = React.useCallback(
+    async (url: string | ImageURISource) => {
+      const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+      if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
+      const permissions = Platform.select<Permission[]>({
+        ios: [],
+        android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+      })!;
+      await assertPermissions(permissions);
+      const foundData = data.find(d => (d.src = url));
+      const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl, filetype: foundData?.mime }, {});
+      return sf;
+    },
+    [data],
+  );
 
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
       try {
         let sf: SyncedFile;
         try {
-          sf = await downloadFile(url);
+          const foundData = data.find(d => (d.src = url));
+          const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+          if (realUrl!.indexOf('file://') > -1) {
+            sf = new SyncedFile(
+              new LocalFile(
+                { filepath: realUrl!, filetype: foundData?.mime!, filename: '' },
+                { _needIOSReleaseSecureAccess: false },
+              ),
+              {
+                url: realUrl!,
+              },
+            );
+          } else {
+            sf = await downloadFile(url);
+          }
           if (!sf) return;
           const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
           const permissions = Platform.select<Permission[]>({
@@ -189,17 +208,21 @@ export function Carousel(props: ICarouselProps) {
             throw e;
           }
         }
+        const realFilePath = Platform.select({
+          android: getPath(sf._filepathNative!),
+          default: decodeURI(sf._filepathNative!),
+        });
         if (Platform.OS === 'android') {
-          await CameraRoll.save(sf.filepath, { album: 'Download' }); // Will put in the actual folder "Download", but still displayed in "Camera" album :/
+          await CameraRoll.save(realFilePath, { album: 'Download' }); // Will put in the actual folder "Download", but still displayed in "Camera" album :/
         } else {
-          await CameraRoll.save(sf.filepath);
+          await CameraRoll.save(realFilePath);
         }
         Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
       } catch {
         Toast.show(I18n.t('save.to.camera.roll.error'));
       }
     },
-    [downloadFile],
+    [data, downloadFile],
   );
 
   const onShare = React.useCallback(

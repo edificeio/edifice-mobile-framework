@@ -8,6 +8,7 @@ interface IMediaCommonAttributes {
   src: string | ImageURISource;
   link?: string;
   alt?: string;
+  mime?: string;
 }
 
 export interface IImageAttributes extends IMediaCommonAttributes {}
