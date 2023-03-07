@@ -37,6 +37,7 @@ export interface ISearchBarHandle {
 
 interface ISearchBarProps {
   onSubmitEditing: (query: string) => void;
+  ref: React.RefObject<ISearchBarHandle>;
 }
 
 interface IIconButtonTextProps {
@@ -48,7 +49,7 @@ interface IIconButtonTextProps {
 }
 
 export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<ISearchBarHandle, ISearchBarProps>(
-  (props: ISearchBarProps, ref) => {
+  (props: ISearchBarProps) => {
     const [value, setValue] = useState<string>('');
     const inputRef = useRef<TextInput>(null);
     const onSearch = () => {
@@ -67,7 +68,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<IS
         setValue('');
       }
     };
-    useImperativeHandle(ref, () => ({ blur, clear }));
+    useImperativeHandle(props.ref, () => ({ blur, clear }));
     return (
       <View style={styles.searchBarContainer}>
         <TextInput

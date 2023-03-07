@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { IResource, Source } from '~/modules/mediacentre/reducer';
+import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 
 import { SmallCard } from './SmallCard';
 

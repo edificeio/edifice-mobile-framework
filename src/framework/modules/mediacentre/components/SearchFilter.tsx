@@ -7,7 +7,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { IResource } from '~/modules/mediacentre/reducer';
+import { IResource } from '~/framework/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
   mainContainer: {

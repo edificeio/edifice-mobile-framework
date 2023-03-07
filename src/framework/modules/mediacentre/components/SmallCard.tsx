@@ -5,14 +5,15 @@ import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { TouchCard } from '~/framework/components/card';
+import { TouchCard } from '~/framework/components/card/base';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { ResourceImage, SourceImage } from '~/framework/modules/mediacentre/components/ResourceImage';
+import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { ResourceImage, SourceImage } from '~/modules/mediacentre/components/ResourceImage';
-import { IResource, Source } from '~/modules/mediacentre/reducer';
+
+import { assertSession } from '../../auth/reducer';
 
 const styles = StyleSheet.create({
   upperContentContainer: {
@@ -92,7 +93,8 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
       return openUrl(this.props.resource.link);
     }
     const link = encodeURIComponent(this.props.resource.link);
-    openUrl(`${DEPRECATED_getCurrentPlatform()!.url}/mediacentre/resource/open?url=${link}`);
+    const session = assertSession();
+    openUrl(`${session?.platform.url}/mediacentre/resource/open?url=${link}`);
   };
 
   copyToClipboard = () => {

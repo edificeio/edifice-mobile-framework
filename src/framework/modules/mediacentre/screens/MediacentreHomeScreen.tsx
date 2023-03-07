@@ -1,18 +1,17 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { fetchWithCache } from '~/infra/fetchWithCache';
 import {
   addFavoriteAction,
   fetchExternalsAction,
@@ -22,14 +21,23 @@ import {
   removeFavoriteAction,
   searchResourcesAction,
   searchResourcesAdvancedAction,
-} from '~/modules/mediacentre/actions';
-import { AdvancedSearchModal, IField, ISearchModalHandle, ISources } from '~/modules/mediacentre/components/AdvancedSearchModal';
-import { FavoritesCarousel } from '~/modules/mediacentre/components/FavoritesCarousel';
-import { ResourceGrid } from '~/modules/mediacentre/components/ResourceGrid';
-import { SearchContent, SearchState } from '~/modules/mediacentre/components/SearchContent';
-import { ISearchBarHandle, IconButtonText, SearchBar } from '~/modules/mediacentre/components/SearchItems';
-import moduleConfig from '~/modules/mediacentre/moduleConfig';
-import { IResource, IResourceList, ISignets, Source } from '~/modules/mediacentre/reducer';
+} from '~/framework/modules/mediacentre/actions';
+import {
+  AdvancedSearchModal,
+  IField,
+  ISearchModalHandle,
+  ISources,
+} from '~/framework/modules/mediacentre/components/AdvancedSearchModal';
+import { FavoritesCarousel } from '~/framework/modules/mediacentre/components/FavoritesCarousel';
+import { ResourceGrid } from '~/framework/modules/mediacentre/components/ResourceGrid';
+import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
+import { ISearchBarHandle, IconButtonText, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
+import moduleConfig from '~/framework/modules/mediacentre/module-config';
+import { IResource, IResourceList, ISignets, Source } from '~/framework/modules/mediacentre/reducer';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { fetchWithCache } from '~/infra/fetchWithCache';
+
+import { MediacentreNavigationParams, mediacentreRouteNames } from '../navigation';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -46,7 +54,7 @@ const styles = StyleSheet.create({
 
 // TYPES ==========================================================================================
 
-interface IMediacentreHomeScreen_DataProps {
+interface IMediacentreHomeScreenDataProps {
   externals: IResourceList;
   favorites: IResourceList;
   isFetchingSearch: boolean;
@@ -57,7 +65,7 @@ interface IMediacentreHomeScreen_DataProps {
   textbooks: IResourceList;
 }
 
-interface IMediacentreHomeScreen_EventProps {
+interface IMediacentreHomeScreenEventProps {
   addFavorite: (id: string, resource: IResource) => any;
   fetchExternals: (sources: string[]) => any;
   fetchFavorites: () => any;
@@ -69,11 +77,26 @@ interface IMediacentreHomeScreen_EventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 
-type IMediacentreHomeScreen_Props = IMediacentreHomeScreen_DataProps & IMediacentreHomeScreen_EventProps & NavigationInjectedProps;
+export interface MediacentreHomeScreenNavigationParams {
+  title: string;
+}
 
-// COMPONENT ======================================================================================
+type IMediacentreHomeScreenProps = IMediacentreHomeScreenDataProps &
+  IMediacentreHomeScreenEventProps &
+  NativeStackScreenProps<MediacentreNavigationParams, typeof mediacentreRouteNames.home>;
 
-const MediacentreHomeScreen = (props: IMediacentreHomeScreen_Props) => {
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<MediacentreNavigationParams, typeof mediacentreRouteNames.home>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('mediacentre.tabName'),
+});
+
+const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   const [shouldFetch, setShouldFetch] = useState<boolean>(true);
   const [isFetchingSources, setFetchingSources] = useState<boolean>(true);
   const [sources, setSources] = useState<string[]>([]);
@@ -178,7 +201,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreen_Props) => {
         ...UI_ANIMATIONS.toast,
       });
       props.fetchFavorites();
-    } catch (err) {
+    } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
@@ -192,7 +215,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreen_Props) => {
         ...UI_ANIMATIONS.toast,
       });
       props.fetchFavorites();
-    } catch (err) {
+    } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
@@ -209,7 +232,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreen_Props) => {
   // RENDER =======================================================================================
 
   return (
-    <PageView navigation={props.navigation} navBarWithBack={{ title: I18n.t('mediacentre.tabName') }}>
+    <PageView>
       {!sources.length ? (
         renderEmptyState()
       ) : (
@@ -284,7 +307,7 @@ const setFavorites = (resources: IResource[], favorites: string[]) => {
   }
 };
 
-const mapStateToProps = (gs: any) => {
+const mapStateToProps = (gs: IGlobalState) => {
   const state = moduleConfig.getState(gs);
   const externals = state.externals;
   const favorites = state.favorites;
@@ -314,7 +337,7 @@ const mapStateToProps = (gs: any) => {
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
   getState: () => IGlobalState,
-) => IMediacentreHomeScreen_EventProps = (dispatch, getState) => ({
+) => IMediacentreHomeScreenEventProps = (dispatch, getState) => ({
   addFavorite: async (resourceId: string, resource: IResource) => {
     return dispatch(addFavoriteAction(resourceId, resource));
   },

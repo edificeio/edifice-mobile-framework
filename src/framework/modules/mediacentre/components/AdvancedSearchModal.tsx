@@ -19,9 +19,9 @@ import { Picture } from '~/framework/components/picture';
 import { Icon } from '~/framework/components/picture/Icon';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
+import { ButtonGroup } from '~/framework/modules/mediacentre/components/ButtonGroup';
+import { Source } from '~/framework/modules/mediacentre/reducer';
 import { Image } from '~/framework/util/media';
-import { ButtonGroup } from '~/modules/mediacentre/components/ButtonGroup';
-import { Source } from '~/modules/mediacentre/reducer';
 
 const styles = StyleSheet.create({
   buttonGroupContainer: {
@@ -145,6 +145,7 @@ export interface ISearchModalHandle {
 interface IAdvancedSearchModalProps {
   availableSources: string[];
   isVisible: boolean;
+  ref: React.RefObject<ISearchModalHandle>;
 
   closeModal: () => void;
   onSearch: (fields: IField[], sources: ISources) => void;
@@ -204,7 +205,7 @@ const SourceCheckbox: React.FunctionComponent<ISourceCheckboxProps> = (props: IS
 export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalProps> = forwardRef<
   ISearchModalHandle,
   IAdvancedSearchModalProps
->((props: IAdvancedSearchModalProps, ref) => {
+>((props: IAdvancedSearchModalProps) => {
   const [fields, setFields] = useState<IField[]>(defaultFields);
   const [sources, setSources] = useState<ISources>(defaultSources);
   const areFieldsEmpty = !fields.some(field => field.value !== '');
@@ -234,8 +235,9 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
   };
   useEffect(() => {
     resetSources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.availableSources]);
-  useImperativeHandle(ref, () => ({ resetParams }));
+  useImperativeHandle(props.ref, () => ({ resetParams }));
   return (
     <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
       <KeyboardAvoidingView

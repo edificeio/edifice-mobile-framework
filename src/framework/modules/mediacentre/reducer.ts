@@ -3,8 +3,10 @@
  */
 import { combineReducers } from 'redux';
 
+import { Reducers } from '~/app/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
-import moduleConfig from '~/modules/mediacentre/moduleConfig';
+
+import moduleConfig from './module-config';
 
 // Types
 
@@ -44,7 +46,7 @@ export interface ISignets {
 
 // State
 
-interface IMediacentre_StateData {
+interface IMediacentreStateData {
   externals: IResourceList;
   favorites: IResourceList;
   search: IResourceList;
@@ -52,7 +54,7 @@ interface IMediacentre_StateData {
   textbooks: IResourceList;
 }
 
-export interface IMediacentre_State {
+export interface IMediacentreState {
   externals: AsyncState<IResourceList>;
   favorites: AsyncState<IResourceList>;
   search: AsyncState<IResourceList>;
@@ -62,7 +64,7 @@ export interface IMediacentre_State {
 
 // Reducer
 
-const initialState: IMediacentre_StateData = {
+const initialState: IMediacentreStateData = {
   externals: [],
   favorites: [],
   search: [],
@@ -83,10 +85,12 @@ export const actionTypes = {
   textbooks: createAsyncActionTypes(moduleConfig.namespaceActionType('TEXTBOOKS')),
 };
 
-export default combineReducers({
+const reducer = combineReducers({
   externals: createSessionAsyncReducer(initialState.externals, actionTypes.externals),
   favorites: createSessionAsyncReducer(initialState.favorites, actionTypes.fetchFavorites),
   search: createSessionAsyncReducer(initialState.search, actionTypes.search),
   signets: createSessionAsyncReducer(initialState.signets, actionTypes.signets),
   textbooks: createSessionAsyncReducer(initialState.textbooks, actionTypes.textbooks),
 });
+Reducers.register(moduleConfig.reducerName, reducer);
+export default reducer;

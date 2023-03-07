@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 'react-native';
 
 import { NamedSVG } from '~/framework/components/picture';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { Source } from '~/framework/modules/mediacentre/reducer';
 import { Image } from '~/framework/util/media';
-import { Source } from '~/modules/mediacentre/reducer';
 
 interface IResourceImageProps {
   image: string;
@@ -19,8 +19,9 @@ interface ISourceImageProps {
 }
 
 const getImageUri = (value: string): string => {
+  const session = assertSession();
   if (value.startsWith('/')) {
-    const url = DEPRECATED_getCurrentPlatform()!.url;
+    const url = session?.platform.url;
     return url + value;
   }
   return value;

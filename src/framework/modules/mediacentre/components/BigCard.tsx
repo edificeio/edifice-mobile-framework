@@ -9,9 +9,9 @@ import { TouchableResourceCard } from '~/framework/components/card';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { IResource, Source } from '~/modules/mediacentre/reducer';
 
 import { ResourceImage, SourceImage } from './ResourceImage';
 
@@ -104,7 +104,8 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
       return openUrl(this.props.resource.link);
     }
     const link = encodeURIComponent(this.props.resource.link);
-    openUrl(`${DEPRECATED_getCurrentPlatform()!.url}/mediacentre/resource/open?url=${link}`);
+    const session = assertSession();
+    openUrl(`${session?.platform.url}/mediacentre/resource/open?url=${link}`);
   };
 
   copyToClipboard = () => {

@@ -1,13 +1,11 @@
 /**
  * Mediacentre actions
  */
-import { ThunkAction } from 'redux-thunk';
-
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { IField, ISources } from '~/framework/modules/mediacentre/components/AdvancedSearchModal';
+import { IResource, Source, actionTypes } from '~/framework/modules/mediacentre/reducer';
+import { compareResources, mediacentreService } from '~/framework/modules/mediacentre/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
-import { getUserSession } from '~/framework/util/session';
-import { IField, ISources } from '~/modules/mediacentre/components/AdvancedSearchModal';
-import { IResource, IResourceList, Source, actionTypes } from '~/modules/mediacentre/reducer';
-import { compareResources, mediacentreService } from '~/modules/mediacentre/service';
 
 /**
  * Fetch the external resources.
@@ -18,7 +16,7 @@ export const fetchExternalsAction = (sources: string[]) => async (dispatch, getS
     return;
   }
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(externalsActionsCreators.request());
     const externals = await mediacentreService.search.getSimple(session, [Source.GAR], '.*');
     dispatch(externalsActionsCreators.receipt(externals));
@@ -35,7 +33,7 @@ export const fetchExternalsAction = (sources: string[]) => async (dispatch, getS
 export const fetchFavoritesActionsCreators = createAsyncActionCreators(actionTypes.fetchFavorites);
 export const fetchFavoritesAction = () => async (dispatch, getState) => {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(fetchFavoritesActionsCreators.request());
     const favorites = await mediacentreService.favorites.get(session);
     dispatch(fetchFavoritesActionsCreators.receipt(favorites));
@@ -51,7 +49,7 @@ export const fetchFavoritesAction = () => async (dispatch, getState) => {
 export const addFavoriteActionsCreators = createAsyncActionCreators(actionTypes.addFavorite);
 export const addFavoriteAction = (resourceId: string, resource: IResource) => async (dispatch, getState) => {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(addFavoriteActionsCreators.request());
     await mediacentreService.favorites.add(session, resourceId, resource);
     dispatch(fetchFavoritesActionsCreators.receipt(resourceId));
@@ -66,7 +64,7 @@ export const addFavoriteAction = (resourceId: string, resource: IResource) => as
 export const removeFavoriteActionsCreators = createAsyncActionCreators(actionTypes.removeFavorite);
 export const removeFavoriteAction = (resourceId: string, source: Source) => async (dispatch, getState) => {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(removeFavoriteActionsCreators.request());
     await mediacentreService.favorites.remove(session, resourceId, source);
     dispatch(removeFavoriteActionsCreators.receipt(resourceId));
@@ -81,7 +79,7 @@ export const removeFavoriteAction = (resourceId: string, source: Source) => asyn
 export const searchActionsCreators = createAsyncActionCreators(actionTypes.search);
 export const searchResourcesAction = (sources: string[], query: string) => async (dispatch, getState) => {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(searchActionsCreators.request());
     const resources = await mediacentreService.search.getSimple(session, sources, query);
     if (sources.includes(Source.SIGNET)) {
@@ -105,7 +103,7 @@ export const searchResourcesAction = (sources: string[], query: string) => async
  */
 export const searchResourcesAdvancedAction = (fields: IField[], sources: ISources) => async (dispatch, getState) => {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(searchActionsCreators.request());
     const resources = await mediacentreService.search.getAdvanced(session, fields, sources);
     if (sources.Signet === true) {
@@ -130,7 +128,7 @@ export const searchResourcesAdvancedAction = (fields: IField[], sources: ISource
 export const signetsActionsCreators = createAsyncActionCreators(actionTypes.signets);
 export const fetchSignetsAction = () => async (dispatch, getState) => {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(signetsActionsCreators.request());
     const shared = await mediacentreService.signets.get(session);
     const orientation = await mediacentreService.signets.getOrientation(session);
@@ -147,7 +145,7 @@ export const fetchSignetsAction = () => async (dispatch, getState) => {
 export const textbooksActionsCreators = createAsyncActionCreators(actionTypes.textbooks);
 export const fetchTextbooksAction = () => async (dispatch, getState) => {
   try {
-    const session = getUserSession();
+    const session = assertSession();
     dispatch(textbooksActionsCreators.request());
     const textbooks = await mediacentreService.textbooks.get(session);
     dispatch(textbooksActionsCreators.receipt(textbooks));

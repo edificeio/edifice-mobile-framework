@@ -9,7 +9,7 @@ import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { IResource, Source } from '~/modules/mediacentre/reducer';
+import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 
 import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
