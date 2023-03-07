@@ -202,6 +202,7 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
                 <RenderPJs
                   attachments={this.props.mail.attachments}
                   mailId={this.props.mail.id}
+                  navigation={this.props.navigation}
                   onDownload={this.props.downloadAttachment}
                   dispatch={this.props.dispatch}
                 />
