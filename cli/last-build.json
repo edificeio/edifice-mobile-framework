@@ -1,6 +1,6 @@
 {
   "last": "2023-02-28 21:26:36",
   "notes": "upgrade(rn6): delete dashboard and presences old modules\nfix(presences): remove dependencies to old module\nfeat(presences): refactor old course list container\nfix(presences): catching exceptions when opening calls\nfeat(presences): replace old actions with service\nfeat(presences): rework history screen\nfix(diary): session screen params\nfix(viesco): fix card import\nfeat(presences): add terms, schoolyear and history to reducer\nfeat(presences): rework declare absence screen\nupgrade(rn6): Fix prettier errors\nrn6(support): MB-794, support finished\nupgrade(rn6): Upgrade ESLint plugins\nchore(timeline & blog): MB-788, blog finished (lint errors included) && + button on timeline worked\nchore(timeline): add computeNavBar\nupgrade(rn6): Upgrade packages && Android plugins\nchore(build): update tsc config with last ES version && exclude scaffolder folder\nupgrade(stack): Upgrade packages\nupgrade(rn6): Remove old DEPRECATED_getCurrentPlatform()  from trackers.\nupgrade(rn6): Html Parser using old DEPRECATED_getCurrentPlatform() fix\nrelease: 1.9.4-alpha.5(1090405)",
-  "version": "1.9.4-alpha.6(1090406)",
+  "version": "1.9.5-alpha.6(1090506)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
