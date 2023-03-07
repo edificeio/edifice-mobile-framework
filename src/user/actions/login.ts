@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
+import I18n from 'i18n-js';
 import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
@@ -7,12 +9,20 @@ import { ThunkDispatch } from 'redux-thunk';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType, urlSigner } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
-import { IEntcoreEmailValidationInfos, IUserRequirements, userService } from '~/user/service';
+import { LegalUrls } from '~/user/reducers/auth';
+import {
+  IEntcoreEmailValidationInfos,
+  IEntcoreMobileValidationInfos,
+  IUserRequirements,
+  Languages,
+  userService,
+} from '~/user/service';
 
+import { actionTypeLegalDocuments } from './actionTypes/legalDocuments';
 import {
   actionTypeLoggedIn,
   actionTypeLoggedInPartial,
@@ -33,6 +43,7 @@ export enum LoginFlowErrorType {
   MUST_CHANGE_PASSWORD = 'must-change-password',
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
   MUST_VERIFY_EMAIL = 'must-verify-email',
+  MUST_VERIFY_MOBILE = 'must-verify-mobile',
 }
 
 export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
@@ -102,32 +113,46 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 1: Get oAuth token from somewhere (server or local storage)
-      // eslint-disable-next-line no-useless-catch
+      // === 1: Load legal document urls
+      const legalUrls: LegalUrls = {
+        userCharter: undefined,
+        cgu: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cgu')),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.personalDataProtection')),
+        cookies: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cookies')),
+      };
       try {
-        if (credentials) {
-          await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
-            credentials.username,
-            credentials.password,
-            false, // Do not save token until login is completely successful
+        const authTranslationKeys = await userService.getAuthTranslationKeys(I18n.locale as Languages);
+        if (authTranslationKeys) {
+          legalUrls.userCharter = urlSigner.getAbsoluteUrl(
+            authTranslationKeys['auth.charter'] || I18n.t('user.legalUrl.userCharter'),
           );
-        } else {
-          // Here, an offline user will try to load a token.
-          // If a token is stored, it allows the user to be offline.
-          await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
-          if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
-            // No token, redirect to login page without error.
-            dispatch(endSessionAction());
-            const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
-            reset(getLoginStackToDisplay(platformId));
-            return;
-          }
         }
       } catch (err) {
-        throw err;
+        console.warn(err);
+      }
+      dispatch({ type: actionTypeLegalDocuments, legalUrls });
+
+      // === 2: Get oAuth token from somewhere (server or local storage)
+      if (credentials) {
+        await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
+          credentials.username,
+          credentials.password,
+          false, // Do not save token until login is completely successful
+        );
+      } else {
+        // Here, an offline user will try to load a token.
+        // If a token is stored, it allows the user to be offline.
+        await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
+        if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
+          // No token, redirect to login page without error.
+          dispatch(endSessionAction());
+          const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+          reset(getLoginStackToDisplay(platformId));
+          return;
+        }
       }
 
-      // === 2: Gather logged user information
+      // === 3: Gather logged user information
       let userinfo2;
       try {
         userinfo2 = (await fetchJSONWithCache('/auth/oauth2/userinfo', {
@@ -153,7 +178,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 4: check user validity
+      // === 5: check user validity
       if (userinfo2.deletePending) {
         const err = new Error('[loginAction]: User is predeleted.');
         (err as any).type = LoginFlowErrorType.PRE_DELETED;
@@ -166,6 +191,18 @@ export function loginAction(
         const err = new Error('[loginAction]: User must change password.');
         (err as any).type = LoginFlowErrorType.MUST_CHANGE_PASSWORD;
         (err as any).userinfo2 = userinfo2;
+        throw err;
+      } else if (requirements?.needRevalidateMobile) {
+        const err = new Error('[loginAction]: User must verify mobile.');
+        try {
+          const mobileValidationInfos = await userService.getMobileValidationInfos();
+          (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
+          (err as any).mobileValidationInfos = {
+            ...mobileValidationInfos,
+          } as IEntcoreMobileValidationInfos;
+        } catch (e) {
+          throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', e as Error);
+        }
         throw err;
       } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
@@ -185,7 +222,7 @@ export function loginAction(
         throw err;
       }
 
-      // === 5: Gather another user information
+      // === 6: Gather more user information
       let userdata: any, userPublicInfo: any;
       try {
         userdata = (await fetchJSONWithCache(`/directory/user/${userinfo2.userId}`)) as any;
@@ -199,7 +236,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 6: Get firebase device token and store it in the backend
+      // === 7: Get firebase device token and store it in the backend
       try {
         const authorizationStatus = await messaging().requestPermission();
         if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
@@ -209,7 +246,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err as Error);
       }
 
-      // === 7: validate login
+      // === 8: validate login
       try {
         dispatch({
           type: actionTypeLoggedIn,
@@ -222,7 +259,7 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
 
-      // === 8: Tracking reporting (only on success)
+      // === 9: Tracking reporting (only on success)
 
       // ToDo
       await Promise.all([
@@ -243,10 +280,10 @@ export function loginAction(
       // Track manual login (with credentials)
       else await Trackers.trackDebugEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
-      // === 9: Store Curreet Platform
+      // === 10: Store Current Platform
       await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, pf.name);
 
-      // === 10: navigate back to the main screen
+      // === 11: navigate back to the main screen
       navigate('Main');
       dispatch(letItSnowAction());
     } catch (err) {
@@ -286,17 +323,21 @@ export function loginAction(
               }
             }
           }
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (activationErr) {
+        } catch {
           // TODO: Manage error
+        } finally {
+          CookieManager.clearAll();
         }
       } else if ((err as any).type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
         routeToGo = 'ChangePassword';
       } else if ((err as any).type === LoginFlowErrorType.MUST_REVALIDATE_TERMS) {
         routeToGo = 'RevalidateTerms';
         routeParams = { credentials };
+      } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_MOBILE) {
+        routeToGo = 'UserMobile';
+        routeParams = { credentials, defaultMobile: (err as any)?.mobileValidationInfos?.mobile };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
-        routeToGo = 'SendEmailVerificationCode';
+        routeToGo = 'UserEmail';
         routeParams = { credentials, defaultEmail: (err as any)?.emailValidationInfos?.email };
       }
 

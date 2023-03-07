@@ -5,7 +5,6 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Platform } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from 'react-native-document-picker';
-import FileViewer from 'react-native-file-viewer';
 import { DownloadDirectoryPath, UploadFileItem, copyFile, exists } from 'react-native-fs';
 import {
   Asset,
@@ -16,8 +15,11 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import { NavigationInjectedProps } from 'react-navigation';
 
 import { assertPermissions } from '~/framework/util/permissions';
+
+import { openDocument } from './actions';
 
 namespace LocalFile {
   export type IPickOptionsType = 'image' | 'audio' | 'video';
@@ -201,6 +203,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   /** Functions to parse URLs. You shouldn't have to use them manually. */
   static removeProtocol = (url: string) => url.replace(/^\w*?:\/\/(.+)/, '$1');
+
   static formatUrlForUpload = (url: string) =>
     Platform.select({
       ios: decodeURI(LocalFile.removeProtocol(url)),
@@ -210,15 +213,13 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   /**
    * Opens the file with the native device's reader.
    */
-  async open() {
-    try {
-      await FileViewer.open(this._filepathNative, {
-        showOpenWithDialog: true,
-        showAppsSuggestions: true,
-      });
-    } catch (error) {
-      throw error;
+  async open(navigation: NavigationInjectedProps['navigation']) {
+    // Add "file://" if absolute url is provided
+    if (!this.filepath.includes('://')) {
+      this.filepath = 'file://' + this.filepath;
+      this._filepathNative = 'file://' + this._filepathNative;
     }
+    await openDocument(this, navigation);
   }
 
   /**
@@ -263,6 +264,7 @@ export interface IAnyDistantFile extends IDistantFile {
  */
 export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements LocalFile, IDistantFile {
   df: DFType;
+
   lf: LocalFile;
 
   constructor(localFile: LocalFile, distantFile: DFType) {
@@ -273,33 +275,39 @@ export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements L
   get url() {
     return this.df.url;
   }
+
   get filename() {
     return this.df.filename ?? this.lf.filename;
   }
+
   get filepath() {
     return this.lf.filepath;
   }
+
   get filesize() {
     return this.df.filesize;
   }
+
   get filetype() {
     return this.df.filetype ?? this.lf.filetype;
   }
+
   get _filepathNative() {
     return this.lf._filepathNative;
   }
 
   releaseIfNeeded = () => LocalFile.prototype.releaseIfNeeded.call(this.lf);
-  open = () => LocalFile.prototype.open.call(this.lf);
+
+  open = (navigation: NavigationInjectedProps['navigation']) => LocalFile.prototype.open.call(this.lf, navigation);
+
   setExtension = (ext: string) => LocalFile.prototype.setExtension.call(this.lf, ext);
+
   setPath = (path: string) => LocalFile.prototype.setPath.call(this.lf, path);
+
   mirrorToDownloadFolder = () => LocalFile.prototype.mirrorToDownloadFolder.call(this.lf);
 }
 
 export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {
-  constructor(localFile: LocalFile, distantFile: IDistantFileWithId) {
-    super(localFile, distantFile);
-  }
   get id() {
     return (this.df as IDistantFileWithId).id;
   }

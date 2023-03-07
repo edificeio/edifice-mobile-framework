@@ -12,15 +12,16 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Picture } from '~/framework/components/picture';
 import { Icon } from '~/framework/components/picture/Icon';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media';
+import { ButtonGroup } from '~/modules/mediacentre/components/ButtonGroup';
 import { Source } from '~/modules/mediacentre/reducer';
-import { ButtonGroup } from '~/ui/ButtonGroup';
 
 const styles = StyleSheet.create({
   buttonGroupContainer: {
@@ -245,7 +246,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         <View style={styles.headerContainer}>
           <BodyBoldText style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</BodyBoldText>
           <TouchableOpacity onPress={props.closeModal}>
-            <Icon name="close" color={theme.ui.text.inverse} size={20} />
+            <Picture type="NamedSvg" name="ui-close" width={24} height={24} fill={theme.ui.text.inverse} />
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">

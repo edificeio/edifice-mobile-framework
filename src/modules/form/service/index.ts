@@ -75,8 +75,8 @@ interface IBackendQuestion {
   cursor_min_val?: number;
   cursor_max_val?: number;
   cursor_step?: number;
-  cursor_label_min_val?: string;
-  cursor_label_max_val?: string;
+  cursor_min_label?: string;
+  cursor_max_label?: string;
 }
 
 interface IBackendQuestionChoice {
@@ -169,8 +169,8 @@ const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
     cursorMinVal: data.cursor_min_val,
     cursorMaxVal: data.cursor_max_val,
     cursorStep: data.cursor_step,
-    cursorLabelMinVal: data.cursor_label_min_val,
-    cursorLabelMaxVal: data.cursor_label_max_val,
+    cursorMinLabel: data.cursor_min_label,
+    cursorMaxLabel: data.cursor_max_label,
   } as IQuestion;
 };
 
@@ -316,6 +316,11 @@ export const formService = {
       const api = `/formulaire/forms/${formId}/sections`;
       const sections = (await fetchJSONWithCache(api)) as IBackendSectionList;
       return sections.map(section => sectionAdapter(section)) as ISection[];
+    },
+    hasResponderRight: async (session: IUserSession, formId: number) => {
+      const api = `/formulaire/forms/${formId}/rights`;
+      const rights = (await fetchJSONWithCache(api)) as { action: string }[];
+      return rights.some(r => r.action === 'fr-openent-formulaire-controllers-FormController|initResponderResourceRight');
     },
   },
   questions: {

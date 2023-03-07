@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 
+import { getStore } from '~/App';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getUserSession } from '~/framework/util/session';
-import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
-import { resetNavigation } from '~/navigation/helpers/navHelper';
+import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
+import { getRootNavState, resetNavigation } from '~/navigation/helpers/navHelper';
+import { actionTypeLoginError } from '~/user/actions/actionTypes/login';
 
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
@@ -14,27 +16,30 @@ import { OAuth2RessourceOwnerPasswordClient } from './oauth';
  * @param init request options
  */
 export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit): Promise<Response> {
-  try {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
-    if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
-      try {
-        await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
-      } catch (err) {
-        if (getUserSession()) {
-          // Only reset if we are logged in. Reset when logout will cause the error to dissappear.
+  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
+  if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
+    try {
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
+    } catch (err) {
+      setTimeout(() => {
+        const currentNavState = getRootNavState().nav;
+        const currentRoute = currentNavState.routes[currentNavState.index];
+        if (currentRoute.routeName === 'Main') {
           const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
           resetNavigation(stack, stack.length - 1);
-        } else {
-          navigate(getLoginRouteName());
         }
-        throw err;
-      }
+      });
+      getStore().dispatch({
+        type: actionTypeLoginError,
+        errmsg: (err as any).type,
+      });
+      throw err;
     }
-    const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
-    return await fetch(req);
-  } catch (err) {
-    throw err;
   }
+  const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
+  const ret = fetch(req);
+  CookieManager.clearAll();
+  return ret;
 }
 
 /**

@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { NavigationInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
@@ -10,33 +11,41 @@ import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { IUserAuthState } from '~/user/reducers/auth';
+import { getAuthState } from '~/user/selectors';
 
 // TYPES ==========================================================================================
 
+export interface ILegalNoticeScreenDataProps {
+  auth: IUserAuthState;
+}
+
+export type ILegalNoticeScreenProps = ILegalNoticeScreenDataProps & NavigationInjectedProps;
+
 export interface ILegalNoticeScreenState {
-  legalTitle: string;
-  legalUrl: string;
+  selectedLegalTitle: string;
+  selectedLegalUrl: string;
+  showLegalDoc: boolean;
 }
 
 // COMPONENT ======================================================================================
-class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<object>, ILegalNoticeScreenState> {
+class LegalNoticeScreen extends React.PureComponent<ILegalNoticeScreenProps, ILegalNoticeScreenState> {
   // DECLARATIONS ===================================================================================
 
   state: ILegalNoticeScreenState = {
-    legalTitle: '',
-    legalUrl: '',
+    selectedLegalTitle: '',
+    selectedLegalUrl: '',
+    showLegalDoc: false,
   };
 
   // RENDER =========================================================================================
 
   render() {
     const { navigation } = this.props;
-    const { legalTitle, legalUrl } = this.state;
+    const { showLegalDoc, selectedLegalTitle, selectedLegalUrl } = this.state;
     const legalItems = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
-
     return (
       <PageView
         navigation={navigation}
@@ -45,11 +54,11 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
         }}>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropPdfReader
-          handleClose={() => this.setState({ legalTitle: '', legalUrl: '' })}
-          handleOpen={() => this.setState({ legalTitle, legalUrl })}
-          title={legalTitle}
-          uri={legalUrl}
-          visible={!!legalUrl}
+          handleClose={() => this.setState({ showLegalDoc: false, selectedLegalTitle: '', selectedLegalUrl: '' })}
+          handleOpen={() => this.setState({ showLegalDoc: true, selectedLegalTitle, selectedLegalUrl })}
+          visible={showLegalDoc}
+          title={selectedLegalTitle}
+          uri={selectedLegalUrl}
         />
       </PageView>
     );
@@ -57,7 +66,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
 
   renderLegalItem(legalItem: string) {
     return (
-      <TouchableOpacity onPress={() => this.handleOpenLegalItem(legalItem)} key={legalItem}>
+      <TouchableOpacity onPress={() => this.openLegalItem(legalItem)} key={legalItem}>
         <ListItem
           leftElement={<SmallText>{I18n.t(`user.legalNoticeScreen.${legalItem}`)}</SmallText>}
           rightElement={
@@ -76,12 +85,12 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
 
   // METHODS ========================================================================================
 
-  handleOpenLegalItem = (legalItem: string) => {
-    const platform = DEPRECATED_getCurrentPlatform()!.url;
-    const path = I18n.t(`common.url.${legalItem}`);
-    const legalUrl = `${platform}${path}`;
-    const legalTitle = I18n.t(`user.legalNoticeScreen.${legalItem}`);
-    this.setState({ legalUrl, legalTitle });
+  openLegalItem = (legalItem: string) => {
+    const { auth } = this.props;
+    const legalUrls = auth.legalUrls;
+    const selectedLegalTitle = I18n.t(`user.legalNoticeScreen.${legalItem}`);
+    const selectedLegalUrl = legalUrls[legalItem];
+    this.setState({ showLegalDoc: true, selectedLegalTitle, selectedLegalUrl });
     Trackers.trackEvent('Profile', 'READ NOTICE', legalItem);
   };
 
@@ -90,4 +99,10 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<obje
   // MAPPING ========================================================================================
 }
 
-export default withViewTracking('user/legalNotice')(LegalNoticeScreen);
+const ConnectedLegalNoticeScreen = connect((state: any): ILegalNoticeScreenDataProps => {
+  return {
+    auth: getAuthState(state),
+  };
+})(LegalNoticeScreen);
+
+export default withViewTracking('user/legalNotice')(ConnectedLegalNoticeScreen);

@@ -31,6 +31,7 @@ export type IFile = {
   contentType?: string;
   size?: number;
   url?: string;
+  key: string;
 };
 
 export type IFolder = {

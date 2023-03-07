@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
@@ -205,7 +205,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
           <ScrollView>
             <LeftColoredItem color={mainColor} style={styles.recapHeader}>
               <View style={styles.recapHeaderView}>
-                <Icon color="grey" size={12} name="access_time" />
+                <Picture type="NamedSvg" name="ui-clock" width={20} height={20} fill={mainColor} />
                 <SmallText style={styles.recapHeaderText}>
                   {startDateString} - {endDateString}
                 </SmallText>

@@ -1,13 +1,13 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import { StyleSheet, View } from 'react-native';
+import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LeftColoredItem } from '~/modules/viescolaire/dashboard/components/Item';
 import { Homework } from '~/modules/viescolaire/utils/diary';
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   LeftColoredItemInfoBar: {
-    alignItems: 'flex-end',
+    alignItems: 'center',
     flexDirection: 'row',
   },
   homeworkPart: {
@@ -126,8 +126,14 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
               <LeftColoredItem shadow style={styles.LeftColoredItemInfoBar} color={theme.palette.complementary.orange.regular}>
                 {homeworkList && homeworkList[indexSelectedHomework]?.created_date ? (
                   <>
-                    <Icon size={20} color={theme.palette.complementary.orange.regular} name="date_range" />
-                    <SmallText>&emsp;{moment(homeworkList[indexSelectedHomework].created_date).format('DD/MM/YY')}</SmallText>
+                    <Picture
+                      type="NamedSvg"
+                      name="ui-calendarLight"
+                      width={20}
+                      height={20}
+                      fill={theme.palette.complementary.orange.regular}
+                    />
+                    <SmallText>&ensp;{moment(homeworkList[indexSelectedHomework].created_date).format('DD/MM/YY')}</SmallText>
                   </>
                 ) : null}
                 {homeworkList && homeworkList[indexSelectedHomework]?.subject ? (

@@ -2,6 +2,7 @@ import Filesize from 'filesize';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
+import FileViewer from 'react-native-file-viewer';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Toast from 'react-native-tiny-toast';
@@ -11,12 +12,12 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
@@ -78,7 +79,7 @@ const defaultAttachmentIcon = 'attached';
 const getAttachmentTypeByExt = (filename: string) => {
   // from https://stackoverflow.com/a/12900504/6111343
   const ext = filename
-    // tslint:disable-next-line:no-bitwise
+    // eslint-disable-next-line no-bitwise
     .slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2)
     .toLowerCase();
 
@@ -90,18 +91,18 @@ const getAttachmentTypeByExt = (filename: string) => {
   return icon;
 };
 
-const openFile = (notifierId: string, file?: SyncedFile) => {
+const openFile = (notifierId: string, file: SyncedFile | undefined, navigation: NavigationInjectedProps['navigation']) => {
   return dispatch => {
     if (file) {
       try {
-        file.open();
-      } catch (e) {
+        file.open(navigation);
+      } catch {
         Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
   };
 };
-let lastToast = undefined;
+let lastToast;
 const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: string) => {
   return dispatch => {
     if (file) {
@@ -111,7 +112,7 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
         lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }), {
           ...UI_ANIMATIONS.toast,
         });
-      } catch (e) {
+      } catch {
         Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
       }
     }
@@ -124,7 +125,7 @@ class Attachment extends React.PureComponent<
     style: ViewStyle;
     editMode?: boolean;
     onRemove?: () => void;
-    onOpenFile: (notifierId: string, file?: LocalFile) => void;
+    onOpenFile: (notifierId: string, file: LocalFile | undefined, navigation: NavigationInjectedProps['navigation']) => void;
     onDownloadFile: (notifierId: string, file?: LocalFile, toastMessage?: string) => void;
     onDownload?: () => void;
     onError?: () => void;
@@ -154,26 +155,26 @@ class Attachment extends React.PureComponent<
   }
 
   public async componentDidUpdate(prevProps: any) {
-    const { starDownload, attachment } = this.props;
+    const { starDownload } = this.props;
     const { downloadState } = this.state;
     const canDownload = this.attId && downloadState !== DownloadState.Success && downloadState !== DownloadState.Downloading;
     const notifierId = `attachment/${this.attId}`;
     if (prevProps.starDownload !== starDownload) {
-      canDownload &&
-        (await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
+      if (canDownload) {
+        await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
           requestAnimationFrame(() => {
-            this.props.onDownloadFile && this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'));
+            if (this.props.onDownloadFile) this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'));
           });
-        }).catch(err => {
+        }).catch(() => {
           // TODO: Manage error
-        }));
-      // canDownload && this.startDownload(attachment as IRemoteAttachment).catch(err => {// TODO: Manage error});
+        });
+      }
     }
   }
 
   public render() {
-    const { attachment: att, style, editMode, onRemove, onDownloadFile } = this.props;
-    const { downloadState, progress } = this.state;
+    const { attachment: att, style, editMode, onDownloadFile } = this.props;
+    const { downloadState } = this.state;
     const notifierId = `attachment/${this.attId}`;
 
     return (
@@ -185,7 +186,9 @@ class Attachment extends React.PureComponent<
             alignItems: 'center',
             height: 30,
           }}>
-          <Pressable style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.onPressAttachment(notifierId)}>
+          <Pressable
+            style={{ flexDirection: 'row', flex: 1 }}
+            onPress={() => this.onPressAttachment(notifierId, this.props.navigation)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
                 <ActivityIndicator
@@ -258,9 +261,9 @@ class Attachment extends React.PureComponent<
                   onPress={async () => {
                     await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
                       requestAnimationFrame(() => {
-                        onDownloadFile && onDownloadFile(notifierId, lf);
+                        if (onDownloadFile) onDownloadFile(notifierId, lf);
                       });
-                    }).catch(err => {
+                    }).catch(() => {
                       // TODO: Manage error
                     });
                   }}
@@ -279,7 +282,7 @@ class Attachment extends React.PureComponent<
     );
   }
 
-  public async onPressAttachment(notifierId: string) {
+  public async onPressAttachment(notifierId: string, navigation: NavigationInjectedProps['navigation']) {
     const { onOpenFile, onOpen, attachment, editMode } = this.props;
     const { downloadState, newDownloadedFile } = this.state;
     const fileType = editMode
@@ -295,34 +298,24 @@ class Attachment extends React.PureComponent<
         { _needIOSReleaseSecureAccess: false },
       ) as LocalFile;
     const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
-    const carouselImage =
-      Platform.OS === 'android'
-        ? [{ src: { uri: 'file://' + file?.filepath }, alt: 'image' }]
-        : [{ src: { uri: file?.filepath }, alt: 'image' }];
-
     if (!this.attId) {
       return undefined;
     } else if (editMode || downloadState === DownloadState.Success) {
       if (Platform.OS === 'android') {
         await Permissions.request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
       }
-      onOpen && onOpen();
+      if (onOpen) onOpen();
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
-        openCarousel(
-          {
-            data: carouselImage.map(img => ({
-              type: 'image' as 'image',
-              src: img.src,
-              ...(img.alt ? { alt: img.alt } : undefined),
-            })),
-          },
-          this.props.navigation,
-        );
+        try {
+          if (file) await openDocument(file, navigation);
+        } catch (error) {
+          console.log(error);
+        }
       } else {
-        onOpenFile(notifierId, file);
+        onOpenFile(notifierId, file, navigation);
       }
     } else {
-      this.startDownload(attachment as IRemoteAttachment).catch(err => {
+      this.startDownload(attachment as IRemoteAttachment).catch(() => {
         /*TODO: Manage error*/
       });
     }
@@ -358,15 +351,15 @@ class Attachment extends React.PureComponent<
         )
         .then(lf => {
           this.setState({ newDownloadedFile: lf });
-          this.props.onDownload && this.props.onDownload();
+          if (this.props.onDownload) this.props.onDownload();
           this.setState({
             downloadState: DownloadState.Success,
             progress: 1,
           });
-          callback && callback(lf);
+          if (callback) callback(lf);
         })
-        .catch(e => {
-          this.props.onError && this.props.onError();
+        .catch(() => {
+          if (this.props.onError) this.props.onError();
           this.setState({
             downloadState: DownloadState.Error,
             progress: 0,
@@ -379,7 +372,8 @@ class Attachment extends React.PureComponent<
 
 export default withNavigation(
   connect(null, dispatch => ({
-    onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
+    onOpenFile: (notifierId: string, file: LocalFile, navigation: NavigationInjectedProps['navigation']) =>
+      dispatch(openFile(notifierId, file, navigation)),
     onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
       dispatch(downloadFile(notifierId, file, toastMessage)),
     dispatch,

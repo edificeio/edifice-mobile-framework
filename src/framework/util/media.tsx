@@ -8,6 +8,7 @@ interface IMediaCommonAttributes {
   src: string | ImageURISource;
   link?: string;
   alt?: string;
+  mime?: string;
 }
 
 export interface IImageAttributes extends IMediaCommonAttributes {}
@@ -57,7 +58,7 @@ export class FastImage extends React.PureComponent<FastImageProps> {
     const { source, ...rest } = this.props;
     const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
     const newSource = hasSource ? urlSigner.signURISource(source) : undefined;
-    if (newSource) newSource.cache = RNFastImage.cacheControl.web;
+    // if (newSource) newSource.cache = RNFastImage.cacheControl.web;
     return <RNFastImage source={newSource} {...rest} />;
   }
 }

@@ -1,16 +1,19 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Keyboard, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
@@ -19,7 +22,6 @@ import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { IUserSession, getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
-import { ImagePicked, ImagePicker, imagePickedToLocalFile } from '~/infra/imagePicker';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/modules/blog/actions';
 import { IBlog } from '~/modules/blog/reducer';
 import {
@@ -202,6 +204,10 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
     );
   }
 
+  imageCallback = image => {
+    this.setState(prevState => ({ images: [...prevState.images, image] }));
+  };
+
   renderPostMedia() {
     const { images } = this.state;
     const imagesAdded = images.length > 0;
@@ -213,11 +219,17 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           borderWidth: 1,
           borderRadius: 5,
         }}>
-        <ImagePicker
-          multiple
-          callback={image => {
-            this.setState(prevState => ({ images: [...prevState.images, image] }));
-          }}>
+        <BottomMenu
+          title={I18n.t('bottom-menu-add-media')}
+          actions={[
+            cameraAction({
+              callback: this.imageCallback,
+            }),
+            galleryAction({
+              callback: this.imageCallback,
+              multiple: true,
+            }),
+          ]}>
           <View
             style={{
               alignItems: 'center',
@@ -233,7 +245,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>
-        </ImagePicker>
+        </BottomMenu>
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           onlyImages
@@ -279,6 +291,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
   }
 
   async doSend() {
+    Keyboard.dismiss();
     try {
       this.setState({ sendLoadingState: true });
       await this.doSendPost();
@@ -304,7 +317,16 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
       // Upload post images (if added)
       let uploadedPostImages: undefined | SyncedFile[];
       if (images.length > 0) {
-        uploadedPostImages = await handleUploadPostImages(images);
+        try {
+          uploadedPostImages = await handleUploadPostImages(images);
+        } catch (e) {
+          if (e.response?.body === '{"error":"file.too.large"}') {
+            Alert.alert('', I18n.t('fullStorage'));
+          } else {
+            Alert.alert('', I18n.t('blog-post-upload-attachments-error-text'));
+          }
+          throw new Error('handled');
+        }
       }
 
       // Translate entered content to httml
@@ -341,7 +363,6 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         }),
       );
     } catch (e) {
-      // ToDo: Error handling
       const { dispatch } = this.props;
       dispatch(
         notifierShowAction({
@@ -351,13 +372,12 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           type: 'error',
         }),
       );
+      if ((e as Error).message && (e as Error).message !== 'handled') {
+        Alert.alert('', I18n.t('blog-post-publish-error-text'));
+      }
     }
   }
 }
-
-// UTILS ==========================================================================================
-
-// Add some util functions here
 
 // MAPPING ========================================================================================
 

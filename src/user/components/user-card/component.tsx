@@ -4,8 +4,9 @@ import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
+import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
-import { ImagePicked, ImagePicker } from '~/infra/imagePicker';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
@@ -30,16 +31,21 @@ export const UserCard = ({
     </View>
   );
 
-  const renderActions = (avatar: boolean, changeAvatar: (image: ImagePicked) => void, deleteAvatar: () => void) => (
+  const renderActions = (avatar: boolean, changeAvatar: (image) => void, deleteAvatar: () => void) => (
     <View style={styles.buttonsActionAvatar}>
       {avatar ? (
         <>
-          <ImagePicker
-            callback={image => (updatingAvatar ? null : changeAvatar(image))}
-            activeOpacity={updatingAvatar ? 1 : 0}
-            cameraOptions={{ cameraType: 'front' }}>
+          <BottomMenu
+            title={I18n.t('bottom-menu-change-avatar')}
+            actions={[
+              cameraAction({
+                callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
+                useFrontCamera: true,
+              }),
+              galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
+            ]}>
             <IconButton disabled={updatingAvatar} iconName="pencil" iconColor={theme.ui.text.inverse} iconSize={15} />
-          </ImagePicker>
+          </BottomMenu>
           <TouchableOpacity
             disallowInterruption
             onPress={() => (updatingAvatar ? null : deleteAvatar())}
@@ -50,12 +56,17 @@ export const UserCard = ({
       ) : (
         <>
           <View style={styles.viewNoAvatar} />
-          <ImagePicker
-            callback={image => (updatingAvatar ? null : changeAvatar(image))}
-            activeOpacity={updatingAvatar ? 1 : 0}
-            cameraOptions={{ cameraType: 'front' }}>
+          <BottomMenu
+            title={I18n.t('bottom-menu-change-avatar')}
+            actions={[
+              cameraAction({
+                callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
+                useFrontCamera: true,
+              }),
+              galleryAction({ callback: image => (updatingAvatar ? undefined : changeAvatar(image)) }),
+            ]}>
             <IconButton disabled={updatingAvatar} iconName="camera-on" iconColor={theme.ui.text.inverse} iconSize={15} />
-          </ImagePicker>
+          </BottomMenu>
         </>
       )}
     </View>

@@ -9,7 +9,7 @@ import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { HeaderTitle } from '~/framework/components/header';
@@ -266,7 +266,10 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
   componentDidUpdate(prevProps: IWAYFPageProps) {
     const { auth } = this.props;
     // Detect && display potential login error sent after checkVersionThenLogin(false) call
-    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) this.displayError(auth.error);
+    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) {
+      this.displayError(auth.error);
+      this.cancelLoginError();
+    }
   }
 
   // Cancel login error
@@ -410,16 +413,26 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
 
   // Called each time a navigation error occurs in WebView
   // See WebView onError property
-  onError(/*event*/) {
-    // alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+  // Called each time a navigation error occurs in WebView
+  // See WebView onError property
+  /*onError(event) {
+    alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+    // Display empty screen
+    this.displayEmpty();
+  }*/
+  onError() {
     // Display empty screen
     this.displayEmpty();
   }
 
   // Called each time an http error occurs in WebView
   // See WebView onError property
-  onHttpError(/*event*/) {
-    // alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+  /*onHttpError(event) {
+    alert(event.nativeEvent.description + '[' + event.nativeEvent.url + ']');
+    // Display empty screen
+    this.displayEmpty();
+  }*/
+  onHttpError() {
     // Display empty screen
     this.displayEmpty();
   }

@@ -12,35 +12,46 @@ import { PageView } from '~/framework/components/page';
 import { logout } from '~/user/actions/login';
 import { checkVersionThenLogin } from '~/user/actions/version';
 import { RevalidateTermsScreen } from '~/user/components/RevalidateTermsScreen';
+import { IUserAuthState } from '~/user/reducers/auth';
+import { getAuthState } from '~/user/selectors';
 import { userService } from '~/user/service';
 
 // TYPES ==========================================================================================
 
-export interface IRevalidateTermsScreen_EventProps {
+export interface IRevalidateTermsScreenDataProps {
+  auth: IUserAuthState;
+}
+
+export interface IRevalidateTermsScreenEventProps {
   onLogout(): void;
   onLogin(credentials?: { username: string; password: string; rememberMe: boolean }): void;
 }
-export type IRevalidateTermsScreen_Props = IRevalidateTermsScreen_EventProps & NavigationInjectedProps;
+export type IRevalidateTermsScreenProps = IRevalidateTermsScreenDataProps &
+  IRevalidateTermsScreenEventProps &
+  NavigationInjectedProps;
 
 // COMPONENT ======================================================================================
 
-const RevalidateTermsContainer = (props: IRevalidateTermsScreen_Props) => {
+const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
+  const [isLoading, setIsLoading] = React.useState(false);
   // EVENTS =====================================================================================
 
   const refuseTerms = async () => {
     try {
       props.onLogout();
-    } catch (e) {
+    } catch {
       // console.warn('refuseTerms: could not refuse terms', e);
     }
   };
 
   const revalidateTerms = async () => {
     try {
+      setIsLoading(true);
       await userService.revalidateTerms();
       const credentials = props.navigation.getParam('credentials');
       props.onLogin(credentials);
-    } catch (e) {
+    } catch {
+      setIsLoading(false);
       // console.warn('revalidateTerms: could not revalidate terms', e);
     }
   };
@@ -55,7 +66,12 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreen_Props) => {
 
   return (
     <PageView style={{ backgroundColor: theme.ui.background.card }} navigation={props.navigation} navBar={navBarInfo}>
-      <RevalidateTermsScreen acceptAction={() => revalidateTerms()} refuseAction={() => refuseTerms()} />
+      <RevalidateTermsScreen
+        cguUrl={props.auth.legalUrls.cgu}
+        loading={isLoading}
+        acceptAction={() => revalidateTerms()}
+        refuseAction={() => refuseTerms()}
+      />
     </PageView>
   );
 };
@@ -63,7 +79,11 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreen_Props) => {
 // MAPPING ========================================================================================
 
 export default connect(
-  () => ({}),
+  (state: any): IRevalidateTermsScreenDataProps => {
+    return {
+      auth: getAuthState(state),
+    };
+  },
   dispatch =>
     bindActionCreators(
       {

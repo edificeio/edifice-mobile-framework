@@ -4,7 +4,7 @@ import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-n
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
+import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { IFile, IFolder } from '~/modules/workspace/reducer';
 
@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 30,
+    paddingHorizontal: UI_SIZES.spacing.tiny,
     marginBottom: UI_SIZES.spacing.tiny / 2,
     borderRadius: 5,
   },
@@ -118,10 +119,11 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
 
     if (item.children && item.children.length && !(isParentOfSelection && allFoldersSelected)) {
       const isExpanded = expandedFolders.includes(item.id);
+      const iconName = isExpanded ? 'ui-rafterDown' : 'ui-rafterRight';
       return (
         <View>
           <TouchableOpacity onPress={() => onTapFolder({ item })} style={[styles.rowContainer, { backgroundColor }]}>
-            <Icon name={isExpanded ? 'menu-down' : 'menu-right'} size={24} color={theme.palette.secondary.regular} />
+            <Picture type="NamedSvg" name={iconName} width={16} height={16} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.nameText}>{item.name}</SmallText>
           </TouchableOpacity>
           {isExpanded ? (

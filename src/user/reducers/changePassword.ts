@@ -12,9 +12,8 @@ import {
   actionTypeChangePasswordReset,
   actionTypeChangePasswordSubmit,
 } from '~/user/actions/changePassword';
+import { IUserAuthContext } from '~/user/service';
 import { ContextState, SubmitState } from '~/utils/SubmitState';
-
-import { IUserAuthContext } from '../service';
 
 export interface IChangePasswordState {
   isPerforming: boolean;

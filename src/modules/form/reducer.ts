@@ -90,8 +90,8 @@ export interface IQuestion {
   cursorMinVal?: number;
   cursorMaxVal?: number;
   cursorStep?: number;
-  cursorLabelMinVal?: string;
-  cursorLabelMaxVal?: string;
+  cursorMinLabel?: string;
+  cursorMaxLabel?: string;
   choices: IQuestionChoice[];
   children?: IQuestion[];
 }

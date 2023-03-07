@@ -14,13 +14,11 @@
  */
 
 // As this iss a cli tool, we disable some rules
-/* eslint-disable @babel/no-unused-expressions */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/no-throw-literal */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable no-console */
 /* eslint-disable no-extend-native */
 /* eslint-disable no-throw-literal */
 
@@ -208,7 +206,9 @@ async function askRepository(uri, branch, username, password) {
     },
   ];
   const needToAsk = Object.entries({ uri, branch, username, password })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([k, v]) => !v)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(([k, v]) => asks.find(a => a.name === k));
 
   if (opts.interactive) {
@@ -332,7 +332,7 @@ async function _git_getAvailableBranchName(uri, branch, username, password) {
   if (!remoteInfo[branch]) {
     const ode = await _ode_getPackageJsonOde();
     const defaultBranch = ode.override.defaultBranch || 'master';
-    console.log(`  Branch "${branch}" does not exists. Using "${defaultBranch}" instead.`);
+    console.log(`  Branch "${branch}" does not exist. Using "${defaultBranch}" instead.`);
     return defaultBranch;
   }
   return branch;
@@ -509,6 +509,7 @@ async function _override_computeUncommittedFiles() {
   const uncommittedFiles = lines
     .map(line => line.split(/\s+/).filter(v => v))
     .filter(v => v.length)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([status, path]) => matchFiles.includes(path));
 
   return uncommittedFiles;
@@ -530,6 +531,7 @@ async function _override_computeLockedFiles() {
     const lockedFiles = lines
       .map(line => line.split(/\s+/).filter(v => v))
       .filter(v => v.length)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .filter(([status, path]) => matchFiles.includes(path));
 
     return lockedFiles;
@@ -643,7 +645,7 @@ async function _override_performRestoreCurrent() {
   // 2. Remove / restore files
 
   for (const [status, file] of uncommittedFiles) {
-    if (status == '??') {
+    if (status === '??') {
       opts.verbose && console.log('Removing', file);
       fs.rmSync(path.join(_projectPathAbsolute, file));
     } else {
@@ -671,6 +673,7 @@ async function _override_performStashCurrent(message) {
 
   // 2. Create spec file
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const specString = uncommittedFiles.map(([status, file]) => file).join('\n');
   const specFilePath = path.join(_projectPathAbsolute, _override_stashSpecFile);
   fs.writeFileSync(specFilePath, specString);
@@ -698,7 +701,7 @@ async function _override_performLock() {
   const filesToIgnore = [];
 
   for (const [status, filepath] of filesToLock) {
-    if (status == '??') {
+    if (status === '??') {
       filesToIgnore.push(filepath);
     } else {
       await exec(`git update-index --skip-worktree "${filepath}"`);
@@ -725,6 +728,7 @@ async function _override_performUnlock() {
   const filesToUnlock = await _override_computeLockedFiles();
   if (!filesToUnlock) return;
 
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   for (const [status, filepath] of filesToUnlock) {
     await exec(`git update-index --no-skip-worktree "${filepath}"`);
   }
@@ -758,6 +762,7 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
 
   // Compute stack
 
+  // eslint-disable-next-line no-undef
   if (!computedOverrideNames) computedOverrideNames = await askOverrideNames(overridesPathAbsolute, overrideNames);
   const overrideStack = await _override_computeStack(overridesPath, computedOverrideNames);
 
@@ -768,8 +773,11 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
   // 1. Applies overrides stack
 
   opts.verbose && console.log('Override stack :', overrideStack);
+  // eslint-disable-next-line no-undef
   for (override of overrideStack) {
+    // eslint-disable-next-line no-undef
     opts.verbose && console.log('Applying override', override);
+    // eslint-disable-next-line no-undef
     const filesCopied = await _override_performCopyMerge(overridesPath, override);
 
     // Merge files information
@@ -803,9 +811,11 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
  * Parse command args & execute
  */
 const main = () => {
+  // eslint-disable-next-line no-unused-expressions
   yargs
     .showHelpOnFail(false, 'Specify --help for available options')
-    .fail(function (msg, err, yargs) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .fail(function (msg, err, _yargs) {
       msg && console.error(msg);
       console.error(err);
       process.exit(1);
@@ -980,6 +990,7 @@ const main = () => {
     .command(
       'reset-cache',
       'Remove overrides cache',
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       yargs => {},
       argv => {
         opts = argv;

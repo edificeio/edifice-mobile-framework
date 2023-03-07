@@ -8,6 +8,7 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { getUserSession } from '~/framework/util/session';
 import { DraftType } from '~/modules/zimbra/screens/NewMail';
+import { IMail } from '~/modules/zimbra/state/mailContent';
 import { getUserColor } from '~/modules/zimbra/utils/userColor';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
 
 type MailContentProps = {
   navigation: any;
-  mail: any;
+  mail: IMail;
   isFetching: boolean;
   error?: Error;
   restore: (mailIds: string[]) => void;
@@ -201,6 +202,7 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
                 <RenderPJs
                   attachments={this.props.mail.attachments}
                   mailId={this.props.mail.id}
+                  navigation={this.props.navigation}
                   onDownload={this.props.downloadAttachment}
                   dispatch={this.props.dispatch}
                 />

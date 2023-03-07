@@ -3,17 +3,18 @@
  */
 import I18n from 'i18n-js';
 import React from 'react';
-import { Alert, Platform, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, Platform, RefreshControl, ScrollView } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import ActionsMenu from '~/framework/components/actionsMenu';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { deleteAction } from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -41,13 +42,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
   const userType = session?.user?.type;
   const isTeacher = userType === UserType.Teacher;
   const isParent = userType === UserType.Relative;
-  const menuData = [
-    {
-      text: I18n.t('common.delete'),
-      icon: 'trash',
-      onPress: () => showDeleteSchoolbookWordAlert(),
-    },
-  ];
 
   // LOADER =====================================================================================
 
@@ -209,7 +203,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
 
   // HEADER =====================================================================================
 
-  const [showMenu, setShowMenu] = React.useState(false);
   const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };
@@ -219,9 +212,9 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
     title: I18n.t('schoolbook.appName'),
     right:
       isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
-        <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+        <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
           <HeaderIcon name="more_vert" iconSize={24} />
-        </TouchableOpacity>
+        </PopupMenu>
       ) : undefined,
   };
 
@@ -293,7 +286,6 @@ const SchoolbookWordDetailsScreen = (props: ISchoolbookWordDetailsScreen_Props) 
         }}>
         {renderPage()}
       </PageComponent>
-      <ActionsMenu onClickOutside={() => setShowMenu(!showMenu)} show={showMenu} data={menuData} />
     </>
   );
 };

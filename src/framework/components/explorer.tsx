@@ -14,31 +14,22 @@
  *
  * ResourceItem: Component that display a single resource/folder.
  *   props:
- *      - title + subtitle (+ textStyle) : Text displayed under the thumbnail
+ *      - title + subtitle (+ textStyle) : Text displayed under the thumbnail.
  *      - color (+ showBgColor)          : Color of the item, traditionally correspond to the entcore application. bgColor can be shown if no image, or with a transparent image.
- *      - image                          : Image thumbnail
- *      - overlay                        : Another component display on top of the image/background. Traditionally the icon of the entcore application
+ *      - image                          : Image thumbnail.
+ *      - base                           : Another component displayed below the image/background. Typically the icon of the entcore application.
  *      - style                          : ViewStyle applied. Replaces entirely the default one. Use this if your style must be on a parent component to erase the default behaviour.
  */
 import styled from '@emotion/native';
 import { Moment } from 'moment';
 import * as React from 'react';
-import {
-  ColorValue,
-  FlatList,
-  FlatListProps,
-  ImageSourcePropType,
-  TextProps,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { ColorValue, FlatList, FlatListProps, ImageSourcePropType, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
-import { Image } from '../util/media';
+import { Image } from '~/framework/util/media';
 
 import { UI_SIZES } from './constants';
 import { Picture, PictureProps } from './picture';
@@ -177,8 +168,7 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
         subtitle={isResourceWithDate ? displayPastDate(item.date!) : undefined}
         color={item.type === 'folder' ? 'transparent' : item.color}
         showBgColor={item.type !== 'folder'}
-        image={(item as IExplorerResourceItemWithImage).thumbnail}
-        overlay={
+        base={
           (item as IExplorerResourceItemWithIcon).icon || item.type === 'folder' ? (
             typeof (item as IExplorerResourceItemWithIcon).icon === 'string' || item.type === 'folder' ? (
               <Icon
@@ -191,6 +181,7 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
             )
           ) : null
         }
+        image={(item as IExplorerResourceItemWithImage).thumbnail}
         textStyle={isResourceWithDate ? {} : { textAlign: 'center' }}
         textProps={{ numberOfLines: isResourceWithDate ? 1 : 2 }}
         style={
@@ -250,8 +241,8 @@ export const ResourceItem = (props: {
   textProps?: Omit<TextProps, 'style'>;
   color?: ColorValue;
   showBgColor?: boolean;
+  base?: React.ReactNode;
   image?: ImageSourcePropType;
-  overlay?: React.ReactNode;
   style?: ViewStyle;
 }) => {
   return (
@@ -269,6 +260,7 @@ export const ResourceItem = (props: {
               return <CustomView />;
             })()
           : null}
+        {props.base ? props.base : null}
         {props.image ? (
           <Image
             source={props.image}
@@ -281,7 +273,6 @@ export const ResourceItem = (props: {
             }}
           />
         ) : null}
-        {props.overlay ? props.overlay : null}
       </ThumbnailView>
       <MetadataView>
         <View style={{}}>

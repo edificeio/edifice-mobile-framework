@@ -1,6 +1,7 @@
 /**
  * New implementation of Carousel built with our custom react-native-image-viewer !
  */
+import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -13,21 +14,19 @@ import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { FakeHeader } from '~/framework/components/header';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { FakeHeader, HeaderIcon } from '~/framework/components/header';
+import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
-import { SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { getUserSession } from '~/framework/util/session';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
-
-import { EmptyScreen } from '../emptyScreen';
-import { NamedSVG } from '../picture';
-import PopupMenu from '../popupMenu';
 
 export interface ICarouselNavParams {
   data: IMedia[];
@@ -91,43 +90,43 @@ async function assertPermissions(permissions: Permission[]) {
   }
 }
 
-export const Buttons = ({ disabled, imageViewerRef, popupMenuRef }: { disabled: boolean; imageViewerRef; popupMenuRef }) => {
-  const dotsButtons = React.useCallback(
-    (onPress: () => void) => <ActionButton disabled={disabled} iconName="ui-options" style={styles.closeButton} action={onPress} />,
-    [disabled],
-  );
+export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   return (
     <>
       <ActionButton
+        text=""
         action={() => {
-          imageViewerRef.current?.saveToLocal?.();
+          Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+            {
+              text: I18n.t('carousel.privacy.button'),
+              onPress: () => imageViewerRef.current?.saveToLocal?.(),
+            },
+          ]);
         }}
         iconName="ui-download"
         style={styles.closeButton}
         disabled={disabled}
       />
       <PopupMenu
-        button={dotsButtons}
-        options={[
+        actions={[
           {
-            i18n: 'share',
-            icon: (
-              <NamedSVG
-                name="ui-share"
-                fill={theme.palette.grey.black}
-                width={UI_SIZES.dimensions.width.large}
-                height={UI_SIZES.dimensions.width.large}
-                style={{ marginHorizontal: UI_SIZES.spacing.small }}
-              />
-            ),
-            onClick: () => imageViewerRef.current?.share?.(),
+            title: I18n.t('share'),
+            action: () => {
+              Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+                {
+                  text: I18n.t('carousel.privacy.button'),
+                  onPress: () => imageViewerRef.current?.share?.(),
+                },
+              ]);
+            },
+            icon: {
+              ios: 'square.and.arrow.up',
+              android: 'ic_share',
+            },
           },
-        ]}
-        ref={popupMenuRef as React.LegacyRef<PopupMenu>} // Some type hack here...
-        style={{
-          top: UI_SIZES.elements.navbarHeight + UI_SIZES.spacing.minor,
-        }}
-      />
+        ]}>
+        <HeaderIcon name="more_vert" iconSize={26} />
+      </PopupMenu>
     </>
   );
 };
@@ -137,39 +136,57 @@ export function Carousel(props: ICarouselProps) {
   const startIndex = navigation.getParam('startIndex') ?? 0;
   const data = React.useMemo(() => navigation.getParam('data') ?? [], [navigation]);
   const dataAsImages = React.useMemo(() => data.map(d => ({ url: '', props: { source: urlSigner.signURISource(d.src) } })), [data]);
+  const isAttachmentLocal = dataAsImages[0].props.source.isLocal;
 
   const [isNavBarVisible, setNavBarVisible] = React.useState(true);
 
   const closeButton = React.useMemo(
-    () => <ActionButton action={navigation.goBack} iconName="ui-rafterLeft" style={styles.closeButton} />,
+    () => <ActionButton text="" action={navigation.goBack} iconName="ui-rafterLeft" style={styles.closeButton} />,
     [navigation],
   );
 
   const imageViewerRef = React.useRef<ImageViewer>();
-  const popupMenuRef = React.useRef<PopupMenu>();
   const getButtons = React.useCallback(
-    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} popupMenuRef={popupMenuRef} />,
-    [popupMenuRef, imageViewerRef],
+    (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} />,
+    [imageViewerRef],
   );
 
-  const downloadFile = React.useCallback(async (url: string | ImageURISource) => {
-    const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
-    if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
-    const permissions = Platform.select<Permission[]>({
-      ios: [],
-      android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
-    })!;
-    await assertPermissions(permissions);
-    const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl }, {});
-    return sf;
-  }, []);
+  const downloadFile = React.useCallback(
+    async (url: string | ImageURISource) => {
+      const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+      if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
+      const permissions = Platform.select<Permission[]>({
+        ios: [],
+        android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+      })!;
+      await assertPermissions(permissions);
+      const foundData = data.find(d => (d.src = url));
+      const sf = await fileTransferService.downloadFile(getUserSession(), { url: realUrl, filetype: foundData?.mime }, {});
+      return sf;
+    },
+    [data],
+  );
 
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
       try {
         let sf: SyncedFile;
         try {
-          sf = await downloadFile(url);
+          const foundData = data.find(d => (d.src = url));
+          const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+          if (realUrl!.indexOf('file://') > -1) {
+            sf = new SyncedFile(
+              new LocalFile(
+                { filepath: realUrl!, filetype: foundData?.mime!, filename: '' },
+                { _needIOSReleaseSecureAccess: false },
+              ),
+              {
+                url: realUrl!,
+              },
+            );
+          } else {
+            sf = await downloadFile(url);
+          }
           if (!sf) return;
           const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
           const permissions = Platform.select<Permission[]>({
@@ -191,17 +208,21 @@ export function Carousel(props: ICarouselProps) {
             throw e;
           }
         }
+        const realFilePath = Platform.select({
+          android: getPath(sf._filepathNative!),
+          default: decodeURI(sf._filepathNative!),
+        });
         if (Platform.OS === 'android') {
-          await CameraRoll.save(sf.filepath, { album: 'Download' }); // Will put in the actual folder "Download", but still displayed in "Camera" album :/
+          await CameraRoll.save(realFilePath, { album: 'Download' }); // Will put in the actual folder "Download", but still displayed in "Camera" album :/
         } else {
-          await CameraRoll.save(sf.filepath);
+          await CameraRoll.save(realFilePath);
         }
         Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
-      } catch (e) {
+      } catch {
         Toast.show(I18n.t('save.to.camera.roll.error'));
       }
     },
-    [downloadFile],
+    [data, downloadFile],
   );
 
   const onShare = React.useCallback(
@@ -275,7 +296,7 @@ export function Carousel(props: ICarouselProps) {
                 left={closeButton}
                 style={headerStyle}
                 title={total !== 1 ? I18n.t('carousel.counter', { current, total }) : ''}
-                right={getButtons(imageStatus !== 'success')}
+                right={!isAttachmentLocal ? getButtons(imageStatus !== 'success') : null}
               />
             );
           }}

@@ -2,6 +2,7 @@
  * OAuth2 client for Ressource Owner Password Grant type flow.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 import { encode as btoa } from 'base-64';
 import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
@@ -76,7 +77,9 @@ export const sanitizeScope = (scopes: string[]) => (Array.isArray(scopes) ? scop
 
 export class OAuthClientInfo {
   clientId: string;
+
   clientSecret: string;
+
   scope: string[];
 
   constructor(clientId: string, clientSecret: string, scope: string[]) {
@@ -106,8 +109,11 @@ export class OAuth2RessourceOwnerPasswordClient {
   public static connection: OAuth2RessourceOwnerPasswordClient | null = null;
 
   private token: IOAuthToken | null = null; // Current active token information
+
   private clientInfo: OAuthClientInfo | null = null; // Current connected client information
+
   private accessTokenUri: string = ''; // Uri to get or refresh the token
+
   private uniqueSessionIdentifier: string | undefined;
 
   /**
@@ -170,7 +176,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       } else {
         err.type = OAuthErrorType.UNKNOWN_RESPONSE;
       }
-    } else if (bodyOrType && typeof bodyOrType === 'object' && error) {
+    } else if (bodyOrType && typeof bodyOrType !== 'object' && error) {
       // create from type
       err.type = bodyOrType as unknown as OAuthErrorType;
       err.error = error;
@@ -253,6 +259,8 @@ export class OAuth2RessourceOwnerPasswordClient {
     } catch (err) {
       if (err instanceof Error) (err as OAuthError).type = OAuthErrorType.NETWORK_ERROR;
       throw err;
+    } finally {
+      CookieManager.clearAll();
     }
     // 3: Check HTTP Status
     if (!response.ok) {
@@ -625,7 +633,15 @@ export const urlSigner = {
   /**
    * Returns a signed URISource from a url or an imageURISource.
    */
-  signURISource: (URISource: ImageURISource | string | ImageRequireSource | ImageURISource[] | Source | undefined) => {
+  signURISource: (
+    URISource:
+      | (ImageURISource & { isLocal?: boolean })
+      | string
+      | ImageRequireSource
+      | (ImageURISource & { isLocal?: boolean })[]
+      | (Source & { isLocal?: boolean })
+      | undefined,
+  ) => {
     if (URISource === undefined) return URISource;
     if (typeof URISource === 'number') return URISource;
     if (Array.isArray(URISource)) {
@@ -635,6 +651,7 @@ export const urlSigner = {
 
     if (typeof URISource === 'object') {
       if (!URISource.uri) throw new Error('[oAuth] signURISource: no uri');
+      if (URISource.isLocal) return URISource;
       const absUri = urlSigner.getAbsoluteUrl(URISource.uri)!;
       if (urlSigner.getIsUrlSignable(absUri)) {
         return { ...URISource, uri: absUri, headers: { ...URISource.headers, ...urlSigner.getAuthHeader() } };

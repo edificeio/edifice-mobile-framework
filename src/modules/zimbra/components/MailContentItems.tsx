@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
+import { NavigationInjectedProps } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
@@ -304,12 +305,14 @@ export const FooterButton = ({ icon, text, onPress }) => {
 export const RenderPJs = ({
   attachments,
   mailId,
+  navigation,
   onDownload,
   dispatch,
 }: {
   attachments: IDistantFile[];
   mailId: string;
-  onDownload: (att: IDistantFile) => void;
+  navigation: NavigationInjectedProps['navigation'];
+  onDownload: (att: IDistantFile, navigation: NavigationInjectedProps['navigation']) => void;
   dispatch: ThunkDispatch<any, any, any>;
 }) => {
   const [isVisible, toggleVisible] = React.useState(false);
@@ -328,7 +331,7 @@ export const RenderPJs = ({
           <TouchableOpacity
             onPress={() => {
               Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-              onDownload(df);
+              onDownload(df, navigation);
             }}>
             <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
               <View style={[styles.gridViewStyle, styles.attachmentGridViewChild]}>

@@ -1,4 +1,5 @@
 import I18n from 'i18n-js';
+import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -6,9 +7,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { CaptionText, SmallText } from '~/framework/components/text';
+import { displayPastDate } from '~/framework/util/date';
 import { renderIcon } from '~/modules/workspace/components/image';
-import { IFile } from '~/modules/workspace/reducer';
-import { DateView } from '~/ui/DateView';
+import { Filter, IFile } from '~/modules/workspace/reducer';
 
 const styles = StyleSheet.create({
   centerPanel: {
@@ -18,12 +19,10 @@ const styles = StyleSheet.create({
   dateContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    alignItems: 'center',
+    marginTop: UI_SIZES.spacing.tiny,
   },
-  dateText: {
-    maxWidth: '50%',
-  },
-  authorText: {
+  captionText: {
     color: theme.ui.text.light,
     maxWidth: '50%',
   },
@@ -52,7 +51,7 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
 
   public render() {
     const { item, isDisabled, isSelected } = this.props;
-    const { id, isFolder, name, date, ownerName = '', contentType } = item;
+    const { id, isFolder, name, date, ownerName, contentType, parentId } = item;
     const borderBottomWidth = isDisabled ? 0 : 1;
     const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
     return (
@@ -63,18 +62,16 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
           rightElement={
             <View style={styles.centerPanel}>
               <SmallText numberOfLines={1}>{name}</SmallText>
-              <View style={styles.dateContainer}>
-                {date ? (
-                  <View style={styles.dateText}>
-                    <DateView min date={date} />
-                  </View>
-                ) : null}
-                {ownerName.length > 0 ? (
-                  <CaptionText numberOfLines={1} style={styles.authorText}>
+              {parentId !== Filter.ROOT ? (
+                <View style={styles.dateContainer}>
+                  <CaptionText numberOfLines={1} style={styles.captionText}>
+                    {displayPastDate(moment(date))}
+                  </CaptionText>
+                  <CaptionText numberOfLines={1} style={styles.captionText}>
                     {longOwnerName}
                   </CaptionText>
-                ) : null}
-              </View>
+                </View>
+              ) : null}
             </View>
           }
         />

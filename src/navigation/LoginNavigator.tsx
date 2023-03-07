@@ -8,13 +8,14 @@ import ActivationPage from '~/user/containers/ActivationPage';
 import ChangePasswordPage from '~/user/containers/ChangePasswordPage';
 import FederatedAccountPage from '~/user/containers/FederatedAccount';
 import ForgotPage from '~/user/containers/ForgotPage';
-import LoginPage from '~/user/containers/LoginPage';
 import LoginWAYFPage from '~/user/containers/LoginWAYFPage';
 import PlatformSelectPage from '~/user/containers/PlatformSelectPage';
 import RevalidateTermsScreen from '~/user/containers/RevalidateTermsScreen';
-import SendEmailVerificationCodeScreen from '~/user/containers/SendEmailVerificationCodeScreen';
-import VerifyEmailCodeScreen from '~/user/containers/VerifyEmailCodeScreen';
 import WAYFPage from '~/user/containers/WAYFPage';
+import UserEmailScreen from '~/user/containers/email';
+import LoginPage from '~/user/containers/login';
+import MFAScreen from '~/user/containers/mfa';
+import UserMobileScreen from '~/user/containers/mobile';
 import OnboardingScreen from '~/user/containers/onboarding';
 
 import { loginRouteNames } from './helpers/loginRouteName';
@@ -52,14 +53,20 @@ export default createStackNavigator(
         gestureEnabled: false,
       },
     },
-    SendEmailVerificationCode: {
-      screen: SendEmailVerificationCodeScreen,
+    UserMobile: {
+      screen: UserMobileScreen,
       navigationOptions: {
         gestureEnabled: false,
       },
     },
-    VerifyEmailCode: {
-      screen: VerifyEmailCodeScreen,
+    UserEmail: {
+      screen: UserEmailScreen,
+      navigationOptions: {
+        gestureEnabled: false,
+      },
+    },
+    MFA: {
+      screen: MFAScreen,
     },
   },
   {

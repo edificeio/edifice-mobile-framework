@@ -9,7 +9,7 @@ import { Platform, Text as RNText, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
 
-import { getScaleDimension } from './constants';
+import { getScaleFontSize, getScaleHeight } from './constants';
 
 /**
  * Base font properties
@@ -61,28 +61,28 @@ export const HeadingFontStyle = Platform.select({
 type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Huge' | 'Giant';
 export const TextSizeStyle = {
   Small: {
-    fontSize: getScaleDimension(12, 'font'),
-    lineHeight: getScaleDimension(20, 'height'),
+    fontSize: getScaleFontSize(12),
+    lineHeight: getScaleHeight(20),
   },
   Normal: {
-    fontSize: getScaleDimension(14, 'font'),
-    lineHeight: getScaleDimension(22, 'height'),
+    fontSize: getScaleFontSize(14),
+    lineHeight: getScaleHeight(22),
   },
   Medium: {
-    fontSize: getScaleDimension(16, 'font'),
-    lineHeight: getScaleDimension(24, 'height'),
+    fontSize: getScaleFontSize(16),
+    lineHeight: getScaleHeight(24),
   },
   Big: {
-    fontSize: getScaleDimension(18, 'font'),
-    lineHeight: getScaleDimension(26, 'height'),
+    fontSize: getScaleFontSize(18),
+    lineHeight: getScaleHeight(26),
   },
   Huge: {
-    fontSize: getScaleDimension(26, 'font'),
-    lineHeight: getScaleDimension(34, 'height'),
+    fontSize: getScaleFontSize(26),
+    lineHeight: getScaleHeight(34),
   },
   Giant: {
-    fontSize: getScaleDimension(32, 'font'),
-    lineHeight: getScaleDimension(38, 'height'),
+    fontSize: getScaleFontSize(32),
+    lineHeight: getScaleHeight(38),
   },
 } as { [key in TextSizeStyleKey]: TextStyle };
 

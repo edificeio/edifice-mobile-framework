@@ -4,12 +4,13 @@ import * as React from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
+import { Picture } from '~/framework/components/picture';
+import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { DocumentPicked, FilePicker, ImagePicked } from '~/infra/filePicker';
 import { viescoTheme } from '~/modules/viescolaire/dashboard/utils/viescoTheme';
 import { Attachment } from '~/modules/zimbra/components/Attachment';
 import DateTimePicker from '~/ui/DateTimePicker';
@@ -82,13 +83,10 @@ const styles = StyleSheet.create({
   },
   filePickerStyle: {
     flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: UI_SIZES.spacing.medium,
   },
-  iconAttMarginRight: { marginRight: UI_SIZES.spacing.small },
-  dialogButtonOk: {
-    alignSelf: 'center',
-    marginVertical: UI_SIZES.spacing.minor,
-  },
+  iconAttMarginRight: { marginRight: UI_SIZES.spacing.minor },
 });
 
 type DeclarationProps = {
@@ -234,10 +232,25 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
               onChangeText={updateComment}
             />
             {!(attachment && attachment.filename !== null && attachment.filename !== undefined && attachment.filename !== '') ? (
-              <FilePicker callback={att => this.props.onPickAttachment(att)} style={styles.filePickerStyle}>
-                <Icon size={20} name="attachment" style={styles.iconAttMarginRight} />
-                <SmallText>{I18n.t('viesco-attachment')}</SmallText>
-              </FilePicker>
+              <BottomMenu
+                title={I18n.t('viesco-attachment')}
+                actions={[
+                  cameraAction({ callback: att => this.props.onPickAttachment(att) }),
+                  galleryAction({ callback: att => this.props.onPickAttachment(att) }),
+                  documentAction({ callback: att => this.props.onPickAttachment(att) }),
+                ]}>
+                <View style={styles.filePickerStyle}>
+                  <Picture
+                    type="NamedSvg"
+                    name="ui-attachment"
+                    width={20}
+                    height={20}
+                    fill={theme.palette.primary.regular}
+                    style={styles.iconAttMarginRight}
+                  />
+                  <SmallActionText>{I18n.t('viesco-attachment')}</SmallActionText>
+                </View>
+              </BottomMenu>
             ) : null}
           </View>
           {attachment ? (

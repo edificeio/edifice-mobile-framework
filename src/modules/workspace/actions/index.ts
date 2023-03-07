@@ -5,14 +5,17 @@ import I18n from 'i18n-js';
 import { Platform } from 'react-native';
 import Share from 'react-native-share';
 import Toast from 'react-native-tiny-toast';
+import { NavigationInjectedProps } from 'react-navigation';
 import { ThunkAction } from 'redux-thunk';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import uploadService, { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
+import { urlSigner } from '~/infra/oauth';
 import { Filter, IFile, IFolder, actionTypes } from '~/modules/workspace/reducer';
 import { factoryRootFolder, workspaceService } from '~/modules/workspace/service';
 
@@ -30,7 +33,7 @@ export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => as
     Toast.showSuccess(I18n.t('workspace.file-added'), { ...UI_ANIMATIONS.toast });
   } catch (e) {
     if (e && e?.response && e.response.body === `{"error":"file.too.large"}`) {
-      Toast.show(I18n.t('workspace.quota.overflowText'), { ...UI_ANIMATIONS.toast });
+      Toast.show(I18n.t('fullStorage'), { ...UI_ANIMATIONS.toast });
     }
     dispatch(workspaceUploadActionsCreators.error(e as Error));
   }
@@ -218,9 +221,9 @@ export const renameWorkspaceFileAction = (file: IFile, name: string) => async (d
   }
 };
 
-const convertIFileToIDistantFile = (file: IFile) => {
+export const convertIFileToIDistantFile = (file: IFile) => {
   return {
-    url: file.url,
+    url: urlSigner.getAbsoluteUrl(file.url),
     filename: file.name,
     filesize: file.size,
     filetype: file.contentType,
@@ -231,19 +234,18 @@ const convertIFileToIDistantFile = (file: IFile) => {
  * Download and open the given file.
  */
 export const workspacePreviewActionsCreators = createAsyncActionCreators(actionTypes.preview);
-export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {
-  try {
-    dispatch(workspacePreviewActionsCreators.request());
-    const session = getUserSession();
-    const distanteFile = convertIFileToIDistantFile(file);
-    const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
-    syncedFile.open();
-    dispatch(workspacePreviewActionsCreators.receipt(syncedFile));
-  } catch (e) {
-    dispatch(workspacePreviewActionsCreators.error(e as Error));
-    throw e;
-  }
-};
+export const downloadThenOpenWorkspaceFileAction =
+  (file: IFile, navigation: NavigationInjectedProps['navigation']) => async (dispatch, getState) => {
+    try {
+      dispatch(workspacePreviewActionsCreators.request());
+      const distanteFile = convertIFileToIDistantFile(file);
+      const resultingFile = await openDocument(distanteFile, navigation);
+      dispatch(workspacePreviewActionsCreators.receipt(resultingFile));
+    } catch (e) {
+      dispatch(workspacePreviewActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Download and share the given file.

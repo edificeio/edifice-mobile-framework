@@ -53,7 +53,7 @@ export default () =>
   registerNotifHandlers([
     {
       type: 'WORKSPACE',
-      'event-type': 'SHARE-FOLDER',
+      'event-type': ['SHARE-FOLDER', 'CONTRIB-FOLDER'],
       notifHandlerAction: handleWorkspaceShareFolderNotificationAction,
     },
     {

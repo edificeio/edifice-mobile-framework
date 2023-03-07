@@ -3,20 +3,21 @@ import { createStackNavigator } from 'react-navigation-stack';
 import ChangePasswordPage from './containers/ChangePasswordPage';
 import ChildrenPage from './containers/ChildrenPage';
 import LegalNoticeScreen from './containers/LegalNoticeScreen';
-import ProfilePage from './containers/ProfilePage';
 import PushNotifsSettingsScreen from './containers/PushNotifsSettingsScreen';
 import RelativesPage from './containers/RelativesPage';
-import SendEmailVerificationCodeScreen from './containers/SendEmailVerificationCodeScreen';
 import StructuresPage from './containers/StructuresPage';
-import VerifyEmailCodeScreen from './containers/VerifyEmailCodeScreen';
 import WhoAreWeScreen from './containers/WhoAreWeScreen';
 import XmasScreen from './containers/XmasScreen';
-import UserScreen from './containers/user-profile';
+import UserEmailScreen from './containers/email';
+import MFAScreen from './containers/mfa';
+import UserMobileScreen from './containers/mobile';
+import UserAccountScreen from './containers/user-account';
+import UserProfileScreen from './containers/user-profile';
 
 export default createStackNavigator(
   {
     Profile: {
-      screen: UserScreen,
+      screen: UserAccountScreen,
     },
 
     NotifPrefs: {
@@ -36,19 +37,23 @@ export default createStackNavigator(
     },
 
     MyProfile: {
-      screen: ProfilePage,
+      screen: UserProfileScreen,
     },
 
     ChangePassword: {
       screen: ChangePasswordPage,
     },
 
-    SendEmailVerificationCode: {
-      screen: SendEmailVerificationCodeScreen,
+    UserMobile: {
+      screen: UserMobileScreen,
     },
 
-    VerifyEmailCode: {
-      screen: VerifyEmailCodeScreen,
+    UserEmail: {
+      screen: UserEmailScreen,
+    },
+
+    MFA: {
+      screen: MFAScreen,
     },
 
     Structures: {

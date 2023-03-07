@@ -2,6 +2,7 @@
  * Activate account action(s)
  * Build actions to be dispatched to activate a new account
  */
+import CookieManager from '@react-native-cookies/cookies';
 import { Action } from 'redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -71,8 +72,10 @@ export function actionForgotSubmit(userInfo: IForgotModel, forgotId?: boolean) {
       const ok = resStatus >= 200 && resStatus < 300;
       const response = { ...resJson, ok };
       dispatch(actionCreateForgotReceive(response));
-    } catch (err) {
+    } catch {
       dispatch(actionCreateForgotReceive({ error: '', ok: false }));
+    } finally {
+      CookieManager.clearAll();
     }
   };
 }

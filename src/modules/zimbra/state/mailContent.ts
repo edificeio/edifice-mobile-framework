@@ -26,13 +26,11 @@ export interface IMail {
   thread_id: string;
 }
 
-export type IMailContent = IMail[];
-
 // THE STATE --------------------------------------------------------------------------------------
 
-export type IMailContentState = AsyncState<IMailContent>;
+export type IMailContentState = AsyncState<IMail>;
 
-export const initialState: IMailContent = [];
+export const initialState = [];
 
 export const getMailContentState = (globalState: any) => mailConfig.getState(globalState).mailContent as IMailContentState;
 

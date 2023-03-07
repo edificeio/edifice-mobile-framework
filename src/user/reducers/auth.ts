@@ -1,6 +1,7 @@
 import { IEntcoreWidget } from '~/framework/util/moduleTool';
 import { computeUserSession } from '~/framework/util/session';
 import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
+import { actionTypeLegalDocuments } from '~/user/actions/actionTypes/legalDocuments';
 import {
   actionTypeLoggedIn,
   actionTypeLoggedInPartial,
@@ -29,6 +30,13 @@ export type backendUserApp = {
   prefix: string;
 };
 
+export type LegalUrls = {
+  userCharter?: string;
+  cgu?: string;
+  personalDataProtection?: string;
+  cookies?: string;
+};
+
 export interface IUserAuthState {
   // user account information
   login?: string;
@@ -51,6 +59,8 @@ export interface IUserAuthState {
   skipVersion: boolean;
   versionContext: IVersionContext;
   widgets: IEntcoreWidget[];
+  //legal documents
+  legalUrls: LegalUrls;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -67,6 +77,12 @@ export const stateDefault: IUserAuthState = {
   synced: false,
   skipVersion: false,
   versionContext: null,
+  legalUrls: {
+    userCharter: undefined,
+    cgu: undefined,
+    personalDataProtection: undefined,
+    cookies: undefined,
+  },
 };
 
 const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthState => {
@@ -173,6 +189,11 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
       return {
         ...state,
         platformId: action.platformId,
+      };
+    case actionTypeLegalDocuments:
+      return {
+        ...state,
+        legalUrls: { ...state.legalUrls, ...action.legalUrls },
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

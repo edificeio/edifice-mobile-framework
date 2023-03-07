@@ -11,13 +11,14 @@ import { bindActionCreators } from 'redux';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { HeaderAction, HeaderIcon } from '~/framework/components/header';
+import { DocumentPicked, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { pickFileError } from '~/infra/actions/pickFile';
-import { DocumentPicked, FilePicker } from '~/infra/filePicker';
 import { deleteMailsAction, trashMailsAction } from '~/modules/zimbra/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/modules/zimbra/actions/mailContent';
 import {
@@ -36,7 +37,6 @@ import moduleConfig from '~/modules/zimbra/moduleConfig';
 import { ISearchUsers } from '~/modules/zimbra/service/newMail';
 import { IMail, getMailContentState } from '~/modules/zimbra/state/mailContent';
 import { ISignature, getSignatureState } from '~/modules/zimbra/state/signature';
-import { DropdownMenu } from '~/ui/DropdownMenu';
 
 //STYLE
 
@@ -109,7 +109,6 @@ interface ICreateMailState {
   prevBody?: string;
   replyTo?: string;
   deleteModal: { isShown: boolean; mailsIds: string[] };
-  isShownHeaderMenu: boolean;
   settingId: boolean;
   signature: { text: string; useGlobal: boolean };
   isShownSignatureModal: boolean;
@@ -125,7 +124,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       mail: { to: [], cc: [], bcc: [], subject: '', body: '', attachments: [] },
       prevBody: '',
       deleteModal: { isShown: false, mailsIds: [] },
-      isShownHeaderMenu: false,
       settingId: false,
       signature: { text: '', useGlobal: false },
       isShownSignatureModal: false,
@@ -224,10 +222,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         const navParams = this.props.navigation.state;
         if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       }
-    },
-    showHeaderMenu: () => {
-      const { isShownHeaderMenu } = this.state;
-      this.setState({ isShownHeaderMenu: !isShownHeaderMenu });
     },
     getGoBack: () => {
       const draftType = this.props.navigation.getParam('type');
@@ -558,17 +552,35 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const { navigation } = this.props;
     const addGivenAttachment = navigation.getParam('addGivenAttachment');
     const sendDraft = navigation.getParam('getSendDraft');
-    const showMenu = navigation.getParam('showHeaderMenu');
+    const deleteDraft = this.props.navigation.getParam('getDeleteDraft');
+    const menuData = [
+      {
+        title: I18n.t('zimbra-signature-add'),
+        action: this.showSignatureModal,
+        icon: {
+          ios: 'pencil',
+          android: 'ic_pencil',
+        },
+      },
+      deleteAction({ action: deleteDraft }),
+    ];
     return {
       right: (
         <View style={styles.row}>
           {addGivenAttachment && (
-            <FilePicker multiple callback={addGivenAttachment}>
+            <PopupMenu
+              actions={[
+                cameraAction({ callback: addGivenAttachment }),
+                galleryAction({ callback: addGivenAttachment, multiple: true }),
+                documentAction({ callback: addGivenAttachment }),
+              ]}>
               <HeaderIcon name="attachment" />
-            </FilePicker>
+            </PopupMenu>
           )}
           {sendDraft && <HeaderAction style={styles.navBarHeaders} onPress={sendDraft} iconName="outbox" />}
-          {showMenu && <HeaderAction style={styles.navBarHeaders} onPress={showMenu} iconName="more_vert" />}
+          <PopupMenu actions={menuData}>
+            <HeaderIcon style={styles.navBarHeaders} name="more_vert" />
+          </PopupMenu>
         </View>
       ),
     };
@@ -578,12 +590,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const { isPrefilling, mail, isShownSignatureModal, signature } = this.state;
     const { attachments, body, ...headers } = mail;
     const { navigation } = this.props;
-    const showMenu = this.props.navigation.getParam('showHeaderMenu');
-    const deleteDraft = this.props.navigation.getParam('getDeleteDraft');
-    const menuData = [
-      { text: I18n.t('zimbra-signature-add'), icon: 'pencil', onPress: this.showSignatureModal },
-      { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: deleteDraft },
-    ];
 
     return (
       <PageView
@@ -613,7 +619,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           onSignatureAPIChange={this.setSignatureAPI}
           hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
         />
-        <DropdownMenu data={menuData} isVisible={this.state.isShownHeaderMenu} onTapOutside={showMenu} />
         <ModalPermanentDelete
           deleteModal={this.state.deleteModal}
           closeModal={this.closeDeleteModal}

@@ -8,12 +8,19 @@ const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 const SCALE_DIMENSION_MAX = 1.5;
 const SCALE_DIMENSION_MIN = 0.75;
 
-export const getScaleDimension = (dimension: number, type: 'height' | 'font' | 'image' | 'width') =>
+enum ScaleDimensionType {
+  FONT,
+  HEIGHT,
+  IMAGE,
+  WIDTH,
+}
+
+const getScaleDimension = (dimension: number, type: ScaleDimensionType) =>
   Math.round(
     dimension *
       Math.max(
         Math.min(
-          type === 'height'
+          type === ScaleDimensionType.HEIGHT
             ? screenDimensions.height / standardScreenDimensions.height
             : screenDimensions.width / standardScreenDimensions.width,
           SCALE_DIMENSION_MAX,
@@ -21,6 +28,14 @@ export const getScaleDimension = (dimension: number, type: 'height' | 'font' | '
         SCALE_DIMENSION_MIN,
       ),
   );
+
+export const getScaleFontSize = (size: number) => getScaleDimension(size, ScaleDimensionType.FONT);
+
+export const getScaleHeight = (height: number) => getScaleDimension(height, ScaleDimensionType.HEIGHT);
+
+export const getScaleImageSize = (size: number) => getScaleDimension(size, ScaleDimensionType.IMAGE);
+
+export const getScaleWidth = (width: number) => getScaleDimension(width, ScaleDimensionType.WIDTH);
 
 export const UI_ANIMATIONS = {
   fade: {
@@ -64,14 +79,15 @@ export const UI_SIZES = {
     },
   },
   elements: {
-    icon: 24,
     actionButtonBorder: 2,
-    logoSize: { height: getScaleDimension(64, 'height'), width: getScaleDimension(300, 'width') },
+    icon: 24,
+    logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
     navbarHeight: 56,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
     tabbarIconSize: 24,
     textFieldMaxHeight: 105,
+    thumbnail: getScaleImageSize(150),
   },
   radius: {
     small: 4,
@@ -97,16 +113,16 @@ export const UI_SIZES = {
     width: screenDimensions.width,
   },
   spacing: {
-    _LEGACY_tiny: getScaleDimension(2, 'width'),
-    tiny: getScaleDimension(4, 'width'),
-    _LEGACY_small: getScaleDimension(6, 'width'),
-    minor: getScaleDimension(8, 'width'),
-    small: getScaleDimension(12, 'width'),
-    medium: getScaleDimension(16, 'width'),
-    big: getScaleDimension(24, 'width'),
-    large: getScaleDimension(36, 'width'),
-    major: getScaleDimension(48, 'width'),
-    huge: getScaleDimension(64, 'width'),
+    _LEGACY_tiny: getScaleWidth(2),
+    tiny: getScaleWidth(4),
+    _LEGACY_small: getScaleWidth(6),
+    minor: getScaleWidth(8),
+    small: getScaleWidth(12),
+    medium: getScaleWidth(16),
+    big: getScaleWidth(24),
+    large: getScaleWidth(36),
+    major: getScaleWidth(48),
+    huge: getScaleWidth(64),
   },
   standardScreen: standardScreenDimensions,
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
@@ -123,12 +139,13 @@ export const UI_SIZES = {
 };
 
 export const UI_STYLES = StyleSheet.create({
-  row: { flexDirection: 'row' },
-  rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
+  clickZone: { minHeight: 48, minWidth: 48 },
   flex1: { flex: 1 },
   flexGrow1: { flexGrow: 1 },
   flexShrink1: { flexShrink: 1 },
   justifyEnd: { justifyContent: 'flex-end' },
+  row: { flexDirection: 'row' },
+  rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
 });
 
 export const UI_VALUES = {

@@ -4,8 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { IUserSession } from '~/framework/util/session';
 import { IBlog, IBlogPost } from '~/modules/blog/reducer';
-
-import { IDisplayedBlog } from '../BlogExplorerScreen';
+import { IDisplayedBlog } from '~/modules/blog/screens/BlogExplorerScreen';
 
 export interface IBlogPostDetailsScreenDataProps {
   session: IUserSession;
@@ -56,6 +55,5 @@ export interface IBlogPostDetailsScreenState {
   blogPostData: IBlogPost | undefined;
   errorState: boolean;
   showHeaderTitle: boolean;
-  showMenu: boolean;
   isCommentFieldFocused: boolean;
 }

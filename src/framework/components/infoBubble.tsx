@@ -2,6 +2,8 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { ActionButton } from '~/framework/components/buttons/action';
+import { Image } from '~/framework/util/media';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
 

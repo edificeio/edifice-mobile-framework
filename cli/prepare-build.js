@@ -14,9 +14,6 @@
 //   - ios/appe/Info.plist'
 //
 
-// As this is a cli tool, we disable some rules
-/* eslint-disable no-console */
-
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 const moment = require('moment');
@@ -31,7 +28,7 @@ const versionFile = 'cli/prepare-build.json';
 // Check arguments
 //
 
-let buildType = process.argv.slice(2)[0];
+const buildType = process.argv.slice(2)[0];
 if (!['alpha', 'rc', 'major', 'minor', 'rev'].includes(buildType)) {
   console.error('!!! Argument should be "alpha", "rc", "major", "minor" or "rev" !!!');
   process.exit(1);
@@ -91,7 +88,6 @@ try {
   const rev = versionContent.rev;
   const build = versionContent.build;
   const type = fullBuildType.length ? `-${fullBuildType}` : '';
-  // eslint-disable-next-line prettier/prettier
   buildNumber = `${major}${minor.toString().padStart(2, '0')}${rev.toString().padStart(2, '0')}${build
     .toString()
     .padStart(2, '0')}`;
@@ -138,6 +134,7 @@ try {
 try {
   if (['alpha', 'rc'].includes(buildType)) {
     // ¡¡¡ Update notes before last !!!
+    // eslint-disable-next-line no-useless-escape
     lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`).toString();
     lastContent.last = moment().format('YYYY-MM-DD HH:mm:ss');
     lastContent.version = fullVersion;

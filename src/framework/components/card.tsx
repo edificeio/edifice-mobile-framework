@@ -16,14 +16,14 @@ import {
 
 import theme from '~/app/theme';
 import { displayPastDate } from '~/framework/util/date';
+import { Image } from '~/framework/util/media';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { Badge } from './badge';
-import { UI_SIZES, getScaleDimension } from './constants';
+import { UI_SIZES, getScaleHeight } from './constants';
 import { Icon, NamedSVG, Picture, PictureProps } from './picture';
 import { BodyText, CaptionItalicText, CaptionText, SmallText, TextFontStyle, TextSizeStyle } from './text';
-import { Image } from '../util/media';
 
 export const cardPaddingV = UI_SIZES.spacing.medium;
 export const cardPaddingH = UI_SIZES.spacing.medium;
@@ -303,7 +303,7 @@ function PictureCard_Base(props: PictureCardProps & { cardComponent?: React.Comp
               justifyContent: 'center',
               alignItems: 'center',
               marginTop: UI_SIZES.spacing.minor,
-              height: getScaleDimension(20, 'height') * 2,
+              height: getScaleHeight(20) * 2,
             }}>
             <SmallText
               numberOfLines={2}
@@ -361,7 +361,11 @@ function OverviewCardBase(props: OverviewCardProps & { cardComponent?: React.Com
   const { cardComponent, children, title, style, picture, pictureStyle, pictureWrapperStyle, ...rest } = props;
   if (picture) {
     if (picture.type === 'Image') picture.resizeMode = 'contain';
-    if (picture.type === 'NamedSvg') picture.fill = theme.ui.text.inverse;
+    if (picture.type === 'NamedSvg') {
+      picture.fill = theme.ui.text.inverse;
+      picture.width = OverviewCardBase.styles.picture.width;
+      picture.height = OverviewCardBase.styles.picture.height;
+    }
   }
   const CC = cardComponent ?? ContentCard;
   return (

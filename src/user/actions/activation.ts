@@ -12,8 +12,8 @@ import { asyncActionTypes } from '~/infra/redux/async';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
+import { IUserAuthContext } from '~/user/service';
 
-import { IUserAuthContext } from '../service';
 import { loginAction } from './login';
 
 // TYPES ------------------------------------------------------------------------------------------------
@@ -128,10 +128,6 @@ export function activationAccount(model: IActivationModel, rememberMe?: boolean)
         }
       }
 
-      // === Bonus : clear cookies. The backend send back a Set-Cookie header that conflicts with the oAuth2 token.
-      await CookieManager.clearAll();
-      // ToDo : what to do if clearing the cookies doesn't work ? The user will be stuck with that cookie and will be logged to that account forever and ever ! 😱
-
       // === 4 - call thunk login using login/password
       await dispatch(
         loginAction(true, {
@@ -144,9 +140,11 @@ export function activationAccount(model: IActivationModel, rememberMe?: boolean)
       dispatch(activationSubmitReceived());
       // === 6 - Tracking
       Trackers.trackEvent('Auth', 'ACTIVATE');
-    } catch (e) {
+    } catch {
       dispatch(activationSubmitError(I18n.t('activation-errorSubmit')));
       Trackers.trackEvent('Auth', 'ACTIVATE ERROR');
+    } finally {
+      CookieManager.clearAll();
     }
   };
 }

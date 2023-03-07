@@ -1,11 +1,12 @@
+import CookieManager from '@react-native-cookies/cookies';
 import { Action } from 'redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
+import { IUserAuthContext } from '~/user/service';
 
-import { IUserAuthContext } from '../service';
 import type { IActivationContextFetchedAction, IActivationContextRequestedAction, IActivationUserInfo } from './activation';
 
 export const actionTypeActivationContext = asyncActionTypes(userConfig.createActionType('ACTIVATION_CONTEXT'));
@@ -37,9 +38,10 @@ export function initActivationAccount(args: IActivationUserInfo, redirect: boole
       }
       const activationContext: IUserAuthContext = await res.json();
       dispatch(activationContextReceived(activationContext));
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       dispatch(activationContextError());
+    } finally {
+      CookieManager.clearAll();
     }
   };
 }

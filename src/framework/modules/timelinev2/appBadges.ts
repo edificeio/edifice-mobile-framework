@@ -1,10 +1,12 @@
 import deepmerge from 'deepmerge';
 
 import theme from '~/app/theme';
+import appConf from '~/framework/util/appConf';
 import { IAppBadgeInfo, IAppBadgesInfoDeclaration } from '~/framework/util/moduleTool';
 
 // all badges have default values that can be overrided with their moduleConfig.
 
+const variableColor = appConf.is1d ? theme.palette.primary.regular : theme.palette.complementary.green.regular;
 export let APPBADGES: {
   [key: string]: IAppBadgeInfo;
 } = {
@@ -31,9 +33,9 @@ export let APPBADGES: {
   SUPPORT: { icon: { type: 'NamedSvg', name: 'support' }, color: theme.palette.complementary.green.regular },
   TIMELINE: { icon: { type: 'NamedSvg', name: 'report' }, color: theme.palette.complementary.indigo.regular },
   TIMELINEGENERATOR: { icon: { type: 'NamedSvg', name: 'timeLineGenerator' }, color: theme.palette.complementary.yellow.regular },
-  USERBOOK: { icon: { type: 'NamedSvg', name: 'adressBook' }, color: theme.palette.complementary.green.regular },
-  USERBOOK_MOOD: { icon: { type: 'NamedSvg', name: 'adressBook' }, color: theme.palette.complementary.green.regular },
-  USERBOOK_MOTTO: { icon: { type: 'NamedSvg', name: 'adressBook' }, color: theme.palette.complementary.green.regular },
+  USERBOOK: { icon: { type: 'NamedSvg', name: 'adressBook' }, color: variableColor },
+  USERBOOK_MOOD: { icon: { type: 'NamedSvg', name: 'adressBook' }, color: variableColor },
+  USERBOOK_MOTTO: { icon: { type: 'NamedSvg', name: 'adressBook' }, color: variableColor },
   WIKI: { icon: { type: 'NamedSvg', name: 'wiki' }, color: theme.palette.complementary.purple.regular },
   WORKSPACE: { icon: { type: 'NamedSvg', name: 'files' }, color: theme.palette.complementary.red.regular },
 };

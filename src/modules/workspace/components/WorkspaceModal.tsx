@@ -3,9 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/ActionButton';
 import ModalBox from '~/framework/components/ModalBox';
-import { ActionButton } from '~/framework/components/action-button';
+import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import { Filter, IFile, IFolder } from '~/modules/workspace/reducer';
@@ -46,16 +45,6 @@ interface IWorkspaceModalSettings {
   hasDestinationSelector?: boolean;
   hasFileList?: boolean;
   hasInput?: boolean;
-}
-
-export interface IWorkspaceModalEventProps {
-  createFolder: (name: string, parentId: string) => void;
-  deleteFiles: (parentId: string, files: IFile[]) => void;
-  downloadFiles: (files: IFile[]) => void;
-  duplicateFiles: (parentId: string, files: IFile[], destinationId: string) => void;
-  moveFiles: (parentId: string, files: IFile[], destinationId: string) => void;
-  renameFile: (file: IFile, name: string) => void;
-  trashFiles: (parentId: string, files: IFile[]) => void;
 }
 
 interface IWorkspaceModalProps {

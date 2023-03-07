@@ -9,7 +9,7 @@ import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker, { DropDownPickerProps } from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
-import { ActionButton, ActionButtonProps } from '~/framework/components/action-button';
+import { ActionButton, ActionButtonProps } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
