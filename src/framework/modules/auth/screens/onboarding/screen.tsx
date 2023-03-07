@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, SafeAreaView, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import deviceInfoModule from 'react-native-device-info';
 import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';

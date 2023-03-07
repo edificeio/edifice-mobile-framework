@@ -57,7 +57,7 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
     dispatch(flashMessagesActions.clear());
     dispatch(notificationsActions.receipt(notifications, page));
     dispatch(flashMessagesActions.receipt(flashMessages));
-  } catch (e) {
+  } catch {
     // ToDo: Error handling
   }
 };
@@ -88,7 +88,7 @@ export const loadNotificationsPageAction =
       return !state.notifications.endReached;
     } catch (e) {
       // ToDo: Error handling
-      dispatch(notificationsActions.error(e));
+      dispatch(notificationsActions.error(e as Error));
     }
   };
 
@@ -104,7 +104,7 @@ export const dismissFlashMessageAction =
       dispatch(flashMessagesActions.dismissRequest(flashMessageId));
       await flashMessagesService.dismiss(session, flashMessageId);
       dispatch(flashMessagesActions.dismissReceipt(flashMessageId));
-    } catch (e) {
+    } catch {
       // ToDo: Error handling (notifier: "votre action n'a pas été correctement exécutée (problème de connexion)")
       dispatch(flashMessagesActions.dismissError(flashMessageId));
     }

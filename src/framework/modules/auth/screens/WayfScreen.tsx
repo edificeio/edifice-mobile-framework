@@ -193,7 +193,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
                   dropdownOpened: !dropdownOpened,
                 })
               }
-              setValue={callback => (this.dropdownValue = callback())}
+              setValue={callback => (this.dropdownValue = callback({}))}
               showTickIcon={false}
               style={STYLES.select}
               textStyle={STYLES.selectText}
@@ -361,7 +361,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if (redirect) {
           redirectLoginNavAction(redirect, this.props.route.params.platform, this.props.navigation);
         }
-      } catch (e) {}
+      } catch {
+        // TODO: handle error
+      }
     });
   }
 

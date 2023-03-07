@@ -16,12 +16,13 @@ export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatc
     dispatch(notifFiltersAsyncActions.request());
     const filters = await notifFiltersService.list(session);
     // 1a. Fetch notif types from backend
+    let notificationTypes;
     try {
       dispatch(notifTypesAsyncActions.request());
-      var notificationTypes = await registeredNotificationsService.list(session);
+      notificationTypes = await registeredNotificationsService.list(session);
       dispatch(notifTypesAsyncActions.receipt(notificationTypes));
     } catch (e) {
-      dispatch(notifTypesAsyncActions.error(e));
+      dispatch(notifTypesAsyncActions.error(e as Error));
       throw e;
     }
     // 1b. Filter notif filters (That sounds odd...) + get app info
@@ -32,6 +33,6 @@ export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatc
     dispatch(notifFiltersAsyncActions.receipt(detailedFilters));
   } catch (e) {
     console.error(e);
-    dispatch(notifFiltersAsyncActions.error(e));
+    dispatch(notifFiltersAsyncActions.error(e as Error));
   }
 };

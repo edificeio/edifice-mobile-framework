@@ -4,7 +4,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -45,6 +45,25 @@ export type IRevalidateTermsScreenProps = IRevalidateTermsScreenEventProps &
   NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.revalidateTerms>;
 
 // COMPONENT ======================================================================================
+
+const styles = StyleSheet.create({
+  mustAccept: {
+    textAlign: 'center',
+    marginTop: UI_SIZES.spacing.small,
+  },
+  newEULALabel: {
+    textAlign: 'center',
+    color: theme.palette.primary.regular,
+    marginTop: UI_SIZES.spacing.large,
+  },
+  newEULALink: {
+    textDecorationLine: 'underline',
+  },
+  refuseButton: {
+    color: theme.palette.status.failure.regular,
+    textAlign: 'center',
+  },
+});
 
 const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
   // EVENTS =====================================================================================
@@ -105,26 +124,18 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
             <NamedSVG name="empty-eula" width={imageWidth} height={imageHeight} />
           </View>
         </View>
-        <HeadingSText
-          numberOfLines={2}
-          style={{
-            textAlign: 'center',
-            color: theme.palette.primary.regular,
-            marginTop: UI_SIZES.spacing.large,
-          }}>
+        <HeadingSText numberOfLines={2} style={styles.newEULALabel}>
           {I18n.t('user.revalidateTermsScreen.newEULA')}
         </HeadingSText>
-        <SmallText numberOfLines={3} style={{ textAlign: 'center', marginTop: UI_SIZES.spacing.small }}>
+        <SmallText numberOfLines={3} style={styles.mustAccept}>
           {`${I18n.t('user.revalidateTermsScreen.mustAccept')} `}
-          <SmallActionText onPress={() => doOpenCGU(eulaUrl)} style={{ textDecorationLine: 'underline' }}>
+          <SmallActionText onPress={() => doOpenCGU(eulaUrl)} style={styles.newEULALink}>
             {I18n.t('user.revalidateTermsScreen.newEndUserLicenseAgreement')}
           </SmallActionText>
         </SmallText>
         <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.t('common.accept')} action={doRevalidateTerms} />
         <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={doRefuseTerms}>
-          <SmallBoldText style={{ color: theme.palette.status.failure.regular, textAlign: 'center' }}>
-            {I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}
-          </SmallBoldText>
+          <SmallBoldText style={styles.refuseButton}>{I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}</SmallBoldText>
         </TouchableOpacity>
       </PageViewStyle>
     </PageView>

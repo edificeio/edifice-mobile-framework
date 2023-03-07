@@ -54,7 +54,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     dispatch(notifFilterSettingsActions.receipt(settings));
   } catch (e) {
     // ToDo: Error handling
-    dispatch(notifFilterSettingsActions.error(e));
+    dispatch(notifFilterSettingsActions.error(e as Error));
   }
 };
 
@@ -67,7 +67,7 @@ export const setFiltersAction =
       dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
       await setItemJson(asyncStorageKey, selectedFilters);
       dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
-    } catch (e) {
+    } catch {
       // ToDo: Error handling
       dispatch(notifFilterSettingsActions.setError(selectedFilters));
     }
@@ -89,7 +89,7 @@ export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch
     dispatch(pushNotifsSettingsActions.receipt(pushNotifsSettings));
   } catch (e) {
     // ToDo: Error handling
-    dispatch(pushNotifsSettingsActions.error(e));
+    dispatch(pushNotifsSettingsActions.error(e as Error));
   }
 };
 
@@ -103,7 +103,7 @@ export const updatePushNotifsSettingsAction =
       dispatch(loadPushNotifsSettingsAction()); // no await here it's for refreshing datas
     } catch (e) {
       // ToDo: Error handling
-      dispatch(pushNotifsSettingsActions.setError(e));
+      dispatch(pushNotifsSettingsActions.setError(e as INotifFilterSettings));
       dispatch(
         notifierShowAction({
           type: 'error',

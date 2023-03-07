@@ -53,9 +53,9 @@ export default class ChangePasswordFormModel {
   }
 
   blur() {
-    this.inputOldPassword && this.inputOldPassword.blur();
-    this.inputNewPassword && this.inputNewPassword.blur();
-    this.inputPasswordConfirm && this.inputPasswordConfirm.blur();
+    if (this.inputOldPassword) this.inputOldPassword.blur();
+    if (this.inputNewPassword) this.inputNewPassword.blur();
+    if (this.inputPasswordConfirm) this.inputPasswordConfirm.blur();
   }
 
   showOldPasswordError(oldPassword: string) {
