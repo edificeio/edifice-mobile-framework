@@ -7,13 +7,10 @@ import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
 import { Source } from 'react-native-fast-image';
 
-
-
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
-
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 export const AllModulesBackup = {
@@ -93,6 +90,15 @@ export class OAuthClientInfo {
   }
 }
 
+export const uniqueId = () => {
+  try {
+    assertSession();
+    return assertSession()?.user?.uniqueId ?? '';
+  } catch {
+    return '';
+  }
+};
+
 export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Common headers to all oauth2 flow requets
@@ -101,6 +107,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     // tslint:disable-next-line:prettier
     Accept: 'application/json, application/x-www-form-urlencoded',
     'Content-Type': 'application/x-www-form-urlencoded',
+    'X-Device-Id': uniqueId,
   };
 
   /**

@@ -6,7 +6,7 @@ import appConf, { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2 } from '~/infra/oauth';
+import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId } from '~/infra/oauth';
 
 import {
   IAuthContext,
@@ -58,6 +58,7 @@ export interface IUserInfoBackend {
   authorizedActions?: IAuthorizedAction[];
   firstName?: string;
   lastName?: string;
+  uniqueId?: string;
   groupsIds?: string[];
   classes?: string[];
   children?: { [userId: string]: { lastName: string; firstName: string } };
@@ -244,6 +245,7 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend, us
     groups: userinfo.groupsIds,
     classes: userinfo.classes,
     structures: userPrivateData?.structureNodes,
+    uniqueId: userinfo.uniqueId,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
   // compute here detailed data about children (laborious)
@@ -316,6 +318,7 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        'X-Device-Id': uniqueId(),
       },
       method: 'post',
     });
@@ -332,7 +335,11 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
 }
 
 export async function getAuthContext(platform: Platform) {
-  const res = await fetch(`${platform.url}/auth/context`);
+  const res = await fetch(`${platform.url}/auth/context`, {
+    headers: {
+      'X-Device-Id': uniqueId(),
+    },
+  });
   if (!res.ok) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Auth context code not 200');
   }
@@ -484,7 +491,7 @@ export async function revalidateTerms(session: ISession) {
 export async function getAuthTranslationKeys(platform: Platform, language: SupportedLocales) {
   try {
     // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
-    const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language } });
+    const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language, 'X-Device-Id': uniqueId() } });
     if (res.ok) {
       const authTranslationKeys = await res.json();
       return authTranslationKeys;

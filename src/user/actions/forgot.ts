@@ -5,6 +5,7 @@
 import { Action } from 'redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { uniqueId } from '~/infra/oauth';
 import { asyncActionTypes } from '~/infra/redux/async';
 import userConfig from '~/user/config';
 
@@ -65,6 +66,9 @@ export function actionForgotSubmit(userInfo: IForgotModel, forgotId?: boolean) {
       const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/forgot-${forgotId ? 'id' : 'password'}`, {
         body: JSON.stringify(payLoad),
         method: 'POST',
+        headers: {
+          'X-Device-Id': uniqueId(),
+        },
       });
       const resJson = await res.json();
       const resStatus = await res.status;

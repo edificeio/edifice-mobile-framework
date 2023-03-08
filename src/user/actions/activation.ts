@@ -8,6 +8,7 @@ import { Action } from 'redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
+import { uniqueId } from '~/infra/oauth';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 import { navigate } from '~/navigation/helpers/navHelper';
@@ -109,6 +110,7 @@ export function activationAccount(model: IActivationModel, rememberMe?: boolean)
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
+          'X-Device-Id': uniqueId(),
         },
         method: 'post',
       });

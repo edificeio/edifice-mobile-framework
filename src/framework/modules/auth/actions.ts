@@ -1,12 +1,13 @@
 import CookieManager from '@react-native-cookies/cookies';
 import I18n from 'i18n-js';
+import DeviceInfo from 'react-native-device-info';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { SupportedLocales } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache } from '~/infra/fetchWithCache';
-import { OAuth2ErrorCode, destroyOAuth2, urlSigner } from '~/infra/oauth';
+import { OAuth2ErrorCode, destroyOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
 
 // import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoginError } from '~/user/actions/actionTypes/login';
 import {
@@ -112,8 +113,10 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       }
 
       // 2. Gather information about user
-
       const userinfo = await fetchUserInfo(platform);
+      DeviceInfo.getUniqueId().then(uniqueID => {
+        userinfo.uniqueId = uniqueID;
+      });
       ensureUserValidity(userinfo);
 
       // 3. Check some partial session cases
@@ -232,6 +235,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
+          'X-Device-Id': uniqueId(),
         },
         method: 'post',
       });
@@ -291,6 +295,9 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
     const res = await fetch(`${platform.url}/auth/forgot-${forgotMode === 'id' ? 'id' : 'password'}`, {
       body: JSON.stringify(payLoad),
       method: 'POST',
+      headers: {
+        'X-Device-Id': uniqueId(),
+      },
     });
     const resJson = await res.json();
     const resStatus = await res.status;
@@ -367,6 +374,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
+          'X-Device-Id': uniqueId(),
         },
         method: 'post',
       });

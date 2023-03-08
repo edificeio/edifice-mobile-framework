@@ -50,6 +50,7 @@ export interface ILoggedUser extends IUser {
   firstName: string;
   lastName: string;
   groups: string[];
+  uniqueId?: string;
   children?: UserChildren;
   classes?: string[];
   relatives?: UserPrivateData['parents'];

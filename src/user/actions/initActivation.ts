@@ -1,6 +1,7 @@
 import { Action } from 'redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { uniqueId } from '~/infra/oauth';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
@@ -25,7 +26,11 @@ export function initActivationAccount(args: IActivationUserInfo, redirect: boole
     try {
       // === 1 - Fetch activation context
       dispatch(activationContextRequested(args));
-      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`, {
+        headers: {
+          'X-Device-Id': uniqueId(),
+        },
+      });
       // === 2 - Navigate if needed
       if (redirect) {
         navigate('LoginActivation', { rememberMe });

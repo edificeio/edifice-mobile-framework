@@ -7,7 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
-import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
+import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, uniqueId, urlSigner } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
@@ -285,6 +285,7 @@ export function loginAction(
               headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
+                'X-Device-Id': uniqueId(),
               },
               method: 'post',
             });

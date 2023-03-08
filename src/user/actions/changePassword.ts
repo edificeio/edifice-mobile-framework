@@ -8,6 +8,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
 import { signedFetch } from '~/infra/fetchWithCache';
+import { uniqueId } from '~/infra/oauth';
 import { asyncActionTypes } from '~/infra/redux/async';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
@@ -81,7 +82,11 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
     try {
       // === 1 - Fetch activation context
       dispatch(changePasswordContextRequestedAction(args));
-      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`, {
+        headers: {
+          'X-Device-Id': uniqueId(),
+        },
+      });
       // === 2 - send result to store
       if (!res.ok) {
         dispatch(changePasswordContextErrorAction());

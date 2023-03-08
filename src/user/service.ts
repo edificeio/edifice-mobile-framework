@@ -7,6 +7,7 @@ import DeviceInfo from 'react-native-device-info';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
+import { uniqueId } from '~/infra/oauth';
 
 export interface IEntcoreParentChildrenByStructure {
   children: {
@@ -231,7 +232,11 @@ class UserService {
     try {
       if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
       const url = `${DEPRECATED_getCurrentPlatform()!.url}/assets/mobileapp.json`;
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: {
+          'X-Device-Id': uniqueId(),
+        },
+      });
       if (res.ok) {
         const json = await res.json();
         const version = DeviceInfo.getVersion();
@@ -377,7 +382,9 @@ class UserService {
   async getAuthTranslationKeys(language: Languages) {
     try {
       // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
-      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/i18n`, { headers: { 'Accept-Language': language } });
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/i18n`, {
+        headers: { 'Accept-Language': language, 'X-Device-Id': uniqueId() },
+      });
       if (res.ok) {
         const authTranslationKeys = await res.json();
         return authTranslationKeys;
