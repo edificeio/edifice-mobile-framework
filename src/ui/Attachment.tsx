@@ -309,8 +309,8 @@ class Attachment extends React.PureComponent<
             showOpenWithDialog: true,
             showAppsSuggestions: true,
           });
-        } catch (error) {
-          console.log(error);
+        } catch {
+          // TODO: handle error
         }
       } else {
         onOpenFile(notifierId, file);

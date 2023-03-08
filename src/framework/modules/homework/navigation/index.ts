@@ -1,11 +1,10 @@
 import { ParamListBase } from '@react-navigation/native';
 
 import { HomeworkTaskListScreenNavigationParams } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
+import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkExplorerScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkExplorerScreen';
 import { HomeworkInitialScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkInitialScreen';
 import { IHomeworkTaskDetailsScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';
-
-import moduleConfig from '../module-config';
 
 export const homeworkRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',

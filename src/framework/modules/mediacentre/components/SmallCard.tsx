@@ -9,11 +9,10 @@ import { TouchCard } from '~/framework/components/card/base';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { ResourceImage, SourceImage } from '~/framework/modules/mediacentre/components/ResourceImage';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { openUrl } from '~/framework/util/linking';
-
-import { assertSession } from '../../auth/reducer';
 
 const styles = StyleSheet.create({
   upperContentContainer: {

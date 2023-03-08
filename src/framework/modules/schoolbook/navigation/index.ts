@@ -1,8 +1,11 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '../module-config';
-import type { SchoolbookWordDetailsScreenNavigationParams } from '../screens/SchoolbookWordDetailsScreen';
-import { SchoolbookWordReportScreenNavigationParams } from '../screens/word-report/types';
+
+
+import moduleConfig from '~/framework/modules/schoolbook/module-config';
+import type { SchoolbookWordDetailsScreenNavigationParams } from '~/framework/modules/schoolbook/screens/SchoolbookWordDetailsScreen';
+import { SchoolbookWordReportScreenNavigationParams } from '~/framework/modules/schoolbook/screens/word-report/types';
+
 
 export const schoolbookRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',

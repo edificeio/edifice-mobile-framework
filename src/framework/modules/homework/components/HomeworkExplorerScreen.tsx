@@ -11,14 +11,13 @@ import Explorer from '~/framework/components/explorer';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import config from '~/framework/modules/homework/module-config';
+import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
-
-import { HomeworkNavigationParams, homeworkRouteNames } from '../navigation';
 
 export interface IHomeworkExplorerScreenDataProps {
   diaryList?: {

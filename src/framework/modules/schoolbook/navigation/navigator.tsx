@@ -1,13 +1,19 @@
 import * as React from 'react';
 
+import moduleConfig from '~/framework/modules/schoolbook/module-config';
+import SchoolbookWordDetailsScreen, {
+  computeNavBar as SchoolbookWordDetailsNavBar,
+} from '~/framework/modules/schoolbook/screens/SchoolbookWordDetailsScreen';
+import SchoolbookWordListScreen, {
+  computeNavBar as SchoolbookWordListNavBar,
+} from '~/framework/modules/schoolbook/screens/SchoolbookWordListScreen';
+import SchoolbookWordReportScreen, {
+  computeNavBar as SchoolbookWordReportNavBar,
+} from '~/framework/modules/schoolbook/screens/word-report/screen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '.';
-import moduleConfig from '../module-config';
-import SchoolbookWordDetailsScreen, { computeNavBar as SchoolbookWordDetailsNavBar } from '../screens/SchoolbookWordDetailsScreen';
-import SchoolbookWordListScreen, { computeNavBar as SchoolbookWordListNavBar } from '../screens/SchoolbookWordListScreen';
-import SchoolbookWordReportScreen, { computeNavBar as SchoolbookWordReportNavBar } from '../screens/word-report/screen';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<SchoolbookNavigationParams>(moduleConfig.name, Stack => (

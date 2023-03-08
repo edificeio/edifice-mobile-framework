@@ -58,7 +58,6 @@ export const initI18n = () => {
     languageTag: string;
     isRTL: boolean;
   };
-  console.log('res', res, typeof res);
   if (res) {
     I18nManager.forceRTL(res.isRTL);
     I18n.locale = res.languageTag;

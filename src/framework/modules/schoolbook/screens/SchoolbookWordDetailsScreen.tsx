@@ -22,6 +22,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
+import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-handler';
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
@@ -29,8 +30,6 @@ import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/mod
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import { SchoolbookNavigationParams, schoolbookRouteNames } from '../navigation';
 
 // TYPES ==========================================================================================
 

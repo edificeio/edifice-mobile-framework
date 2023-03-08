@@ -29,6 +29,7 @@ import {
   SmallText,
 } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '~/framework/modules/schoolbook/reducer';
 import { hasResendRight } from '~/framework/modules/schoolbook/rights';
 import styles from '~/framework/modules/schoolbook/screens/word-report/styles';
@@ -38,8 +39,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
-
-import { SchoolbookNavigationParams, schoolbookRouteNames } from '../../navigation';
 
 // HEADER =====================================================================================
 

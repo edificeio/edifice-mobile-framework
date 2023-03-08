@@ -1,19 +1,17 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 
+import { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
+import { computeNavBar as homeworkTaskListNavBar } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
+import moduleConfig from '~/framework/modules/homework/module-config';
+import HomeworkExplorerScreen from '~/framework/modules/homework/screens/HomeworkExplorerScreen';
+import HomeworkInitialScreen from '~/framework/modules/homework/screens/HomeworkInitialScreen';
+import HomeworkTaskDetailsScreen from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';
+import HomeworkTaskListScreen from '~/framework/modules/homework/screens/HomeworkTaskListScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { HomeworkNavigationParams, homeworkRouteNames } from '.';
-import { computeNavBar as homeworkExplorerNavBar } from '../components/HomeworkExplorerScreen';
-import { computeNavBar as homeworkTaskListNavBar } from '../components/HomeworkTaskListScreen';
-import moduleConfig from '../module-config';
-import HomeworkExplorerScreen from '../screens/HomeworkExplorerScreen';
-import HomeworkInitialScreen from '../screens/HomeworkInitialScreen';
-import HomeworkTaskDetailsScreen from '../screens/HomeworkTaskDetailsScreen';
-import HomeworkTaskListScreen from '../screens/HomeworkTaskListScreen';
-
-// import HomeworkOtherScreen, { computeNavBar as otherNavBar } from '../screens/other';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<HomeworkNavigationParams>(moduleConfig.name, Stack => (

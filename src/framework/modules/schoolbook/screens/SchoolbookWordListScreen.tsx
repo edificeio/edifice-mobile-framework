@@ -25,6 +25,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { SchoolbookWordSummaryCard } from '~/framework/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
+import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import {
   IChildrenWithUnacknowledgedWordsCount,
   IStudentAndParentWord,
@@ -40,8 +41,6 @@ import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { removeFirstWord } from '~/framework/util/string';
 import { userService } from '~/user/service';
-
-import { SchoolbookNavigationParams, schoolbookRouteNames } from '../navigation';
 
 //FIXME: create/move to styles.ts
 const styles = {

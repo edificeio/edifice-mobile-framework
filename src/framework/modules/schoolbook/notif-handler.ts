@@ -4,14 +4,13 @@
  * The notifHandler registers some behaviours for given notif types and event-types.
  * It applicates to both timelineNotififation and pushNotifications.
  */
+import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import { navigate } from '~/framework/navigation/helper';
 import { computeRelativePath } from '~/framework/util/navigation';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
-
-import { getSession } from '../auth/reducer';
 
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 

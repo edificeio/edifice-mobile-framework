@@ -27,7 +27,6 @@ export const computeNavBar = ({
 function LvsHomeScreen(props: LvsHomeScreenPrivateProps) {
   const { session } = props;
   const { connector } = props.route.params;
-  console.log(session?.user.displayName);
   if (!session) {
     return <EmptyConnectionScreen />;
   } else {

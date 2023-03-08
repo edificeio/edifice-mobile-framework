@@ -33,11 +33,10 @@ import { ResourceGrid } from '~/framework/modules/mediacentre/components/Resourc
 import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
 import { ISearchBarHandle, IconButtonText, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
+import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { IResource, IResourceList, ISignets, Source } from '~/framework/modules/mediacentre/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { fetchWithCache } from '~/infra/fetchWithCache';
-
-import { MediacentreNavigationParams, mediacentreRouteNames } from '../navigation';
 
 const styles = StyleSheet.create({
   mainContainer: {
