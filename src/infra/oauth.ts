@@ -580,10 +580,13 @@ export const urlSigner = {
    * Uses the current platform as domain, but custom platform can be used as a second optional argument.
    */
   getAbsoluteUrl: (url?: string, pf?: Platform) => {
-    if (!pf) {
-      pf = assertSession().platform;
+    if (!url) return undefined;
+    if (url.startsWith('//')) return `https:${url}`;
+    if (url.startsWith('/')) {
+      if (!pf) pf = assertSession().platform;
+      return `${pf.url}${url}`;
     }
-    return url && (url.startsWith('//') ? `https:${url}` : url.startsWith('/') ? `${pf.url}${url}` : url);
+    return url;
   },
 
   /**
