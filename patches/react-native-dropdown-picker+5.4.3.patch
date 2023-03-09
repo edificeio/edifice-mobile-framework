@@ -1,9 +1,13 @@
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
 <<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
+<<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
 index 0b06940..4610a77 100644
 ========
 index c769683..ad57360 100644
 >>>>>>>> release/1.9.3:patches/react-native-dropdown-picker+5.4.4.patch
+========
+index c769683..ad57360 100644
+>>>>>>>> release/1.9.4:patches/react-native-dropdown-picker+5.4.4.patch
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
 +++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
 @@ -41,7 +41,8 @@ import {
@@ -17,10 +21,14 @@ index c769683..ad57360 100644
  import THEMES from '../themes';
  import RenderBadgeItem from './RenderBadgeItem';
 <<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
+<<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
 @@ -160,7 +161,8 @@ function Picker({
 ========
 @@ -162,7 +163,8 @@ function Picker({
 >>>>>>>> release/1.9.3:patches/react-native-dropdown-picker+5.4.4.patch
+========
+@@ -162,7 +163,8 @@ function Picker({
+>>>>>>>> release/1.9.4:patches/react-native-dropdown-picker+5.4.4.patch
      testID,
      closeOnBackPressed = false,
      extendableBadgeContainer = false,
@@ -31,10 +39,14 @@ index c769683..ad57360 100644
      const [necessaryItems, setNecessaryItems] = useState([]);
      const [searchText, setSearchText] = useState('');
 <<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
+<<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
 @@ -185,7 +187,7 @@ function Picker({
 ========
 @@ -187,7 +189,7 @@ function Picker({
 >>>>>>>> release/1.9.3:patches/react-native-dropdown-picker+5.4.4.patch
+========
+@@ -187,7 +189,7 @@ function Picker({
+>>>>>>>> release/1.9.4:patches/react-native-dropdown-picker+5.4.4.patch
       * The item schema.
       * @returns {object}
       */
@@ -44,10 +56,14 @@ index c769683..ad57360 100644
      /**
       * componentDidMount.
 <<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
+<<<<<<<< HEAD:patches/react-native-dropdown-picker+5.4.3.patch
 @@ -1799,11 +1801,22 @@ function Picker({
 ========
 @@ -1807,11 +1809,22 @@ function Picker({
 >>>>>>>> release/1.9.3:patches/react-native-dropdown-picker+5.4.4.patch
+========
+@@ -1807,11 +1809,22 @@ function Picker({
+>>>>>>>> release/1.9.4:patches/react-native-dropdown-picker+5.4.4.patch
       */
      const pointerEvents = useMemo(() => disabled ? "none" : "auto", [disabled]);
  

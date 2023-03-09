@@ -7,10 +7,7 @@ import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-========
 import { ContainerTextInput, ContainerView } from '~/framework/components/buttons/line';
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeaderAction } from '~/framework/components/header';
 import { ImagePicked } from '~/framework/components/menus/actions';
@@ -18,23 +15,6 @@ import { PageView } from '~/framework/components/page';
 import { CaptionText, SmallText } from '~/framework/components/text';
 import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
-import { formatSource } from '~/framework/util/media';
-import { IUserSession, UserType, getUserSession } from '~/framework/util/session';
-import { Trackers } from '~/framework/util/tracker';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { pickFileError } from '~/infra/actions/pickFile';
-import { ImagePicked } from '~/infra/imagePicker';
-import { notifierShowAction } from '~/infra/notifier/actions';
-import Notifier from '~/infra/notifier/container';
-import { PageContainer } from '~/ui/ContainerContent';
-import { ContainerTextInput, ContainerView } from '~/ui/button-line';
-import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
-import UserCard from '~/user/components/user-card';
-import { IUserAuthState } from '~/user/reducers/auth';
-import { IUserInfoState } from '~/user/state/info';
-========
 import { LocalFile } from '~/framework/util/fileHandler';
 import { formatSource } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
@@ -47,38 +27,11 @@ import Notifier from '~/infra/notifier/container';
 import { PageContainer } from '~/ui/ContainerContent';
 import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
 import UserCard from '~/user/components/user-card';
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
 import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
 import { IProfilePageProps, IProfilePageState } from './types';
 
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-export interface IProfilePageEventProps {
-  onSave: (updatedProfileValues: IUpdatableProfileValues) => void;
-  dispatch: Dispatch;
-}
-
-export type IProfilePageProps = IProfilePageDataProps &
-  IProfilePageEventProps &
-  NavigationInjectedProps & {
-    onUploadAvatar: (avatar: LocalFile) => Promise<SyncedFile>;
-    onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
-    onPickFileError: (notifierId: string) => void;
-    onUploadAvatarError: () => void;
-  };
-
-export type IProfilePageState = IUpdatableProfileValues & {
-  emailValid?: boolean;
-  homePhoneValid?: boolean;
-  mobileValid?: boolean;
-  loginAliasValid?: boolean;
-  updatingAvatar?: boolean;
-};
-
-// tslint:disable-next-line:max-classes-per-file
-========
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
 export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfilePageState> {
   defaultState: (force?: boolean) => IProfilePageState = force => ({
     displayName: this.props.userinfo.displayName,
@@ -141,10 +94,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     return (
       <PageContainer>
         <Notifier id="profileOne" />
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-========
         <Notifier id="profileTwo" />
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
         <KeyboardAvoidingView
           style={styles.profilePage}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -173,11 +123,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || userinfo.login),
                 editable: true,
                 setter: loginAlias => this.setState({ loginAlias }),
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-                validator: { key: 'loginAliasValid', regex: /^[0-9a-z\-\.]+$/ },
-========
                 validator: { key: 'loginAliasValid', regex: /^[0-9a-z\-.]+$/ },
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
                 placeholder: userinfo.login,
               })}
               {this.renderItem({
@@ -270,17 +216,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           {...(placeholder ? { placeholder } : {})}
           {...(placeholderTextColor ? { placeholderTextColor } : {})}>
           <SmallText
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-            style={{
-              lineHeight: undefined,
-              textAlignVertical: 'center',
-              color: validator
-                ? this.state[validator.key]
-                  ? theme.ui.text.regular
-                  : theme.palette.status.failure.regular
-                : theme.ui.text.regular,
-            }}>
-========
             style={[
               {
                 color: validator
@@ -291,31 +226,20 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               },
               styles.textOnEdit,
             ]}>
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
             {getter()}
           </SmallText>
         </ContainerTextInput>
       ) : (
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-        <ContainerView style={{ flex: 1, justifyContent: 'space-between' }}>
-          <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
-========
         <ContainerView style={styles.containerItem}>
           <SmallText numberOfLines={1} style={styles.textItem}>
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
             {getter()}
           </SmallText>
         </ContainerView>
       );
     } else {
       box = (
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-        <ContainerView style={{ flex: 1, justifyContent: 'space-between' }}>
-          <SmallText numberOfLines={1} style={{ flex: 1, color: theme.ui.text.light, textAlignVertical: 'center' }}>
-========
         <ContainerView style={styles.containerItem}>
           <SmallText numberOfLines={1} style={styles.textItem}>
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
             {getter()}
           </SmallText>
         </ContainerView>
@@ -410,11 +334,7 @@ const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch) =>
   return workspaceService.uploadFile(getUserSession(), avatar, {});
 };
 
-<<<<<<<< HEAD:src/user/containers/ProfilePage.tsx
-const ProfilePageConnected = connect(
-========
 const UserProfileScreenConnected = connect(
->>>>>>>> release/1.9.3:src/user/containers/user-profile/screen.tsx
   (state: any) => {
     const ret = {
       userauth: state.user.auth,
