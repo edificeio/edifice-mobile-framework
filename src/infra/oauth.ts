@@ -92,7 +92,6 @@ export class OAuthClientInfo {
 
 export const uniqueId = () => {
   try {
-    assertSession();
     return assertSession()?.user?.uniqueId ?? '';
   } catch {
     return '';

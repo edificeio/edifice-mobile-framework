@@ -114,10 +114,11 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 2. Gather information about user
       const userinfo = await fetchUserInfo(platform);
+      ensureUserValidity(userinfo);
+      // Add device ID to userinfo
       DeviceInfo.getUniqueId().then(uniqueID => {
         userinfo.uniqueId = uniqueID;
       });
-      ensureUserValidity(userinfo);
 
       // 3. Check some partial session cases
       const partialSessionScenario = getPartialSessionScenario(userinfo);
