@@ -2,27 +2,34 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import MoveToFolderModalComponent from '~/modules/conversation/components/MoveToFolderModal';
-import { getInitMailListState, IFolder } from '~/modules/conversation/state/initMails';
+import { IGlobalState } from '~/app/store';
+import MoveToFolderModalComponent from '~/framework/modules/conversation/components/MoveToFolderModal';
+import { IFolder, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
 
-type MoveToFolderModalProps = {
-  folders: IFolder[];
-  show: boolean;
-  mail: any;
-  currentFolder: string;
+interface ConversationMoveToFolderModalEventProps {
   closeModal: () => any;
   moveToFolder: (ids: string[], folder: string) => any;
   moveToInbox: (ids: string[]) => any;
   restoreToFolder: (ids: string[], folder: string) => any;
   restoreToInbox: (ids: string[]) => any;
   successCallback: () => any;
-};
+}
+interface ConversationMoveToFolderModalDataProps {
+  folders: IFolder[];
+  show: boolean;
+  mail: any;
+  currentFolder: string;
+}
+export type ConversationMoveToFolderModalProps = ConversationMoveToFolderModalEventProps & ConversationMoveToFolderModalDataProps;
 
-type MoveToFolderModalState = {
+interface ConversationMoveToFolderModalState {
   selectedFolder: string | null;
-};
+}
 
-class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFolderModalState> {
+class ConversationMoveToFolderModal extends React.Component<
+  ConversationMoveToFolderModalProps,
+  ConversationMoveToFolderModalState
+> {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,7 +71,7 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: IGlobalState) => {
   return {
     folders: getInitMailListState(state).data.folders,
   };
@@ -74,4 +81,4 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({}, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MoveToFolderModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ConversationMoveToFolderModal);
