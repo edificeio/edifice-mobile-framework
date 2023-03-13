@@ -8,7 +8,7 @@ import { assertPermissions } from '~/framework/util/permissions';
 
 import { MenuPickerActionProps } from './types';
 
-export default function documentAction(props: MenuPickerActionProps) {
+export default function documentAction(props: MenuPickerActionProps & { synchrone?: boolean }) {
   const documentCallback = async (files: DocumentPickerResponse[]) => {
     try {
       for (const file of files) {
@@ -16,7 +16,8 @@ export default function documentAction(props: MenuPickerActionProps) {
           android: getPath(file.uri),
           default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
         });
-        props.callback!({ fileName: file.name!, fileSize: file.size!, uri: file.uri, type: file.type });
+        if (props.synchrone) await props.callback!({ fileName: file.name!, fileSize: file.size!, uri: file.uri, type: file.type });
+        else props.callback!({ fileName: file.name!, fileSize: file.size!, uri: file.uri, type: file.type });
       }
     } catch {
       /* empty */

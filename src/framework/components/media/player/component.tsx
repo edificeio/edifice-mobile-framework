@@ -1,85 +1,198 @@
+import I18n from 'i18n-js';
 import * as React from 'react';
-import { StatusBar, TouchableOpacity, View } from 'react-native';
+import { BackHandler, StatusBar, TouchableOpacity, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
-import Orientation, { LANDSCAPE, PORTRAIT, useOrientationChange } from 'react-native-orientation-locker';
+import Orientation, { PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
+import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyMediaNotSupportedScreen } from '~/framework/components/emptyMediaNotSupported';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
-export default function MediaPlayer(props: MediaPlayerProps) {
+function MediaPlayer(props: MediaPlayerProps) {
   const source = props.navigation.getParam('source');
   const type = props.navigation.getParam('type');
 
+  const isAudio = type === MediaType.AUDIO;
+  let isChangingOrientation = false;
+
+  const [error, setError] = React.useState({
+    active: false,
+    type: '',
+  });
+
   const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [vpControlTimeoutDelay, setVPControlTimeoutDelay] = React.useState(type === MediaType.AUDIO ? 999999 : 3000);
+  const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
+
+  const handleBack = () => {
+    StatusBar.setHidden(false);
+    setTimeout(() => {
+      props.navigation.goBack();
+    }, 10);
+  };
+
+  const setErrorMediaType = () => {
+    const filetype = props.navigation.getParam('filetype');
+    if (filetype === 'video/avi' || filetype === 'video/x-msvideo') {
+      setError({
+        active: true,
+        type: 'AVFoundationErrorDomain',
+      });
+    }
+  };
 
   React.useEffect(() => {
-    Orientation.unlockAllOrientations();
-    StatusBar.setHidden(true);
-  });
+    if (!props.connected) {
+      setError({
+        active: true,
+        type: 'connection',
+      });
+    } else {
+      setError({
+        active: false,
+        type: '',
+      });
+      setErrorMediaType();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.connected]);
 
-  useOrientationChange(current => {
-    if (current.indexOf(LANDSCAPE) > -1) setOrientation(LANDSCAPE);
-    else if (current.indexOf(PORTRAIT) > -1) setOrientation(PORTRAIT);
-  });
+  React.useEffect(() => {
+    setErrorMediaType();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const onBack = () => {
-    Orientation.lockToPortrait();
-    StatusBar.setHidden(false);
-    props.navigation.goBack();
+  const handleHardwareBack = () => {
+    handleBack();
+    return true;
   };
 
-  const onVPEnd = () => {
-    setVPControlTimeoutDelay(999999);
+  const handleVideoPlayerEnd = () => {
+    setVideoPlayerControlTimeoutDelay(999999);
   };
 
-  const styleOverlay = {
-    height: orientation === PORTRAIT ? 80 : 60,
+  const renderError = () => {
+    switch (error.type) {
+      case 'connection':
+        return <EmptyConnectionScreen />;
+      case 'AVFoundationErrorDomain':
+        return <EmptyMediaNotSupportedScreen />;
+      default:
+        return <EmptyContentScreen />;
+    }
+  };
+
+  const getSource = () => {
+    // Add "file://" if absolute url is provided
+    let src = Object.assign({}, source);
+    if (typeof source === 'string') {
+      if (!source.includes('://')) {
+        src = `file://${source}`;
+      }
+      src = { uri: new URL(src).href };
+    } else if (typeof source === 'object') {
+      if (!source.uri.includes('://')) {
+        src.uri = `file://${source}`;
+      }
+      src.uri = new URL(source.uri).href;
+    }
+    return src;
   };
 
   const getPlayer = () => {
-    if (type !== MediaType.WEB)
+    const isPortrait = orientation === PORTRAIT;
+    if (type === MediaType.WEB)
       return (
+        <>
+          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]}>
+            <TouchableOpacity onPress={handleBack}>
+              <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
+            </TouchableOpacity>
+          </View>
+          <WebView
+            allowsInlineMediaPlayback
+            mediaPlaybackRequiresUserAction={false}
+            scrollEnabled={false}
+            source={getSource()}
+            startInLoadingState
+            style={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+          />
+        </>
+      );
+    return (
+      <>
         <VideoPlayer
-          controlTimeoutDelay={vpControlTimeoutDelay}
+          alwaysShowControls={isAudio}
+          controlTimeoutDelay={videoPlayerControlTimeoutDelay}
           disableFullscreen
           disableVolume
           ignoreSilentSwitch="ignore"
+          onBack={handleBack}
+          onEnd={handleVideoPlayerEnd}
+          onError={(e: any) => {
+            setError({
+              active: true,
+              type: e.error.domain,
+            });
+          }}
+          rewindTime={10}
+          showDuration
           showOnStart
           showOnEnd
-          source={source}
-          onBack={onBack}
-          onEnd={onVPEnd}
-        />
-      );
-
-    return (
-      <>
-        <View style={[styles.back, styleOverlay]}>
-          <TouchableOpacity onPress={onBack}>
-            <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
-          </TouchableOpacity>
-        </View>
-        <WebView
-          allowsInlineMediaPlayback
-          mediaPlaybackRequiresUserAction={false}
-          scrollEnabled={false}
-          source={source}
-          startInLoadingState
-          style={orientation === LANDSCAPE ? styles.playerLandscape : styles.playerPortrait}
+          source={getSource()}
         />
       </>
     );
   };
 
+  useDeviceOrientationChange(newOrientation => {
+    const isPortraitOrLandscape =
+      newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
+    if (isPortraitOrLandscape && newOrientation !== orientation) {
+      isChangingOrientation = true;
+      setOrientation(newOrientation);
+    }
+  });
+
+  React.useEffect(() => {
+    if (!isAudio) Orientation.unlockAllOrientations();
+    setTimeout(() => {
+      if (!error.active) StatusBar.setHidden(true);
+    }, 10);
+    // Manage Android back button
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
+    return () => {
+      backHandler.remove();
+      if (!isChangingOrientation) {
+        Orientation.lockToPortrait();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      isChangingOrientation = false;
+    };
+  });
+
   return (
-    <PageView style={styles.page} showNetworkBar={false}>
-      {getPlayer()}
-    </PageView>
+    <>
+      {!error.active ? (
+        <PageView style={styles.page} showNetworkBar={false} onBack={handleBack}>
+          {getPlayer()}
+        </PageView>
+      ) : (
+        <PageView navBarWithBack={{ title: I18n.t('media-player-title') }} onBack={handleBack}>
+          {renderError()}
+        </PageView>
+      )}
+    </>
   );
 }
+
+export default connect((state: any) => ({
+  connected: !!state.connectionTracker.connected,
+}))(MediaPlayer);

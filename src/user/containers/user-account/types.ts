@@ -12,9 +12,11 @@ export enum ModificationType {
 
 export interface UserAccountScreenState {
   avatarPhoto?: '' | ImageURISource;
-  loadingMFARequirementForEmail: boolean;
-  loadingMFARequirementForMobile: boolean;
-  loadingMFARequirementForPassword: boolean;
+  loadingMFARequirement: {
+    email: boolean;
+    mobile: boolean;
+    password: boolean;
+  };
   showVersionType: boolean;
   updatingAvatar: boolean;
   versionOverride: string;

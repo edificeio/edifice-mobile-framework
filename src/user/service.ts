@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
 import AppLink from 'react-native-app-link';
@@ -115,7 +116,7 @@ export interface IUserRequirements {
   needRevalidateEmail?: boolean;
   needRevalidateTerms?: boolean;
   needRevalidateMobile?: boolean;
-  needMFA?: boolean;
+  needMfa?: boolean;
 }
 
 class UserService {
@@ -254,8 +255,10 @@ class UserService {
       } else {
         //console.debug("[UserService] checkVersion: there isnt a new version (not found) ", res.status, url, res)
       }
-    } catch (e) {
+    } catch {
       // TODO: Manage error
+    } finally {
+      CookieManager.clearAll();
     }
     return { canContinue: true, hasNewVersion: false, newVersion: '' };
   }
@@ -279,8 +282,10 @@ class UserService {
     }
     try {
       await AppLink.openInStore({ appName, appStoreId, appStoreLocale, playStoreId });
-    } catch (e) {
+    } catch {
       // TODO: Manage error
+    } finally {
+      CookieManager.clearAll();
     }
   }
 
@@ -316,10 +321,11 @@ class UserService {
 
   async verifyEmailCode(key: string) {
     try {
-      await fetchJSONWithCache('/directory/user/mailstate', {
+      const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
         method: 'POST',
         body: JSON.stringify({ key }),
-      });
+      })) as IEntcoreEmailValidationState;
+      return emailValidationState;
     } catch (e) {
       // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
     }
@@ -343,10 +349,11 @@ class UserService {
 
   async verifyMobileCode(key: string) {
     try {
-      (await fetchJSONWithCache('/directory/user/mobilestate', {
+      const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
         method: 'POST',
         body: JSON.stringify({ key }),
       })) as IEntcoreMobileValidationState;
+      return mobileValidationState;
     } catch (e) {
       // console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
     }
@@ -370,10 +377,11 @@ class UserService {
 
   async verifyMFACode(key: string) {
     try {
-      await fetchJSONWithCache('/auth/user/mfa/code', {
+      const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
         method: 'POST',
         body: JSON.stringify({ key }),
-      });
+      })) as IEntcoreMFAValidationState;
+      return mfaValidationState;
     } catch (e) {
       // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
     }
@@ -391,6 +399,8 @@ class UserService {
       } else throw new Error('error in res.json()');
     } catch (e) {
       throw '[UserService] getAuthTranslationKeys: ' + e;
+    } finally {
+      CookieManager.clearAll();
     }
   }
 

@@ -13,6 +13,10 @@ export const resetNavigation = (actions: any[], index?: number) => {
   Alert.alert('[legacy] resetNavigation', actions.toString());
 };
 
+export const getRootNavState = () => {
+  return rootNavigatorRef.state;
+};
+
 /**
  * Use the Root Navigator to go on another page.
  * CAUTION : Do NOT use this if you want navigate inside a module, instead, use the navigation prop.

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import I18n from 'i18n-js';
 import { NavigationActions } from 'react-navigation';
@@ -12,7 +13,13 @@ import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { LegalUrls } from '~/user/reducers/auth';
-import { IEntcoreEmailValidationInfos, IUserRequirements, Languages, userService } from '~/user/service';
+import {
+  IEntcoreEmailValidationInfos,
+  IEntcoreMobileValidationInfos,
+  IUserRequirements,
+  Languages,
+  userService,
+} from '~/user/service';
 
 import { actionTypeLegalDocuments } from './actionTypes/legalDocuments';
 import {
@@ -185,7 +192,15 @@ export function loginAction(
         throw err;
       } else if (requirements?.needRevalidateMobile) {
         const err = new Error('[loginAction]: User must verify mobile.');
-        (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
+        try {
+          const mobileValidationInfos = await userService.getMobileValidationInfos();
+          (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
+          (err as any).mobileValidationInfos = {
+            ...mobileValidationInfos,
+          } as IEntcoreMobileValidationInfos;
+        } catch (e) {
+          throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', e as Error);
+        }
         throw err;
       } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
@@ -309,6 +324,8 @@ export function loginAction(
           }
         } catch {
           // TODO: Manage error
+        } finally {
+          CookieManager.clearAll();
         }
       } else if ((err as any).type === LoginFlowErrorType.MUST_CHANGE_PASSWORD) {
         routeToGo = 'ChangePassword';
@@ -317,7 +334,7 @@ export function loginAction(
         routeParams = { credentials };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_MOBILE) {
         routeToGo = 'UserMobile';
-        routeParams = { credentials };
+        routeParams = { credentials, defaultMobile: (err as any)?.mobileValidationInfos?.mobile };
       } else if ((err as any).type === LoginFlowErrorType.MUST_VERIFY_EMAIL) {
         routeToGo = 'UserEmail';
         routeParams = { credentials, defaultEmail: (err as any)?.emailValidationInfos?.email };

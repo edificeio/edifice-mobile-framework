@@ -108,7 +108,7 @@ class Notifier extends React.Component<
   public measureText = (evt: NativeSyntheticEvent<TextLayoutEventData>) => {
     const textBlockHeight = evt.nativeEvent.lines[0].height * evt.nativeEvent.lines.length;
     if (evt.nativeEvent.lines.length > 1) {
-      this.setState({ measuredText: true, longText: true, notifierHeight: textBlockHeight + 30 });
+      this.setState({ measuredText: true, longText: true, notifierHeight: textBlockHeight + 40 });
     } else {
       this.setState({ measuredText: true, longText: false, notifierHeight: 40 });
     }

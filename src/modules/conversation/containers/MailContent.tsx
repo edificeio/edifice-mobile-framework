@@ -306,7 +306,12 @@ class MailContentContainer extends React.PureComponent<
         )}
         <View style={{ marginTop: UI_SIZES.spacing.medium }} />
         {this.props.mail.attachments && this.props.mail.attachments.length > 0 && (
-          <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} dispatch={this.props.dispatch} />
+          <RenderPJs
+            attachments={this.props.mail.attachments}
+            mailId={this.props.mail.id}
+            dispatch={this.props.dispatch}
+            navigation={this.props.navigation}
+          />
         )}
       </View>
     );

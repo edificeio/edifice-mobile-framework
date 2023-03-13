@@ -17,6 +17,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { formatSource } from '~/framework/util/media';
+import { containsValue } from '~/framework/util/object';
 import { getUserSession } from '~/framework/util/session';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
@@ -35,9 +36,11 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
     versionOverride: RNConfigReader.BundleVersionOverride,
     versionType: RNConfigReader.BundleVersionType,
     avatarPhoto: undefined,
-    loadingMFARequirementForEmail: false,
-    loadingMFARequirementForMobile: false,
-    loadingMFARequirementForPassword: false,
+    loadingMFARequirement: {
+      email: false,
+      mobile: false,
+      password: false,
+    },
   };
 
   showWhoAreWe = this.props.session.platform.showWhoAreWe;
@@ -74,42 +77,47 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
     ]);
   };
 
-  public setLoadingMFARequirement = (modificationType: ModificationType, isLoading: boolean) => {
-    if (modificationType === ModificationType.EMAIL) {
-      this.setState({ loadingMFARequirementForEmail: isLoading });
-    } else if (modificationType === ModificationType.PASSWORD) {
-      this.setState({ loadingMFARequirementForPassword: isLoading });
-    } else if (modificationType === ModificationType.MOBILE) {
-      this.setState({ loadingMFARequirementForMobile: isLoading });
-    }
-  };
-
-  public getIsMFANeeded = async (modificationType: ModificationType) => {
+  public getMFARequirementAndRedirect = async (modificationType: ModificationType) => {
     try {
-      this.setLoadingMFARequirement(modificationType, true);
+      this.setState({ loadingMFARequirement: { ...this.state.loadingMFARequirement, [modificationType]: true } });
       const requirements = await userService.getUserRequirements();
-      const needMFA = requirements?.needMFA;
-      if (needMFA) await userService.getMFAValidationInfos();
-      return needMFA;
+      const needMfa = requirements?.needMfa;
+      if (needMfa) await userService.getMFAValidationInfos();
+      const routeNames = {
+        [ModificationType.EMAIL]: 'UserEmail',
+        [ModificationType.MOBILE]: 'UserMobile',
+        [ModificationType.PASSWORD]: 'ChangePassword',
+      };
+      const routeName = needMfa ? 'MFA' : routeNames[modificationType];
+      const params = {
+        [ModificationType.EMAIL]: {
+          navBarTitle: I18n.t('user.page.editEmail'),
+          modificationType: ModificationType.EMAIL,
+        },
+        [ModificationType.MOBILE]: {
+          navBarTitle: I18n.t('user.page.editMobile'),
+          modificationType: ModificationType.MOBILE,
+        },
+        [ModificationType.PASSWORD]: {
+          navBarTitle: I18n.t('user.page.editPassword'),
+          modificationType: ModificationType.PASSWORD,
+        },
+      };
+      const routeParams = params[modificationType];
+      this.props.navigation.navigate(routeName, routeParams);
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     } finally {
-      this.setLoadingMFARequirement(modificationType, false);
+      this.setState({ loadingMFARequirement: { ...this.state.loadingMFARequirement, [modificationType]: false } });
     }
   };
 
   public render() {
     const { navigation, userinfo, session } = this.props;
-    const {
-      loadingMFARequirementForEmail,
-      loadingMFARequirementForMobile,
-      loadingMFARequirementForPassword,
-      showVersionType,
-      versionOverride,
-      versionType,
-    } = this.state;
-    const isLoadingMFARequirement =
-      loadingMFARequirementForPassword || loadingMFARequirementForEmail || loadingMFARequirementForMobile;
+    const { loadingMFARequirement, showVersionType, versionOverride, versionType } = this.state;
+    const isNotStudent = session.user.type !== 'Student';
+    const isLoadingMFARequirement = containsValue(loadingMFARequirement, true);
+
     navigation.addListener('didFocus', () => {
       this.setState({
         avatarPhoto:
@@ -157,67 +165,25 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
             <ButtonLineGroup>
               <LineButton title="directory-notificationsTitle" onPress={() => navigation.navigate('NotifPrefs')} />
               <LineButton
-                loading={loadingMFARequirementForPassword}
+                loading={loadingMFARequirement.password}
                 disabled={isLoadingMFARequirement}
                 title="user.page.editPassword"
-                onPress={async () => {
-                  const isMFANeeded = await this.getIsMFANeeded(ModificationType.PASSWORD);
-                  navigation.navigate(isMFANeeded ? 'MFA' : 'ChangePassword', {
-                    navBarTitle: I18n.t('user.page.editPassword'),
-                    modificationType: ModificationType.PASSWORD,
-                  });
-                }}
+                onPress={() => this.getMFARequirementAndRedirect(ModificationType.PASSWORD)}
               />
-              {session.user.type !== 'Student' ? (
+              {isNotStudent ? (
                 <LineButton
-                  loading={loadingMFARequirementForEmail}
+                  loading={loadingMFARequirement.email}
                   disabled={isLoadingMFARequirement}
                   title="user.page.editEmail"
-                  onPress={async () => {
-                    const isMFANeeded = await this.getIsMFANeeded(ModificationType.EMAIL);
-                    const navigationInfos = isMFANeeded
-                      ? {
-                          routeName: 'MFA',
-                          routeParams: {
-                            navBarTitle: I18n.t('user.page.editEmail'),
-                            modificationType: ModificationType.EMAIL,
-                          },
-                        }
-                      : {
-                          routeName: 'UserEmail',
-                          routeParams: {
-                            navBarTitle: I18n.t('user.page.editEmail'),
-                            isModifyingEmail: true,
-                          },
-                        };
-                    navigation.navigate(navigationInfos.routeName, navigationInfos.routeParams);
-                  }}
+                  onPress={() => this.getMFARequirementAndRedirect(ModificationType.EMAIL)}
                 />
               ) : null}
-              {session.user.type !== 'Student' ? (
+              {isNotStudent ? (
                 <LineButton
-                  loading={loadingMFARequirementForMobile}
+                  loading={loadingMFARequirement.mobile}
                   disabled={isLoadingMFARequirement}
                   title="user.page.editMobile"
-                  onPress={async () => {
-                    const isMFANeeded = await this.getIsMFANeeded(ModificationType.MOBILE);
-                    const navigationInfos = isMFANeeded
-                      ? {
-                          routeName: 'MFA',
-                          routeParams: {
-                            navBarTitle: I18n.t('user.page.editMobile'),
-                            modificationType: ModificationType.MOBILE,
-                          },
-                        }
-                      : {
-                          routeName: 'UserMobile',
-                          routeParams: {
-                            navBarTitle: I18n.t('user.page.editMobile'),
-                            isModifyingMobile: true,
-                          },
-                        };
-                    navigation.navigate(navigationInfos.routeName, navigationInfos.routeParams);
-                  }}
+                  onPress={() => this.getMFARequirementAndRedirect(ModificationType.MOBILE)}
                 />
               ) : null}
               <LineButton title="directory-structuresTitle" onPress={() => navigation.navigate('Structures')} />

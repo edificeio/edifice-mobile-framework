@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { uniqueId } from '~/infra/oauth';
@@ -14,7 +15,6 @@ export const read = async (path: string, forceSync: boolean = true, platform: st
     console.debug("OLD DEPRECATED 'read' function: User offline, reading from cache");
   }
   const fromCache = await AsyncStorage.getItem(path);
-
   if (Connection.isOnline && !(!forceSync && fromCache)) {
     const response = await fetch(`${platform}${path}`, {
       headers: {
@@ -23,9 +23,9 @@ export const read = async (path: string, forceSync: boolean = true, platform: st
     });
     const data = await response.json();
     await AsyncStorage.setItem(path, JSON.stringify(data));
+    CookieManager.clearAll();
     return data;
   }
-
   if (fromCache) {
     return JSON.parse(fromCache);
   }

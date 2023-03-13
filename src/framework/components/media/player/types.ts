@@ -9,6 +9,9 @@ export enum MediaType {
 export interface MediaPlayerParams {
   type: MediaType;
   source: any;
+  filetype?: string;
 }
 
-export interface MediaPlayerProps extends NavigationInjectedProps<MediaPlayerParams> {}
+export interface MediaPlayerProps extends NavigationInjectedProps<MediaPlayerParams> {
+  connected: boolean;
+}

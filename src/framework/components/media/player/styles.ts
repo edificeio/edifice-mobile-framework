@@ -4,21 +4,28 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  page: {
-    backgroundColor: theme.palette.grey.darkness,
-    position: 'relative',
-  },
   back: {
-    position: 'absolute',
-    top: 0,
+    alignContent: 'flex-end',
+    backgroundColor: theme.palette.grey.darkness,
+    justifyContent: 'flex-end',
     left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,.6)',
-    zIndex: 9999999,
+    opacity: 0.6,
     paddingBottom: UI_SIZES.spacing.medium,
     paddingLeft: UI_SIZES.spacing.medium,
-    alignContent: 'flex-end',
-    justifyContent: 'flex-end',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 9999999,
+  },
+  overlayLandscape: {
+    height: 60,
+  },
+  overlayPortrait: {
+    height: 80,
+  },
+  page: {
+    backgroundColor: theme.palette.grey.darkness,
+    //position: 'relative',
   },
   playerLandscape: {
     backgroundColor: theme.palette.grey.darkness,

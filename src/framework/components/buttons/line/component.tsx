@@ -5,12 +5,12 @@ import * as ReactIs from 'react-is';
 import { ActivityIndicator } from 'react-native';
 
 import theme from '~/app/theme';
+import styles from '~/framework/components/buttons/line/styles';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
-import styles from './styles';
+import { NamedSVG } from '../../picture';
 
 export const ContainerView = styled.View({
   alignItems: 'center',
@@ -53,14 +53,21 @@ export const LineButton = ({
 }) => {
   return (
     <TouchableOpacity
-      disabled={disabled}
+      disabled={loading || disabled}
       style={[styles.container, first ? styles.containerFirst : last ? styles.containerLast : alone ? styles.containerAlone : null]}
       onPress={() => onPress()}>
-      <SmallText style={styles.lineButtonText}>{I18n.t(title)}</SmallText>
+      <SmallText style={styles.lineButtonText} numberOfLines={1}>
+        {I18n.t(title)}
+      </SmallText>
       {loading ? (
-        <ActivityIndicator color={theme.palette.primary.regular} />
+        <ActivityIndicator color={theme.palette.primary.regular} size={UI_SIZES.dimensions.width.mediumPlus} />
       ) : (
-        <Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.lineButtonIcon} />
+        <NamedSVG
+          name="ui-rafterRight"
+          width={UI_SIZES.dimensions.width.mediumPlus}
+          height={UI_SIZES.dimensions.width.mediumPlus}
+          fill={theme.palette.primary.regular}
+        />
       )}
     </TouchableOpacity>
   );

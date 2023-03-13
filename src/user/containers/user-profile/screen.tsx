@@ -35,12 +35,8 @@ import { IProfilePageProps, IProfilePageState } from './types';
 export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfilePageState> {
   defaultState: (force?: boolean) => IProfilePageState = force => ({
     displayName: this.props.userinfo.displayName,
-    email: this.props.userinfo.email,
     homePhone: this.props.userinfo.homePhone,
-    mobile: this.props.userinfo.mobile,
-    emailValid: true,
     homePhoneValid: true,
-    mobileValid: true,
     loginAlias: this.props.userinfo.loginAlias,
     loginAliasValid: true,
     updatingAvatar: false,
@@ -158,11 +154,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               })}
               {this.renderItem({
                 title: I18n.t('CellPhone'),
-                getter: () => this.state.mobile,
-                editable: true,
-                setter: mobile => this.setState({ mobile }),
-                keyboardType: 'phone-pad',
-                validator: { key: 'mobileValid', regex: ValidatorBuilder.PHONE_REGEX },
+                getter: () => userinfo.mobile,
               })}
               {this.renderItem({
                 title: I18n.t('Birthdate'),
@@ -211,7 +203,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           }}
           onChangeText={text => {
             if (validator) {
-              if (validator.key === 'homePhoneValid' || validator.key === 'mobileValid') {
+              if (validator.key === 'homePhoneValid') {
                 if (text === '') this.setState({ [validator.key]: true });
                 else this.setState({ [validator.key]: validator.regex.test(text) });
               } else {
@@ -285,6 +277,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps & N
             <HeaderAction
               onPress={() => {
                 navigation.setParams({ edit: false });
+                navigation.setParams({ updatedProfileValues: undefined });
                 if (navigation.getParam('onCancel')) navigation.getParam('onCancel')();
               }}
               text={I18n.t('Cancel')}
@@ -295,7 +288,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps & N
               onPress={() => {
                 const values = navigation.getParam('updatedProfileValues') as IProfilePageState;
                 if (!isEmpty(values)) {
-                  if (values.loginAliasValid && values.emailValid && values.homePhoneValid && values.mobileValid) {
+                  if (values.loginAliasValid && values.homePhoneValid) {
                     navigation.setParams({ edit: false });
                     if (navigation.getParam('onSave')) navigation.getParam('onSave')(navigation.getParam('updatedProfileValues'));
                   } else {

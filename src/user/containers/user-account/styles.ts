@@ -4,28 +4,18 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  page: {
-    backgroundColor: theme.palette.grey.white,
+  boxBottomPage: {
+    marginVertical: UI_SIZES.spacing.large,
+  },
+  linkDisconnect: {
+    color: theme.palette.status.failure.regular,
+    textAlign: 'center',
   },
   main: {
     flex: 1,
   },
-  svgHeader: {
-    position: 'absolute',
-  },
-  userInfo: {
-    alignItems: 'center',
-    marginBottom: UI_SIZES.spacing.large,
-    marginTop: UI_SIZES.spacing.tiny,
-  },
-  userInfo_name: {
-    marginTop: UI_SIZES.spacing.medium,
-  },
-  userInfo_type: {
-    color: theme.ui.text.light,
-  },
-  userInfo_button: {
-    marginTop: UI_SIZES.spacing.medium,
+  page: {
+    backgroundColor: theme.palette.grey.white,
   },
   section: {
     marginHorizontal: UI_SIZES.spacing.medium,
@@ -34,12 +24,8 @@ export default StyleSheet.create({
   sectionLast: {
     marginBottom: 0,
   },
-  linkDisconnect: {
-    color: theme.palette.status.failure.regular,
-    textAlign: 'center',
-  },
-  boxBottomPage: {
-    marginVertical: UI_SIZES.spacing.large,
+  svgHeader: {
+    position: 'absolute',
   },
   textVersion: {
     color: theme.palette.grey.graphite,
@@ -48,5 +34,19 @@ export default StyleSheet.create({
   titleSection: {
     color: theme.palette.grey.black,
     marginBottom: UI_SIZES.spacing.small,
+  },
+  userInfo: {
+    alignItems: 'center',
+    marginBottom: UI_SIZES.spacing.large,
+    marginTop: UI_SIZES.spacing.tiny,
+  },
+  userInfo_button: {
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  userInfo_name: {
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  userInfo_type: {
+    color: theme.ui.text.light,
   },
 });

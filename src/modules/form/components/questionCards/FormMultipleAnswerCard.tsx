@@ -56,10 +56,20 @@ export const FormMultipleAnswerCard = ({
     const { id, value } = choice;
     if (selectedChoices.includes(id)) {
       setSelectedChoices(selectedChoices.filter(choiceId => choiceId !== id));
-      responses = responses.filter(response => response.choiceId !== id);
+      //responses = responses.filter(response => response.choiceId !== id);
+      responses = responses.map(r => {
+        if (r.choiceId === choice.id) {
+          r.toDelete = true;
+        }
+        return r;
+      });
     } else {
+      // AMV2-472 temporary fix until form web 1.6.0
+      if (responses.length === 1 && !responses[0].choiceId) {
+        responses[0].toDelete = true;
+      }
       setSelectedChoices([...selectedChoices, id]);
-      responses = responses.filter(r => r.choiceId);
+      //responses = responses.filter(r => r.choiceId);
       responses.push({
         questionId: question.id,
         answer: value,

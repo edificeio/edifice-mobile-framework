@@ -137,3 +137,12 @@ export function splitWords(
   });
   return output;
 }
+
+/**
+ * Removes every illegal characters in Unix filesystem.
+ * @param name input string is not modified
+ * @returns The new string
+ */
+export function getSafeFileName(input?: string) {
+  return input?.replaceAll(/[\\0/]/g, '-');
+}

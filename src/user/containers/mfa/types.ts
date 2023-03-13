@@ -4,17 +4,17 @@ import { IUserSession } from '~/framework/util/session';
 import { IUpdatableProfileValues } from '~/user/actions/profile';
 
 export enum CodeState {
-  PRISTINE = 'pristine',
-  CODE_RESENT = 'codeResent',
-  CODE_WRONG = 'codeWrong',
-  CODE_EXPIRED = 'codeExpired',
   CODE_CORRECT = 'codeCorrect',
+  CODE_EXPIRED = 'codeExpired',
+  CODE_RESENT = 'codeResent',
   CODE_STATE_UNKNOWN = 'codeStateUnknown',
+  CODE_WRONG = 'codeWrong',
+  PRISTINE = 'pristine',
 }
 
 export enum ResendResponse {
-  SUCCESS = 'success',
   FAIL = 'fail',
+  SUCCESS = 'success',
 }
 
 export interface MFAScreenDataProps {

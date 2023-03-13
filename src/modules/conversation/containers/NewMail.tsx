@@ -71,7 +71,7 @@ type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & Nav
 
 interface ICreateMailState {
   id?: string;
-  mail: newMail;
+  mail: NewMail;
   tempAttachment?: any;
   isPrefilling?: boolean;
   prevBody?: string;
@@ -79,7 +79,7 @@ interface ICreateMailState {
   webDraftWarning: boolean;
 }
 
-type newMail = {
+type NewMail = {
   to: ISearchUsers;
   cc: ISearchUsers;
   cci: ISearchUsers;
@@ -117,6 +117,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
     this.props.clearContent();
     this.props.setup();
+    if (
+      this.props.navigation.getParam('mailId') !== undefined &&
+      this.state.id === undefined &&
+      this.props.navigation.getParam('type') === DraftType.DRAFT
+    ) {
+      this.setState({ id: this.props.navigation.getParam('mailId') });
+    }
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
@@ -136,34 +143,32 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.state.id === undefined &&
       this.props.navigation.getParam('type') === DraftType.DRAFT
     )
-      this.setState({ id: this.props.navigation.getParam('mailId') });
-
-    // Check if html tags are present in body
-    if (this.props.navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !this.state.webDraftWarning) {
-      const removeWrapper = (text: string) => {
-        return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
-      };
-      let checkBody = removeWrapper(this.props.mail.body);
-      checkBody = checkBody.split('<hr class="ng-scope">')[0];
-      checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
-      if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
-        this.setState({ webDraftWarning: true });
-        Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
-          {
-            text: I18n.t('common.quit'),
-            onPress: async () => {
-              this.props.navigation.goBack();
+      if (this.props.navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !this.state.webDraftWarning) {
+        // Check if html tags are present in body
+        const removeWrapper = (text: string) => {
+          return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
+        };
+        let checkBody = removeWrapper(this.props.mail.body);
+        checkBody = checkBody.split('<hr class="ng-scope">')[0];
+        checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
+        if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
+          this.setState({ webDraftWarning: true });
+          Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
+            {
+              text: I18n.t('common.quit'),
+              onPress: async () => {
+                this.props.navigation.goBack();
+              },
+              style: 'cancel',
             },
-            style: 'cancel',
-          },
-          {
-            text: I18n.t('common.continue'),
-            onPress: async () => {},
-            style: 'default',
-          },
-        ]);
+            {
+              text: I18n.t('common.continue'),
+              onPress: async () => {},
+              style: 'default',
+            },
+          ]);
+        }
       }
-    }
   };
 
   navigationHeaderFunction = {
@@ -651,7 +656,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
               <PopupMenu
                 actions={[
                   cameraAction({ callback: addGivenAttachment }),
-                  galleryAction({ callback: addGivenAttachment, multiple: true }),
+                  galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
                   documentAction({ callback: addGivenAttachment }),
                 ]}>
                 <HeaderIcon name="attachment" />

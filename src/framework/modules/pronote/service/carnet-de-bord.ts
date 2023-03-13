@@ -2,6 +2,7 @@
  * CarnetDeBord Service
  * Controls and interpret API of the feature of Pronote.
  */
+import CookieManager from '@react-native-cookies/cookies';
 import { XMLParser } from 'fast-xml-parser';
 import moment from 'moment';
 
@@ -427,7 +428,8 @@ export default {
       await Promise.all(
         matchingApps.map(async app => {
           const url = await redirect(session, app.address, undefined, true);
-          if (url) await fetch(url); // No signature needed here, it's external url containing a custom ticket
+          if (url) await fetch(url);
+          CookieManager.clearAll(); // No signature needed here, it's external url containing a custom ticket
         }),
       );
       // Then, retry

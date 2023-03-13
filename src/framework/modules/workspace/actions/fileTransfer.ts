@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import { Platform } from 'react-native';
 import Share from 'react-native-share';
 import Toast from 'react-native-tiny-toast';
+import type { NavigationInjectedProps } from 'react-navigation';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { UI_ANIMATIONS } from '~/framework/components/constants';
@@ -9,9 +10,11 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile, actionTypes } from '~/framework/modules/workspace/reducer';
 import workspaceService, { IWorkspaceUploadParams, factoryRootFolder } from '~/framework/modules/workspace/service';
 import { IDistantFile, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { openDocument } from '~/framework/util/fileHandler/actions';
 import type { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+import { urlSigner } from '~/infra/oauth';
 
 /**
  * Take a file from the mobile and post it to the backend.
@@ -173,7 +176,7 @@ export const renameWorkspaceFileAction = (file: IFile, name: string) => async (d
 
 const convertIFileToIDistantFile = (file: IFile) => {
   return {
-    url: file.url,
+    url: urlSigner.getAbsoluteUrl(file.url),
     filename: file.name,
     filesize: file.size,
     filetype: file.contentType,
@@ -184,19 +187,18 @@ const convertIFileToIDistantFile = (file: IFile) => {
  * Download and open the given file.
  */
 export const workspacePreviewActionsCreators = createAsyncActionCreators(actionTypes.preview);
-export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {
-  try {
-    dispatch(workspacePreviewActionsCreators.request());
-    const session = assertSession();
-    const distanteFile = convertIFileToIDistantFile(file);
-    const syncedFile = await fileTransferService.downloadFile(session, distanteFile, {});
-    syncedFile.open();
-    dispatch(workspacePreviewActionsCreators.receipt(syncedFile));
-  } catch (e) {
-    dispatch(workspacePreviewActionsCreators.error(e as Error));
-    throw e;
-  }
-};
+export const downloadThenOpenWorkspaceFileAction =
+  (file: IFile, navigation: NavigationInjectedProps['navigation']) => async (dispatch, getState) => {
+    try {
+      dispatch(workspacePreviewActionsCreators.request());
+      const distanteFile = convertIFileToIDistantFile(file);
+      const resultingFile = await openDocument(distanteFile, navigation);
+      dispatch(workspacePreviewActionsCreators.receipt(resultingFile));
+    } catch (e) {
+      dispatch(workspacePreviewActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Download and share the given file.

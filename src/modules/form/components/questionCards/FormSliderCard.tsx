@@ -46,12 +46,12 @@ interface IFormSliderCardProps {
 }
 
 const getDefaultValue = (min: number, max: number, step: number) => {
-  const half = Math.round((max - min) / 2);
+  const half = Math.round((max - min) / 2 + min);
   return (half / step) * step;
 };
 
 export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormSliderCardProps) => {
-  const { title, mandatory, cursorMinVal = 0, cursorMaxVal = 100, cursorStep = 1, cursorLabelMinVal, cursorLabelMaxVal } = question;
+  const { title, mandatory, cursorMinVal = 0, cursorMaxVal = 100, cursorStep = 1, cursorMinLabel, cursorMaxLabel } = question;
   const [value, setValue] = React.useState(
     responses[0]?.answer ? Number(responses[0]?.answer) : getDefaultValue(cursorMinVal, cursorMaxVal, cursorStep),
   );
@@ -100,7 +100,7 @@ export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer
             </View>
             <SmallText>{cursorMaxVal}</SmallText>
           </View>
-          {cursorLabelMinVal || cursorLabelMaxVal ? (
+          {cursorMinLabel || cursorMaxLabel ? (
             <View style={styles.rowContainer}>
               <TouchableOpacity
                 onPress={() => setLabelExpanded(true)}
@@ -108,7 +108,7 @@ export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer
                 activeOpacity={1}
                 style={styles.labelContainer}>
                 <CaptionText numberOfLines={isLabelExpanded ? undefined : 2} style={styles.labelText}>
-                  {cursorLabelMinVal}
+                  {cursorMinLabel}
                 </CaptionText>
               </TouchableOpacity>
               <TouchableOpacity
@@ -117,7 +117,7 @@ export const FormSliderCard = ({ isDisabled, question, responses, onChangeAnswer
                 activeOpacity={1}
                 style={styles.labelContainer}>
                 <CaptionText numberOfLines={isLabelExpanded ? undefined : 2} style={styles.labelText}>
-                  {cursorLabelMaxVal}
+                  {cursorMaxLabel}
                 </CaptionText>
               </TouchableOpacity>
             </View>

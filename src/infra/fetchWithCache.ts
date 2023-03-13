@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CookieManager from '@react-native-cookies/cookies';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
 
@@ -23,6 +24,7 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
     }
   }
   const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
+  CookieManager.clearAll();
   return fetch(req);
 }
 

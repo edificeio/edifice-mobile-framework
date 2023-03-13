@@ -107,5 +107,6 @@ export const dismissFlashMessageAction =
     } catch {
       // ToDo: Error handling (notifier: "votre action n'a pas été correctement exécutée (problème de connexion)")
       dispatch(flashMessagesActions.dismissError(flashMessageId));
+      throw e;
     }
   };

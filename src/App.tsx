@@ -153,7 +153,7 @@ function connectWithStore(store: any, WrappedComponent: any, ...args: [any?, any
 }
 
 const theStore: any = { store: undefined };
-const getStore = () => {
+export const getStore = () => {
   if (!theStore.store) theStore.store = createMainStore();
   return theStore.store;
 };

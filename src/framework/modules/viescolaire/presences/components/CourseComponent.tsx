@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
     left: '30%',
   },
   itemContent: { flex: 1, padding: UI_SIZES.spacing.medium, justifyContent: 'space-evenly' },
-  itemRowStyle: { flexDirection: 'row' },
-  iconMarginRight: { marginRight: UI_SIZES.spacing.small },
+  itemRowStyle: { flexDirection: 'row', alignItems: 'center' },
+  iconMarginRight: { marginRight: UI_SIZES.spacing.minor },
 });
 
 export default ({

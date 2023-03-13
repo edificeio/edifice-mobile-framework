@@ -36,11 +36,11 @@ export const computeNavBar = ({
 
 const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => {
   const preview = () => {
-    props.previewFile(props.file);
+    props.previewFile(props.file, props.navigation);
   };
 
   const download = () => {
-    props.downloadFile(props.file);
+    props.downloadFile([props.file]);
   };
 
   const share = () => {

@@ -2,7 +2,6 @@ import Filesize from 'filesize';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
-import FileViewer from 'react-native-file-viewer';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Toast from 'react-native-tiny-toast';
@@ -17,6 +16,7 @@ import { SmallText } from '~/framework/components/text';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
@@ -91,7 +91,7 @@ const getAttachmentTypeByExt = (filename: string) => {
   return icon;
 };
 
-const openFile = (notifierId: string, file?: SyncedFile) => {
+const openFile = (notifierId: string, file: SyncedFile | undefined) => {
   return dispatch => {
     if (file) {
       try {
@@ -125,7 +125,7 @@ class Attachment extends React.PureComponent<
     style: ViewStyle;
     editMode?: boolean;
     onRemove?: () => void;
-    onOpenFile: (notifierId: string, file?: LocalFile) => void;
+    onOpenFile: (notifierId: string, file: LocalFile | undefined, navigation: NavigationInjectedProps['navigation']) => void;
     onDownloadFile: (notifierId: string, file?: LocalFile, toastMessage?: string) => void;
     onDownload?: () => void;
     onError?: () => void;
@@ -186,7 +186,9 @@ class Attachment extends React.PureComponent<
             alignItems: 'center',
             height: 30,
           }}>
-          <Pressable style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.onPressAttachment(notifierId)}>
+          <Pressable
+            style={{ flexDirection: 'row', flex: 1 }}
+            onPress={() => this.onPressAttachment(notifierId, this.props.navigation)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
                 <ActivityIndicator
@@ -280,7 +282,7 @@ class Attachment extends React.PureComponent<
     );
   }
 
-  public async onPressAttachment(notifierId: string) {
+  public async onPressAttachment(notifierId: string, navigation: NavigationInjectedProps['navigation']) {
     const { onOpenFile, onOpen, attachment, editMode } = this.props;
     const { downloadState, newDownloadedFile } = this.state;
     const fileType = editMode
@@ -305,15 +307,12 @@ class Attachment extends React.PureComponent<
       if (onOpen) onOpen();
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
         try {
-          await FileViewer.open(file!._filepathNative, {
-            showOpenWithDialog: true,
-            showAppsSuggestions: true,
-          });
-        } catch {
-          // TODO: handle error
+          if (file) await openDocument(file, navigation);
+        } catch (error) {
+          console.log(error);
         }
       } else {
-        onOpenFile(notifierId, file);
+        onOpenFile(notifierId, file, navigation);
       }
     } else {
       this.startDownload(attachment as IRemoteAttachment).catch(() => {

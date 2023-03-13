@@ -7,7 +7,7 @@ import { assertPermissions } from '~/framework/util/permissions';
 
 import { ImagePicked, MenuPickerActionProps } from './types';
 
-export default function galleryAction(props: MenuPickerActionProps & { multiple?: boolean }) {
+export default function galleryAction(props: MenuPickerActionProps & { multiple?: boolean; synchrone?: boolean }) {
   const imageCallback = async (images: LocalFile[]) => {
     try {
       for (const img of images) {
@@ -15,7 +15,8 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
           ...img.nativeInfo,
           ...img,
         };
-        props.callback!(imgFormatted as ImagePicked);
+        if (props.synchrone) await props.callback!(imgFormatted as ImagePicked);
+        else props.callback!(imgFormatted as ImagePicked);
       }
     } catch {
       /* empty */

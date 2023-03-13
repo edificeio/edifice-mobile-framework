@@ -11,9 +11,15 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Trackers } from '~/framework/util/tracker';
 
-interface ILoginWayfScreenProps extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf> {}
+interface ILoginWayfScreenReduxProps {
+  auth: IAuthState;
+}
+interface ILoginWayfScreenProps
+  extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf>,
+    ILoginWayfScreenReduxProps {}
 
 export interface ILoginWayfScreenState {}
 
@@ -37,6 +43,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
 
   public render() {
     const { navigation, route } = this.props;
+    const { error } = this.props.auth;
     return (
       <PageView>
         <SafeAreaView style={styles.safeArea}>
@@ -57,4 +64,9 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
   }
 }
 
-export default connect()(LoginWAYFPage);
+export default connect((state: any, props: any): ILoginWayfScreenReduxProps => {
+  const auth = getAuthState(state);
+  return {
+    auth,
+  };
+})(LoginWAYFPage);

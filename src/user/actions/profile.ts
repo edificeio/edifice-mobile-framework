@@ -13,10 +13,10 @@ export interface IUpdatableProfileValues {
   displayName?: string;
   email?: string;
   homePhone?: string;
-  mobile?: string;
   loginAlias?: string;
-  picture?: string;
+  mobile?: string;
   photo?: string;
+  picture?: string;
 }
 
 export const actionTypeProfileUpdateRequested = userConfig.createActionType('PROFILE_UPDATE_REQUESTED');

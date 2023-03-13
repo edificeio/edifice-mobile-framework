@@ -2,6 +2,7 @@
  * Tracking manager, aka "Tracker"
  * Collect data throught Matomo and AppCenter.
  */
+import CookieManager from '@react-native-cookies/cookies';
 import AppCenter from 'appcenter';
 import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
@@ -227,6 +228,8 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
         }
       } catch {
         if (++this.errorCount >= 3) this.sending = false;
+      } finally {
+        CookieManager.clearAll();
       }
     }
     this.sending = false;
@@ -258,7 +261,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       news: 'Actualites',
       schoolbook: 'SchoolBook',
       homework: 'Homeworks',
-      workspace: 'Worksapce',
+      workspace: 'Workspace',
       conversation: 'Conversation',
       user: 'MyAccount',
       zimbra: 'Zimbra',

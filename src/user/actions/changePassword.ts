@@ -1,3 +1,4 @@
+import CookieManager from '@react-native-cookies/cookies';
 import I18n from 'i18n-js';
 import Toast from 'react-native-tiny-toast';
 import { Action, AnyAction, Dispatch } from 'redux';
@@ -97,6 +98,8 @@ export function initChangePasswordAction(args: IChangePasswordUserInfo) {
       return initChangePasswordAction;
     } catch {
       dispatch(changePasswordContextErrorAction());
+    } finally {
+      CookieManager.clearAll();
     }
   };
 }

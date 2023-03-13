@@ -28,9 +28,7 @@ export type IProfilePageProps = IProfilePageDataProps &
   };
 
 export type IProfilePageState = IUpdatableProfileValues & {
-  emailValid?: boolean;
   homePhoneValid?: boolean;
-  mobileValid?: boolean;
   loginAliasValid?: boolean;
   updatingAvatar?: boolean;
 };

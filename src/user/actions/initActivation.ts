@@ -1,3 +1,4 @@
+import CookieManager from '@react-native-cookies/cookies';
 import { Action } from 'redux';
 
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
@@ -44,6 +45,8 @@ export function initActivationAccount(args: IActivationUserInfo, redirect: boole
       dispatch(activationContextReceived(activationContext));
     } catch {
       dispatch(activationContextError());
+    } finally {
+      CookieManager.clearAll();
     }
   };
 }
