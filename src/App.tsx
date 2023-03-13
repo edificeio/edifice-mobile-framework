@@ -8,6 +8,7 @@ import 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { Provider, connect } from 'react-redux';
+import FlipperAsyncStorage from 'rn-flipper-async-storage-advanced';
 import 'ts-polyfill/lib/es2019-object';
 
 import AppScreen from './AppScreen';
@@ -52,6 +53,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     return (
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={this.props.store}>
+          <FlipperAsyncStorage />
           <View style={UI_STYLES.flex1}>
             <StatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />
             <AppScreen />

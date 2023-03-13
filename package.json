@@ -153,6 +153,7 @@
     "redux": "4.2.1",
     "redux-flipper": "2.0.2",
     "redux-thunk": "2.4.2",
+    "rn-flipper-async-storage-advanced": "1.0.4",
     "rn-material-ui-textfield": "1.0.9",
     "sax": "1.2.4",
     "saxophone": "0.7.2",
