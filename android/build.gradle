@@ -17,7 +17,7 @@ buildscript {
         maven { url 'https://jcenter.bintray.com'}
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:7.4.1')
+        classpath('com.android.tools.build:gradle:7.4.2')
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("de.undercouch:gradle-download-task:5.0.1")
         classpath("com.google.gms:google-services:4.3.15")
