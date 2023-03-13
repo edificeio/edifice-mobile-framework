@@ -45,9 +45,9 @@ export type ICount = {
 };
 
 export interface ConversationMailListScreenNavigationParams {
-  folderId: any;
+  folderId: string;
   folderName: string;
-  key: any;
+  key: string;
 }
 export interface ConversationMailListScreenEventProps {
   fetchInit: () => IInit;
@@ -210,6 +210,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
         firstFetch={this.state.firstFetch}
         fetchRequested={this.state.fetchRequested}
         fetchCompleted={this.fetchCompleted}
+        navigationKey={this.props.route.param.key}
       />
     );
   }
