@@ -174,7 +174,7 @@ export const renameWorkspaceFileAction = (file: IFile, name: string) => async (d
   }
 };
 
-const convertIFileToIDistantFile = (file: IFile) => {
+export const convertIFileToIDistantFile = (file: IFile) => {
   return {
     url: urlSigner.getAbsoluteUrl(file.url),
     filename: file.name,

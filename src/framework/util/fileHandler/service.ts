@@ -17,12 +17,11 @@ import RNFS, {
 } from 'react-native-fs';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
 import { assertPermissions } from '~/framework/util/permissions';
+import { getSafeFileName } from '~/framework/util/string';
 import { urlSigner } from '~/infra/oauth';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-import { getSafeFileName } from '../string';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };

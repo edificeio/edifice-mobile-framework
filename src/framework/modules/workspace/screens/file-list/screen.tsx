@@ -20,6 +20,7 @@ import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
+  convertIFileToIDistantFile,
   copyWorkspaceFilesAction,
   deleteWorkspaceFilesAction,
   downloadThenOpenWorkspaceFileAction,
@@ -43,7 +44,6 @@ import { openDocument } from '~/framework/util/fileHandler/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { convertIFileToIDistantFile } from '~/modules/workspace/actions';
 
 import styles from './styles';
 import { IWorkspaceFileListScreenProps } from './types';
