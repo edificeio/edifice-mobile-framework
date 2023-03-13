@@ -2,11 +2,12 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
-import { getFileIcon } from '~/modules/conversation/utils/fileIcon';
+import { getFileIcon } from '~/framework/modules/conversation/utils/fileIcon';
 
 const attachmentStyle = {
   flexDirection: 'row',
@@ -41,7 +42,7 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
   );
 };
 
-const mapStateToProps = (state: any) => ({
+const mapStateToProps = (state: IGlobalState) => ({
   uploadProgress: [state.progress.value],
 });
 

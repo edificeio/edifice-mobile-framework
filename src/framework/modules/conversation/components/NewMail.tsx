@@ -1,3 +1,4 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
 import { Alert, Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
@@ -29,20 +30,22 @@ type IAttachment = {
   contentType: string;
   size?: number;
 };
-
-interface NewMailComponentProps {
-  isFetching: boolean;
-  headers: HeadersProps;
+interface ConversationNewMailComponentEventProps {
   onDraftSave: () => void;
   onHeaderChange: (header: HeadersProps) => void;
-  body: string;
   onBodyChange: (body: string) => void;
-  attachments: IDistantFileWithId[];
   onAttachmentChange: (attachments: IAttachment[]) => void;
   onAttachmentDelete: (attachmentId: string) => void;
+}
+interface ConversationNewMailComponentDataProps {
+  isFetching: boolean;
+  headers: HeadersProps;
+  body: string;
+  attachments: IDistantFileWithId[];
   prevBody: any;
   isReplyDraft: boolean;
 }
+export type ConversationNewMailComponentProps = ConversationNewMailComponentEventProps & ConversationNewMailComponentDataProps;
 
 const styles = StyleSheet.create({
   mailPart: {
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
   body: { zIndex: 1, flex: 1 },
 });
 
-export default (props: NewMailComponentProps) => {
+export default (props: ConversationNewMailComponentProps) => {
   const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ to: false, cc: false, cci: false });
   const [keyboardHeight, setkeyboardHeight] = React.useState(0);
   const [showExtraFields, toggleExtraFields] = React.useState(false);
