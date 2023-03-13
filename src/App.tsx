@@ -28,7 +28,7 @@ import { IUserAuthState } from './user/reducers/auth';
 import { isInActivatingMode } from './user/selectors';
 import { IUserInfoState } from './user/state/info';
 
-require('./homework');
+require('~/framework/modules/homework');
 require('./user');
 
 if (Platform.OS === 'android') {
