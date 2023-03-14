@@ -8,6 +8,9 @@ import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScr
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
+import { ISession } from '../modules/auth/model';
+import { openUrl } from '../util/linking';
+
 export interface IBackdropPdfReaderState {
   error: boolean;
 }
@@ -20,13 +23,19 @@ export class BackdropPdfReaderScreen extends React.PureComponent<
   NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Pdf>,
   IBackdropPdfReaderState
 > {
-  // DECLARATIONS =================================================================================
-
   state: IBackdropPdfReaderState = {
     error: false,
   };
 
-  // RENDER =======================================================================================
+  handleError(err: any) {
+    this.setState({ error: !!err });
+  }
+
+  handlePressLink(
+    uri: string | ((session: ISession) => string | false | Promise<string | false | undefined> | undefined) | undefined,
+  ) {
+    openUrl(uri);
+  }
 
   render() {
     const { src: uri } = this.props.route.params;
@@ -41,11 +50,8 @@ export class BackdropPdfReaderScreen extends React.PureComponent<
         }}
         source={{ cache: true, uri }}
         style={styles.pdf}
-        onError={err => {
-          // Note: when the backdrop is dimissed, the "uri" prop becomes undefined and onError activates;
-          // therefore, we only use setState if the modal is displayed (the "visible" prop is true).
-          this.setState({ error: !!err });
-        }}
+        onError={this.handleError}
+        onPressLink={this.handlePressLink}
       />
     );
   }
