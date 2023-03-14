@@ -1,35 +1,33 @@
 /**
  * Conversation notif handler
- * @scaffolder Remove this file if your module handles no notification.
  *
  * The notifHandler registers some behaviours for given notif types and event-types.
  * It applicates to both timelineNotififation and pushNotifications.
  */
+import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import { navigate } from '~/framework/navigation/helper';
+import { computeRelativePath } from '~/framework/util/navigation';
+import { IResourceIdNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-import { ConversationNavigationParams, conversationRouteNames } from './navigation';
-
-const handleSomeNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  // @scaffolder extract info from notification here
-  
-  // @scaffolder navigate somewhere here
-
-  // @scaffolder put `return {managed: 0}` if notification is skipped
-  return {managed: 0}
-  
-  // return {
-  //   managed: 1,
-  //   trackInfo: { action: 'Conversation', name: `${notification.type}.${notification['event-type']}` },
-  // };
-};
+const handleConversationNotificationAction: NotifHandlerThunkAction =
+  (notification, trackCategory, navState) => async (dispatch, getState) => {
+    const route = computeRelativePath(`${moduleConfig.routeName}/mail-content`, navState);
+    navigate(route, {
+      notification,
+      mailId: (notification as IResourceIdNotification).resource.id,
+    });
+    return {
+      managed: 1,
+      trackInfo: { action: 'Conversation', name: `${notification.type}.${notification['event-type']}` },
+    };
+  };
 
 export default () =>
   registerNotifHandlers([
     {
-      type: 'SOME-TYPE', // Replace this with the backend notification type
-      'event-type': 'SOME-EVENT-TYPE', // Replace this with the backend notification event-type
-      notifHandlerAction: handleSomeNotificationAction,
+      type: 'MESSAGERIE',
+      'event-type': 'SEND-MESSAGE',
+      notifHandlerAction: handleConversationNotificationAction,
     },
   ]);
- 
