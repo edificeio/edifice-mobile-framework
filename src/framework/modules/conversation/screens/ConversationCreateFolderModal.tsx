@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -74,13 +74,20 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
     const textInputStyle = {
       color: theme.ui.text.regular,
     } as ViewStyle;
+    //FIXME: create/move to styles.ts
+    const styles = StyleSheet.create({
+      inputContainer: { width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium },
+      modalContent: { width: 350 },
+      modalContentBlock: { flexDirection: 'row' },
+    });
+    // Ignore ModalBox lint errors
     return (
       <ModalBox isVisible={show} backdropOpacity={0.5}>
-        <ModalContent style={{ width: 350 }}>
+        <ModalContent style={styles.modalContent}>
           <ModalContentBlock>
             <SmallBoldText>{I18n.t('conversation.createDirectory')}</SmallBoldText>
           </ModalContentBlock>
-          <View style={{ width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
+          <View style={styles.inputContainer}>
             <TextInput
               autoFocus
               value={name}
@@ -90,7 +97,7 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
               style={textInputStyle}
             />
           </View>
-          <ModalContentBlock style={{ flexDirection: 'row' }}>
+          <ModalContentBlock style={styles.modalContentBlock}>
             <DialogButtonCancel onPress={this.props.onClose} />
             <DialogButtonOk disabled={!this.state.name} label={I18n.t('conversation.create')} onPress={this.onConfirm} />
           </ModalContentBlock>

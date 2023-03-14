@@ -55,11 +55,11 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
 };
 
 export type IUserInfosBackend = {
-  result: Array<{
+  result: {
     id: string;
     displayNames: string;
     type: string[];
-  }>;
+  }[];
 };
 
 const userInfosAdapter: (data: IUserInfosBackend) => IUserInfosBackend = data => {

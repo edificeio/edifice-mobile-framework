@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { FlatList, StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import theme from '~/app/theme';
@@ -8,6 +8,34 @@ import { Icon } from '~/framework/components/icon';
 import { SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { newMailService } from '~/framework/modules/conversation/service/newMail';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
+
+//FIXME: create/move to styles.ts
+const styles = StyleSheet.create({
+  displayName: { flex: 1, marginLeft: UI_SIZES.spacing.small },
+  foundUserOrGroupContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: UI_SIZES.spacing.minor,
+    marginLeft: UI_SIZES.spacing.minor,
+  },
+  selectedListContainer: { flexDirection: 'row', flexWrap: 'wrap', flex: 0 },
+  userOrGroupSearch: {
+    overflow: 'visible',
+    marginHorizontal: UI_SIZES.spacing.minor,
+    flex: 1,
+  },
+});
+
+const FoundUserOrGroup = ({ id, displayName, onPress }) => {
+  return (
+    <TouchableOpacity style={styles.foundUserOrGroupContainer} onPress={onPress}>
+      <SingleAvatar size={undefined} status={undefined} userId={id} />
+      <SmallText numberOfLines={1} ellipsizeMode="tail" style={styles.displayName}>
+        {displayName}
+      </SmallText>
+    </TouchableOpacity>
+  );
+};
 
 export const FoundList = ({ foundUserOrGroup, addUser }) => {
   const insets = useSafeAreaInsets();
@@ -22,24 +50,6 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
     shadowOpacity: 0.25,
     shadowRadius: 2,
   } as ViewStyle;
-
-  const FoundUserOrGroup = ({ id, displayName, onPress }) => {
-    return (
-      <TouchableOpacity
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginVertical: UI_SIZES.spacing.minor,
-          marginLeft: UI_SIZES.spacing.minor,
-        }}
-        onPress={onPress}>
-        <SingleAvatar userId={id} />
-        <SmallText numberOfLines={1} ellipsizeMode="tail" style={{ flex: 1, marginLeft: UI_SIZES.spacing.small }}>
-          {displayName}
-        </SmallText>
-      </TouchableOpacity>
-    );
-  };
 
   return foundUserOrGroup.length > 0 ? (
     <FlatList
@@ -102,36 +112,35 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key,
 
 //Selected Item
 
+const SelectedUserOrGroup = ({ onClick, displayName }) => {
+  const itemStyle = {
+    backgroundColor: theme.palette.complementary.blue.pale,
+    borderRadius: 3,
+    paddingVertical: UI_SIZES.spacing.tiny,
+    paddingHorizontal: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.tiny,
+    flex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+  } as ViewStyle;
+
+  const userLabel = { color: theme.palette.complementary.blue.regular, textAlignVertical: 'center' } as ViewStyle;
+
+  return (
+    <TouchableOpacity onPress={onClick} style={itemStyle}>
+      <SmallText style={userLabel}>{displayName}</SmallText>
+      <Icon
+        name="close"
+        size={12}
+        color={theme.palette.complementary.blue.regular}
+        style={{ marginLeft: UI_SIZES.spacing.minor }}
+      />
+    </TouchableOpacity>
+  );
+};
 export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
-  const SelectedUserOrGroup = ({ onClick, displayName }) => {
-    const itemStyle = {
-      backgroundColor: theme.palette.complementary.blue.pale,
-      borderRadius: 3,
-      paddingVertical: UI_SIZES.spacing.tiny,
-      paddingHorizontal: UI_SIZES.spacing.tiny,
-      marginRight: UI_SIZES.spacing.tiny,
-      flex: 0,
-      flexDirection: 'row',
-      alignItems: 'center',
-    } as ViewStyle;
-
-    const userLabel = { color: theme.palette.complementary.blue.regular, textAlignVertical: 'center' } as ViewStyle;
-
-    return (
-      <TouchableOpacity onPress={onClick} style={itemStyle}>
-        <SmallText style={userLabel}>{displayName}</SmallText>
-        <Icon
-          name="close"
-          size={12}
-          color={theme.palette.complementary.blue.regular}
-          style={{ marginLeft: UI_SIZES.spacing.minor }}
-        />
-      </TouchableOpacity>
-    );
-  };
-
   return selectedUsersOrGroups.length > 0 ? (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', flex: 0 }}>
+    <View style={styles.selectedListContainer}>
       {selectedUsersOrGroups.map(userOrGroup => (
         <SelectedUserOrGroup
           key={userOrGroup.id}
@@ -147,15 +156,15 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
 
 export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
   const [search, updateSearch] = React.useState('');
-  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState([]);
-  const searchTimeout = React.useRef();
+  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<any[]>([]);
+  const searchTimeout = React.useRef<NodeJS.Timeout>();
 
   React.useEffect(() => {
     const filterUsersOrGroups = found => selectedUsersOrGroups?.every(selected => selected.id !== found.id);
     if (search.length >= 3) {
       updateFoundUsersOrGroups([]);
-      window.clearTimeout(searchTimeout.current);
-      searchTimeout.current = window.setTimeout(() => {
+      clearTimeout(searchTimeout.current);
+      searchTimeout.current = setTimeout(() => {
         newMailService.searchUsers(search).then(({ groups, users }) => {
           const filteredUsers = users?.filter(filterUsersOrGroups) || [];
           const filteredGroups = groups?.filter(filterUsersOrGroups) || [];
@@ -166,9 +175,9 @@ export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }
 
     return () => {
       updateFoundUsersOrGroups([]);
-      window.clearTimeout(searchTimeout.current);
+      clearTimeout(searchTimeout.current);
     };
-  }, [filterUsersOrGroups, search]);
+  }, [search, selectedUsersOrGroups]);
 
   const removeUser = id => onChange(selectedUsersOrGroups?.filter(user => user.id !== id) || []);
   const addUser = userOrGroup => {
@@ -177,14 +186,11 @@ export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }
   };
 
   return (
-    <View
-      style={{
-        overflow: 'visible',
-        marginHorizontal: UI_SIZES.spacing.minor,
-        flex: 1,
-      }}>
+    <View style={styles.userOrGroupSearch}>
       <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
       <Input
+        key={1}
+        inputRef={undefined}
         autoFocus={autoFocus}
         value={search}
         onChangeText={updateSearch}

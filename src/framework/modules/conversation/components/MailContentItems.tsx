@@ -20,8 +20,29 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 const styles = StyleSheet.create({
+  additionalInfos: { flex: 0, flexDirection: 'row' },
+  attachmentContainer: { flex: 0 },
+  attachmentSubContainer: { flexDirection: 'row', flex: 0, alignItems: 'center', borderRadius: 6 },
+  attachmentsToggle: { padding: UI_SIZES.spacing.tiny, flex: 0 },
+  contactName: { flex: 1 },
+  contactNameContainer: { flex: 0 },
+  contactNameSubContainer: { flex: 0, flexDirection: 'row' },
   containerMail: {
     backgroundColor: theme.ui.background.card,
+    flexDirection: 'column',
+    flex: 0,
+  },
+  dotReceiverColor: {
+    width: 8,
+    height: 8,
+    borderRadius: 15,
+    marginTop: UI_SIZES.spacing.tiny,
+    marginRight: UI_SIZES.spacing.tiny,
+  },
+  fileIcon: { flex: 0 },
+  footerButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
   gridButtonTextPJnb: {
     color: theme.palette.primary.regular,
@@ -34,16 +55,11 @@ const styles = StyleSheet.create({
     marginLeft: UI_SIZES.spacing.tiny,
     flex: 1,
   },
-  dotReceiverColor: {
-    width: 8,
-    height: 8,
-    borderRadius: 15,
-    marginTop: UI_SIZES.spacing.tiny,
-    marginRight: UI_SIZES.spacing.tiny,
-  },
   greyColor: {
     color: theme.palette.grey.graphite,
   },
+  gridAvatarsContainer: { alignSelf: 'flex-start', marginTop: UI_SIZES.spacing.medium + UI_SIZES.spacing.tiny },
+  headerMailSubContainer: { paddingVertical: UI_SIZES.spacing.small, borderBottomWidth: 0 },
   mailInfos: {
     paddingLeft: UI_SIZES.spacing.small,
     flex: 1,
@@ -63,15 +79,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.small,
     flex: 0,
   },
+  sendersCollapsed: { marginTop: UI_SIZES.spacing.tiny, flex: 0 },
+  sendersContainer: { flex: 1 },
+  userContainer: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'baseline' },
+  users: { flexDirection: 'row', flexWrap: 'wrap' },
+  usersContainer: { flexDirection: 'row' },
 });
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor('Guest'));
-
   getUserColor(userId).then(setDotColor);
-
   return (
-    <View style={{ flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'baseline' }} key={userId}>
+    <View style={styles.userContainer} key={userId}>
       <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
       <CaptionText>{userName}</CaptionText>
     </View>
@@ -80,27 +99,26 @@ const User = ({ userId, userName }) => {
 
 const SendersDetails = ({ mailInfos, inInbox }) => {
   const contacts = getMailPeople(mailInfos);
-
   return (
     <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
       {inInbox || (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.usersContainer}>
           <CaptionText style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</CaptionText>
           <User userId={contacts.from[0]} userName={contacts.from[1]} />
         </View>
       )}
-      <View style={{ flexDirection: 'row' }}>
+      <View style={styles.usersContainer}>
         <SmallText style={styles.greyColor}>{I18n.t('conversation.toPrefix')}</SmallText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        <View style={styles.users}>
           {contacts.to.map(person => (
             <User userId={person[0]} userName={person[1]} />
           ))}
         </View>
       </View>
       {contacts.cc && contacts.cc.length > 0 && (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.usersContainer}>
           <SmallText style={styles.greyColor}>{I18n.t('conversation.ccPrefix')}</SmallText>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          <View style={styles.users}>
             {contacts.cc.map(person => (
               <User userId={person[0]} userName={person[1]} />
             ))}
@@ -108,9 +126,9 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
         </View>
       )}
       {contacts.cci && contacts.cci.length > 0 && (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={styles.usersContainer}>
           <SmallText style={styles.greyColor}>{I18n.t('conversation.bccPrefix')}</SmallText>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          <View style={styles.users}>
             {contacts.cci.map(person => (
               <User userId={person[0]} userName={person[1]} />
             ))}
@@ -126,7 +144,6 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
 export const HeaderMail = ({ mailInfos, currentFolder }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const isFolderInbox = currentFolder === 'inbox';
-
   const mailContacts = getMailPeople(mailInfos);
   if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.t('conversation.emptyTo'), false]];
   const contactsToMore = mailContacts.to.length + mailContacts.cc.length + mailContacts.cci.length - 1;
@@ -134,9 +151,9 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   return (
     <TouchableOpacity onPress={() => toggleVisible(!isVisible)} activeOpacity={1}>
       <ListItem
-        style={{ paddingVertical: UI_SIZES.spacing.small, borderBottomWidth: 0 }}
+        style={styles.headerMailSubContainer}
         leftElement={
-          <View style={{ alignSelf: 'flex-start', marginTop: UI_SIZES.spacing.medium + UI_SIZES.spacing.tiny }}>
+          <View style={styles.gridAvatarsContainer}>
             <GridAvatars users={[{ id: mailContacts.from[0], isGroup: mailContacts.from[2] }]} />
           </View>
         }
@@ -146,36 +163,27 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
             <SmallText style={styles.mailDate} numberOfLines={1}>
               {displayPastDate(moment(mailInfos.date), true)}
             </SmallText>
-            <View style={{ flex: 0 }}>
+            <View style={styles.contactNameContainer}>
               {/* Contact name */}
-              <View style={{ flex: 0, flexDirection: 'row' }}>
-                {(() => {
-                  const TextContactComponent = SmallBoldText;
-                  return (
-                    <>
-                      <TextContactComponent numberOfLines={1} style={{ flex: 1 }}>
-                        {mailContacts.from[1]}
-                      </TextContactComponent>
-                    </>
-                  );
-                })()}
+              <View style={styles.contactNameSubContainer}>
+                <SmallBoldText numberOfLines={1} style={styles.contactName}>
+                  {mailContacts.from[1]}
+                </SmallBoldText>
               </View>
             </View>
-            <View style={{ flex: 0, flexDirection: 'row' }}>
-              <View style={{ flex: 1 }}>
-                {(() => {
-                  return isVisible ? (
-                    <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
-                  ) : (
-                    <CaptionText style={{ marginTop: UI_SIZES.spacing.tiny, flex: 0 }} numberOfLines={1}>
-                      <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
-                      <NestedText style={{ color: theme.palette.primary.regular }}>
-                        {mailContacts.to[0][1]}
-                        {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
-                      </NestedText>
-                    </CaptionText>
-                  );
-                })()}
+            <View style={styles.additionalInfos}>
+              <View style={styles.sendersContainer}>
+                {isVisible ? (
+                  <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
+                ) : (
+                  <CaptionText style={styles.sendersCollapsed} numberOfLines={1}>
+                    <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
+                    <NestedText style={{ color: theme.palette.primary.regular }}>
+                      {mailContacts.to[0][1]}
+                      {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
+                    </NestedText>
+                  </CaptionText>
+                )}
               </View>
               {/* Mail attachment indicator */}
               {mailInfos.attachments.length > 0 && (
@@ -193,12 +201,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
 
 export const FooterButton = ({ icon, text, onPress }) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-      }}>
+    <TouchableOpacity onPress={onPress} style={styles.footerButtonContainer}>
       <Icon name={icon} size={24} style={{ color: theme.ui.text.light }} />
       <CaptionText style={{ color: theme.ui.text.light }}>{text}</CaptionText>
     </TouchableOpacity>
@@ -217,7 +220,7 @@ export const RenderPJs = ({
   const [isVisible, toggleVisible] = React.useState(false);
   const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
   return (
-    <View style={[styles.containerMail, { flexDirection: 'column', flex: 0 }]}>
+    <View style={styles.containerMail}>
       {displayedAttachments.map((item, index) => {
         const df: IDistantFileWithId = {
           url: `/conversation/message/${mailId}/attachment/${item.id}`,
@@ -229,22 +232,22 @@ export const RenderPJs = ({
         return (
           <TouchableOpacity
             key={item.id}
-            style={{ flex: 0 }}
+            style={styles.attachmentContainer}
             onPress={async () => {
               const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
               try {
                 await sf.open();
-              } catch (e) {
+              } catch {
                 Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
               }
             }}>
-            <View style={{ flexDirection: 'row', flex: 0, alignItems: 'center', borderRadius: 6 }}>
-              <Icon size={24} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} style={{ flex: 0 }} />
+            <View style={styles.attachmentSubContainer}>
+              <Icon size={24} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} style={styles.fileIcon} />
               <SmallText style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
                 {item.filename}
               </SmallText>
               {index === 0 && (
-                <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: UI_SIZES.spacing.tiny, flex: 0 }}>
+                <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={styles.attachmentsToggle}>
                   {attachments.length > 1 && (
                     <SmallText style={styles.gridButtonTextPJnb}>
                       {isVisible ? '-' : '+'}
@@ -260,7 +263,7 @@ export const RenderPJs = ({
                       const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                       await sf.mirrorToDownloadFolder();
                       Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }), { ...UI_ANIMATIONS.toast });
-                    } catch (e) {
+                    } catch {
                       Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
                     }
                   }}

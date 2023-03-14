@@ -67,6 +67,10 @@ interface ConversationMailListComponentState {
 let lastFolderCache = '';
 
 const styles = StyleSheet.create({
+  contacts: {
+    flex: 1,
+  },
+  contactsAndDateContainer: { flex: 1, flexDirection: 'row' },
   containerMailRead: {
     paddingVertical: UI_SIZES.spacing.medium,
   },
@@ -92,7 +96,22 @@ const styles = StyleSheet.create({
     paddingTop: UI_SIZES.spacing.tiny,
     paddingLeft: UI_SIZES.spacing.small,
   },
+  pageViewSubContainer: { flex: 1 },
+  subjectAndContent: { marginTop: UI_SIZES.spacing.tiny, flex: 1 },
+  subjectAndContentContainer: { flex: 1 },
+  subjectContentAndAttachmentIndicatorContainer: { flex: 1, flexDirection: 'row' },
+  swipeableListContentContainerStyle: { flexGrow: 1 },
+  swipeableListStyle: { marginTop: 45 },
 });
+
+const SubjectAndContent = (isMailUnread, subject) => {
+  const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
+  return (
+    <TextSubjectComponent numberOfLines={1} style={styles.subjectAndContent}>
+      {subject}
+    </TextSubjectComponent>
+  );
+};
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
   flatListRef: typeof SwipeableList | null = null;
@@ -352,14 +371,14 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     return (
       <>
         <PageView>
-          <View style={{ flex: 1 }}>
+          <View style={styles.pageViewSubContainer}>
             {isFetching && !isRefreshing && !isChangingPage ? (
               <Loading />
             ) : (
               <SwipeableList
                 ref={ref => (this.flatListRef = ref)}
-                style={{ marginTop: 45 }} // ToDo : Magic value here as it's Drawer size
-                contentContainerStyle={{ flexGrow: 1 }}
+                style={styles.swipeableListStyle} // ToDo : Magic value here as it's the Drawer size
+                contentContainerStyle={styles.swipeableListContentContainerStyle}
                 data={uniqueMails.length > 0 ? uniqueMails : []}
                 onScrollBeginDrag={() => {
                   this.setState({ nextPageCallable: true });
@@ -377,44 +396,26 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                         rightElement={
                           <View style={styles.mailInfos}>
                             {/* Contact name */}
-                            <View style={{ flex: 1, flexDirection: 'row' }}>
-                              {(() => {
-                                const TextContactComponent = isMailUnread ? SmallBoldText : SmallBoldText;
-                                const textContactPrefixColor = isMailUnread ? theme.ui.text.regular : theme.ui.text.light;
-                                return (
-                                  <>
-                                    {isFolderOutbox || isFolderDrafts ? (
-                                      <SmallText style={{ color: textContactPrefixColor }}>
-                                        {I18n.t('conversation.toPrefix') + ' '}
-                                      </SmallText>
-                                    ) : null}
-                                    <TextContactComponent
-                                      numberOfLines={1}
-                                      style={{
-                                        ...(isFolderDrafts ? { color: theme.palette.status.warning.regular } : {}),
-                                        flex: 1,
-                                      }}>
-                                      {contacts.map(c => c[1]).join(', ')}
-                                    </TextContactComponent>
-                                  </>
-                                );
-                              })()}
+                            <View style={styles.contactsAndDateContainer}>
+                              {isFolderOutbox || isFolderDrafts ? (
+                                <SmallText style={{ color: isMailUnread ? theme.ui.text.regular : theme.ui.text.light }}>
+                                  {I18n.t('conversation.toPrefix') + ' '}
+                                </SmallText>
+                              ) : null}
+                              <SmallBoldText
+                                numberOfLines={1}
+                                style={[styles.contacts, isFolderDrafts ? { color: theme.palette.status.warning.regular } : {}]}>
+                                {contacts.map(c => c[1]).join(', ')}
+                              </SmallBoldText>
                               {/* Date */}
                               <SmallText style={styles.mailDate} numberOfLines={1}>
                                 {displayPastDate(moment(item.date))}
                               </SmallText>
                             </View>
-                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                            <View style={styles.subjectContentAndAttachmentIndicatorContainer}>
                               {/* Mail subjet & content */}
-                              <View style={{ flex: 1 }}>
-                                {(() => {
-                                  const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
-                                  return (
-                                    <TextSubjectComponent numberOfLines={1} style={{ marginTop: UI_SIZES.spacing.tiny, flex: 1 }}>
-                                      {item.subject}
-                                    </TextSubjectComponent>
-                                  );
-                                })()}
+                              <View style={styles.subjectAndContentContainer}>
+                                <SubjectAndContent isMailUnread={isMailUnread} subject={item.subject} />
                               </View>
                               {/* Mail attachment indicator */}
                               {item.hasAttachment ? (

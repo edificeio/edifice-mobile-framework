@@ -151,9 +151,9 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
 
   private fetchMails = (page = 0) => {
     const { route, fetchMailList, fetchMailFromFolder } = this.props;
-    const key = route.param.key;
-    const folderName = route.param.folderName;
-    const folderId = route.param.folderId;
+    const key = route.params.key;
+    const folderName = route.params.folderName;
+    const folderId = route.params.folderId;
 
     this.setState({ fetchRequested: true });
     if (folderName) fetchMailFromFolder(folderId, page);
@@ -169,7 +169,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
 
     fetchInit();
     fetchCount();
-    if (!route.param.key) {
+    if (!route.params.key) {
       this.setState({ firstFetch: true });
       navigation.setParams({ key: 'inbox', folderName: undefined, folderId: undefined });
     }
@@ -179,7 +179,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   componentDidUpdate(prevProps) {
     const { route, init, count, isFetching, isFocused } = this.props;
     const { firstFetch, fetchRequested, isChangingFolder } = this.state;
-    const key = route.param.key;
+    const key = route.params.key;
 
     if (prevProps.init.isFetching && !init.isFetching) {
       this.setState({ folders: init.data.folders });
@@ -201,16 +201,17 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   }
 
   public render() {
+    // Ignore missing props in MailList
     return (
       <MailList
         {...this.props}
         {...this.state}
         fetchMails={this.fetchMails}
-        isTrashed={this.props.route.param.key === 'trash'}
+        isTrashed={this.props.route.params.key === 'trash'}
         firstFetch={this.state.firstFetch}
         fetchRequested={this.state.fetchRequested}
         fetchCompleted={this.fetchCompleted}
-        navigationKey={this.props.route.param.key}
+        navigationKey={this.props.route.params.key}
       />
     );
   }
@@ -221,7 +222,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
 const mapStateToProps = (state: IGlobalState) => {
   const { isPristine, isFetching, data } = getMailListState(state);
 
-  if (data !== undefined && data.length > 0) {
+  if (data?.length > 0) {
     for (let i = 0; i <= data.length - 1; i++) {
       data[i].isChecked = false;
     }

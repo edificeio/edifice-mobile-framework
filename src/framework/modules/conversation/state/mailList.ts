@@ -24,6 +24,7 @@ export interface IMail {
   cci: [];
   cciName: [];
   count: number;
+  isChecked?: boolean;
 }
 
 export type IMailList = IMail[];

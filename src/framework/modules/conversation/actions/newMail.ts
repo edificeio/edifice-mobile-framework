@@ -8,7 +8,8 @@ import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
-    return await newMailService.sendMail(mailDatas, draftId, InReplyTo);
+    const sentMail = await newMailService.sendMail(mailDatas, draftId, InReplyTo);
+    return sentMail;
   };
 }
 
@@ -16,7 +17,7 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
   return async () => {
     try {
       await newMailService.forwardMail(draftId, forwardFrom);
-    } catch (errmsg) {
+    } catch {
       // TODO: Manage error
     }
   };
@@ -24,28 +25,29 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
 
 export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boolean) {
   return async (dispatch: Dispatch) => {
-    return await newMailService.makeDraftMail(mailDatas, inReplyTo);
+    const draftMail = await newMailService.makeDraftMail(mailDatas, inReplyTo);
+    return draftMail;
   };
 }
 
 export function updateDraftMailAction(mailId: string, mailDatas) {
   return async () => {
-    return await newMailService.updateDraftMail(mailId, mailDatas);
+    const updatedDraft = await newMailService.updateDraftMail(mailId, mailDatas);
+    return updatedDraft;
   };
 }
 
 export function addAttachmentAction(mailId: string, attachment: LocalFile, callbacks?: IUploadCallbaks) {
   return async (dispatch: Dispatch, getState: () => IGlobalState) => {
-    try {
-      const session = assertSession();
-      const newAttachment = await newMailService.addAttachment(session, mailId, attachment, callbacks);
-      return newAttachment;
-    } catch (errmsg) {
-      throw errmsg;
-    }
+    const session = assertSession();
+    const newAttachment = await newMailService.addAttachment(session, mailId, attachment, callbacks);
+    return newAttachment;
   };
 }
 
 export function deleteAttachmentAction(mailId: string, attachmentId: string) {
-  return async (dispatch: Dispatch) => await newMailService.deleteAttachment(mailId, attachmentId);
+  return async (dispatch: Dispatch) => {
+    const deletedAttachment = await newMailService.deleteAttachment(mailId, attachmentId);
+    return deletedAttachment;
+  };
 }

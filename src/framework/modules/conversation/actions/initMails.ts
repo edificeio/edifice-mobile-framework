@@ -13,7 +13,7 @@ export function fetchInitAction() {
       const data = await initMailService.get();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
-      dispatch(dataActions.error(errmsg));
+      dispatch(dataActions.error(errmsg as Error));
     }
   };
 }

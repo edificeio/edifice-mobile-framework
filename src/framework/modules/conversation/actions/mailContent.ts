@@ -17,7 +17,7 @@ export function fetchMailContentAction(mailId) {
       const data = await mailContentService.get(mailId);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
-      dispatch(dataActions.error(errmsg));
+      dispatch(dataActions.error(errmsg as Error));
     }
   };
 }

@@ -37,7 +37,7 @@ export const actionTypes = createAsyncActionTypes(conversationConfig.namespaceAc
 export const searchVisibles = (
   visibles: IVisibles,
   query: string,
-  omitResults?: Array<IVisibleGroup | IVisibleUser>,
+  omitResults?: (IVisibleGroup | IVisibleUser)[],
   limit?: number,
   threshold?: number,
 ) => {
@@ -64,6 +64,6 @@ export const searchVisibles = (
   const res = computed
     .filter(v => filterFunc(v) && filterFunc2(v))
     .sort(sortFunc)
-    .slice(0, limit ?? 20) as Array<IVisibleGroup | IVisibleUser>;
+    .slice(0, limit ?? 20) as (IVisibleGroup | IVisibleUser)[];
   return res;
 };

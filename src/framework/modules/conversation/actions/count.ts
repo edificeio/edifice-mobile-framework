@@ -13,7 +13,7 @@ export function fetchCountAction() {
       const data = await foldersService.count();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
-      dispatch(dataActions.error(errmsg));
+      dispatch(dataActions.error(errmsg as Error));
     }
   };
 }

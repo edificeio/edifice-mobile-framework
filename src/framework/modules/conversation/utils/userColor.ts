@@ -1,5 +1,5 @@
 import theme from '~/app/theme';
-import { mailContentService } from '~/modules/conversation/service/mailContent';
+import { mailContentService } from '~/framework/modules/conversation/service/mailContent';
 
 enum UserRole {
   STUDENT = 'STUDENT',
@@ -8,17 +8,6 @@ enum UserRole {
   PERSONNEL = 'PERSONNEL',
   GUEST = 'GUEST',
 }
-
-export const getUserColor = async (userId: string) => {
-  try {
-    const { result } = userId
-      ? await mailContentService.getUserInfos(userId)
-      : { result: [{ id: '', displayNames: '', type: [''] }] };
-    return getProfileColor(result?.[0].type[0]);
-  } catch (err) {
-    return getProfileColor();
-  }
-};
 
 export const getProfileColor = (role?) => {
   switch (role?.toUpperCase()) {
@@ -36,5 +25,16 @@ export const getProfileColor = (role?) => {
       return theme.color.profileTypes.Guest;
     default:
       return theme.palette.grey.grey;
+  }
+};
+
+export const getUserColor = async (userId: string) => {
+  try {
+    const { result } = userId
+      ? await mailContentService.getUserInfos(userId)
+      : { result: [{ id: '', displayNames: '', type: [''] }] };
+    return getProfileColor(result?.[0].type[0]);
+  } catch {
+    return getProfileColor();
   }
 };

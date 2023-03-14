@@ -10,16 +10,6 @@ export type FoldersBackend = {
   id: string;
 }[];
 
-// const foldersAdapter: (data: FoldersBackend) => IFolderList = data => {
-//   return data.map(folder => ({
-//     parent_id: folder.parent_id,
-//     trashed: folder.trashed,
-//     depth: folder.depth,
-//     name: folder.name,
-//     id: folder.id,
-//   }));
-// };
-
 export const foldersService = {
   post: async (name: string, parentId: string | null = null) => {
     const body = {
@@ -40,9 +30,9 @@ export const foldersService = {
     });
     const results = await Promise.all(promises);
     const ret: ICountMailboxes = results.reduce((acc, res, i) => {
-      const new_acc = { ...acc };
-      new_acc[`${ids[i]}`] = res.count;
-      return new_acc;
+      const newAcc = { ...acc };
+      newAcc[`${ids[i]}`] = res.count;
+      return newAcc;
     }, {});
     return ret;
   },

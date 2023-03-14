@@ -38,14 +38,14 @@ const formatMailDatas = mailDatas => {
 
 export const newMailService = {
   searchUsers: async search => {
-    return await fetchJSONWithCache(`/conversation/visible?search=${search}`);
+    const searchResult = await fetchJSONWithCache(`/conversation/visible?search=${search}`);
+    return searchResult;
   },
   sendMail: async (mailDatas, draftId, inReplyTo) => {
     const params = {
       id: draftId,
       'In-Reply-To': inReplyTo,
     };
-
     const paramsUrl = Object.entries(params)
       .filter(([key, value]) => !!value)
       .map(([key, value]) => `${key}=${value}`)
@@ -82,7 +82,7 @@ export const newMailService = {
   },
   addAttachment: async (session: ISession, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
     const url = `/conversation/message/${draftId}/attachment`;
-    return await fileHandlerService.uploadFile<SyncedFileWithId>(
+    const uploadedFile = await fileHandlerService.uploadFile<SyncedFileWithId>(
       session,
       file,
       {
@@ -101,8 +101,12 @@ export const newMailService = {
       callbacks,
       SyncedFileWithId,
     );
+    return uploadedFile;
   },
   deleteAttachment: async (draftId: string, attachmentId: string) => {
-    return await fetchJSONWithCache(`/conversation/message/${draftId}/attachment/${attachmentId}`, { method: 'DELETE' });
+    const deletedAttachment = await fetchJSONWithCache(`/conversation/message/${draftId}/attachment/${attachmentId}`, {
+      method: 'DELETE',
+    });
+    return deletedAttachment;
   },
 };

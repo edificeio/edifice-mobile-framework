@@ -17,7 +17,7 @@ export function fetchMailListAction(page: number, folderName: string) {
       const data = await mailListService.get(page, folderName);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
-      dispatch(dataActions.error(errmsg));
+      dispatch(dataActions.error(errmsg as Error));
     }
   };
 }
@@ -29,7 +29,7 @@ export function fetchMailListFromFolderAction(folderId: string, page: number) {
       const data = await mailListService.getFromFolder(folderId, page);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
-      dispatch(dataActions.error(errmsg));
+      dispatch(dataActions.error(errmsg as Error));
     }
   };
 }

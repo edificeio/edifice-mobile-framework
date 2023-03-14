@@ -45,9 +45,11 @@ import { ConversationNavigationParams, conversationRouteNames } from '../navigat
 export interface ConversationMailContentScreenNavigationParams {
   currentFolder: string;
   isTrashed: boolean;
+  mailId: string;
+  onGoBack: () => void;
 }
 interface ConversationMailContentScreenEventProps {
-  fetchMailContentAction: (mailId: string) => void;
+  fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
   toggleRead: (mailIds: string[], read: boolean) => void;
   trashMails: (mailIds: string[]) => void;
@@ -90,17 +92,19 @@ export const computeNavBar = ({
 });
 
 const styles = StyleSheet.create({
-  footerAreaView: {
-    backgroundColor: theme.ui.background.card,
-    borderTopColor: theme.ui.border.listItem,
-    borderTopWidth: 1,
-  },
   containerFooter: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     height: UI_SIZES.elements.tabbarHeight,
   },
+  footerAreaView: {
+    backgroundColor: theme.ui.background.card,
+    borderTopColor: theme.ui.border.listItem,
+    borderTopWidth: 1,
+  },
+  mailContentContainer: { flexGrow: 1, padding: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card },
+  scrollView: { flex: 1 },
 });
 
 class MailContentScreen extends React.PureComponent<ConversationMailContentScreenProps, ConversationMailContentScreenState> {
@@ -108,9 +112,9 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
 
   constructor(props) {
     super(props);
-    const { navigation } = this.props;
+    const { route } = this.props;
     this.state = {
-      mailId: navigation.state.params?.mailId,
+      mailId: route.params.mailId,
       showModal: false,
       showHeaderSubject: false,
       htmlError: false,
@@ -118,7 +122,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 
   public componentDidMount() {
-    const { mail, error, route, navigation, isFetching, clearContent, fetchMailContentAction } = this.props;
+    const { mail, error, route, navigation, isFetching, clearContent, fetchMailContent } = this.props;
     const { htmlError, showHeaderSubject } = this.state;
     const currentFolder = route.params.currentFolder;
     const isCurrentFolderTrash = currentFolder === 'trash';
@@ -144,6 +148,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     ];
     navigation.setOptions({
       title: showHeaderSubject ? mail.subject : undefined,
+      // React Navigation 6 uses this syntax to setup nav options
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         isFetching || error || htmlError ? undefined : (
           <PopupMenu
@@ -159,16 +165,16 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         ),
     });
     clearContent();
-    fetchMailContentAction(navigation.state.params?.mailId);
+    fetchMailContent(route.params.mailId);
   }
 
   public componentDidUpdate() {
-    const { navigation, clearContent, fetchMailContentAction } = this.props;
+    const { clearContent, fetchMailContent, route } = this.props;
     const { mailId } = this.state;
-    if (navigation.state.params?.mailId !== mailId) {
+    if (route.params.mailId !== mailId) {
       clearContent();
-      fetchMailContentAction(navigation.state.params?.mailId);
-      this.setState({ mailId: navigation.state.params?.mailId });
+      fetchMailContent(route.params.mailId);
+      this.setState({ mailId: route.params.mailId });
     }
   }
 
@@ -185,8 +191,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   mailMoved = () => {
-    const { navigation } = this.props;
-    navigation.state.params?.onGoBack();
+    const { route } = this.props;
+    route.params.onGoBack();
     this.goBack();
     Toast.show(I18n.t('conversation.messageMoved'), {
       position: Toast.position.BOTTOM,
@@ -234,8 +240,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   goBack = () => {
-    const { navigation } = this.props;
-    navigation.state.params?.onGoBack?.();
+    const { navigation, route } = this.props;
+    route.params.onGoBack?.();
     navigation.dispatch(CommonActions.goBack());
   };
 
@@ -245,6 +251,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     const currentFolder = route.params.currentFolder;
     const ViewportAwareSubject = Viewport.Aware(View);
 
+    // Ignore onBack error (will be managed later on)
     return (
       <>
         <PageView onBack={this.goBack.bind(this)}>
@@ -256,7 +263,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
             ) : (
               <>
                 <Viewport.Tracker>
-                  <ScrollView style={{ flex: 1 }} scrollEventThrottle={16}>
+                  <ScrollView style={styles.scrollView} scrollEventThrottle={16}>
                     {mail.id && this.mailHeader()}
                     <ViewportAwareSubject
                       style={{ marginHorizontal: UI_SIZES.spacing.medium, backgroundColor: theme.ui.background.card }}
@@ -303,7 +310,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY,
                 mailId: mail.id,
-                onGoBack: navigation.state.params?.onGoBack,
+                onGoBack: route.params.onGoBack,
                 currentFolder: route.params.currentFolder,
               });
             }}
@@ -318,7 +325,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY_ALL,
                 mailId: mail.id,
-                onGoBack: navigation.state.params?.onGoBack,
+                onGoBack: route.params.onGoBack,
                 currentFolder: route.params.currentFolder,
               });
             }}
@@ -333,7 +340,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.FORWARD,
                 mailId: mail.id,
-                onGoBack: navigation.state.params?.onGoBack,
+                onGoBack: route.params.onGoBack,
               });
             }}
           />
@@ -351,7 +358,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   private mailContent() {
     const { mail, dispatch } = this.props;
     return (
-      <View style={{ flexGrow: 1, padding: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card }}>
+      <View style={styles.mailContentContainer}>
         {mail.body !== undefined && (
           <HtmlContentView onHtmlError={() => this.setState({ htmlError: true })} html={mail.body} opts={{ selectable: true }} />
         )}
@@ -389,7 +396,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return {
     ...bindActionCreators(
       {
-        fetchMailContentAction,
+        fetchMailContent: fetchMailContentAction,
         clearContent: clearMailContentAction,
         toggleRead: tryAction(toggleReadAction, (mailIds, read) => [
           moduleConfig,

@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Alert, AlertButton, Keyboard, Platform, View } from 'react-native';
+import { Alert, AlertButton, Keyboard, Platform, StyleSheet, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -54,7 +54,7 @@ type NewMail = {
   cci: ISearchUsers;
   subject: string;
   body: string;
-  attachments: IDistantFile[];
+  attachments: Omit<IDistantFile, 'url'>[];
 };
 
 export interface ConversationNewMailScreenNavigationParams {
@@ -109,6 +109,31 @@ export const computeNavBar = ({
   title: I18n.t('conversation.newMessage'),
 });
 
+//FIXME: create/move to styles.ts
+const styles = StyleSheet.create({
+  addAttchmentMenuContainer: { width: 48, alignItems: 'center' },
+  headerRightContainer: { flexDirection: 'row' },
+  sendDraftAction: { width: 48, alignItems: 'center' },
+});
+
+const HeaderRight = (addGivenAttachment, sendDraft) => (
+  <View style={styles.headerRightContainer}>
+    {addGivenAttachment && (
+      <View style={styles.addAttchmentMenuContainer}>
+        <PopupMenu
+          actions={[
+            cameraAction({ callback: addGivenAttachment }),
+            galleryAction({ callback: addGivenAttachment, multiple: true }),
+            documentAction({ callback: addGivenAttachment }),
+          ]}>
+          <HeaderIcon name="attachment" />
+        </PopupMenu>
+      </View>
+    )}
+    {sendDraft && <HeaderAction style={styles.sendDraftAction} onPress={sendDraft} iconName="outbox" />}
+  </View>
+);
+
 class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, ConversationNewMailScreenState> {
   constructor(props) {
     super(props);
@@ -126,26 +151,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const sendDraft = route.params.getSendDraft;
     const draftType = route.params.type;
     const isSavedDraft = draftType === DraftType.DRAFT;
-
     navigation.setOptions({
       title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
-      headerRight: () => (
-        <View style={{ flexDirection: 'row' }}>
-          {addGivenAttachment && (
-            <View style={{ width: 48, alignItems: 'center' }}>
-              <PopupMenu
-                actions={[
-                  cameraAction({ callback: addGivenAttachment }),
-                  galleryAction({ callback: addGivenAttachment, multiple: true }),
-                  documentAction({ callback: addGivenAttachment }),
-                ]}>
-                <HeaderIcon name="attachment" />
-              </PopupMenu>
-            </View>
-          )}
-          {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
-        </View>
-      ),
+      headerRight: <HeaderRight addGivenAttachment={addGivenAttachment} sendDraft={sendDraft} />,
     });
     navigation.setParams(this.navigationHeaderFunction);
     if (route.params.mailId) {
@@ -171,12 +179,12 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     if (prevProps.mail !== mail) {
       const prefilledMailRet = this.getPrefilledMail();
       if (!prefilledMailRet) return;
-      const { mail, ...rest } = prefilledMailRet;
-      if (!mail) return;
+      const { mail: prefilledMail, ...rest } = prefilledMailRet;
+      if (!prefilledMail) return;
       this.setState(prevState => ({
         ...prevState,
         ...rest,
-        mail: { ...prevState.mail, ...(mail as IMail) },
+        mail: { ...prevState.mail, ...(prefilledMail as IMail) },
         isPrefilling: false,
       }));
     } else if (route.params.mailId && !id && route.params.type === DraftType.DRAFT) this.setState({ id: route.params.mailId });
@@ -189,7 +197,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       let checkBody = removeWrapper(mail.body);
       checkBody = checkBody.split('<hr class="ng-scope">')[0];
       checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
-      if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
+      if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(checkBody)) {
         this.setState({ webDraftWarning: true });
         Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
           {
@@ -609,6 +617,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     } catch (e) {
       Keyboard.dismiss();
       Toast.show(
+        // Ignore type error
         e.response.body === '{"error":"file.too.large"}' ? I18n.t('fullStorage') : I18n.t('conversation.attachmentError'),
         {
           position: Toast.position.BOTTOM,
@@ -678,6 +687,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
 
+    // Ignore onBack error (will be managed later on)
     return (
       <PageView
         onBack={() => (route.params.getGoBack ?? navigation.goBack)()}
@@ -686,11 +696,13 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           isFetching={isFetching || !!isPrefilling}
           headers={headers}
           onDraftSave={this.saveDraft}
-          onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
+          onHeaderChange={changedHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...changedHeaders } }))}
           body={mail.body.replace(/<br>/gs, '\n')}
-          onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
+          onBodyChange={changedBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: changedBody } }))}
           attachments={tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments}
-          onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
+          onAttachmentChange={changedAttachments =>
+            this.setState(prevState => ({ mail: { ...prevState.mail, attachments: changedAttachments } }))
+          }
           onAttachmentDelete={attachmentId => deleteAttachment(id, attachmentId)}
           prevBody={prevBody}
           isReplyDraft={isReplyDraft}

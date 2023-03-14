@@ -1,4 +1,3 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
 import { Alert, Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
@@ -47,155 +46,40 @@ interface ConversationNewMailComponentDataProps {
 }
 export type ConversationNewMailComponentProps = ConversationNewMailComponentEventProps & ConversationNewMailComponentDataProps;
 
+//FIXME: create/move to styles.ts
 const styles = StyleSheet.create({
+  attachments: { zIndex: 2 },
+  attachmentsAdditionalStyle: { padding: 0 },
+  body: { zIndex: 1, flex: 1 },
+  bodyAdditionalStyle: { flexGrow: 1 },
+  bodyInput: { flexGrow: 1 },
+  commonFieldsContainer: { flex: 1, backgroundColor: theme.ui.background.card },
+  foundListContainer: { flexGrow: 1 },
+  mailContactFieldContainer: { flexGrow: 1 },
+  mailContactFieldInputContainer: { overflow: 'visible', marginHorizontal: UI_SIZES.spacing.tiny, flex: 1 },
+  mailContactFieldInputSubWrapper: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
+    borderBottomColor: theme.palette.grey.cloudy,
+    borderBottomWidth: 2,
+    backgroundColor: theme.ui.background.card,
+    flex: 0,
+  },
+  mailContactFieldInputWrapper: { flex: 0, alignItems: 'stretch' },
+  mailContactFieldTitle: { color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny },
   mailPart: {
     padding: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
   },
-  body: { zIndex: 1, flex: 1 },
+  newMailContentStyle: { flexGrow: 1 },
+  newMailContentContainerStyle: { flexGrow: 1 },
+  newMailStyle: {
+    flexGrow: 1,
+  },
+  prevBodyAddtionalStyle: { flexGrow: 1 },
 });
-
-export default (props: ConversationNewMailComponentProps) => {
-  const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ to: false, cc: false, cci: false });
-  const [keyboardHeight, setkeyboardHeight] = React.useState(0);
-  const [showExtraFields, toggleExtraFields] = React.useState(false);
-
-  const isSearchingUsersFinal = React.useMemo(() => Object.values(isSearchingUsers).includes(true), [isSearchingUsers]);
-
-  const setIsSearchingUsers = (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => {
-    toggleIsSearchingUsers({ ...isSearchingUsers, ...val });
-  };
-
-  React.useEffect(() => {
-    const hideKeyboardListener = Keyboard.addListener('keyboardWillHide', () => {
-      setkeyboardHeight(0);
-    });
-    const showKeyboardListener = Keyboard.addListener('keyboardDidShow', event => {
-      setkeyboardHeight(event.endCoordinates.height);
-    });
-    return () => {
-      hideKeyboardListener.remove();
-      showKeyboardListener.remove();
-    };
-  }, []);
-
-  return (
-    <KeyboardAvoidingScrollView
-      alwaysBounceVertical={false}
-      overScrollMode="never"
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="on-drag"
-      contentContainerStyle={{ flexGrow: 1 }}
-      style={{
-        flexGrow: 1,
-        marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.screen.bottomInset, default: 0 }),
-      }}>
-      <View style={{ flexGrow: 1 }}>
-        {props.isFetching ? (
-          <Loading />
-        ) : (
-          <Fields
-            {...props}
-            showExtraFields={showExtraFields}
-            toggleExtraFields={toggleExtraFields}
-            setIsSearchingUsers={setIsSearchingUsers}
-            isSearchingUsersFinal={isSearchingUsersFinal}
-          />
-        )}
-      </View>
-    </KeyboardAvoidingScrollView>
-  );
-};
-
-const Fields = ({
-  headers,
-  onHeaderChange,
-  showExtraFields,
-  toggleExtraFields,
-  setIsSearchingUsers,
-  isSearchingUsersFinal,
-  attachments,
-  onAttachmentChange,
-  onAttachmentDelete,
-  onDraftSave,
-  prevBody,
-  isReplyDraft,
-  body,
-  onBodyChange,
-}: {
-  headers: HeadersProps;
-  onHeaderChange: (header: HeadersProps) => void;
-  showExtraFields: boolean;
-  toggleExtraFields: (val: boolean) => void;
-  setIsSearchingUsers: (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => void;
-  isSearchingUsersFinal: boolean;
-  attachments: IDistantFileWithId[];
-  onAttachmentChange: (attachments: IAttachment[]) => void;
-  onAttachmentDelete: (attachmentId: string) => void;
-  onDraftSave: () => void;
-  prevBody: any;
-  isReplyDraft: boolean;
-  body: string;
-  onBodyChange: (body: string) => void;
-}) => {
-  const commonFields = (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
-      <HeaderSubject
-        title={I18n.t('conversation.subject')}
-        value={headers.subject}
-        onChange={subject => onHeaderChange({ ...headers, subject })}
-        key="subject"
-      />
-      <Attachments
-        style={{ zIndex: 2 }}
-        attachments={attachments}
-        onChange={onAttachmentChange}
-        onDelete={onAttachmentDelete}
-        onSave={onDraftSave}
-        key="attachments"
-      />
-      <Body style={styles.body} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
-      {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
-    </SafeAreaView>
-  );
-
-  return (
-    <MailContactField
-      autoFocus={!isReplyDraft}
-      value={headers.to}
-      onChange={to => onHeaderChange({ ...headers, to })}
-      rightComponent={
-        isSearchingUsersFinal ? undefined : (
-          <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
-            <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
-          </TouchableOpacity>
-        )
-      }
-      title={I18n.t('conversation.to')}
-      key="to"
-      onOpenSearch={v => setIsSearchingUsers({ to: v })}>
-      {showExtraFields ? (
-        <MailContactField
-          title={I18n.t('conversation.cc')}
-          value={headers.cc}
-          onChange={cc => onHeaderChange({ ...headers, cc })}
-          key="cc"
-          onOpenSearch={v => setIsSearchingUsers({ cc: v })}>
-          <MailContactField
-            title={I18n.t('conversation.bcc')}
-            value={headers.cci}
-            onChange={cci => onHeaderChange({ ...headers, cci })}
-            key="cci"
-            onOpenSearch={v => setIsSearchingUsers({ cci: v })}>
-            {commonFields}
-          </MailContactField>
-        </MailContactField>
-      ) : (
-        commonFields
-      )}
-    </MailContactField>
-  );
-};
 
 const MailContactField = connect((state: IGlobalState) => ({
   visibles: state[moduleConfig.reducerName].visibles as IVisiblesState,
@@ -277,22 +161,12 @@ const MailContactField = connect((state: IGlobalState) => ({
       inputRef.current?.focus();
     };
 
-    const inputStyle = {
-      flexDirection: 'row',
-      alignItems: 'stretch',
-      paddingHorizontal: UI_SIZES.spacing.medium,
-      paddingVertical: UI_SIZES.spacing.minor,
-      borderBottomColor: theme.palette.grey.cloudy,
-      borderBottomWidth: 2,
-      backgroundColor: theme.ui.background.card,
-      flex: 0,
-    } as ViewStyle;
     return (
-      <View style={{ flexGrow: 1 }}>
-        <View style={{ flex: 0, alignItems: 'stretch' }}>
-          <View style={[inputStyle, style]}>
-            <SmallText style={{ color: theme.ui.text.light, paddingVertical: UI_SIZES.spacing.tiny }}>{title} : </SmallText>
-            <View style={{ overflow: 'visible', marginHorizontal: UI_SIZES.spacing.tiny, flex: 1 }}>
+      <View style={styles.mailContactFieldContainer}>
+        <View style={styles.mailContactFieldInputWrapper}>
+          <View style={[styles.mailContactFieldInputSubWrapper, style]}>
+            <SmallText style={styles.mailContactFieldTitle}>{title} : </SmallText>
+            <View style={styles.mailContactFieldInputContainer}>
               <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
               <Input
                 inputRef={inputRef}
@@ -312,7 +186,7 @@ const MailContactField = connect((state: IGlobalState) => ({
             {rightComponent}
           </View>
         </View>
-        <View style={{ flexGrow: 1 }}>
+        <View style={styles.foundListContainer}>
           {foundUsersOrGroups.length ? <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} /> : children}
         </View>
       </View>
@@ -383,10 +257,9 @@ const Attachments = ({
   return attachments.length === 0 ? (
     <View />
   ) : (
-    <View style={[styles.mailPart, style, { padding: 0 }]}>
+    <View style={[styles.mailPart, styles.attachmentsAdditionalStyle, style]}>
       {attachments.map(att => (
         <Attachment
-          id={att.id || att.filename}
           uploadSuccess={!!att.id && onSave()}
           fileType={att.filetype}
           fileName={att.filename}
@@ -399,9 +272,6 @@ const Attachments = ({
 
 const Body = ({ style, value, onChange, autofocus }) => {
   const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
-  // const removeWrapper = (text: string) => {
-  //   return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
-  // }
   const br2nl = (text: string) => {
     return text?.replace(/<br\/?>/gm, '\n').replace(/<div>\s*?<\/div>/gm, '\n');
   };
@@ -431,20 +301,20 @@ const Body = ({ style, value, onChange, autofocus }) => {
     };
   }, []);
 
-  const textInputRef = React.useRef<TextInput>();
+  const textInputRef = React.createRef<TextInput>();
   React.useEffect(() => {
     if (autofocus) textInputRef.current?.focus();
-  }, [autofocus]);
+  }, [autofocus, textInputRef]);
 
   return (
-    <View style={[styles.mailPart, style, { flexGrow: 1 }]}>
+    <View style={[styles.mailPart, styles.bodyAdditionalStyle, style]}>
       <TextInput
         ref={textInputRef}
         placeholder={I18n.t('conversation.typeMessage')}
         textAlignVertical="top"
         multiline
         scrollEnabled={false}
-        style={{ flexGrow: 1 }}
+        style={styles.bodyInput}
         defaultValue={value}
         value={br2nl(currentValue)}
         onChangeText={text => updateCurrentValue(nl2br(text))}
@@ -456,8 +326,150 @@ const Body = ({ style, value, onChange, autofocus }) => {
 
 const PrevBody = ({ prevBody }) => {
   return (
-    <View style={[styles.mailPart, { flexGrow: 1 }]}>
+    <View style={[styles.mailPart, styles.prevBodyAddtionalStyle]}>
       <HtmlContentView html={prevBody} />
     </View>
+  );
+};
+
+const Fields = ({
+  headers,
+  onHeaderChange,
+  showExtraFields,
+  toggleExtraFields,
+  setIsSearchingUsers,
+  isSearchingUsersFinal,
+  attachments,
+  onAttachmentChange,
+  onAttachmentDelete,
+  onDraftSave,
+  prevBody,
+  isReplyDraft,
+  body,
+  onBodyChange,
+}: {
+  headers: HeadersProps;
+  onHeaderChange: (header: HeadersProps) => void;
+  showExtraFields: boolean;
+  toggleExtraFields: (val: boolean) => void;
+  setIsSearchingUsers: (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => void;
+  isSearchingUsersFinal: boolean;
+  attachments: IDistantFileWithId[];
+  onAttachmentChange: (attachments: IAttachment[]) => void;
+  onAttachmentDelete: (attachmentId: string) => void;
+  onDraftSave: () => void;
+  prevBody: any;
+  isReplyDraft: boolean;
+  body: string;
+  onBodyChange: (body: string) => void;
+}) => {
+  const commonFields = (
+    <SafeAreaView style={styles.commonFieldsContainer}>
+      <HeaderSubject
+        title={I18n.t('conversation.subject')}
+        value={headers.subject}
+        onChange={subject => onHeaderChange({ ...headers, subject })}
+        key="subject"
+      />
+      <Attachments
+        style={styles.attachments}
+        attachments={attachments}
+        onChange={onAttachmentChange}
+        onDelete={onAttachmentDelete}
+        onSave={onDraftSave}
+        key="attachments"
+      />
+      <Body style={styles.body} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
+      {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
+    </SafeAreaView>
+  );
+
+  return (
+    <MailContactField
+      autoFocus={!isReplyDraft}
+      value={headers.to}
+      onChange={to => onHeaderChange({ ...headers, to })}
+      rightComponent={
+        isSearchingUsersFinal ? undefined : (
+          <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
+            <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
+          </TouchableOpacity>
+        )
+      }
+      title={I18n.t('conversation.to')}
+      key="to"
+      onOpenSearch={v => setIsSearchingUsers({ to: v })}>
+      {showExtraFields ? (
+        <MailContactField
+          title={I18n.t('conversation.cc')}
+          value={headers.cc}
+          onChange={cc => onHeaderChange({ ...headers, cc })}
+          key="cc"
+          onOpenSearch={v => setIsSearchingUsers({ cc: v })}>
+          <MailContactField
+            title={I18n.t('conversation.bcc')}
+            value={headers.cci}
+            onChange={cci => onHeaderChange({ ...headers, cci })}
+            key="cci"
+            onOpenSearch={v => setIsSearchingUsers({ cci: v })}>
+            {commonFields}
+          </MailContactField>
+        </MailContactField>
+      ) : (
+        commonFields
+      )}
+    </MailContactField>
+  );
+};
+
+export default (props: ConversationNewMailComponentProps) => {
+  const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ to: false, cc: false, cci: false });
+  const [keyboardHeight, setkeyboardHeight] = React.useState(0);
+  const [showExtraFields, toggleExtraFields] = React.useState(false);
+
+  const isSearchingUsersFinal = React.useMemo(() => Object.values(isSearchingUsers).includes(true), [isSearchingUsers]);
+
+  const setIsSearchingUsers = (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => {
+    toggleIsSearchingUsers({ ...isSearchingUsers, ...val });
+  };
+
+  React.useEffect(() => {
+    const hideKeyboardListener = Keyboard.addListener('keyboardWillHide', () => {
+      setkeyboardHeight(0);
+    });
+    const showKeyboardListener = Keyboard.addListener('keyboardDidShow', event => {
+      setkeyboardHeight(event.endCoordinates.height);
+    });
+    return () => {
+      hideKeyboardListener.remove();
+      showKeyboardListener.remove();
+    };
+  }, []);
+
+  return (
+    <KeyboardAvoidingScrollView
+      alwaysBounceVertical={false}
+      overScrollMode="never"
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+      contentContainerStyle={styles.newMailContentContainerStyle}
+      style={[
+        styles.newMailStyle,
+        { marginBottom: Platform.select({ ios: keyboardHeight - UI_SIZES.screen.bottomInset, default: 0 }) },
+      ]}>
+      <View style={styles.newMailContentStyle}>
+        {props.isFetching ? (
+          <Loading />
+        ) : (
+          <Fields
+            {...props}
+            showExtraFields={showExtraFields}
+            toggleExtraFields={toggleExtraFields}
+            setIsSearchingUsers={setIsSearchingUsers}
+            isSearchingUsersFinal={isSearchingUsersFinal}
+          />
+        )}
+      </View>
+    </KeyboardAvoidingScrollView>
   );
 };

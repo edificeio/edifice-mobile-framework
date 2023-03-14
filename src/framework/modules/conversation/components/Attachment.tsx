@@ -16,25 +16,25 @@ const attachmentStyle = {
 } as ViewStyle;
 
 const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemove }) => {
+  //FIXME: create/move to styles.ts
+  const styles = StyleSheet.create({
+    fileName: { flex: 1, color: theme.palette.complementary.blue.regular },
+    uploadBar: {
+      backgroundColor: theme.palette.complementary.blue.pale,
+      right: undefined,
+    },
+  });
+  const test = { width: uploadSuccess ? '100%' : `${uploadProgress}%` };
   return (
     <View style={attachmentStyle}>
-      <View
-        style={[
-          StyleSheet.absoluteFill,
-          {
-            backgroundColor: theme.palette.complementary.blue.pale,
-            right: undefined,
-            width: uploadSuccess ? '100%' : `${uploadProgress}%`,
-          },
-        ]}
-      />
+      <View style={[StyleSheet.absoluteFill, styles.uploadBar, test]} />
       <Icon
         size={25}
         style={{ margin: UI_SIZES.spacing.small }}
         color={theme.palette.complementary.blue.regular}
         name={getFileIcon(fileType)}
       />
-      <SmallText style={{ flex: 1, color: theme.palette.complementary.blue.regular }}>{fileName}</SmallText>
+      <SmallText style={styles.fileName}>{fileName}</SmallText>
       <TouchableOpacity onPress={onRemove}>
         <Icon name="close" style={{ margin: UI_SIZES.spacing.small }} color={theme.palette.status.failure.regular} />
       </TouchableOpacity>
