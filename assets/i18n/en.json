@@ -1056,6 +1056,7 @@
   "zimbra-reply-subject": "RE: ",
   "zimbra-replyAll": "Reply All",
   "zimbra-restore": "Restore",
+  "zimbra-search-length-error": "Please add 3 characters to start the search",
   "zimbra-see_detail": "See details",
   "zimbra-send-attachment-progress": "Please wait until the attachment has been added",
   "zimbra-send-mail": "Message sent",

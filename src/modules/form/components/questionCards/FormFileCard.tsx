@@ -10,10 +10,10 @@ import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/f
 import BottomMenu from '~/framework/components/menus/bottom';
 import { Picture } from '~/framework/components/picture';
 import { SmallActionText } from '~/framework/components/text';
+import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { FormQuestionCard } from '~/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse, IResponseFile } from '~/modules/form/reducer';
-import { Attachment } from '~/modules/zimbra/components/Attachment';
 
 import { FormAnswerText } from './FormAnswerText';
 

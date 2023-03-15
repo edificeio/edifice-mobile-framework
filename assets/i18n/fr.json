@@ -1057,6 +1057,7 @@
   "zimbra-reply-subject": "RE : ",
   "zimbra-replyAll": "Répondre à tous",
   "zimbra-restore": "Restaurer",
+  "zimbra-search-length-error": "Veuillez ajouter 3 caractères pour lancer la recherche",
   "zimbra-see_detail": "Voir le détail",
   "zimbra-send-attachment-progress": "Veuillez attendre l'ajout complet de la pièce jointe",
   "zimbra-send-mail": "Message envoyé",

@@ -24,10 +24,10 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
 import { getSupportWorkflowInformation } from '~/framework/modules/support/rights';
+import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { tryAction } from '~/framework/util/redux/actions';
-import { Attachment } from '~/modules/zimbra/components/Attachment';
 
 import styles from './styles';
 import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
