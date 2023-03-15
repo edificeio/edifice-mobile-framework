@@ -28,6 +28,7 @@ export function createMainStore() {
   const middlewares = [thunkMiddleware];
 
   if (__DEV__) {
+    // eslint-disable-next-line import/no-extraneous-dependencies
     const createDebugger = require('redux-flipper').default;
     middlewares.push(createDebugger());
   }

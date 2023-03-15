@@ -168,7 +168,10 @@ dependencies {
         exclude group:'com.facebook.fbjni'
     }
     //noinspection GradleDependency
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_FRESCO_VERSION}") {
+        exclude group:'com.facebook.flipper'
+    }
+    debugImplementation ("com.facebook.fresco:fresco:2.6.0") {
         exclude group:'com.facebook.flipper'
     }
     //noinspection GradleDependency

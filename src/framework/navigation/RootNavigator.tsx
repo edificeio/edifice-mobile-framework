@@ -65,6 +65,14 @@ function RootNavigator(props: RootNavigatorProps) {
     return isFullyLogged ? MainNavigation(session.apps, session.widgets) : AuthNavigator();
   }, [isFullyLogged, session]);
 
+  // === Initialize React Navigation Flipper Plugin ===
+  if (__DEV__) {
+    // eslint-disable-next-line import/no-extraneous-dependencies
+    const rnDevTools = require('@react-navigation/devtools');
+    rnDevTools?.useFlipper(navigationRef);
+    rnDevTools?.useReduxDevToolsExtension(navigationRef);
+  }
+
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 
   // === Render navigation container with initialState ===
