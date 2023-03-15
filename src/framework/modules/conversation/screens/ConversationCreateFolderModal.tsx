@@ -70,7 +70,7 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
 
   public render() {
     const { name } = this.state;
-    const { show } = this.props;
+    const { show, onClose } = this.props;
     const textInputStyle = {
       color: theme.ui.text.regular,
     } as ViewStyle;
@@ -98,8 +98,8 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
             />
           </View>
           <ModalContentBlock style={styles.modalContentBlock}>
-            <DialogButtonCancel onPress={this.props.onClose} />
-            <DialogButtonOk disabled={!this.state.name} label={I18n.t('conversation.create')} onPress={this.onConfirm} />
+            <DialogButtonCancel onPress={onClose} />
+            <DialogButtonOk disabled={!name} label={I18n.t('conversation.create')} onPress={this.onConfirm} />
           </ModalContentBlock>
         </ModalContent>
       </ModalBox>

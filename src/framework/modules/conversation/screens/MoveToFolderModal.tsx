@@ -60,10 +60,11 @@ class ConversationMoveToFolderModal extends React.Component<
   };
 
   public render() {
+    const { selectedFolder } = this.state;
     return (
       <MoveToFolderModalComponent
         {...this.props}
-        selectedFolder={this.state.selectedFolder}
+        selectedFolder={selectedFolder}
         selectFolder={this.selectFolder}
         confirm={this.confirm}
       />

@@ -134,20 +134,14 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
 
   componentDidUpdate(prevProps) {
     const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props;
-    const { isChangingPage } = this.state;
+    const { isChangingPage, indexPage } = this.state;
 
-    if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
+    if (indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
       this.setState({ mails: notifications });
       fetchCompleted();
     }
 
-    if (
-      notifications !== prevProps.notifications &&
-      this.state.indexPage > 0 &&
-      prevProps.isFetching &&
-      !isFetching &&
-      fetchRequested
-    ) {
+    if (notifications !== prevProps.notifications && indexPage > 0 && prevProps.isFetching && !isFetching && fetchRequested) {
       let { mails } = this.state;
       if (lastFolderCache && navigation.state?.params?.key !== lastFolderCache) {
         // THIS IS A BIG HACK BECAUSE DATA FLOW IS TOTALLY FUCKED UP IN THIS MODULE !!!!!!!! 🤬🤬🤬
@@ -184,29 +178,29 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   }
 
   renderMailContent = mailInfos => {
-    const navigationKey = this.props.navigationKey;
+    const { navigationKey, navigation, fetchInit, isTrashed } = this.props;
     const isFolderDrafts = navigationKey === 'drafts';
     const isStateDraft = mailInfos.state === 'DRAFT';
 
     if (isStateDraft && isFolderDrafts) {
-      this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
+      navigation.navigate(`${moduleConfig.routeName}/new`, {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
         onGoBack: () => {
           this.refreshMailList();
-          this.props.fetchInit();
+          fetchInit();
         },
       });
     } else {
-      this.props.navigation.navigate(`${moduleConfig.routeName}/mail`, {
+      navigation.navigate(`${moduleConfig.routeName}/mail`, {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
         currentFolder: navigationKey || 'inbox',
         onGoBack: () => {
           this.refreshMailList();
-          this.props.fetchInit();
+          fetchInit();
         },
-        isTrashed: this.props.isTrashed,
+        isTrashed,
       });
     }
   };
@@ -262,35 +256,49 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   };
 
   onChangePage = () => {
-    if (!this.props.isFetching && this.props.notifications !== undefined) {
+    const { isFetching, notifications, fetchMails } = this.props;
+    if (!isFetching && notifications !== undefined) {
       const { indexPage } = this.state;
       const currentPage = indexPage + 1;
       this.setState({ indexPage: currentPage });
-      this.props.fetchMails(currentPage);
+      fetchMails(currentPage);
     }
   };
 
   refreshMailList = () => {
-    this.props.fetchMails(0);
+    const { fetchMails } = this.props;
+    fetchMails(0);
     this.setState({ indexPage: 0 });
   };
 
   toggleUnread = () => {
+    const { mails } = this.state;
     let toggleListIds = '';
-    for (let i = 0; i < this.state.mails.length - 1; i++) {
-      if (this.state.mails[i].isChecked) toggleListIds = toggleListIds.concat('id=', this.state.mails[i].id, '&');
+    for (let i = 0; i < mails.length - 1; i++) {
+      if (mails[i].isChecked) toggleListIds = toggleListIds.concat('id=', mails[i].id, '&');
     }
     if (toggleListIds === '') return;
     toggleListIds = toggleListIds.slice(0, -1);
   };
 
   public render() {
-    const { isFetching, navigationKey, navigation, folders, mailboxesCount } = this.props;
-    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage, showFolderCreationModal } = this.state;
+    const {
+      isFetching,
+      navigationKey,
+      navigation,
+      folders,
+      mailboxesCount,
+      isTrashed,
+      moveToFolder,
+      moveToInbox,
+      restoreToFolder,
+      restoreToInbox,
+    } = this.props;
+    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage, showFolderCreationModal, mails } = this.state;
     const uniqueId = [] as string[];
     const uniqueMails: (IMail & { key: string })[] = [];
-    if (this.state.mails)
-      for (const mail of this.state.mails) {
+    if (mails)
+      for (const mail of mails) {
         // @ts-ignore
         if (uniqueId.indexOf(mail.id) === -1) {
           // @ts-ignore
@@ -366,7 +374,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
     const isFolderOutbox = navigationKey === 'sendMessages';
     const isFolderDrafts = navigationKey === 'drafts';
-    const isFolderTrash = this.props.isTrashed;
+    const isFolderTrash = isTrashed;
 
     return (
       <>
@@ -527,10 +535,10 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
           show={showModal}
           closeModal={() => this.setState({ showModal: false })}
           successCallback={this.mailRestored}
-          moveToFolder={this.props.moveToFolder}
-          moveToInbox={this.props.moveToInbox}
-          restoreToFolder={this.props.restoreToFolder}
-          restoreToInbox={this.props.restoreToInbox}
+          moveToFolder={moveToFolder}
+          moveToInbox={moveToInbox}
+          restoreToFolder={restoreToFolder}
+          restoreToInbox={restoreToInbox}
         />
       </>
     );

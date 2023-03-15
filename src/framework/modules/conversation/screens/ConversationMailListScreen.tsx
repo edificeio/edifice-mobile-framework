@@ -201,17 +201,18 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   }
 
   public render() {
+    const { firstFetch, fetchRequested, route } = this.state;
     // Ignore missing props in MailList
     return (
       <MailList
         {...this.props}
         {...this.state}
         fetchMails={this.fetchMails}
-        isTrashed={this.props.route.params.key === 'trash'}
-        firstFetch={this.state.firstFetch}
-        fetchRequested={this.state.fetchRequested}
+        isTrashed={route.params.key === 'trash'}
+        firstFetch={firstFetch}
+        fetchRequested={fetchRequested}
         fetchCompleted={this.fetchCompleted}
-        navigationKey={this.props.route.params.key}
+        navigationKey={route.params.key}
       />
     );
   }
