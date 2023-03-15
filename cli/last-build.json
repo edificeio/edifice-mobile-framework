@@ -1,6 +1,6 @@
 {
-  "last": "2023-03-08 12:23:46",
-  "notes": "upgrade(rn6): Stack upgrade\nupgrade(rn6): Goto 1.9.5-alpha.6\nupgrade(rn6): Fix Lint+Prettier errors and warnings\nrn6(mediacentre): MB-790, mediacentre finished\nupgrade(rn6): MB-545, Fix ESLint + Prettier Errors && Warnings\nupgrade(rn6): MB-537, Fix Lint + Prettier Errors && Warnings\nrn6(homework): MB-787, homework partially finished\nrelease: 1.9.4-alpha.6(1090406)",
-  "version": "1.9.5-alpha.7(1090507)",
+  "last": "2023-03-15 19:10:59",
+  "notes": "upgrade(rn6): react-native-flipper downgrade due to iOS build errors\nupgrade(rn6): MO-206 upgrade zimbra\nupgrade(rn6): Crash at launch on Android fix\nupgrade(rn6): Remove dummies Flipper Plugins and configure Images+Redux+Navigation properly\nfix(pdf, rn6): MB-1292, Handle onPressLink\nupgrade(rn6): Red Screen @ Launch Fix\nMerge remote-tracking branch 'origin/dev/1.9.5' into dev/1.9.5\nauth-error-other\nupgrade(rn6): Performance Monitor Flipper Plugin Addition\nupgrade(rn6): Async Storage Flipper Plugin Addition\nupfrade(rn6): React Navigation Flipper Plugin Addition\nfix(onboarding): MB-1198, refact openUrl && fix redirection problem on discovery button\nfix(refacto): Fix errors\nrelease: 1.9.4-rc.2(1090403)\nupgrade(rn6): console.log removal\nrelease: 1.9.4-rc.1(1090402)\nchore(global): MB-1284: add uniqueId on headers of all requests\nrelease: 1.9.5-alpha.7(1090507)",
+  "version": "1.9.5-alpha.8(1090508)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
