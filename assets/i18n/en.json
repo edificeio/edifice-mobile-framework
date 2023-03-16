@@ -413,6 +413,7 @@
   "form.finishAndSend": "Finish and send",
   "form.formDistributionListScreen.emptyScreen.text": "You will receive a notification as soon as a form has been sent to you.",
   "form.formDistributionListScreen.emptyScreen.title": "You do not have any forms pending.",
+  "form.formDistributionListScreen.title": "Form: My answers",
   "form.formDistributionScreen.emptyScreen.title": "Sorry, you do not have the rights to access this page",
   "form.formDistributionScreen.submissionModal.upperText": "You are about to validate your answers to this form.",
   "form.formDistributionScreen.submissionModal.lowerText.default": "Once you have submitted your form you will not be able to change your answers. Do you want to confirm the submission?",

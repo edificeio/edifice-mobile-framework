@@ -413,6 +413,7 @@
   "form.finishAndSend": "Terminer et envoyer",
   "form.formDistributionListScreen.emptyScreen.text": "Vous recevrez une notification dès qu'un formulaire vous aura été envoyé.",
   "form.formDistributionListScreen.emptyScreen.title": "Vous n'avez aucun formulaire en attente de réponse",
+  "form.formDistributionListScreen.title": "Formulaire : Mes réponses",
   "form.formDistributionScreen.emptyScreen.title": "Désolé, vous n'avez pas les droits pour accéder à cette page",
   "form.formDistributionScreen.submissionModal.upperText": "Vous êtes sur le point de valider vos réponses à ce formulaire.",
   "form.formDistributionScreen.submissionModal.lowerText.default": "Une fois votre formulaire envoyé vous ne pourrez plus modifier vos réponses. Voulez-vous confirmer l'envoi ?",

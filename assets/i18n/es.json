@@ -413,6 +413,7 @@
   "form.finishAndSend": "Terminar y enviar",
   "form.formDistributionListScreen.emptyScreen.text": "Se le notificará tan pronto como se le envíe un formulario.",
   "form.formDistributionListScreen.emptyScreen.title": "No tiene ningún formulario esperando una respuesta.",
+  "form.formDistributionListScreen.title": "Formulario: Mis respuestas",
   "form.formDistributionScreen.emptyScreen.title": "Lo sentimos, no tiene derechos para acceder a esta página",
   "form.formDistributionScreen.submissionModal.upperText": "Está a punto de validar sus respuestas a este formulario.",
   "form.formDistributionScreen.submissionModal.lowerText.default": "Una vez que haya enviado su formulario, no podrá modificar sus respuestas. ¿Desea confirmar el envío?",
