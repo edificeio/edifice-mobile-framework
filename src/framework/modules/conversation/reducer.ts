@@ -1,9 +1,11 @@
 /**
  * Conversation Reducer
  */
+import { combineReducers } from 'redux';
+
 import { Reducers } from '~/app/store';
-import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
-import { createInitialState } from '~/infra/redux/async2';
+import { createSessionAsyncReducer } from '~/framework/util/redux/async';
+import { createAsyncActionTypes, createInitialState } from '~/infra/redux/async2';
 
 import moduleConfig from './module-config';
 import { ICountListState, initialState as initialCountListState } from './state/count';
@@ -37,8 +39,22 @@ const initialState: IConversationState = {
   signature: createInitialState(initialSignatureState),
 };
 
-const reducer = createSessionReducer(initialState, {
-  // Add reducer functions here or use reducer tools
+export const actionTypes = {
+  count: createAsyncActionTypes(moduleConfig.namespaceActionType('COUNT_LIST')),
+  folders: createAsyncActionTypes(moduleConfig.namespaceActionType('FOLDERS_LIST')),
+  init: createAsyncActionTypes(moduleConfig.namespaceActionType('INIT_MAIL_LIST')),
+  mailContent: createAsyncActionTypes(moduleConfig.namespaceActionType('MAIL_CONTENT')),
+  mailList: createAsyncActionTypes(moduleConfig.namespaceActionType('MAIL_LIST')),
+  signature: createAsyncActionTypes(moduleConfig.namespaceActionType('SIGNATURE')),
+};
+
+const reducer = combineReducers({
+  count: createSessionAsyncReducer(initialState.count, actionTypes.count),
+  folders: createSessionAsyncReducer(initialState.folders, actionTypes.folders),
+  init: createSessionAsyncReducer(initialState.init, actionTypes.init),
+  mailContent: createSessionAsyncReducer(initialState.mailContent, actionTypes.mailContent),
+  mailList: createSessionAsyncReducer(initialState.mailList, actionTypes.mailList),
+  signature: createSessionAsyncReducer(initialState.signature, actionTypes.signature),
 });
 Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;
