@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getStore } from '~/app/store';
+import { AuthError, RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
+import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
 
-// import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
-// import { navigate } from '~/navigation/helpers/navHelper';
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
 
@@ -19,8 +19,11 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
     try {
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
     } catch (err) {
-      // ToDo : logout here ?
-      // navigate(getLoginRouteName());
+      // We consider assume here user user is logged out, but we don't really destroy his session.
+      // ToDo : really erases all tokens ?
+      // ToDo : what about the FCM token ?
+      getStore().dispatch(authActions.sessionError((err as AuthError)?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+      throw err;
     }
   }
   const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);

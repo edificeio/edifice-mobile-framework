@@ -55,12 +55,18 @@ function RootNavigator(props: RootNavigatorProps) {
   // === Compute initial auth state ===
   // ToDo : verify that the state is correctly reset after logout & auto-login
 
-  const loadedPlatform = useAppStartup(dispatch);
+  const lastLoadedPlatform = useAppStartup(dispatch, session?.platform);
   const initialNavState = React.useMemo(() => {
-    return isReady && !logged ? getAuthNavigationState(loadedPlatform, autoLoginResult) : undefined;
-  }, [isReady, logged, loadedPlatform, autoLoginResult]);
+    return isReady && !logged ? getAuthNavigationState(lastLoadedPlatform, autoLoginResult) : undefined;
+  }, [isReady, logged, lastLoadedPlatform, autoLoginResult]);
 
-  // === A. Auth/Main switch ===
+  // === If initialNavState changed during the runtime, we need to update it in navigationRef by hand ===
+  React.useLayoutEffect(() => {
+    // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
+    if (initialNavState && navigationRef.isReady()) navigationRef.reset(initialNavState);
+  }, [initialNavState]);
+
+  // === Auth/Main switch ===
   const routes = React.useMemo(() => {
     return isFullyLogged ? MainNavigation(session.apps, session.widgets) : AuthNavigator();
   }, [isFullyLogged, session]);

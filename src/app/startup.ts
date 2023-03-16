@@ -10,7 +10,7 @@ import { Platform } from '~/framework/util/appConf';
 /**
  * Logic code that is run for the app start
  */
-export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
+export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatform?: Platform) {
   const [loadedPlatform, setLoadedPlatform] = React.useState<Platform | undefined>(undefined);
   React.useEffect(() => {
     loadCurrentPlatform().then(platform => {
@@ -18,6 +18,9 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
         dispatch(loginAction(platform, undefined))
           .then(redirect => {
             dispatch(actions.redirectAutoLogin(redirect));
+          })
+          .catch(() => {
+            // Do nothing. Finally clause + default navigation state will handle the case.
           })
           .finally(() => {
             setLoadedPlatform(platform);
@@ -28,5 +31,11 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
     // We WANT TO call this only once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Update last-known platform if provided.
+  if (lastPlatform && lastPlatform !== loadedPlatform) {
+    setLoadedPlatform(lastPlatform);
+    return lastPlatform;
+  }
   return loadedPlatform;
 }
