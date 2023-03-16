@@ -1,20 +1,15 @@
 import theme from '~/app/theme';
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
-import { getUserSession } from '~/framework/util/session';
 
-import { IHomeworkAssistance_State } from './reducer';
+import reducer from './reducer';
 import { getHomeworkAssistanceWorkflowInformation } from './rights';
 
-const hasSendRight = () => {
-  const session = getUserSession();
-  return getHomeworkAssistanceWorkflowInformation(session).send;
-};
-
-export default new NavigableModuleConfig<'homeworkAssistance', IHomeworkAssistance_State>({
+export default new NavigableModuleConfig<'homeworkAssistance', ReturnType<typeof reducer>>({
   name: 'homeworkAssistance',
   entcoreScope: ['homework-assistance'],
   matchEntcoreApp: '/homework-assistance',
-  hasRight: () => hasSendRight(),
+  hasRight: () => getHomeworkAssistanceWorkflowInformation(assertSession()).send,
 
   displayI18n: 'homeworkAssistance.tabName',
   displayAs: 'myAppsModule',

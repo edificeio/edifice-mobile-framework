@@ -1,9 +1,8 @@
 import moment, { Moment } from 'moment';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IUserSession } from '~/framework/util/session';
+import { ISession } from '~/framework/modules/auth/model';
+import { IConfig, IExclusion, IService } from '~/framework/modules/homework-assistance/model';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
-import { IConfig, IExclusion, IService } from '~/modules/homeworkAssistance/reducer';
 
 interface IBackendHomeworkAssistanceExclusion {
   start: string;
@@ -92,14 +91,14 @@ const homeworkAssistanceServicesAdapter = (services: IBackendHomeworkAssistanceS
 
 export const homeworkAssistanceService = {
   config: {
-    get: async (session: IUserSession) => {
+    get: async (session: ISession) => {
       const api = '/homework-assistance/config';
       const config = (await fetchJSONWithCache(api)) as IBackendHomeworkAssistanceConfig;
       return homeworkAssistanceConfigAdapter(config) as IConfig;
     },
   },
   services: {
-    get: async (session: IUserSession) => {
+    get: async (session: ISession) => {
       const api = '/homework-assistance/services/all';
       const services = (await fetchJSONWithCache(api)) as IBackendHomeworkAssistanceServices;
       return homeworkAssistanceServicesAdapter(services);
@@ -107,7 +106,7 @@ export const homeworkAssistanceService = {
   },
   service: {
     addRequest: async (
-      session: IUserSession,
+      session: ISession,
       service: IService,
       phoneNumber: string,
       date: Moment,
@@ -136,7 +135,7 @@ export const homeworkAssistanceService = {
         },
         informations_complementaires: information,
       });
-      const response = (await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+      const response = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',
         body,
       })) as { status: string };

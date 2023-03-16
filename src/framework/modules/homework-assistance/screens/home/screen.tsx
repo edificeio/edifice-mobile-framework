@@ -1,12 +1,12 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { RefreshControl, SafeAreaView, View } from 'react-native';
-import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -15,16 +15,35 @@ import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, BodyText, SmallText } from '~/framework/components/text';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
+import moduleConfig from '~/framework/modules/homework-assistance/module-config';
+import {
+  HomeworkAssistanceNavigationParams,
+  homeworkAssistanceRouteNames,
+} from '~/framework/modules/homework-assistance/navigation';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { getUserSession } from '~/framework/util/session';
-import { fetchHomeworkAssistanceConfigAction } from '~/modules/homeworkAssistance/actions';
-import moduleConfig from '~/modules/homeworkAssistance/moduleConfig';
 
 import styles from './styles';
-import { IHomeworkAssistanceHomeScreenProps } from './types';
+import { HomeworkAssistanceHomeScreenPrivateProps } from './types';
 
-const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps) => {
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<
+  HomeworkAssistanceNavigationParams,
+  typeof homeworkAssistanceRouteNames.home
+>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('homeworkAssistance.tabName'),
+});
+
+const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivateProps) => {
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -50,24 +69,19 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps)
     if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
   };
 
-  const focusEventListener = React.useRef<NavigationEventSubscription>();
   React.useEffect(() => {
-    focusEventListener.current = props.navigation.addListener('didFocus', () => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
       fetchOnNavigation();
     });
-    return () => {
-      focusEventListener.current?.remove();
-    };
-  }, []);
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation]);
 
-  const goToRequest = () => {
-    props.navigation.navigate(`${moduleConfig.routeName}/request`);
-  };
+  const goToRequest = () => props.navigation.navigate(homeworkAssistanceRouteNames.request);
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -95,11 +109,7 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps)
             <SmallText style={styles.secondaryText}>{info}</SmallText>
           </View>
         </View>
-        <ActionButton
-          text={I18n.t('homeworkAssistance.makeARequest')}
-          action={() => goToRequest()}
-          style={styles.actionContainer}
-        />
+        <ActionButton text={I18n.t('homeworkAssistance.makeARequest')} action={goToRequest} style={styles.actionContainer} />
       </SafeAreaView>
     );
   };
@@ -107,9 +117,6 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps)
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
         return renderInformation();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
@@ -120,26 +127,30 @@ const HomeworkAssistanceHomeScreen = (props: IHomeworkAssistanceHomeScreenProps)
     }
   };
 
-  return (
-    <PageView navigation={props.navigation} navBarWithBack={{ title: I18n.t('homeworkAssistance.tabName') }}>
-      {renderPage()}
-    </PageView>
-  );
+  return <PageView>{renderPage()}</PageView>;
 };
 
 export default connect(
-  (gs: IGlobalState) => {
-    const state = moduleConfig.getState(gs);
+  (state: IGlobalState) => {
+    const homeworkAssistanceState = moduleConfig.getState(state);
+    const session = getSession(state);
+
     return {
-      config: state.config.data,
-      initialLoadingState: state.config.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
-      session: getUserSession(),
+      config: homeworkAssistanceState.config.data,
+      initialLoadingState: homeworkAssistanceState.config.isPristine
+        ? AsyncPagedLoadingState.PRISTINE
+        : AsyncPagedLoadingState.DONE,
+      session,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchConfig: tryAction(fetchHomeworkAssistanceConfigAction, undefined, true),
+        fetchConfig: tryAction(
+          fetchHomeworkAssistanceConfigAction,
+          undefined,
+          true,
+        ) as unknown as HomeworkAssistanceHomeScreenPrivateProps['fetchConfig'],
       },
       dispatch,
     ),

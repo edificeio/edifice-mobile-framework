@@ -1,14 +1,9 @@
 /**
- * Homework assistance Reducer
+ * Data model for the module homeworkAssistance
  */
 import { Moment } from 'moment';
-import { combineReducers } from 'redux';
 
 import { getDayOfTheWeek } from '~/framework/util/date';
-import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
-import moduleConfig from '~/modules/workspace/moduleConfig';
-
-// Types
 
 export interface IExclusion {
   start: Moment;
@@ -46,35 +41,10 @@ export interface IService {
   value: number;
 }
 
-// State
-
-interface IHomeworkAssistance_StateData {
+export interface HomeworkAssistanceData {
   config?: IConfig;
   services: IService[];
 }
-
-export interface IHomeworkAssistance_State {
-  config: AsyncState<IConfig>;
-  services: AsyncState<IService[]>;
-}
-
-// Reducer
-
-const initialState: IHomeworkAssistance_StateData = {
-  services: [],
-};
-
-export const actionTypes = {
-  config: createAsyncActionTypes(moduleConfig.namespaceActionType('CONFIG')),
-  services: createAsyncActionTypes(moduleConfig.namespaceActionType('SERVICES')),
-};
-
-export default combineReducers({
-  config: createSessionAsyncReducer(initialState.config, actionTypes.config),
-  services: createSessionAsyncReducer(initialState.services, actionTypes.services),
-});
-
-// Getters
 
 export const getIsDateValid = (config: IConfig, date: Moment, time: Moment): boolean => {
   const { openingDays, exclusions, openingTime } = config.settings;

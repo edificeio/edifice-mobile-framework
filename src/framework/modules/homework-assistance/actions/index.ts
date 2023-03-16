@@ -4,11 +4,12 @@
 import { Moment } from 'moment';
 import { ThunkAction } from 'redux-thunk';
 
+import { UserChild } from '~/framework/modules/auth/model';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import { IConfig, IService } from '~/framework/modules/homework-assistance/model';
+import { actionTypes } from '~/framework/modules/homework-assistance/reducer';
+import { homeworkAssistanceService } from '~/framework/modules/homework-assistance/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
-import { getUserSession } from '~/framework/util/session';
-import { IConfig, IService, actionTypes } from '~/modules/homeworkAssistance/reducer';
-import { homeworkAssistanceService } from '~/modules/homeworkAssistance/service';
-import { IChild } from '~/modules/viescolaire/dashboard/state/children';
 
 /**
  * Fetch the config.
@@ -17,7 +18,7 @@ export const homeworkAssistanceConfigActionsCreators = createAsyncActionCreators
 export const fetchHomeworkAssistanceConfigAction =
   (): ThunkAction<Promise<IConfig>, any, any, any> => async (dispatch, getState) => {
     try {
-      const session = getUserSession();
+      const session = assertSession();
       dispatch(homeworkAssistanceConfigActionsCreators.request());
       const config = await homeworkAssistanceService.config.get(session);
       dispatch(homeworkAssistanceConfigActionsCreators.receipt(config));
@@ -35,7 +36,7 @@ export const homeworkAssistanceServicesActionsCreators = createAsyncActionCreato
 export const fetchHomeworkAssistanceServicesAction =
   (): ThunkAction<Promise<IService[]>, any, any, any> => async (dispatch, getState) => {
     try {
-      const session = getUserSession();
+      const session = assertSession();
       dispatch(homeworkAssistanceServicesActionsCreators.request());
       const services = await homeworkAssistanceService.services.get(session);
       dispatch(homeworkAssistanceServicesActionsCreators.receipt(services));
@@ -55,14 +56,14 @@ export const postHomeworkAssistanceRequestAction =
     phoneNumber: string,
     date: Moment,
     time: Moment,
-    student: IChild | null,
+    student: UserChild | null,
     structureName: string,
     className: string,
     information: string,
   ) =>
   async (dispatch, getState) => {
     try {
-      const session = getUserSession();
+      const session = assertSession();
       const firstName = student?.firstName ?? session.user.firstName;
       const lastName = student?.lastName ?? session.user.lastName;
       const response = await homeworkAssistanceService.service.addRequest(

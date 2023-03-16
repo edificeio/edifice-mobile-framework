@@ -49,13 +49,11 @@ export default StyleSheet.create({
     marginBottom: UI_SIZES.spacing.medium,
   },
   actionContainerEnabled: {
-    marginBottom: UI_SIZES.spacing.medium,
     backgroundColor: theme.palette.secondary.regular,
     borderColor: theme.palette.secondary.regular,
     opacity: 1,
   },
   actionContainerDisabled: {
-    marginBottom: UI_SIZES.spacing.medium,
     backgroundColor: theme.ui.text.light,
     borderColor: theme.ui.text.light,
     opacity: 0.5,
