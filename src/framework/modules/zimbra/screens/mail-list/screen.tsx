@@ -111,12 +111,12 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const refreshSilent = () => {
+  /*const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
     fetchMails()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
+  };*/
 
   const fetchNext = () => {
     setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);

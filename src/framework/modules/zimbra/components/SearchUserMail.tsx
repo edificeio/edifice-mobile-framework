@@ -86,7 +86,7 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
       updateFoundUsersOrGroups([]);
       clearTimeout(searchTimeout.current);
     };
-  }, [search]);
+  }, [filterUsersOrGroups, search]);
 
   const removeUser = id => onChange(selectedUsersOrGroups.filter(user => user.id !== id));
 
