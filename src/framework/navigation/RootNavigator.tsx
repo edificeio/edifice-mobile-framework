@@ -18,7 +18,7 @@ import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 
-import { navigationRef } from './helper';
+import { navigationRef, useNavigationDevPlugins } from './helper';
 import { MainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
@@ -70,14 +70,6 @@ function RootNavigator(props: RootNavigatorProps) {
   const routes = React.useMemo(() => {
     return isFullyLogged ? MainNavigation(session.apps, session.widgets) : AuthNavigator();
   }, [isFullyLogged, session]);
-
-  // === Initialize React Navigation Flipper Plugin ===
-  if (__DEV__) {
-    // eslint-disable-next-line import/no-extraneous-dependencies
-    const rnDevTools = require('@react-navigation/devtools');
-    rnDevTools?.useFlipper(navigationRef);
-    rnDevTools?.useReduxDevToolsExtension(navigationRef);
-  }
 
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 

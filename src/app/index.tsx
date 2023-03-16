@@ -13,6 +13,7 @@ import { Provider } from 'react-redux';
 
 import AppModules from '~/app/modules';
 import Navigation from '~/framework/navigation/RootNavigator';
+import { useNavigationDevPlugins } from '~/framework/navigation/helper';
 import { Trackers } from '~/framework/util/tracker';
 import { AllModulesBackup } from '~/infra/oauth';
 
@@ -73,6 +74,8 @@ function App(props: AppProps) {
   useAppState();
   useLocale();
   useTrackers();
+
+  useNavigationDevPlugins();
 
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
