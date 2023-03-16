@@ -9,6 +9,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import Notifier from '~/infra/notifier/container';
+import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
@@ -137,7 +138,7 @@ const HeaderSubject = ({
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue]);
+  }, [currentValue, onChange]);
 
   return (
     <View style={[headerStyle, style]}>
@@ -228,7 +229,7 @@ const Body = ({ style, value, onChange, onSave }) => {
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue]);
+  }, [currentValue, onChange]);
 
   return (
     <View style={[styles.mailPart, style, styles.fullGrowView]}>
@@ -272,7 +273,7 @@ const Signature = ({
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue]);
+  }, [currentValue, onSignatureTextChange]);
 
   return (
     <View style={styles.signatureZone}>
