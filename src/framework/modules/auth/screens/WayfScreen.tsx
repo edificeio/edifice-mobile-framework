@@ -17,7 +17,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { loginAction } from '~/framework/modules/auth/actions';
+import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Trackers } from '~/framework/util/tracker';
@@ -150,11 +150,18 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={STYLES.errorMsg}>
-            {I18n.t('auth-error-' + this.error, {
-              version: DeviceInfo.getVersion(),
-              errorcode: this.error,
-              currentplatform: this.props.route.params.platform.url,
-            })}
+            {this.error
+              ? I18n.t('auth-error-' + this.error, {
+                  version: DeviceInfo.getVersion(),
+                  errorcode: this.error,
+                  currentplatform: this.props.route.params.platform.url,
+                  defaultValue: I18n.t('auth-error-other', {
+                    version: DeviceInfo.getVersion(),
+                    errorcode: this.error,
+                    currentplatform: this.props.route.params.platform.url,
+                  }),
+                })
+              : ''}
           </SmallText>
           <ActionButton text={I18n.t('login-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
@@ -251,7 +258,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   componentDidUpdate(prevProps: IWayfScreenProps) {
     const { auth } = this.props;
     // Detect && display potential login error sent after checkVersionThenLogin(false) call
-    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) this.displayError(auth.error);
+    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) {
+      this.displayError(auth.error);
+    }
     // Update page title
     this.props.navigation.setOptions({
       title: I18n.t(this.state.mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title'),
@@ -290,6 +299,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.clearDatas(() => {
       this.error = error === OAuth2ErrorCode.BAD_CREDENTIALS ? OAuth2ErrorCode.BAD_SAML : error;
       this.setState({ mode: WAYFPageMode.ERROR });
+      this.props.dispatch(consumeAuthError());
     });
   }
 

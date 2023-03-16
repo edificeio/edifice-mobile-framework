@@ -1,7 +1,7 @@
 import styled from '@emotion/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { ScrollView, TextInput, View } from 'react-native';
+import { InteractionManager, ScrollView, TextInput, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,7 +13,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { CaptionText, SmallText } from '~/framework/components/text';
-import { loginAction, markLoginErrorTimestampAction } from '~/framework/modules/auth/actions';
+import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
@@ -30,8 +30,7 @@ const initialState: LoginHomeScreenState = {
   typing: false,
   rememberMe: true,
   loginState: 'IDLE',
-  error: undefined,
-  errorTimestamp: undefined,
+  error: undefined, // We stores error retrived via props for display persistence
 };
 
 const FormContainer = styled.View({
@@ -46,6 +45,10 @@ const FormContainer = styled.View({
 export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps, LoginHomeScreenState> {
   private mounted = false;
 
+  private unsubscribeBlur?: () => void;
+
+  private unsubscribeBlurTask?: ReturnType<typeof InteractionManager.runAfterInteractions>;
+
   private inputLogin: TextInput | null = null;
 
   private setInputLoginRef = (el: TextInput) => (this.inputLogin = el);
@@ -56,39 +59,52 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
 
   constructor(props: LoginHomeScreenPrivateProps) {
     super(props);
-    this.state = { ...initialState, errorTimestamp: Date.now() };
+    this.state = { ...initialState };
   }
 
   get isSubmitDisabled() {
     return !(this.state.login && this.state.password);
   }
 
-  // If a previous error was thrown without timestamp (ex: autoLogin), make sure to give it a timestamp to show only once.
-  consumeErrorIfNeeded() {
-    if (this.props.auth.error && this.state.errorTimestamp && this.props.auth.errorTimestamp === undefined) {
-      this.props.handleConsumeError(this.props.auth.error, this.state.errorTimestamp);
+  consumeError() {
+    if (this.props.auth.error) {
+      this.setState({ error: this.props.auth.error });
+      this.props.handleConsumeError();
     }
+  }
+
+  resetError() {
+    this.setState({ error: undefined });
   }
 
   componentDidMount() {
     this.mounted = true;
-    this.consumeErrorIfNeeded();
+    this.consumeError();
+    this.unsubscribeBlur = this.props.navigation.addListener('blur', () => {
+      this.unsubscribeBlurTask = InteractionManager.runAfterInteractions(() => {
+        this.resetError();
+      });
+    });
   }
 
   componentDidUpdate() {
-    this.consumeErrorIfNeeded();
+    this.consumeError();
   }
 
   componentWillUnmount(): void {
     this.mounted = false;
+    this.unsubscribeBlur?.();
+    this.unsubscribeBlurTask?.cancel();
   }
 
   onLoginChanged(value: string) {
     this.setState({ login: value.trim().toLowerCase(), typing: true });
+    this.resetError();
   }
 
   onPasswordChanged(value: string) {
     this.setState({ password: value, typing: true });
+    this.resetError();
   }
 
   protected async doLogin() {
@@ -104,7 +120,6 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
           password: this.state.password.trim(), // we trim password silently.
         },
         this.state.rememberMe,
-        this.state.errorTimestamp,
       );
       if (redirect) {
         redirectLoginNavAction(redirect, platform, navigation);
@@ -146,11 +161,9 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
   };
 
   protected renderForm() {
-    const { errorTimestamp, error } = this.props.auth;
-    const { login, password, typing, rememberMe } = this.state;
+    const { login, password, typing, rememberMe, error } = this.state;
     const { route, navigation } = this.props;
     const { platform } = route.params;
-    const showError = (!typing && this.state.errorTimestamp === errorTimestamp) || errorTimestamp === undefined; // errorTimestamp === undefined => redirected from somewhere or autoLogin
 
     return (
       <View style={styles.view}>
@@ -166,7 +179,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
               placeholder={I18n.t('Login')}
               onChangeText={this.onLoginChanged.bind(this)}
               value={login}
-              hasError={!!error && showError}
+              hasError={!!error}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -178,7 +191,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
               placeholder={I18n.t('Password')}
               onChangeText={this.onPasswordChanged.bind(this)}
               value={password}
-              hasError={!!error && showError}
+              hasError={!!error}
             />
             <View style={styles.inputCheckbox}>
               <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('AutoLogin')}</CaptionText>
@@ -189,7 +202,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
               />
             </View>
             <SmallText style={styles.textError}>
-              {showError && error
+              {error
                 ? I18n.t('auth-error-' + error, {
                     version: DeviceInfo.getVersion(),
                     errorcode: error,
@@ -266,7 +279,7 @@ export default connect(
       {
         handleLogin: tryAction(loginAction, undefined, true) as unknown as LoginHomeScreenDispatchProps['handleLogin'], // Redux-thunk types suxx
         handleConsumeError: tryAction(
-          markLoginErrorTimestampAction,
+          consumeAuthError,
           undefined,
           false,
         ) as unknown as LoginHomeScreenDispatchProps['handleConsumeError'],

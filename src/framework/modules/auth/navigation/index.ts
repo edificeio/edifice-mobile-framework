@@ -85,7 +85,6 @@ export const redirectLoginNavAction = (
   action: ILoginResult,
   platform: Platform,
   navigation: NavigationProp<IAuthNavigationParams>,
-  // navigation: NativeStackNavigationProp<IAuthNavigationParams>,
 ) => {
   const navAction = getRedirectLoginNavAction(action, platform);
   if (navAction) {

@@ -46,7 +46,7 @@ const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
   const { logged, session, isReady, autoLoginResult, dispatch } = props;
-  const isFullyLogged = logged && session; // Partial sessions scenarios have session = true && logged = false, and must stay on auth stack.
+  const isFullyLogged = logged && session; // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
 
   React.useEffect(() => {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);

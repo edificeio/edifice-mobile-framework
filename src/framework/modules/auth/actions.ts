@@ -9,10 +9,8 @@ import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, destroyOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
 
-// import { actionTypeLoggedIn, actionTypeLoggedInPartial, actionTypeLoginError } from '~/user/actions/actionTypes/login';
 import {
   AuthError,
-  AuthErrorCode,
   ForgotMode,
   IActivationError,
   IActivationPayload,
@@ -94,7 +92,7 @@ function getLegalUrlsAction(platform: Platform) {
   };
 }
 
-export function loginAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean, timestamp?: number) {
+export function loginAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<ILoginResult> {
     try {
       await dispatch(getLegalUrlsAction(platform));
@@ -149,25 +147,9 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       const sessionInfo = formatSession(platform, userinfo, userdata);
       if (partialSessionScenario) {
         const context = await getAuthContext(platform);
-        // dispatch({
-        //   // For legacy compat
-        //   // Todo : remove legacy session information when not useful anymore
-        //   type: actionTypeLoggedInPartial,
-        //   userbook: userinfo,
-        //   userdata,
-        //   userPublicInfo: userPublicInfo.result[0],
-        // });
         dispatch(authActions.sessionPartial(sessionInfo));
         return { action: partialSessionScenario, context, credentials, rememberMe };
       } else {
-        // dispatch({
-        //   // For legacy compat
-        //   // Todo : remove legacy session information when not useful anymore
-        //   type: actionTypeLoggedIn,
-        //   userbook: userinfo,
-        //   userdata,
-        //   userPublicInfo: userPublicInfo.result[0],
-        // });
         dispatch(authActions.sessionCreate(sessionInfo));
       }
     } catch (e) {
@@ -181,19 +163,13 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
           return { action: 'activate', context, credentials, rememberMe };
         } catch (err) {
           authError = (err as Error).name === 'EAUTH' ? (err as AuthError) : undefined;
-          dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR, timestamp));
+          dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
           throw err;
         }
       } else {
         if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', authError?.type);
         else await Trackers.trackEvent('Auth', 'RESTORE ERROR', authError?.type);
-        // dispatch({
-        //   // For legacy compat
-        //   // Todo : remove legacy session information when not useful anymore
-        //   type: actionTypeLoginError,
-        //   errmsg: authError?.type,
-        // });
-        dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR, timestamp));
+        dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
         throw e;
       }
     }
@@ -278,7 +254,14 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
   };
 }
 
-// ToDo : type the return value
+/**
+ * Send reset mail for id or password
+ * @param platform
+ * @param userInfo
+ * @param forgotMode
+ * @returns
+ * ToDo : type the return value
+ */
 export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgotMode: ForgotMode) {
   return async (dispatch: ThunkDispatch<any, any, any>) => {
     const payLoad =
@@ -309,14 +292,11 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
 }
 
 /**
- * mark the current to be genereted with the given timestamp.
- * Login screens get the timestamp to ensure to show the error only once.
- * @param errcode the AuthErrorCode
- * @param timestamp timestamp of the last-render-time of the screen
+ * removes the current stored auth error
  */
-export function markLoginErrorTimestampAction(errcode: AuthErrorCode, timestamp: number) {
-  return async (dispatch: ThunkDispatch<any, any, any>) => {
-    dispatch(authActions.sessionError(errcode, timestamp));
+export function consumeAuthError() {
+  return (dispatch: ThunkDispatch<any, any, any>) => {
+    dispatch(authActions.sessionErrorConsume());
   };
 }
 
