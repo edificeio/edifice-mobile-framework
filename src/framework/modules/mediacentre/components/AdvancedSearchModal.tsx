@@ -205,7 +205,7 @@ const SourceCheckbox: React.FunctionComponent<ISourceCheckboxProps> = (props: IS
 export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalProps> = forwardRef<
   ISearchModalHandle,
   IAdvancedSearchModalProps
->((props: IAdvancedSearchModalProps) => {
+>((props: IAdvancedSearchModalProps, ref) => {
   const [fields, setFields] = useState<IField[]>(defaultFields);
   const [sources, setSources] = useState<ISources>(defaultSources);
   const areFieldsEmpty = !fields.some(field => field.value !== '');

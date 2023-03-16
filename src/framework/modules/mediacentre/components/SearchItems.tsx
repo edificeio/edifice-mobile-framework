@@ -49,7 +49,7 @@ interface IIconButtonTextProps {
 }
 
 export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<ISearchBarHandle, ISearchBarProps>(
-  (props: ISearchBarProps) => {
+  (props: ISearchBarProps, ref) => {
     const [value, setValue] = useState<string>('');
     const inputRef = useRef<TextInput>(null);
     const onSearch = () => {
