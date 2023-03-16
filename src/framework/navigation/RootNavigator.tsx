@@ -18,7 +18,7 @@ import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 
-import { navigationRef, useNavigationDevPlugins } from './helper';
+import { navigationRef } from './helper';
 import { MainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';

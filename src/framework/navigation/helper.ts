@@ -33,7 +33,6 @@ export function navigate<ParamList extends ParamListBase, RouteName extends keyo
 export const useNavigationDevPlugins = () => {
   // It is safe to use hooks as __DEV__ will not change over time.
   if (__DEV__) {
-    // eslint-disable-next-line import/no-extraneous-dependencies
     const rnDevTools = require('@react-navigation/devtools');
     rnDevTools?.useFlipper(navigationRef);
     rnDevTools?.useReduxDevToolsExtension(navigationRef);
