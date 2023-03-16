@@ -188,9 +188,9 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
       this.setState({ mailboxesCount: count.data });
     }
     if (!isFetching && firstFetch) this.setState({ firstFetch: false });
-    if (key !== prevProps.route.param.key) this.setState({ isChangingFolder: true });
+    if (key !== prevProps.route.params.key) this.setState({ isChangingFolder: true });
     if (isChangingFolder && !isFetching && prevProps.isFetching) this.setState({ isChangingFolder: false });
-    if (!fetchRequested && (key !== prevProps.route.param.key || (isFocused && prevProps.isFocused !== isFocused))) {
+    if (!fetchRequested && (key !== prevProps.route.params.key || (isFocused && prevProps.isFocused !== isFocused))) {
       this.fetchMails();
     }
   }
@@ -201,8 +201,8 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   }
 
   public render() {
-    const { firstFetch, fetchRequested, route } = this.state;
-    // Ignore missing props in MailList
+    const { route } = this.props;
+    const { firstFetch, fetchRequested } = this.state;
     return (
       <MailList
         {...this.props}
@@ -278,7 +278,7 @@ const mapDispatchToProps = dispatch => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(ConversationMailListScreen));
 // const ConversationMailListScreenConnectedWithTracking = withViewTracking(props => {
-//   const key = props.route.param.key;;
+//   const key = props.route.params.key;;
 //   const getValue = () => {
 //     switch (key) {
 //       case 'inbox':
