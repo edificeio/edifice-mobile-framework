@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
@@ -28,6 +29,8 @@ import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Loading } from '~/ui/Loading';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
+import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
+
 interface ConversationMailListComponentDataProps {
   notifications: any;
   isFetching: boolean;
@@ -51,7 +54,9 @@ interface ConversationMailListComponentEventProps {
   restoreToFolder: (mailIds: string[], folderId: string) => void;
   restoreToInbox: (mailIds: string[]) => void;
 }
-type ConversationMailListComponentProps = ConversationMailListComponentDataProps & ConversationMailListComponentEventProps;
+type ConversationMailListComponentProps = ConversationMailListComponentDataProps &
+  ConversationMailListComponentEventProps &
+  NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.home>;
 
 interface ConversationMailListComponentState {
   indexPage: number;
