@@ -1,12 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { getStore } from '~/app/store';
+import { sessionInvalidateAction } from '~/framework/modules/auth/actions';
 import { AuthError, RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
+import { Platform } from '~/framework/util/appConf';
 
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
+
+/** singleton boolean to prevent logout multiple time when parallel fetchs fails */
+let isFailing: boolean = false;
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().
@@ -19,10 +25,18 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
     try {
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
     } catch (err) {
-      // We consider assume here user user is logged out, but we don't really destroy his session.
-      // ToDo : really erases all tokens ?
-      // ToDo : what about the FCM token ?
-      getStore().dispatch(authActions.sessionError((err as AuthError)?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+      if (isFailing) throw err;
+      isFailing = true;
+      // We consider assume here user user is logged out, but we don't really destroy his session => sessionInvalidate.
+      let platform: Platform;
+      try {
+        platform = assertSession().platform;
+        await (getStore().dispatch as ThunkDispatch<any, any, any>)(sessionInvalidateAction(platform, err as AuthError));
+      } catch {
+        // Cannot remove FCM token if we havn't platform. Just dispatch error in this case.
+        getStore().dispatch(authActions.sessionError((err as AuthError)?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+      }
+      isFailing = false;
       throw err;
     }
   }

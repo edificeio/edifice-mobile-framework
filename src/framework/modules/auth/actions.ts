@@ -314,6 +314,19 @@ function sessionDestroyAction(platform: Platform) {
   };
 }
 
+/** Action that invalidates the session without Tracking anything in case of error.
+ * This removes FCM and take the user to the auth stack.
+ */
+export function sessionInvalidateAction(platform: Platform, error?: AuthError) {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    // Unregister the device token from the backend
+    console.debug('call removeFirebaseToken');
+    await removeFirebaseToken(platform);
+    // Validate log out
+    dispatch(authActions.sessionError(error?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+  };
+}
+
 /** Clear the current session and track logout event.
  * Session must exist and this action will throw if no session is active.
  */
