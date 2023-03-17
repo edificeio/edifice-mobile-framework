@@ -2,7 +2,6 @@ import { StackNavigationState } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -64,7 +63,6 @@ export interface ConversationMailListScreenEventProps {
   fetchCount: () => ICount;
 }
 export interface ConversationMailListScreenDataProps {
-  navigation: NavigationScreenProp<any>;
   isPristine: boolean;
   isFetching: boolean;
   notifications: any;
@@ -112,7 +110,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
     super(props);
 
     this.state = {
-      unsubscribe: this.props.navigation.addListener('didFocus', () => {
+      unsubscribe: this.props.navigation.addListener('focus', () => {
         this.forceUpdate();
       }),
       fetchRequested: false,
@@ -279,7 +277,7 @@ const mapDispatchToProps = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(ConversationMailListScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(ConversationMailListScreen);
 // const ConversationMailListScreenConnectedWithTracking = withViewTracking(props => {
 //   const key = props.route.params.key;;
 //   const getValue = () => {
