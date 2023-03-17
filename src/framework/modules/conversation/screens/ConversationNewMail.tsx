@@ -153,7 +153,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const isSavedDraft = draftType === DraftType.DRAFT;
     navigation.setOptions({
       title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
-      headerRight: <HeaderRight addGivenAttachment={addGivenAttachment} sendDraft={sendDraft} />,
+      headerRight: () => <HeaderRight addGivenAttachment={addGivenAttachment} sendDraft={sendDraft} />,
     });
     navigation.setParams(this.navigationHeaderFunction);
     if (route.params.mailId) {
