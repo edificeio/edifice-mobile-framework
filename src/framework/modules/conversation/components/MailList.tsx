@@ -140,12 +140,12 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
 
     if (notifications !== prevProps.notifications && indexPage > 0 && prevProps.isFetching && !isFetching && fetchRequested) {
       let { mails } = this.state;
-      if (lastFolderCache && navigation.state?.params?.key !== lastFolderCache) {
+      if (lastFolderCache && navigation.getState()?.key !== lastFolderCache) {
         // THIS IS A BIG HACK BECAUSE DATA FLOW IS TOTALLY FUCKED UP IN THIS MODULE !!!!!!!! 🤬🤬🤬
         // So we force here mail state flush when folder has changed.
         mails = [];
       }
-      lastFolderCache = navigation.state?.params?.key;
+      lastFolderCache = navigation.getState()?.key;
       const joinedList = mails.concat(notifications);
       this.setState({ mails: joinedList });
       fetchCompleted();

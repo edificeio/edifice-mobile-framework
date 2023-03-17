@@ -64,6 +64,7 @@ export interface ConversationNewMailScreenNavigationParams {
   getSendDraft: () => void;
   mailId: string;
   type: DraftType;
+  onGoBack: () => void;
 }
 interface ConversationNewMailScreenEventProps {
   setup: () => void;
@@ -301,8 +302,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       const draftType = route.params.type;
       const isNewDraft = draftType === DraftType.NEW;
       const isSavedDraft = draftType === DraftType.DRAFT;
-      const navParams = navigation.state;
-      const onGoBack = navParams.params && navParams.params.onGoBack;
+      const onGoBack = route.params.onGoBack;
       const isUploadingAttachment = tempAttachment && tempAttachment !== null;
       const isDraftEmpty =
         to.length === 0 && cc.length === 0 && cci.length === 0 && subject === '' && body === '' && attachments.length === 0;
@@ -657,9 +657,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   sendDraft = async () => {
     try {
-      const { navigation, sendMail } = this.props;
+      const { navigation, sendMail, route } = this.props;
       const { id, replyTo } = this.state;
-      const navParams = navigation.state;
 
       sendMail(this.getMailData(), id, replyTo);
       Keyboard.dismiss();
@@ -669,8 +668,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         ...UI_ANIMATIONS.toast,
       });
-
-      if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
+      if (route.params.onGoBack) route.params.onGoBack();
       navigation.goBack();
     } catch {
       // TODO: Manage error
