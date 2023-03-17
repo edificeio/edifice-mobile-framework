@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
-index c769683..ad57360 100644
+index e3fb93b..c329b18 100644
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
 +++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
 @@ -41,7 +41,8 @@ import {
@@ -12,52 +12,39 @@ index c769683..ad57360 100644
  } from '../constants';
  import THEMES from '../themes';
  import RenderBadgeItem from './RenderBadgeItem';
-@@ -162,7 +163,8 @@ function Picker({
+@@ -162,6 +163,7 @@ function Picker({
      testID,
      closeOnBackPressed = false,
      extendableBadgeContainer = false,
--    onSelectItem = (item) => {}
-+    onSelectItem = (item) => {},
-+    arrowIconPosition = ARROW_ICON_POSITION.RIGHT
++    arrowIconPosition = ARROW_ICON_POSITION.RIGHT,
+     onSelectItem = (item) => {}
  }) {
      const [necessaryItems, setNecessaryItems] = useState([]);
-     const [searchText, setSearchText] = useState('');
-@@ -187,7 +189,7 @@ function Picker({
-      * The item schema.
-      * @returns {object}
-      */
--     const _schema = useMemo(() => ({...SCHEMA, ...schema}), [schema]);
-+    const _schema = useMemo(() => ({...SCHEMA, ...schema}), [schema]);
- 
-     /**
-      * componentDidMount.
-@@ -1807,11 +1809,22 @@ function Picker({
+@@ -1808,14 +1810,19 @@ function Picker({
       */
      const pointerEvents = useMemo(() => disabled ? "none" : "auto", [disabled]);
  
-+    /**
-+     * The top component.
-+     * @returns {JSX.Element}
-+     */
 +    const TopComponent = useMemo(() => {
 +        switch (arrowIconPosition) {
-+            case ARROW_ICON_POSITION.LEFT: return [_ArrowComponent, _BodyComponent];
 +            case ARROW_ICON_POSITION.RIGHT: return [_BodyComponent, _ArrowComponent];
-+            default: //
++            default: return [_ArrowComponent, _BodyComponent];
 +        }
 +    }, [arrowIconPosition, _ArrowComponent, _BodyComponent]);
 +
      return (
-         <View style={_containerStyle} {...containerProps}>
-             <TouchableOpacity style={_style} onPress={__onPress} onLayout={__onLayout} {...props} ref={onRef} pointerEvents={pointerEvents} disabled={disabled} testID={testID}>
--                {_BodyComponent}
--                {_ArrowComponent}
-+              {TopComponent}
-             </TouchableOpacity>
-             {DropDownBodyComponent}
-         </View>
+         <>
+             <View style={_containerStyle} {...containerProps}>
+                 <TouchableOpacity style={_style} onPress={__onPress} onLayout={__onLayout} {...props} ref={onRef} pointerEvents={pointerEvents} disabled={disabled} testID={testID}>
+-                    {_BodyComponent}
+-                    {_ArrowComponent}
++                    {TopComponent}
+                 </TouchableOpacity>
+-
+                 {DropDownBodyComponent}
+             </View>
+         </>
 diff --git a/node_modules/react-native-dropdown-picker/src/constants/index.js b/node_modules/react-native-dropdown-picker/src/constants/index.js
-index f4e9c76..22456af 100644
+index f4e9c76..5a2bc5b 100644
 --- a/node_modules/react-native-dropdown-picker/src/constants/index.js
 +++ b/node_modules/react-native-dropdown-picker/src/constants/index.js
 @@ -134,3 +134,5 @@ export const ASCII_CODE = (str) => {
@@ -66,4 +53,3 @@ index f4e9c76..22456af 100644
  }
 +
 +export const ARROW_ICON_POSITION = { LEFT: 'LEFT', RIGHT: 'RIGHT' };
-\ No newline at end of file
