@@ -86,7 +86,8 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
       updateFoundUsersOrGroups([]);
       clearTimeout(searchTimeout.current);
     };
-  }, [filterUsersOrGroups, search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   const removeUser = id => onChange(selectedUsersOrGroups.filter(user => user.id !== id));
 

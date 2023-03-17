@@ -11,7 +11,6 @@ import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { MenuAction, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -38,7 +37,7 @@ import WorkspaceModal, { WorkspaceModalType } from '~/framework/modules/workspac
 import moduleConfig from '~/framework/modules/workspace/module-config';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
@@ -283,7 +282,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
             ]
           : []),
       ];
-      return { navBarActions: { icon: 'more_vert' }, popupMenuActions };
+      return { navBarActions: { icon: 'ui-options' }, popupMenuActions };
     }
     if (filter === Filter.OWNER || (filter === Filter.SHARED && parentId !== Filter.SHARED)) {
       const popupMenuActions = [
@@ -303,7 +302,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
             ]
           : []),
       ];
-      return { navBarActions: { icon: 'add' }, popupMenuActions };
+      return { navBarActions: { icon: 'ui-plus' }, popupMenuActions };
     }
     return { navBarActions: { icon: '' }, popupMenuActions: [] };
   };
@@ -315,7 +314,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <PopupMenu actions={menuActions.popupMenuActions}>
-          <HeaderIcon name={menuActions.navBarActions.icon} iconSize={menuActions.navBarActions.icon === 'more_vert' ? 26 : 20} />
+          <NavBarAction iconName={menuActions.navBarActions.icon} />
         </PopupMenu>
       ),
     });

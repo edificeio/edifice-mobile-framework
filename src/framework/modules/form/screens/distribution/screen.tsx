@@ -1,14 +1,13 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
-import { FlatList, Platform, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { FlatList, Platform, RefreshControl, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
@@ -16,7 +15,6 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { Picture } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -39,7 +37,7 @@ import {
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { formService } from '~/framework/modules/form/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -293,12 +291,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     if (loadingState !== AsyncPagedLoadingState.DONE) return;
     navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () =>
-        !isPositionAtSummary ? (
-          <TouchableOpacity onPress={saveChanges} style={styles.saveActionContainer}>
-            <Picture type="NamedSvg" name="ui-save" fill={theme.ui.text.inverse} width={24} height={24} />
-          </TouchableOpacity>
-        ) : undefined,
+      headerRight: () => (!isPositionAtSummary ? <NavBarAction iconName="ui-save" onPress={saveChanges} /> : undefined),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingState, position]);

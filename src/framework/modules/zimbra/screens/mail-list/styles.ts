@@ -14,7 +14,7 @@ export default StyleSheet.create({
   },
   headerRightContainer: {
     flexDirection: 'row',
-    marginRight: UI_SIZES.spacing.minor,
+    marginRight: UI_SIZES.spacing.small,
   },
   listContentContainer: {
     flexGrow: 1,

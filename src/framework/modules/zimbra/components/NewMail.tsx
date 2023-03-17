@@ -138,7 +138,8 @@ const HeaderSubject = ({
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentValue]);
 
   return (
     <View style={[headerStyle, style]}>
@@ -229,7 +230,8 @@ const Body = ({ style, value, onChange, onSave }) => {
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentValue]);
 
   return (
     <View style={[styles.mailPart, style, styles.fullGrowView]}>
@@ -273,7 +275,8 @@ const Signature = ({
     return () => {
       clearTimeout(textUpdateTimeout.current);
     };
-  }, [currentValue, onSignatureTextChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentValue]);
 
   return (
     <View style={styles.signatureZone}>

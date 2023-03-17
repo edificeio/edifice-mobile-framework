@@ -34,6 +34,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
+import { NavBarAction } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -298,7 +299,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
             ? [
                 {
                   icon: getIsSelectedMailUnread() ? 'email-open' : 'email',
-                  action: markSelectedMailsAsUnread,
+                  onPress: markSelectedMailsAsUnread,
                 },
               ]
             : []),
@@ -351,7 +352,11 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     }
     return {
       headerLeft: undefined,
-      headerRight: () => <HeaderAction iconName="new_message" iconSize={20} onPress={openComposer} style={styles.rightMargin} />,
+      headerRight: () => (
+        <View style={styles.headerRightContainer}>
+          <NavBarAction iconName="ui-write" onPress={openComposer} />
+        </View>
+      ),
     };
   };
 

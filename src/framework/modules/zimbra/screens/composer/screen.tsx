@@ -13,7 +13,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
-import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { DocumentPicked, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
@@ -25,7 +24,7 @@ import { DraftType } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -534,11 +533,13 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
               galleryAction({ callback: this.addGivenAttachment, multiple: true }),
               documentAction({ callback: this.addGivenAttachment }),
             ]}>
-            <HeaderIcon name="attachment" />
+            <NavBarAction iconName="ui-attachment" />
           </PopupMenu>
-          <HeaderAction style={styles.navbarSendAction} onPress={this.getSendDraft} iconName="outbox" />
+          <View style={styles.navbarSendAction}>
+            <NavBarAction iconName="ui-send" onPress={this.getSendDraft} />
+          </View>
           <PopupMenu actions={menuActions}>
-            <HeaderIcon name="more_vert" iconSize={24} />
+            <NavBarAction iconName="ui-options" />
           </PopupMenu>
         </View>
       ),
