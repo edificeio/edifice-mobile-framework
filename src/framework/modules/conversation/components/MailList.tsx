@@ -180,7 +180,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     const isStateDraft = mailInfos.state === 'DRAFT';
 
     if (isStateDraft && isFolderDrafts) {
-      navigation.navigate(`${moduleConfig.routeName}/new`, {
+      navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
         onGoBack: () => {
@@ -189,7 +189,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
         },
       });
     } else {
-      navigation.navigate(`${moduleConfig.routeName}/mail`, {
+      navigation.navigate(`${moduleConfig.routeName}/mail-content`, {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
         currentFolder: navigationKey || 'inbox',

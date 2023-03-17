@@ -307,7 +307,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre');
               else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre');
-              navigation.navigate(`${moduleConfig.routeName}/new`, {
+              navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
                 type: DraftType.REPLY,
                 mailId: mail.id,
                 onGoBack: route.params.onGoBack,
@@ -322,7 +322,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre à tous');
               else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Répondre à tous');
-              navigation.navigate(`${moduleConfig.routeName}/new`, {
+              navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
                 type: DraftType.REPLY_ALL,
                 mailId: mail.id,
                 onGoBack: route.params.onGoBack,
@@ -337,7 +337,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Transférer');
               else Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Inbox/Dossier/Corbeille - Mail - Transférer');
-              navigation.navigate(`${moduleConfig.routeName}/new`, {
+              navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
                 type: DraftType.FORWARD,
                 mailId: mail.id,
                 onGoBack: route.params.onGoBack,

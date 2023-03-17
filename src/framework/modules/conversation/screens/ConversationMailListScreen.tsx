@@ -111,7 +111,7 @@ export const computeNavBar = ({
       iconName="new_message"
       onPress={() => {
         Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
-        navigation.navigate(`${moduleConfig.routeName}/new`, {
+        navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
           type: DraftType.NEW,
           mailId: undefined,
           currentFolder: getActiveRouteState(navigation.state).key,
