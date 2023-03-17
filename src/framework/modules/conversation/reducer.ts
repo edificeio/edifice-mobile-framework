@@ -30,13 +30,13 @@ export interface IConversationState {
 
 // Reducer
 
-const initialState: IConversationState = {
-  count: createInitialState(initialCountListState),
-  folders: createInitialState(initialFolderListState),
-  init: createInitialState(initialInitMailState),
-  mailContent: createInitialState(initialMailContentState),
-  mailList: createInitialState(initialMailListState),
-  signature: createInitialState(initialSignatureState),
+const initialState = {
+  count: initialCountListState,
+  folders: initialFolderListState,
+  init: initialInitMailState,
+  mailContent: initialMailContentState,
+  mailList: initialMailListState,
+  signature: initialSignatureState,
 };
 
 export const actionTypes = {
