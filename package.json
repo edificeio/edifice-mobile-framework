@@ -220,6 +220,7 @@
   "resolutions": {
     "set-value": "4.0.1"
   },
+  "eslintIgnore": ["__tests__","__overrides__","__stashSpec__","scaffolder","src/app/override"],
   "jest": {
     "preset": "react-native",
     "moduleFileExtensions": [

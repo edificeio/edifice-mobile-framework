@@ -9,7 +9,7 @@ import connectionTracker from './infra/reducers/connectionTracker';
 import progress from './infra/reducers/progress';
 import ui from './infra/reducers/ui';
 
-declare var window: any;
+let window: any;
 
 export function createMainStore() {
   const reducers = {
@@ -28,7 +28,6 @@ export function createMainStore() {
   const middlewares = [thunkMiddleware];
 
   if (__DEV__) {
-    // eslint-disable-next-line import/no-extraneous-dependencies
     const createDebugger = require('redux-flipper').default;
     middlewares.push(createDebugger());
   }

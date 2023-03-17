@@ -29,7 +29,7 @@ export class Reducers {
   }
 
   static get(name: string) {
-    if (this.$items.hasOwnProperty(name)) {
+    if (Object.prototype.hasOwnProperty.call(this.$items.hasOwnProperty, name)) {
       return this.$items[name];
     } else {
       throw new Error(`[Reducers] No reducer of name ${name} has been registred.`);
@@ -55,7 +55,6 @@ export function createMainStore() {
   const middlewares = [thunkMiddleware];
 
   if (__DEV__) {
-    // eslint-disable-next-line import/no-extraneous-dependencies
     const createDebugger = require('redux-flipper').default;
     middlewares.push(createDebugger());
   }

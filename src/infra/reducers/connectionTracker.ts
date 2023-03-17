@@ -58,3 +58,5 @@ const reducer = (state: ConnectionTrackerState = initialState, action: AnyAction
 Reducers.register('connectionTracker', reducer);
 
 export const getState = (state: IGlobalState) => state.connectionTracker as ConnectionTrackerState;
+
+export default reducer;
