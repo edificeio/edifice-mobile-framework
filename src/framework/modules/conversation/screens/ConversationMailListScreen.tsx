@@ -1,12 +1,12 @@
+import { StackNavigationState } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { NavigationScreenProp, NavigationState, withNavigationFocus } from 'react-navigation';
+import { NavigationScreenProp, withNavigationFocus } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
-import { DEPRECATED_HeaderPrimaryAction } from '~/framework/components/header';
 import { fetchCountAction } from '~/framework/modules/conversation/actions/count';
 import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import {
@@ -27,7 +27,7 @@ import { DraftType } from '~/framework/modules/conversation/screens/Conversation
 import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
 import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
 import { getMailListState } from '~/framework/modules/conversation/state/mailList';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 
@@ -88,12 +88,11 @@ type ConversationMailListScreenState = {
   folders: IFolder[];
 };
 
-const getActiveRouteState = (route: NavigationState) => {
-  if (!route.routes || route.routes.length === 0 || route.index >= route.routes.length) {
-    return route;
+const getActiveRouteState = (navigationState: StackNavigationState<ConversationNavigationParams>) => {
+  if (!navigationState.routes || navigationState.routes.length === 0 || navigationState.index >= navigationState.routes.length) {
+    return navigationState;
   }
-
-  const childActiveRoute = route.routes[route.index] as NavigationState;
+  const childActiveRoute = navigationState.routes[navigationState.index];
   return getActiveRouteState(childActiveRoute);
 };
 
@@ -106,19 +105,6 @@ export const computeNavBar = ({
     route,
   }),
   title: I18n.t('conversation.appName'),
-  headerRight: () => (
-    <DEPRECATED_HeaderPrimaryAction
-      iconName="new_message"
-      onPress={() => {
-        Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
-        navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
-          type: DraftType.NEW,
-          mailId: undefined,
-          currentFolder: getActiveRouteState(navigation.state).key,
-        });
-      }}
-    />
-  ),
 });
 
 class ConversationMailListScreen extends React.PureComponent<ConversationMailListScreenProps, ConversationMailListScreenState> {
@@ -177,10 +163,27 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
   }
 
   componentDidUpdate(prevProps) {
-    const { route, init, count, isFetching, isFocused } = this.props;
+    const { route, init, count, isFetching, isFocused, navigation } = this.props;
     const { firstFetch, fetchRequested, isChangingFolder } = this.state;
     const key = route.params.key;
 
+    navigation.setOptions({
+      // React Navigation 6 uses this syntax to setup nav options
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <NavBarAction
+          iconName="ui-plus"
+          onPress={() => {
+            Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
+            navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
+              type: DraftType.NEW,
+              mailId: undefined,
+              currentFolder: getActiveRouteState(navigation.getState()).key,
+            });
+          }}
+        />
+      ),
+    });
     if (prevProps.init.isFetching && !init.isFetching) {
       this.setState({ folders: init.data.folders });
     }
