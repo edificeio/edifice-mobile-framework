@@ -28,6 +28,8 @@ export type IVisiblesState = AsyncState<IVisibles>;
 
 export const initialState: IVisibles = { groups: [], users: [] };
 
+export const getVisiblesState = (globalState: any) => conversationConfig.getState(globalState).visibles as IVisiblesState;
+
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
 export const actionTypes = createAsyncActionTypes(conversationConfig.namespaceActionType('VISIBLES'));

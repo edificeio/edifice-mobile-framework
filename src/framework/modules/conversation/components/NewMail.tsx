@@ -9,9 +9,14 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
-import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ISearchUsers, IUser } from '~/framework/modules/conversation/service/newMail';
-import { IVisibleGroup, IVisibleUser, IVisiblesState, searchVisibles } from '~/framework/modules/conversation/state/visibles';
+import {
+  IVisibleGroup,
+  IVisibleUser,
+  IVisiblesState,
+  getVisiblesState,
+  searchVisibles,
+} from '~/framework/modules/conversation/state/visibles';
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
 });
 
 const MailContactField = connect((state: IGlobalState) => ({
-  visibles: state[moduleConfig.reducerName].visibles as IVisiblesState,
+  visibles: getVisiblesState(state),
 }))(
   ({
     style,

@@ -5,7 +5,7 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { createSessionAsyncReducer } from '~/framework/util/redux/async';
-import { createAsyncActionTypes, createInitialState } from '~/infra/redux/async2';
+import { createAsyncActionTypes } from '~/infra/redux/async2';
 
 import moduleConfig from './module-config';
 import { ICountListState, initialState as initialCountListState } from './state/count';
@@ -14,6 +14,7 @@ import { IInitMailState, initialState as initialInitMailState } from './state/in
 import { IMailContentState, initialState as initialMailContentState } from './state/mailContent';
 import { IMailListState, initialState as initialMailListState } from './state/mailList';
 import { ISignatureState, initialState as initialSignatureState } from './state/signature';
+import { IVisiblesState, initialState as initialVisiblesState } from './state/visibles';
 
 // Types
 
@@ -26,6 +27,7 @@ export interface IConversationState {
   mailContent: IMailContentState;
   mailList: IMailListState;
   signature: ISignatureState;
+  visibles: IVisiblesState;
 }
 
 // Reducer
@@ -37,6 +39,7 @@ const initialState = {
   mailContent: initialMailContentState,
   mailList: initialMailListState,
   signature: initialSignatureState,
+  visibles: initialVisiblesState,
 };
 
 export const actionTypes = {
@@ -46,6 +49,7 @@ export const actionTypes = {
   mailContent: createAsyncActionTypes(moduleConfig.namespaceActionType('MAIL_CONTENT')),
   mailList: createAsyncActionTypes(moduleConfig.namespaceActionType('MAIL_LIST')),
   signature: createAsyncActionTypes(moduleConfig.namespaceActionType('SIGNATURE')),
+  visibles: createAsyncActionTypes(moduleConfig.namespaceActionType('VISIBLES')),
 };
 
 const reducer = combineReducers({
@@ -55,6 +59,7 @@ const reducer = combineReducers({
   mailContent: createSessionAsyncReducer(initialState.mailContent, actionTypes.mailContent),
   mailList: createSessionAsyncReducer(initialState.mailList, actionTypes.mailList),
   signature: createSessionAsyncReducer(initialState.signature, actionTypes.signature),
+  visibles: createSessionAsyncReducer(initialState.visibles, actionTypes.visibles),
 });
 Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;
