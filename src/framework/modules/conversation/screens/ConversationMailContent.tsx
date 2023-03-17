@@ -46,6 +46,7 @@ export interface ConversationMailContentScreenNavigationParams {
   currentFolder: string;
   isTrashed: boolean;
   mailId: string;
+  subject: string;
   onGoBack: () => void;
 }
 interface ConversationMailContentScreenEventProps {
@@ -122,7 +123,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   }
 
   public componentDidMount() {
-    const { mail, error, route, navigation, isFetching, clearContent, fetchMailContent } = this.props;
+    const { error, route, navigation, isFetching, clearContent, fetchMailContent } = this.props;
     const { htmlError, showHeaderSubject } = this.state;
     const currentFolder = route.params.currentFolder;
     const isCurrentFolderTrash = currentFolder === 'trash';
@@ -147,7 +148,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
       deleteAction({ action: () => this.delete() }),
     ];
     navigation.setOptions({
-      title: showHeaderSubject ? mail.subject : undefined,
+      title: showHeaderSubject ? route.params.subject : '',
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
