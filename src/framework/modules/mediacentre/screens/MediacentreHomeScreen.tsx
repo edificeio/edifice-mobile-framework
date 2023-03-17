@@ -158,21 +158,15 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   };
 
   const onCancelSearch = () => {
-    if (searchBarRef.current) {
-      searchBarRef.current.clear();
-    }
-    if (searchModalRef.current) {
-      searchModalRef.current.resetParams();
-    }
+    searchBarRef.current?.clear();
+    searchModalRef.current?.resetParams();
     setSearchedResources([]);
     setSearchState(SearchState.NONE);
   };
 
   const showSearchModal = () => {
     setSearchModalVisible(true);
-    if (searchBarRef.current) {
-      searchBarRef.current.blur();
-    }
+    searchBarRef.current?.blur();
   };
 
   const hideSearchModal = () => {

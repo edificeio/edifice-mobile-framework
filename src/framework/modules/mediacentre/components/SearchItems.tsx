@@ -52,23 +52,22 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<IS
   (props: ISearchBarProps, ref) => {
     const [value, setValue] = useState<string>('');
     const inputRef = useRef<TextInput>(null);
+
     const onSearch = () => {
       if (value.length) {
         props.onSubmitEditing(value);
       }
     };
-    const blur = () => {
-      if (inputRef.current) {
-        inputRef.current.blur();
-      }
-    };
+
+    const blur = () => inputRef.current?.blur();
+
     const clear = () => {
-      if (inputRef.current) {
-        inputRef.current.clear();
-        setValue('');
-      }
+      inputRef.current?.clear();
+      setValue('');
     };
-    useImperativeHandle(props.ref, () => ({ blur, clear }));
+
+    useImperativeHandle(ref, () => ({ blur, clear }));
+
     return (
       <View style={styles.searchBarContainer}>
         <TextInput

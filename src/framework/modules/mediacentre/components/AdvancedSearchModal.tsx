@@ -209,14 +209,17 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
   const [fields, setFields] = useState<IField[]>(defaultFields);
   const [sources, setSources] = useState<ISources>(defaultSources);
   const areFieldsEmpty = !fields.some(field => field.value !== '');
+
   const updateField = (index: number, field: IField) => {
     const newFields = [...fields];
     newFields[index] = field;
     setFields(newFields);
   };
+
   const onSearch = () => {
     props.onSearch(fields, sources);
   };
+
   const resetSources = () => {
     setSources({
       GAR: props.availableSources.includes(Source.GAR),
@@ -225,6 +228,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
       Signet: props.availableSources.includes(Source.SIGNET),
     });
   };
+
   const resetParams = () => {
     for (const field of fields) {
       field.value = '';
@@ -233,11 +237,14 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
     setFields(fields);
     resetSources();
   };
+
   useEffect(() => {
     resetSources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.availableSources]);
-  useImperativeHandle(props.ref, () => ({ resetParams }));
+
+  useImperativeHandle(ref, () => ({ resetParams }));
+
   return (
     <Modal visible={props.isVisible} animationType="slide" presentationStyle="formSheet" onRequestClose={props.closeModal}>
       <KeyboardAvoidingView
