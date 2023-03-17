@@ -1,8 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
 
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface PresencesHistoryScreenProps {

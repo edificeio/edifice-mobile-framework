@@ -138,11 +138,11 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
         leftButtonWidth={120}
         leftButtons={this.swipeButtons(
           () => {
-            this.swipeableRef && this.swipeableRef.recenter();
+            this.swipeableRef?.recenter();
             lateCallback(lateEvent);
           },
           () => {
-            this.swipeableRef && this.swipeableRef.recenter();
+            this.swipeableRef?.recenter();
             leavingCallback(leavingEvent);
           },
         )}>

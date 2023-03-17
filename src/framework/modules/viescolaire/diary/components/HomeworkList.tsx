@@ -82,6 +82,7 @@ const EmptyComponent = ({ title }) => <EmptyScreen svgImage="empty-homework" tit
 const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomeworkTap, onHomeworkStatusUpdate, userType }) => {
   React.useEffect(() => {
     if (Object.keys(homeworkList).length === 0) onRefreshHomeworks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const homeworkDataList = homeworkList as IHomeworkMap;
@@ -119,6 +120,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
 const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap, personnelList }) => {
   React.useEffect(() => {
     if (sessionList.length === 0) onRefreshSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -164,84 +166,62 @@ export default (props: HomeworkListProps) => {
       onRefreshHomeworks();
       onRefreshSessions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate, props.childId]);
 
   React.useEffect(() => {
     notFirstRender.current = true;
   }, []);
 
-  const DatePickers = React.memo(({ startDate, endDate }) => (
-    <View style={styles.grid}>
-      <SmallText>{I18n.t('viesco-from')}</SmallText>
-      <DateTimePicker
-        mode="date"
-        style={styles.datePicker}
-        value={startDate}
-        maximumDate={endDate}
-        onChange={setStartDate}
-        color={viescoTheme.palette.diary}
-      />
-      <SmallText>{I18n.t('viesco-to')}</SmallText>
-      <DateTimePicker
-        mode="date"
-        style={styles.datePicker}
-        value={endDate}
-        minimumDate={startDate}
-        onChange={setEndDate}
-        color={viescoTheme.palette.diary}
-      />
-    </View>
-  ));
-
-  const PlatformSpecificSwitch = React.memo(({ value }) => {
-    let newProps = {};
-    switch (Platform.OS) {
-      case 'android': {
-        newProps = { thumbColor: value ? viescoTheme.palette.diary : theme.palette.status.warning.regular, ...newProps };
-        break;
-      }
-      case 'ios': {
-        newProps = {
+  const switchProps =
+    Platform.OS === 'ios'
+      ? {
           trackColor: { false: theme.palette.status.warning.regular, true: viescoTheme.palette.diary },
           ios_backgroundColor: theme.palette.status.warning.regular,
-          ...newProps,
-        };
-        break;
-      }
-      default: {
-        newProps = { trackColor: { false: theme.palette.status.warning.regular, true: viescoTheme.palette.diary }, ...newProps };
-        break;
-      }
-    }
-
-    return (
-      <View style={styles.grid}>
-        <View style={styles.gridHomeworkTitle}>
-          <SmallText>{I18n.t('viesco-homework')}</SmallText>
-        </View>
-        <Switch
-          style={styles.gridSwith}
-          onValueChange={() => {
-            toggleSwitch(switchValue === SwitchState.SESSION ? SwitchState.HOMEWORK : SwitchState.SESSION);
-          }}
-          value={switchValue === SwitchState.SESSION}
-          {...newProps}
-        />
-        <View style={styles.gridSesionTitle}>
-          <SmallText>{I18n.t('viesco-session')}</SmallText>
-        </View>
-      </View>
-    );
-  });
-
+        }
+      : { thumbColor: switchValue ? viescoTheme.palette.diary : theme.palette.status.warning.regular };
   const { isFetchingSession, isFetchingHomework, userType } = props;
 
   return (
     <PageContainer>
       {userType === UserType.Relative ? <ChildPicker /> : null}
       <View style={styles.homeworkPart}>
-        <DatePickers startDate={startDate} endDate={endDate} />
-        <PlatformSpecificSwitch value={switchValue} />
+        <View style={styles.grid}>
+          <SmallText>{I18n.t('viesco-from')}</SmallText>
+          <DateTimePicker
+            mode="date"
+            style={styles.datePicker}
+            value={startDate}
+            maximumDate={endDate}
+            onChange={setStartDate}
+            color={viescoTheme.palette.diary}
+          />
+          <SmallText>{I18n.t('viesco-to')}</SmallText>
+          <DateTimePicker
+            mode="date"
+            style={styles.datePicker}
+            value={endDate}
+            minimumDate={startDate}
+            onChange={setEndDate}
+            color={viescoTheme.palette.diary}
+          />
+        </View>
+        <View style={styles.grid}>
+          <View style={styles.gridHomeworkTitle}>
+            <SmallText>{I18n.t('viesco-homework')}</SmallText>
+          </View>
+          <Switch
+            style={styles.gridSwith}
+            onValueChange={() => {
+              toggleSwitch(switchValue === SwitchState.SESSION ? SwitchState.HOMEWORK : SwitchState.SESSION);
+            }}
+            value={switchValue === SwitchState.SESSION}
+            {...switchProps}
+          />
+          <View style={styles.gridSesionTitle}>
+            <SmallText>{I18n.t('viesco-session')}</SmallText>
+          </View>
+        </View>
         {switchValue === SwitchState.HOMEWORK ? (
           <HomeworkList
             isFetching={isFetchingHomework}

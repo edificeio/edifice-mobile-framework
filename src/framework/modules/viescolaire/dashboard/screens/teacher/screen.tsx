@@ -1,4 +1,3 @@
-import type { DashboardTeacherScreenPrivateProps } from './types';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -20,6 +19,7 @@ import CourseList from '~/framework/modules/viescolaire/presences/screens/Course
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
+import type { DashboardTeacherScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

@@ -318,7 +318,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     // finding starting and ending slots for this element
     slots!
       .sort((a, b) => a.startHour.diff(b.startHour))
-      .forEach((s, i, slots) => {
+      .forEach((s, i, array) => {
         if (iSlotStart < 0 && minutes(s.startHour) <= minutes(displayedStart) && minutes(s.endHour) >= minutes(displayedStart)) {
           iSlotStart = i;
         }
@@ -327,20 +327,20 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
         }
         if (
           iSlotStart < 0 &&
-          i < slots.length - 1 &&
+          i < array.length - 1 &&
           minutes(s.endHour) < minutes(displayedStart) &&
-          minutes(slots[i + 1].startHour) > minutes(displayedStart)
+          minutes(array[i + 1].startHour) > minutes(displayedStart)
         ) {
-          displayedStart = slots[i + 1].startHour.clone();
+          displayedStart = array[i + 1].startHour.clone();
           iSlotStart = i + 1;
         }
         if (
           iSlotEnd < 0 &&
           i > 0 &&
           minutes(s.startHour) > minutes(displayedEnd) &&
-          minutes(slots[i - 1].endHour) < minutes(displayedEnd)
+          minutes(array[i - 1].endHour) < minutes(displayedEnd)
         ) {
-          displayedEnd = slots[i - 1].endHour.clone();
+          displayedEnd = array[i - 1].endHour.clone();
           iSlotEnd = i - 1;
         }
       });
