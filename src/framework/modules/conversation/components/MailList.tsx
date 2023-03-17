@@ -30,6 +30,7 @@ import { Loading } from '~/ui/Loading';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
+import { IMailList } from '../state/mailList';
 
 interface ConversationMailListComponentDataProps {
   notifications: any;
@@ -60,7 +61,7 @@ type ConversationMailListComponentProps = ConversationMailListComponentDataProps
 
 interface ConversationMailListComponentState {
   indexPage: number;
-  mails: any;
+  mails: IMailList;
   nextPageCallable: boolean;
   showModal: boolean;
   selectedMail: IMail | undefined;
@@ -108,15 +109,6 @@ const styles = StyleSheet.create({
   swipeableListContentContainerStyle: { flexGrow: 1 },
   swipeableListStyle: { marginTop: 45 },
 });
-
-const SubjectAndContent = (isMailUnread, subject) => {
-  const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
-  return (
-    <TextSubjectComponent numberOfLines={1} style={styles.subjectAndContent}>
-      {subject}
-    </TextSubjectComponent>
-  );
-};
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
   flatListRef: typeof SwipeableList | null = null;
@@ -399,6 +391,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                 renderItem={({ item }) => {
                   const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
                   const mailContacts = getMailPeople(item);
+                  const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
                   let contacts = !isFolderOutbox && !isFolderDrafts ? [mailContacts.from] : mailContacts.to;
                   if (contacts.length === 0) contacts = [[undefined, I18n.t('conversation.emptyTo'), false]];
                   return (
@@ -426,9 +419,11 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               </SmallText>
                             </View>
                             <View style={styles.subjectContentAndAttachmentIndicatorContainer}>
-                              {/* Mail subjet & content */}
+                              {/* Mail subject */}
                               <View style={styles.subjectAndContentContainer}>
-                                <SubjectAndContent isMailUnread={isMailUnread} subject={item.subject} />
+                                <TextSubjectComponent numberOfLines={1} style={styles.subjectAndContent}>
+                                  {item.subject}
+                                </TextSubjectComponent>
                               </View>
                               {/* Mail attachment indicator */}
                               {item.hasAttachment ? (
