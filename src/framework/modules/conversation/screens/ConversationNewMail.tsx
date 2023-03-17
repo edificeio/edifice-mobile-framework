@@ -116,24 +116,6 @@ const styles = StyleSheet.create({
   sendDraftAction: { width: 48, alignItems: 'center' },
 });
 
-const HeaderRight = (addGivenAttachment, sendDraft) => (
-  <View style={styles.headerRightContainer}>
-    {addGivenAttachment && (
-      <View style={styles.addAttchmentMenuContainer}>
-        <PopupMenu
-          actions={[
-            cameraAction({ callback: addGivenAttachment }),
-            galleryAction({ callback: addGivenAttachment, multiple: true }),
-            documentAction({ callback: addGivenAttachment }),
-          ]}>
-          <HeaderIcon name="attachment" />
-        </PopupMenu>
-      </View>
-    )}
-    {sendDraft && <HeaderAction style={styles.sendDraftAction} onPress={sendDraft} iconName="outbox" />}
-  </View>
-);
-
 class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, ConversationNewMailScreenState> {
   constructor(props) {
     super(props);
@@ -147,24 +129,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   componentDidMount = () => {
     const { fetchMailContent, route, navigation, clearContent, setup } = this.props;
-    const addGivenAttachment = route.params.addGivenAttachment;
-    const sendDraft = route.params.getSendDraft;
     const draftType = route.params.type;
-    const isSavedDraft = draftType === DraftType.DRAFT;
-    navigation.setOptions({
-      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
-      headerRight: () => <HeaderRight addGivenAttachment={addGivenAttachment} sendDraft={sendDraft} />,
-    });
     navigation.setParams(this.navigationHeaderFunction);
     if (route.params.mailId) {
       this.setState({ isPrefilling: true });
       fetchMailContent(route.params.mailId);
-    }
-    if (draftType === DraftType.REPLY) {
-      /* empty */
-    }
-    if (draftType === DraftType.REPLY_ALL) {
-      /* empty */
     }
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
@@ -176,6 +145,34 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   componentDidUpdate = async (prevProps: ConversationNewMailScreenProps) => {
     const { mail, navigation, route } = this.props;
     const { id, webDraftWarning } = this.state;
+    const draftType = route.params.type;
+    const isSavedDraft = draftType === DraftType.DRAFT;
+    const addGivenAttachment = route.params.addGivenAttachment;
+    const sendDraft = route.params.getSendDraft;
+
+    navigation.setOptions({
+      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
+      // React Navigation 6 uses this syntax to setup nav options
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <View style={styles.headerRightContainer}>
+          {addGivenAttachment && (
+            <View style={styles.addAttchmentMenuContainer}>
+              <PopupMenu
+                actions={[
+                  cameraAction({ callback: addGivenAttachment }),
+                  galleryAction({ callback: addGivenAttachment, multiple: true }),
+                  documentAction({ callback: addGivenAttachment }),
+                ]}>
+                <HeaderIcon name="attachment" />
+              </PopupMenu>
+            </View>
+          )}
+          {sendDraft && <HeaderAction style={styles.sendDraftAction} onPress={sendDraft} iconName="outbox" />}
+        </View>
+      ),
+    });
+
     if (prevProps.mail !== mail) {
       const prefilledMailRet = this.getPrefilledMail();
       if (!prefilledMailRet) return;
