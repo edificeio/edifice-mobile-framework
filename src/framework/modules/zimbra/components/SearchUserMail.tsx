@@ -113,7 +113,7 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
       {selectedUsersOrGroups.length > 0 ? (
         <View style={styles.selectedListContainer}>
           {selectedUsersOrGroups.map(userOrGroup => (
-            <TouchableOpacity onPress={removeUser(userOrGroup.id)} style={styles.selectedItem}>
+            <TouchableOpacity onPress={() => removeUser(userOrGroup.id)} style={styles.selectedItem}>
               <SmallText style={styles.userLabel}>{userOrGroup.displayName}</SmallText>
             </TouchableOpacity>
           ))}

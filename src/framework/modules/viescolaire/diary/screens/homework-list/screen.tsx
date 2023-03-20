@@ -35,7 +35,7 @@ export const computeNavBar = ({
     navigation,
     route,
   }),
-  title: route.params.diaryTitle ?? I18n.t('Homework'),
+  title: I18n.t('Homework'),
   headerStyle: {
     backgroundColor: viescoTheme.palette.diary,
   },

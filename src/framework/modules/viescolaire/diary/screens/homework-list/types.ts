@@ -21,9 +21,7 @@ export interface DiaryHomeworkListScreenProps {
   updateHomeworkProgress?: any;
 }
 
-export interface DiaryHomeworkListScreenNavParams {
-  diaryTitle?: string;
-}
+export interface DiaryHomeworkListScreenNavParams {}
 
 export interface DiaryHomeworkListScreenPrivateProps
   extends NativeStackScreenProps<DiaryNavigationParams, 'homeworkList'>,
