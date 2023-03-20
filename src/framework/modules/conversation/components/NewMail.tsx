@@ -309,7 +309,9 @@ const Body = ({ style, value, onChange, autofocus }) => {
   const textInputRef = React.createRef<TextInput>();
   React.useEffect(() => {
     if (autofocus) textInputRef.current?.focus();
-  }, [autofocus, textInputRef]);
+    // We want to call this only once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View style={[styles.mailPart, styles.bodyAdditionalStyle, style]}>
