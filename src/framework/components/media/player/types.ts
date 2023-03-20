@@ -1,4 +1,6 @@
-import { NavigationInjectedProps } from 'react-navigation';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
 export enum MediaType {
   AUDIO = 'audio',
@@ -12,6 +14,6 @@ export interface MediaPlayerParams {
   filetype?: string;
 }
 
-export interface MediaPlayerProps extends NavigationInjectedProps<MediaPlayerParams> {
+export interface MediaPlayerProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer> {
   connected: boolean;
 }

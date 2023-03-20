@@ -1,7 +1,9 @@
 import * as React from 'react';
 
 import CarouselScreen from '~/framework/components/carousel';
-import { computeNavBar } from '~/framework/components/carousel/screen';
+import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
+import { computeNavBar as MediaPlayerNavBar } from '~/framework/components/media/player';
+import MediaPlayer from '~/framework/components/media/player';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 
@@ -22,7 +24,13 @@ export default (
         presentation: 'fullScreenModal',
         headerShown: true,
       }}>
-      <RootStack.Screen name={ModalsRouteNames.Carousel} options={computeNavBar} component={CarouselScreen} />
+      <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselNavBar} component={CarouselScreen} />
+    </RootStack.Group>
+    <RootStack.Group
+      screenOptions={{
+        presentation: 'fullScreenModal',
+      }}>
+      <RootStack.Screen name={ModalsRouteNames.MediaPlayer} options={MediaPlayerNavBar} component={MediaPlayer} />
     </RootStack.Group>
   </>
 );
