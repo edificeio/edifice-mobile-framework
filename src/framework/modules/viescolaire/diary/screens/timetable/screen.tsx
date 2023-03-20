@@ -109,6 +109,7 @@ export default connect(
   (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
     const session = getSession(state);
+
     return {
       courses: getCoursesListState(state),
       slots: diaryState.slots,

@@ -54,7 +54,5 @@ const reducer = combineReducers({
   teachers: createSessionAsyncReducer(initialState.teachers, actionTypes.teachers),
   userChildren: createSessionAsyncReducer(initialState.userChildren, actionTypes.userChildren),
 });
-
 Reducers.register(moduleConfig.reducerName, reducer);
-
 export default reducer;

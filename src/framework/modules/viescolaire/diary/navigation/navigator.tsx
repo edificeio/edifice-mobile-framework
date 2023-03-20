@@ -25,30 +25,18 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     const session = assertSession();
 
     if (session?.user.type === UserType.Teacher) {
-      screens.push(
-        <Stack.Screen
-          name={diaryRouteNames.timetable}
-          component={DiaryTimetableScreen}
-          options={timetableNavBar}
-          initialParams={{}}
-        />,
-      );
+      screens.push(<Stack.Screen name={diaryRouteNames.timetable} component={DiaryTimetableScreen} options={timetableNavBar} />);
       moduleConfig.routeName = diaryRouteNames.timetable;
     } else {
       screens.push(
-        <Stack.Screen
-          name={diaryRouteNames.homeworkList}
-          component={DiaryHomeworkListScreen}
-          options={homeworkListNavBar}
-          initialParams={{}}
-        />,
+        <Stack.Screen name={diaryRouteNames.homeworkList} component={DiaryHomeworkListScreen} options={homeworkListNavBar} />,
       );
       moduleConfig.routeName = diaryRouteNames.homeworkList;
     }
 
     screens.push(
-      <Stack.Screen name={diaryRouteNames.homework} component={DiaryHomeworkScreen} options={homeworkNavBar} initialParams={{}} />,
-      <Stack.Screen name={diaryRouteNames.session} component={DiarySessionScreen} options={sessionNavBar} initialParams={{}} />,
+      <Stack.Screen name={diaryRouteNames.homework} component={DiaryHomeworkScreen} options={homeworkNavBar} />,
+      <Stack.Screen name={diaryRouteNames.session} component={DiarySessionScreen} options={sessionNavBar} />,
     );
 
     return <>{screens}</>;

@@ -66,6 +66,8 @@ const termAdapter = (data: IBackendTerm): ITerm => {
 const userAdapter = (data: IBackendUser): IUser => {
   return {
     id: data.id,
+    login: '',
+    type: data.type,
     displayName: data.displayName,
   } as IUser;
 };

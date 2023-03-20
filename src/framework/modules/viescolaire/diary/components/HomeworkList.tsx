@@ -9,6 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { IUser } from '~/framework/modules/auth/model';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
@@ -19,7 +20,6 @@ import {
   isHomeworkDone,
   sessionListDetailsAdapter,
 } from '~/framework/modules/viescolaire/common/utils/diary';
-import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -68,7 +68,7 @@ type HomeworkListProps = {
   updateHomeworkProgress?: any;
   homeworks: IHomeworkMap;
   sessions: IDiarySession[];
-  personnel: IPersonnelList;
+  personnel: IUser[];
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
   onRefreshHomeworks: any;

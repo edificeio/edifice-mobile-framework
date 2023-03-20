@@ -1,5 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { IUser } from '~/framework/modules/auth/model';
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
 import type { DashboardNavigationParams } from '~/framework/modules/viescolaire/dashboard/navigation';
@@ -18,7 +19,7 @@ export interface DashboardRelativeScreenProps {
   fetchDevoirs: (structureId: string, childId: string) => Promise<IDevoirsMatieres>;
   fetchHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
   fetchLevels: (structureId: string) => Promise<ILevel[]>;
-  fetchTeachers: (structureId: string) => void;
+  fetchTeachers: (structureId: string) => Promise<IUser[]>;
 }
 
 export interface DashboardRelativeScreenNavParams {}

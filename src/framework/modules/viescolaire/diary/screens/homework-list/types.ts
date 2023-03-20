@@ -1,20 +1,20 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
+import { IUser } from '~/framework/modules/auth/model';
 import { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import type { DiaryNavigationParams } from '~/framework/modules/viescolaire/diary/navigation';
 
 export interface DiaryHomeworkListScreenProps {
   homeworks: IHomeworkMap;
   sessions: IDiarySession[];
-  personnel: IPersonnelList;
+  teachers: IUser[];
   childId: string;
   structureId: string;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
   userType: string;
   fetchHomeworks: any;
-  fetchPersonnel: any;
+  fetchTeachers: any;
   fetchSessions: any;
   fetchChildHomeworks: any;
   fetchChildSessions: any;

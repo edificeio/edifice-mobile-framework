@@ -68,8 +68,8 @@ const StructurePicker = ({ selectedStructureId, structures = [], selectStructure
 
 export default connect(
   (state: IGlobalState) => {
-    const session = getSession(state);
     const viescoState = viescoConfig.getState(state);
+    const session = getSession(state);
 
     return {
       selectedStructureId: viescoState.structure.selectedStructure,

@@ -10,6 +10,6 @@ import { CompetencesNavigationParams, competencesRouteNames } from '.';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<CompetencesNavigationParams>(moduleConfig.name, Stack => (
     <>
-      <Stack.Screen name={competencesRouteNames.home} component={CompetencesHomeScreen} options={homeNavBar} initialParams={{}} />
+      <Stack.Screen name={competencesRouteNames.home} component={CompetencesHomeScreen} options={homeNavBar} />
     </>
   ));

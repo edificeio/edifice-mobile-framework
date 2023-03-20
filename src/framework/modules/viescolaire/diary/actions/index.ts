@@ -3,7 +3,9 @@
  */
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
+import { IUser } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
+import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { actionTypes } from '~/framework/modules/viescolaire/diary/reducer';
 import { diaryService } from '~/framework/modules/viescolaire/diary/service';
@@ -105,7 +107,7 @@ export const fetchDiarySessionsFromChildAction =
 /**
  * Fetch the time slots.
  */
-export const diarySlotsActionsCreators = createAsyncActionCreators(actionTypes.slots);
+export const diarySlotsActionsCreators = createAsyncActionCreators(actionTypes.timeSlots);
 export const fetchDiarySlotsAction =
   (structureId: string): ThunkAction<Promise<ISlot[]>, any, any, any> =>
   async (dispatch, getState) => {
@@ -117,6 +119,25 @@ export const fetchDiarySlotsAction =
       return slots;
     } catch (e) {
       dispatch(diarySlotsActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch the teachers.
+ */
+export const diaryTeachersActionsCreators = createAsyncActionCreators(actionTypes.teachers);
+export const fetchDiaryTeachersAction =
+  (structureId: string): ThunkAction<Promise<IUser[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(diaryTeachersActionsCreators.request());
+      const teachers = await viescoService.teachers.get(session, structureId);
+      dispatch(diaryTeachersActionsCreators.receipt(teachers));
+      return teachers;
+    } catch (e) {
+      dispatch(diaryTeachersActionsCreators.error(e as Error));
       throw e;
     }
   };

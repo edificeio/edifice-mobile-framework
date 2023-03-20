@@ -21,11 +21,10 @@ import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/com
 import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
-import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { fetchDiaryHomeworksFromChildAction } from '~/framework/modules/viescolaire/diary/actions';
+import { fetchDiaryHomeworksFromChildAction, fetchDiaryTeachersAction } from '~/framework/modules/viescolaire/diary/actions';
 import { HomeworkItem } from '~/framework/modules/viescolaire/diary/components/Items';
 import { IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import diaryConfig from '~/framework/modules/viescolaire/diary/module-config';
@@ -243,9 +242,9 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
 
 export default connect(
   (state: IGlobalState) => {
-    const session = getSession(state);
     const competencesState = competencesConfig.getState(state);
     const diaryState = diaryConfig.getState(state);
+    const session = getSession(state);
 
     return {
       authorizedViescoApps: {
@@ -271,7 +270,7 @@ export default connect(
         fetchDevoirs: tryAction(fetchCompetencesDevoirsAction, undefined, true),
         fetchHomeworks: tryAction(fetchDiaryHomeworksFromChildAction, undefined, true),
         fetchLevels: tryAction(fetchCompetencesLevelsAction, undefined, true),
-        fetchTeachers: tryAction(fetchPersonnelListAction, undefined, true),
+        fetchTeachers: tryAction(fetchDiaryTeachersAction, undefined, true),
       },
       dispatch,
     ),

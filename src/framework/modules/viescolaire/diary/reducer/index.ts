@@ -4,6 +4,7 @@
 import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
+import { IUser } from '~/framework/modules/auth/model';
 import { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { ISlot } from '~/framework/modules/viescolaire/edt/model';
@@ -13,24 +14,28 @@ interface IDiaryReduxStateData {
   homeworks: IHomeworkMap;
   sessions: IDiarySession[];
   slots: ISlot[];
+  teachers: IUser[];
 }
 
 export interface IDiaryReduxState {
   homeworks: AsyncState<IHomeworkMap>;
   sessions: AsyncState<IDiarySession[]>;
   slots: AsyncState<ISlot[]>;
+  teachers: AsyncState<IUser[]>;
 }
 
 const initialState: IDiaryReduxStateData = {
   homeworks: {},
   sessions: [],
   slots: [],
+  teachers: [],
 };
 
 export const actionTypes = {
   homeworks: createAsyncActionTypes(moduleConfig.namespaceActionType('HOMEWORKS')),
   sessions: createAsyncActionTypes(moduleConfig.namespaceActionType('SESSIONS')),
-  slots: createAsyncActionTypes(moduleConfig.namespaceActionType('TIME_SLOTS')),
+  teachers: createAsyncActionTypes(moduleConfig.namespaceActionType('TEACHERS')),
+  timeSlots: createAsyncActionTypes(moduleConfig.namespaceActionType('TIME_SLOTS')),
   updateHomework: createAsyncActionTypes(moduleConfig.namespaceActionType('UPDATE_HOMEWORK')),
 };
 
@@ -48,9 +53,8 @@ const homeworksActionHandler = {
 const reducer = combineReducers({
   homeworks: createSessionAsyncReducer(initialState.homeworks, actionTypes.homeworks, homeworksActionHandler),
   sessions: createSessionAsyncReducer(initialState.sessions, actionTypes.sessions),
-  slots: createSessionAsyncReducer(initialState.slots, actionTypes.slots),
+  slots: createSessionAsyncReducer(initialState.slots, actionTypes.timeSlots),
+  teachers: createSessionAsyncReducer(initialState.teachers, actionTypes.teachers),
 });
-
 Reducers.register(moduleConfig.reducerName, reducer);
-
 export default reducer;

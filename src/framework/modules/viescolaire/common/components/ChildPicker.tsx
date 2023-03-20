@@ -75,8 +75,8 @@ const ChildPicker = ({ children, selectedChildId, userChildren = [], selectChild
 
 export default connect(
   (state: IGlobalState) => {
-    const session = getSession(state);
     const viescoState = viescoConfig.getState(state);
+    const session = getSession(state);
 
     return {
       selectedChildId: viescoState.children.selectedChild,

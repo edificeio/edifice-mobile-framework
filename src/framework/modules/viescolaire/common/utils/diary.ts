@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { IPersonnelList } from '~/framework/modules/viescolaire/dashboard/state/personnel';
+import { IUser } from '~/framework/modules/auth/model';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 
 export type Homework = {
@@ -22,10 +22,9 @@ export type Session = {
   title: string;
 };
 
-export const getTeacherName = (teacherId, teachersList: IPersonnelList) => {
+export const getTeacherName = (teacherId, teachersList: IUser[]) => {
   const result = teachersList.find(personnel => personnel.id === teacherId);
-  if (typeof result === 'undefined') return '';
-  return `${result.lastName} ${result.firstName}`;
+  return result?.displayName ?? '';
 };
 
 export const isHomeworkDone = homework => homework.progress !== null && homework.progress.state_label === 'done';
@@ -91,12 +90,12 @@ export const homeworkListDetailsTeacherAdapter = (homeworkList: IHomeworkMap | I
 
 // -- SESSIONS DETAILS ------------------
 
-export const sessionDetailsAdapter = (session: IDiarySession, teachersList?: IPersonnelList) => {
+export const sessionDetailsAdapter = (session: IDiarySession, teachers?: IUser[]) => {
   return {
     id: session?.id ? session.id : 0,
     subject: session?.subject_id !== 'exceptional' ? session?.subject?.name : session?.exceptional_label,
     date: session?.date ? session.date : null,
-    teacher: teachersList ? getTeacherName(session.teacher_id, teachersList) : null,
+    teacher: teachers ? getTeacherName(session.teacher_id, teachers) : null,
     description: session?.description ? session.description : null,
     title: session?.title ? session.title : null,
   } as Session;
@@ -113,14 +112,12 @@ export const hasEmptyDescription = (session: IDiarySession) => {
   return false;
 };
 
-export const sessionListDetailsAdapter = (session: IDiarySession, teachersList: IPersonnelList, sessionList?: IDiarySession[]) => {
+export const sessionListDetailsAdapter = (session: IDiarySession, teachers: IUser[], sessionList?: IDiarySession[]) => {
   const reformatedSessionArray = [] as Session[];
-  sessionList?.forEach(
-    item => !hasEmptyDescription(item) && reformatedSessionArray.push(sessionDetailsAdapter(item, teachersList)),
-  );
+  sessionList?.forEach(item => !hasEmptyDescription(item) && reformatedSessionArray.push(sessionDetailsAdapter(item, teachers)));
 
   return {
-    session: sessionDetailsAdapter(session, teachersList),
+    session: sessionDetailsAdapter(session, teachers),
     sessionList: reformatedSessionArray,
   };
 };

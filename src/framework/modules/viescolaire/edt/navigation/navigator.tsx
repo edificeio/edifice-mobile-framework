@@ -10,6 +10,6 @@ import { EdtNavigationParams, edtRouteNames } from '.';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<EdtNavigationParams>(moduleConfig.name, Stack => (
     <>
-      <Stack.Screen name={edtRouteNames.home} component={EdtHomeScreen} options={homeNavBar} initialParams={{}} />
+      <Stack.Screen name={edtRouteNames.home} component={EdtHomeScreen} options={homeNavBar} />
     </>
   ));

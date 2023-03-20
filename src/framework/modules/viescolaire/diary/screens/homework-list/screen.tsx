@@ -10,14 +10,13 @@ import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { fetchPersonnelListAction } from '~/framework/modules/viescolaire/dashboard/actions/personnel';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { getPersonnelListState } from '~/framework/modules/viescolaire/dashboard/state/personnel';
 import {
   fetchDiaryHomeworksAction,
   fetchDiaryHomeworksFromChildAction,
   fetchDiarySessionsAction,
   fetchDiarySessionsFromChildAction,
+  fetchDiaryTeachersAction,
   updateDiaryHomeworkProgressAction,
 } from '~/framework/modules/viescolaire/diary/actions';
 import HomeworkList from '~/framework/modules/viescolaire/diary/components/HomeworkList';
@@ -44,7 +43,7 @@ export const computeNavBar = ({
 
 class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScreenPrivateProps> {
   componentDidMount() {
-    this.props.fetchPersonnel(this.props.structureId);
+    this.props.fetchTeachers(this.props.structureId);
   }
 
   private fetchHomeworks = (startDate, endDate) =>
@@ -62,7 +61,7 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
       <PageView>
         <HomeworkList
           navigation={this.props.navigation}
-          personnel={this.props.personnel}
+          personnel={this.props.teachers}
           isFetchingHomework={this.props.isFetchingHomework}
           isFetchingSession={this.props.isFetchingSession}
           updateHomeworkProgress={this.props.updateHomeworkProgress}
@@ -81,16 +80,15 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
 export default connect(
   (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
-    const personnelState = getPersonnelListState(state);
     const session = getSession(state);
     const userType = session?.user.type;
 
     return {
       homeworks: diaryState.homeworks.data,
       sessions: diaryState.sessions.data,
-      personnel: personnelState.data,
-      isFetchingHomework: diaryState.homeworks.isFetching || personnelState.isFetching,
-      isFetchingSession: diaryState.sessions.isFetching || personnelState.isFetching,
+      teachers: diaryState.teachers.data,
+      isFetchingHomework: diaryState.homeworks.isFetching || diaryState.teachers.isFetching,
+      isFetchingSession: diaryState.sessions.isFetching || diaryState.teachers.isFetching,
       childId: getSelectedChild(state)?.id,
       structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
       userType,
@@ -102,8 +100,8 @@ export default connect(
         fetchChildHomeworks: tryAction(fetchDiaryHomeworksFromChildAction, undefined, true),
         fetchChildSessions: tryAction(fetchDiarySessionsFromChildAction, undefined, true),
         fetchHomeworks: tryAction(fetchDiaryHomeworksAction, undefined, true),
-        fetchPersonnel: tryAction(fetchPersonnelListAction, undefined, true),
         fetchSessions: tryAction(fetchDiarySessionsAction, undefined, true),
+        fetchTeachers: tryAction(fetchDiaryTeachersAction, undefined, true),
         updateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction, undefined, true),
       },
       dispatch,
