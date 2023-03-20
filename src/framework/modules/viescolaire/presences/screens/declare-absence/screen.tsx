@@ -37,7 +37,7 @@ export const computeNavBar = ({
     navigation,
     route,
   }),
-  title: `${I18n.t('viesco-absence-declaration')}`,
+  title: I18n.t('viesco-absence-declaration'),
   headerStyle: {
     backgroundColor: viescoTheme.palette.presences,
   },
@@ -81,6 +81,13 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
     }
   };
 
+  React.useEffect(() => {
+    const { childName, navigation } = props;
+
+    navigation.setOptions({ title: `${I18n.t('viesco-absence-declaration')} ${childName}` });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.childName]);
+
   const renderPage = () => {
     const areDatesValid = startDate.isBefore(endDate) && startDate.isSameOrAfter(moment(), 'day');
 
@@ -117,7 +124,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="date"
                 value={startDate}
-                onChange={date => setStartDate(startDate.set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                onChange={date => setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
                 minimumDate={moment().startOf('day')}
                 color={viescoTheme.palette.presences}
               />
@@ -126,7 +133,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
                 <DateTimePicker
                   mode="date"
                   value={startDate}
-                  onChange={date => setStartDate(startDate.set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                  onChange={date => setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
                   minimumDate={moment().startOf('day')}
                   maximumDate={endDate}
                   color={viescoTheme.palette.presences}
@@ -134,7 +141,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
                 <DateTimePicker
                   mode="date"
                   value={endDate}
-                  onChange={date => setEndDate(endDate.set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                  onChange={date => setEndDate(endDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
                   minimumDate={startDate}
                   color={viescoTheme.palette.presences}
                 />
@@ -147,7 +154,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="time"
                 value={startDate}
-                onChange={date => setStartDate(startDate.set({ hour: date.hour(), minute: date.minute() }))}
+                onChange={date => setStartDate(startDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
                 color={viescoTheme.palette.presences}
               />
             </View>
@@ -156,7 +163,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="time"
                 value={endDate}
-                onChange={date => setEndDate(endDate.set({ hour: date.hour(), minute: date.minute() }))}
+                onChange={date => setEndDate(endDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
                 color={viescoTheme.palette.presences}
               />
             </View>
@@ -204,7 +211,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
     );
   };
 
-  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
   return <PageComponent>{renderPage()}</PageComponent>;
 };

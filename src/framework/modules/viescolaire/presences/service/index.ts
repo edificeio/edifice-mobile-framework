@@ -455,7 +455,7 @@ export const presencesService = {
         multiple_slot: allowMultipleSlots,
       })}`;
       const courses = (await fetchJSONWithCache(api)) as IBackendCourseList;
-      return courses.map(course => courseAdapter(course)) as ICourse[];
+      return courses.map(course => courseAdapter(course)).sort((a, b) => a.startDate.diff(b.startDate)) as ICourse[];
     },
   },
   courseRegister: {
