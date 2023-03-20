@@ -180,10 +180,12 @@ const MailContactField = connect((state: IGlobalState) => ({
                 onChangeText={onUserType}
                 onSubmit={() => noUserFound(search)}
                 onEndEditing={() => {
-                  updateFoundUsersOrGroups([]);
                   onOpenSearch?.(false);
                   clearTimeout(searchTimeout.current);
-                  updateSearch('');
+                  if (foundUsersOrGroups.length === 0) {
+                    updateFoundUsersOrGroups([]);
+                    updateSearch('');
+                  }
                 }}
                 key={key}
               />

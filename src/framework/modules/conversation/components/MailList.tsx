@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
   flatListRef: typeof SwipeableList | null = null;
 
-  constructor(props) {
+  constructor(props: ConversationMailListComponentProps) {
     super(props);
 
     const { notifications } = this.props;
@@ -452,7 +452,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                 }
                 onEndReachedThreshold={0.5}
                 onEndReached={() => {
-                  if (nextPageCallable) {
+                  if (nextPageCallable && !isRefreshing) {
                     this.setState({ nextPageCallable: false, isChangingPage: true });
                     this.onChangePage();
                   }

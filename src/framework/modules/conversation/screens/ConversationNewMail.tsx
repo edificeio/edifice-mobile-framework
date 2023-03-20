@@ -130,17 +130,22 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   componentDidMount = () => {
     const { fetchMailContent, route, navigation, clearContent, setup } = this.props;
+    const { id } = this.state;
     const draftType = route.params.type;
+    const mailId = route.params.mailId;
     navigation.setParams(this.navigationHeaderFunction);
-    if (route.params.mailId) {
+    if (mailId) {
       this.setState({ isPrefilling: true });
-      fetchMailContent(route.params.mailId);
+      fetchMailContent(mailId);
     }
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
     }
     clearContent();
     setup();
+    if (mailId && !id && draftType === DraftType.DRAFT) {
+      this.setState({ id: mailId });
+    }
   };
 
   componentDidUpdate = async (prevProps: ConversationNewMailScreenProps) => {
@@ -162,7 +167,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
               <PopupMenu
                 actions={[
                   cameraAction({ callback: addGivenAttachment }),
-                  galleryAction({ callback: addGivenAttachment, multiple: true }),
+                  galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
                   documentAction({ callback: addGivenAttachment }),
                 ]}>
                 <HeaderIcon name="attachment" />
@@ -185,34 +190,33 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         mail: { ...prevState.mail, ...(prefilledMail as IMail) },
         isPrefilling: false,
       }));
-    } else if (route.params.mailId && !id && route.params.type === DraftType.DRAFT) this.setState({ id: route.params.mailId });
-
-    // Check if html tags are present in body
-    if ((route.params.type ?? DraftType.NEW) === DraftType.DRAFT && !webDraftWarning) {
-      const removeWrapper = (text: string) => {
-        return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
-      };
-      let checkBody = removeWrapper(mail.body);
-      checkBody = checkBody.split('<hr class="ng-scope">')[0];
-      checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
-      if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(checkBody)) {
-        this.setState({ webDraftWarning: true });
-        Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
-          {
-            text: I18n.t('common.quit'),
-            onPress: async () => {
-              navigation.goBack();
+    } else if (route.params.mailId && !id && route.params.type === DraftType.DRAFT)
+      if ((route.params.type ?? DraftType.NEW) === DraftType.DRAFT && !webDraftWarning) {
+        // Check if html tags are present in body
+        const removeWrapper = (text: string) => {
+          return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
+        };
+        let checkBody = removeWrapper(this.props.mail.body);
+        checkBody = checkBody.split('<hr class="ng-scope">')[0];
+        checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
+        if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(checkBody)) {
+          this.setState({ webDraftWarning: true });
+          Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
+            {
+              text: I18n.t('common.quit'),
+              onPress: async () => {
+                this.props.navigation.goBack();
+              },
+              style: 'cancel',
             },
-            style: 'cancel',
-          },
-          {
-            text: I18n.t('common.continue'),
-            onPress: async () => {},
-            style: 'default',
-          },
-        ]);
+            {
+              text: I18n.t('common.continue'),
+              onPress: async () => {},
+              style: 'default',
+            },
+          ]);
+        }
       }
-    }
   };
 
   navigationHeaderFunction = {
