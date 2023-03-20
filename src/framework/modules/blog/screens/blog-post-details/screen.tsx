@@ -17,7 +17,6 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -45,7 +44,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
@@ -316,7 +315,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
         !errorState ? (
           <PopupMenu actions={menuData}>
-            <HeaderIcon name="more_vert" iconSize={24} />
+            <NavBarAction iconName="ui-options" />
           </PopupMenu>
         ) : undefined,
     });

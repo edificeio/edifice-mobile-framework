@@ -11,10 +11,11 @@ import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
-import { HeaderAction, HeaderIcon } from '~/framework/components/header';
+import { HeaderAction } from '~/framework/components/header';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
+import { NavBarAction } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -659,14 +660,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                   galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
                   documentAction({ callback: addGivenAttachment }),
                 ]}>
-                <HeaderIcon name="attachment" />
+                <NavBarAction iconName="ui-attachment" />
               </PopupMenu>
             </View>
           )}
           {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
-          {/* {deleteDraft && isSavedDraft && (
-            <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={deleteDraft} iconName="delete" />
-          )} */}
         </View>
       ),
     };

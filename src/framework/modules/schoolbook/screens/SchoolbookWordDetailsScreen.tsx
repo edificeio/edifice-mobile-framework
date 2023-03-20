@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import { IGlobalState } from '~/app/store';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { HeaderIcon } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -27,7 +26,7 @@ import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-ha
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -216,7 +215,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       headerRight: () =>
         isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
           <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
-            <HeaderIcon name="more_vert" iconSize={24} />
+            <NavBarAction iconName="ui-options" />
           </PopupMenu>
         ) : undefined,
     });
