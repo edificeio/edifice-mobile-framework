@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
@@ -10,7 +10,6 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
@@ -39,7 +38,7 @@ export const computeNavBar = ({
 
 const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
   const [memento, setMemento] = React.useState<IMemento | undefined>();
-  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState || AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
@@ -85,8 +84,7 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -94,31 +92,23 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
 
   const renderMemento = () => {
     return memento ? (
-      <View>
+      <ScrollView>
         <View style={styles.studentInfos}>
           {memento.name ? <BodyBoldText style={styles.studentName}>{memento.name}</BodyBoldText> : null}
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="cake-variant" />
-            {memento.birth_date ? (
-              <SmallText>
-                {I18n.t('viesco-memento-born-date')} {moment(memento.birth_date).format('L')}
-              </SmallText>
-            ) : (
-              <SmallText>-</SmallText>
-            )}
+            <SmallText>
+              {memento.birth_date ? `${I18n.t('viesco-memento-born-date')} ${moment(memento.birth_date).format('L')}` : '-'}
+            </SmallText>
           </View>
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="school" />
-            {memento.classes && memento.classes.length > 0 ? (
-              <SmallText>{memento.classes.join(', ')}</SmallText>
-            ) : (
-              <SmallText>-</SmallText>
-            )}
+            <SmallText>{memento.classes?.length ? memento.classes.join(', ') : '-'}</SmallText>
           </View>
           {memento.groups.length > 0 && <SmallText style={styles.studentGroups}>{memento.groups.join(', ')}</SmallText>}
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="silverware" />
-            {memento.accommodation ? <SmallText>{memento.accommodation.toLocaleLowerCase()}</SmallText> : <SmallText>-</SmallText>}
+            <SmallText>{memento.accommodation ? memento.accommodation.toLocaleLowerCase() : '-'}</SmallText>
           </View>
         </View>
         {memento.relatives.length ? (
@@ -133,38 +123,31 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
                 ) : null}
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="email" />
-                  {relative.email && relative.email !== '' ? <SmallText>{relative.email}</SmallText> : <SmallText>-</SmallText>}
+                  <SmallText>{relative.email || '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="cellphone" />
-                  {relative.mobile && relative.mobile !== '' ? <SmallText>{relative.mobile}</SmallText> : <SmallText>-</SmallText>}
+                  <SmallText>{relative.mobile || '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="phone" />
-                  {relative.phone && relative.phone !== '' ? <SmallText>{relative.phone}</SmallText> : <SmallText>-</SmallText>}
+                  <SmallText>{relative.phone || '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="home" />
-                  {relative.address && relative.address !== '' ? (
-                    <SmallText>{relative.address}</SmallText>
-                  ) : (
-                    <SmallText>-</SmallText>
-                  )}
+                  <SmallText>{relative.address || '-'}</SmallText>
                 </View>
               </View>
             ))}
           </View>
         ) : null}
-      </View>
+      </ScrollView>
     ) : null;
   };
 
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
         return renderMemento();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:

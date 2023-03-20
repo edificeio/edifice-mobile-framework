@@ -2,11 +2,11 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
   studentInfos: {
-    padding: UI_SIZES.spacing.small,
-    paddingBottom: UI_SIZES.spacing.medium,
+    padding: pageGutterSize,
   },
   studentName: {
     marginBottom: UI_SIZES.spacing.small,
@@ -17,18 +17,14 @@ export default StyleSheet.create({
   },
   infoLine: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: UI_SIZES.spacing.small,
   },
   iconDisplay: {
     marginRight: UI_SIZES.spacing.small,
-    marginTop: -UI_SIZES.spacing.tiny,
   },
   relativesInfos: {
-    flex: 1,
-    borderStyle: 'solid',
-    padding: UI_SIZES.spacing.small,
+    padding: pageGutterSize,
   },
   relativesTitleText: {
     marginBottom: UI_SIZES.spacing.small,
