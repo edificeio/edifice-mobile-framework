@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { connect } from 'react-redux';
 
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -24,10 +22,10 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
       right: undefined,
     },
   });
-  const test = { width: uploadSuccess ? '100%' : `${uploadProgress}%` };
+  const uploadBarWidth = { width: uploadSuccess ? '100%' : `${uploadProgress}%` };
   return (
     <View style={attachmentStyle}>
-      <View style={[StyleSheet.absoluteFill, styles.uploadBar, test]} />
+      <View style={[StyleSheet.absoluteFill, styles.uploadBar, uploadBarWidth]} />
       <Icon
         size={25}
         style={{ margin: UI_SIZES.spacing.small }}
@@ -42,8 +40,4 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
   );
 };
 
-const mapStateToProps = (state: IGlobalState) => ({
-  uploadProgress: [state.progress.value],
-});
-
-export default connect(mapStateToProps)(Attachment);
+export default Attachment;

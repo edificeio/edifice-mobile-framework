@@ -70,7 +70,7 @@ interface ConversationNewMailScreenEventProps {
   setup: () => void;
   sendMail: (mailDatas: object, draftId: string | undefined, inReplyTo: string) => void;
   forwardMail: (draftId: string, inReplyTo: string) => void;
-  makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => Promise<void>;
+  makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => Promise<string>;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
   deleteMessage: (mailId: string[]) => void;
@@ -606,11 +606,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   getAttachmentData = async (file: LocalFile) => {
     const { addAttachment } = this.props;
-    const { id } = this.state;
     this.setState({ tempAttachment: file });
     try {
+      const mailId = await this.saveDraft();
+      const newAttachment = await addAttachment(mailId, file);
       await this.saveDraft();
-      const newAttachment = await addAttachment(id!, file);
       this.setState(prevState => ({
         mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
@@ -654,8 +654,10 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
       this.setState({ id: idDraft });
       if (isForward) this.forwardDraft();
+      return idDraft;
     } else {
       updateDraft(id, this.getMailData());
+      return id;
     }
   };
 

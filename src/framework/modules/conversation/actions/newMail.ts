@@ -26,7 +26,7 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
 export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boolean) {
   return async (dispatch: Dispatch) => {
     const draftMail = await newMailService.makeDraftMail(mailDatas, inReplyTo);
-    return draftMail;
+    return draftMail as string;
   };
 }
 
