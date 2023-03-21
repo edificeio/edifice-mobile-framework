@@ -138,42 +138,37 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  getSendDraft = async () => {
+  sendMail = async () => {
     if (!this.state.mail.to.length && !this.state.mail.cc.length && !this.state.mail.bcc.length) {
-      Toast.show(I18n.t('zimbra-missing-receiver'), { ...UI_ANIMATIONS.toast });
-      return;
+      return Toast.show(I18n.t('zimbra-missing-receiver'), { ...UI_ANIMATIONS.toast });
     } else if (this.state.tempAttachment) {
-      Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
-      return;
+      return Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
     }
 
     try {
-      const { session } = this.props;
+      const { navigation, session } = this.props;
       const { mail } = this.state;
+
       if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
       await zimbraService.mail.send(session!, this.getMailData(), this.state.id!, this.state.replyTo!);
-      Toast.show(I18n.t('zimbra-send-mail'), { ...UI_ANIMATIONS.toast });
-      this.getGoBack();
+      Toast.showSuccess(I18n.t('zimbra-send-mail'), { ...UI_ANIMATIONS.toast });
+      navigation.goBack();
     } catch {
       // TODO: Manage error
     }
   };
 
   getGoBack = () => {
-    const draftType = this.props.route.params.type;
     if (this.state.tempAttachment) {
-      Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
-      return;
+      return Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
     }
     if (!this.checkIsMailEmpty()) {
+      const { type } = this.props.route.params;
       this.saveDraft();
-      if (draftType === DraftType.DRAFT) {
-        Toast.showSuccess(I18n.t('zimbra-draft-updated'), { ...UI_ANIMATIONS.toast });
-      } else {
-        Toast.showSuccess(I18n.t('zimbra-draft-created'), { ...UI_ANIMATIONS.toast });
-      }
+      Toast.showSuccess(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'), {
+        ...UI_ANIMATIONS.toast,
+      });
     }
-
     this.props.navigation.goBack();
   };
 
@@ -536,7 +531,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
             <NavBarAction iconName="ui-attachment" />
           </PopupMenu>
           <View style={styles.navbarSendAction}>
-            <NavBarAction iconName="ui-send" onPress={this.getSendDraft} />
+            <NavBarAction iconName="ui-send" onPress={this.sendMail} />
           </View>
           <PopupMenu actions={menuActions}>
             <NavBarAction iconName="ui-options" />
@@ -610,7 +605,7 @@ export default connect(
           fetchZimbraSignatureAction,
           undefined,
           true,
-        ) as unknown as ZimbraComposerScreenPrivateProps['fetchMail'],
+        ) as unknown as ZimbraComposerScreenPrivateProps['fetchSignature'],
         onPickFileError: tryAction(pickFileError, undefined, true),
       },
       dispatch,
