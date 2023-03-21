@@ -240,11 +240,31 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDevoirs: tryAction(fetchCompetencesDevoirsAction, undefined, true),
-        fetchHomeworks: tryAction(fetchDiaryHomeworksAction, undefined, true),
-        fetchLevels: tryAction(fetchCompetencesLevelsAction, undefined, true),
-        fetchTeachers: tryAction(fetchDiaryTeachersAction, undefined, true),
-        updateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction, undefined, true),
+        fetchDevoirs: tryAction(
+          fetchCompetencesDevoirsAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['fetchDevoirs'],
+        fetchHomeworks: tryAction(
+          fetchDiaryHomeworksAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['fetchHomeworks'],
+        fetchLevels: tryAction(
+          fetchCompetencesLevelsAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['fetchLevels'],
+        fetchTeachers: tryAction(
+          fetchDiaryTeachersAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['fetchTeachers'],
+        updateHomeworkProgress: tryAction(
+          updateDiaryHomeworkProgressAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['updateHomeworkProgress'],
       },
       dispatch,
     ),

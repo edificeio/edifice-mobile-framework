@@ -57,30 +57,30 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 
   fetchCourses = () => {
     const { startDate } = this.state;
-    const { fetchTeacherCourses, fetchHomeworks, fetchSessions, structure, teacherId } = this.props;
-    fetchTeacherCourses(structure.id, startDate, startDate.clone().endOf('week'), teacherId);
-    fetchSessions(structure.id, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
-    fetchHomeworks(structure.id, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
+    const { fetchTeacherCourses, fetchHomeworks, fetchSessions, structureId, userId } = this.props;
+    fetchTeacherCourses(structureId, startDate, startDate.clone().endOf('week'), userId);
+    fetchSessions(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
+    fetchHomeworks(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
   };
 
   componentDidMount() {
-    const { structure } = this.props;
+    const { structureId } = this.props;
     this.fetchCourses();
-    this.props.fetchSlots(structure.id);
+    this.props.fetchSlots(structureId);
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { startDate, selectedDate } = this.state;
-    const { structure, fetchSlots } = this.props;
+    const { structureId, fetchSlots } = this.props;
 
     // on selected date change
     if (!prevState.selectedDate.isSame(selectedDate, 'day')) this.setState({ startDate: selectedDate.clone().startOf('week') });
 
     // on week, structure change
-    if (!prevState.startDate.isSame(startDate, 'day') || structure.id !== prevProps.structure.id) this.fetchCourses();
+    if (!prevState.startDate.isSame(startDate, 'day') || structureId !== prevProps.structureId) this.fetchCourses();
 
     // on structure change
-    if (structure.id !== prevProps.structure.id) fetchSlots(structure.id);
+    if (structureId !== prevProps.structure.id) fetchSlots(structureId);
   }
 
   updateSelectedDate = (newDate: moment.Moment) => {
@@ -112,20 +112,32 @@ export default connect(
 
     return {
       courses: getCoursesListState(state),
-      slots: diaryState.slots,
-      structure: { id: getSelectedStructure(state) },
-      teacherId: session?.user.id,
-      sessions: diaryState.sessions,
       homeworks: diaryState.homeworks,
+      sessions: diaryState.sessions,
+      slots: diaryState.slots,
+      structureId: getSelectedStructure(state),
+      userId: session?.user.id,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchTeacherCourses: tryAction(fetchCourseListFromTeacherAction, undefined, true),
-        fetchHomeworks: tryAction(fetchDiaryHomeworksAction, undefined, true),
-        fetchSessions: tryAction(fetchDiarySessionsAction, undefined, true),
-        fetchSlots: tryAction(fetchDiarySlotsAction, undefined, true),
+        fetchHomeworks: tryAction(
+          fetchDiaryHomeworksAction,
+          undefined,
+          true,
+        ) as unknown as DiaryTimetableScreenPrivateProps['fetchHomeworks'],
+        fetchSessions: tryAction(
+          fetchDiarySessionsAction,
+          undefined,
+          true,
+        ) as unknown as DiaryTimetableScreenPrivateProps['fetchSessions'],
+        fetchSlots: tryAction(fetchDiarySlotsAction, undefined, true) as unknown as DiaryTimetableScreenPrivateProps['fetchSlots'],
+        fetchTeacherCourses: tryAction(
+          fetchCourseListFromTeacherAction,
+          undefined,
+          true,
+        ) as unknown as DiaryTimetableScreenPrivateProps['fetchTeacherCourses'],
       },
       dispatch,
     ),

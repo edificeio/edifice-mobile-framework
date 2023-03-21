@@ -6,19 +6,19 @@ import type { DiaryNavigationParams } from '~/framework/modules/viescolaire/diar
 
 export interface DiaryHomeworkListScreenProps {
   homeworks: IHomeworkMap;
-  sessions: IDiarySession[];
-  teachers: IUser[];
-  childId: string;
-  structureId: string;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
-  userType: string;
-  fetchHomeworks: any;
-  fetchTeachers: any;
-  fetchSessions: any;
-  fetchChildHomeworks: any;
-  fetchChildSessions: any;
-  updateHomeworkProgress?: any;
+  sessions: IDiarySession[];
+  teachers: IUser[];
+  childId?: string;
+  structureId?: string;
+  userType?: string;
+  fetchChildHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
+  fetchChildSessions: (childId: string, startDate: string, endDate: string) => Promise<IDiarySession[]>;
+  fetchHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
+  fetchSessions: (structureId: string, startDate: string, endDate: string) => Promise<IDiarySession[]>;
+  fetchTeachers: (structureId: string) => Promise<IUser[]>;
+  updateHomeworkProgress: (homeworkId: number, isDone: boolean) => Promise<void>;
 }
 
 export interface DiaryHomeworkListScreenNavParams {}

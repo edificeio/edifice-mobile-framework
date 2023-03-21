@@ -255,10 +255,9 @@ export default connect(
       },
       childId: getSelectedChild(state)?.id,
       evaluations: competencesState.devoirsMatieres,
+      hasRightToCreateAbsence:
+        session?.authorizedActions.some(action => action.displayName === 'presences.absence.statements.create') ?? false,
       homeworks: diaryState.homeworks,
-      hasRightToCreateAbsence: session?.authorizedActions.some(
-        action => action.displayName === 'presences.absence.statements.create',
-      ),
       levels: competencesState.levels.data,
       structureId: getSelectedChildStructure(state)?.id,
       userId: session?.user.id,
@@ -267,10 +266,26 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDevoirs: tryAction(fetchCompetencesDevoirsAction, undefined, true),
-        fetchHomeworks: tryAction(fetchDiaryHomeworksFromChildAction, undefined, true),
-        fetchLevels: tryAction(fetchCompetencesLevelsAction, undefined, true),
-        fetchTeachers: tryAction(fetchDiaryTeachersAction, undefined, true),
+        fetchDevoirs: tryAction(
+          fetchCompetencesDevoirsAction,
+          undefined,
+          true,
+        ) as unknown as DashboardRelativeScreenPrivateProps['fetchDevoirs'],
+        fetchHomeworks: tryAction(
+          fetchDiaryHomeworksFromChildAction,
+          undefined,
+          true,
+        ) as unknown as DashboardRelativeScreenPrivateProps['fetchHomeworks'],
+        fetchLevels: tryAction(
+          fetchCompetencesLevelsAction,
+          undefined,
+          true,
+        ) as unknown as DashboardRelativeScreenPrivateProps['fetchLevels'],
+        fetchTeachers: tryAction(
+          fetchDiaryTeachersAction,
+          undefined,
+          true,
+        ) as unknown as DashboardRelativeScreenPrivateProps['fetchTeachers'],
       },
       dispatch,
     ),
