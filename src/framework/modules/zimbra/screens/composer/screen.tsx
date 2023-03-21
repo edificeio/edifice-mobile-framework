@@ -120,7 +120,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  addGivenAttachment = async (file: Asset | DocumentPicked, sourceType: string) => {
+  addGivenAttachment = async (file: Asset | DocumentPicked, sourceType: string = '') => {
     const actionName =
       'Rédaction mail - Insérer - Pièce jointe - ' +
       ({
@@ -457,7 +457,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     if (!this.checkIsMailEmpty() || addedAttachments) {
       if (this.state.id === undefined && !this.state.settingId) {
         this.setState({ settingId: true });
-        const inReplyTo = this.props.mail.id;
+        const inReplyTo = this.props.mail?.id;
         const isForward = this.props.route.params.type === DraftType.FORWARD;
         const idDraft = await zimbraService.draft.create(session!, this.getMailData(), inReplyTo, isForward);
 
@@ -611,7 +611,7 @@ export default connect(
           undefined,
           true,
         ) as unknown as ZimbraComposerScreenPrivateProps['fetchMail'],
-        onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
+        onPickFileError: tryAction(pickFileError, undefined, true),
       },
       dispatch,
     ),
